@@ -19,7 +19,7 @@ Effort figures assume one part-time developer with assistance.
 ```
 Current phase:  P3 — in progress
 Last completed: P2 — Market-data layer (2026-08-09)
-Blocked on:     —
+Blocked on:     complete predecessor trial count for DSR/citable P3 evidence
 ```
 
 ---
@@ -292,8 +292,9 @@ and non-optional hold, passive, significance, and drawdown adoption gates.
 Evidence must reference that plan, cannot predate it, and must match its
 dataset, cost profile, and code revision. The first 16-candidate trend-vol
 replacement specification and registration command are recorded in
-`docs/studies/cost-correct-preregistration-2026-08-09.md`. It remains unregistered
-until a real verified N7 dataset hash exists.
+`docs/studies/cost-correct-preregistration-2026-08-09.md`. It was initially left
+unregistered until a real verified N7 dataset hash existed. That prerequisite
+and the later one-time execution are now complete below.
 
 Next: implement the plan-driven nested chronological runner. It must consume the
 registered split and grid rather than accepting ad hoc parameters, and it must
@@ -333,8 +334,9 @@ Adoption requires both analyses and strictly positive lower bounds; short or
 invalid samples state insufficiency and fail closed. See
 `docs/studies/benchmark-relative-uncertainty-2026-08-09.md`.
 
-Next: prepare the verified multi-asset archive as the exact decision dataset,
-register the real 16-candidate study, and execute it once.
+Subsequently completed below: prepare the verified multi-asset archive as the
+exact decision dataset, register the real 16-candidate study, and execute it
+once.
 
 **Completed 2026-08-09 — verified decision-dataset preparation:**
 `pnpm research:prepare-dataset` now verifies every immutable N7 source archive,
@@ -347,10 +349,9 @@ aggregators remain reference-feature sources and cannot enter this execution
 price path. See
 `docs/studies/multi-asset-decision-preparation-2026-08-09.md`.
 
-Next: choose the actual Coinbase asset mix and coverage from available source
-archives, prepare that exact dataset, then register and execute the real
-16-candidate study once. No plan has been registered and no holdout has been
-opened yet.
+The next recorded step was choosing the Coinbase asset mix and coverage,
+preparing that exact dataset, then registering and executing the real
+16-candidate study once.
 
 **Completed 2026-08-09 — Coinbase study archive acquired:** exact raw public
 Coinbase candle responses for `BTC-USD`, `ETH-USD`, and `LTC-USD` were preserved
@@ -360,11 +361,9 @@ Its prepared decision-dataset hash is
 `d56276d736716bc8796be1c6a1c13a458933f5f5b52de262a0943b83890543f5`.
 See `docs/studies/coinbase-study-acquisition-2026-08-09.md`.
 
-Next: freeze the chronological development/holdout split and create a stable
-code revision before registration. The repository has no commit yet, so the
-acquisition uses an explicit working-tree parser label; the final study must not
-pretend that label is a committed application revision. Do not open the holdout
-until both choices are recorded.
+The next recorded step froze the chronological development/holdout split and
+created a stable code revision before registration. The acquisition's explicit
+working-tree parser label was not used as the final application revision.
 
 **Frozen 2026-08-09 — replacement-study split:** development is 2016-08-21
 through 2021-12-31 (1,959 daily bars); the untouched holdout is 2022-01-01
@@ -373,6 +372,25 @@ equal-weighted. The plan generator fixes the exact 16 candidates and all
 previously declared adoption thresholds. An immutable study-run record now
 persists atomically with the registered trial budget even when incomplete
 legacy history prevents a citable evidence snapshot.
+
+**Executed once 2026-08-10 — negative replacement result:** plan
+`7aeec117f27df08d51820778f44ae4dd9cf5ff322e903961fb53f9d245c58d3a`
+ran under commit `037927e6b876a86b53f6a9977d35fd0df1a37873`; immutable run hash
+`1c19605cb28c1c418ae57393a9e520e6b47f74f4e0c8585259facf626ea62120`
+records all 16 candidates. The selected 180-day/lookback, 50% target-vol,
+100-day trend-gate, 30-day cadence candidate earned positive cumulative excess
+on the final holdout, but its paired confidence lower bounds were negative,
+PBO was 28.60% against the frozen 5% ceiling, drawdown was 35.84% against the
+35% limit, and DSR remained unavailable because historical trial completeness
+is only a lower bound. It is not adopted. Existing tuned defaults therefore do
+not survive as evidence-backed defaults; they remain legacy/unvalidated and are
+not replaced by another result-selected candidate. See
+`docs/studies/trendvol-replacement-v1-2026-08-09.md`.
+
+Next: recover or conservatively resolve the missing predecessor private-vault
+trial count. Until then P3 cannot produce citable DSR evidence. P4 engineering
+may proceed only with the UI and documentation clearly labeling strategy
+parameters as unvalidated and without presenting this run as proof of edge.
 
 **Exit:** the scoreboard reports deflated significance over the *true* historical
 trial count. A study is committed recording the outcome either way. Determinism:

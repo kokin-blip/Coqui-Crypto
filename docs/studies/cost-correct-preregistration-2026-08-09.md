@@ -2,10 +2,10 @@
 
 ## Decision
 
-Coqui now has an immutable pre-registration boundary for the P3 replacement
-study. No replacement study has been registered or run yet: registration needs
-the final verified N7 dataset hash, and inventing that value would defeat the
-control.
+Coqui has an immutable pre-registration boundary for the P3 replacement study.
+The first replacement plan was later registered and executed exactly once; its
+negative result is recorded in
+`docs/studies/trendvol-replacement-v1-2026-08-09.md`.
 
 The boundary freezes, before results are inspected:
 
@@ -92,8 +92,8 @@ not change the candidates, development scores, outer-fold selections, or final
 selected parameters. The holdout outcome changes, as it should. Re-running the
 same registered plan is rejected before the holdout is opened again.
 
-CSCV/PBO, benchmark-relative confidence, and the verified Coinbase
-archive-to-decision-dataset preparation command are now implemented. The next
-step requires an owner decision on the exact Coinbase asset mix and actual
-archive coverage. Only then can the immutable plan be registered and its
-holdout opened exactly once.
+CSCV/PBO, benchmark-relative confidence, verified Coinbase preparation, atomic
+trial/run persistence, registration, and the one authorized holdout execution
+are complete. The result was not adopted. The remaining evidence blocker is the
+predecessor registry's unresolved lower-bound status, not missing study
+plumbing.

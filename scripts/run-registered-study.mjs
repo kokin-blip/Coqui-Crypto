@@ -70,6 +70,9 @@ try {
     (item) => item.preRegistrationHash === planHash,
   );
   if (run === undefined) throw new Error('The immutable study run was not persisted.');
+  const pboSummary = Object.fromEntries(
+    Object.entries(result.pbo).filter(([key]) => key !== 'splits'),
+  );
   console.log(JSON.stringify({
     ok: true,
     planId: result.planId,
@@ -79,7 +82,7 @@ try {
     datasetHash: result.datasetHash,
     candidateCount: result.candidateCount,
     selectedCandidate: result.selectedCandidate,
-    pbo: result.pbo,
+    pbo: pboSummary,
     holdout: result.holdout,
   }, null, 2));
 } catch {

@@ -65,6 +65,6 @@ The Coinbase acquisition command produced a 3,640-day shared continuous span
 from 2016-08-21 through 2026-08-08 inclusive and decision-dataset hash
 `d56276d736716bc8796be1c6a1c13a458933f5f5b52de262a0943b83890543f5`.
 
-The chronological development/holdout split and stable application code
-revision remain deliberately unfrozen. The final holdout stays unopened until
-those choices are recorded and registration succeeds.
+The split was later frozen at 2022-01-01, application revision `037927e` was
+committed, and the registered holdout was executed once. See
+`docs/studies/trendvol-replacement-v1-2026-08-09.md` for the negative result.
