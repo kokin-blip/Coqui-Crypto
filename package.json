@@ -21,7 +21,9 @@
     "archive:parquet": "pnpm build && node scripts/archive-market-bars.mjs",
     "research:seed-trials": "pnpm build && node scripts/seed-trial-audit.mjs",
     "research:prepare-dataset": "pnpm build && node scripts/prepare-research-dataset.mjs",
+    "research:create-trendvol-plan": "pnpm build && node scripts/create-trendvol-plan.mjs",
     "research:register-plan": "pnpm build && node scripts/register-research-plan.mjs",
+    "research:run-plan": "pnpm build && node scripts/run-registered-study.mjs",
     "providers:smoke": "node --env-file=.env scripts/provider-smoke.mjs",
     "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm build"
   },

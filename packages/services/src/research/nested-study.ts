@@ -8,7 +8,11 @@ import {
 } from '@coqui/core';
 import {
   appendTrialRecord,
+  canonicalStudyResult,
+  inTransaction,
   loadTrialRegistry,
+  researchStudyRunHash,
+  saveResearchStudyRun,
   type Db,
 } from '@coqui/storage';
 import { requireResearchPreRegistration } from './pre-registration.js';
@@ -53,19 +57,37 @@ export function runRegisteredNestedStudy(
     input.tradeCosts,
     registryBeforeRun,
   );
-  appendTrialRecord({
-    id: `pre-registration:${plan.id}`,
-    family: plan.family,
-    searchKind: 'grid',
-    evidenceStatus: 'verified',
-    parameterSpace: plan.parameterSpace,
-    trialCount: plan.candidateCount,
-    searchedAt: new Date(input.completedAtMs).toISOString(),
+  const resultJson = canonicalStudyResult(result);
+  const runWithoutHash = {
+    id: `study-run:${plan.id}`,
+    preRegistrationHash: input.preRegistrationHash,
+    completedAtMs: input.completedAtMs,
     datasetHash: plan.datasetHash,
     costProfileHash: plan.costProfileHash,
     codeRevision: plan.codeRevision,
-    producedDefaults: result.selectedCandidate.parameters,
-    studyRef: plan.studyRef,
-  }, database);
+    selectedCandidateId: result.selectedCandidate.id,
+    adopted: result.holdout.adopted,
+    resultJson,
+  };
+  inTransaction(database, () => {
+    appendTrialRecord({
+      id: `pre-registration:${plan.id}`,
+      family: plan.family,
+      searchKind: 'grid',
+      evidenceStatus: 'verified',
+      parameterSpace: plan.parameterSpace,
+      trialCount: plan.candidateCount,
+      searchedAt: new Date(input.completedAtMs).toISOString(),
+      datasetHash: plan.datasetHash,
+      costProfileHash: plan.costProfileHash,
+      codeRevision: plan.codeRevision,
+      producedDefaults: result.selectedCandidate.parameters,
+      studyRef: plan.studyRef,
+    }, database);
+    saveResearchStudyRun({
+      ...runWithoutHash,
+      runHash: researchStudyRunHash(runWithoutHash),
+    }, database);
+  });
   return result;
 }

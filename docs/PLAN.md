@@ -17,8 +17,8 @@ Effort figures assume one part-time developer with assistance.
 > **Update this section as phases complete. It is the first thing to read.**
 
 ```
-Current phase:  P2 — in progress
-Last completed: P1 — Pure core migration (2026-08-01)
+Current phase:  P3 — in progress
+Last completed: P2 — Market-data layer (2026-08-09)
 Blocked on:     —
 ```
 
@@ -365,6 +365,14 @@ code revision before registration. The repository has no commit yet, so the
 acquisition uses an explicit working-tree parser label; the final study must not
 pretend that label is a committed application revision. Do not open the holdout
 until both choices are recorded.
+
+**Frozen 2026-08-09 — replacement-study split:** development is 2016-08-21
+through 2021-12-31 (1,959 daily bars); the untouched holdout is 2022-01-01
+through 2026-08-08 (1,681 daily bars). The three Coinbase base targets are
+equal-weighted. The plan generator fixes the exact 16 candidates and all
+previously declared adoption thresholds. An immutable study-run record now
+persists atomically with the registered trial budget even when incomplete
+legacy history prevents a citable evidence snapshot.
 
 **Exit:** the scoreboard reports deflated significance over the *true* historical
 trial count. A study is committed recording the outcome either way. Determinism:

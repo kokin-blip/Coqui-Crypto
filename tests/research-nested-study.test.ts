@@ -20,6 +20,7 @@ import {
 import {
   loadTrialRegistry,
   openDatabase,
+  verifiedResearchStudyRuns,
 } from '../packages/storage/src/index.js';
 
 const DAY_MS = 86_400_000;
@@ -188,6 +189,18 @@ describe('plan-driven nested chronological research', () => {
     expect(result.developmentScores.every((item) => item.validationSegments === 3)).toBe(true);
     expect(result.holdout.checks.significanceAvailable).toBe(false);
     expect(result.holdout.adopted).toBe(false);
+    const runs = verifiedResearchStudyRuns(database);
+    expect(runs).toHaveLength(1);
+    expect(runs[0]).toEqual(expect.objectContaining({
+      id: `study-run:${plan.id}`,
+      preRegistrationHash: planHash,
+      selectedCandidateId: result.selectedCandidate.id,
+      adopted: false,
+    }));
+    expect(JSON.parse(runs[0]!.resultJson)).toEqual(result);
+    expect(() => database.prepare(
+      'UPDATE research_study_runs SET adopted = 1 WHERE id = ?',
+    ).run(runs[0]!.id)).toThrow(/immutable/u);
     expect(() => runRegisteredNestedStudy({
       preRegistrationHash: planHash,
       dataset: data,

@@ -7,6 +7,7 @@ export * from './pre-registrations.js';
 export * from './portfolio.js';
 export * from './research.js';
 export * from './research-evidence.js';
+export * from './research-study-runs.js';
 export * from './settings.js';
 export * from './trials.js';
 export * from './universe.js';
