@@ -1,0 +1,14 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/core" },
+    { "path": "packages/adapters" },
+    { "path": "packages/storage" },
+    { "path": "packages/observability" },
+    { "path": "packages/services" },
+    { "path": "packages/contracts" },
+    { "path": "packages/ui-kit" },
+    { "path": "apps/desktop" }
+  ]
+}
+

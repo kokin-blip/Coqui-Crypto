@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "noEmit": true,
+    "rootDir": ".",
+    "paths": {
+      "@coqui/core": ["./packages/core/src/index.ts"],
+      "@coqui/observability": ["./packages/observability/src/index.ts"],
+      "@coqui/storage": ["./packages/storage/src/index.ts"]
+    },
+    "types": ["node", "vitest/globals"]
+  },
+  "include": ["packages/*/src/**/*.ts", "apps/*/src/**/*.ts", "tests/**/*.ts"]
+}

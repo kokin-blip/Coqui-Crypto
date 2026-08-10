@@ -1,0 +1,21 @@
+{
+  "name": "@coqui/storage",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "test:native-duckdb": "node --input-type=module -e \"const {DuckDBConnection,version}=await import('@duckdb/node-api');const c=await DuckDBConnection.create();const r=await c.runAndReadAll('select 42 as answer');if(!version()||r.getRowsJson()[0]?.[0]!==42)process.exit(1);c.closeSync()\""
+  },
+  "dependencies": {
+    "@coqui/core": "workspace:*",
+    "@duckdb/node-api": "1.5.5-r.3",
+    "decimal.js": "10.6.0"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "name": "coqui-crypto",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.9.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.check.json --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "build": "tsc -b",
+    "dataset:coinbase": "pnpm build && node scripts/build-market-dataset.mjs",
+    "universe:snapshot": "pnpm build && node scripts/snapshot-universe.mjs",
+    "archive:binance": "pnpm build && node scripts/import-binance-archive.mjs",
+    "archive:kraken": "pnpm build && node scripts/import-kraken-archive.mjs",
+    "archive:coinbase": "pnpm build && node scripts/acquire-coinbase-archive.mjs",
+    "archive:verify-coinbase": "pnpm build && node scripts/verify-coinbase-acquisition.mjs",
+    "archive:parquet": "pnpm build && node scripts/archive-market-bars.mjs",
+    "research:seed-trials": "pnpm build && node scripts/seed-trial-audit.mjs",
+    "research:prepare-dataset": "pnpm build && node scripts/prepare-research-dataset.mjs",
+    "research:register-plan": "pnpm build && node scripts/register-research-plan.mjs",
+    "providers:smoke": "node --env-file=.env scripts/provider-smoke.mjs",
+    "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm build"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "25.9.3",
+    "eslint": "10.5.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.61.0",
+    "vitest": "4.1.8"
+  }
+}

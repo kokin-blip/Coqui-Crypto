@@ -1,0 +1,21 @@
+{
+  "name": "@coqui/adapters",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "test:native-keyring": "node --input-type=module -e \"const m=await import('@napi-rs/keyring/keytar.js');if(typeof m.getPassword!=='function'||typeof m.setPassword!=='function'||typeof m.deletePassword!=='function')process.exit(1)\""
+  },
+  "dependencies": {
+    "@coqui/core": "workspace:*",
+    "@napi-rs/keyring": "1.3.0",
+    "fflate": "0.8.3"
+  }
+}

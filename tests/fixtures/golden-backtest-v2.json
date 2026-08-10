@@ -1,0 +1,26 @@
+{
+  "fixtureVersion": "golden-backtest-v2",
+  "strategyVersion": "strategy-backtest-v3-arithmetic-ratios-registered-trials",
+  "closes": {
+    "BTC": [100, 102, 101, 105, 108, 106, 110, 114, 112, 118, 121, 119, 125, 128, 126, 132, 136, 134, 140, 145, 143, 149, 153, 151],
+    "ETH": [50, 51, 52, 51, 54, 55, 53, 57, 59, 58, 61, 63, 62, 66, 68, 67, 70, 73, 72, 76, 79, 77, 81, 84]
+  },
+  "targets": [
+    { "assetId": "BTC", "weight": 0.6 },
+    { "assetId": "ETH", "weight": 0.4 }
+  ],
+  "warmup": 5,
+  "rebalanceEveryDays": 3,
+  "trialCount": 25,
+  "expected": {
+    "days": 19,
+    "holdReturnPct": 46.57494887683566,
+    "passiveReturnPct": 46.46171521480387,
+    "passiveTurnoverUsd": 10506.333219352233,
+    "passiveCostUsd": 89.30383236449401,
+    "dsr": 0.9712876710315697,
+    "trials": 25,
+    "firstPassiveValue": 9915.059549907206,
+    "lastPassiveValue": 14521.766281363307
+  }
+}
