@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@coqui/core": "workspace:*",
-    "@duckdb/node-api": "1.5.5-r.3",
+    "@duckdb/node-api": "1.5.5-r.4",
     "decimal.js": "10.6.0"
   }
 }
