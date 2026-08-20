@@ -81,10 +81,10 @@ message types rather than preserve these channels verbatim.
 | 9634 | `COINGECKO_RESEARCH_SYNC` | `market-data` | Adapt | Persist reference features with observation time; never execution prices. |
 | 9635 | `RESEARCH_MATRIX_RUN` | `research` | Defer P3 | Replace ad hoc matrices with immutable registered plans. |
 | 9638 | `RESEARCH_MATRIX_CANCEL` | `research` | Defer P3 | Cancellation belongs to the registered research job lifecycle. |
-| 9639 | `RESEARCH_RUNS` | `research` | Adapt | Return immutable plan, dataset, code, cost, and outcome identities. |
+| 9639 | `RESEARCH_RUNS` | `research` | Adapt | Return immutable plan, dataset, code, cost, and outcome identities. Implemented by `ResearchReadModelService.runs`; transport remains deferred. |
 | 9640 | `RESEARCH_JOB_START` | `research` | Defer P3 | Start only a registered plan; never accept an unregistered search payload. |
-| 9643 | `RESEARCH_JOB_LIST` | `research` | Adapt | Bounded job summaries with stable status and reason codes. |
-| 9644 | `RESEARCH_JOB_GET` | `research` | Adapt | Scoped immutable job evidence; no raw worker errors. |
+| 9643 | `RESEARCH_JOB_LIST` | `research` | Adapt | Bounded job summaries with stable status and reason codes. Implemented by `ResearchReadModelService.jobs`; transport remains deferred. |
+| 9644 | `RESEARCH_JOB_GET` | `research` | Adapt | Scoped immutable job evidence; no raw worker errors. Implemented by `ResearchReadModelService.job`; transport remains deferred. |
 | 9647 | `RESEARCH_JOB_CANCEL` | `research` | Defer P3 | Deterministic cancellation with a recorded terminal outcome. |
 | 9650 | `RESEARCH_STRESS_START` | `research` | Defer P3 | Stress work must be pre-registered and excluded from default selection. |
 | 9653 | `AUTOTRADE_GET` | `paper` | Defer P6 | Paper automation state only; no live mode. |

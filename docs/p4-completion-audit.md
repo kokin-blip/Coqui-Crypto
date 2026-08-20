@@ -121,12 +121,13 @@ consume, then proving the shell boots against them, tests the transport contract
 service shapes rather than against anticipated ones.
 
 **Closed during P5, before the shell (10 rows).** These back the scoreboard and markets screens and
-are prerequisites for any renderer work:
+are prerequisites for any renderer work. **Both clusters completed 2026-08-20**; baseline moved from
+108 files / 657 tests to 111 files / 692 tests, so 63 of 76 `Adapt` rows now have tested coverage:
 
-| Rows | Destination boundary |
-|---|---|
-| `MARKET_PRICES`, `FEAR_GREED`, `COIN_CANDLES`, `MARKETS`, `TRENDING`, `YIELDS`, `NEWS_VIEW` | market-data display query facade |
-| `RESEARCH_RUNS`, `RESEARCH_JOB_LIST`, `RESEARCH_JOB_GET` | research read models |
+| Rows | Destination boundary | Test evidence |
+|---|---|---|
+| `MARKET_PRICES`, `FEAR_GREED`, `COIN_CANDLES`, `MARKETS`, `TRENDING`, `YIELDS`, `NEWS_VIEW` | `MarketDisplayQueryService` | `tests/market-display-queries.test.ts`, `tests/reference-feeds.test.ts` |
+| `RESEARCH_RUNS`, `RESEARCH_JOB_LIST`, `RESEARCH_JOB_GET` | `ResearchReadModelService` | `tests/research-read-models.test.ts` |
 
 **Re-phased to P7 — Coinbase read-only integration (5 rows).** Both clusters are connection and
 import flows whose safety behaviour is only observable through the connect and import UI that P7
