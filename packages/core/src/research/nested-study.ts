@@ -1,7 +1,5 @@
 import {
-  backtestDecisionDataset,
   equityReturns,
-  type DecisionStrategyBacktestResult,
   type TrackResult,
 } from '../backtest/index.js';
 import type { TradeCostConfig } from '../costs/index.js';
@@ -27,6 +25,10 @@ import {
   type CscvPboResult,
 } from './cscv.js';
 import { analyzeHoldoutEvidence, type HoldoutAdoptionResult } from './holdout-evidence.js';
+import {
+  evaluateTrendVolResearch,
+  type TrendVolResearchTracks,
+} from './trendvol-evaluator.js';
 
 const DAY_MS = 86_400_000;
 const START_VALUE = 10_000;
@@ -206,27 +208,25 @@ function runCandidate(
   plan: ResearchPreRegistration,
   candidate: ResearchCandidate,
   tradeCosts: TradeCostConfig,
-): DecisionStrategyBacktestResult {
+): TrendVolResearchTracks {
   const options = candidateOptions(candidate);
   if (options.momentum.targetVolatilityPct <= 0 || options.volTarget.targetVolPct <= 0 ||
       options.volTarget.minExposure > options.volTarget.maxExposure) {
     throw new RangeError('Candidate volatility and exposure parameters are inconsistent.');
   }
-  return backtestDecisionDataset(
+  return evaluateTrendVolResearch(
     dataset,
     plan.execution.baseTargets.map((target) => ({
       assetId: target.assetId as InstrumentKey,
       weight: target.weight,
     })),
     {
-      clock: { nowMs: () => dataset.generatedAtMs },
       warmup: scoreStartIndex,
       rebalanceEveryDays: options.rebalanceEveryDays,
       momentum: options.momentum,
       volTarget: options.volTarget,
       tradeCosts,
       cashAprPct: plan.execution.cashAprPct,
-      evalSignal: () => null,
     },
   );
 }
@@ -236,13 +236,13 @@ function afterCostReturnPct(track: TrackResult): number {
   return last === undefined ? 0 : (last / START_VALUE - 1) * 100;
 }
 
-function trackForFamily(result: DecisionStrategyBacktestResult, family: ResearchPreRegistration['family']): TrackResult {
+function trackForFamily(result: TrendVolResearchTracks, family: ResearchPreRegistration['family']): TrackResult {
   if (family !== 'trendvol') throw new TypeError('The first nested runner supports trendvol only.');
   return result.trendvol;
 }
 
 function score(
-  result: DecisionStrategyBacktestResult,
+  result: TrendVolResearchTracks,
   candidate: ResearchCandidate,
   family: ResearchPreRegistration['family'],
 ): CandidateScore {

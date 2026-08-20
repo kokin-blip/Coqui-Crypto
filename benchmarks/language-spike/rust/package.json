@@ -1,0 +1,16 @@
+{
+  "name": "@coqui/language-spike-rust",
+  "version": "0.0.0",
+  "private": true,
+  "main": "index.js",
+  "napi": {
+    "name": "coqui_research_kernel",
+    "triples": {
+      "defaults": false,
+      "additional": [
+        "x86_64-pc-windows-msvc",
+        "aarch64-apple-darwin"
+      ]
+    }
+  }
+}

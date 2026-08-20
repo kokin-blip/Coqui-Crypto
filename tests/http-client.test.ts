@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import fc from 'fast-check';
 
 import {
   createHttpClient,
@@ -25,7 +26,7 @@ function response(
   };
 }
 
-function passThroughRegistry(acquire = vi.fn(async () => {})): {
+function passThroughRegistry(acquire = vi.fn(async () => 'acquired' as const)): {
   registry: RateLimiterRegistry;
   acquire: typeof acquire;
 } {
@@ -161,8 +162,32 @@ describe('createHttpClient', () => {
     const result = await client.getJson('https://api.example/data');
 
     expect(result.ok).toBe(true);
-    expect(sleep).toHaveBeenNthCalledWith(1, 60_000);
-    expect(sleep).toHaveBeenNthCalledWith(2, 50);
+    expect(sleep).toHaveBeenNthCalledWith(1, 60_000, expect.any(AbortSignal));
+    expect(sleep).toHaveBeenNthCalledWith(2, 50, expect.any(AbortSignal));
+  });
+
+  it('keeps generated exponential jitter within the deterministic retry bound', async () => {
+    await fc.assert(fc.asyncProperty(
+      fc.integer({ min: 0, max: 10_000 }),
+      fc.double({ min: 0, max: 0.999_999, noNaN: true, noDefaultInfinity: true }),
+      async (baseDelayMs, jitter) => {
+        const delays: number[] = [];
+        let calls = 0;
+        const client = testClient({
+          fetch: async () => calls++ === 0
+            ? response(false, 503)
+            : response(true, 200, { recovered: true }),
+          maxRetries: 1,
+          baseDelayMs,
+          random: () => jitter,
+          sleep: async (milliseconds) => { delays.push(milliseconds); },
+        });
+        await expect(client.getJson('https://api.example/data')).resolves.toMatchObject({ ok: true });
+        expect(delays).toEqual([baseDelayMs + jitter * baseDelayMs]);
+        expect(delays[0]!).toBeGreaterThanOrEqual(baseDelayMs);
+        expect(delays[0]!).toBeLessThanOrEqual(baseDelayMs * 2);
+      },
+    ), { seed: 2_026_080_9, numRuns: 100 });
   });
 
   it('does not retry authentication or ordinary client errors', async () => {
@@ -232,6 +257,108 @@ describe('createHttpClient', () => {
     }
   });
 
+  it('bounds authentication preparation and response parsing', async () => {
+    vi.useFakeTimers();
+    try {
+      const preparationClient = testClient({
+        fetch: async () => response(true, 200),
+        prepareAttempt: async () => await new Promise<RequestInit>(() => {}),
+        timeoutMs: 50,
+        maxElapsedMs: 100,
+        maxRetries: 0,
+      });
+      const preparing = preparationClient.getJson('https://api.example/preparing');
+      await vi.advanceTimersByTimeAsync(50);
+      await expect(preparing).resolves.toEqual({
+        ok: false,
+        reason: 'timeout',
+        status: 0,
+        retried: 0,
+      });
+
+      let attemptSignal: AbortSignal | null | undefined;
+      const body = response(true, 200);
+      body.json = async () => await new Promise<unknown>(() => {});
+      const parsingClient = testClient({
+        fetch: async (_url, init) => {
+          attemptSignal = init?.signal;
+          return body;
+        },
+        timeoutMs: 100,
+        maxElapsedMs: 40,
+        maxRetries: 0,
+      });
+      const parsing = parsingClient.getJson('https://api.example/parsing');
+      await vi.advanceTimersByTimeAsync(40);
+      await expect(parsing).resolves.toEqual({
+        ok: false,
+        reason: 'elapsed-budget',
+        status: 0,
+        retried: 0,
+      });
+      expect(attemptSignal?.aborted).toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('honors caller cancellation before and during an attempt', async () => {
+    const before = new AbortController();
+    before.abort();
+    const client = testClient({ fetch: vi.fn(), maxRetries: 0 });
+    await expect(client.getJson('https://api.example/data', { signal: before.signal }))
+      .resolves.toEqual({ ok: false, reason: 'canceled', status: 0, retried: 0 });
+
+    const duringClient = testClient({
+      fetch: async () => await new Promise<FetchLikeResponse>(() => {}),
+      maxRetries: 0,
+    });
+    const during = new AbortController();
+    const pending = duringClient.getJson('https://api.example/data', { signal: during.signal });
+    during.abort();
+    await expect(pending).resolves.toEqual({
+      ok: false,
+      reason: 'canceled',
+      status: 0,
+      retried: 0,
+    });
+
+    const nullSignalClient = testClient({
+      fetch: async () => response(true, 200, { value: 'ok' }),
+      maxRetries: 0,
+    });
+    await expect(nullSignalClient.getJson('https://api.example/data', { signal: null }))
+      .resolves.toEqual({ ok: true, status: 200, data: { value: 'ok' } });
+  });
+
+  it('distinguishes client shutdown and total elapsed-budget exhaustion', async () => {
+    const shutdownClient = testClient({
+      fetch: async () => await new Promise<FetchLikeResponse>(() => {}),
+      maxRetries: 0,
+    });
+    const pending = shutdownClient.getJson('https://api.example/data');
+    shutdownClient.destroy();
+    await expect(pending).resolves.toEqual({
+      ok: false,
+      reason: 'shutdown',
+      status: 0,
+      retried: 0,
+    });
+
+    const budgetClient = testClient({
+      fetch: async () => response(false, 503),
+      maxRetries: 1,
+      baseDelayMs: 50,
+      maxElapsedMs: 25,
+    });
+    await expect(budgetClient.getJson('https://api.example/data')).resolves.toEqual({
+      ok: false,
+      reason: 'elapsed-budget',
+      status: 0,
+      retried: 1,
+    });
+  });
+
   it('returns parse, serialization, and invalid URL failures without throwing', async () => {
     const malformed = response(true, 200);
     malformed.json = async () => {
@@ -266,5 +393,6 @@ describe('createHttpClient', () => {
     expect(() => createHttpClient({ timeoutMs: 0 })).toThrow(RangeError);
     expect(() => createHttpClient({ maxRetries: -1 })).toThrow(RangeError);
     expect(() => createHttpClient({ baseDelayMs: Number.POSITIVE_INFINITY })).toThrow(RangeError);
+    expect(() => createHttpClient({ maxElapsedMs: 0 })).toThrow(RangeError);
   });
 });

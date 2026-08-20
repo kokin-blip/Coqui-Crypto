@@ -102,9 +102,22 @@ export interface Candle {
   readonly volume: number;
 }
 
+export type SpotPriceQuality = 'venue_reported_last' | 'reference_market';
+
+/** One exact spot observation with source identity preserved through fallback composition. */
+export interface SpotPriceObservation {
+  readonly priceUsd: UsdAmount;
+  readonly source: string;
+  readonly quality: SpotPriceQuality;
+  /** Authoritative provider event time, or null when the provider supplies none. */
+  readonly observedAtMs: number | null;
+}
+
 export interface PriceSource {
   readonly name: string;
-  spot(instruments: readonly InstrumentIdentity[]): Promise<ReadonlyMap<string, UsdAmount>>;
+  spot(
+    instruments: readonly InstrumentIdentity[],
+  ): Promise<ReadonlyMap<string, SpotPriceObservation>>;
   candles?(instrument: InstrumentIdentity, timeframe: string): Promise<readonly Candle[]>;
 }
 
@@ -134,4 +147,3 @@ export interface Executor {
   readonly mode: 'paper' | 'live';
   execute(intent: ExecutionIntent): Promise<Disposal | TaxLot>;
 }
-

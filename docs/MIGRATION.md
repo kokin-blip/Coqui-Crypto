@@ -10,6 +10,105 @@ Clone it locally; paths below are relative to its root.
 **Default decision is COPY.** Read the predecessor file, move it, fix import
 paths, move its tests. Do not reimplement from these descriptions.
 
+The user's personal rebuilt NautilusTrader fork is a separate, owner-authorized
+design reference, not the predecessor migration source. Its read-only concept audit
+and Coqui adoption decisions are recorded in
+[`nautilus-adoption-matrix.md`](nautilus-adoption-matrix.md). That matrix does not
+override Coqui's stack, scope, safety invariants, or copy-first predecessor rules.
+Its fourth bounded P4 adoption is now implemented as a host-driven scheduler over durable Coqui
+leases: UTC cadence, injected time, concurrency two, cancellation, and expired-lease recovery were
+adapted without copying a message bus, timer registry, keychain access, or execution behavior.
+Migration 40 similarly replaces predecessor alert JSON with typed profile policy, tombstoned
+canonical targets, immutable evidence facts, and separate read/archive presentation state; no
+predecessor timer or native notification behavior is copied.
+Migration 41 stores only a profile-scoped, allowlisted advisor model policy. Gemini credential
+material remains exclusively in the injected secret-store adapter, with the predecessor's main
+keyring account preserved and additional profiles isolated by scope. Advisor conversation, TTS,
+social data, IPC, and execution authority are not copied into the P4 connection boundary.
+The first accounts slice keeps the predecessor's version-1 `wallet-profiles.json` compatibility but
+replaces permissive loading with strict validation, revision-checked atomic writes, injected IDs and
+time, and database provisioning before manifest publication. Only secret-free display metadata is
+returned. Context switching, credential copying, and destructive profile deletion remain deferred
+to their explicitly bounded follow-up slices.
+Profile switching is now a two-phase service contract: prepare and migrate the target while the old
+context remains active, publish the revision-checked durable selection, then atomically commit the
+prepared context. Safe commit refusal rolls the manifest back; ambiguous commit failure requires
+restart recovery and never guesses. Electron lifecycle wiring remains a P5 composition-root task.
+Deletion preview is now an independent read-only accounts use case. It counts durable evidence by
+category and checks credential presence without reading secret values into the service. Incomplete
+inspection, active/last profile state, or evidence without a recoverable backup blocks eligibility.
+The recoverable-backup prerequisite is now a separate accounts operation over inactive, non-last
+profiles. It creates a consistent SQLite `VACUUM INTO` artifact, a strict versioned manifest,
+database and manifest SHA-256 checksums, schema/integrity verification, bounded impact counts, and
+credential-category metadata while explicitly excluding credential values. Creation is serialized
+with profile switching and changes neither the source database nor global manifest. The
+predecessor's direct remove path is not copied. Confirmed deletion now requires a fresh verified
+backup even for an otherwise empty profile. The exact confirmation binds profile and backup UUID;
+the service rechecks manifest revision, bounded evidence counts, and credential categories before
+writing a durable deletion journal. Revision-checked manifest removal is the commit point, followed
+by idempotent database/WAL and profile-scoped Coinbase/Gemini credential cleanup. Interrupted
+cleanup remains visible and resumable; corrupted recovery state fails closed. Restore remains a
+separate future operation.
+Profile duplication keeps the predecessor's consistent SQLite-backup concept but deliberately
+removes its `copyCredentials` option. Coqui dynamically rewrites every explicit `profile_id` column,
+rejects cross-profile contamination, clears legacy Coinbase/Gemini connection and sync markers,
+and excludes scheduler leases plus unfinished Coinbase staging jobs. Completed local facts remain in
+the isolated clone. The source database, source credentials, and source manifest record are
+unchanged; the new manifest record contains neither credential material nor provider fingerprints.
+Revision conflict cleanup first proves the target database is unreferenced, avoiding cross-process
+deletion of a newly published profile.
+Profile comparison replaces the predecessor's sequential per-wallet network pricing, binary-float
+totals, ambient `Date.now`, and missing-database zero fabrication. Coqui captures bounded detached
+facts with injected time and four-way read concurrency, then prices the union of canonical
+instruments once. Exact tracked and paper values distinguish priced subtotal from complete equity,
+carry source/quality counts and canonical unpriced identities, and expose per-profile unavailable
+states without leaking filenames, credentials, fingerprints, rows, or diagnostics.
+Profile dashboard adapts the predecessor summary instead of copying its ambient time, binary-float
+totals, raw warning/error text, missing-database zero fallbacks, and credential-marker assumptions.
+Coqui composes the comparison result with bounded isolated status reads, injected-clock freshness,
+stable warning codes, and sanitized automation/risk/safety evidence. Invalid or unavailable status
+remains explicit, and incomplete tracked or paper valuation makes the corresponding aggregate total
+null rather than overstating a priced subtotal as complete equity.
+All-profile refresh replaces the predecessor's serial loop, raw credential/provider error strings,
+ambient time, and command-plus-dashboard coupling. Coqui snapshots ordered profile metadata, uses
+one injected request time, and invokes a narrow authenticated-acquisition boundary with four-way
+bounded concurrency and caller cancellation. The accounts result copies no database filename,
+credential, response, or diagnostic data: it contains only profile display identity, terminal
+status, bounded evidence count, and an allowlisted reason code. Dashboard retrieval remains a
+separate query, and this accounts slice adds no scheduler, IPC, execution, or tax-lot authority.
+Coinbase connection replaces the predecessor's raw authentication messages and database credential
+markers with one profile-scoped, secret-safe service. Direct credentials and bounded key-file JSON
+both pass canonical ES256 validation and the same authenticated view-only probe. In addition to
+Trade and Transfer, Coqui rejects Coinbase's separately documented Receive permission. Only hashed
+key/portfolio identities enter the manifest, where they prevent duplicate assignment across
+profiles; private material remains in the OS secret store. Revision conflict restores the prior
+scoped secret, and a failed restore becomes explicit recovery-required state. Disconnect clears only
+that profile's Coinbase secret and identity markers and never deletes imported or portfolio evidence.
+Coinbase synchronization ports only the predecessor's bounded account/fill fetching. Cursor pages,
+normalized exact-decimal facts, provider times, local request/receipt times, and deterministic dataset
+hashes are appended through migration 42. Local remaining lots are read only to produce directional
+balance discrepancies. The predecessor's zero-cost lot synthesis, proportional lot resizing, staged
+promotion, and import deletion/replacement behavior are rejected. Duplicate profile databases retain
+the immutable origin profile as provenance; a later sync appends facts for the new profile rather than
+rewriting copied history. `COINBASE_SYNC` is now the authenticated executor behind the existing
+four-way profile refresh boundary, while IPC and scheduler ownership remain deferred.
+Migration 43 replaces the predecessor's mutable `tracked_coins` JSON and silent default fallback
+with an explicit ordered profile display universe. Only normalized Coinbase USD spot identities
+observed through the bounded public catalog can be selected; search/page observations retain a
+verified Coinbase provider mapping. Replacements are atomic, allow an intentional empty set, reject
+unknown or duplicate identities, and append immutable origin provenance. Profile duplication rewrites
+the current preference while preserving the source origin on historical events. This state never
+writes `universe_snapshots` or changes research membership. The similarly named predecessor
+`WATCHLIST_*` surface is not part of coin selection: it concerns attributed public chain addresses
+and remains separate until observation and unverified-attribution provenance are implemented.
+Migration 44 replaces the predecessor's permissive all-domain `user_settings` JSON merge with an
+accounts-owned presentation schema. Only theme, density, motion, and language are available through
+`SETTINGS_GET/SET`; default-versus-saved provenance is explicit. Unknown fields and predecessor cost
+basis, rebalance, pricing-provider, cash-yield, tax-rate, venue-cost, strategy, and advisor fields are
+rejected rather than ignored, clamped, or written through a generic key. Valid partial patches are
+merged with the current complete row inside one transaction. Other domains must expose their own
+typed policy service, and the unvalidated strategy defaults remain untouched.
+
 ---
 
 ## 1. Copy verbatim — no behaviour change
@@ -269,7 +368,7 @@ item instead.
 
 | Predecessor path | Destination | Approach |
 |---|---|---|
-| `src/app/main/index.ts` | `packages/services/*` + `apps/desktop/src/main/` | ~9,900 lines, ~140 `ipcMain.handle` registrations, ~331 functions. **Catalogue every handler into `docs/handler-inventory.md` first**, mapping each to one of the ten services. Then implement against the new service contracts. Target: `apps/desktop/src/main/` under 500 lines, wiring only |
+| `src/app/main/index.ts` | `packages/services/*` + `apps/desktop/src/main/` | ~9,900 lines, 140 `ipcMain.handle` registrations, ~331 functions. The read-only [handler inventory](handler-inventory.md) maps all 140 unique channels to one of the ten services before implementation against the new contracts. Target: `apps/desktop/src/main/` under 500 lines, wiring only |
 | `src/app/ipc-types.ts` | `packages/contracts/` | ~1,850 lines. Reuse the *shape*; split by domain; add Zod schemas validated in both directions |
 | `src/app/preload/index.ts` | `apps/desktop/src/preload/` | Explicit allowlist; validate every payload |
 | `src/app/renderer/src/components/*` (~40 files) | `apps/desktop/src/renderer/features/` | **Read for feature inventory only.** No component keeps its `setInterval`. Max 300 lines each — the predecessor's settings panel is ~2,100 |

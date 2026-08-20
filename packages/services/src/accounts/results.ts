@@ -1,0 +1,61 @@
+export type AccountProfileIssueCode =
+  | 'unknown_field'
+  | 'invalid_name'
+  | 'invalid_color'
+  | 'invalid_icon'
+  | 'invalid_profile_id'
+  | 'profile_not_found'
+  | 'empty_patch'
+  | 'invalid_permutation'
+  | 'profile_limit_reached'
+  | 'invalid_id_source'
+  | 'invalid_database_filename'
+  | 'database_provision_failed'
+  | 'profile_operation_in_progress'
+  | 'context_prepare_failed'
+  | 'context_commit_failed'
+  | 'context_recovery_required'
+  | 'profile_backup_active'
+  | 'profile_backup_last_profile'
+  | 'profile_backup_impact_unavailable'
+  | 'profile_backup_credentials_unavailable'
+  | 'profile_backup_invalid_metadata'
+  | 'profile_backup_invalid_artifact'
+  | 'profile_backup_source_unavailable'
+  | 'profile_backup_destination_unavailable'
+  | 'profile_backup_conflict'
+  | 'profile_backup_verification_failed'
+  | 'profile_delete_confirmation_required'
+  | 'profile_delete_backup_stale'
+  | 'profile_delete_impact_unavailable'
+  | 'profile_delete_credentials_unavailable'
+  | 'profile_delete_invalid_metadata'
+  | 'profile_delete_source_unavailable'
+  | 'profile_delete_journal_unavailable'
+  | 'profile_delete_manifest_conflict'
+  | 'profile_delete_recovery_corrupt'
+  | 'profile_duplicate_invalid_metadata'
+  | 'profile_duplicate_source_unavailable'
+  | 'profile_duplicate_destination_conflict'
+  | 'profile_duplicate_destination_unavailable'
+  | 'profile_duplicate_foreign_identity'
+  | 'profile_duplicate_verification_failed'
+  | 'profile_duplicate_cleanup_required'
+  | 'profile_compare_invalid_selection'
+  | 'profile_compare_invalid_metadata'
+  | 'profile_dashboard_invalid_metadata'
+  | 'profile_dashboard_snapshot_conflict'
+  | 'profile_refresh_invalid_metadata'
+  | 'profile_store_unavailable'
+  | 'profile_store_corrupt'
+  | 'profile_store_conflict'
+  | 'profile_store_rejected';
+
+export interface AccountProfileIssue {
+  readonly path: readonly string[];
+  readonly code: AccountProfileIssueCode;
+}
+
+export type AccountProfileResult<T> =
+  | { readonly ok: true; readonly value: T }
+  | { readonly ok: false; readonly issues: readonly AccountProfileIssue[] };

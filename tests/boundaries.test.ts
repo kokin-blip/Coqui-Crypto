@@ -26,6 +26,12 @@ const cases: readonly BoundaryCase[] = [
     ruleId: 'architecture/boundaries',
   },
   {
+    name: 'rejects production imports from the quarantined language spike',
+    filePath: 'packages/services/src/research/violation.ts',
+    code: "import '../../../../../benchmarks/language-spike/kernel.mjs';\n",
+    ruleId: 'architecture/boundaries',
+  },
+  {
     name: 'rejects global fetch outside the HTTP adapter',
     filePath: 'packages/adapters/src/coinbase/violation.ts',
     code: "export const request = () => fetch('https://example.invalid');\n",
@@ -36,6 +42,12 @@ const cases: readonly BoundaryCase[] = [
     filePath: 'packages/services/src/research/violation.ts',
     code: "import '../market-data/index.js';\nimport '../portfolio/index.js';\nimport '../paper/index.js';\n",
     ruleId: 'architecture/service-import-limit',
+  },
+  {
+    name: 'keeps contracts independent of service implementation',
+    filePath: 'packages/contracts/src/violation.ts',
+    code: "import '@coqui/services';\n",
+    ruleId: 'architecture/boundaries',
   },
   {
     name: 'rejects component-owned intervals',
@@ -69,4 +81,3 @@ describe('architecture boundaries', () => {
     expect(result?.errorCount).toBe(0);
   });
 });
-

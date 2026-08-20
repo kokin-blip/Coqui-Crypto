@@ -11,6 +11,13 @@ import { migrations34 } from './v34.js';
 import { migrations35 } from './v35.js';
 import { migrations36 } from './v36.js';
 import { migrations37 } from './v37.js';
+import { migrations38 } from './v38.js';
+import { migrations39 } from './v39.js';
+import { migrations40 } from './v40.js';
+import { migrations41 } from './v41.js';
+import { migrations42 } from './v42.js';
+import { migrations43 } from './v43.js';
+import { migrations44 } from './v44.js';
 
 export type { Migration, MigrationDatabase } from './types.js';
 
@@ -29,4 +36,11 @@ export const migrations = [
   ...migrations35,
   ...migrations36,
   ...migrations37,
+  ...migrations38,
+  ...migrations39,
+  ...migrations40,
+  ...migrations41,
+  ...migrations42,
+  ...migrations43,
+  ...migrations44,
 ] as const;

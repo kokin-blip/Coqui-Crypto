@@ -7,9 +7,9 @@
   "scripts": { "build": "tsc -b" },
   "dependencies": {
     "@coqui/adapters": "workspace:*",
+    "@coqui/contracts": "workspace:*",
     "@coqui/core": "workspace:*",
     "@coqui/observability": "workspace:*",
     "@coqui/storage": "workspace:*"
   }
 }
-

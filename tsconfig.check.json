@@ -8,8 +8,11 @@
     "noEmit": true,
     "rootDir": ".",
     "paths": {
+      "@coqui/adapters": ["./packages/adapters/src/index.ts"],
       "@coqui/core": ["./packages/core/src/index.ts"],
+      "@coqui/contracts": ["./packages/contracts/src/index.ts"],
       "@coqui/observability": ["./packages/observability/src/index.ts"],
+      "@coqui/services": ["./packages/services/src/index.ts"],
       "@coqui/storage": ["./packages/storage/src/index.ts"]
     },
     "types": ["node", "vitest/globals"]

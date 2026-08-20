@@ -3,6 +3,7 @@ import {
   decimal,
   instrumentKey,
   nonNegativeDecimal,
+  validateAllocationPolicy,
   type AcquisitionSource,
   type AllocationPolicy,
   type AssetRef,
@@ -11,6 +12,7 @@ import {
   type PortfolioSnapshot,
   type TaxLot,
 } from '@coqui/core';
+import { Decimal } from 'decimal.js';
 
 import { inTransaction, type Db } from '../sqlite/index.js';
 import { getSetting, setSetting } from './settings.js';
@@ -155,6 +157,45 @@ export function listTaxLots(database: Db, openOnly = false): TaxLot[] {
     }));
 }
 
+export function getTaxLot(id: string, database: Db): TaxLot | null {
+  const row = database.prepare('SELECT * FROM tax_lots_v2 WHERE id = ?').get(id) as
+    | TaxLotRow
+    | undefined;
+  if (!row) return null;
+  return {
+    id: row.id,
+    asset: assetFromRow(row),
+    quantity: nonNegativeDecimal(row.quantity_text),
+    remaining: nonNegativeDecimal(row.remaining_text),
+    costUsd: nonNegativeDecimal(row.cost_usd_text),
+    acquiredAt: row.acquired_at,
+    source: row.source,
+    externalId: row.external_id,
+  };
+}
+
+export type DeleteManualTaxLotResult =
+  | { readonly status: 'deleted'; readonly lot: TaxLot }
+  | { readonly status: 'not_found' }
+  | { readonly status: 'not_manual' }
+  | { readonly status: 'has_disposals' };
+
+/** Delete only a wholly unconsumed manual acquisition; imported or consumed lots fail closed. */
+export function deleteUnconsumedManualTaxLot(
+  id: string,
+  database: Db,
+): DeleteManualTaxLotResult {
+  return inTransaction(database, () => {
+    const lot = getTaxLot(id, database);
+    if (!lot) return { status: 'not_found' };
+    if (lot.source !== 'manual') return { status: 'not_manual' };
+    if (!new Decimal(lot.remaining).eq(lot.quantity)) return { status: 'has_disposals' };
+    const result = database.prepare('DELETE FROM tax_lots_v2 WHERE id = ?').run(id);
+    if (Number(result.changes) !== 1) return { status: 'not_found' };
+    return { status: 'deleted', lot };
+  });
+}
+
 /** Reduce a lot only to an explicit exact remaining quantity. */
 export function updateTaxLotRemaining(id: string, remaining: string, database: Db): boolean {
   const exact = nonNegativeDecimal(remaining);
@@ -245,6 +286,44 @@ export function listDisposals(database: Db, instrument?: InstrumentIdentity): Di
   }));
 }
 
+export interface TaxLotRemainingUpdate {
+  readonly id: string;
+  readonly remaining: string;
+}
+
+export type CommitPortfolioSaleResult =
+  | { readonly status: 'committed' }
+  | { readonly status: 'disposal_id_conflict' };
+
+/** Atomically reduce explicit lots and append disposal evidence without deleting acquisitions. */
+export function commitPortfolioSale(
+  updates: readonly TaxLotRemainingUpdate[],
+  disposals: readonly Disposal[],
+  database: Db,
+): CommitPortfolioSaleResult {
+  return inTransaction(database, () => {
+    const conflict = database.prepare('SELECT 1 FROM disposals_v2 WHERE id = ?');
+    if (disposals.some((disposal) => conflict.get(disposal.id) !== undefined)) {
+      return { status: 'disposal_id_conflict' };
+    }
+
+    const update = database.prepare('UPDATE tax_lots_v2 SET remaining_text = ? WHERE id = ?');
+    for (const item of updates) {
+      const remaining = nonNegativeDecimal(item.remaining);
+      const current = getTaxLot(item.id, database);
+      if (!current) throw new Error('A sale referenced a missing tax lot.');
+      if (
+        new Decimal(remaining).gt(current.remaining) ||
+        new Decimal(remaining).gt(current.quantity)
+      ) throw new Error('A sale cannot increase a tax-lot balance.');
+      const result = update.run(remaining, item.id);
+      if (Number(result.changes) !== 1) throw new Error('A sale tax-lot update was not applied.');
+    }
+    insertDisposals(disposals, database);
+    return { status: 'committed' };
+  });
+}
+
 export function savePortfolioSnapshot(snapshot: PortfolioSnapshot, database: Db): void {
   nonNegativeDecimal(snapshot.valueUsd);
   nonNegativeDecimal(snapshot.costUsd);
@@ -279,16 +358,18 @@ export function listPortfolioSnapshots(database: Db, sinceMs?: number): Portfoli
 }
 
 const REBALANCE_BAND_KEY = 'allocation.rebalance_band_pct';
+export const DEFAULT_REBALANCE_BAND_PCT = 5;
 
 export function saveAllocationPolicy(policy: AllocationPolicy, database: Db): void {
+  const validated = validateAllocationPolicy(policy);
+  if (!validated.ok) throw new TypeError('Allocation policy is invalid.');
   inTransaction(database, () => {
     database.exec('DELETE FROM allocation_targets_v2');
     const statement = database.prepare(`
       INSERT INTO allocation_targets_v2 (venue, product_id, product_type, weight)
       VALUES (?, ?, ?, ?)
     `);
-    for (const target of policy.targets) {
-      instrumentKey(target.instrument);
+    for (const target of validated.policy.targets) {
       statement.run(
         target.instrument.venue,
         target.instrument.productId,
@@ -296,7 +377,19 @@ export function saveAllocationPolicy(policy: AllocationPolicy, database: Db): vo
         target.weight,
       );
     }
-    setSetting(REBALANCE_BAND_KEY, String(policy.rebalanceBandPct), database);
+    setSetting(
+      REBALANCE_BAND_KEY,
+      String(validated.policy.rebalanceBandPct),
+      database,
+    );
+  });
+}
+
+/** Explicitly remove user targets and restore the documented default band atomically. */
+export function clearAllocationPolicy(database: Db): void {
+  inTransaction(database, () => {
+    database.exec('DELETE FROM allocation_targets_v2');
+    setSetting(REBALANCE_BAND_KEY, String(DEFAULT_REBALANCE_BAND_PCT), database);
   });
 }
 
@@ -320,7 +413,9 @@ export function getAllocationPolicy(database: Db): AllocationPolicy {
       },
       weight: row.weight,
     })),
-    rebalanceBandPct: storedBand === null ? 5 : Number(storedBand),
+    rebalanceBandPct: storedBand === null
+      ? DEFAULT_REBALANCE_BAND_PCT
+      : Number(storedBand),
   };
 }
 

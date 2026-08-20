@@ -59,8 +59,14 @@ describe('createCoinbasePriceSource', () => {
     const prices = await source.spot([BTC, ETH]);
 
     expect([...prices.entries()]).toEqual([
-      [instrumentKey(BTC), '65000.50000000'],
+      [instrumentKey(BTC), {
+        priceUsd: '65000.50000000',
+        source: 'coinbase',
+        quality: 'venue_reported_last',
+        observedAtMs: null,
+      }],
     ]);
+    expect(Object.isFrozen(prices.get(instrumentKey(BTC)))).toBe(true);
   });
 
   it('normalizes valid candles oldest-first and rejects unknown timeframes', async () => {

@@ -1,5 +1,9 @@
 import { Decimal } from 'decimal.js';
 import { decimal, type DecimalString, type UsdAmount } from '../types/index.js';
+import {
+  portfolioUtcDayKey,
+  type PortfolioEvidenceSnapshot,
+} from './snapshot-evidence.js';
 
 /** One observed portfolio point; history is never fabricated retroactively. */
 export interface PortfolioSnapshot {
@@ -26,7 +30,47 @@ export interface PerformanceSummary {
 
 /** Normalize a moment to UTC day start. */
 export function dayKey(at: number): number {
-  return Math.floor(at / 86_400_000) * 86_400_000;
+  return portfolioUtcDayKey(at);
+}
+
+export interface VerifiedPortfolioPerformance {
+  /** Latest deterministic observation for each requested UTC day. */
+  readonly dailyEvidence: readonly PortfolioEvidenceSnapshot[];
+  /** Complete days used by the performance calculation. */
+  readonly verifiedEvidence: readonly PortfolioEvidenceSnapshot[];
+  readonly excludedDayKeys: readonly number[];
+  readonly performance: PerformanceSummary;
+}
+
+/**
+ * Select one latest observation per UTC day and exclude incomplete or legacy
+ * valuations from every return calculation. Historical evidence remains intact.
+ */
+export function summarizePortfolioEvidence(
+  snapshots: readonly PortfolioEvidenceSnapshot[],
+): VerifiedPortfolioPerformance {
+  const ordered = [...snapshots].sort((left, right) =>
+    left.dayKeyMs - right.dayKeyMs ||
+    left.observedAtMs - right.observedAtMs ||
+    left.recordedAtMs - right.recordedAtMs ||
+    left.id.localeCompare(right.id),
+  );
+  const byDay = new Map<number, PortfolioEvidenceSnapshot>();
+  for (const snapshot of ordered) byDay.set(snapshot.dayKeyMs, snapshot);
+  const dailyEvidence = Object.freeze([...byDay.values()]);
+  const verifiedEvidence = Object.freeze(dailyEvidence.filter(
+    (snapshot) => snapshot.valuationStatus === 'complete' && snapshot.equityUsd !== null,
+  ));
+  const excludedDayKeys = Object.freeze(dailyEvidence
+    .filter((snapshot) => snapshot.valuationStatus !== 'complete' || snapshot.equityUsd === null)
+    .map((snapshot) => snapshot.dayKeyMs));
+  const performance = summarizePerformance(verifiedEvidence.map((snapshot) => ({
+    at: snapshot.dayKeyMs,
+    valueUsd: snapshot.equityUsd!,
+    costUsd: snapshot.openCostUsd,
+    realizedPnlUsd: snapshot.realizedPnlUsd,
+  })));
+  return Object.freeze({ dailyEvidence, verifiedEvidence, excludedDayKeys, performance });
 }
 
 const EMPTY: PerformanceSummary = {

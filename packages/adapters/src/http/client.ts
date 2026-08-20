@@ -1,4 +1,5 @@
 import { clearTimeout, setTimeout } from 'node:timers';
+import { performance } from 'node:perf_hooks';
 
 import {
   createRateLimiterRegistry,
@@ -28,7 +29,16 @@ export interface HttpSuccess<T> {
 export interface HttpFailure {
   ok: false;
   status: number;
-  reason: 'timeout' | 'network' | 'http' | 'parse' | 'serialize' | 'invalid-url';
+  reason:
+    | 'timeout'
+    | 'network'
+    | 'http'
+    | 'parse'
+    | 'serialize'
+    | 'invalid-url'
+    | 'canceled'
+    | 'shutdown'
+    | 'elapsed-budget';
   retried: number;
   /** Secret-safe correlation ID supplied by the remote service. */
   traceId?: string;
@@ -55,13 +65,17 @@ export interface HttpClientOptions {
   baseDelayMs?: number;
   /** Maximum accepted Retry-After delay. Default: 60 seconds. */
   maxRetryAfterMs?: number;
+  /** Total elapsed budget across attempts and delays. Default: 5 minutes. */
+  maxElapsedMs?: number;
   fetch?: FetchLike;
   /** Injectable for deterministic tests. */
-  sleep?: (milliseconds: number) => Promise<void>;
+  sleep?: (milliseconds: number, signal?: AbortSignal) => Promise<void>;
   /** Injectable for deterministic backoff jitter. */
   random?: () => number;
   /** Injectable for HTTP-date Retry-After parsing. */
   now?: () => number;
+  /** Injectable monotonic source for total elapsed-budget tests. */
+  elapsedNow?: () => number;
   /** Injectable shared registry. The client does not destroy an injected registry. */
   rateLimiters?: RateLimiterRegistry;
   /** Runs immediately before every network attempt, including retries. */
@@ -79,9 +93,39 @@ interface RequestSpec<T> {
 }
 
 const TIMEOUT = Symbol('http-timeout');
+const CANCELED = Symbol('http-canceled');
+const SHUTDOWN = Symbol('http-shutdown');
+const ELAPSED_BUDGET = Symbol('http-elapsed-budget');
+const PARSE_FAILURE = Symbol('http-parse-failure');
 
-function defaultSleep(milliseconds: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+type ControlledOutcome =
+  | typeof TIMEOUT
+  | typeof CANCELED
+  | typeof SHUTDOWN
+  | typeof ELAPSED_BUDGET;
+
+interface AttemptResponse {
+  readonly response: FetchLikeResponse;
+  /** Abort an unread or still-streaming response body without touching the caller signal. */
+  discard(): void;
+}
+
+function defaultSleep(milliseconds: number, signal?: AbortSignal): Promise<void> {
+  return new Promise((resolve) => {
+    if (signal?.aborted) {
+      resolve();
+      return;
+    }
+    const timer = setTimeout(() => {
+      signal?.removeEventListener('abort', abort);
+      resolve();
+    }, milliseconds);
+    const abort = () => {
+      clearTimeout(timer);
+      resolve();
+    };
+    signal?.addEventListener('abort', abort, { once: true });
+  });
 }
 
 function assertNonNegativeInteger(value: number, name: string): void {
@@ -161,49 +205,99 @@ export function createHttpClient(options: HttpClientOptions = {}): HttpClient {
   const maxRetries = options.maxRetries ?? 3;
   const baseDelayMs = options.baseDelayMs ?? 200;
   const maxRetryAfterMs = options.maxRetryAfterMs ?? 60_000;
+  const maxElapsedMs = options.maxElapsedMs ?? 300_000;
   assertPositiveInteger(timeoutMs, 'timeoutMs');
   assertNonNegativeInteger(maxRetries, 'maxRetries');
   assertNonNegativeInteger(baseDelayMs, 'baseDelayMs');
   assertNonNegativeInteger(maxRetryAfterMs, 'maxRetryAfterMs');
+  assertPositiveInteger(maxElapsedMs, 'maxElapsedMs');
 
   const fetchImpl = options.fetch ?? fetch;
   const sleep = options.sleep ?? defaultSleep;
   const random = options.random ?? Math.random;
   const now = options.now ?? Date.now;
+  const elapsedNow = options.elapsedNow ?? (() => performance.now());
   const prepareAttempt = options.prepareAttempt;
   const ownedRateLimiters = options.rateLimiters === undefined
     ? createRateLimiterRegistry()
     : undefined;
   const rateLimiters = options.rateLimiters ?? ownedRateLimiters!;
+  const shutdown = new AbortController();
+  let destroyed = false;
+
+  function combinedSignal(
+    caller?: AbortSignal | null,
+    local?: AbortSignal | null,
+  ): AbortSignal {
+    const signals = [caller, local, shutdown.signal].filter(
+      (signal): signal is AbortSignal => signal !== undefined && signal !== null,
+    );
+    return signals.length === 1 ? signals[0]! : AbortSignal.any(signals);
+  }
+
+  function abortOutcome(caller?: AbortSignal | null): typeof CANCELED | typeof SHUTDOWN {
+    return destroyed || shutdown.signal.aborted ? SHUTDOWN : caller?.aborted ? CANCELED : SHUTDOWN;
+  }
 
   async function attempt(
     url: string,
     hostname: string,
     init: RequestInit,
-  ): Promise<FetchLikeResponse | typeof TIMEOUT> {
-    await rateLimiters.forDomain(hostname).acquire();
-    const prepared = prepareAttempt
-      ? await prepareAttempt(url, init)
-      : init;
+    remainingMs: number,
+  ): Promise<AttemptResponse | ControlledOutcome> {
+    if (destroyed) return SHUTDOWN;
+    if (init.signal?.aborted) return CANCELED;
+    if (remainingMs <= 0) return ELAPSED_BUDGET;
+    const admission = await rateLimiters
+      .forDomain(hostname)
+      .acquire(combinedSignal(init.signal));
+    if (admission === 'aborted') return abortOutcome(init.signal);
+    if (admission === 'destroyed') return SHUTDOWN;
     const controller = new AbortController();
     let timer: ReturnType<typeof setTimeout> | undefined;
+    const controlSignal = combinedSignal(init.signal);
+    const attemptSignal = combinedSignal(controlSignal, controller.signal);
+    const operationTimeoutMs = Math.min(timeoutMs, remainingMs);
     const timeout = new Promise<typeof TIMEOUT>((resolve) => {
       timer = setTimeout(() => {
         controller.abort();
         resolve(TIMEOUT);
-      }, timeoutMs);
+      }, operationTimeoutMs);
+    });
+    let removeControlAbort = (): void => {};
+    const aborted = new Promise<typeof CANCELED | typeof SHUTDOWN>((resolve) => {
+      if (controlSignal.aborted) {
+        resolve(abortOutcome(init.signal));
+        return;
+      }
+      const onAbort = (): void => resolve(abortOutcome(init.signal));
+      controlSignal.addEventListener('abort', onAbort, { once: true });
+      removeControlAbort = () => controlSignal.removeEventListener('abort', onAbort);
     });
     try {
-      return await Promise.race([
-        fetchImpl(url, { ...prepared, signal: controller.signal }),
+      const operation = (async (): Promise<FetchLikeResponse> => {
+        const prepared = prepareAttempt
+          ? await prepareAttempt(url, init)
+          : init;
+        return await fetchImpl(url, { ...prepared, signal: attemptSignal });
+      })();
+      const result = await Promise.race([
+        operation,
         timeout,
+        aborted,
       ]);
+      return typeof result === 'symbol'
+        ? result
+        : { response: result, discard: () => controller.abort() };
     } finally {
       if (timer !== undefined) clearTimeout(timer);
+      removeControlAbort();
     }
   }
 
   async function request<T>(spec: RequestSpec<T>): Promise<HttpResult<T>> {
+    if (destroyed) return failure('shutdown', 0, 0);
+    if (spec.init.signal?.aborted) return failure('canceled', 0, 0);
     let hostname: string;
     try {
       hostname = new URL(spec.url).hostname;
@@ -213,14 +307,32 @@ export function createHttpClient(options: HttpClientOptions = {}): HttpClient {
     }
 
     let retried = 0;
+    const startedAt = elapsedNow();
+    const remaining = (): number => maxElapsedMs - (elapsedNow() - startedAt);
+
+    const waitBeforeRetry = async (milliseconds: number): Promise<ControlledOutcome | null> => {
+      if (destroyed) return SHUTDOWN;
+      if (spec.init.signal?.aborted) return CANCELED;
+      if (milliseconds > remaining()) return ELAPSED_BUDGET;
+      const signal = combinedSignal(spec.init.signal);
+      await sleep(milliseconds, signal);
+      if (signal.aborted) return abortOutcome(spec.init.signal);
+      return remaining() <= 0 ? ELAPSED_BUDGET : null;
+    };
+
     for (let attemptIndex = 0; attemptIndex <= maxRetries; attemptIndex += 1) {
+      if (remaining() <= 0) return failure('elapsed-budget', 0, retried);
       let response: FetchLikeResponse | undefined;
+      let discardResponse: (() => void) | undefined;
       try {
-        const outcome = await attempt(spec.url, hostname, spec.init);
+        const outcome = await attempt(spec.url, hostname, spec.init, remaining());
+        if (outcome === CANCELED) return failure('canceled', 0, retried);
+        if (outcome === SHUTDOWN) return failure('shutdown', 0, retried);
+        if (outcome === ELAPSED_BUDGET) return failure('elapsed-budget', 0, retried);
         if (outcome === TIMEOUT) {
           if (spec.retryable && attemptIndex < maxRetries) {
             retried += 1;
-            await sleep(retryDelay(
+            const waited = await waitBeforeRetry(retryDelay(
               undefined,
               attemptIndex,
               baseDelayMs,
@@ -228,15 +340,19 @@ export function createHttpClient(options: HttpClientOptions = {}): HttpClient {
               random,
               now,
             ));
+            if (waited === CANCELED) return failure('canceled', 0, retried);
+            if (waited === SHUTDOWN) return failure('shutdown', 0, retried);
+            if (waited === ELAPSED_BUDGET) return failure('elapsed-budget', 0, retried);
             continue;
           }
           return failure('timeout', 0, retried);
         }
-        response = outcome;
+        response = outcome.response;
+        discardResponse = outcome.discard;
       } catch {
         if (spec.retryable && attemptIndex < maxRetries) {
           retried += 1;
-          await sleep(retryDelay(
+          const waited = await waitBeforeRetry(retryDelay(
             undefined,
             attemptIndex,
             baseDelayMs,
@@ -244,6 +360,9 @@ export function createHttpClient(options: HttpClientOptions = {}): HttpClient {
             random,
             now,
           ));
+          if (waited === CANCELED) return failure('canceled', 0, retried);
+          if (waited === SHUTDOWN) return failure('shutdown', 0, retried);
+          if (waited === ELAPSED_BUDGET) return failure('elapsed-budget', 0, retried);
           continue;
         }
         return failure('network', 0, retried);
@@ -255,8 +374,9 @@ export function createHttpClient(options: HttpClientOptions = {}): HttpClient {
           isTransientStatus(response.status) &&
           attemptIndex < maxRetries
         ) {
+          discardResponse?.();
           retried += 1;
-          await sleep(retryDelay(
+          const waited = await waitBeforeRetry(retryDelay(
             response,
             attemptIndex,
             baseDelayMs,
@@ -264,16 +384,62 @@ export function createHttpClient(options: HttpClientOptions = {}): HttpClient {
             random,
             now,
           ));
+          if (waited === CANCELED) return failure('canceled', 0, retried);
+          if (waited === SHUTDOWN) return failure('shutdown', 0, retried);
+          if (waited === ELAPSED_BUDGET) return failure('elapsed-budget', 0, retried);
           continue;
         }
+        discardResponse?.();
         return failure('http', response.status, retried, response);
       }
 
-      try {
-        return { ok: true, data: await spec.parse(response), status: response.status };
-      } catch {
+      const parseRemainingMs = remaining();
+      if (parseRemainingMs <= 0) {
+        discardResponse?.();
+        return failure('elapsed-budget', 0, retried);
+      }
+      const parseSignal = combinedSignal(spec.init.signal);
+      let parseTimer: ReturnType<typeof setTimeout> | undefined;
+      const parseTimeout = new Promise<typeof ELAPSED_BUDGET>((resolve) => {
+        parseTimer = setTimeout(() => resolve(ELAPSED_BUDGET), parseRemainingMs);
+      });
+      let removeParseAbort = (): void => {};
+      const parseAborted = new Promise<typeof CANCELED | typeof SHUTDOWN>((resolve) => {
+        if (parseSignal.aborted) {
+          resolve(abortOutcome(spec.init.signal));
+          return;
+        }
+        const onAbort = (): void => resolve(abortOutcome(spec.init.signal));
+        parseSignal.addEventListener('abort', onAbort, { once: true });
+        removeParseAbort = () => parseSignal.removeEventListener('abort', onAbort);
+      });
+      const parsed = await Promise.race([
+        spec.parse(response).then(
+          (data) => ({ data }),
+          () => PARSE_FAILURE,
+        ),
+        parseTimeout,
+        parseAborted,
+      ]);
+      if (parseTimer !== undefined) clearTimeout(parseTimer);
+      removeParseAbort();
+      if (parsed === CANCELED) {
+        discardResponse?.();
+        return failure('canceled', 0, retried);
+      }
+      if (parsed === SHUTDOWN) {
+        discardResponse?.();
+        return failure('shutdown', 0, retried);
+      }
+      if (parsed === ELAPSED_BUDGET) {
+        discardResponse?.();
+        return failure('elapsed-budget', 0, retried);
+      }
+      if (typeof parsed === 'symbol') {
+        discardResponse?.();
         return failure('parse', response.status, retried, response);
       }
+      return { ok: true, data: parsed.data, status: response.status };
     }
     return failure('network', 0, retried);
   }
@@ -314,6 +480,11 @@ export function createHttpClient(options: HttpClientOptions = {}): HttpClient {
       },
       retryable: true,
     }),
-    destroy: () => ownedRateLimiters?.destroyAll(),
+    destroy: () => {
+      if (destroyed) return;
+      destroyed = true;
+      shutdown.abort();
+      ownedRateLimiters?.destroyAll();
+    },
   };
 }

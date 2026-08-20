@@ -6,6 +6,7 @@ export const MAX_SECRET_BYTES = 64 * 1_024;
 
 export type SecretKey =
   | 'coinbase-credentials'
+  | 'gemini-api-key'
   | 'coingecko-api-key'
   | 'coinmarketcap-api-key';
 
@@ -37,6 +38,31 @@ export interface SecretStore {
     walletId?: string | null,
   ): Promise<SecretMutationResult>;
   remove(key: SecretKey, walletId?: string | null): Promise<SecretMutationResult>;
+}
+
+export type SecretPresenceResult =
+  | { readonly ok: true; readonly present: readonly SecretKey[] }
+  | SecretStoreFailure;
+
+/** Check configured secret categories without allowing their values across the adapter boundary. */
+export async function readSecretPresence(
+  store: SecretStore,
+  keys: readonly SecretKey[],
+  walletId?: string | null,
+): Promise<SecretPresenceResult> {
+  const unique = [...new Set(keys)];
+  const results = await Promise.all(unique.map(async (key) => ({
+    key,
+    result: await store.read(key, walletId),
+  })));
+  const failure = results.find(({ result }) => !result.ok);
+  if (failure && !failure.result.ok) return failure.result;
+  return Object.freeze({
+    ok: true,
+    present: Object.freeze(results
+      .filter(({ result }) => result.ok && result.value !== null)
+      .map(({ key }) => key)),
+  });
 }
 
 export interface SecretBackend {

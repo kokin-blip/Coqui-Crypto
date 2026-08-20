@@ -40,8 +40,10 @@ const architecturePlugin = {
             const inCore = filename.includes('/packages/core/');
             const inServices = filename.includes('/packages/services/');
             const inAdapters = filename.includes('/packages/adapters/');
+            const inContracts = filename.includes('/packages/contracts/');
             const inRenderer = filename.includes('/apps/desktop/src/renderer/');
             const inStrategy = filename.includes('/packages/core/src/strategies/');
+            const inProductionWorkspace = filename.includes('/packages/') || filename.includes('/apps/');
             const nodeForbiddenInCore = ['node:fs', 'node:net', 'node:http'].includes(source);
             const runtimeForbiddenInCore = source === 'electron' || source === 'react';
             const otherWorkspaceTarget =
@@ -49,10 +51,22 @@ const architecturePlugin = {
               !target.startsWith(`${workspaceRoot}/packages/core/`);
 
             let message = null;
-            if (inCore && (nodeForbiddenInCore || runtimeForbiddenInCore || otherWorkspaceTarget || target.includes('/apps/'))) {
+            if (inProductionWorkspace && target.includes('/benchmarks/language-spike/')) {
+              message = 'production workspaces cannot import the quarantined language spike';
+            } else if (inCore && (nodeForbiddenInCore || runtimeForbiddenInCore || otherWorkspaceTarget || target.includes('/apps/'))) {
               message = 'core must remain pure and cannot import runtime I/O, UI, apps, or another workspace package';
             } else if (inServices && (source === 'electron' || source === 'react')) {
               message = 'services cannot import Electron or React';
+            } else if (
+              inContracts &&
+              (
+                source === 'electron' ||
+                source === 'react' ||
+                ['/packages/services/', '/packages/storage/', '/packages/adapters/', '/apps/']
+                  .some((part) => target.includes(part))
+              )
+            ) {
+              message = 'contracts must remain transport-neutral and cannot import runtime implementation';
             } else if (inAdapters && target.includes('/packages/services/')) {
               message = 'adapters cannot import services';
             } else if (
@@ -143,7 +157,16 @@ const architecturePlugin = {
 
 export default tseslint.config(
   {
-    ignores: ['.migration-source/**', '**/dist/**', '**/node_modules/**', '**/coverage/**'],
+    ignores: [
+      '.migration-source/**',
+      '**/dist/**',
+      '**/node_modules/**',
+      '**/coverage/**',
+      'benchmarks/language-spike/.venv/**',
+      'benchmarks/language-spike/rust/index.js',
+      'benchmarks/language-spike/rust/index.d.ts',
+      'benchmarks/language-spike/rust/target/**',
+    ],
   },
   {
     ...js.configs.recommended,

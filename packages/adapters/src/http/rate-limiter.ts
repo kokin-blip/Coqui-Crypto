@@ -1,20 +1,63 @@
-import { clearInterval, setInterval } from 'node:timers';
+import { performance } from 'node:perf_hooks';
+import { clearTimeout, setTimeout } from 'node:timers';
+
+export type RateLimitAcquireOutcome = 'acquired' | 'aborted' | 'destroyed';
+
+export interface RateLimitClock {
+  /** Monotonic milliseconds used only for elapsed-time decisions. */
+  nowMs(): number;
+  /** Sleep until the delay elapses or the supplied signal aborts. */
+  sleep(milliseconds: number, signal: AbortSignal): Promise<'elapsed' | 'aborted'>;
+}
 
 export interface RateLimiter {
-  /** Acquire one request token, waiting for the next window when exhausted. */
-  acquire(): Promise<void>;
+  /** Acquire one request cell in FIFO order. */
+  acquire(signal?: AbortSignal): Promise<RateLimitAcquireOutcome>;
   available(): number;
   pending(): number;
-  /** Stop refills and release shutdown waiters. */
+  /** Stop admissions and resolve every waiter explicitly as destroyed. */
   destroy(): void;
 }
 
 export interface RateLimiterOptions {
   requests: number;
   windowMs: number;
+  /** Injectable monotonic clock for deterministic traces. */
+  clock?: RateLimitClock;
 }
 
-/** Create a fixed-window FIFO limiter for one remote host. */
+const systemRateLimitClock: RateLimitClock = {
+  nowMs: () => performance.now(),
+  sleep: async (milliseconds, signal) => await new Promise((resolve) => {
+    if (signal.aborted) {
+      resolve('aborted');
+      return;
+    }
+    const timer = setTimeout(() => {
+      signal.removeEventListener('abort', abort);
+      resolve('elapsed');
+    }, Math.max(0, milliseconds));
+    timer.unref();
+    const abort = () => {
+      clearTimeout(timer);
+      resolve('aborted');
+    };
+    signal.addEventListener('abort', abort, { once: true });
+  }),
+};
+
+interface Waiter {
+  readonly resolve: (outcome: RateLimitAcquireOutcome) => void;
+  readonly signal?: AbortSignal;
+  abort?: () => void;
+  settled: boolean;
+}
+
+/**
+ * Create a FIFO Generic Cell Rate Algorithm limiter. The configured request
+ * count is the initial burst capacity; replenishment is evenly spaced across
+ * the window, so a fixed-window boundary cannot admit a double burst.
+ */
 export function createRateLimiter(options: RateLimiterOptions): RateLimiter {
   if (!Number.isSafeInteger(options.requests) || options.requests <= 0) {
     throw new RangeError('Rate-limit requests must be a positive safe integer');
@@ -23,37 +66,97 @@ export function createRateLimiter(options: RateLimiterOptions): RateLimiter {
     throw new RangeError('Rate-limit windowMs must be a positive safe integer');
   }
 
-  let tokens = options.requests;
+  const clock = options.clock ?? systemRateLimitClock;
+  const intervalMs = options.windowMs / options.requests;
+  const burstToleranceMs = intervalMs * (options.requests - 1);
+  let theoreticalArrivalMs = clock.nowMs();
   let destroyed = false;
-  const queue: Array<() => void> = [];
-  const interval = setInterval(() => {
-    tokens = options.requests;
-    while (queue.length > 0 && tokens > 0) {
-      tokens -= 1;
-      queue.shift()?.();
+  let draining = false;
+  let wake = new AbortController();
+  const queue: Waiter[] = [];
+
+  const interruptDrain = (): void => {
+    wake.abort();
+    wake = new AbortController();
+  };
+
+  const settle = (waiter: Waiter, outcome: RateLimitAcquireOutcome): void => {
+    if (waiter.settled) return;
+    waiter.settled = true;
+    if (waiter.signal && waiter.abort) waiter.signal.removeEventListener('abort', waiter.abort);
+    waiter.resolve(outcome);
+  };
+
+  const nextLiveWaiter = (): Waiter | undefined => {
+    while (queue[0]?.settled) queue.shift();
+    return queue[0];
+  };
+
+  const drain = async (): Promise<void> => {
+    if (draining) return;
+    draining = true;
+    try {
+      while (!destroyed) {
+        const waiter = nextLiveWaiter();
+        if (!waiter) return;
+        const nowMs = clock.nowMs();
+        const earliestMs = theoreticalArrivalMs - burstToleranceMs;
+        if (nowMs >= earliestMs) {
+          queue.shift();
+          theoreticalArrivalMs = Math.max(nowMs, theoreticalArrivalMs) + intervalMs;
+          settle(waiter, 'acquired');
+          continue;
+        }
+        await clock.sleep(Math.max(0, earliestMs - nowMs), wake.signal);
+      }
+    } finally {
+      draining = false;
+      if (!destroyed && nextLiveWaiter()) void drain();
     }
-  }, options.windowMs);
-  interval.unref();
+  };
 
   return {
-    acquire() {
-      if (destroyed) return Promise.resolve();
-      if (tokens > 0) {
-        tokens -= 1;
-        return Promise.resolve();
-      }
-      return new Promise<void>((resolve) => queue.push(resolve));
+    acquire(signal) {
+      if (destroyed) return Promise.resolve('destroyed');
+      if (signal?.aborted) return Promise.resolve('aborted');
+      return new Promise<RateLimitAcquireOutcome>((resolve) => {
+        const waiter: Waiter = signal
+          ? { resolve, signal, settled: false }
+          : { resolve, settled: false };
+        if (signal) {
+          waiter.abort = () => {
+            settle(waiter, 'aborted');
+            interruptDrain();
+            void drain();
+          };
+          signal.addEventListener('abort', waiter.abort, { once: true });
+        }
+        queue.push(waiter);
+        void drain();
+      });
     },
     available() {
-      return tokens;
+      if (destroyed) return 0;
+      const nowMs = clock.nowMs();
+      let simulatedArrival = theoreticalArrivalMs;
+      let available = 0;
+      while (
+        available < options.requests &&
+        nowMs >= simulatedArrival - burstToleranceMs
+      ) {
+        available += 1;
+        simulatedArrival = Math.max(nowMs, simulatedArrival) + intervalMs;
+      }
+      return available;
     },
     pending() {
-      return queue.length;
+      return queue.filter((waiter) => !waiter.settled).length;
     },
     destroy() {
+      if (destroyed) return;
       destroyed = true;
-      clearInterval(interval);
-      while (queue.length > 0) queue.shift()?.();
+      interruptDrain();
+      for (const waiter of queue.splice(0)) settle(waiter, 'destroyed');
     },
   };
 }

@@ -5,6 +5,7 @@ import {
   type InstrumentIdentity,
   type InstrumentKey,
   type PriceSource,
+  type SpotPriceObservation,
   type UsdAmount,
 } from '@coqui/core';
 
@@ -162,7 +163,7 @@ export function createCoinGeckoPriceSource(
         if (entry) requested.set(key, entry);
       }
       const byId = entriesByProviderId([...requested.values()]);
-      const prices = new Map<InstrumentKey, UsdAmount>();
+      const prices = new Map<InstrumentKey, SpotPriceObservation>();
       await Promise.all(chunks([...byId.keys()]).map(async (ids) => {
         const query = new URLSearchParams({
           ids: ids.join(','),
@@ -177,7 +178,14 @@ export function createCoinGeckoPriceSource(
           const row = response.data[id];
           const price = isRecord(row) ? usd((row as SimplePriceRow).usd) : null;
           if (price === null) continue;
-          for (const entry of byId.get(id) ?? []) prices.set(entry.key, price);
+          for (const entry of byId.get(id) ?? []) {
+            prices.set(entry.key, Object.freeze({
+              priceUsd: price,
+              source: 'coingecko',
+              quality: 'reference_market' as const,
+              observedAtMs: null,
+            }));
+          }
         }
       }));
       return prices;

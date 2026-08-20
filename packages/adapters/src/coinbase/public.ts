@@ -7,6 +7,7 @@ import {
   type InstrumentIdentity,
   type MarketBar,
   type PriceSource,
+  type SpotPriceObservation,
   type UsdAmount,
 } from '@coqui/core';
 
@@ -140,7 +141,7 @@ export function createCoinbasePriceSource(http: HttpClient): PriceSource {
   return {
     name: 'coinbase',
     async spot(instruments) {
-      const prices = new Map<string, UsdAmount>();
+      const prices = new Map<string, SpotPriceObservation>();
       await Promise.all(instruments.map(async (instrument) => {
         const result = await http.getJson<CoinbaseStats>(
           productPath(instrument, '/stats'),
@@ -148,7 +149,14 @@ export function createCoinbasePriceSource(http: HttpClient): PriceSource {
         if (!result.ok) return;
         const data: CoinbaseStats = isRecord(result.data) ? result.data : {};
         const price = positiveUsd(data.last);
-        if (price !== null) prices.set(instrumentKey(instrument), price);
+        if (price !== null) {
+          prices.set(instrumentKey(instrument), Object.freeze({
+            priceUsd: price,
+            source: 'coinbase',
+            quality: 'venue_reported_last' as const,
+            observedAtMs: null,
+          }));
+        }
       }));
       return prices;
     },

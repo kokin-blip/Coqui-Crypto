@@ -25,13 +25,13 @@
  */
 
 import {
-  momentumTargets,
   rotationTargets,
-  volTargetTargets,
   tiltTargets,
   DEFAULT_TILT_CONFIG,
   type AssetSignal,
 } from '../strategies/index.js';
+import { momentumTargetsAt } from '../strategies/momentum.js';
+import { volTargetExposureAt } from '../strategies/vol-target.js';
 import {
   DEFAULT_TRADE_COST_CONFIG,
   estimateTradeCost,
@@ -67,7 +67,10 @@ const EMPTY_COSTS: StrategyCostSummary = {
   events: 0,
 };
 
-function normalize(targets: { assetId: InstrumentKey; weight: number }[]): Map<InstrumentKey, number> {
+/** @internal Shared with the bounded trend-vol research evaluator. */
+export function normalizeBacktestWeights(
+  targets: { assetId: InstrumentKey; weight: number }[],
+): Map<InstrumentKey, number> {
   const sum = targets.reduce((s, t) => s + Math.max(0, t.weight), 0);
   const m = new Map<InstrumentKey, number>();
   if (sum <= 0) return m;
@@ -76,7 +79,8 @@ function normalize(targets: { assetId: InstrumentKey; weight: number }[]): Map<I
 }
 
 /** Value a {cash, units} book at day `i`. */
-function bookValue(
+/** @internal Shared with the bounded trend-vol research evaluator. */
+export function backtestBookValue(
   cash: number,
   units: Map<InstrumentKey, number>,
   prices: Map<InstrumentKey, number>,
@@ -87,14 +91,15 @@ function bookValue(
 }
 
 /** Rebalance the book to `weights` (summing ≤ 1; remainder → cash), charging commission. */
-function rebalance(
+/** @internal Shared with the bounded trend-vol research evaluator. */
+export function rebalanceBacktestBook(
   cash: number,
   units: Map<InstrumentKey, number>,
   prices: Map<InstrumentKey, number>,
   weights: Map<InstrumentKey, number>,
   tradeCosts: TradeCostConfig,
 ): { cash: number; units: Map<InstrumentKey, number>; turnoverUsd: number; costUsd: number } {
-  const v = bookValue(cash, units, prices);
+  const v = backtestBookValue(cash, units, prices);
   if (v <= 0) return { cash, units, turnoverUsd: 0, costUsd: 0 };
   let turnover = 0;
   let cost = 0;
@@ -125,7 +130,8 @@ function rebalance(
   return { cash: Math.max(0, (1 - invested) * vAfter), units: newUnits, turnoverUsd: turnover, costUsd: cost };
 }
 
-function addCost(
+/** @internal Shared with the bounded trend-vol research evaluator. */
+export function addBacktestCost(
   costs: StrategyCostSummary,
   event: { turnoverUsd: number; costUsd: number },
 ): StrategyCostSummary {
@@ -149,7 +155,7 @@ export function backtestStrategies(
   const tiltOpts = opts.tilt ?? DEFAULT_TILT_CONFIG;
 
   // Use only assets that have history AND a (positive) base weight.
-  const baseWeights = normalize(baseTargets);
+  const baseWeights = normalizeBacktestWeights(baseTargets);
   const assets = [...baseWeights.keys()].filter((id) => (closesById[id]?.length ?? 0) > 0);
   const empty: TrackResult = { equity: [], metrics: metricsFrom([]), costs: EMPTY_COSTS };
   if (assets.length === 0) {
@@ -165,7 +171,9 @@ export function backtestStrategies(
   }
 
   // Re-normalize base weights over the assets we kept.
-  const keptBase = normalize(assets.map((id) => ({ assetId: id, weight: baseWeights.get(id) ?? 0 })));
+  const keptBase = normalizeBacktestWeights(
+    assets.map((id) => ({ assetId: id, weight: baseWeights.get(id) ?? 0 })),
+  );
   const baseTargetList = assets.map((id) => ({ assetId: id, weight: keptBase.get(id) ?? 0 }));
 
   const closePricesAt = (i: number): Map<InstrumentKey, number> =>
@@ -195,7 +203,7 @@ export function backtestStrategies(
   // Initialize all four books fully allocated to the base mix at day `start`.
   const init = () => {
     const cash = START_VALUE;
-    const r = rebalance(cash, new Map(), executionPricesAt(start), keptBase, tradeCosts);
+    const r = rebalanceBacktestBook(cash, new Map(), executionPricesAt(start), keptBase, tradeCosts);
     return r;
   };
   const initialCosts = (r: { turnoverUsd: number; costUsd: number }): StrategyCostSummary => ({
@@ -248,8 +256,8 @@ export function backtestStrategies(
 
     // Rebalance on cadence (not on the first day — already allocated).
     if (tIdx > 0 && tIdx % opts.rebalanceEveryDays === 0) {
-      passive = rebalance(passive.cash, passive.units, executionPrices, keptBase, tradeCosts);
-      passiveCosts = addCost(passiveCosts, passive);
+      passive = rebalanceBacktestBook(passive.cash, passive.units, executionPrices, keptBase, tradeCosts);
+      passiveCosts = addBacktestCost(passiveCosts, passive);
 
       // A decision made from completed bar D may execute no earlier than the
       // next eligible interval. The execution interval itself is never passed
@@ -261,79 +269,84 @@ export function backtestStrategies(
       }
       const tilted = tiltTargets(baseTargetList, signals, tiltOpts);
       const weights = new Map(tilted.targets.map((t) => [t.assetId, t.weight]));
-      signal = rebalance(signal.cash, signal.units, executionPrices, weights, tradeCosts);
-      signalCosts = addCost(signalCosts, signal);
+      signal = rebalanceBacktestBook(signal.cash, signal.units, executionPrices, weights, tradeCosts);
+      signalCosts = addBacktestCost(signalCosts, signal);
 
       // Momentum: rank/scale from data through the preceding completed bar. If no asset has enough
       // lookback yet, stay with the passive base mix rather than fabricating a
       // defensive read.
       const closesToDate: Partial<Record<InstrumentKey, number[]>> = {};
       for (const id of assets) closesToDate[id] = series.get(id)!.slice(0, i);
-      const mom = momentumTargets(baseTargetList, closesToDate, opts.momentum);
+      const mom = momentumTargetsAt(baseTargetList, series, i, opts.momentum);
       const momentumWeights =
         mom.stats.length > 0 ? new Map(mom.targets.map((t) => [t.assetId, t.weight])) : keptBase;
-      momentum = rebalance(
+      momentum = rebalanceBacktestBook(
         momentum.cash,
         momentum.units,
         executionPrices,
         momentumWeights,
         tradeCosts,
       );
-      momentumCosts = addCost(momentumCosts, momentum);
+      momentumCosts = addBacktestCost(momentumCosts, momentum);
 
       // Rotation shares this engine's next-interval fills. The retired standalone
       // backtest observed and filled the same bar, so none of its results migrate.
       const held = [...rotation.units.keys()].filter((id) => (rotation.units.get(id) ?? 0) > 0);
       const rotated = rotationTargets(closesToDate, opts.rotation, held);
       const rotationWeights = new Map(rotated.picks.map((pick) => [pick.assetId, pick.weight]));
-      rotation = rebalance(
+      rotation = rebalanceBacktestBook(
         rotation.cash,
         rotation.units,
         executionPrices,
         rotationWeights,
         tradeCosts,
       );
-      rotationCosts = addCost(rotationCosts, rotation);
+      rotationCosts = addBacktestCost(rotationCosts, rotation);
 
       // Vol-target also observes only completed intervals before execution.
-      const vt = volTargetTargets(baseTargetList, mixIndex.slice(0, i), opts.volTarget);
+      const vt = volTargetExposureAt(mixIndex, i, opts.volTarget);
       // External exposure modifier (e.g. F&G overlay): scale the vol-target
       // exposure, never past fully invested.
       const scale = Math.max(0, opts.exposureScale?.[i] ?? 1);
       const scaledExposure = Math.min(1, vt.exposure * scale);
       const vtFactor = vt.exposure > 0 ? scaledExposure / vt.exposure : 0;
-      const voltargetWeights = new Map(vt.targets.map((t) => [t.assetId, t.weight * vtFactor]));
-      voltarget = rebalance(
+      const voltargetWeights = new Map(
+        baseTargetList.map((target) => [
+          target.assetId,
+          target.weight * vt.exposure * vtFactor,
+        ]),
+      );
+      voltarget = rebalanceBacktestBook(
         voltarget.cash,
         voltarget.units,
         executionPrices,
         voltargetWeights,
         tradeCosts,
       );
-      voltargetCosts = addCost(voltargetCosts, voltarget);
+      voltargetCosts = addBacktestCost(voltargetCosts, voltarget);
 
       // Trend+Vol combo: momentum decides WHAT to hold, the vol-target exposure
       // decides HOW MUCH is invested. Momentum weights already sum ≤ 1 (its own
       // defensive cash), so scaling by exposure only ever gets more defensive.
       const trendvolWeights = new Map<InstrumentKey, number>();
       for (const [id, w] of momentumWeights) trendvolWeights.set(id, w * scaledExposure);
-      trendvol = rebalance(
+      trendvol = rebalanceBacktestBook(
         trendvol.cash,
         trendvol.units,
         executionPrices,
         trendvolWeights,
         tradeCosts,
       );
-      trendvolCosts = addCost(trendvolCosts, trendvol);
+      trendvolCosts = addBacktestCost(trendvolCosts, trendvol);
     }
 
-    holdEq.push({ t: tIdx, value: bookValue(hold.cash, hold.units, prices) });
-    passiveEq.push({ t: tIdx, value: bookValue(passive.cash, passive.units, prices) });
-    signalEq.push({ t: tIdx, value: bookValue(signal.cash, signal.units, prices) });
-    momentumEq.push({ t: tIdx, value: bookValue(momentum.cash, momentum.units, prices) });
-    voltargetEq.push({ t: tIdx, value: bookValue(voltarget.cash, voltarget.units, prices) });
-    trendvolEq.push({ t: tIdx, value: bookValue(trendvol.cash, trendvol.units, prices) });
-    rotationEq.push({ t: tIdx, value: bookValue(rotation.cash, rotation.units, prices) });
+    holdEq.push({ t: tIdx, value: backtestBookValue(hold.cash, hold.units, prices) });
+    passiveEq.push({ t: tIdx, value: backtestBookValue(passive.cash, passive.units, prices) });
+    signalEq.push({ t: tIdx, value: backtestBookValue(signal.cash, signal.units, prices) });
+    momentumEq.push({ t: tIdx, value: backtestBookValue(momentum.cash, momentum.units, prices) });
+    voltargetEq.push({ t: tIdx, value: backtestBookValue(voltarget.cash, voltarget.units, prices) });
+    trendvolEq.push({ t: tIdx, value: backtestBookValue(trendvol.cash, trendvol.units, prices) });
+    rotationEq.push({ t: tIdx, value: backtestBookValue(rotation.cash, rotation.units, prices) });
   }
 
   return {

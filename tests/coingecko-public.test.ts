@@ -16,8 +16,17 @@ type AdapterPriceSource = Parameters<typeof withPriceFallback>[0];
 type AdapterUsd = Awaited<ReturnType<AdapterPriceSource['spot']>> extends
   ReadonlyMap<string, infer Value> ? Value : never;
 
-function adapterUsd(value: string): AdapterUsd {
-  return value as AdapterUsd;
+function adapterPrice(
+  value: string,
+  source = 'primary',
+  quality: AdapterUsd['quality'] = 'venue_reported_last',
+): AdapterUsd {
+  return {
+    priceUsd: value as AdapterUsd['priceUsd'],
+    source,
+    quality,
+    observedAtMs: null,
+  };
 }
 
 const BTC: InstrumentIdentity = {
@@ -89,14 +98,25 @@ describe('createCoinGeckoPriceSource', () => {
     const prices = await source.spot([BTC, ETH]);
 
     expect([...prices.entries()]).toEqual([
-      [instrumentKey(BTC), '65000.25'],
-      [instrumentKey(ETH), '3500'],
+      [instrumentKey(BTC), {
+        priceUsd: '65000.25',
+        source: 'coingecko',
+        quality: 'reference_market',
+        observedAtMs: null,
+      }],
+      [instrumentKey(ETH), {
+        priceUsd: '3500',
+        source: 'coingecko',
+        quality: 'reference_market',
+        observedAtMs: null,
+      }],
     ]);
     const request = new URL(urls[0]!);
     expect(request.pathname).toBe('/api/v3/simple/price');
     expect(request.searchParams.get('ids')).toBe('bitcoin,ethereum');
     expect(request.searchParams.get('vs_currencies')).toBe('usd');
     expect(request.searchParams.get('precision')).toBe('full');
+    expect(Object.isFrozen(prices.get(instrumentKey(BTC)))).toBe(true);
   });
 
   it('does not request unmapped instruments or join by display symbol', async () => {
@@ -134,7 +154,12 @@ describe('createCoinGeckoPriceSource', () => {
     );
 
     expect([...await source.spot([BTC])]).toEqual([
-      [instrumentKey(BTC), '0.00000065'],
+      [instrumentKey(BTC), {
+        priceUsd: '0.00000065',
+        source: 'coingecko',
+        quality: 'reference_market',
+        observedAtMs: null,
+      }],
     ]);
   });
 
@@ -169,20 +194,20 @@ describe('createCoinGeckoPriceSource', () => {
     );
 
     const prices = await source.spot([BTC, wrappedBtc]);
-    expect(prices.get(instrumentKey(BTC))).toBe('65000');
-    expect(prices.get(instrumentKey(wrappedBtc))).toBe('65000');
+    expect(prices.get(instrumentKey(BTC))?.priceUsd).toBe('65000');
+    expect(prices.get(instrumentKey(wrappedBtc))?.priceUsd).toBe('65000');
   });
 });
 
 describe('withPriceFallback', () => {
   it('queries the fallback only for missing canonical instruments', async () => {
     const fallbackSpot = vi.fn(async () => new Map([
-      [instrumentKey(ETH), adapterUsd('3500')],
+      [instrumentKey(ETH), adapterPrice('3500', 'fallback', 'reference_market')],
     ]));
     const primary: AdapterPriceSource = {
       name: 'primary',
       spot: async () => new Map([
-        [instrumentKey(BTC), adapterUsd('65000')],
+        [instrumentKey(BTC), adapterPrice('65000')],
       ]),
     };
     const fallback: AdapterPriceSource = { name: 'fallback', spot: fallbackSpot };
@@ -191,8 +216,8 @@ describe('withPriceFallback', () => {
 
     expect(fallbackSpot).toHaveBeenCalledWith([ETH]);
     expect([...prices.entries()]).toEqual([
-      [instrumentKey(ETH), '3500'],
-      [instrumentKey(BTC), '65000'],
+      [instrumentKey(ETH), adapterPrice('3500', 'fallback', 'reference_market')],
+      [instrumentKey(BTC), adapterPrice('65000')],
     ]);
   });
 
@@ -200,19 +225,20 @@ describe('withPriceFallback', () => {
     const primary: AdapterPriceSource = {
       name: 'primary',
       spot: async () => new Map([
-        [instrumentKey(BTC), adapterUsd('65000')],
+        [instrumentKey(BTC), adapterPrice('65000')],
       ]),
     };
     const fallback: AdapterPriceSource = {
       name: 'fallback',
       spot: async () => new Map([
-        [instrumentKey(BTC), adapterUsd('1')],
-        [instrumentKey(ETH), adapterUsd('3500')],
+        [instrumentKey(BTC), adapterPrice('1', 'fallback', 'reference_market')],
+        [instrumentKey(ETH), adapterPrice('3500', 'fallback', 'reference_market')],
       ]),
     };
 
     const prices = await withPriceFallback(primary, fallback).spot([BTC, ETH]);
-    expect([...prices].find(([key]) => key === instrumentKey(BTC))?.[1]).toBe('65000');
+    expect([...prices].find(([key]) => key === instrumentKey(BTC))?.[1])
+      .toEqual(adapterPrice('65000'));
   });
 });
 

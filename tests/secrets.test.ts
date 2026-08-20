@@ -39,6 +39,13 @@ describe('secret account compatibility', () => {
       'coinmarketcap-api-key',
     );
   });
+
+  it('scopes the advisor key without changing the predecessor main account', () => {
+    expect(secretAccountForScope(null, 'gemini-api-key')).toBe('gemini-api-key');
+    expect(secretAccountForScope('family-a', 'gemini-api-key')).toBe(
+      'gemini-api-key:family-a',
+    );
+  });
 });
 
 describe('createMemorySecretStore', () => {

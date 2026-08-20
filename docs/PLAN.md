@@ -400,6 +400,18 @@ the same manifest run twice produces identical results.
 > project can tell its owner. The predecessor already published three negative
 > results; this would be the fourth and the most important.
 
+**Completed 2026-08-10 - P1-P3 Nautilus strengthening and runtime proof:** the
+owner-authorized local rebuild was re-audited by SHA-256 without consulting online Nautilus code or
+changing the source tree. P2 now uses injected-monotonic-clock GCRA admission with explicit
+acquired/aborted/destroyed outcomes, while HTTP retries honor caller cancellation, shutdown, and a
+total elapsed budget without changing the GET-only rule. P1/P3 momentum and volatility evaluation
+use indexed windows and pass differential property tests against the prior prefix implementations;
+the golden backtest is unchanged. `fast-check` 4.9.0 is pinned. A quarantined TypeScript,
+Rust/N-API, and persistent Python/NumPy comparison achieved exact 20-run spike parity, but Rust was
+only 1.43x faster and Python was slower, so neither passed the 3x/2x/one-second gate and neither was
+promoted. See `docs/studies/language-runtime-spike-2026-08-10.md`. P3 remains blocked, the current
+strategy defaults remain unvalidated, and this work did not read a registered holdout.
+
 ---
 
 ### P4 — Services layer · 2–3 weeks
@@ -412,6 +424,406 @@ The old main process is decomposed and cannot re-form.
 - Scheduler: UTC cadence, per-wallet leases, concurrency 2, injected `Clock`.
   **The scheduler must never read the keychain** — test that
 - Extend the completed N6 metrics foundation with scheduler health measurements
+
+**Completed 2026-08-09 — Nautilus-informed contract foundation:** the user's
+personal rebuilt NautilusTrader fork was audited read-only in
+`docs/nautilus-adoption-matrix.md`. P4 now has strict Zod command/event envelopes,
+correlation and causation identity, injected-clock message factories, and a reduced
+service component lifecycle state machine with exhaustive transition tests. The full
+message bus, scheduler, IPC, `CoquiClient`, live execution, and synthetic
+reconciliation behavior were not introduced. The next P4 task remains the predecessor
+IPC handler inventory before domain-service implementation.
+
+**Completed 2026-08-09 — predecessor IPC decomposition gate:**
+`docs/handler-inventory.md` records all 140 unique `ipcMain.handle` registrations from
+the user-owned predecessor at an exact commit and source hash, maps every handler to
+one of the ten P4 services, and fixes phase/safety dispositions before implementation.
+The inventory rejects synthetic lot promotion, direct paper-position replacement,
+paper-evidence deletion, unregistered adaptive workers, and runtime strategy patches.
+A repository test enforces row uniqueness, source ordering, valid ownership, and
+per-service count reconciliation without making the ignored predecessor checkout a CI
+dependency. P3 remains blocked, strategy defaults remain unvalidated, and neither IPC
+nor domain-service behavior was introduced by this audit.
+
+**Completed 2026-08-09 — first portfolio service slice:** the new portfolio
+lot-ledger service owns manual lot creation, canonical asset-scoped listing,
+unpriced holdings derivation, and safe manual-lot removal. It preserves exact decimal
+strings, uses injected time and deterministic UUIDv4 sources, returns deeply immutable
+views, and fails validation without consuming an ID or mutating storage. Removal is
+limited to wholly unconsumed manual acquisitions; imported or partially consumed lots
+remain untouched with stable reason codes. The first repository-level service graph
+test now fails on dependency cycles and enforces the two-service import ceiling. This
+slice adds no pricing, IPC, exports, strategy defaults, synthetic lots, or paper
+behavior. The next portfolio slice is disposal/tax orchestration before priced and
+allocation read models.
+
+**Completed 2026-08-09 — portfolio disposal and tax slice:** sales now validate
+canonical instruments, exact decimal quantity/proceeds, cost-basis method, and
+injected-clock timestamps before touching storage. Only lots acquired by the sale
+time are eligible. Any quantity shortfall or deterministic disposal-ID conflict leaves
+all lots and disposal evidence unchanged; persistence rolls every earlier update back
+if a later reference fails. Successful sales retain fully consumed acquisitions at
+zero, append short/long disposal evidence atomically, and return deeply immutable tax
+summaries and UTC years. Tax-method previews are immutable, validate bounded rate
+assumptions, and perform no writes. Legacy disposal deletion remains deferred because
+the current aggregate disposal record cannot restore the exact consumed lots; the
+predecessor's synthetic replacement-lot behavior is not ported. Exports, harvest
+pricing, IPC, and priced/allocation views remain outside this slice. The next portfolio
+work is the priced and allocation read-model boundary.
+
+**Completed 2026-08-09 — priced portfolio and allocation read models:** the
+portfolio service now derives exact-decimal holdings from open lots through an
+injected `PriceSource` and `Clock`. Every view exposes the application request and
+receipt times, source name, priced/unpriced counts, and an explicit complete,
+partial, unavailable, failed, or not-required pricing status. Total open cost is
+kept separate from priced-book cost and unrealized P&L so a partial feed cannot look
+like a complete portfolio valuation. Malformed, zero, and unrequested prices are
+ignored; provider failures return an immutable unpriced view without leaking raw
+diagnostics. Allocation reads only the stored user policy. Rebalance output remains
+estimate-only and is suppressed when pricing is incomplete or a target lacks a real
+holding, rather than synthesizing positions or trades. No polling, network adapter,
+IPC, policy suggestions, or strategy defaults were added. P3 remains blocked and its
+defaults remain unvalidated. The next portfolio work is the allocation-policy
+mutation boundary: validate complete target invariants atomically while keeping
+`ALLOCATION_SUGGEST` deferred to P3.
+
+**Completed 2026-08-09 — Nautilus re-audit, price provenance, and allocation-policy
+mutation:** the owner-authorized local rebuild was re-audited without consulting an
+online Nautilus source or changing the source tree. The adoption matrix now anchors
+the relevant local files by SHA-256 and records the additional configuration,
+valuation-evidence, scheduler, testing, and benchmark decisions. Spot prices are now
+immutable per-instrument observations with exact price, stable source and quality,
+and nullable authoritative observation time. Fallbacks preserve the winning
+observation, portfolio views expose deterministic source/quality counts and
+per-holding provenance, and any non-Coinbase venue price blocks a rebalance estimate
+without blocking display valuation. Allocation-policy saves collect all stable
+path/code issues in deterministic order, canonicalize and freeze a complete valid
+policy before starting storage, and atomically preserve the old policy after any
+failure. Clearing is explicit and restores the 5% band. TypeScript remains
+authoritative; the architecture now allows a pure Rust batch kernel only after the
+documented parity and performance gate passes, and no production native dependency was added.
+P3 remains blocked and strategy defaults remain unvalidated. Snapshot evidence,
+carried-price policy, scheduling, IPC, and execution work remain queued for their
+planned phases.
+
+**Completed 2026-08-10 — append-only portfolio snapshot evidence:** migration 38 adds immutable
+valuation facts with separate scheduled, observed, and locally recorded times. Complete equity is
+nullable by construction: partial, unavailable, and migrated legacy-unverified observations retain
+their display-only priced subtotal but can never enter the equity field or performance calculation.
+Canonical unpriced instruments are persisted, exact retries are idempotent, later same-day recovery
+is appended rather than overwriting earlier facts, and reads are bounded without truncating stored
+history. The portfolio evidence service accepts an explicit scheduled time and uses injected reads
+and clocks; it adds no scheduler. Daily performance deterministically selects the latest observation
+per UTC day and excludes incomplete or legacy days. Carried-price reuse, snapshot UI, IPC, and
+scheduler behavior remain deferred; P3 and its strategy defaults remain unchanged.
+
+**Completed 2026-08-10 — durable UTC scheduler foundation:** migration 39 extends the existing
+per-wallet lease record with an immutable cadence, UTC offset, enabled state, and deterministic due
+index. The host-driven scheduler validates the complete task set before persistence, calculates
+strict UTC boundaries from an injected `Clock`, recovers expired running leases idempotently, and
+runs the deterministic due queue through a FIFO concurrency limit of two. Owner-bound release
+prevents a stale worker from finalizing a lease it lost. Shutdown is idempotent, aborts active work,
+does not let queued work acquire a durable lease or execute, and leaves canceled schedules due for
+an explicit retry.
+Task failures expose only stable reason codes; scheduler metrics contain outcome-level labels and no
+wallet/profile cardinality. The service has no keychain, network, IPC, UI, strategy, or execution
+dependency, and a regression test proves keychain-like construction extras are never read. The
+composition root still owns the single wake-up mechanism; IPC and `CoquiClient` remain deferred.
+P3 remains blocked and its strategy defaults and final holdout remain unchanged.
+
+**Completed 2026-08-10 — scheduler automation-status boundary:** the remaining P4 scheduler-owned
+status capability now returns bounded profile-ordered views classified as scheduled, running,
+overdue, lease-expired, stopped, error, or disabled using only the injected `Clock`. Views omit lease
+owner identity, expose an expiry only for an active lease, sanitize legacy free-form errors to a
+stable `legacy_unverified_error` code, and are deeply immutable. Status reads never acquire,
+finalize, or otherwise mutate a lease. Query metrics report only aggregate profile, active-lease,
+and unhealthy counts with no wallet labels. `PROFILE_AUTOMATION_STATUS` is therefore implemented at
+the service boundary while its contracts/IPC transport remain deferred; the P5-only launch-at-login
+shell action remains outside the scheduler. P3, strategy defaults, and the final holdout are
+unchanged.
+
+**Completed 2026-08-10 — first risk-service slice:** `REALITY_CHECK` now validates every supplied
+portfolio, cost, cadence, concentration, significance, history, paper-state, and evidence-hash fact
+before reading the injected `Clock`. Invalid requests return all deterministic path/code issues and
+never echo raw values or unknown field names. Successful reports expose only stable advisory codes,
+are deeply immutable, and carry both the exact source-evidence hash and a deterministic assessment
+hash binding all validated facts and assessment time. Even a clear report explicitly sets
+`liveExecutionPermitted` to false: it is advisory evidence, never an execution gate. No strategy
+configuration or default is selected or validated, and no portfolio, research, storage, scheduler,
+IPC, or execution state is mutated. `EVIDENCE_TRACKER` and `LONG_TERM` were intentionally kept as
+separate follow-up slices so their provenance contracts could not be blurred into this report. P3
+and the final holdout remain untouched.
+
+**Completed 2026-08-10 — fail-closed evidence tracker:** `EVIDENCE_TRACKER` now reads the append-only
+trial registry and immutable research evidence without mutating either. The current project state is
+reported honestly as `blocked_trial_history_incomplete`; the tracker cannot manufacture figures
+while the historical trial count remains a known lower bound. With a complete registry it
+distinguishes no snapshot, integrity failure, unsupported schema, unmet gates, and eligibility for
+human review. Gate figures are accepted only from a strict versioned envelope whose snapshot hash,
+dataset, costs, pre-registration, code-revision hash, and exact current trial-registry hash remain
+bound together. Returned facts and gate codes are deeply immutable and contain no stored prose or
+raw diagnostic text. Even when all four gates pass, the result is only `eligible_for_review` and
+`liveExecutionPermitted` remains false. Contracts/IPC, exports, UI, strategy adoption, and the final
+holdout remain deferred.
+
+**Completed 2026-08-10 — explicit long-term risk assessment:** `LONG_TERM` now accepts only a
+canonical Coinbase USD spot instrument, strictly increasing completed venue-reported observations,
+an explicit source-dataset hash, and a complete caller-supplied indicator parameter set. It never
+loads or implies strategy defaults and rejects reference, incomplete, malformed, non-monotonic, or
+future observations. Exact input prices remain decimal strings while indicator calculations use the
+existing pure core evaluator. Reports replace narrative rationale with stable reason codes, expose
+dataset, series, and parameter hashes, preserve observation time and age, and are deeply immutable.
+Both `orderIntentCreated` and `liveExecutionPermitted` are always false. With `REALITY_CHECK` and
+`EVIDENCE_TRACKER`, all three P4 risk-owned service capabilities are now implemented; export/UI
+transport remains P5/P8 work and P3 remains blocked.
+
+**Completed 2026-08-10 — typed append-only alerts foundation:** migration 40 replaces predecessor
+JSON alert state with profile-scoped typed policy, canonical Coinbase price targets, immutable alert
+facts, and separate read/archive presentation metadata. Complete rule configurations validate every
+boolean, exact decimal threshold, and quiet-hour invariant before one replacement write. Price
+targets use injected UUIDv4/time sources, exact decimal USD prices, explicit directions, and removal
+tombstones rather than deletion. Alert facts carry stable keys, kinds, severity/reason codes,
+optional canonical instrument identity, observed/recorded time, and an evidence hash; exact retries
+deduplicate while conflicting identities fail closed. Mark-read and clear/archive operations mutate
+only presentation state and cannot update or delete evidence. Reads are bounded, deeply immutable,
+and isolated by profile. No timer, rule evaluator, free-form notification copy, Electron API, native
+notification, paper alert, IPC, or execution behavior was added; native delivery remains P5 and
+alert evaluation/surfaces remain bounded by their later phases.
+
+**Completed 2026-08-10 — secret-safe advisor connection boundary:** migration 41 persists only a
+profile-scoped, allowlisted Coqui model-policy identifier and its injected-clock update time. Gemini
+keys remain exclusively in the injected secret store: the main predecessor keyring account is
+preserved, additional profiles are isolated, status exposes only connected, disconnected, or
+unavailable presence, and no returned or SQLite value contains credential material. Connect,
+disconnect, status, and policy mutation validate before touching time or state, return only stable
+path/code failures, and produce deeply immutable advisory-only views with execution authority
+explicitly false. Disconnect removes only the scoped advisor credential and safe model config.
+Advisor questions, welcome state, TTS, social context, provider network calls, IPC, UI, strategy
+signals, and execution behavior remain deferred. P3 remains blocked; its defaults and final holdout
+are unchanged.
+
+**Queued P4/P5/P8 — provider-neutral portfolio advisor:** extend the advisor boundary to Gemini,
+the OpenAI API, and the Anthropic API through one provider interface and separately scoped OS-secret
+entries. P4 owns only provider status, allowlisted Coqui model-policy mappings, bounded/cancelable
+HTTP adapters, and strict versioned input/output schemas. P5 adds explicit provider selection,
+streaming conversation and scan UI, payload/privacy preview, percentage-only sharing by default,
+and a separate opt-in for exact dollar values. P8 may add evidence-grounded portfolio scans and an
+explicit multi-provider comparison mode. Coqui computes every holding, return, allocation, price
+quality, concentration, and risk fact locally; providers receive a minimized
+`PortfolioAnalysisSnapshotV1` and may return only a validated `AdvisorReportV1` containing evidence
+references, observations, uncertainties, data-quality warnings, and questions. They receive no
+database, wallet identity, credential, tax-lot, strategy, scheduler, IPC, or execution tool access.
+Reports never create order intents, mutate allocation/strategy policy, or affect the live-evidence
+gate. Provider failover and sending to multiple providers are never silent. The implementation must
+honor current provider retention controls, including OpenAI `store: false` where supported, while
+making clear that this is not equivalent to approved zero-data-retention. See the official
+[OpenAI structured-output](https://developers.openai.com/api/docs/guides/structured-outputs),
+[OpenAI data-control](https://developers.openai.com/api/docs/guides/your-data#default-usage-policies-by-endpoint),
+[Claude structured-output](https://platform.claude.com/docs/en/build-with-claude/structured-outputs),
+and [Anthropic retention](https://privacy.claude.com/en/articles/7996866-how-long-do-you-store-my-organization-s-data)
+documentation. No provider SDK or network call is added by this plan note.
+
+**Completed 2026-08-10 — accounts profile-metadata foundation:** the first accounts slice adapts
+the predecessor's version-1 global wallet manifest without moving profile identity into any one
+wallet database. The storage boundary accepts the predecessor field names and non-secret Coinbase
+fingerprints, but strictly validates the complete manifest, unique profile/database identity, exact
+ordering, active membership, palette/icon allowlists, timestamps, and path-safe database filenames.
+Corrupt or unavailable manifests fail closed and are never silently replaced. Writes use an atomic
+sibling replacement plus revision check. The accounts service now owns secret-free profile list,
+active-profile, initialization, creation, display-metadata update, and exact-permutation reorder
+behavior. It uses injected time and UUIDv4 sources, provisions and migrates an isolated database
+before publishing a new profile, returns deeply immutable views, and validates before consuming
+time, IDs, storage, or provisioning work. It never returns database filenames or Coinbase
+fingerprints. Profile switching, duplication, delete preview/deletion, cross-profile summaries,
+credential copying, IPC, and filesystem cleanup remain separate follow-up slices; no database is
+closed and no user data or secret is removed here. P3, strategy defaults, and the final holdout are
+unchanged.
+
+**Completed 2026-08-10 — two-phase profile context switching:** `PROFILE_SWITCH` now validates the
+target and resolves it from the strict global manifest before consuming injected time or preparing a
+context. The injected context manager must open and migrate the target without changing the active
+context; only then does the service revision-check and publish the durable selection and request one
+atomic commit. A safe commit refusal leaves the old context active and rolls the manifest back to
+the exact prior state. A thrown/ambiguous commit fails closed as `context_recovery_required` and
+keeps the durable target for restart recovery rather than guessing which context is live. Concurrent
+profile reads and mutations through the service return `profile_operation_in_progress`, repeated
+selection of the active profile is a no-op, and successful views remain secret-free and deeply
+immutable. This slice adds no Electron lifecycle, credential reads/copies, profile duplication,
+deletion, or user-data cleanup; the P5 composition root must implement the prepared-context contract.
+P3, strategy defaults, and the final holdout remain unchanged.
+
+**Completed 2026-08-10 — fail-closed profile deletion-impact preview:**
+`PROFILE_DELETE_PREVIEW` now resolves only strict manifest metadata and reads bounded category counts
+for open lots, disposals, portfolio, paper, research, alert, Coinbase-import, and operational
+evidence. Credential inspection crosses a value-free adapter boundary and returns only configured
+categories; secret values, keychain account names, database filenames, evidence content, and raw
+reader failures never enter the preview. The immutable result distinguishes complete from incomplete
+inspection, reports stable blocker/warning codes, and always requires explicit confirmation. Last or
+active profiles are blocked. Unavailable evidence or credential inspection fails closed. Preview
+eligibility now requires a supplied backup artifact whose profile, manifest revision, evidence
+counts, and credential categories all match the fresh inspection; an empty profile without a backup
+is not called deletion-ready. The preview shares the profile-switch gate and performs no manifest
+replacement, acknowledgement, database write, secret removal, filesystem mutation, backup, or
+deletion. Backup and deletion are separate operations. P3, strategy defaults, and the final holdout
+remain unchanged.
+
+**Completed 2026-08-10 — verified recoverable profile-backup foundation:** an inactive, non-last
+profile can now be backed up through the same serialized profile-operation gate. Storage opens the
+source read-only and uses SQLite `VACUUM INTO`, writes a strict version-1 manifest containing source
+manifest revision, schema version, bounded evidence counts, deterministic credential categories,
+and SHA-256 database identity, then atomically publishes the artifact directory. Creation and later
+verification both require SQLite integrity/schema agreement and checksum parity; tampering,
+traversal, conflicts, malformed metadata, unavailable inspection, and destination failures return
+stable codes without raw diagnostics. Credential values are never read by the backup boundary or
+written to the artifact; `credentialsIncluded: false` is explicit. Tests prove source database,
+global manifest, and secret-store values remain unchanged, failed temporary artifacts are cleaned,
+and successful results are deeply immutable and path-free. The artifact grants no implicit restore
+or deletion authority; the separately confirmed deletion workflow is recorded below. Restore
+remains deferred. P3, strategy defaults, and the final holdout remain unchanged.
+
+**Completed 2026-08-10 — confirmed, recoverable profile deletion:** `PROFILE_DELETE` now accepts
+only an exact `delete_profile_permanently` confirmation bound to the target profile and verified
+backup UUID. Before consuming injected time or a deletion UUID it rejects active/last profiles,
+re-verifies the artifact, and requires the current manifest revision, bounded evidence counts, and
+credential categories to equal the backup metadata. Storage writes and flushes a strict deletion
+journal before the revision-checked manifest replacement; manifest removal is the explicit commit
+point because the manifest, filesystem, and OS keychain cannot form one transaction. Target
+database, WAL/SHM, Coinbase credential, and Gemini credential cleanup are idempotent and scoped.
+After the commit point, interruption returns `deleted: true` with exact pending cleanup rather than
+misreporting rollback. Recovery enumerates a bounded journal set, re-verifies the retained backup,
+resumes cleanup, and fails closed on corrupt journals. Tests cover exact confirmation, tampered and
+stale backups, changed evidence/credential categories, source/manifest/secret isolation, completed
+deletion, pending keychain cleanup, restart recovery, and repeated recovery. The verified backup is
+retained; restore, IPC, and UI remain separate work. P3, strategy defaults, and the final holdout
+remain unchanged.
+
+**Completed 2026-08-10 — explicit credential-free profile duplication:** `PROFILE_DUPLICATE` now
+creates a consistent SQLite snapshot under the shared profile-operation gate, assigns a new injected
+UUID/time, and publishes an inactive manifest record only after complete verification. Unlike the
+predecessor's optional secret-copy branch, the Coqui service has no secret-store dependency and the
+new manifest entry omits Coinbase key/portfolio fingerprints. Storage discovers every current or
+future table with an explicit `profile_id`, rejects any foreign identity in the source snapshot, and
+rewrites all scoped rows transactionally. Completed settings, portfolio, paper, research, alert,
+risk, import, and operational evidence remain local to the clone, while scheduler lease authority,
+unfinished Coinbase staging rows, and legacy Coinbase/Gemini connection/sync markers are explicitly
+excluded. Schema version, foreign keys, integrity, SHA-256 identity, discovered-table count,
+rewritten-row count, transient exclusions, and cleared metadata are returned as immutable evidence.
+Manifest conflict cleanup first rechecks that no record references the clone before removing it.
+Tests cover future-schema discovery, full identity rewrite, source immutability, contamination
+rejection, transient/credential-marker exclusion, secret and fingerprint isolation, destination
+conflicts, publication rollback, validation, and operation serialization. P3, strategy defaults,
+and the final holdout remain unchanged.
+
+**Completed 2026-08-10 — bounded cross-profile comparison:** `PROFILE_COMPARE` now validates an
+optional unique profile selection, preserves manifest order, and captures detached facts from
+isolated SQLite databases under the shared operation gate with read concurrency capped at four.
+The gate is released after database readers close; one shared price request then covers the union of
+canonical tracked and paper instruments. All values remain exact decimal strings. Tracked and paper
+priced subtotals are distinct from nullable complete equity, while source/quality counts and sorted
+canonical unpriced instruments make coverage explicit. Missing, corrupt, or oversized databases
+produce stable per-profile unavailable rows instead of false zero balances, and provider failure is
+contained without raw diagnostics. Results omit database filenames, credential state, fingerprints,
+and raw evidence rows. Tests cover mixed Coinbase/reference/missing prices, tracked and paper
+valuation, selection/order validation, partial database failure, four-reader concurrency, operation
+serialization, provider failure, secrecy, and deep immutability. P3, strategy defaults, and the final
+holdout remain unchanged.
+
+**Completed 2026-08-10 — secret-free multi-profile dashboard:** `PROFILE_DASHBOARD` now composes the
+bounded comparison view with isolated operational reads capped at four. An injected clock determines
+Coinbase freshness, schedule health, lease expiry, and overdue state. The result exposes only stable
+warning, risk-stage, and safety-kind codes plus grouped unresolved-incident counts; it never returns
+credential values, provider fingerprints, lease owners, incident detail, safety reasons, database
+filenames, or raw diagnostics. Exact tracked and paper subtotals remain distinct from nullable
+complete aggregates, so missing prices or unavailable profiles cannot become false complete equity.
+Manifest changes between valuation and status capture fail closed, while an individual corrupt status
+read remains an explicit partial profile without erasing valid valuation. Tests cover exact aggregation,
+freshness, schedule/risk/safety warnings, incomplete prices, concrete persisted corruption, partial
+failure, snapshot conflict, four-reader concurrency, secrecy, and deep immutability. Transport remains
+deferred; P3, strategy defaults, and the final holdout remain unchanged.
+
+**Completed 2026-08-10 — bounded all-profile refresh orchestration:** `PROFILE_REFRESH_ALL` now
+captures manifest order and one injected request time under the shared profile-operation gate, then
+fans out through a narrow injected authenticated-acquisition executor with at most four profiles in
+flight. Results preserve every profile in deterministic order and distinguish refreshed, skipped,
+failed, and cancelled outcomes with aggregate counts, bounded evidence counts, and closed reason
+codes. Caller cancellation prevents new work from starting while retaining truthful terminal results
+for already-running work. Thrown, malformed, or secret-bearing executor responses are contained as
+stable failures; database filenames, credentials, HTTP objects, response bodies, and raw diagnostics
+never enter the public result. Unlike the predecessor, the command does not serialize all network
+work or couple completion to another dashboard request. The accounts layer itself performs no
+storage mutation; authenticated acquisition remains injected, and dashboard invalidation/querying is
+deferred to P5 composition. Tests cover deterministic order, mixed outcomes, malformed responses,
+four-way concurrency, mid-flight and pre-flight cancellation, busy-operation exclusion, corrupt
+manifest and invalid-clock fail-fast behavior, secrecy, and deep immutability. IPC, scheduling,
+execution, tax-lot mutation, P3, strategy defaults, and the final holdout remain unchanged.
+
+**Audited 2026-08-10 — P4 service completion reconciliation:** the 76 `Adapt` rows in the
+predecessor handler inventory were checked against concrete service exports and tests. Fifteen
+previously unlabelled rows are proven aliases of completed profile, portfolio, and scheduler
+boundaries; lower-layer helpers were not counted as services. Thirty-five genuine gaps remain,
+grouped and dependency-ordered in `docs/p4-completion-audit.md`. Coinbase connection is next because
+the completed all-profile fan-out must not be bound to authenticated acquisition until credential
+publication, duplicate portfolio identity, rollback/recovery, and view-only permission semantics are
+proven. This audit changes no runtime state and does not advance P3, strategy defaults, the final
+holdout, IPC, `CoquiClient`, or P5 UI work.
+
+**Completed 2026-08-10 — profile-scoped Coinbase connection boundary:** `COINBASE_STATUS`,
+`COINBASE_CONNECT`, `COINBASE_CONNECT_JSON`, and `COINBASE_DISCONNECT` now share one secret-safe
+service. Credentials are validated and canonicalized as ES256 before an abortable GET-only probe
+proves account readability and requires View while rejecting Trade, Transfer, and Coinbase's newly
+separate Receive permission. Successful publication stores private material only in the scoped
+secret store and writes only SHA-256 key/portfolio identities to the revision-checked global
+manifest; either duplicate identity blocks another profile. Connect and disconnect restore the prior
+secret after manifest conflict, surface explicit recovery-required state if restoration fails, and
+never delete portfolio evidence. Status derives disconnected, connected, attention-required, or
+unavailable state without network access, raw errors, credentials, or fingerprints. Current adapter
+source is now resolved directly by both typecheck and Vitest, closing a stale-build test gap. Tests
+cover the official four permission flags, retry-bound cancellation, malformed and secret-bearing
+input containment, duplicate identities, both rollback directions, derived mismatch states,
+idempotent disconnect, secrecy, and deep immutability. Coinbase account/fill ingestion and
+discrepancy evidence remain next; no IPC, execution, tax-lot promotion, P3/default, or final-holdout
+behavior was added.
+
+**Completed 2026-08-10 — Coinbase account/fill and discrepancy evidence:** `COINBASE_SYNC` and
+`COINBASE_IMPORT_DISCREPANCIES` now use a complete bounded cursor acquisition over Coinbase accounts
+and spot fills, with exact-decimal normalization, authoritative provider timestamps where supplied,
+separate injected request/receipt times, deterministic dataset identity, duplicate/cursor conflict
+rejection, cancellation, and stable secret-free failures. Migration 42 atomically appends immutable
+sync, account, fill, and directional balance-discrepancy facts; exact retries are idempotent and
+bounded reads retain origin-profile provenance across isolated profile duplication. The existing
+four-way refresh boundary is bound through an injected profile context, and the last-sync marker is
+committed with the evidence. Tests prove rollback and that tax lots/disposals remain byte-for-byte
+unchanged: no missing balance creates a lot, no outflow resizes a lot, and no discrepancy creates a
+fill, resolution, or execution estimate. The verified baseline is 104 test files / 631 tests. The P4
+queue advances to the profile-scoped display universe/watchlist; P3, defaults, the final holdout,
+IPC, scheduler expansion, and live execution remain unchanged.
+
+**Completed 2026-08-10 — profile display universe and Coinbase catalog:** `CATALOG_SEARCH`,
+`COINS_GET`, `COINS_SET`, and `COINS_SEARCH` now share a bounded `DisplayUniverseService` over the
+officially documented public Coinbase product catalog. The adapter accepts only complete online USD
+spot identities, strictly validates product metadata and conflicting duplicates, forwards caller
+cancellation, and returns stable failures without provider diagnostics. Search/page results retain
+canonical Coinbase mappings with injected request/receipt time. Migration 43 stores an exact ordered
+profile preference and immutable origin events; explicit empty selection is allowed, while unknown,
+duplicate, oversized, or extra-field input fails before mutation. Profile copies rewrite current
+preference ownership but preserve historical origin. Tests prove that `universe_snapshots` and the
+golden research path remain unchanged. The predecessor audit also corrected `WATCHLIST_*`: those
+handlers concern attributed public blockchain addresses, not selected coins, so their observation and
+unverified-attribution evidence remains queued separately. The verified baseline is 107 test files /
+650 tests. The P4 queue advances to typed account settings; P3, strategy defaults, the final holdout,
+IPC, scheduling, and execution remain unchanged.
+
+**Completed 2026-08-10 — typed profile presentation settings:** `SETTINGS_GET` and `SETTINGS_SET`
+now terminate at `AccountSettingsService`, which owns only theme, density, motion, and language.
+Migration 44 stores a complete typed row per profile; unsaved reads return explicit Coqui presentation
+defaults without writing them. Patch validation reports every invalid field in deterministic input
+order before time or storage, rejects unknown fields and all predecessor financial/tax/provider/
+strategy/venue-cost/advisor fields, and atomically merges only a valid partial patch. No value is
+silently dropped or clamped. Tests prove default/saved provenance, profile isolation and duplication,
+clock rollback, transaction rollback, deep immutability, and that the predecessor `user_settings`
+blob cannot be mutated through this boundary. The verified baseline is 108 test files / 657 tests.
+The P4 queue advances to the market-data display query facade and optional CoinGecko connection; P3,
+strategy defaults, the final holdout, IPC, scheduler expansion, and execution remain unchanged.
 
 **Exit:** every old handler has a home. **A dependency-cycle test fails the
 build.** No service imports more than two others. No service over 500 lines.
@@ -429,9 +841,28 @@ The UX problem is solved, not relocated.
 - **Query layer** — N9
 - Implement the design, motion, accessibility, and performance contract in
   `docs/UI-UX.md`; `ui-kit` first, then screens — `ARCHITECTURE.md` §9
+- Begin with task maps and low-fidelity wireframes for the scoreboard, portfolio,
+  and paper-action review. Obtain owner approval on information hierarchy before
+  applying a visual theme or propagating components to other screens
+- Screen the user's
+  [UI-library catalogue](https://github.com/gabrielizalo/Awesome-CSS-Frameworks-and-UI-Libraries)
+  as a discovery index. Audit each candidate's own license and maintenance; do
+  not assume the catalogue license covers linked code or assets
+- Prototype Base UI, React Aria Components, and Radix against the same Electron,
+  CSP, keyboard, high-contrast, reduced-motion, bundle, and performance checks.
+  Select and pin at most one headless primitive layer in an ADR; Tailwind and
+  Coqui-owned tokens remain the visual layer
+- Enforce the anti-template authorship rules in `docs/UI-UX.md` §0: no wholesale
+  styled kit, mixed component packs, card-everything dashboard, glass/gradient
+  decoration, generic AI copy, or unlicensed/generated filler assets
 - Use tokenized 83/167/250ms motion for purposeful local transitions; native
   CSS/Web Animations first, compositor-friendly properties only, with a tested
   reduced/no-motion path
+- Implement the action-feedback contract in `docs/UI-UX.md` §3.1: next-frame
+  press acknowledgement, stable pending labels without layout shift, keyboard
+  parity, duplicate-command prevention, and explicit success/failure/blocked/
+  unknown outcomes. Optimistic success is forbidden for financial, credential,
+  kill-switch, export, and destructive actions
 - Add a production-build performance harness before feature polish: p75
   interaction latency ≤200ms, warm useful shell ≤1.5s on the recorded reference
   machine, responsive chart pan/zoom, and no recurring renderer-blocking work
@@ -443,7 +874,11 @@ The UX problem is solved, not relocated.
 sandbox, navigation-block and permission-deny presence tests pass; the
 `setInterval` lint rule is active. The task review, keyboard/zoom, reduced-motion,
 incremental-chart, loading/error-state, and measured performance gates in
-`docs/UI-UX.md` §7 pass.
+`docs/UI-UX.md` §7 pass. The three-workflow screenshot set is owner-approved and
+the heuristic review records no unresolved high-severity usability finding.
+Action feedback remains responsive under the recorded stress case, sends no
+duplicate non-idempotent command, preserves focus/layout, and never displays an
+unconfirmed financial result as success.
 
 ---
 

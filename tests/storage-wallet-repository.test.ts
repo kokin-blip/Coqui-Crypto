@@ -7,10 +7,14 @@ import {
   appendRuntimeIncident,
   appendWalletRunAudit,
   ensureWalletSchedule,
+  ensureWalletUtcSchedule,
+  finalizeExpiredWalletScheduleLeases,
   getWalletDecisionRun,
   getWalletRiskState,
   getWalletSafetyStop,
   listRuntimeIncidents,
+  listDueWalletSchedules,
+  listWalletSchedules,
   listWalletRunAudits,
   listWalletSafetyStopEvents,
   openDatabase,
@@ -26,6 +30,7 @@ describe('wallet scheduler and risk persistence', () => {
     ensureWalletSchedule('family-b', 100, database);
     expect(acquireWalletScheduleLease('family-a', 'worker-a', 100, 50, database)?.ownerId)
       .toBe('worker-a');
+    expect(acquireWalletScheduleLease('family-a', 'worker-a', 101, 50, database)).toBeNull();
     expect(acquireWalletScheduleLease('family-a', 'worker-b', 101, 50, database)).toBeNull();
     expect(acquireWalletScheduleLease('family-b', 'worker-b', 101, 50, database)?.ownerId)
       .toBe('worker-b');
@@ -33,6 +38,31 @@ describe('wallet scheduler and risk persistence', () => {
       .toBe(false);
     expect(releaseWalletScheduleLease('family-a', 'worker-a', 200, 'idle', null, 110, database))
       .toBe(true);
+    database.close();
+  });
+
+  it('persists immutable UTC cadence and recovers expired leases idempotently', () => {
+    const database = openDatabase(':memory:');
+    ensureWalletUtcSchedule('family-b', 1_000, 100, 1_100, database);
+    ensureWalletUtcSchedule('family-a', 1_000, 100, 1_100, database);
+    expect(ensureWalletUtcSchedule('family-a', 1_000, 100, 1_100, database)).toEqual(
+      expect.objectContaining({ cadenceMs: 1_000, utcOffsetMs: 100, enabled: true }),
+    );
+    expect(() => ensureWalletUtcSchedule('family-a', 2_000, 100, 2_100, database))
+      .toThrow('immutable');
+    expect(listDueWalletSchedules(1_100, 10, database).map((row) => row.profileId))
+      .toEqual(['family-a', 'family-b']);
+    expect(listWalletSchedules(1, database).map((row) => row.profileId)).toEqual(['family-a']);
+    expect(() => listWalletSchedules(1_001, database)).toThrow('[1, 1000]');
+
+    expect(acquireWalletScheduleLease('family-a', 'worker-a', 1_100, 50, database)?.state)
+      .toBe('running');
+    expect(finalizeExpiredWalletScheduleLeases(1_149, database)).toBe(0);
+    expect(finalizeExpiredWalletScheduleLeases(1_150, database)).toBe(1);
+    expect(finalizeExpiredWalletScheduleLeases(1_150, database)).toBe(0);
+    expect(listDueWalletSchedules(1_150, 1, database)).toEqual([
+      expect.objectContaining({ profileId: 'family-a', error: 'lease_expired', ownerId: null }),
+    ]);
     database.close();
   });
 

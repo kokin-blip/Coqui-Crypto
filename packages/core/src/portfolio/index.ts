@@ -1,6 +1,8 @@
 export * from './allocation.js';
+export * from './coinbase-evidence.js';
 export * from './holdings.js';
 export * from './rebalance.js';
+export * from './summary.js';
 export * from './stablecoin.js';
 export * from './costbasis.js';
 export * from './tax.js';
@@ -8,5 +10,7 @@ export * from './harvest.js';
 export * from './tax-aware.js';
 export * from './risk-budget.js';
 export * from './performance.js';
+export * from './snapshot-evidence.js';
+export * from './policy.js';
 export * from './contribution.js';
 export * from './import-csv.js';

@@ -96,6 +96,26 @@ function annualizedVolatilityPct(closes: number[], days: number): number {
   return Math.sqrt(variance) * Math.sqrt(YEAR) * 100;
 }
 
+function annualizedVolatilityPctAt(
+  closes: readonly number[],
+  endExclusive: number,
+  days: number,
+): number {
+  const wanted = Math.max(2, days);
+  const reversed: number[] = [];
+  for (let index = Math.min(endExclusive, closes.length) - 1; index >= 1; index -= 1) {
+    const previous = closes[index - 1]!;
+    const current = closes[index]!;
+    if (previous > 0 && current > 0) reversed.push(current / previous - 1);
+    if (reversed.length === wanted) break;
+  }
+  const rets = reversed.reverse();
+  if (rets.length < 2) return 0;
+  const mean = rets.reduce((sum, value) => sum + value, 0) / rets.length;
+  const variance = rets.reduce((sum, value) => sum + (value - mean) ** 2, 0) / rets.length;
+  return Math.sqrt(variance) * Math.sqrt(YEAR) * 100;
+}
+
 /** Trend return over a single lookback, or null when history is insufficient. */
 function lookbackReturn(closes: number[], lookbackDays: number): number | null {
   const lookback = Math.max(1, Math.floor(lookbackDays));
@@ -128,6 +148,82 @@ export function momentumStat(
   return { assetId, returnPct, volatilityPct, riskAdjustedMomentum };
 }
 
+function momentumStatAt(
+  assetId: InstrumentKey,
+  closes: readonly number[],
+  endExclusive: number,
+  config: MomentumConfig,
+): MomentumStat | null {
+  const end = Math.min(Math.max(0, endExclusive), closes.length);
+  const lookbacks = config.lookbackDaysEnsemble && config.lookbackDaysEnsemble.length > 0
+    ? config.lookbackDaysEnsemble
+    : [config.lookbackDays];
+  const returns: number[] = [];
+  for (const rawLookback of lookbacks) {
+    const lookback = Math.max(1, Math.floor(rawLookback));
+    if (end <= lookback) continue;
+    const start = closes[end - 1 - lookback]!;
+    const finish = closes[end - 1]!;
+    if (start > 0 && finish > 0) returns.push(finish / start - 1);
+  }
+  if (returns.length === 0) return null;
+  const returnPct = returns.reduce((sum, value) => sum + value, 0) / returns.length;
+  const volatilityPct = annualizedVolatilityPctAt(closes, end, config.volatilityDays);
+  return {
+    assetId,
+    returnPct,
+    volatilityPct,
+    riskAdjustedMomentum: volatilityPct > 0 ? returnPct / (volatilityPct / 100) : returnPct,
+  };
+}
+
+function targetsFromStats(
+  base: { assetId: InstrumentKey; weight: number }[],
+  stats: MomentumStat[],
+  config: MomentumConfig,
+): MomentumTargetResult {
+  const byId = new Map(stats.map((stat) => [stat.assetId, stat]));
+  if (base.length === 0 || stats.length === 0) return { targets: [], cashWeight: 1, stats };
+  const scores = stats.map((stat) => stat.riskAdjustedMomentum);
+  const min = Math.min(...scores);
+  const max = Math.max(...scores);
+  const spread = max - min;
+  let targets = base.map((target) => {
+    const stat = byId.get(target.assetId);
+    if (!stat) return { assetId: target.assetId, weight: 0 };
+    const relative = spread > 0 ? (stat.riskAdjustedMomentum - min) / spread : 0.5;
+    const relativeTilt = 1 + config.maxRelativeTilt * (relative * 2 - 1);
+    const defensive = stat.returnPct < 0 ? clamp(config.defensiveScale, 0, 1) : 1;
+    const volScale = stat.volatilityPct > 0
+      ? clamp(config.targetVolatilityPct / stat.volatilityPct, 0.15, 1)
+      : 1;
+    return { assetId: target.assetId, weight: target.weight * relativeTilt * defensive * volScale };
+  });
+  const sum = targets.reduce((total, target) => total + target.weight, 0);
+  if (sum > 1) targets = targets.map((target) => ({ ...target, weight: target.weight / sum }));
+  const finalSum = targets.reduce((total, target) => total + target.weight, 0);
+  return { targets, cashWeight: Math.max(0, 1 - finalSum), stats };
+}
+
+/** @internal Indexed research path; avoids allocating every historical prefix. */
+export function momentumTargetsAt(
+  baseTargets: { assetId: InstrumentKey; weight: number }[],
+  closesById: ReadonlyMap<InstrumentKey, readonly number[]>,
+  endExclusive: number,
+  config: MomentumConfig = DEFAULT_MOMENTUM_CONFIG,
+): MomentumTargetResult {
+  const base = normalizeBase(baseTargets);
+  const stats = base
+    .map((target) => momentumStatAt(
+      target.assetId,
+      closesById.get(target.assetId) ?? [],
+      endExclusive,
+      config,
+    ))
+    .filter((stat): stat is MomentumStat => stat !== null);
+  return targetsFromStats(base, stats, config);
+}
+
 /**
  * Build candidate targets from base weights + close history. Weights may sum below
  * 1 when absolute momentum is negative or vol is above target; that remainder is
@@ -143,27 +239,5 @@ export function momentumTargets(
   const stats = base
     .map((t) => momentumStat(t.assetId, closesById[t.assetId] ?? [], config))
     .filter((s): s is MomentumStat => s !== null);
-  const byId = new Map(stats.map((s) => [s.assetId, s]));
-  if (base.length === 0 || stats.length === 0) return { targets: [], cashWeight: 1, stats };
-
-  const scores = stats.map((s) => s.riskAdjustedMomentum);
-  const min = Math.min(...scores);
-  const max = Math.max(...scores);
-  const spread = max - min;
-
-  let targets = base.map((t) => {
-    const s = byId.get(t.assetId);
-    if (!s) return { assetId: t.assetId, weight: 0 };
-
-    const relative = spread > 0 ? (s.riskAdjustedMomentum - min) / spread : 0.5;
-    const relativeTilt = 1 + config.maxRelativeTilt * (relative * 2 - 1);
-    const defensive = s.returnPct < 0 ? clamp(config.defensiveScale, 0, 1) : 1;
-    const volScale = s.volatilityPct > 0 ? clamp(config.targetVolatilityPct / s.volatilityPct, 0.15, 1) : 1;
-    return { assetId: t.assetId, weight: t.weight * relativeTilt * defensive * volScale };
-  });
-
-  const sum = targets.reduce((acc, t) => acc + t.weight, 0);
-  if (sum > 1 && sum > 0) targets = targets.map((t) => ({ assetId: t.assetId, weight: t.weight / sum }));
-  const finalSum = targets.reduce((acc, t) => acc + t.weight, 0);
-  return { targets, cashWeight: Math.max(0, 1 - finalSum), stats };
+  return targetsFromStats(base, stats, config);
 }

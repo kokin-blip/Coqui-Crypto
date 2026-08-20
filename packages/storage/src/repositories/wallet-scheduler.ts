@@ -10,6 +10,9 @@ export interface StoredWalletScheduleLease {
   readonly lastRunAt: number | null;
   readonly state: 'idle' | 'running' | 'stopped' | 'error';
   readonly error: string | null;
+  readonly cadenceMs: number;
+  readonly utcOffsetMs: number;
+  readonly enabled: boolean;
 }
 
 interface WalletScheduleRow {
@@ -20,6 +23,9 @@ interface WalletScheduleRow {
   last_run_at: number | null;
   state: StoredWalletScheduleLease['state'];
   error: string | null;
+  cadence_ms: number;
+  utc_offset_ms: number;
+  enabled: number;
 }
 
 function scheduleFromRow(row: WalletScheduleRow): StoredWalletScheduleLease {
@@ -31,7 +37,16 @@ function scheduleFromRow(row: WalletScheduleRow): StoredWalletScheduleLease {
     lastRunAt: row.last_run_at,
     state: row.state,
     error: row.error,
+    cadenceMs: row.cadence_ms,
+    utcOffsetMs: row.utc_offset_ms,
+    enabled: row.enabled === 1,
   };
+}
+
+const PROFILE_ID = /^[a-z0-9][a-z0-9._:-]{0,63}$/u;
+
+function validTime(value: number): boolean {
+  return Number.isSafeInteger(value) && value >= 0;
 }
 
 export function ensureWalletSchedule(
@@ -39,6 +54,9 @@ export function ensureWalletSchedule(
   nextRunAt: number,
   database: Db,
 ): StoredWalletScheduleLease {
+  if (!PROFILE_ID.test(profileId) || !validTime(nextRunAt)) {
+    throw new TypeError('A wallet schedule requires a stable profile and safe next-run time.');
+  }
   database.prepare(`
     INSERT INTO wallet_schedule_lease
       (profile_id, owner_id, leased_until, next_run_at, last_run_at, state, error)
@@ -46,6 +64,34 @@ export function ensureWalletSchedule(
     ON CONFLICT(profile_id) DO NOTHING
   `).run(profileId, nextRunAt);
   return getWalletSchedule(profileId, database)!;
+}
+
+/** Create one immutable UTC-aligned cadence policy; exact retries are idempotent. */
+export function ensureWalletUtcSchedule(
+  profileId: string,
+  cadenceMs: number,
+  utcOffsetMs: number,
+  nextRunAt: number,
+  database: Db,
+): StoredWalletScheduleLease {
+  if (
+    !PROFILE_ID.test(profileId) || !Number.isSafeInteger(cadenceMs) || cadenceMs <= 0 ||
+    !Number.isSafeInteger(utcOffsetMs) || utcOffsetMs < 0 || utcOffsetMs >= cadenceMs ||
+    !validTime(nextRunAt) || nextRunAt < utcOffsetMs ||
+    (nextRunAt - utcOffsetMs) % cadenceMs !== 0
+  ) throw new TypeError('Wallet cadence must be a safe UTC-aligned interval policy.');
+  database.prepare(`
+    INSERT INTO wallet_schedule_lease
+      (profile_id, owner_id, leased_until, next_run_at, last_run_at, state, error,
+       cadence_ms, utc_offset_ms, enabled)
+    VALUES (?, NULL, NULL, ?, NULL, 'idle', NULL, ?, ?, 1)
+    ON CONFLICT(profile_id) DO NOTHING
+  `).run(profileId, nextRunAt, cadenceMs, utcOffsetMs);
+  const schedule = getWalletSchedule(profileId, database)!;
+  if (schedule.cadenceMs !== cadenceMs || schedule.utcOffsetMs !== utcOffsetMs) {
+    throw new Error('Wallet scheduler cadence policy is immutable.');
+  }
+  return schedule;
 }
 
 export function getWalletSchedule(
@@ -58,6 +104,22 @@ export function getWalletSchedule(
   return row ? scheduleFromRow(row) : null;
 }
 
+/** Return secret-free schedule records in stable profile order. */
+export function listWalletSchedules(
+  limit: number,
+  database: Db,
+): StoredWalletScheduleLease[] {
+  if (!Number.isSafeInteger(limit) || limit <= 0 || limit > 1_000) {
+    throw new TypeError('A schedule query requires a limit in [1, 1000].');
+  }
+  const rows = database.prepare(`
+    SELECT * FROM wallet_schedule_lease
+    ORDER BY profile_id
+    LIMIT ?
+  `).all(limit) as unknown as WalletScheduleRow[];
+  return rows.map(scheduleFromRow);
+}
+
 export function acquireWalletScheduleLease(
   profileId: string,
   ownerId: string,
@@ -65,15 +127,15 @@ export function acquireWalletScheduleLease(
   leaseMs: number,
   database: Db,
 ): StoredWalletScheduleLease | null {
-  if (!ownerId.trim() || !Number.isSafeInteger(leaseMs) || leaseMs <= 0) {
+  if (!PROFILE_ID.test(profileId) || !ownerId.trim() || !validTime(now) ||
+      !Number.isSafeInteger(leaseMs) || leaseMs <= 0) {
     throw new TypeError('A lease requires an owner and positive duration.');
   }
   return inTransaction(database, () => {
     const current = getWalletSchedule(profileId, database);
-    if (!current || current.nextRunAt > now) return null;
+    if (!current || !current.enabled || current.nextRunAt > now) return null;
     if (
       current.ownerId &&
-      current.ownerId !== ownerId &&
       current.leasedUntil !== null &&
       current.leasedUntil > now
     ) return null;
@@ -95,6 +157,9 @@ export function releaseWalletScheduleLease(
   now: number,
   database: Db,
 ): boolean {
+  if (!PROFILE_ID.test(profileId) || !ownerId.trim() || !validTime(nextRunAt) || !validTime(now)) {
+    throw new TypeError('A wallet lease release requires stable identity and safe times.');
+  }
   const result = database.prepare(`
     UPDATE wallet_schedule_lease
     SET owner_id = NULL, leased_until = NULL, next_run_at = ?, last_run_at = ?,
@@ -102,6 +167,35 @@ export function releaseWalletScheduleLease(
     WHERE profile_id = ? AND owner_id = ?
   `).run(nextRunAt, now, state, error, profileId, ownerId);
   return Number(result.changes) === 1;
+}
+
+/** Read a bounded deterministic due queue without acquiring any lease. */
+export function listDueWalletSchedules(
+  now: number,
+  limit: number,
+  database: Db,
+): StoredWalletScheduleLease[] {
+  if (!validTime(now) || !Number.isSafeInteger(limit) || limit <= 0 || limit > 1_000) {
+    throw new TypeError('A due-schedule query requires safe time and a limit in [1, 1000].');
+  }
+  const rows = database.prepare(`
+    SELECT * FROM wallet_schedule_lease
+    WHERE enabled = 1 AND next_run_at <= ?
+    ORDER BY next_run_at, profile_id
+    LIMIT ?
+  `).all(now, limit) as unknown as WalletScheduleRow[];
+  return rows.map(scheduleFromRow);
+}
+
+/** Finalize only expired running leases; repeated startup recovery is idempotent. */
+export function finalizeExpiredWalletScheduleLeases(now: number, database: Db): number {
+  if (!validTime(now)) throw new TypeError('Lease finalization requires a safe time.');
+  const result = database.prepare(`
+    UPDATE wallet_schedule_lease
+    SET owner_id = NULL, leased_until = NULL, state = 'error', error = 'lease_expired'
+    WHERE state = 'running' AND leased_until IS NOT NULL AND leased_until <= ?
+  `).run(now);
+  return Number(result.changes);
 }
 
 export interface StoredWalletRiskState {

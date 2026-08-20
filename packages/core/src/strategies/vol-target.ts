@@ -85,6 +85,30 @@ export function realizedPortfolioVolPct(mixCloses: number[], days: number): numb
   return Math.sqrt(variance) * Math.sqrt(YEAR) * 100;
 }
 
+function realizedPortfolioVolPctAt(
+  mixCloses: readonly number[],
+  endExclusive: number,
+  days: number,
+): number | null {
+  const end = Math.min(Math.max(0, endExclusive), mixCloses.length);
+  const wanted = Math.max(2, days);
+  const reversed: number[] = [];
+  for (let index = end - 1; index >= 1; index -= 1) {
+    const previous = mixCloses[index - 1]!;
+    const current = mixCloses[index]!;
+    if (previous > 0 && current > 0) reversed.push(current / previous - 1);
+    if (reversed.length === wanted) break;
+  }
+  const returns = reversed.reverse();
+  if (returns.length < 2) return null;
+  const mean = returns.reduce((sum, value) => sum + value, 0) / returns.length;
+  const variance = returns.reduce(
+    (sum, value) => sum + (value - mean) ** 2,
+    0,
+  ) / returns.length;
+  return Math.sqrt(variance) * Math.sqrt(YEAR) * 100;
+}
+
 /**
  * Compute the invested exposure for a mix from its value series. When realized vol
  * can't be estimated yet, default to fully invested (`maxExposure`) so early days
@@ -103,6 +127,34 @@ export function volTargetExposure(
     realizedVolPct !== null && realizedVolPct > 0
       ? clamp(config.targetVolPct / realizedVolPct, config.minExposure, config.maxExposure)
       : config.maxExposure;
+  if (belowTrend) exposure = Math.min(exposure, config.belowTrendMaxExposure);
+  return { exposure, realizedVolPct, belowTrend };
+}
+
+/** @internal Indexed research path; avoids allocating every historical prefix. */
+export function volTargetExposureAt(
+  mixCloses: readonly number[],
+  endExclusive: number,
+  config: VolTargetConfig = DEFAULT_VOL_TARGET_CONFIG,
+): { exposure: number; realizedVolPct: number | null; belowTrend: boolean } {
+  const end = Math.min(Math.max(0, endExclusive), mixCloses.length);
+  const realizedVolPct = realizedPortfolioVolPctAt(
+    mixCloses,
+    end,
+    config.volLookbackDays,
+  );
+  const trendStart = end - config.trendGateDays;
+  let trend: number | null = null;
+  if (config.trendGateDays > 0 && trendStart >= 0) {
+    let sum = 0;
+    for (let index = trendStart; index < end; index += 1) sum += mixCloses[index]!;
+    trend = sum / config.trendGateDays;
+  }
+  const last = mixCloses[end - 1] ?? 0;
+  const belowTrend = trend !== null && last > 0 ? last < trend : false;
+  let exposure = realizedVolPct !== null && realizedVolPct > 0
+    ? clamp(config.targetVolPct / realizedVolPct, config.minExposure, config.maxExposure)
+    : config.maxExposure;
   if (belowTrend) exposure = Math.min(exposure, config.belowTrendMaxExposure);
   return { exposure, realizedVolPct, belowTrend };
 }

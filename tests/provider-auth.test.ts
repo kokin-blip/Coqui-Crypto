@@ -14,7 +14,7 @@ import {
 function unlimitedRegistry(): RateLimiterRegistry {
   return {
     forDomain: () => ({
-      acquire: async () => {},
+      acquire: async () => 'acquired' as const,
       available: () => 1,
       pending: () => 0,
       destroy: () => {},

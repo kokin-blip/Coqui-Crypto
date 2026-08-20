@@ -1,0 +1,23 @@
+[package]
+name = "coqui_research_kernel"
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+napi = { version = "3.6.0", default-features = false, features = ["napi8"] }
+napi-derive = "3.4.0"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.149"
+
+[build-dependencies]
+napi-build = "2.3.1"
+
+[profile.release]
+codegen-units = 1
+lto = true
+panic = "abort"

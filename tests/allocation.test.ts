@@ -5,6 +5,7 @@ import {
   decimal,
   holdingsFromLots,
   instrumentKey,
+  summarizePortfolioValuation,
   type AllocationPolicy,
   type AssetRef,
   type Holding,
@@ -107,6 +108,36 @@ describe('computeAllocation', () => {
     const btc = alloc.slices.find((s) => s.asset.symbol === 'BTC')!;
     expect(btc.targetWeight).toBe(0.5);
     expect(btc.driftPct).toBeNull(); // unknown, not −50pp
+  });
+});
+
+describe('summarizePortfolioValuation', () => {
+  it('separates all-book cost from priced-book cost and P&L', () => {
+    const summary = summarizePortfolioValuation([
+      holding('BTC', 2, 25, 40),
+      holding('ETH', 3, 10, null),
+    ]);
+    expect(summary).toEqual({
+      totalValueUsd: '80',
+      totalCostUsd: '80',
+      pricedCostUsd: '50',
+      totalUnrealizedPnlUsd: '30',
+      totalUnrealizedPnlPct: 60,
+      pricedCount: 1,
+      unpricedCount: 1,
+    });
+  });
+
+  it('returns a null percentage when no priced cost basis exists', () => {
+    expect(summarizePortfolioValuation([holding('BTC', 1, 10, null)]))
+      .toEqual(expect.objectContaining({
+        totalValueUsd: '0',
+        totalCostUsd: '10',
+        pricedCostUsd: '0',
+        totalUnrealizedPnlPct: null,
+        pricedCount: 0,
+        unpricedCount: 1,
+      }));
   });
 });
 

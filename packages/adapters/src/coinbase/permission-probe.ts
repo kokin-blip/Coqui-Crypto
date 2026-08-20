@@ -7,6 +7,9 @@ import {
 export type CoinbaseProbeErrorCode =
   | 'timeout'
   | 'network'
+  | 'cancelled'
+  | 'shutdown'
+  | 'elapsed_budget_exhausted'
   | 'unauthorized'
   | 'forbidden'
   | 'rate_limited'
@@ -47,6 +50,18 @@ function classifyFailure(failure: HttpFailure): {
   if (failure.reason === 'timeout') {
     return { code: 'timeout', error: 'Coinbase did not respond in time.' };
   }
+  if (failure.reason === 'canceled') {
+    return { code: 'cancelled', error: 'Coinbase verification was cancelled.' };
+  }
+  if (failure.reason === 'shutdown') {
+    return { code: 'shutdown', error: 'Coinbase verification stopped during shutdown.' };
+  }
+  if (failure.reason === 'elapsed-budget') {
+    return {
+      code: 'elapsed_budget_exhausted',
+      error: 'Coinbase verification exceeded its elapsed-time budget.',
+    };
+  }
   if (failure.status === 0) {
     return { code: 'network', error: 'Could not reach Coinbase.' };
   }
@@ -76,8 +91,12 @@ function diagnostics(
  */
 export async function probeCoinbaseViewOnlyPermissions(
   http: CoinbaseReadHttpClient,
+  signal?: AbortSignal,
 ): Promise<CoinbasePermissionProbeResult> {
-  const permissions = await http.getJson<unknown>(PERMISSIONS_URL);
+  const permissions = await http.getJson<unknown>(
+    PERMISSIONS_URL,
+    signal === undefined ? undefined : { signal },
+  );
   if (!permissions.ok) {
     if (permissions.reason === 'parse') {
       return {
@@ -104,7 +123,8 @@ export async function probeCoinbaseViewOnlyPermissions(
   if (
     typeof data['can_view'] !== 'boolean' ||
     typeof data['can_trade'] !== 'boolean' ||
-    typeof data['can_transfer'] !== 'boolean'
+    typeof data['can_transfer'] !== 'boolean' ||
+    typeof data['can_receive'] !== 'boolean'
   ) {
     return {
       ok: false,
@@ -121,16 +141,23 @@ export async function probeCoinbaseViewOnlyPermissions(
       diagnostics: diagnostics(permissions.status, null, null),
     };
   }
-  if (data['can_trade'] === true || data['can_transfer'] === true) {
+  if (
+    data['can_trade'] === true ||
+    data['can_transfer'] === true ||
+    data['can_receive'] === true
+  ) {
     return {
       ok: false,
       code: 'excess_permissions',
-      error: 'Coqui accepts only keys without Trade or Transfer permission.',
+      error: 'Coqui accepts only keys without Trade, Transfer, or Receive permission.',
       diagnostics: diagnostics(permissions.status, null, null),
     };
   }
 
-  const accounts = await http.getJson<unknown>(ACCOUNTS_URL);
+  const accounts = await http.getJson<unknown>(
+    ACCOUNTS_URL,
+    signal === undefined ? undefined : { signal },
+  );
   if (!accounts.ok) {
     if (accounts.reason === 'parse') {
       return {

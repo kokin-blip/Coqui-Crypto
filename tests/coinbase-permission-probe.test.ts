@@ -35,6 +35,7 @@ describe('probeCoinbaseViewOnlyPermissions', () => {
           can_view: true,
           can_trade: false,
           can_transfer: false,
+          can_receive: false,
           portfolio_uuid: ' portfolio-one ',
         },
       },
@@ -59,9 +60,10 @@ describe('probeCoinbaseViewOnlyPermissions', () => {
   });
 
   it.each([
-    { can_view: true, can_trade: true, can_transfer: false },
-    { can_view: true, can_trade: false, can_transfer: true },
-    { can_view: true, can_trade: true, can_transfer: true },
+    { can_view: true, can_trade: true, can_transfer: false, can_receive: false },
+    { can_view: true, can_trade: false, can_transfer: true, can_receive: false },
+    { can_view: true, can_trade: false, can_transfer: false, can_receive: true },
+    { can_view: true, can_trade: true, can_transfer: true, can_receive: true },
   ])('rejects transaction-capable keys before reading accounts', async (permissions) => {
     const fake = clientWith([{ ok: true, status: 200, data: permissions }]);
 
@@ -75,7 +77,7 @@ describe('probeCoinbaseViewOnlyPermissions', () => {
     const fake = clientWith([{
       ok: true,
       status: 200,
-      data: { can_view: true, can_trade: false },
+      data: { can_view: true, can_trade: false, can_receive: false },
     }]);
 
     const result = await probeCoinbaseViewOnlyPermissions(fake.client);
@@ -88,7 +90,7 @@ describe('probeCoinbaseViewOnlyPermissions', () => {
     const fake = clientWith([{
       ok: true,
       status: 200,
-      data: { can_view: false, can_trade: false, can_transfer: false },
+      data: { can_view: false, can_trade: false, can_transfer: false, can_receive: false },
     }]);
     await expect(probeCoinbaseViewOnlyPermissions(fake.client)).resolves.toMatchObject({
       ok: false,
@@ -123,7 +125,7 @@ describe('probeCoinbaseViewOnlyPermissions', () => {
       {
         ok: true,
         status: 200,
-        data: { can_view: true, can_trade: false, can_transfer: false },
+        data: { can_view: true, can_trade: false, can_transfer: false, can_receive: false },
       },
       { ok: true, status: 200, data: { unexpected: [] } },
     ]);
@@ -150,13 +152,26 @@ describe('probeCoinbaseViewOnlyPermissions', () => {
       {
         ok: true,
         status: 200,
-        data: { can_view: true, can_trade: false, can_transfer: false },
+        data: { can_view: true, can_trade: false, can_transfer: false, can_receive: false },
       },
       { ok: false, status: 200, reason: 'parse', retried: 0 },
     ]);
     await expect(probeCoinbaseViewOnlyPermissions(accounts.client)).resolves.toMatchObject({
       ok: false,
       code: 'accounts_unreadable',
+    });
+  });
+
+  it.each([
+    ['canceled', 'cancelled'],
+    ['shutdown', 'shutdown'],
+    ['elapsed-budget', 'elapsed_budget_exhausted'],
+  ] as const)('classifies %s without exposing transport detail', async (reason, code) => {
+    const fake = clientWith([{
+      ok: false, status: 0, reason, retried: 0,
+    }]);
+    await expect(probeCoinbaseViewOnlyPermissions(fake.client)).resolves.toMatchObject({
+      ok: false, code,
     });
   });
 });
