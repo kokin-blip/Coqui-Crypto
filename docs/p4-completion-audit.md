@@ -103,3 +103,59 @@ Twenty-three `Adapt` rows still lack a complete service boundary:
 P3 remains blocked, the final holdout remains unopened, strategy defaults remain unvalidated, and
 P5 IPC/`CoquiClient`/renderer work does not begin until the remaining P4 service gaps are closed or
 explicitly re-phased with a documented reason.
+
+## Re-phasing decision (2026-08-20)
+
+This section is the documented reason the gate above requires. **Thirteen of the twenty-three
+remaining rows are re-phased to the phase that owns their screen. None is dropped, and the coverage
+rule is unchanged** — each still requires a typed service boundary, tested safety behaviour, and an
+inventory row pointing at it before it counts as covered.
+
+**Reason.** The largest unretired risk in this repository is not the missing service rows. It is
+that roughly 25,000 lines of backend, the ADR-0003 assumption that `node:sqlite` is available inside
+an Electron renderer host, and a transport contract that does not yet exist have never met each
+other. `apps/desktop/src/index.ts` is a placeholder, so nothing here has been executed outside
+`vitest`. Closing thirteen further headless rows first would defer that integration risk by
+approximately three weeks and retire none of it. Building the ten rows the first screens actually
+consume, then proving the shell boots against them, tests the transport contract against real
+service shapes rather than against anticipated ones.
+
+**Closed during P5, before the shell (10 rows).** These back the scoreboard and markets screens and
+are prerequisites for any renderer work:
+
+| Rows | Destination boundary |
+|---|---|
+| `MARKET_PRICES`, `FEAR_GREED`, `COIN_CANDLES`, `MARKETS`, `TRENDING`, `YIELDS`, `NEWS_VIEW` | market-data display query facade |
+| `RESEARCH_RUNS`, `RESEARCH_JOB_LIST`, `RESEARCH_JOB_GET` | research read models |
+
+**Re-phased to P7 — Coinbase read-only integration (5 rows).** Both clusters are connection and
+import flows whose safety behaviour is only observable through the connect and import UI that P7
+builds; implementing them headless first would mean writing their credential and failure contracts
+twice:
+
+`COINGECKO_STATUS`, `COINGECKO_CONNECT`, `COINGECKO_DISCONNECT`, `COINGECKO_RESEARCH_SYNC`,
+`CSV_IMPORT`.
+
+`CSV_IMPORT` additionally belongs beside the Coinbase import path because both must satisfy
+invariant 12 — an unexplained balance is a reconciliation exception, never an invented zero-basis
+lot and never a proportional rescale — and that behaviour should be built once against one
+reconciliation ledger.
+
+**Re-phased to P8 — Risk and evidence surfaces (8 rows).** Every row in this group is an
+estimate-bearing or derived view whose required proof is provenance display. That proof cannot be
+demonstrated without the surface that carries it:
+
+`DCA_PLAN`, `CONTRIBUTION_PLAN`, `HARVEST_VIEW`, `ASSET_REMOVE`, `DASHBOARD_MOVERS`,
+`WATCHLIST_GET`, `WATCHLIST_ADD`, `WATCHLIST_REMOVE`.
+
+The three `WATCHLIST_*` rows carry a second, independent blocker that this decision does not
+resolve: their predecessor semantics are attributed public blockchain addresses, not selected coins.
+They stay queued until chain-address canonicalization, attribution, and observation provenance can be
+modelled without importing observed balances into holdings and without implying that an attribution
+is verified. If that modelling is not settled by P8, the rows are deferred again rather than shipped
+with a weaker claim.
+
+**What this decision does not change.** P3 stays blocked and strategy defaults stay labelled
+legacy/unvalidated in every surface that displays them. The dependency-ordered queue above still
+governs the order within each cluster. P4 is not declared complete: it closes when all 76 `Adapt`
+rows have tested boundaries, which now happens across P5, P7, and P8 rather than in one phase.

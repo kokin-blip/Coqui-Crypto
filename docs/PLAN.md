@@ -17,10 +17,25 @@ Effort figures assume one part-time developer with assistance.
 > **Update this section as phases complete. It is the first thing to read.**
 
 ```
-Current phase:  P3 — in progress
-Last completed: P2 — Market-data layer (2026-08-09)
+Current phase:  P5 — Shell and new UI (starting), with a P4 remainder
+Last completed: P4 — Services layer, partial (2026-08-10) — 53 of 76 Adapt rows
+Verified:       108 test files / 657 tests, pnpm verify green (2026-08-20)
 Blocked on:     complete predecessor trial count for DSR/citable P3 evidence
 ```
+
+P3 executed its registered replacement study and recorded a negative result; it
+remains blocked on the missing predecessor private-vault trial count, so
+**strategy defaults stay labelled legacy/unvalidated everywhere they are
+displayed** and no run is presented as proof of edge.
+
+The P4 remainder is 23 `Adapt` handler rows. Ten are closed during P5 because the
+first screens need them; thirteen are **re-phased to the phase that owns their
+screen** — see `docs/p4-completion-audit.md` §"Re-phasing decision (2026-08-20)"
+for the row-by-row destinations and the reason. Nothing is dropped.
+
+P5 is greenfield: `apps/desktop/src/index.ts` and `packages/ui-kit/src/index.ts`
+are still placeholders, and `packages/contracts` carries envelope factories but
+no `CoquiClient`, channel registry, or request/response schemas.
 
 ---
 
