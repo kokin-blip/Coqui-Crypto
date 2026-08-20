@@ -45,12 +45,12 @@ message types rather than preserve these channels verbatim.
 
 | Source line | Channel constant | Destination | Disposition | Migration contract |
 |---:|---|---|---|---|
-| 9583 | `MARKET_PRICES` | `market-data` | Adapt | Reference prices only; never splice aggregator prices into Coinbase decision bars. |
-| 9584 | `FEAR_GREED` | `market-data` | Adapt | Keyless reference feature with provenance and freshness. |
-| 9585 | `COIN_CANDLES` | `market-data` | Adapt | Return canonical, completed, timestamped bars; validate instrument and timeframe. |
-| 9588 | `MARKETS` | `market-data` | Adapt | Reference market snapshot with source and observation time. |
-| 9589 | `TRENDING` | `market-data` | Adapt | Informational only; never a trading signal. |
-| 9590 | `YIELDS` | `market-data` | Adapt | Informational reference data with staleness metadata. |
+| 9583 | `MARKET_PRICES` | `market-data` | Adapt | Reference prices only; never splice aggregator prices into Coinbase decision bars. Implemented by `MarketDisplayQueryService.prices`; transport remains deferred. |
+| 9584 | `FEAR_GREED` | `market-data` | Adapt | Keyless reference feature with provenance and freshness. Implemented by `MarketDisplayQueryService.fearGreed`; transport remains deferred. |
+| 9585 | `COIN_CANDLES` | `market-data` | Adapt | Return canonical, completed, timestamped bars; validate instrument and timeframe. Implemented by `MarketDisplayQueryService.candles`; transport remains deferred. |
+| 9588 | `MARKETS` | `market-data` | Adapt | Reference market snapshot with source and observation time. Implemented by `MarketDisplayQueryService.markets`; transport remains deferred. |
+| 9589 | `TRENDING` | `market-data` | Adapt | Informational only; never a trading signal. Implemented by `MarketDisplayQueryService.trending`; transport remains deferred. |
+| 9590 | `YIELDS` | `market-data` | Adapt | Informational reference data with staleness metadata. Implemented by `MarketDisplayQueryService.yields`; transport remains deferred. |
 | 9591 | `DCA_PLAN` | `portfolio` | Adapt | Behavioural contribution plan, explicitly not an alpha claim. |
 | 9595 | `CATALOG_SEARCH` | `market-data` | Adapt | Implemented by `DisplayUniverseService.search` over a bounded, cancellable, strictly normalized Coinbase USD spot catalog; returned identities and verified Coinbase mappings are retained without changing research membership. |
 | 9596 | `PORTFOLIO_VIEW` | `portfolio` | Adapt | Implemented by `PortfolioReadModelService.portfolioView` with exact valuation, per-holding source/quality provenance, and explicit incomplete pricing. |
@@ -101,7 +101,7 @@ message types rather than preserve these channels verbatim.
 | 9671 | `EVIDENCE_EXPORT` | `risk` | Defer P5 | Risk produces redacted evidence data; desktop owns file selection. |
 | 9672 | `TAX_PREVIEW` | `portfolio` | Adapt | Implemented by `PortfolioTaxService.previewSale` as a no-write exact-decimal comparison with explicit rates and lot-method identity. |
 | 9677 | `BOT_VIEW` | `paper` | Defer P6 | Paper status/read model only; remove promotional or live claims. |
-| 9678 | `NEWS_VIEW` | `market-data` | Adapt | Informational and explicitly never a signal. |
+| 9678 | `NEWS_VIEW` | `market-data` | Adapt | Informational and explicitly never a signal. Implemented by `MarketDisplayQueryService.news`; transport remains deferred. |
 | 9679 | `BOT_SET_BUDGET` | `paper` | Defer P6 | Decimal paper-only budget with an explicit funding source. |
 | 9684 | `STRATEGY_BACKTEST` | `research` | Defer P3 | Use registered dataset, costs, trials, and final-holdout policy. |
 | 9687 | `SIMULATION_LAB` | `research` | Defer P3 | Evidence-only sandbox; cannot mutate production/default strategy. |
