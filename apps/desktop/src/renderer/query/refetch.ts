@@ -41,6 +41,9 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'research.runs': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
   'research.jobs': { refetchIntervalMs: 30 * SECOND, staleTimeMs: 10 * SECOND },
   'research.job': { refetchIntervalMs: 30 * SECOND, staleTimeMs: 10 * SECOND },
+  // The gate moves when a new evidence snapshot is written, which happens at
+  // most daily. It is polled at all only so a long-running window notices.
+  'risk.evidence-gate': { refetchIntervalMs: 5 * MINUTE, staleTimeMs: 2 * MINUTE },
 };
 
 /** Total polls per hour across every channel, for the review in UI-UX §5. */

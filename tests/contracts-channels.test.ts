@@ -52,6 +52,7 @@ describe('channel registry', () => {
       'research.job',
       'research.jobs',
       'research.runs',
+      'risk.evidence-gate',
     ]);
   });
 
@@ -151,6 +152,46 @@ describe('response envelope', () => {
       }).success,
     ).toBe(false);
     expect(issueSchema.safeParse({ path: ['runs'], code: 'Error: boom' }).success).toBe(false);
+  });
+});
+
+describe('risk evidence gate contract', () => {
+  it('pins liveExecutionPermitted to false on the wire', () => {
+    const schema = CHANNEL_SCHEMAS['risk.evidence-gate'].response;
+    const base = {
+      schemaVersion: 1,
+      assessedAtMs: 1_724_000_000_000,
+      status: 'requirements_not_met',
+      trialHistoryComplete: true,
+      source: null,
+      facts: null,
+      gates: [{ code: 'significance', met: false }],
+      conversationEligible: false,
+      liveExecutionPermitted: false,
+      assessmentHash: 'a'.repeat(64),
+    };
+    expect(schema.safeParse(base).success).toBe(true);
+    // Reaching the gate makes live considerable, never enabled. A main process
+    // that tried to send true fails validation rather than lighting a control.
+    expect(schema.safeParse({ ...base, liveExecutionPermitted: true }).success).toBe(false);
+  });
+
+  it('rejects a status outside the closed vocabulary', () => {
+    const schema = CHANNEL_SCHEMAS['risk.evidence-gate'].response;
+    expect(
+      schema.safeParse({
+        schemaVersion: 1,
+        assessedAtMs: 1,
+        status: 'looks_fine_to_me',
+        trialHistoryComplete: true,
+        source: null,
+        facts: null,
+        gates: [],
+        conversationEligible: false,
+        liveExecutionPermitted: false,
+        assessmentHash: 'a'.repeat(64),
+      }).success,
+    ).toBe(false);
   });
 });
 

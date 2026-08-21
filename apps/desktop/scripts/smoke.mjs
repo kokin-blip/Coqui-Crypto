@@ -154,6 +154,20 @@ async function run() {
   );
   check('research.jobs round-trips', jobs.status === 'ok', `status=${jobs.status}`);
 
+  // The scoreboard's channel, end to end. liveExecutionPermitted is pinned to
+  // false by the wire type, so a main process that sent true would fail
+  // response validation rather than reach the screen.
+  const gate = JSON.parse(
+    await withTimeout('risk.evidence-gate', window.webContents.executeJavaScript(
+      'window.coqui.query("risk.evidence-gate", {}).then(JSON.stringify)',
+    )),
+  );
+  check(
+    'risk.evidence-gate round-trips',
+    gate.status === 'ok' && gate.value.liveExecutionPermitted === false,
+    `status=${gate.status}, gateStatus=${gate.value?.status}`,
+  );
+
   window.destroy();
 }
 

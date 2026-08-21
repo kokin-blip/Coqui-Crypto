@@ -1,6 +1,7 @@
 import {
   evidenceGateChecklist,
   sha256Hex,
+  trialCountForSignificance,
   trialRegistryHash,
   type Clock,
   type EvidenceSnapshot,
@@ -211,7 +212,13 @@ export class RiskEvidenceTrackerService {
     let currentTrialRegistryHash: string;
     try {
       const registry = loadTrialRegistry(this.#database);
-      if (registry.completeness !== 'complete') {
+      // One predicate decides this, shared with the significance engine. A
+      // conservative upper bound is admissible for the same reason it is
+      // admissible to DSR: over-counting trials deflates further, so it can
+      // only make this gate harder to pass, never easier. Comparing to
+      // 'complete' directly would let core and this service disagree about
+      // whether the same registry is usable.
+      if (trialCountForSignificance(registry) === null) {
         return blocked(assessedAtMs, 'blocked_trial_history_incomplete', false);
       }
       currentTrialRegistryHash = trialRegistryHash(registry);

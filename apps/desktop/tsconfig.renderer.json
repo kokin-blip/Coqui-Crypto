@@ -4,11 +4,43 @@
     "composite": false,
     "noEmit": true,
     "jsx": "react-jsx",
-    "lib": ["ES2024", "DOM", "DOM.Iterable"],
-    "types": ["vite/client"],
+    "lib": [
+      "ES2024",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "types": [
+      "vite/client"
+    ],
     "module": "Preserve",
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "paths": {
+      "@coqui/adapters": [
+        "../../packages/adapters/src/index.ts"
+      ],
+      "@coqui/core": [
+        "../../packages/core/src/index.ts"
+      ],
+      "@coqui/contracts": [
+        "../../packages/contracts/src/index.ts"
+      ],
+      "@coqui/observability": [
+        "../../packages/observability/src/index.ts"
+      ],
+      "@coqui/services": [
+        "../../packages/services/src/index.ts"
+      ],
+      "@coqui/storage": [
+        "../../packages/storage/src/index.ts"
+      ],
+      "@coqui/ui-kit": [
+        "../../packages/ui-kit/src/index.ts"
+      ]
+    }
   },
-  "include": ["src/renderer/**/*.ts", "src/renderer/**/*.tsx"]
+  "include": [
+    "src/renderer/**/*.ts",
+    "src/renderer/**/*.tsx"
+  ]
 }

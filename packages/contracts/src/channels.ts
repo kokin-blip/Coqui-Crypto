@@ -2,6 +2,7 @@ import * as z from 'zod';
 
 import { marketDataChannelSchemas } from './schemas/market-data.js';
 import { researchChannelSchemas } from './schemas/research.js';
+import { riskChannelSchemas } from './schemas/risk.js';
 import type { ContractSchema, DeepReadonly } from './messages.js';
 
 /**
@@ -21,6 +22,7 @@ import type { ContractSchema, DeepReadonly } from './messages.js';
 export const CHANNEL_SCHEMAS = {
   ...marketDataChannelSchemas,
   ...researchChannelSchemas,
+  ...riskChannelSchemas,
 } as const;
 
 export type ChannelSchemas = typeof CHANNEL_SCHEMAS;

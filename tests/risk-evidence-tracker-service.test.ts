@@ -7,6 +7,7 @@ import {
   loadTrialRegistry,
   saveResearchPreRegistration,
   saveResearchEvidenceSnapshot,
+  setTrialRegistryCompleteness,
   type Db,
   type StoredResearchEvidenceSnapshot,
 } from '../packages/storage/src/index.js';
@@ -122,6 +123,7 @@ describe('risk evidence-tracker service', () => {
     saveEvidence(invalidDb, gateResult(), {
       snapshotHash: '0'.repeat(64),
     });
+
     const invalid = new RiskEvidenceTrackerService({
       database: invalidDb, clock: new FixedClock(2),
     }).track();
@@ -253,5 +255,31 @@ describe('risk evidence-tracker service', () => {
       database: contradictoryDb, clock: new FixedClock(5),
     }).track().status).toBe('blocked_unsupported_evidence');
     contradictoryDb.close();
+  });
+  it('accepts a conservative upper bound, matching the significance engine', () => {
+    const database = openDatabase(':memory:');
+    // Over-counting trials deflates further, so an upper bound can only make
+    // this gate harder to pass. Core already admits it for DSR; blocking here
+    // would let the two disagree about the same registry.
+    setTrialRegistryCompleteness('conservative-upper-bound', database);
+    const view = new RiskEvidenceTrackerService({
+      database,
+      clock: new FixedClock(123),
+    }).track();
+
+    expect(view.status).not.toBe('blocked_trial_history_incomplete');
+    database.close();
+  });
+
+  it('still blocks on a known lower bound', () => {
+    const database = openDatabase(':memory:');
+    const view = new RiskEvidenceTrackerService({
+      database,
+      clock: new FixedClock(123),
+    }).track();
+
+    expect(view.status).toBe('blocked_trial_history_incomplete');
+    expect(view.trialHistoryComplete).toBe(false);
+    database.close();
   });
 });

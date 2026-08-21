@@ -1,26 +1,28 @@
 import type { CoquiClient } from '@coqui/contracts';
 
+import { Scoreboard } from './Scoreboard.js';
 import { useChannel } from '../query/use-channel.js';
 
 /**
  * Boot shell.
  *
- * This is the vertical slice that proves the stack: a real channel read through
- * the query layer, rendering each designed state distinctly. The scoreboard
- * replaces it in Stage 4, once the wireframes are approved — UI-UX §0 forbids
- * propagating a visual language before that.
+ * Hosts the scoreboard, the first screen and the one that establishes the
+ * language for the rest (`docs/UI-UX.md` §2). Styling stays minimal until the
+ * wireframe review; §0 forbids propagating a visual language before then.
  */
 export function App({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const runs = useChannel(client, 'research.runs', {});
 
   return (
-    <main className="mx-auto max-w-3xl p-8 font-mono text-sm">
+    <main className="mx-auto max-w-3xl space-y-6 p-8 font-mono text-sm">
       <h1 className="mb-1 text-base font-semibold">Coqui</h1>
       <p className="mb-6 opacity-70">
         paper-trading research · no live order path exists in this build
       </p>
 
-      <section aria-labelledby="runs-heading">
+      <Scoreboard client={client} />
+
+      <section aria-labelledby="runs-heading" className="mt-8">
         <h2 id="runs-heading" className="mb-2 font-semibold">
           Registered study runs
         </h2>
