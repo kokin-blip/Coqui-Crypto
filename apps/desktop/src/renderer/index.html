@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--
+      The same policy the main process sends as a header. Kept in both places
+      deliberately: the header cannot be stripped by anything that influences
+      the HTML, and the meta tag applies before the first byte of script runs.
+      connect-src 'none' is load-bearing — every network call belongs to the
+      main process, so a renderer that can reach the network is already a
+      boundary violation.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+    />
+    <title>Coqui</title>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

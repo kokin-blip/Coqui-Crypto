@@ -2,3 +2,8 @@ packages:
   - "packages/*"
   - "apps/*"
 
+# esbuild's postinstall only verifies the platform binary that its optional
+# dependency already supplies, so the script is denied rather than approved.
+# The bundler is verified to work without it.
+allowBuilds:
+  esbuild: false

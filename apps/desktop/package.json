@@ -3,11 +3,22 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "scripts": { "build": "tsc -b" },
+  "main": "dist/main/index.js",
+  "scripts": {
+    "build": "tsc -b && node scripts/build-preload.mjs",
+    "start": "pnpm build && electron .",
+    "smoke": "pnpm build && electron scripts/smoke.mjs"
+  },
   "dependencies": {
+    "@coqui/adapters": "workspace:*",
     "@coqui/contracts": "workspace:*",
+    "@coqui/core": "workspace:*",
     "@coqui/services": "workspace:*",
+    "@coqui/storage": "workspace:*",
     "@coqui/ui-kit": "workspace:*"
+  },
+  "devDependencies": {
+    "electron": "43.4.1",
+    "esbuild": "0.28.2"
   }
 }
-

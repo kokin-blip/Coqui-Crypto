@@ -1,0 +1,161 @@
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
+import { existsSync, mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+/**
+ * Stage 2.4 smoke gate.
+ *
+ * Proves the boundary end to end in a real Electron process: the composition
+ * root builds, `node:sqlite` opens a migrated profile database, the dispatcher
+ * validates a request, a real service answers it, the response is validated
+ * against the contract, and the whole thing arrives in the renderer through the
+ * sandboxed preload's `contextBridge`.
+ *
+ * Everything under test is the production module — `composition.js`,
+ * `dispatch.js`, `security.js` and the bundled preload — so passing here means
+ * those files work, not that a parallel harness does.
+ */
+
+const root = dirname(dirname(fileURLToPath(import.meta.url)));
+
+// `tsc -b` skips emitting when its .tsbuildinfo looks current, so a dist that
+// was deleted by hand comes back empty and the failure would otherwise surface
+// as an opaque module-resolution error after Electron has already booted.
+for (const artifact of ['dist/main/composition.js', 'dist/preload/index.cjs']) {
+  if (!existsSync(join(root, artifact))) {
+    console.error(`[coqui] missing ${artifact} — run "pnpm --filter @coqui/desktop build --force".`);
+    process.exit(1);
+  }
+}
+
+const { createRuntime } = await import(join(root, 'dist/main/composition.js'));
+const { createDispatcher } = await import(join(root, 'dist/main/dispatch.js'));
+const { applyWindowHardening, WEB_PREFERENCES, CONTENT_SECURITY_POLICY } = await import(
+  join(root, 'dist/main/security.js')
+);
+
+const checks = [];
+function check(name, passed, detail = '') {
+  checks.push({ name, passed, detail });
+}
+
+const dataDir = mkdtempSync(join(tmpdir(), 'coqui-smoke-'));
+let runtime = null;
+
+async function run() {
+  runtime = createRuntime({
+    databasePath: join(dataDir, 'coqui.db'),
+    profileId: 'main',
+  });
+  check('composition root builds', runtime.handlers !== undefined);
+
+  const version = runtime.database.prepare('PRAGMA user_version').get();
+  check('profile database migrated', Number(version?.user_version) > 0, `user_version=${Number(version?.user_version)}`);
+
+  const dispatch = createDispatcher({ handlers: runtime.handlers });
+  ipcMain.handle('coqui:query', async (_event, channel, payload) => dispatch(channel, payload));
+
+  const entry = join(root, 'src/renderer/index.html');
+  const origin = `file://${entry}`;
+  const window = new BrowserWindow({
+    show: false,
+    webPreferences: { ...WEB_PREFERENCES, preload: join(root, 'dist/preload/index.cjs') },
+  });
+
+  const installed = applyWindowHardening(window.webContents, origin, shell);
+  check('window hardening installed', installed === 5, `${installed} controls`);
+  check('sandbox enabled', WEB_PREFERENCES.sandbox === true);
+  check('csp denies connect-src', CONTENT_SECURITY_POLICY.includes("connect-src 'none'"));
+
+  await window.loadFile(entry);
+  check('renderer loaded', true);
+
+  // The bridge must exist in the renderer's main world, and nothing else.
+  const bridge = await window.webContents.executeJavaScript(
+    'JSON.stringify({ hasCoqui: typeof window.coqui === "object", ' +
+      'hasQuery: typeof window.coqui?.query === "function", ' +
+      'hasRequire: typeof window.require !== "undefined", ' +
+      'hasProcess: typeof window.process !== "undefined" })',
+  );
+  const bridgeState = JSON.parse(bridge);
+  check('contextBridge exposes coqui.query', bridgeState.hasCoqui && bridgeState.hasQuery);
+  check('renderer has no node require', bridgeState.hasRequire === false);
+  check('renderer has no node process', bridgeState.hasProcess === false);
+
+  // A real round trip: renderer -> preload validation -> ipcMain -> dispatcher
+  // -> ResearchReadModelService -> response validation -> renderer.
+  const runs = JSON.parse(
+    await window.webContents.executeJavaScript(
+      'window.coqui.query("research.runs", {}).then(JSON.stringify)',
+    ),
+  );
+  check(
+    'research.runs round-trips',
+    runs.status === 'ok' && Array.isArray(runs.value),
+    `status=${runs.status}`,
+  );
+
+  // An unregistered channel is refused at the preload, before any IPC.
+  const unknown = JSON.parse(
+    await window.webContents.executeJavaScript(
+      'window.coqui.query("market-data.everything", {}).then(JSON.stringify)',
+    ),
+  );
+  check(
+    'unknown channel refused',
+    unknown.status === 'failed' && unknown.issues[0].code === 'unknown_channel',
+    `code=${unknown.issues?.[0]?.code}`,
+  );
+
+  // An out-of-range payload is refused before a service runs.
+  const badPayload = JSON.parse(
+    await window.webContents.executeJavaScript(
+      'window.coqui.query("research.jobs", { limit: 9999 }).then(JSON.stringify)',
+    ),
+  );
+  check(
+    'invalid payload refused',
+    badPayload.status === 'failed' && badPayload.issues[0].code === 'invalid_request_payload',
+    `code=${badPayload.issues?.[0]?.code}`,
+  );
+
+  // A well-formed request reaching a real service through the whole chain.
+  const jobs = JSON.parse(
+    await window.webContents.executeJavaScript(
+      'window.coqui.query("research.jobs", { limit: 5 }).then(JSON.stringify)',
+    ),
+  );
+  check('research.jobs round-trips', jobs.status === 'ok', `status=${jobs.status}`);
+
+  window.destroy();
+}
+
+app.enableSandbox();
+
+app.whenReady().then(async () => {
+  let fatal = null;
+  try {
+    await run();
+  } catch (error) {
+    fatal = error;
+  }
+
+  console.log('\n=== STAGE 2.4 SMOKE GATE ===');
+  for (const { name, passed, detail } of checks) {
+    console.log(`${passed ? 'PASS' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`);
+  }
+  if (fatal) console.log(`FAIL  threw: ${fatal?.stack ?? fatal}`);
+
+  const failures = checks.filter((entry) => !entry.passed).length + (fatal ? 1 : 0);
+  console.log(`=== ${failures === 0 ? 'ALL PASS' : `${failures} FAILED`} ===`);
+
+  try {
+    runtime?.dispose();
+  } catch {
+    // Disposal noise must not mask the result above.
+  }
+  rmSync(dataDir, { recursive: true, force: true });
+  app.exit(failures === 0 ? 0 : 1);
+});
