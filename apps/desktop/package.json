@@ -5,20 +5,32 @@
   "type": "module",
   "main": "dist/main/index.js",
   "scripts": {
-    "build": "tsc -b && node scripts/build-preload.mjs",
+    "build": "tsc -b && node scripts/build-preload.mjs && vite build",
+    "dev": "vite",
     "start": "pnpm build && electron .",
     "smoke": "pnpm build && electron scripts/smoke.mjs"
   },
   "dependencies": {
+    "@base-ui/react": "1.7.0",
     "@coqui/adapters": "workspace:*",
     "@coqui/contracts": "workspace:*",
     "@coqui/core": "workspace:*",
     "@coqui/services": "workspace:*",
     "@coqui/storage": "workspace:*",
-    "@coqui/ui-kit": "workspace:*"
+    "@coqui/ui-kit": "workspace:*",
+    "@tanstack/react-query": "5.101.4",
+    "lightweight-charts": "5.2.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "4.3.3",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "@vitejs/plugin-react": "6.1.0",
     "electron": "43.4.1",
-    "esbuild": "0.28.2"
+    "esbuild": "0.28.2",
+    "tailwindcss": "4.3.3",
+    "vite": "8.2.2"
   }
 }

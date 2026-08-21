@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { existsSync, mkdtempSync, rmSync } from 'node:fs';
+import { setTimeout } from 'node:timers';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -23,7 +24,7 @@ const root = dirname(dirname(fileURLToPath(import.meta.url)));
 // `tsc -b` skips emitting when its .tsbuildinfo looks current, so a dist that
 // was deleted by hand comes back empty and the failure would otherwise surface
 // as an opaque module-resolution error after Electron has already booted.
-for (const artifact of ['dist/main/composition.js', 'dist/preload/index.cjs']) {
+for (const artifact of ['dist/main/composition.js', 'dist/preload/index.cjs', 'dist/renderer/index.html']) {
   if (!existsSync(join(root, artifact))) {
     console.error(`[coqui] missing ${artifact} — run "pnpm --filter @coqui/desktop build --force".`);
     process.exit(1);
@@ -39,6 +40,22 @@ const { applyWindowHardening, WEB_PREFERENCES, CONTENT_SECURITY_POLICY } = await
 const checks = [];
 function check(name, passed, detail = '') {
   checks.push({ name, passed, detail });
+  console.log(`${passed ? 'PASS' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`);
+}
+
+/**
+ * A hung renderer must fail the gate, not stall it. Without this a blocked
+ * `executeJavaScript` would burn the whole CI job timeout and report nothing
+ * about which step it reached.
+ */
+const WATCHDOG_MS = 60_000;
+function withTimeout(label, promise) {
+  return Promise.race([
+    promise,
+    new Promise((_resolve, reject) =>
+      setTimeout(() => reject(new Error(`timed out after ${WATCHDOG_MS}ms: ${label}`)), WATCHDOG_MS),
+    ),
+  ]);
 }
 
 const dataDir = mkdtempSync(join(tmpdir(), 'coqui-smoke-'));
@@ -57,7 +74,7 @@ async function run() {
   const dispatch = createDispatcher({ handlers: runtime.handlers });
   ipcMain.handle('coqui:query', async (_event, channel, payload) => dispatch(channel, payload));
 
-  const entry = join(root, 'src/renderer/index.html');
+  const entry = join(root, 'dist/renderer/index.html');
   const origin = `file://${entry}`;
   const window = new BrowserWindow({
     show: false,
@@ -69,16 +86,24 @@ async function run() {
   check('sandbox enabled', WEB_PREFERENCES.sandbox === true);
   check('csp denies connect-src', CONTENT_SECURITY_POLICY.includes("connect-src 'none'"));
 
-  await window.loadFile(entry);
+  await withTimeout('loadFile', window.loadFile(entry));
   check('renderer loaded', true);
 
+  // The React tree must actually mount under the CSP. A blank root would mean
+  // the bundle was blocked, which is the failure this gate exists to catch.
+  const mounted = await withTimeout(
+    'mount probe',
+    window.webContents.executeJavaScript('document.getElementById("root").children.length > 0'),
+  );
+  check('react tree mounted under CSP', mounted === true);
+
   // The bridge must exist in the renderer's main world, and nothing else.
-  const bridge = await window.webContents.executeJavaScript(
+  const bridge = await withTimeout('bridge probe', window.webContents.executeJavaScript(
     'JSON.stringify({ hasCoqui: typeof window.coqui === "object", ' +
       'hasQuery: typeof window.coqui?.query === "function", ' +
       'hasRequire: typeof window.require !== "undefined", ' +
       'hasProcess: typeof window.process !== "undefined" })',
-  );
+  ));
   const bridgeState = JSON.parse(bridge);
   check('contextBridge exposes coqui.query', bridgeState.hasCoqui && bridgeState.hasQuery);
   check('renderer has no node require', bridgeState.hasRequire === false);
@@ -87,9 +112,9 @@ async function run() {
   // A real round trip: renderer -> preload validation -> ipcMain -> dispatcher
   // -> ResearchReadModelService -> response validation -> renderer.
   const runs = JSON.parse(
-    await window.webContents.executeJavaScript(
+    await withTimeout('research.runs', window.webContents.executeJavaScript(
       'window.coqui.query("research.runs", {}).then(JSON.stringify)',
-    ),
+    )),
   );
   check(
     'research.runs round-trips',
@@ -99,9 +124,9 @@ async function run() {
 
   // An unregistered channel is refused at the preload, before any IPC.
   const unknown = JSON.parse(
-    await window.webContents.executeJavaScript(
+    await withTimeout('unknown channel', window.webContents.executeJavaScript(
       'window.coqui.query("market-data.everything", {}).then(JSON.stringify)',
-    ),
+    )),
   );
   check(
     'unknown channel refused',
@@ -111,9 +136,9 @@ async function run() {
 
   // An out-of-range payload is refused before a service runs.
   const badPayload = JSON.parse(
-    await window.webContents.executeJavaScript(
+    await withTimeout('invalid payload', window.webContents.executeJavaScript(
       'window.coqui.query("research.jobs", { limit: 9999 }).then(JSON.stringify)',
-    ),
+    )),
   );
   check(
     'invalid payload refused',
@@ -123,9 +148,9 @@ async function run() {
 
   // A well-formed request reaching a real service through the whole chain.
   const jobs = JSON.parse(
-    await window.webContents.executeJavaScript(
+    await withTimeout('research.jobs', window.webContents.executeJavaScript(
       'window.coqui.query("research.jobs", { limit: 5 }).then(JSON.stringify)',
-    ),
+    )),
   );
   check('research.jobs round-trips', jobs.status === 'ok', `status=${jobs.status}`);
 
@@ -143,9 +168,6 @@ app.whenReady().then(async () => {
   }
 
   console.log('\n=== STAGE 2.4 SMOKE GATE ===');
-  for (const { name, passed, detail } of checks) {
-    console.log(`${passed ? 'PASS' : 'FAIL'}  ${name}${detail ? `  (${detail})` : ''}`);
-  }
   if (fatal) console.log(`FAIL  threw: ${fatal?.stack ?? fatal}`);
 
   const failures = checks.filter((entry) => !entry.passed).length + (fatal ? 1 : 0);

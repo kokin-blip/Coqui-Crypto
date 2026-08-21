@@ -1,0 +1,60 @@
+@import 'tailwindcss';
+
+/*
+ * Coqui owns every visual token. Tailwind is the styling engine only; the
+ * primitive layer (ADR-0005) supplies behaviour and no appearance.
+ *
+ * Financial figures use tabular numerals and stable column widths so a value
+ * changing from 9 to 10 does not reflow the row (docs/UI-UX.md §1).
+ */
+@theme {
+  --font-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Motion tokens. Three durations, not a scale — UI-UX §3. */
+  --duration-fast: 83ms;
+  --duration-base: 167ms;
+  --duration-slow: 250ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+:root {
+  color-scheme: dark light;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * A complete no-motion path, not a reduction. UI-UX §4 requires essential
+ * state to remain visible without motion, so transitions are removed outright
+ * rather than shortened.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+:root[data-motion='none'] *,
+:root[data-motion='none'] *::before,
+:root[data-motion='none'] *::after {
+  animation-duration: 1ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 1ms !important;
+  scroll-behavior: auto !important;
+}

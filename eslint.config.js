@@ -117,12 +117,13 @@ const architecturePlugin = {
       },
     },
     'no-renderer-interval': {
-      meta: { type: 'problem', schema: [], messages: { forbidden: 'renderer components and features cannot own setInterval' } },
+      meta: { type: 'problem', schema: [], messages: { forbidden: 'renderer code cannot own setInterval; declare a cadence in query/refetch.ts' } },
       create(context) {
         const filename = normalize(context.filename);
-        const guarded =
-          filename.includes('/apps/desktop/src/renderer/components/') ||
-          filename.includes('/apps/desktop/src/renderer/features/');
+        // The whole renderer, not just components and features. A timer in a
+        // hook, a context, or an app shell is exactly as invisible as one in a
+        // component, and the original rule left those directories unguarded.
+        const guarded = filename.includes('/apps/desktop/src/renderer/');
         return {
           CallExpression(node) {
             if (guarded && node.callee.type === 'Identifier' && node.callee.name === 'setInterval') {
@@ -191,7 +192,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['apps/desktop/src/renderer/components/**/*.tsx', 'apps/desktop/src/renderer/features/**/*.tsx'],
+    files: ['apps/desktop/src/renderer/**/*.tsx'],
     rules: {
       'max-lines': ['error', { max: 300, skipBlankLines: true, skipComments: true }],
     },

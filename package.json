@@ -8,7 +8,7 @@
     "node": ">=24"
   },
   "scripts": {
-    "typecheck": "tsc -p tsconfig.check.json --noEmit",
+    "typecheck": "tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.renderer.json --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
     "build": "tsc -b",

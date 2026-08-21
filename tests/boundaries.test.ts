@@ -56,6 +56,20 @@ const cases: readonly BoundaryCase[] = [
     ruleId: 'architecture/no-renderer-interval',
   },
   {
+    // A timer in a hook or an app shell is as invisible as one in a component;
+    // the rule originally guarded only components/ and features/.
+    name: 'rejects intervals anywhere in the renderer, not just components',
+    filePath: 'apps/desktop/src/renderer/app/Violation.tsx',
+    code: 'export const start = () => setInterval(() => undefined, 1_000);\n',
+    ruleId: 'architecture/no-renderer-interval',
+  },
+  {
+    name: 'rejects intervals in renderer hooks',
+    filePath: 'apps/desktop/src/renderer/query/violation.ts',
+    code: 'export const start = () => setInterval(() => undefined, 1_000);\n',
+    ruleId: 'architecture/no-renderer-interval',
+  },
+  {
     name: 'rejects wall-clock access in core',
     filePath: 'packages/core/src/time/violation.ts',
     code: 'export const current = () => Date.now();\n',

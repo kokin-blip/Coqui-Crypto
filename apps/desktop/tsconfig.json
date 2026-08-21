@@ -13,7 +13,8 @@
     ]
   },
   "include": [
-    "src/**/*.ts"
+    "src/main/**/*.ts",
+    "src/preload/**/*.ts"
   ],
   "references": [
     {
