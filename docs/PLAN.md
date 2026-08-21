@@ -17,10 +17,11 @@ Effort figures assume one part-time developer with assistance.
 > **Update this section as phases complete. It is the first thing to read.**
 
 ```
-Current phase:  P5 — Shell and new UI; transport spine done, ui-kit next
-Last completed: P5a — Electron shell boots and round-trips a channel (2026-08-21)
-Verified:       115 test files / 742 tests, pnpm verify green; smoke gate 13/13
-Next gate:      owner approval of scoreboard/portfolio/paper-review wireframes
+Current phase:  P5 — Shell and new UI; foundations done, screens next
+Last completed: P5b — ui-kit, query layer, primitive ADR, perf harness (2026-08-21)
+Verified:       117 test files / 771 tests green; smoke 14/14; perf p75 8.4ms
+Next work:      P5c — the strategy scoreboard, then the remaining screens
+Next gate:      owner approval of the wireframes in docs/design/
 P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
 ```
 
@@ -36,9 +37,28 @@ facade and research read models — putting 63 of 76 rows under tested service
 boundaries. The other thirteen are re-phased to the phase that owns their
 screen; see `docs/p4-completion-audit.md` §"Re-phasing decision (2026-08-20)".
 
-Still greenfield in P5: `packages/ui-kit` is a placeholder, there is no React,
-Vite, Tailwind or query layer yet, and the renderer is a bare HTML shell that
-holds the CSP. No screens exist.
+**The P5 foundations are in place.** React 19 · Vite 8 · Tailwind 4 · TanStack
+Query · Base UI 1.7.0 · lightweight-charts, all pinned. `packages/ui-kit` holds
+financial formatting, the provenance/freshness/validation badges, and the
+action-feedback state machine that makes optimistic success unreachable by
+construction. Every refetch cadence lives in one table in
+`query/refetch.ts`, and the `no-renderer-interval` lint rule now covers the whole
+renderer rather than two directories.
+
+ADR-0005 pins Base UI as the single headless primitive layer — it is the only
+candidate that injects no `<style>` element and therefore the only one that runs
+under `style-src 'self'` without a per-load CSP nonce.
+
+The performance harness is built and passing ahead of feature polish, with its
+own sensitivity control: warm shell 128 ms against a 1500 ms budget, interaction
+p75 8.4 ms against 200 ms, and a deliberately injected 250 ms regression that
+must breach the budget or the harness fails.
+
+**Still to build in P5:** every screen. `docs/design/wireframes-2026-08-21.md`
+holds approved-pending task maps and low-fidelity layouts for the scoreboard,
+portfolio and paper-action review; the renderer currently shows a boot shell
+that reads one channel. UI-UX §0 gates propagating the visual language to every
+screen on owner approval of those wireframes.
 
 P3's trial-count blocker is cleared. Recovering the predecessor's Obsidian vault
 moved the registry from 178 `known-lower-bound` to **215
