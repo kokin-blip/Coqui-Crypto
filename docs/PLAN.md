@@ -17,11 +17,31 @@ Effort figures assume one part-time developer with assistance.
 > **Update this section as phases complete. It is the first thing to read.**
 
 ```
-Current phase:  P5 — Shell and new UI (starting), with a P4 remainder
-Last completed: P4 — Services layer, partial (2026-08-10) — 53 of 76 Adapt rows
-Verified:       108 test files / 657 tests, pnpm verify green (2026-08-20)
+Current phase:  P5 — Shell and new UI; transport spine done, ui-kit next
+Last completed: P5a — Electron shell boots and round-trips a channel (2026-08-21)
+Verified:       115 test files / 742 tests, pnpm verify green; smoke gate 13/13
+Next gate:      owner approval of scoreboard/portfolio/paper-review wireframes
 Blocked on:     complete predecessor trial count for DSR/citable P3 evidence
 ```
+
+**The application runs.** `pnpm smoke` boots a real Electron main process,
+opens a migrated profile database through `node:sqlite`, and round-trips
+`research.runs` from the renderer through the sandboxed preload. Before this the
+repository was ~25,000 lines of backend that had never executed outside
+`vitest`. ADR-0003's runtime assumption is confirmed
+(`docs/studies/electron-node-sqlite-2026-08-20.md`); Electron 43.x is the floor.
+
+Ten of the 23 outstanding `Adapt` rows are closed — the market-data display
+facade and research read models — putting 63 of 76 rows under tested service
+boundaries. The other thirteen are re-phased to the phase that owns their
+screen; see `docs/p4-completion-audit.md` §"Re-phasing decision (2026-08-20)".
+
+Still greenfield in P5: `packages/ui-kit` is a placeholder, there is no React,
+Vite, Tailwind or query layer yet, and the renderer is a bare HTML shell that
+holds the CSP. No screens exist.
+
+P3 stays blocked, so strategy defaults must render as legacy/unvalidated
+wherever they appear.
 
 P3 executed its registered replacement study and recorded a negative result; it
 remains blocked on the missing predecessor private-vault trial count, so
