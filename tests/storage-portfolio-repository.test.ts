@@ -145,7 +145,7 @@ describe('legacy portfolio isolation', () => {
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run('legacy-lot', 'bitcoin', 'BTC', 'Bitcoin', 'BTC-USD', 'bitcoin', 1, 1, 10, 1, 'manual', null);
 
-    expect(runMigrations(database)).toBe(44);
+    expect(runMigrations(database)).toBe(45);
     expect(database.prepare('SELECT id FROM tax_lots WHERE id = ?').get('legacy-lot'))
       .toEqual({ id: 'legacy-lot' });
     expect(listTaxLots(database)).toEqual([]);

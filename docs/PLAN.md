@@ -21,7 +21,7 @@ Current phase:  P5 — Shell and new UI; transport spine done, ui-kit next
 Last completed: P5a — Electron shell boots and round-trips a channel (2026-08-21)
 Verified:       115 test files / 742 tests, pnpm verify green; smoke gate 13/13
 Next gate:      owner approval of scoreboard/portfolio/paper-review wireframes
-Blocked on:     complete predecessor trial count for DSR/citable P3 evidence
+P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
 ```
 
 **The application runs.** `pnpm smoke` boots a real Electron main process,
@@ -40,8 +40,18 @@ Still greenfield in P5: `packages/ui-kit` is a placeholder, there is no React,
 Vite, Tailwind or query layer yet, and the renderer is a bare HTML shell that
 holds the CSP. No screens exist.
 
-P3 stays blocked, so strategy defaults must render as legacy/unvalidated
-wherever they appear.
+P3's trial-count blocker is cleared. Recovering the predecessor's Obsidian vault
+moved the registry from 178 `known-lower-bound` to **215
+`conservative-upper-bound`**, so deflated Sharpe is computable for the first
+time — see `docs/studies/predecessor-vault-recovery-2026-08-21.md`. The recovery
+also found that the 2026-08-04 audit read only one branch and had missed three
+pre-registered studies committed to `kokinstocks`.
+
+This does not validate the defaults. The 2026-08-10 replacement run was negative
+on its own frozen criteria and nothing here revives it, so strategy parameters
+still render as legacy/unvalidated wherever they appear. The scoreboard must also
+state the bound's direction — "deflated against an upper bound of 215 trials" —
+never a bare number.
 
 P3 executed its registered replacement study and recorded a negative result; it
 remains blocked on the missing predecessor private-vault trial count, so

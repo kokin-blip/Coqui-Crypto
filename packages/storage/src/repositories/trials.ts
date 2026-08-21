@@ -61,6 +61,32 @@ export function loadTrialRegistry(database: Db): TrialRegistrySnapshot {
   return registry;
 }
 
+/**
+ * Move the registry's completeness forward.
+ *
+ * Only ever toward a state that supplies a budget to the significance engine.
+ * Regressing to `known-lower-bound` would silently withdraw a published DSR,
+ * and moving to `complete` requires an exact audit that no reconstruction can
+ * provide — so both are refused here rather than left to a caller's discipline.
+ */
+export function setTrialRegistryCompleteness(
+  completeness: TrialRegistryCompleteness,
+  database: Db,
+): void {
+  if (completeness !== 'conservative-upper-bound' && completeness !== 'complete') {
+    throw new TypeError('Registry completeness may only advance to a usable state.');
+  }
+  const current = database.prepare(
+    'SELECT completeness FROM trial_registry_meta WHERE singleton = 1',
+  ).get() as { completeness: TrialRegistryCompleteness };
+  if (current.completeness === 'complete' && completeness !== 'complete') {
+    throw new TypeError('A complete registry cannot be downgraded.');
+  }
+  database.prepare(
+    'UPDATE trial_registry_meta SET completeness = ? WHERE singleton = 1',
+  ).run(completeness);
+}
+
 /** Append one validated search; there is deliberately no update or delete path. */
 export function appendTrialRecord(record: TrialRecord, database: Db): void {
   registerTrials(loadTrialRegistry(database), record);

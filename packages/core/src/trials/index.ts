@@ -3,7 +3,24 @@ import { sha256Hex } from '../crypto/sha256.js';
 export type StrategyFamily = 'momentum' | 'voltarget' | 'trendvol' | 'signal-tilt' | 'rotation';
 export type SearchKind = 'grid' | 'random' | 'bayesian' | 'human-guided' | 'feature-screen' | 'other';
 export type TrialEvidenceStatus = 'verified' | 'legacy-unresolved';
-export type TrialRegistryCompleteness = 'complete' | 'known-lower-bound';
+/**
+ * How much of the historical search this registry represents.
+ *
+ * `known-lower-bound` withholds a count from the significance engine, because
+ * deflating against fewer trials than were really run overstates significance.
+ * `conservative-upper-bound` does supply one: over-counting can only deflate
+ * Sharpe further, so an inflated budget can understate an edge but never
+ * manufacture one. Recording a reconstructed budget as `complete` would be a
+ * false provenance claim, which is why it is a separate state.
+ */
+export type TrialRegistryCompleteness =
+  | 'complete'
+  | 'known-lower-bound'
+  | 'conservative-upper-bound';
+
+const COMPLETENESS_VALUES: readonly TrialRegistryCompleteness[] = [
+  'complete', 'known-lower-bound', 'conservative-upper-bound',
+];
 export type JsonPrimitive = boolean | number | string | null;
 export type JsonValue = JsonPrimitive | readonly JsonValue[] | { readonly [key: string]: JsonValue };
 
@@ -107,7 +124,7 @@ export function registerTrials(
   record: TrialRecord,
 ): TrialRegistrySnapshot {
   if (registry.schemaVersion !== 2) throw new TypeError('Unsupported TrialRegistry schema version');
-  if (registry.completeness !== 'complete' && registry.completeness !== 'known-lower-bound') {
+  if (!COMPLETENESS_VALUES.includes(registry.completeness)) {
     throw new TypeError('Unsupported TrialRegistry completeness');
   }
   validateRecord(record);
@@ -140,9 +157,18 @@ export function totalRegisteredTrialCount(registry: TrialRegistrySnapshot): numb
   return total;
 }
 
-/** Return a DSR search budget only when the historical audit is complete. */
+/**
+ * Return a DSR search budget only when the count cannot overstate significance.
+ *
+ * A complete audit is exact. A conservative upper bound is safe in one
+ * direction: it may deflate a real edge into invisibility, but it cannot turn
+ * noise into a result. A known lower bound is unsafe in exactly the wrong
+ * direction and supplies nothing.
+ */
 export function trialCountForSignificance(registry: TrialRegistrySnapshot): number | null {
-  return registry.completeness === 'complete' ? totalRegisteredTrialCount(registry) : null;
+  return registry.completeness === 'known-lower-bound'
+    ? null
+    : totalRegisteredTrialCount(registry);
 }
 
 /** Count searches backed by immutable dataset and cost-profile hashes. */

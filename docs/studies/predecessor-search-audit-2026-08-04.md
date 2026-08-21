@@ -81,3 +81,20 @@ pre-register a conservative replacement search budget before opening results,
 run it with the shared 85bps venue profile on a verified N7 dataset, and keep the
 historical audit unresolved. Missing history is not permission to declare a
 smaller number exact.
+
+## Superseded 2026-08-21
+
+Both gaps named above are closed by
+[`predecessor-vault-recovery-2026-08-21.md`](predecessor-vault-recovery-2026-08-21.md).
+The "private vault" is an Obsidian vault that was readable all along, and the
+earlier rotation round is reconstructed as an upper bound.
+
+Two claims on this page were wrong and are corrected there. The audited source is
+described as branch `pivot/kokintrader` "culminating" at `4f33bb8`, but commit
+`5d164a3` — three further pre-registered studies — is on `kokinstocks` and is not
+an ancestor of that branch, so **13 trials this page could not see were omitted**.
+The registry total is now 215 and its completeness is
+`conservative-upper-bound`, not `known-lower-bound`; deflated Sharpe is
+computable. Everything this page says about the old runs being unresolved,
+cost-mismatched, and unable to validate the defaults they influenced still
+stands.
