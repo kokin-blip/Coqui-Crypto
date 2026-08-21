@@ -164,8 +164,8 @@ anything in this list**; several encode deliberate pessimism or safety.
 | `src/core/wallets/*` | `services/accounts/` | Per-wallet DB contexts, manifest |
 | `src/core/research/python-toolchain.ts` | `services/research/` | Schema-versioned JSON contract |
 | `src/app/main/research-worker*.ts` | `services/research/` | `worker_threads` job execution |
-| `src/app/main/index.ts` window + security block | `apps/desktop/src/main/` | **CSP, `sandbox: true`, `will-navigate` block, window-open deny, permission deny-all. All correct today — copy exactly, then add the presence tests it never had** |
-| `src/app/renderer/index.html` CSP meta | `apps/desktop/src/renderer/index.html` | Includes `connect-src 'none'` — preserve |
+| `src/app/main/index.ts` window + security block | `apps/desktop/src/main/` | **Corrected 2026-08-20 — this row was wrong.** Verified against predecessor `80b5a1b`: of the five controls claimed here, only window-open deny exists, and it calls `shell.openExternal` on *any* URL with no scheme or domain check (that is S5, not a correct control). `sandbox: false` at `src/app/main/index.ts:4409`. No CSP, no `will-navigate` block, no permission handler anywhere in `src/`. **Write these from scratch; there is nothing safe to copy.** Keep `contextIsolation: true` and `nodeIntegration: false`, which are the two that are genuinely correct |
+| `src/app/renderer/index.html` CSP meta | `apps/desktop/src/renderer/index.html` | **Corrected 2026-08-20 — this row was wrong.** The predecessor's `index.html` has no CSP meta tag at all, so there is no `connect-src 'none'` to preserve. Author the CSP fresh and assert it with a presence test |
 | `src/app/renderer/src/help.ts` | `apps/desktop/src/renderer/` | ~335 lines of explanatory copy. Real work — port, don't rewrite |
 | `tests/*` | Co-located per package | ~75 files, ~598 cases |
 | `tests/fixtures/golden-backtest-v2.json` | `fixtures/` | **The proof gate for the whole migration** |
