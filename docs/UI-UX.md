@@ -54,9 +54,9 @@ spike rather than a wholesale theme installation:
 
 | Candidate | Use in the spike | Decision posture |
 |---|---|---|
-| [Base UI](https://base-ui.com/react/overview/about) | Unstyled dialog, popover, tooltip, menu, select/combobox, tabs, field, and toast behavior | **Preferred candidate** — React-compatible, headless, composable, Tailwind-compatible, and accessibility-focused |
-| [React Aria Components](https://react-spectrum.adobe.com/react-aria/getting-started.html) | Same interaction set, plus complex collection and form behavior | **Fallback** if its tested keyboard, internationalization, or collection behavior materially exceeds Base UI |
-| [Radix Primitives](https://www.radix-ui.com/primitives/docs/overview/introduction) | Compatibility fallback for any interaction the first two cannot meet safely | **Fallback**, not a second simultaneous primitive layer |
+| [Base UI](https://base-ui.com/react/overview/about) — package `@base-ui/react` | Unstyled dialog, popover, tooltip, menu, select/combobox, tabs, field, and toast behavior | **SELECTED 2026-08-21, ADR-0005.** The only candidate that injects no `<style>` element, so it is the only one that runs under `style-src 'self'` without a CSP nonce. Note the package rename: `@base-ui-components/react` is deprecated and its last release is a release candidate |
+| [React Aria Components](https://react-spectrum.adobe.com/react-aria/getting-started.html) | Same interaction set, plus complex collection and form behavior | **Rejected 2026-08-21 (ADR-0005)** — injects two `<style>` elements, so it needs a per-load CSP nonce; also the largest bundle at 58.95 kB gzip |
+| [Radix Primitives](https://www.radix-ui.com/primitives/docs/overview/introduction) | Compatibility fallback for any interaction the first two cannot meet safely | **Rejected 2026-08-21 (ADR-0005)** — smallest bundle at 18.10 kB gzip, but its scroll-lock injects a `<style>` element and needs a per-load CSP nonce |
 | Blueprint, Fluent, and Adobe Spectrum | Study dense desktop hierarchy, motion, keyboard, and status patterns | **Reference only**; do not import their recognizable full visual themes |
 | shadcn/ui, daisyUI, Flowbite, Preline, MUI, Ant Design, Chakra, and similar styled kits | Compare coverage and implementation ideas | **Do not adopt wholesale**; their default visual grammar would replace Coqui's and recreate a template look |
 
