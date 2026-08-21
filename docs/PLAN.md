@@ -17,11 +17,11 @@ Effort figures assume one part-time developer with assistance.
 > **Update this section as phases complete. It is the first thing to read.**
 
 ```
-Current phase:  P5 — Shell and new UI; foundations done, screens next
-Last completed: P5b — ui-kit, query layer, primitive ADR, perf harness (2026-08-21)
-Verified:       117 test files / 771 tests green; smoke 14/14; perf p75 8.4ms
-Next work:      P5c — the strategy scoreboard, then the remaining screens
-Next gate:      owner approval of the wireframes in docs/design/
+Current phase:  P5 — Shell and new UI; scoreboard landed, rest of screens next
+Last completed: P5c — strategy scoreboard wired end to end (2026-08-21)
+Verified:       117 test files / 775 tests green; smoke 15/15; perf p75 8.4ms
+Next work:      portfolio, allocation, tax, markets, paper, settings
+BLOCKED ON:     owner approval of docs/design/wireframes-2026-08-21.md
 P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
 ```
 
@@ -54,11 +54,18 @@ own sensitivity control: warm shell 128 ms against a 1500 ms budget, interaction
 p75 8.4 ms against 200 ms, and a deliberately injected 250 ms regression that
 must breach the budget or the harness fails.
 
-**Still to build in P5:** every screen. `docs/design/wireframes-2026-08-21.md`
-holds approved-pending task maps and low-fidelity layouts for the scoreboard,
-portfolio and paper-action review; the renderer currently shows a boot shell
-that reads one channel. UI-UX §0 gates propagating the visual language to every
-screen on owner approval of those wireframes.
+**The scoreboard exists.** `RiskEvidenceTrackerService` → `risk.evidence-gate`
+→ query layer → screen, proven end to end by the smoke gate. It follows the
+wireframe's hierarchy: the NOT VALIDATED warning above the numbers, DSR carrying
+its upper-bound badge rather than a bare figure, and failure/blocked/unknown
+rendered distinctly. `liveExecutionPermitted` is pinned to the literal `false`
+by the wire type.
+
+**P5 is blocked here.** `docs/UI-UX.md` §0 requires owner approval of the
+information hierarchy in `docs/design/wireframes-2026-08-21.md` before the
+visual language propagates to portfolio, allocation, tax, markets, paper and
+settings. Three questions are open at the foot of that document. Styling stays
+deliberately minimal until then.
 
 P3's trial-count blocker is cleared. Recovering the predecessor's Obsidian vault
 moved the registry from 178 `known-lower-bound` to **215
