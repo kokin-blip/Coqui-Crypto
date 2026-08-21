@@ -74,6 +74,17 @@ jobs:
         if: runner.os == 'Linux'
         run: xvfb-run --auto-servernum pnpm smoke
 
+      # Includes its own sensitivity control: a deliberately injected
+      # renderer-blocking regression must breach the budget, or the harness
+      # fails regardless of how good the baseline looks.
+      - name: Measure renderer performance
+        if: runner.os != 'Linux'
+        run: pnpm perf
+
+      - name: Measure renderer performance
+        if: runner.os == 'Linux'
+        run: xvfb-run --auto-servernum pnpm perf
+
   native-dependencies:
     strategy:
       fail-fast: false

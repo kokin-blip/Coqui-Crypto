@@ -8,7 +8,8 @@
     "build": "tsc -b && node scripts/build-preload.mjs && vite build",
     "dev": "vite",
     "start": "pnpm build && electron .",
-    "smoke": "pnpm build && electron scripts/smoke.mjs"
+    "smoke": "pnpm build && electron scripts/smoke.mjs",
+    "perf": "pnpm build && electron scripts/perf.mjs"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",

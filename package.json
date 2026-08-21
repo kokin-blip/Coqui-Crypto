@@ -13,6 +13,7 @@
     "test": "vitest run",
     "build": "tsc -b",
     "smoke": "pnpm --filter @coqui/desktop smoke",
+    "perf": "pnpm --filter @coqui/desktop perf",
     "dataset:coinbase": "pnpm build && node scripts/build-market-dataset.mjs",
     "universe:snapshot": "pnpm build && node scripts/snapshot-universe.mjs",
     "archive:binance": "pnpm build && node scripts/import-binance-archive.mjs",
