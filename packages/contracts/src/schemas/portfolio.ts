@@ -107,6 +107,34 @@ const discrepancySchema = z
   })
   .readonly();
 
+const resolutionKindSchema = z.enum([
+  'external_transfer_in',
+  'external_transfer_out',
+  'matched_to_lot',
+  'provider_error',
+  'investigating',
+]);
+
+const resolutionSchema = z
+  .strictObject({
+    id: z.string().min(1).max(128),
+    profileId: z.string().min(1).max(64),
+    discrepancyId: z.string().min(1).max(128),
+    kind: resolutionKindSchema,
+    linkedLotId: z.string().min(1).max(128).nullable(),
+    note: z.string().min(1).max(500),
+    decidedAt: epochMillisecondsSchema,
+  })
+  .readonly();
+
+const reconciliationExceptionSchema = z
+  .strictObject({
+    discrepancy: discrepancySchema,
+    resolution: resolutionSchema.nullable(),
+    history: z.array(resolutionSchema).max(50).readonly(),
+  })
+  .readonly();
+
 const allocationSliceSchema = z
   .strictObject({
     asset: assetRefSchema,
@@ -298,11 +326,52 @@ export const portfolioChannelSchemas = {
       .readonly(),
   },
   'portfolio.reconciliation': {
-    request: emptyPayloadSchema,
+    request: z.strictObject({ profileId: z.string().min(1).max(64) }).readonly(),
     response: z
       .strictObject({
         discrepancies: z.array(discrepancySchema).max(250).readonly(),
         lastRunAtMs: epochMillisecondsSchema.nullable(),
+        exceptions: z.array(reconciliationExceptionSchema).max(250).readonly(),
+        /** An exception parked as `investigating` still counts as unresolved. */
+        unresolvedCount: z.number().int().nonnegative(),
+        options: z
+          .array(
+            z
+              .strictObject({
+                kind: resolutionKindSchema,
+                label: z.string().min(1).max(80),
+                explanation: z.string().min(1).max(400),
+                requiresLot: z.boolean(),
+              })
+              .readonly(),
+          )
+          .max(10)
+          .readonly(),
+      })
+      .readonly(),
+  },
+
+  /**
+   * The first write channel in the application.
+   *
+   * It records a *decision* about immutable evidence; it never edits the
+   * evidence and never touches a tax lot (invariant 12). The response reports a
+   * refusal as a typed code rather than a thrown message, because this crosses
+   * IPC and a raw error can carry detail that must stay in the main process.
+   */
+  'portfolio.reconciliation.resolve': {
+    request: z
+      .strictObject({
+        profileId: z.string().min(1).max(64),
+        discrepancyId: z.string().min(1).max(128),
+        kind: resolutionKindSchema,
+        linkedLotId: z.string().min(1).max(128).nullable(),
+        note: z.string().min(1).max(500),
+      })
+      .readonly(),
+    response: z
+      .strictObject({
+        resolution: resolutionSchema,
       })
       .readonly(),
   },

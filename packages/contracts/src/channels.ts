@@ -51,16 +51,28 @@ export function isChannelName(value: unknown): value is ChannelName {
 }
 
 /**
- * Every channel is a read.
+ * Reads and the one write.
  *
- * Write channels will arrive with the paper engine in P6 and the Coinbase
- * connect flow in P7. Keeping the distinction explicit from the start means the
- * boundary can require confirmation semantics on writes rather than retrofitting
- * them: `docs/UI-UX.md` §3.1 forbids optimistic success on financial,
- * credential, kill-switch, export, and destructive actions, and that rule is
- * enforceable only if the transport knows which channels those are.
+ * The distinction was kept explicit while `write` was empty precisely so that
+ * the first write would not have to retrofit it. `docs/UI-UX.md` §3.1 forbids
+ * optimistic success on financial, credential, kill-switch, export and
+ * destructive actions, and that rule is enforceable only if the transport knows
+ * which channels those are.
+ *
+ * P6's paper engine added no write channel and needed none: it is
+ * scheduler-driven, so there is no user-initiated order. The first write is a
+ * reconciliation *resolution* — a recorded decision about immutable evidence,
+ * which changes no balance and no tax lot.
  */
+const WRITE_CHANNELS = ['portfolio.reconciliation.resolve'] as const satisfies readonly ChannelName[];
+
 export const CHANNEL_KINDS = {
-  read: CHANNEL_NAMES,
-  write: [] as readonly ChannelName[],
+  read: CHANNEL_NAMES.filter(
+    (channel) => !(WRITE_CHANNELS as readonly ChannelName[]).includes(channel),
+  ),
+  write: WRITE_CHANNELS as readonly ChannelName[],
 } as const;
+
+export function isWriteChannel(channel: ChannelName): boolean {
+  return (WRITE_CHANNELS as readonly ChannelName[]).includes(channel);
+}

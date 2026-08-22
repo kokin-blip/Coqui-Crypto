@@ -211,13 +211,33 @@ async function run() {
 
   const reconciliation = JSON.parse(
     await withTimeout('portfolio.reconciliation', window.webContents.executeJavaScript(
-      'window.coqui.query("portfolio.reconciliation", {}).then(JSON.stringify)',
+      'window.coqui.query("portfolio.reconciliation", { profileId: "main" }).then(JSON.stringify)',
     )),
   );
   check(
     'portfolio.reconciliation round-trips',
     reconciliation.status === 'ok' && Array.isArray(reconciliation.value.discrepancies),
     `status=${reconciliation.status}`,
+  );
+
+  // The first write channel. A fresh profile has no evidence, so the correct
+  // answer is a refusal — which proves the command path reaches the service and
+  // that a resolution cannot be recorded against nothing.
+  const resolve = JSON.parse(
+    await withTimeout('portfolio.reconciliation.resolve', window.webContents.executeJavaScript(
+      `window.coqui.query("portfolio.reconciliation.resolve", {
+        profileId: "main",
+        discrepancyId: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        kind: "provider_error",
+        linkedLotId: null,
+        note: "smoke"
+      }).then(JSON.stringify)`,
+    )),
+  );
+  check(
+    'reconciliation write refuses unbacked evidence',
+    resolve.status === 'failed' && resolve.issues?.[0]?.code === 'unknown_discrepancy',
+    `status=${resolve.status}, code=${resolve.issues?.[0]?.code}`,
   );
 
   for (const [channel, payload, describe] of [

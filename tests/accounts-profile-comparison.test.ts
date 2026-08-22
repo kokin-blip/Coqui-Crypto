@@ -147,7 +147,7 @@ describe('accounts profile comparison', { timeout: 20_000 }, () => {
         },
         profiles: [
           expect.objectContaining({
-            id: 'main', isActive: true, status: 'available', schemaVersion: 45,
+            id: 'main', isActive: true, status: 'available', schemaVersion: 46,
             tracked: {
               openLotCount: 1, disposalCount: 0, pricedSubtotalUsd: '200',
               completeValueUsd: '200', totalCostUsd: '100', pricedUnrealizedPnlUsd: '100',
@@ -163,7 +163,7 @@ describe('accounts profile comparison', { timeout: 20_000 }, () => {
             },
           }),
           expect.objectContaining({
-            id: PROFILE_ID, isActive: false, status: 'available', schemaVersion: 45,
+            id: PROFILE_ID, isActive: false, status: 'available', schemaVersion: 46,
             tracked: {
               openLotCount: 1, disposalCount: 1, pricedSubtotalUsd: '60',
               completeValueUsd: '60', totalCostUsd: '50', pricedUnrealizedPnlUsd: '10',

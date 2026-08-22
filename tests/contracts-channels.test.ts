@@ -54,6 +54,7 @@ describe('channel registry', () => {
       'paper.portfolio',
       'portfolio.allocation',
       'portfolio.reconciliation',
+      'portfolio.reconciliation.resolve',
       'portfolio.tax',
       'portfolio.view',
       'research.job',
@@ -72,9 +73,15 @@ describe('channel registry', () => {
     expect(isChannelName(null)).toBe(false);
   });
 
-  it('classifies every channel, and declares no write channel before P6', () => {
-    expect([...CHANNEL_KINDS.read].sort()).toEqual([...CHANNEL_NAMES].sort());
-    expect(CHANNEL_KINDS.write).toEqual([]);
+  it('classifies every channel, and names the one write', () => {
+    expect([...CHANNEL_KINDS.read, ...CHANNEL_KINDS.write].sort())
+      .toEqual([...CHANNEL_NAMES].sort());
+    // The distinction was kept explicit while `write` was empty so the first
+    // write would not have to retrofit it. A read must never drift into this
+    // list: `docs/UI-UX.md` §3.1's no-optimistic-success rule is enforceable
+    // only if the transport knows which channels are commands.
+    expect(CHANNEL_KINDS.write).toEqual(['portfolio.reconciliation.resolve']);
+    expect(CHANNEL_KINDS.read).not.toContain('portfolio.reconciliation.resolve');
   });
 });
 
@@ -341,15 +348,44 @@ describe('portfolio contract', () => {
       localQuantity: '12.0',
       deltaQuantity: '0.5',
     };
-    expect(schema.safeParse({ discrepancies: [item], lastRunAtMs: null }).success).toBe(true);
+    const base = {
+      discrepancies: [item],
+      lastRunAtMs: null,
+      exceptions: [{ discrepancy: item, resolution: null, history: [] }],
+      unresolvedCount: 1,
+      options: [
+        {
+          kind: 'investigating',
+          label: 'Still investigating',
+          explanation: 'Keeps the exception open deliberately.',
+          requiresLot: false,
+        },
+      ],
+    };
+    expect(schema.safeParse(base).success).toBe(true);
     // Invariant 12 makes closing an exception a recorded user decision. A
-    // resolved flag here would invite a UI that clears them.
+    // resolved flag on the *evidence* would invite a UI that clears them; the
+    // decision lives in its own append-only row instead.
     expect(
-      schema.safeParse({
-        discrepancies: [{ ...item, resolved: true }],
-        lastRunAtMs: null,
-      }).success,
+      schema.safeParse({ ...base, discrepancies: [{ ...item, resolved: true }] }).success,
     ).toBe(false);
+  });
+
+  it('offers no resolution that touches a tax lot', () => {
+    const kinds = CHANNEL_SCHEMAS['portfolio.reconciliation.resolve'].request;
+    const valid = {
+      profileId: 'main',
+      discrepancyId: 'a'.repeat(64),
+      linkedLotId: null,
+      note: 'Transferred in from a hardware wallet.',
+    };
+    expect(kinds.safeParse({ ...valid, kind: 'external_transfer_in' }).success).toBe(true);
+    // The wire refuses the two things the predecessor did. Invariant 12 is
+    // enforced at the boundary, not only in the service.
+    expect(kinds.safeParse({ ...valid, kind: 'create_zero_basis_lot' }).success).toBe(false);
+    expect(kinds.safeParse({ ...valid, kind: 'rescale_lots' }).success).toBe(false);
+    // And a resolution with no explanation cannot even be expressed.
+    expect(kinds.safeParse({ ...valid, kind: 'provider_error', note: '' }).success).toBe(false);
   });
 });
 

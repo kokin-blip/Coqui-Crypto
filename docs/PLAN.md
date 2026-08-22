@@ -17,10 +17,10 @@ Effort figures assume one part-time developer with assistance.
 > **Update this section as phases complete. It is the first thing to read.**
 
 ```
-Current phase:  P6 — Paper-trading engine; B1-B7 landed, exit criteria next
-Last completed: P6 exit — deterministic 7-day run in CI (2026-08-22)
-Verified:       131 test files / 923 tests green; smoke 24/24; perf p75 8.4ms
-Next work:      P7 — reconciliation ledger, CSV import, CoinGecko, per-wallet DBs
+Current phase:  P7 — Coinbase read-only; C1 reconciliation ledger landed
+Last completed: C1 — append-only resolution ledger + first write channel (2026-08-22)
+Verified:       132 test files / 937 tests green; smoke 25/25; perf p75 8.4ms
+Next work:      C2 CSV import · C3 CoinGecko connection · C4 per-wallet DBs · C5 leak suite
 BLOCKED ON:     nothing; A6 screenshot review is the one open owner gate
 P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
 ```
@@ -1026,6 +1026,21 @@ no fills. The document states both options and leaves the choice to the owner.
   proportionally rescale lots** (S2). Tax exports stay labelled estimates
 - CSV importer from the `pivot` branch — R10
 - Multi-wallet manifest and per-wallet DB contexts — §1
+
+**C1 done 2026-08-22.** Migration 46 adds `reconciliation_resolutions_v1`,
+append-only by trigger like the evidence it points at. The `kind` CHECK *is* the
+invariant-12 boundary: it admits only outcomes that leave the tax lots untouched
+— external transfer in/out, a match against a lot that already exists, provider
+error, or explicitly still investigating. Nothing that mints a zero-basis lot or
+rescales proportionally can be expressed, in the database, in the contract, or
+in the service, and a test asserts each of those three refusals.
+
+This also lands the **first write channel**, `portfolio.reconciliation.resolve`.
+`CHANNEL_KINDS.write` was deliberately kept as an empty list from the start so
+this would not be a retrofit. The renderer runs it through `useCommand`, which
+reduces the shared action machine where `settled` is the only path to
+`succeeded` — optimistic success stays unreachable by construction rather than
+by convention.
 
 **Exit:** a real view-only key imports a real portfolio. All four permission
 combinations tested — view-only accepted; trade, transfer, and both rejected with

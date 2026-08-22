@@ -203,7 +203,7 @@ export function Portfolio({
         pricing {view.pricing.status} · {view.pricing.requestedSource}
       </p>
 
-      <Reconciliation client={client} />
+      <Reconciliation client={client} profileId={profileId} />
     </section>
   );
 }

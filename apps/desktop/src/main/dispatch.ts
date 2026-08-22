@@ -32,6 +32,10 @@ const BLOCKED_CODES: ReadonlySet<string> = new Set([
   'execution_not_permitted',
   'permission_denied',
   'gate_not_met',
+  // Invariant 12 declining to record a match against a lot that does not
+  // exist. Nothing broke — a rule refused, and the surface must say so rather
+  // than showing an error the user would read as a bug.
+  'unknown_lot',
 ]);
 
 /** Codes describing an outcome the application genuinely cannot determine. */

@@ -63,6 +63,10 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'portfolio.allocation': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
   // Disposals change only when the user records a sale.
   'portfolio.tax': { refetchIntervalMs: false, staleTimeMs: 5 * MINUTE },
+  // A write. It is never polled — it runs when the user decides — but the
+  // registry requires a policy for every channel, and stating "never" here is
+  // better than exempting writes and losing the completeness check.
+  'portfolio.reconciliation.resolve': { refetchIntervalMs: false, staleTimeMs: 0 },
   // Reprices with the market, alongside the real portfolio it sits next to.
   'paper.portfolio': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
   // Preferences change only when the user changes them.

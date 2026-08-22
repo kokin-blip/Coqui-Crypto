@@ -16,6 +16,7 @@ import {
   AccountSettingsService,
   PortfolioReadModelService,
   PortfolioTaxService,
+  ReconciliationLedgerService,
   paperPortfolioView,
   MarketDisplayQueryService,
   type PricedHolding,
@@ -137,6 +138,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   // PortfolioAllocationPolicyService is deliberately not wired: it only offers
   // savePolicy/clearPolicy, and there are no write channels before P6.
   const tax = new PortfolioTaxService({ database, clock });
+  const reconciliation = new ReconciliationLedgerService({ database, clock });
   const settings = new AccountSettingsService({ database, clock });
 
   const research = new ResearchReadModelService({ database });
@@ -205,18 +207,39 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     'research.jobs': (payload: { readonly limit: number }) => research.jobs(payload.limit),
     'research.job': (payload: { readonly id: string }) => research.job(payload.id),
     'portfolio.view': async () => ({ ok: true, value: await portfolio.portfolioView() }),
-    'portfolio.reconciliation': () => ({
-      ok: true,
-      value: {
-        // Read-only in P5. The rows are immutable by trigger (migration 42) and
-        // resolution needs its own append-only table — that arrives with P7's
-        // single reconciliation ledger, so it is built once rather than twice.
-        discrepancies: listCoinbaseBalanceDiscrepancies(database, 250),
-        // Same source the status rail reads, so the two cannot disagree about
-        // when reconciliation last ran.
-        lastRunAtMs: lastCoinbaseSyncAtMs(database),
-      },
-    }),
+    'portfolio.reconciliation': (payload: { readonly profileId: string }) => {
+      const ledger = reconciliation.view(payload.profileId);
+      return {
+        ok: true,
+        value: {
+          discrepancies: listCoinbaseBalanceDiscrepancies(database, 250),
+          // Same source the status rail reads, so the two cannot disagree about
+          // when reconciliation last ran.
+          lastRunAtMs: lastCoinbaseSyncAtMs(database),
+          exceptions: ledger.exceptions,
+          unresolvedCount: ledger.unresolvedCount,
+          options: ledger.options,
+        },
+      };
+    },
+    'portfolio.reconciliation.resolve': (payload: {
+      readonly profileId: string;
+      readonly discrepancyId: string;
+      readonly kind: Parameters<ReconciliationLedgerService['resolve']>[0]['kind'];
+      readonly linkedLotId: string | null;
+      readonly note: string;
+    }) => {
+      const result = reconciliation.resolve(payload);
+      // A refusal is `blocked`, not `failed`: nothing went wrong, a rule
+      // declined. The four-way outcome exists so the surface can tell those
+      // apart rather than showing an error for a correct refusal.
+      // The dispatcher classifies the code into the four-way outcome, so a
+      // rule refusal and a malformed request are told apart at the boundary
+      // rather than by each surface.
+      return result.ok
+        ? { ok: true, value: { resolution: result.resolution } }
+        : { ok: false, issues: [{ code: result.code }] };
+    },
     'portfolio.allocation': async () => {
       // allocationView also embeds the whole priced portfolio, which
       // portfolio.view already carries. Both channels poll at 60s, so shipping

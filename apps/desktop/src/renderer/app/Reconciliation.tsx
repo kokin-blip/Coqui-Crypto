@@ -1,30 +1,65 @@
+import { useState } from 'react';
+
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { formatQuantity } from '@coqui/ui-kit';
 
+import { ResolveException } from './ResolveException.js';
 import { useChannel } from '../query/use-channel.js';
 
-type Discrepancy = ChannelResponse<'portfolio.reconciliation'>['discrepancies'][number];
+type Reconciliation = ChannelResponse<'portfolio.reconciliation'>;
+type Exception = Reconciliation['exceptions'][number];
 
 /**
  * The reconciliation strip (wireframe screen 2, region 5).
  *
- * Read-only in this phase, deliberately. Invariant 12 makes an unexplained
- * balance a *user decision*, and the evidence rows are immutable by database
- * trigger, so closing one needs a separate append-only record. That table
- * arrives with P7's single reconciliation ledger — building a resolve path here
- * would build that ledger twice.
- *
- * What the strip must do meanwhile is refuse to hide the exceptions, and say
- * plainly that Coqui will not close them by itself.
+ * Read-only through P5; P7 gave it the append-only resolution ledger it was
+ * waiting for. Invariant 12 governs what a resolution may be: an unexplained
+ * balance is a *decision the user records*, never a zero-basis lot and never a
+ * proportional rescale. The evidence row itself stays exactly as the venue
+ * reported it — immutable by trigger — and a decision is a separate row
+ * pointing at it.
  */
 
-function direction(kind: Discrepancy['kind']): string {
+function direction(kind: Exception['discrepancy']['kind']): string {
   return kind === 'provider_exceeds_local'
     ? 'exchange reports more than the ledger'
     : 'the ledger holds more than the exchange';
 }
 
-function Row({ item }: { readonly item: Discrepancy }): React.JSX.Element {
+function day(atMs: number): string {
+  return new Date(atMs).toISOString().slice(0, 10);
+}
+
+function Decision({ exception }: { readonly exception: Exception }): React.JSX.Element | null {
+  const { resolution } = exception;
+  if (resolution === null) return null;
+  return (
+    <p className="opacity-70">
+      <span aria-hidden="true">{resolution.kind === 'investigating' ? '○' : '●'} </span>
+      {resolution.kind.replaceAll('_', ' ')} · {day(resolution.decidedAt)} · {resolution.note}
+      {exception.history.length > 1 && (
+        <span> · {exception.history.length} decisions recorded</span>
+      )}
+    </p>
+  );
+}
+
+function Row({
+  exception,
+  client,
+  profileId,
+  options,
+}: {
+  readonly exception: Exception;
+  readonly client: CoquiClient;
+  readonly profileId: string;
+  readonly options: Reconciliation['options'];
+}): React.JSX.Element {
+  const [open, setOpen] = useState(false);
+  const item = exception.discrepancy;
+  const unresolved =
+    exception.resolution === null || exception.resolution.kind === 'investigating';
+
   return (
     <li className="py-1">
       <span className="font-semibold">{item.currency}</span>{' '}
@@ -35,17 +70,42 @@ function Row({ item }: { readonly item: Discrepancy }): React.JSX.Element {
       <span className="tabular-nums">
         · difference {formatQuantity(item.deltaQuantity) ?? item.deltaQuantity}
       </span>
-      <span className="opacity-70"> · {direction(item.kind)} → needs your decision</span>
+      <span className="opacity-70">
+        {' '}
+        · {direction(item.kind)}
+        {unresolved ? ' → needs your decision' : ''}
+      </span>
+      <button
+        type="button"
+        className="ml-3 underline"
+        aria-expanded={open}
+        onClick={() => setOpen((previous) => !previous)}
+      >
+        {open ? 'close' : unresolved ? 'resolve' : 'change decision'}
+      </button>
+
+      <Decision exception={exception} />
+
+      {open && (
+        <ResolveException
+          client={client}
+          profileId={profileId}
+          discrepancyId={item.id}
+          options={options}
+        />
+      )}
     </li>
   );
 }
 
 export function Reconciliation({
   client,
+  profileId,
 }: {
   readonly client: CoquiClient;
+  readonly profileId: string;
 }): React.JSX.Element {
-  const reconciliation = useChannel(client, 'portfolio.reconciliation', {});
+  const reconciliation = useChannel(client, 'portfolio.reconciliation', { profileId });
 
   if (reconciliation.kind === 'loading') return <p aria-live="polite">Loading reconciliation…</p>;
 
@@ -58,7 +118,7 @@ export function Reconciliation({
     );
   }
 
-  const { discrepancies, lastRunAtMs } = reconciliation.value;
+  const { exceptions, unresolvedCount, options, lastRunAtMs } = reconciliation.value;
   const lastRun =
     lastRunAtMs === null ? 'never run' : `${new Date(lastRunAtMs).toISOString().slice(11, 16)}Z`;
 
@@ -68,13 +128,13 @@ export function Reconciliation({
         Reconciliation
         <span className="ml-3 font-normal opacity-70">
           last run {lastRun} ·{' '}
-          {discrepancies.length === 0
+          {exceptions.length === 0
             ? 'settled'
-            : `${discrepancies.length} exception${discrepancies.length === 1 ? '' : 's'}, unresolved`}
+            : `${unresolvedCount} unresolved of ${exceptions.length}`}
         </span>
       </h3>
 
-      {discrepancies.length === 0 ? (
+      {exceptions.length === 0 ? (
         <p className="opacity-70">
           {lastRunAtMs === null
             ? 'No Coinbase sync has run for this profile yet.'
@@ -83,8 +143,14 @@ export function Reconciliation({
       ) : (
         <>
           <ul>
-            {discrepancies.map((item) => (
-              <Row key={item.id} item={item} />
+            {exceptions.map((exception) => (
+              <Row
+                key={exception.discrepancy.id}
+                exception={exception}
+                client={client}
+                profileId={profileId}
+                options={options}
+              />
             ))}
           </ul>
           {/*
@@ -93,9 +159,9 @@ export function Reconciliation({
             not is the point of showing them at all.
           */}
           <p className="opacity-70">
-            Coqui will not invent a tax lot or rescale existing ones to close these. Resolving
-            an exception is a decision you record, and that path arrives with the Coinbase
-            import ledger.
+            Coqui will not invent a tax lot or rescale existing ones to close these. A
+            resolution records what you decided; every decision is kept, and the exchange’s
+            own figures are never edited.
           </p>
         </>
       )}
