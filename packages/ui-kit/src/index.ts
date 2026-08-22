@@ -5,3 +5,4 @@ export * from './action.js';
 export * from './badges.js';
 export * from './density.js';
 export * from './format.js';
+export * from './help.js';
