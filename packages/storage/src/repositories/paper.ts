@@ -338,6 +338,49 @@ export function commitPaperFill(
   });
 }
 
+/**
+ * Fills for a profile, newest first.
+ *
+ * Backs the reconciliation harness and the forward-evidence fill counter. The
+ * table is indexed on `(profile_id, filled_at DESC)`, which is exactly this.
+ */
+export function listPaperFills(
+  profileId: string,
+  sinceMs: number,
+  limit: number,
+  database: Db,
+): PaperFill[] {
+  const bounded = Math.max(1, Math.min(5_000, Math.floor(limit)));
+  const rows = database.prepare(`
+    SELECT * FROM paper_fills_v3
+    WHERE profile_id = ? AND filled_at >= ?
+    ORDER BY filled_at DESC, id
+    LIMIT ?
+  `).all(profileId, sinceMs, bounded) as unknown as Array<Record<string, unknown>>;
+  return rows.map((row) => ({
+    id: String(row['id']),
+    orderId: String(row['order_id']),
+    profileId: String(row['profile_id']),
+    quantity: String(row['quantity_text']) as PaperFill['quantity'],
+    executionPrice: String(row['execution_price_text']) as PaperFill['executionPrice'],
+    notional: String(row['notional_text']) as PaperFill['notional'],
+    venueFee: String(row['venue_fee_text']) as PaperFill['venueFee'],
+    spreadCost: String(row['spread_cost_text']) as PaperFill['spreadCost'],
+    slippageCost: String(row['slippage_cost_text']) as PaperFill['slippageCost'],
+    impactCost: String(row['impact_cost_text']) as PaperFill['impactCost'],
+    filledAt: Number(row['filled_at']),
+    marketSnapshotHash: String(row['market_snapshot_hash']),
+  }));
+}
+
+/** Forward-evidence fill counter; counts rows rather than materialising them. */
+export function countPaperFills(profileId: string, sinceMs: number, database: Db): number {
+  const row = database.prepare(
+    'SELECT COUNT(*) AS count FROM paper_fills_v3 WHERE profile_id = ? AND filled_at >= ?',
+  ).get(profileId, sinceMs) as { count: number };
+  return Number(row.count);
+}
+
 export function recoverInterruptedPaperOrders(
   profileId: string,
   at: number,
