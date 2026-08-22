@@ -382,6 +382,26 @@ export function getWalletDecisionRun(
   } : null;
 }
 
+/**
+ * Distinct scheduled slots on which a decision completed.
+ *
+ * This is the forward-evidence "observed days" counter. It counts days the
+ * engine ran and reached a decision — including a decision to stand down —
+ * rather than elapsed calendar days, which `docs/PLAN.md` P6 rules out with
+ * "never elapsed empty days". A week the app was closed contributes nothing.
+ */
+export function countObservedDecisionDays(
+  profileId: string,
+  sinceMs: number,
+  database: Db,
+): number {
+  const row = database.prepare(`
+    SELECT COUNT(DISTINCT scheduled_for) AS count FROM wallet_decision_runs
+    WHERE profile_id = ? AND scheduled_for >= ? AND status = 'completed'
+  `).get(profileId, sinceMs) as { count: number };
+  return Number(row.count);
+}
+
 export function countCompletedDecisionRuns(
   profileId: string,
   sinceMs: number,

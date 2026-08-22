@@ -273,6 +273,34 @@ export function listWalletRunAudits(
 }
 
 /** Append one immutable incident. Resolutions are represented by later incidents. */
+/**
+ * One run's journal in the order it happened.
+ *
+ * The `(run_id, at)` index exists for exactly this. `listWalletRunAudits`
+ * filters by profile and orders newest-first, which suits a dashboard but not a
+ * replay of a single run.
+ */
+export function listWalletRunAuditsByRun(
+  runId: string,
+  limit: number,
+  database: Db,
+): StoredWalletRunAudit[] {
+  const bounded = Math.max(1, Math.min(500, Math.floor(limit)));
+  const rows = database.prepare(`
+    SELECT * FROM wallet_execution_journal
+    WHERE run_id = ? ORDER BY at, id LIMIT ?
+  `).all(runId, bounded) as unknown as Array<Record<string, unknown>>;
+  return rows.map((row) => ({
+    id: String(row['id']),
+    profileId: String(row['profile_id']),
+    runId: String(row['run_id']),
+    at: Number(row['at']),
+    kind: String(row['kind']),
+    status: String(row['status']),
+    detailJson: String(row['detail_json']),
+  }));
+}
+
 export function appendRuntimeIncident(incident: RuntimeIncident, database: Db): boolean {
   assertJson(incident.detailJson);
   const prior = database.prepare('SELECT * FROM runtime_incidents WHERE id = ?').get(incident.id) as
