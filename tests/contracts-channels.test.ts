@@ -53,6 +53,7 @@ describe('channel registry', () => {
       'research.job',
       'research.jobs',
       'research.runs',
+      'research.scoreboard',
       'risk.evidence-gate',
     ]);
   });
@@ -191,6 +192,68 @@ describe('risk evidence gate contract', () => {
         conversationEligible: false,
         liveExecutionPermitted: false,
         assessmentHash: 'a'.repeat(64),
+      }).success,
+    ).toBe(false);
+  });
+});
+
+describe('scoreboard contract', () => {
+  it('permits a null DSR and trial count on a benchmark row', () => {
+    const schema = CHANNEL_SCHEMAS['research.scoreboard'].response;
+    const base = {
+      runId: 'trendvol-replacement-v1',
+      completedAtMs: 1_723_000_000_000,
+      adopted: false,
+      tracks: [
+        {
+          trackId: 'hold',
+          afterCostReturnPct: 11.2,
+          maxDrawdownPct: -44.1,
+          sortino: 0.38,
+          sharpe: 0.3,
+          dsr: null,
+          trialCount: null,
+          excessReturnVsHoldPct: null,
+          excessReturnVsPassivePct: null,
+        },
+      ],
+      sampleDays: 32,
+      datasetHash: 'b'.repeat(64),
+      codeRevision: '037927e',
+      runHash: 'f'.repeat(64),
+      parametersValidated: false,
+    };
+    expect(schema.safeParse(base).success).toBe(true);
+
+    // Literal false: P3's replacement run was negative, so the wire type will
+    // not carry a claim that the defaults are validated.
+    expect(schema.safeParse({ ...base, parametersValidated: true }).success).toBe(false);
+  });
+
+  it('rejects a DSR outside the unit interval', () => {
+    const schema = CHANNEL_SCHEMAS['research.scoreboard'].response;
+    const track = {
+      trackId: 'selected',
+      afterCostReturnPct: 18.4,
+      maxDrawdownPct: -31.7,
+      sortino: 0.61,
+      sharpe: 0.44,
+      dsr: 1.4,
+      trialCount: 215,
+      excessReturnVsHoldPct: 7.2,
+      excessReturnVsPassivePct: 14,
+    };
+    expect(
+      schema.safeParse({
+        runId: 'r',
+        completedAtMs: 1,
+        adopted: false,
+        tracks: [track],
+        sampleDays: null,
+        datasetHash: 'b'.repeat(64),
+        codeRevision: 'x',
+        runHash: 'f'.repeat(64),
+        parametersValidated: false,
       }).success,
     ).toBe(false);
   });

@@ -75,7 +75,41 @@ const jobDetailSchema = z
   })
   .readonly();
 
+const scoreboardTrackSchema = z
+  .strictObject({
+    trackId: z.enum(['selected', 'hold', 'passive']),
+    afterCostReturnPct: z.number().finite(),
+    maxDrawdownPct: z.number().finite(),
+    sortino: z.number().finite().nullable(),
+    sharpe: z.number().finite().nullable(),
+    // Nullable by design: only the selected candidate was tested for
+    // significance, so a benchmark carries no DSR and no search budget.
+    dsr: z.number().min(0).max(1).nullable(),
+    trialCount: z.number().int().positive().nullable(),
+    excessReturnVsHoldPct: z.number().finite().nullable(),
+    excessReturnVsPassivePct: z.number().finite().nullable(),
+  })
+  .readonly();
+
 export const researchChannelSchemas = {
+  'research.scoreboard': {
+    request: emptyPayloadSchema,
+    response: z
+      .strictObject({
+        runId: z.string().min(1).max(200),
+        completedAtMs: epochMillisecondsSchema,
+        adopted: z.boolean(),
+        tracks: z.array(scoreboardTrackSchema).max(8).readonly(),
+        sampleDays: z.number().int().nonnegative().nullable(),
+        datasetHash: sha256HexSchema,
+        codeRevision: z.string().min(1).max(200),
+        runHash: sha256HexSchema,
+        // Literal false until an adopted study backs the defaults. P3's
+        // replacement run was negative; the wire type will not say otherwise.
+        parametersValidated: z.literal(false),
+      })
+      .readonly(),
+  },
   'research.runs': {
     request: emptyPayloadSchema,
     response: z.array(researchRunSchema).max(500).readonly(),

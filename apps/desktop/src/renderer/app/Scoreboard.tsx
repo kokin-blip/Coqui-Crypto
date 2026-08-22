@@ -1,6 +1,7 @@
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { formatPercent, riskBadge, validationBadge } from '@coqui/ui-kit';
 
+import { TrackTable } from './TrackTable.js';
 import { useChannel, type ChannelState } from '../query/use-channel.js';
 
 type GateView = ChannelResponse<'risk.evidence-gate'>;
@@ -134,6 +135,8 @@ export function Scoreboard({ client }: { readonly client: CoquiClient }): React.
       </p>
 
       <Leader gate={view} />
+
+      <TrackTable client={client} />
 
       <div>
         <h3 className="mb-1 font-semibold">Evidence gate</h3>

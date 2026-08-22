@@ -7,6 +7,7 @@ import { SystemClock, type Clock } from '@coqui/core';
 import {
   MarketDisplayQueryService,
   ResearchReadModelService,
+  ResearchScoreboardService,
   RiskEvidenceTrackerService,
   StatusRailService,
 } from '@coqui/services';
@@ -63,6 +64,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   });
 
   const research = new ResearchReadModelService({ database });
+  const scoreboard = new ResearchScoreboardService({ database });
   const evidence = new RiskEvidenceTrackerService({ database, clock });
   const statusRail = new StatusRailService({ database, clock });
 
@@ -80,6 +82,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     'research.runs': () => research.runs(),
     'research.jobs': (payload: { readonly limit: number }) => research.jobs(payload.limit),
     'research.job': (payload: { readonly id: string }) => research.job(payload.id),
+    'research.scoreboard': () => scoreboard.latest(),
     // The tracker throws only on a broken clock; the dispatcher contains that
     // and reports a stable code rather than letting it cross IPC.
     'risk.evidence-gate': () => ({ ok: true, value: evidence.track() }),

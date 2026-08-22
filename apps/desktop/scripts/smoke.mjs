@@ -168,6 +168,19 @@ async function run() {
     `status=${gate.status}, gateStatus=${gate.value?.status}`,
   );
 
+  // A fresh profile has no study run, so the honest outcome is a named
+  // 'no_verified_run' failure — not an empty table pretending to be a result.
+  const board = JSON.parse(
+    await withTimeout('research.scoreboard', window.webContents.executeJavaScript(
+      'window.coqui.query("research.scoreboard", {}).then(JSON.stringify)',
+    )),
+  );
+  check(
+    'research.scoreboard reports no run distinctly',
+    board.status === 'failed' && board.issues[0].code === 'no_verified_run',
+    `status=${board.status}, code=${board.issues?.[0]?.code}`,
+  );
+
   // The rail is reused by every screen, so a failure here breaks all of them.
   const railOutcome = JSON.parse(
     await withTimeout('app.status-rail', window.webContents.executeJavaScript(
