@@ -168,6 +168,18 @@ async function run() {
     `status=${gate.status}, gateStatus=${gate.value?.status}`,
   );
 
+  // The rail is reused by every screen, so a failure here breaks all of them.
+  const railOutcome = JSON.parse(
+    await withTimeout('app.status-rail', window.webContents.executeJavaScript(
+      'window.coqui.query("app.status-rail", { profileId: "main" }).then(JSON.stringify)',
+    )),
+  );
+  check(
+    'app.status-rail round-trips',
+    railOutcome.status === 'ok' && railOutcome.value.mode === 'paper',
+    `status=${railOutcome.status}, mode=${railOutcome.value?.mode}`,
+  );
+
   window.destroy();
 }
 

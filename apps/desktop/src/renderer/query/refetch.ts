@@ -44,6 +44,10 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   // The gate moves when a new evidence snapshot is written, which happens at
   // most daily. It is polled at all only so a long-running window notices.
   'risk.evidence-gate': { refetchIntervalMs: 5 * MINUTE, staleTimeMs: 2 * MINUTE },
+  // The rail is the "is anything wrong right now" surface, so it is the one
+  // thing polled briskly — a kill switch that engaged four minutes ago must not
+  // still read as armed.
+  'app.status-rail': { refetchIntervalMs: 30 * SECOND, staleTimeMs: 10 * SECOND },
 };
 
 /** Total polls per hour across every channel, for the review in UI-UX §5. */

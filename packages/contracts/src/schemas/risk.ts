@@ -47,7 +47,36 @@ const evidenceProvenanceSchema = z
   })
   .readonly();
 
+const statusRailSchema = z
+  .strictObject({
+    profileId: z.string().min(1).max(64),
+    // Literal 'paper': this build has no other executable mode, and the wire
+    // type refuses to describe one (invariant 1).
+    mode: z.literal('paper'),
+    executionPermitted: z.boolean(),
+    killSwitchEngaged: z.boolean(),
+    riskStage: z.string().min(1).max(64).nullable(),
+    activeJobCount: z.number().int().nonnegative(),
+    scheduledJobCount: z.number().int().nonnegative(),
+    reconciliation: z
+      .strictObject({
+        lastRunAtMs: epochMillisecondsSchema.nullable(),
+        // A count, never a severity. A discrepancy is evidence requiring user
+        // resolution (invariant 12), not a blocking condition.
+        unresolvedCount: z.number().int().nonnegative(),
+        neverRun: z.boolean(),
+      })
+      .readonly(),
+    costModelBps: z.number().finite().nonnegative(),
+    assessedAtMs: epochMillisecondsSchema,
+  })
+  .readonly();
+
 export const riskChannelSchemas = {
+  'app.status-rail': {
+    request: z.strictObject({ profileId: z.string().min(1).max(64) }).readonly(),
+    response: statusRailSchema,
+  },
   'risk.evidence-gate': {
     request: emptyPayloadSchema,
     response: z

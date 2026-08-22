@@ -9,4 +9,5 @@ export * from './duplication.js';
 export * from './profiles.js';
 export * from './refresh.js';
 export * from './settings.js';
+export * from './status-rail.js';
 export * from './results.js';

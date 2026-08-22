@@ -42,6 +42,7 @@ describe('channel registry', () => {
 
   it('matches the boundaries that actually have tested services today', () => {
     expect([...CHANNEL_NAMES].sort()).toEqual([
+      'app.status-rail',
       'market-data.candles',
       'market-data.fear-greed',
       'market-data.markets',
@@ -192,6 +193,29 @@ describe('risk evidence gate contract', () => {
         assessmentHash: 'a'.repeat(64),
       }).success,
     ).toBe(false);
+  });
+});
+
+describe('status rail contract', () => {
+  it('pins mode to paper on the wire', () => {
+    const schema = CHANNEL_SCHEMAS['app.status-rail'].response;
+    const base = {
+      profileId: 'main',
+      mode: 'paper',
+      executionPermitted: true,
+      killSwitchEngaged: false,
+      riskStage: null,
+      activeJobCount: 0,
+      scheduledJobCount: 0,
+      reconciliation: { lastRunAtMs: null, unresolvedCount: 0, neverRun: true },
+      costModelBps: 85,
+      assessedAtMs: 1_724_000_000_000,
+    };
+    expect(schema.safeParse(base).success).toBe(true);
+    // Invariant 1: this build has no other executable mode, and the wire type
+    // refuses to describe one.
+    expect(schema.safeParse({ ...base, mode: 'live' }).success).toBe(false);
+    expect(schema.safeParse({ ...base, mode: 'off' }).success).toBe(false);
   });
 });
 

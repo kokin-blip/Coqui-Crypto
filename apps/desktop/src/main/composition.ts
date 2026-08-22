@@ -8,6 +8,7 @@ import {
   MarketDisplayQueryService,
   ResearchReadModelService,
   RiskEvidenceTrackerService,
+  StatusRailService,
 } from '@coqui/services';
 import { listDisplayUniverse, openDatabase, type Db } from '@coqui/storage';
 
@@ -63,6 +64,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
 
   const research = new ResearchReadModelService({ database });
   const evidence = new RiskEvidenceTrackerService({ database, clock });
+  const statusRail = new StatusRailService({ database, clock });
 
   const handlers: ChannelHandlers = {
     'market-data.prices': () => marketData.prices(),
@@ -81,6 +83,8 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     // The tracker throws only on a broken clock; the dispatcher contains that
     // and reports a stable code rather than letting it cross IPC.
     'risk.evidence-gate': () => ({ ok: true, value: evidence.track() }),
+    'app.status-rail': (payload: { readonly profileId: string }) =>
+      statusRail.status(payload.profileId),
   } as ChannelHandlers;
 
   return {

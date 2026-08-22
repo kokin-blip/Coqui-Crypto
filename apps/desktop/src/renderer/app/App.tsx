@@ -1,6 +1,7 @@
 import type { CoquiClient } from '@coqui/contracts';
 
 import { Scoreboard } from './Scoreboard.js';
+import { StatusRail } from './StatusRail.js';
 import { useChannel } from '../query/use-channel.js';
 
 /**
@@ -15,6 +16,8 @@ export function App({ client }: { readonly client: CoquiClient }): React.JSX.Ele
 
   return (
     <main className="mx-auto max-w-3xl space-y-6 p-8 font-mono text-sm">
+      <StatusRail client={client} profileId="main" />
+
       <h1 className="mb-1 text-base font-semibold">Coqui</h1>
       <p className="mb-6 opacity-70">
         paper-trading research · no live order path exists in this build
