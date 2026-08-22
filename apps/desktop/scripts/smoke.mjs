@@ -216,6 +216,23 @@ async function run() {
     `status=${reconciliation.status}`,
   );
 
+  for (const [channel, payload, describe] of [
+    ['portfolio.allocation', '{}', (v) => `estimateOnly=${v?.plan?.estimateOnly}`],
+    ['portfolio.tax', '{}', (v) => `disposals=${v?.disposals?.length}`],
+    ['accounts.settings', '{ profileId: "main" }', (v) => `density=${v?.preferences?.density}`],
+  ]) {
+    const outcome = JSON.parse(
+      await withTimeout(channel, window.webContents.executeJavaScript(
+        `window.coqui.query("${channel}", ${payload}).then(JSON.stringify)`,
+      )),
+    );
+    check(
+      `${channel} round-trips`,
+      outcome.status === 'ok',
+      `status=${outcome.status}, ${describe(outcome.value)}${outcome.issues ? " codes=" + outcome.issues.map((i) => i.code).join("/") : ""}`,
+    );
+  }
+
   // The rail is reused by every screen, so a failure here breaks all of them.
   const railOutcome = JSON.parse(
     await withTimeout('app.status-rail', window.webContents.executeJavaScript(

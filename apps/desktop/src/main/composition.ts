@@ -13,7 +13,9 @@ import {
   type Clock,
 } from '@coqui/core';
 import {
+  AccountSettingsService,
   PortfolioReadModelService,
+  PortfolioTaxService,
   MarketDisplayQueryService,
   ResearchReadModelService,
   ResearchScoreboardService,
@@ -96,6 +98,11 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     candles: createCandleSource(http),
   });
 
+  // PortfolioAllocationPolicyService is deliberately not wired: it only offers
+  // savePolicy/clearPolicy, and there are no write channels before P6.
+  const tax = new PortfolioTaxService({ database, clock });
+  const settings = new AccountSettingsService({ database, clock });
+
   const research = new ResearchReadModelService({ database });
   const scoreboard = new ResearchScoreboardService({ database });
   const evidence = new RiskEvidenceTrackerService({ database, clock });
@@ -128,6 +135,24 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
         lastRunAtMs: lastCoinbaseSyncAtMs(database),
       },
     }),
+    'portfolio.allocation': async () => {
+      // allocationView also embeds the whole priced portfolio, which
+      // portfolio.view already carries. Both channels poll at 60s, so shipping
+      // it twice would double the payload for a screen that does not read it.
+      const view = await portfolio.allocationView();
+      return {
+        ok: true,
+        value: {
+          policy: view.policy,
+          allocation: view.allocation,
+          plan: view.plan,
+          planStatus: view.planStatus,
+        },
+      };
+    },
+    'portfolio.tax': () => ({ ok: true, value: tax.view() }),
+    'accounts.settings': (payload: { readonly profileId: string }) =>
+      settings.get(payload.profileId),
     'research.scoreboard': () => scoreboard.latest(),
     // Static, frozen core data — there is no service to fail, so this cannot
     // return anything but ok.

@@ -59,6 +59,12 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'portfolio.view': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
   // Exceptions change only when a sync runs.
   'portfolio.reconciliation': { refetchIntervalMs: 5 * MINUTE, staleTimeMs: 2 * MINUTE },
+  // Drift moves with prices, so allocation follows the portfolio cadence.
+  'portfolio.allocation': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
+  // Disposals change only when the user records a sale.
+  'portfolio.tax': { refetchIntervalMs: false, staleTimeMs: 5 * MINUTE },
+  // Preferences change only when the user changes them.
+  'accounts.settings': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
   'app.status-rail': { refetchIntervalMs: 30 * SECOND, staleTimeMs: 10 * SECOND },
 };
 

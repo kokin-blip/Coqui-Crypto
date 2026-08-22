@@ -42,6 +42,7 @@ describe('channel registry', () => {
 
   it('matches the boundaries that actually have tested services today', () => {
     expect([...CHANNEL_NAMES].sort()).toEqual([
+      'accounts.settings',
       'app.status-rail',
       'market-data.candles',
       'market-data.fear-greed',
@@ -50,7 +51,9 @@ describe('channel registry', () => {
       'market-data.prices',
       'market-data.trending',
       'market-data.yields',
+      'portfolio.allocation',
       'portfolio.reconciliation',
+      'portfolio.tax',
       'portfolio.view',
       'research.job',
       'research.jobs',
@@ -201,6 +204,28 @@ describe('risk evidence gate contract', () => {
 });
 
 describe('portfolio contract', () => {
+  it('carries estimateOnly across IPC as a literal true', () => {
+    const schema = CHANNEL_SCHEMAS['portfolio.allocation'].response;
+    const base = {
+      policy: { targets: [], rebalanceBandPct: 5 },
+      allocation: { slices: [], totalValueUsd: '0', asOf: 1_724_000_000_000 },
+      plan: {
+        trades: [],
+        turnoverUsd: '0',
+        maxDriftPct: 0,
+        asOf: 1_724_000_000_000,
+        estimateOnly: true,
+      },
+      planStatus: 'no_policy',
+    };
+    expect(schema.safeParse(base).success).toBe(true);
+    // A plan is an estimate no executor may act on. Enforcing that only in
+    // core's types would let the guarantee stop at the process boundary.
+    expect(
+      schema.safeParse({ ...base, plan: { ...base.plan, estimateOnly: false } }).success,
+    ).toBe(false);
+  });
+
   it('keeps an unpriced holding null across every money field', () => {
     const schema = CHANNEL_SCHEMAS['portfolio.view'].response;
     const asset = {

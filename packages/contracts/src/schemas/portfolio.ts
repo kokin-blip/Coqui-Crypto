@@ -107,7 +107,117 @@ const discrepancySchema = z
   })
   .readonly();
 
+const allocationSliceSchema = z
+  .strictObject({
+    asset: assetRefSchema,
+    valueUsd: decimalStringSchema,
+    actualWeight: z.number().finite(),
+    // Null when the policy has no target for this asset — distinct from a
+    // target of zero, which is an explicit instruction to hold none.
+    targetWeight: z.number().finite().nullable(),
+    driftPct: z.number().finite().nullable(),
+  })
+  .readonly();
+
+const rebalanceTradeSchema = z
+  .strictObject({
+    asset: assetRefSchema,
+    side: z.enum(['buy', 'sell']),
+    amountUsd: decimalStringSchema,
+    estimatedQty: decimalStringSchema,
+    reason: z.string().min(1).max(200),
+  })
+  .readonly();
+
+const disposalSchema = z
+  .strictObject({
+    id: z.string().min(1).max(128),
+    asset: assetRefSchema,
+    quantity: decimalStringSchema,
+    proceedsUsd: decimalStringSchema,
+    costBasisUsd: decimalStringSchema,
+    realizedPnlUsd: decimalStringSchema,
+    longTerm: z.boolean(),
+    disposedAt: epochMillisecondsSchema,
+    method: z.enum(['fifo', 'lifo', 'hifo', 'average']),
+    source: z.enum(['coinbase', 'manual', 'onchain']),
+  })
+  .readonly();
+
 export const portfolioChannelSchemas = {
+  'portfolio.allocation': {
+    request: emptyPayloadSchema,
+    response: z
+      .strictObject({
+        policy: z
+          .strictObject({
+            targets: z
+              .array(
+                z
+                  .strictObject({
+                    instrument: instrumentIdentitySchema,
+                    weight: z.number().finite().min(0).max(1),
+                  })
+                  .readonly(),
+              )
+              .max(100)
+              .readonly(),
+            rebalanceBandPct: z.number().finite().nonnegative(),
+          })
+          .readonly(),
+        allocation: z
+          .strictObject({
+            slices: z.array(allocationSliceSchema).max(1000).readonly(),
+            totalValueUsd: decimalStringSchema,
+            asOf: epochMillisecondsSchema,
+          })
+          .readonly(),
+        plan: z
+          .strictObject({
+            trades: z.array(rebalanceTradeSchema).max(200).readonly(),
+            turnoverUsd: decimalStringSchema,
+            maxDriftPct: z.number().finite(),
+            asOf: epochMillisecondsSchema,
+            /**
+             * Literal `true`, carried across IPC on purpose. A rebalance plan
+             * is an estimate that no executor may act on. Enforcing this only
+             * at the type level in core would let the guarantee stop at the
+             * process boundary.
+             */
+            estimateOnly: z.literal(true),
+          })
+          .readonly(),
+        planStatus: z.enum([
+          'available',
+          'no_policy',
+          'blocked_incomplete_pricing',
+          'blocked_non_venue_pricing',
+          'blocked_target_coverage',
+        ]),
+      })
+      .readonly(),
+  },
+  'portfolio.tax': {
+    request: emptyPayloadSchema,
+    response: z
+      .strictObject({
+        asOfMs: epochMillisecondsSchema,
+        disposals: z.array(disposalSchema).max(2000).readonly(),
+        summary: z
+          .strictObject({
+            ytdRealizedUsd: decimalStringSchema,
+            allTimeRealizedUsd: decimalStringSchema,
+            shortTermRealizedUsd: decimalStringSchema,
+            longTermRealizedUsd: decimalStringSchema,
+            ytdShortTermUsd: decimalStringSchema,
+            ytdLongTermUsd: decimalStringSchema,
+            disposalCount: z.number().int().nonnegative(),
+          })
+          .readonly(),
+        years: z.array(z.number().int()).max(100).readonly(),
+      })
+      .readonly(),
+  },
   'portfolio.view': {
     request: emptyPayloadSchema,
     response: z

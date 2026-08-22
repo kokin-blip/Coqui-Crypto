@@ -20,6 +20,8 @@ import {
   type ResearchPreRegistration,
 } from '../packages/core/src/index.js';
 import {
+  PortfolioReadModelService,
+  PortfolioTaxService,
   MarketDisplayQueryService,
   registerResearchPreRegistration,
   ResearchReadModelService,
@@ -273,6 +275,55 @@ function registerPlan(db: Db): string {
   };
   return registerResearchPreRegistration(plan, db);
 }
+
+describe('portfolio views satisfy their channel schemas', () => {
+  const emptyPrices = { name: 'test', async spot() { return new Map(); } };
+
+  it('accepts a portfolio view with nothing priced', async () => {
+    const db = openDatabase(':memory:');
+    const service = new PortfolioReadModelService({
+      database: db,
+      clock: new FixedClock(NOW),
+      priceSource: emptyPrices,
+    });
+    const view = await service.portfolioView();
+    expect(CHANNEL_SCHEMAS['portfolio.view'].response.safeParse(view)).toMatchObject({
+      success: true,
+    });
+    db.close();
+  });
+
+  it('accepts an allocation view once the embedded portfolio is stripped', async () => {
+    const db = openDatabase(':memory:');
+    const service = new PortfolioReadModelService({
+      database: db,
+      clock: new FixedClock(NOW),
+      priceSource: emptyPrices,
+    });
+    // The composition root drops `portfolio` because portfolio.view already
+    // carries it; this pins that the rest conforms.
+    const view = await service.allocationView();
+    const allocation = {
+      policy: view.policy,
+      allocation: view.allocation,
+      plan: view.plan,
+      planStatus: view.planStatus,
+    };
+    expect(CHANNEL_SCHEMAS['portfolio.allocation'].response.safeParse(allocation)).toMatchObject({
+      success: true,
+    });
+    db.close();
+  });
+
+  it('accepts a tax view with no disposals', () => {
+    const db = openDatabase(':memory:');
+    const view = new PortfolioTaxService({ database: db, clock: new FixedClock(NOW) }).view();
+    expect(CHANNEL_SCHEMAS['portfolio.tax'].response.safeParse(view)).toMatchObject({
+      success: true,
+    });
+    db.close();
+  });
+});
 
 describe('research views satisfy their channel schemas', () => {
   it('accepts real run, job-list and job-detail output', () => {

@@ -1,6 +1,10 @@
 import type { CoquiClient } from '@coqui/contracts';
 
+import { Allocation } from './Allocation.js';
+import { Markets } from './Markets.js';
 import { Portfolio } from './Portfolio.js';
+import { Settings } from './Settings.js';
+import { Tax } from './Tax.js';
 import { Scoreboard } from './Scoreboard.js';
 import { StatusRail } from './StatusRail.js';
 import { useChannel } from '../query/use-channel.js';
@@ -27,6 +31,14 @@ export function App({ client }: { readonly client: CoquiClient }): React.JSX.Ele
       <Scoreboard client={client} />
 
       <Portfolio client={client} />
+
+      <Allocation client={client} />
+
+      <Tax client={client} />
+
+      <Markets client={client} />
+
+      <Settings client={client} profileId="main" />
 
       <section aria-labelledby="runs-heading" className="mt-8">
         <h2 id="runs-heading" className="mb-2 font-semibold">
