@@ -422,6 +422,7 @@ describe('status rail contract', () => {
       mode: 'paper',
       executionPermitted: true,
       killSwitchEngaged: false,
+      killSwitchReason: null,
       riskStage: null,
       activeJobCount: 0,
       scheduledJobCount: 0,

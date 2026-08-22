@@ -13,6 +13,8 @@ import {
   type Db,
 } from '@coqui/storage';
 
+import { resolveKillSwitch } from '../paper/kill-switch.js';
+
 const PROFILE_ID = /^(?:main|[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$/iu;
 const MAX_DISCREPANCIES = 1_000;
 
@@ -51,6 +53,8 @@ export interface StatusRailView {
   readonly mode: AutoTradeMode;
   readonly executionPermitted: boolean;
   readonly killSwitchEngaged: boolean;
+  /** Which halt source engaged, so the rail can say why rather than only that. */
+  readonly killSwitchReason: 'risk_hard_stop' | 'safety_stop' | null;
   readonly riskStage: string | null;
   /** Scheduled wallet jobs currently holding a lease. */
   readonly activeJobCount: number;
@@ -121,7 +125,10 @@ export class StatusRailService {
       // Invariant 1: paper is the only mode this build can execute in, and the
       // rail states it rather than leaving the user to infer it.
       const mode: AutoTradeMode = 'paper';
-      const killSwitchEngaged = risk?.hardStopped ?? false;
+      // Both halt sources, via the shared resolver. Reading only the risk
+      // ladder displayed a manual safety stop as "armed·off".
+      const killSwitch = resolveKillSwitch(profileId, this.#database);
+      const killSwitchEngaged = killSwitch.engaged;
 
       return {
         ok: true,
@@ -130,6 +137,7 @@ export class StatusRailService {
           mode,
           executionPermitted: canExecute(mode, killSwitchEngaged),
           killSwitchEngaged,
+          killSwitchReason: killSwitch.reason,
           riskStage: risk?.stage ?? null,
           // A lease that has expired is not a running job. Counting by owner
           // alone would report a crashed worker as still working.

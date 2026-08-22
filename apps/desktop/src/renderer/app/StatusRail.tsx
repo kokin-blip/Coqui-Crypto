@@ -85,11 +85,19 @@ export function StatusRail({
       </span>
 
       {/* Sign plus word, never colour alone (§1). */}
+      {/* Both halt sources feed this, and the rail says which one engaged —
+          a manual safety stop used to display as "armed·off". */}
       <span>
         KILL{' '}
         <span className="font-semibold">
           {view.killSwitchEngaged ? 'ENGAGED' : 'armed·off'}
         </span>
+        {view.killSwitchReason !== null && (
+          <span className="opacity-80">
+            {' '}
+            ({view.killSwitchReason === 'safety_stop' ? 'safety stop' : 'risk hard stop'})
+          </span>
+        )}
       </span>
 
       <Freshness client={client} />

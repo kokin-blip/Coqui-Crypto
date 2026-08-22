@@ -151,7 +151,11 @@ describe('ported predecessor migration manifest', () => {
     database.close();
   });
 
-  it('preserves exact rows when upgrading from every preceding schema version', () => {
+  // Opens and fully upgrades a database once per migration — 45 of them and
+  // growing by one each phase. It runs in ~2.5s idle, which is close enough to
+  // vitest's 5s default to flake on a loaded CI runner, so the budget is
+  // explicit rather than implicit.
+  it('preserves exact rows when upgrading from every preceding schema version', { timeout: 30_000 }, () => {
     for (let version = 1; version < migrations.length; version += 1) {
       const database = openDatabase(':memory:', { migrations: migrations.slice(0, version) });
       database.exec(`

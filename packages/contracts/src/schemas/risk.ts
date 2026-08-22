@@ -55,6 +55,7 @@ const statusRailSchema = z
     mode: z.literal('paper'),
     executionPermitted: z.boolean(),
     killSwitchEngaged: z.boolean(),
+    killSwitchReason: z.enum(['risk_hard_stop', 'safety_stop']).nullable(),
     riskStage: z.string().min(1).max(64).nullable(),
     activeJobCount: z.number().int().nonnegative(),
     scheduledJobCount: z.number().int().nonnegative(),
