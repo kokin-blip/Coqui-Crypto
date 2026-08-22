@@ -3,5 +3,6 @@ export * from './account-evidence.js';
 export * from './catalog.js';
 export * from './archive.js';
 export * from './permission-probe.js';
+export * from './product-rules.js';
 export * from './public.js';
 export * from './universe.js';
