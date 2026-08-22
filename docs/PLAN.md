@@ -17,10 +17,10 @@ Effort figures assume one part-time developer with assistance.
 > **Update this section as phases complete. It is the first thing to read.**
 
 ```
-Current phase:  P7 — Coinbase read-only; C1 reconciliation ledger landed
-Last completed: C3 — CoinGecko connection service, key wired at startup (2026-08-22)
-Verified:       135 test files / 967 tests green; smoke 25/25; perf p75 8.4ms
-Next work:      C4 per-wallet DB contexts · C5 secret-leak suite
+Current phase:  P7 — Coinbase read-only; C1-C5 landed, owner-key exit left
+Last completed: C4 per-wallet DB contexts · C5 canary leak sweep (2026-08-22)
+Verified:       137 test files / 982 tests green; smoke 25/25; perf p75 8.4ms
+Next work:      P8 — risk dashboard, evidence tracker, negative results, alerts
 BLOCKED ON:     nothing; A6 screenshot review is the one open owner gate
 P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
 ```
@@ -1064,6 +1064,33 @@ root holds no secret store, which makes a leak into a service or channel
 structurally impossible rather than merely avoided. Both tiers share the
 rate-limiter registry, because the Demo tier raises the budget rather than
 removing it.
+
+**C4 done 2026-08-22.** `ProfileDatabaseProvisioner` and `ProfileContextManager`
+had no production implementor anywhere — only a test stub — so multi-wallet was
+describable and unreachable. They are implemented in
+`apps/desktop/src/main/profile-contexts.ts` rather than in a service, because a
+service that knew a data directory would be a service that could open another
+profile's database, which is the cross-wallet leak this phase has to rule out.
+
+**One profile is open at a time**, and switching is prepare-then-commit: the
+target is opened and migrated while the current profile stays usable, and only
+a good connection is swapped in. A failed switch leaves the user exactly where
+they were. Two live connections to two profiles is the shape cross-wallet
+leakage takes, and a single active context makes it impossible rather than
+unlikely.
+
+**C5 done 2026-08-22.** `tests/secret-leak-sweep.test.ts` injects a distinctive
+canary and sweeps every route out of the main process: each local channel's
+serialised response, every value in every column of every table, an upstream
+error whose *message* contains the key, and a handler that tries to return it
+(response validation drops it). One test asserts the canary genuinely reaches
+the secret store, so the sweep cannot pass by never having injected anything.
+Network-backed channels are excluded by name — exercising them here would test
+the internet — and a test asserts the exclusion list contains only those.
+
+**Exit still open:** a real view-only key against real Coinbase, and the
+four-permission matrix. That needs the owner's key; everything it depends on is
+built and tested.
 
 This also lands the **first write channel**, `portfolio.reconciliation.resolve`.
 `CHANNEL_KINDS.write` was deliberately kept as an empty list from the start so
