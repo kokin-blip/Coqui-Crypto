@@ -18,9 +18,9 @@ Effort figures assume one part-time developer with assistance.
 
 ```
 Current phase:  P7 — Coinbase read-only; C1 reconciliation ledger landed
-Last completed: C1 — append-only resolution ledger + first write channel (2026-08-22)
-Verified:       132 test files / 937 tests green; smoke 25/25; perf p75 8.4ms
-Next work:      C2 CSV import · C3 CoinGecko connection · C4 per-wallet DBs · C5 leak suite
+Last completed: C2 — CSV import completed and given a service (2026-08-22)
+Verified:       134 test files / 957 tests green; smoke 25/25; perf p75 8.4ms
+Next work:      C3 CoinGecko connection · C4 per-wallet DBs · C5 secret-leak suite
 BLOCKED ON:     nothing; A6 screenshot review is the one open owner gate
 P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
 ```
@@ -1034,6 +1034,23 @@ invariant-12 boundary: it admits only outcomes that leave the tax lots untouched
 error, or explicitly still investigating. Nothing that mints a zero-basis lot or
 rescales proportionally can be expressed, in the database, in the contract, or
 in the service, and a test asserts each of those three refusals.
+
+**C2 done 2026-08-22.** The importer was ported at 187 lines against the
+predecessor's 287, and the missing hundred were the parts that matter on a real
+export: reward rows, content fingerprints, preamble and BOM detection, and the
+plan builder. All are now in, read from the predecessor source at `80b5a1b`
+rather than reconstructed. Two deliberate improvements on the original: lot ids
+are derived from the fingerprint via sha256 instead of `crypto.randomUUID()`, so
+`core` stays pure and a re-run cannot mint a second lot; and the price×quantity
+fallback multiplies in Decimal, because that figure becomes a cost basis
+(invariant 11).
+
+`PortfolioCsvImportService` adds preview and commit as separate calls, and needs
+**no fingerprint table**: an imported lot carries its fingerprint as
+`externalId` and an imported disposal's id is `<fingerprint>:<index>`, so the
+record of what has been imported is the ledger itself and cannot drift out of
+sync with it. A CSV *screen* is not built yet — the service and its guarantees
+are, and the file-picker path belongs with P8's surfaces.
 
 This also lands the **first write channel**, `portfolio.reconciliation.resolve`.
 `CHANNEL_KINDS.write` was deliberately kept as an empty list from the start so

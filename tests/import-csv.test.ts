@@ -48,9 +48,22 @@ describe('parsePortfolioCsv', () => {
   });
 
   it('does not create data when the CSV has no data rows', () => {
-    expect(parsePortfolioCsv('Date,Type,Symbol', resolve)).toEqual({
+    expect(parsePortfolioCsv('Date,Type,Symbol,Quantity', resolve)).toEqual({
       trades: [],
       skipped: [{ rowNumber: 1, reason: 'CSV has no data rows.' }],
+    });
+  });
+
+  it('says so when no row looks like a header', () => {
+    // Distinct from "no data rows": a file whose columns were never recognised
+    // has a different fix, and reporting the wrong one sends the user looking
+    // in the wrong place.
+    expect(parsePortfolioCsv('Date,Type,Symbol', resolve)).toEqual({
+      trades: [],
+      skipped: [{
+        rowNumber: 1,
+        reason: 'Could not find a header row with type/asset/quantity columns.',
+      }],
     });
   });
 });
