@@ -181,6 +181,17 @@ async function run() {
     `status=${board.status}, code=${board.issues?.[0]?.code}`,
   );
 
+  const findings = JSON.parse(
+    await withTimeout('research.negative-findings', window.webContents.executeJavaScript(
+      'window.coqui.query("research.negative-findings", {}).then(JSON.stringify)',
+    )),
+  );
+  check(
+    'research.negative-findings round-trips',
+    findings.status === 'ok' && findings.value.findings.length > 0,
+    `count=${findings.value?.findings?.length}`,
+  );
+
   // The rail is reused by every screen, so a failure here breaks all of them.
   const railOutcome = JSON.parse(
     await withTimeout('app.status-rail', window.webContents.executeJavaScript(

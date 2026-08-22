@@ -91,7 +91,29 @@ const scoreboardTrackSchema = z
   })
   .readonly();
 
+const negativeFindingSchema = z
+  .strictObject({
+    id: z.string().regex(/^[a-z][a-z0-9-]*$/u),
+    title: z.string().min(1).max(120),
+    outcome: z.enum(['not-adopted', 'no-edge']),
+    // A surface must be able to say which findings this repository can stand
+    // behind: predecessor entries are recorded, not independently verifiable.
+    source: z.enum(['coqui-study', 'predecessor-vault']),
+    reference: z.string().min(1).max(200),
+    summary: z.string().min(1).max(500),
+  })
+  .readonly();
+
 export const researchChannelSchemas = {
+  'research.negative-findings': {
+    request: emptyPayloadSchema,
+    response: z
+      .strictObject({
+        findings: z.array(negativeFindingSchema).max(64).readonly(),
+        ledgerNote: z.string().min(1).max(500),
+      })
+      .readonly(),
+  },
   'research.scoreboard': {
     request: emptyPayloadSchema,
     response: z

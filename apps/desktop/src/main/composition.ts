@@ -3,7 +3,12 @@ import {
   createRateLimiterRegistry,
   type HttpClient,
 } from '@coqui/adapters';
-import { SystemClock, type Clock } from '@coqui/core';
+import {
+  SystemClock,
+  NEGATIVE_FINDINGS,
+  NEGATIVE_FINDING_LEDGER_NOTE,
+  type Clock,
+} from '@coqui/core';
 import {
   MarketDisplayQueryService,
   ResearchReadModelService,
@@ -83,6 +88,12 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     'research.jobs': (payload: { readonly limit: number }) => research.jobs(payload.limit),
     'research.job': (payload: { readonly id: string }) => research.job(payload.id),
     'research.scoreboard': () => scoreboard.latest(),
+    // Static, frozen core data — there is no service to fail, so this cannot
+    // return anything but ok.
+    'research.negative-findings': () => ({
+      ok: true,
+      value: { findings: NEGATIVE_FINDINGS, ledgerNote: NEGATIVE_FINDING_LEDGER_NOTE },
+    }),
     // The tracker throws only on a broken clock; the dispatcher contains that
     // and reports a stable code rather than letting it cross IPC.
     'risk.evidence-gate': () => ({ ok: true, value: evidence.track() }),

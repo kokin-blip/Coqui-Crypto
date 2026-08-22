@@ -52,6 +52,7 @@ describe('channel registry', () => {
       'market-data.yields',
       'research.job',
       'research.jobs',
+      'research.negative-findings',
       'research.runs',
       'research.scoreboard',
       'risk.evidence-gate',

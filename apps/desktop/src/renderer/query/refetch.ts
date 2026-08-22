@@ -43,6 +43,11 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   // A study run is immutable once written; a new one arrives only when a study
   // is executed, which is a deliberate operator action.
   'research.scoreboard': { refetchIntervalMs: false, staleTimeMs: 5 * MINUTE },
+  // Compiled-in data. It changes when the application does, never at runtime.
+  'research.negative-findings': {
+    refetchIntervalMs: false,
+    staleTimeMs: Number.POSITIVE_INFINITY,
+  },
   'research.job': { refetchIntervalMs: 30 * SECOND, staleTimeMs: 10 * SECOND },
   // The gate moves when a new evidence snapshot is written, which happens at
   // most daily. It is polled at all only so a long-running window notices.
