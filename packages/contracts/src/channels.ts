@@ -1,6 +1,7 @@
 import * as z from 'zod';
 
 import { marketDataChannelSchemas } from './schemas/market-data.js';
+import { portfolioChannelSchemas } from './schemas/portfolio.js';
 import { researchChannelSchemas } from './schemas/research.js';
 import { riskChannelSchemas } from './schemas/risk.js';
 import type { ContractSchema, DeepReadonly } from './messages.js';
@@ -21,6 +22,7 @@ import type { ContractSchema, DeepReadonly } from './messages.js';
  */
 export const CHANNEL_SCHEMAS = {
   ...marketDataChannelSchemas,
+  ...portfolioChannelSchemas,
   ...researchChannelSchemas,
   ...riskChannelSchemas,
 } as const;

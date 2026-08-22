@@ -50,6 +50,8 @@ describe('channel registry', () => {
       'market-data.prices',
       'market-data.trending',
       'market-data.yields',
+      'portfolio.reconciliation',
+      'portfolio.view',
       'research.job',
       'research.jobs',
       'research.negative-findings',
@@ -193,6 +195,133 @@ describe('risk evidence gate contract', () => {
         conversationEligible: false,
         liveExecutionPermitted: false,
         assessmentHash: 'a'.repeat(64),
+      }).success,
+    ).toBe(false);
+  });
+});
+
+describe('portfolio contract', () => {
+  it('keeps an unpriced holding null across every money field', () => {
+    const schema = CHANNEL_SCHEMAS['portfolio.view'].response;
+    const asset = {
+      instrument: { venue: 'coinbase', productId: 'XYZ-USD', productType: 'spot' },
+      symbol: 'XYZ',
+      name: 'Example',
+      baseAsset: 'XYZ',
+      quoteAsset: 'USD',
+      coingeckoId: null,
+    };
+    const base = {
+      asOfMs: 1_724_000_000_000,
+      holdings: [
+        {
+          asset,
+          quantity: '100.00000000',
+          avgCostUsd: '205.00',
+          // A zero here would silently fold the position into a total.
+          priceUsd: null,
+          valueUsd: null,
+          unrealizedPnlUsd: null,
+          unrealizedPnlPct: null,
+          priceProvenance: null,
+        },
+      ],
+      valuation: {
+        totalValueUsd: '0',
+        totalCostUsd: '205.00',
+        pricedCostUsd: '0',
+        totalUnrealizedPnlUsd: '0',
+        totalUnrealizedPnlPct: null,
+        pricedCount: 0,
+        unpricedCount: 1,
+      },
+      pricing: {
+        requestedSource: 'coinbase+coingecko',
+        requestedAtMs: 1_724_000_000_000,
+        receivedAtMs: 1_724_000_000_100,
+        requestedCount: 1,
+        pricedCount: 0,
+        unpricedCount: 1,
+        sources: [],
+        status: 'unavailable',
+      },
+    };
+    expect(schema.safeParse(base).success).toBe(true);
+  });
+
+  it('permits a priced holding with no observation time', () => {
+    const schema = CHANNEL_SCHEMAS['portfolio.view'].response;
+    expect(
+      schema.safeParse({
+        asOfMs: 1_724_000_000_000,
+        holdings: [
+          {
+            asset: {
+              instrument: { venue: 'coinbase', productId: 'BTC-USD', productType: 'spot' },
+              symbol: 'BTC',
+              name: 'Bitcoin',
+              baseAsset: 'BTC',
+              quoteAsset: 'USD',
+              coingeckoId: 'bitcoin',
+            },
+            quantity: '0.10424000',
+            avgCostUsd: '6010.00',
+            priceUsd: '64001.12',
+            valueUsd: '6671.47',
+            unrealizedPnlUsd: '661.47',
+            unrealizedPnlPct: 11,
+            priceProvenance: {
+              source: 'coingecko',
+              quality: 'reference_market',
+              // Nullable by design: a surface must render freshness-unknown as
+              // its own state rather than substituting zero age.
+              observedAtMs: null,
+            },
+          },
+        ],
+        valuation: {
+          totalValueUsd: '6671.47',
+          totalCostUsd: '6010.00',
+          pricedCostUsd: '6010.00',
+          totalUnrealizedPnlUsd: '661.47',
+          totalUnrealizedPnlPct: 11,
+          pricedCount: 1,
+          unpricedCount: 0,
+        },
+        pricing: {
+          requestedSource: 'coinbase+coingecko',
+          requestedAtMs: 1_724_000_000_000,
+          receivedAtMs: 1_724_000_000_100,
+          requestedCount: 1,
+          pricedCount: 1,
+          unpricedCount: 0,
+          sources: [{ source: 'coingecko', quality: 'reference_market', pricedCount: 1 }],
+          status: 'complete',
+        },
+      }).success,
+    ).toBe(true);
+  });
+
+  it('has no resolved flag on a reconciliation exception', () => {
+    const schema = CHANNEL_SCHEMAS['portfolio.reconciliation'].response;
+    const item = {
+      id: 'a'.repeat(64),
+      runId: 'run-1',
+      receivedAtMs: 1_724_000_000_000,
+      originProfileId: 'main',
+      currency: 'SOL',
+      kind: 'provider_exceeds_local',
+      providerQuantity: '12.5',
+      localQuantity: '12.0',
+      deltaQuantity: '0.5',
+    };
+    expect(schema.safeParse({ discrepancies: [item], lastRunAtMs: null }).success).toBe(true);
+    // Invariant 12 makes closing an exception a recorded user decision. A
+    // resolved flag here would invite a UI that clears them.
+    expect(
+      schema.safeParse({
+        discrepancies: [{ ...item, resolved: true }],
+        lastRunAtMs: null,
       }).success,
     ).toBe(false);
   });

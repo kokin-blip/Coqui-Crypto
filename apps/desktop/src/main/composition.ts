@@ -1,6 +1,9 @@
 import {
+  createCoinbasePriceSource,
+  createCoinGeckoPriceSource,
   createHttpClient,
   createRateLimiterRegistry,
+  withPriceFallback,
   type HttpClient,
 } from '@coqui/adapters';
 import {
@@ -10,16 +13,31 @@ import {
   type Clock,
 } from '@coqui/core';
 import {
+  PortfolioReadModelService,
   MarketDisplayQueryService,
   ResearchReadModelService,
   ResearchScoreboardService,
   RiskEvidenceTrackerService,
   StatusRailService,
 } from '@coqui/services';
-import { listDisplayUniverse, openDatabase, type Db } from '@coqui/storage';
+import {
+  getSetting,
+  listCoinbaseBalanceDiscrepancies,
+  listDisplayUniverse,
+  openDatabase,
+  type Db,
+} from '@coqui/storage';
 
 import { createCandleSource, createReferenceSources } from './reference-sources.js';
 import type { ChannelHandlers } from './dispatch.js';
+
+/** Epoch of the last Coinbase sync, or null when never run or unparseable. */
+function lastCoinbaseSyncAtMs(database: Db): number | null {
+  const raw = getSetting('coinbase.last_sync_at', database);
+  if (raw === null) return null;
+  const parsed = Number(raw);
+  return Number.isSafeInteger(parsed) && parsed > 0 ? parsed : null;
+}
 
 export interface RuntimeOptions {
   readonly databasePath: string;
@@ -55,6 +73,16 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   const rateLimiters = createRateLimiterRegistry();
   const http: HttpClient = createHttpClient({ rateLimiters });
 
+  // Coinbase is the venue and therefore the authoritative spot source;
+  // CoinGecko fills only what Coinbase does not price. The order matters —
+  // reversing it would let a reference price shadow a venue-reported one.
+  const trackedAssets = () => listDisplayUniverse(options.profileId, database);
+  const priceSource = withPriceFallback(
+    createCoinbasePriceSource(http),
+    createCoinGeckoPriceSource(http, trackedAssets()),
+  );
+  const portfolio = new PortfolioReadModelService({ database, clock, priceSource });
+
   const marketData = new MarketDisplayQueryService({
     clock,
     sources: createReferenceSources({
@@ -63,7 +91,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       fearGreed: http,
       yields: http,
       news: http,
-      trackedAssets: () => listDisplayUniverse(options.profileId, database),
+      trackedAssets,
     }),
     candles: createCandleSource(http),
   });
@@ -87,6 +115,19 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     'research.runs': () => research.runs(),
     'research.jobs': (payload: { readonly limit: number }) => research.jobs(payload.limit),
     'research.job': (payload: { readonly id: string }) => research.job(payload.id),
+    'portfolio.view': async () => ({ ok: true, value: await portfolio.portfolioView() }),
+    'portfolio.reconciliation': () => ({
+      ok: true,
+      value: {
+        // Read-only in P5. The rows are immutable by trigger (migration 42) and
+        // resolution needs its own append-only table — that arrives with P7's
+        // single reconciliation ledger, so it is built once rather than twice.
+        discrepancies: listCoinbaseBalanceDiscrepancies(database, 250),
+        // Same source the status rail reads, so the two cannot disagree about
+        // when reconciliation last ran.
+        lastRunAtMs: lastCoinbaseSyncAtMs(database),
+      },
+    }),
     'research.scoreboard': () => scoreboard.latest(),
     // Static, frozen core data — there is no service to fail, so this cannot
     // return anything but ok.

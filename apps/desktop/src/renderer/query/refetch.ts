@@ -55,6 +55,10 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   // The rail is the "is anything wrong right now" surface, so it is the one
   // thing polled briskly — a kill switch that engaged four minutes ago must not
   // still read as armed.
+  // Holdings reprice with the market; the user watches this figure.
+  'portfolio.view': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
+  // Exceptions change only when a sync runs.
+  'portfolio.reconciliation': { refetchIntervalMs: 5 * MINUTE, staleTimeMs: 2 * MINUTE },
   'app.status-rail': { refetchIntervalMs: 30 * SECOND, staleTimeMs: 10 * SECOND },
 };
 

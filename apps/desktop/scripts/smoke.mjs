@@ -192,6 +192,30 @@ async function run() {
     `count=${findings.value?.findings?.length}`,
   );
 
+  // Exercises the real price source composition, which reaches the network —
+  // an empty profile prices nothing, so this asserts the shape, not a quote.
+  const portfolio = JSON.parse(
+    await withTimeout('portfolio.view', window.webContents.executeJavaScript(
+      'window.coqui.query("portfolio.view", {}).then(JSON.stringify)',
+    )),
+  );
+  check(
+    'portfolio.view round-trips',
+    portfolio.status === 'ok' && Array.isArray(portfolio.value.holdings),
+    `status=${portfolio.status}, holdings=${portfolio.value?.holdings?.length}`,
+  );
+
+  const reconciliation = JSON.parse(
+    await withTimeout('portfolio.reconciliation', window.webContents.executeJavaScript(
+      'window.coqui.query("portfolio.reconciliation", {}).then(JSON.stringify)',
+    )),
+  );
+  check(
+    'portfolio.reconciliation round-trips',
+    reconciliation.status === 'ok' && Array.isArray(reconciliation.value.discrepancies),
+    `status=${reconciliation.status}`,
+  );
+
   // The rail is reused by every screen, so a failure here breaks all of them.
   const railOutcome = JSON.parse(
     await withTimeout('app.status-rail', window.webContents.executeJavaScript(
