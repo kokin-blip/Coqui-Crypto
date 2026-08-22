@@ -1,6 +1,11 @@
 # P5 wireframes and task maps — 2026-08-21
 
-**Status: awaiting owner approval on information hierarchy.**
+**Status: APPROVED on information hierarchy, 2026-08-21.**
+
+Density default is **comfortable** (owner). The negative-results panel is labelled
+**`NEGATIVE FINDINGS`** and reconciliation appears in **both** the rail and the portfolio
+strip — both delegated to research; the reasoning is recorded at the foot of this document
+under "Resolved questions". The remaining gate is the §7.9 screenshot review.
 
 `docs/UI-UX.md` §0 requires low-fidelity wireframes for the scoreboard,
 portfolio, and paper-action review, approved on hierarchy, *before* any visual
@@ -26,7 +31,7 @@ The first screen, and the one that sets the language for the rest
 | 2 | Which track is leading, and can I act on it? | Decision summary | opening another screen |
 | 3 | How do the tracks actually compare? | Scoreboard table | hovering |
 | 4 | Why should I believe this number? | Provenance on every row | documentation |
-| 5 | What has already been ruled out? | Negative findings | leaving the app |
+| 5 | What has already been tested and not adopted? | Negative findings | leaving the app |
 | 6 | Why is trading blocked? | Action area | reading code |
 
 ### Layout
@@ -34,7 +39,7 @@ The first screen, and the one that sets the language for the rest
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
 │ [wallet: main ▾]  MODE paper  KILL armed·OFF   data 3m ago ●fresh            │ 1
-│ jobs: idle        last reconcile 2026-08-21 06:00Z  ·  cost model 85bps      │
+│ jobs: idle        reconcile 06:00Z · 2 unresolved   ·  cost model 85bps      │
 ├──────────────────────────────────────────────────────────────────────────────┤
 │ LEADER   trendvol                                    RISK STAGE  2 of 5      │ 2
 │ after-cost return +18.4%   ·   sample 412d   ·   Sortino 0.61                │
@@ -56,14 +61,14 @@ The first screen, and the one that sets the language for the rest
 │      no larger, so a figure that clears here clears at the true count too.   │
 │ unv  parameters are legacy/unvalidated — no adopted study backs them.        │
 ├──────────────────────────────────────────┬───────────────────────────────────┤
-│ EVIDENCE                                 │ RULED OUT (10)                    │ 5
-│  ┌────────────────────────────────────┐  │  alt rotation        negative     │
-│  │      equity, after cost            │  │  fear & greed        negative     │
-│  │  ╱╲    ╱╲╱                         │  │  volume gate         negative     │
-│  │ ╱  ╲__╱                            │  │  profit-protect      negative     │
-│  └────────────────────────────────────┘  │  meta-label          no edge      │
-│  walk-forward   adds_value (3 folds)     │  regime caps         negative     │
-│  dataset  7a3f9c…  ·  code  0995980      │  adaptive pick       negative     │
+│ EVIDENCE                                 │ NEGATIVE FINDINGS (10)            │ 5
+│  ┌────────────────────────────────────┐  │  alt rotation      not adopted    │
+│  │      equity, after cost            │  │  fear & greed      not adopted    │
+│  │  ╱╲    ╱╲╱                         │  │  volume gate       not adopted    │
+│  │ ╱  ╲__╱                            │  │  profit-protect    not adopted    │
+│  └────────────────────────────────────┘  │  meta-label        no edge        │
+│  walk-forward   adds_value (3 folds)     │  regime caps       not adopted    │
+│  dataset  7a3f9c…  ·  code  0995980      │  adaptive pick     not adopted    │
 │  study    trendvol-replacement-v1        │            [ see all studies ]    │
 ├──────────────────────────────────────────┴───────────────────────────────────┤
 │ ACTION            paper preview only — no live path exists in this build     │ 6
@@ -85,8 +90,10 @@ only on hover, and the direction of the bound is the whole point — a bare
 "DSR 0.41" would be a stronger claim than the evidence supports.
 
 **Negative findings are a peer of the evidence panel, not a buried page.**
-`docs/PLAN.md` §6 treats the negative-results ledger as a headline product
-feature; ten rejected ideas is the most trustworthy thing this app can show.
+`docs/PLAN.md` P8 makes the "Negative-results surface" a deliverable and says of a
+negative outcome: "A negative result here is a success. It is the single most
+valuable thing this project can tell its owner." Ten of them is the most
+trustworthy thing this app can show.
 
 **The gate shows counts, not a percentage.** "0/3 met" with the raw numbers
 underneath is checkable. A progress bar would imply the gate is a countdown
@@ -240,11 +247,59 @@ a raw string.
 
 ---
 
-## Open questions for the owner
+## Resolved questions
 
-1. **Density default** — comfortable or compact on first run? The scoreboard is
-   readable at both; the portfolio table is the one that benefits from compact.
-2. **Is "RULED OUT" the right label** for the negative-results panel, or is
-   "what we tested and rejected" worth the extra width?
-3. **Reconciliation placement** — on the portfolio screen as drawn, or promoted
-   to the status rail when exceptions exist?
+### 1. Density default — **comfortable**
+
+Owner's call. Already the persisted default at
+`packages/services/src/accounts/settings.ts`, and `account_preferences_v1` carries no column
+default, so this required no migration. The compact token still exists and remains a
+mandatory screenshot-review state (`docs/UI-UX.md` §0).
+
+### 2. Panel label — **`NEGATIVE FINDINGS`**, not "RULED OUT"
+
+- **It is the spec's own name for the region.** `docs/UI-UX.md` §2.4 lists the Evidence view
+  as containing "negative findings". Using a different word on screen than in the IA spec
+  costs consistency for nothing, and consistency is one of the six NN/g heuristics §8 cites
+  as the review's grounding.
+- **It matches the project's canonical noun.** `docs/PLAN.md` P8 names the deliverable the
+  "Negative-results surface"; `docs/ARCHITECTURE.md` describes `docs/studies/` as holding
+  "negative results". "RULED OUT" appeared nowhere in the repository except this document.
+- **"Ruled out" overclaims.** Each study's own status is "not adopted", and several negatives
+  are window-specific — the predecessor's note 29 keeps the rotation engine "in core for
+  future re-tests (different universes/windows)". "Ruled out" asserts a finality the evidence
+  does not support, which is precisely the kind of overclaim this project exists to avoid.
+  Row status therefore reads `not adopted` / `no edge`, matching the studies.
+- "What we tested and rejected" was the alternative. It has no precedent, reads against §0's
+  demand for "concise, specific interface copy", and "rejected" is already this repo's word
+  for rejected *library candidates* (ADR-0005).
+
+### 3. Reconciliation — **detail on portfolio, state in the rail**
+
+Both, asymmetrically, and it costs the rail no extra line.
+
+- **The rail already had a reconciliation slot.** §2.1 puts "last successful reconciliation"
+  there. This is not an addition; it makes that slot honest. Showing
+  `last reconcile 06:00Z` while two exceptions sit unresolved answers the rail's own stated
+  question — "Is anything wrong right now?" — with "no", which is false. The rail is exactly
+  two full lines, so a new badge would have displaced something; rewording the existing slot
+  does not.
+- **The detail stays on portfolio.** §2 has the other screens reuse the scoreboard's patterns
+  rather than duplicate content, and the resolve action belongs beside the lots it concerns.
+  The rail entry is a pointer: `reconcile 06:00Z · 2 unresolved`.
+- **It is not rendered as an alarm, because the code says it is not one.** A discrepancy is
+  returned on the `ok: true` path with no severity field
+  (`packages/services/src/accounts/coinbase-sync.ts`), stored as immutable evidence
+  (migration 42), and absent from every failure code. This repo's blocking vocabulary —
+  `canExecute`, the kill switch, guardrails, the evidence gate — is never invoked for
+  reconciliation, and "halts on mismatch" belongs to P11 live trading. So the rail shows
+  status, not a stop.
+- Unchanged: on a main screen, never behind settings, never auto-closed, and never resolved
+  by inventing or rescaling a lot (invariant 12).
+
+---
+
+## Remaining gate
+
+The §7.9 screenshot review: the three workflows in light, dark, high-contrast, compact, 200%
+zoom, stale data, negative evidence, and a blocked paper action.

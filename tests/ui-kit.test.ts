@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
+import { DEFAULT_ACCOUNT_PRESENTATION_PREFERENCES } from '../packages/services/src/index.js';
 import {
   alignDecimal,
+  densityCustomProperties,
+  resolveDensity,
+  DEFAULT_DENSITY,
+  DENSITY_SCALES,
+  MINIMUM_TARGET_PX,
   formatPercent,
   formatQuantity,
   formatUsd,
@@ -187,5 +193,44 @@ describe('action feedback contract', () => {
     const view = presentAction({ kind: 'pending' }, LABELS);
     expect(view).toMatchObject({ label: 'Submitting…', disabled: true, busy: true });
     expect(view.liveMessage).toContain('Waiting for confirmation');
+  });
+});
+
+describe('density tokens', () => {
+  it('defaults to comfortable, matching the persisted account preference', () => {
+    // The stored preference is the source of truth; these tokens are only its
+    // presentation, so the two defaults must not drift.
+    expect(DEFAULT_DENSITY).toBe('comfortable');
+    expect(DEFAULT_ACCOUNT_PRESENTATION_PREFERENCES.density).toBe(DEFAULT_DENSITY);
+  });
+
+  it('keeps interactive targets at or above the WCAG 2.2 minimum in both densities', () => {
+    for (const density of ['comfortable', 'compact'] as const) {
+      // Compact reduces rhythm, never the size of something a user must hit.
+      expect(DENSITY_SCALES[density].controlHeightPx).toBeGreaterThanOrEqual(MINIMUM_TARGET_PX);
+    }
+  });
+
+  it('makes compact denser than comfortable on every axis', () => {
+    const roomy = DENSITY_SCALES.comfortable;
+    const tight = DENSITY_SCALES.compact;
+    expect(tight.rowHeightPx).toBeLessThan(roomy.rowHeightPx);
+    expect(tight.cellPaddingYPx).toBeLessThan(roomy.cellPaddingYPx);
+    expect(tight.sectionGapPx).toBeLessThan(roomy.sectionGapPx);
+  });
+
+  it('emits custom properties rather than a style element', () => {
+    // A <style> element would be refused by style-src 'self'; these are applied
+    // through CSSOM, which CSP does not govern.
+    const properties = densityCustomProperties('compact');
+    expect(properties['--density-row-height']).toBe('28px');
+    expect(Object.keys(properties).every((key) => key.startsWith('--density-'))).toBe(true);
+  });
+
+  it('falls back to comfortable for an untrusted stored value', () => {
+    expect(resolveDensity('compact')).toBe('compact');
+    expect(resolveDensity('cozy')).toBe('comfortable');
+    expect(resolveDensity(null)).toBe('comfortable');
+    expect(resolveDensity(undefined)).toBe('comfortable');
   });
 });
