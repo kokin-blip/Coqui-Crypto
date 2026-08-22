@@ -18,9 +18,9 @@ Effort figures assume one part-time developer with assistance.
 
 ```
 Current phase:  P6 — Paper-trading engine; B1-B7 landed, exit criteria next
-Last completed: B7 — paper value beside real value; scheduler wake-up (2026-08-22)
-Verified:       130 test files / 915 tests green; smoke 24/24; perf p75 8.4ms
-Next work:      P6 exit — simulated 7-day run in CI, then a real multi-day run
+Last completed: P6 exit — deterministic 7-day run in CI (2026-08-22)
+Verified:       131 test files / 923 tests green; smoke 24/24; perf p75 8.4ms
+Next work:      P7 — reconciliation ledger, CSV import, CoinGecko, per-wallet DBs
 BLOCKED ON:     nothing; A6 screenshot review is the one open owner gate
 P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
 ```
@@ -998,6 +998,21 @@ number chosen to make the engine trade.
 **Exit:** 7-day unattended run with a complete journal. Reconciliation reports a
 quantified divergence. **A test proves no path reaches execution while skipping a
 gate.** Kill switch halts everything including paper.
+
+**Exit met 2026-08-22, with one part registered rather than run.**
+`tests/paper-seven-day-run.test.ts` drives seven UTC slots on a stepped clock:
+one completed decision per day, a complete journal, fills that move the
+simulated balances, a replayed slot that changes nothing, recovery across a
+restart, and a reconciliation harness reporting a quantified basis-point
+divergence against a restated week. The no-bypass test (B2) and both kill-switch
+halt sources stay green.
+
+The **real** multi-day run is registered as
+`docs/studies/paper-forward-run-2026-08-22.md` with its success criteria fixed in
+advance. It cannot be a CI gate — it takes a week and depends on the venue being
+up — and it is blocked on the same precondition described above: without a
+registered net-edge estimate it would record seven honest days of stand-down and
+no fills. The document states both options and leaves the choice to the owner.
 
 ---
 
