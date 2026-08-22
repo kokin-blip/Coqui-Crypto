@@ -1,3 +1,4 @@
+export * from './coingecko-connection.js';
 export * from './binance-archive.js';
 export * from './kraken-archive.js';
 export * from './decision-dataset.js';

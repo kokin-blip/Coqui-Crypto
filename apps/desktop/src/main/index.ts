@@ -1,5 +1,6 @@
 import { join } from 'node:path';
 
+import { createOsKeyringSecretStore } from '@coqui/adapters';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 
 import { createDispatcher } from './dispatch.js';
@@ -71,10 +72,31 @@ function createWindow(): BrowserWindow {
  * every behaviour it reaches belongs to a service, and the one thing it owns is
  * the order in which things are created and torn down.
  */
-function start(): void {
+/**
+ * Read the connected CoinGecko key, if there is one.
+ *
+ * Read here and passed by value, so the key's only journey is
+ * keychain → argument → an HTTP client's header. The composition root holds no
+ * secret store, which is what makes it structurally impossible for a secret to
+ * reach a service or a channel (invariant 3).
+ *
+ * A keychain that will not open is not a startup failure: the application runs
+ * on the public tier and says so.
+ */
+async function coinGeckoApiKey(): Promise<string | null> {
+  try {
+    const read = await createOsKeyringSecretStore().read('coingecko-api-key', null);
+    return read.ok ? read.value : null;
+  } catch {
+    return null;
+  }
+}
+
+async function start(): Promise<void> {
   runtime = createRuntime({
     databasePath: databasePath(),
     profileId: DEFAULT_PROFILE,
+    coinGeckoApiKey: await coinGeckoApiKey(),
     // Background failures are reported, never thrown: a failed paper tick must
     // not take down a window the user is reading.
     onUnexpectedError: (context, error) => {
@@ -105,7 +127,9 @@ function shutdown(): void {
 app.enableSandbox();
 
 app.on('ready', () => {
-  start();
+  // The window opens after the key read, so the first market request already
+  // uses the connected tier rather than falling back and re-fetching.
+  void start();
 
   app.on('activate', () => {
     // Electron owns the window list; keeping a second reference here would

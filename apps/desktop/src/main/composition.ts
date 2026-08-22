@@ -1,5 +1,6 @@
 import {
   createCoinbasePriceSource,
+  createCoinGeckoDemoHttpClient,
   createCoinGeckoPriceSource,
   createHttpClient,
   createRateLimiterRegistry,
@@ -80,6 +81,16 @@ export interface RuntimeOptions {
    * check wiring and should not start a timer or reach the network to do it.
    */
   readonly disableScheduler?: boolean;
+  /**
+   * A verified CoinGecko Demo key, read from the secret store *before* the
+   * runtime is built.
+   *
+   * Passed in rather than read here so the key's only journey is
+   * keychain → this argument → an HTTP client's header. The composition root
+   * never holds a secret store, so there is no path by which a secret could
+   * reach a service or a channel (invariant 3).
+   */
+  readonly coinGeckoApiKey?: string | null;
 }
 
 export interface CoquiRuntime {
@@ -111,13 +122,21 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   const rateLimiters = createRateLimiterRegistry();
   const http: HttpClient = createHttpClient({ rateLimiters });
 
+  // The authenticated tier when a key is connected, the public tier otherwise.
+  // Both share the rate-limiter registry: the Demo tier has a *higher* budget,
+  // not an unlimited one, and two registries could disagree about the same host.
+  const coinGeckoHttp: HttpClient =
+    options.coinGeckoApiKey === undefined || options.coinGeckoApiKey === null
+      ? http
+      : createCoinGeckoDemoHttpClient(options.coinGeckoApiKey, { rateLimiters });
+
   // Coinbase is the venue and therefore the authoritative spot source;
   // CoinGecko fills only what Coinbase does not price. The order matters —
   // reversing it would let a reference price shadow a venue-reported one.
   const trackedAssets = () => listDisplayUniverse(options.profileId, database);
   const priceSource = withPriceFallback(
     createCoinbasePriceSource(http),
-    createCoinGeckoPriceSource(http, trackedAssets()),
+    createCoinGeckoPriceSource(coinGeckoHttp, trackedAssets()),
   );
   const portfolio = new PortfolioReadModelService({ database, clock, priceSource });
 
@@ -125,7 +144,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   const marketData = new MarketDisplayQueryService({
     clock,
     sources: createReferenceSources({
-      coingecko: http,
+      coingecko: coinGeckoHttp,
       coinbase: http,
       fearGreed: http,
       yields: http,
@@ -288,6 +307,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     scheduler,
     dispose() {
       scheduler?.dispose();
+      if (coinGeckoHttp !== http) coinGeckoHttp.destroy();
       http.destroy();
       rateLimiters.destroyAll();
       database.close();

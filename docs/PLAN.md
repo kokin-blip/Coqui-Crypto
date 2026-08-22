@@ -18,9 +18,9 @@ Effort figures assume one part-time developer with assistance.
 
 ```
 Current phase:  P7 — Coinbase read-only; C1 reconciliation ledger landed
-Last completed: C2 — CSV import completed and given a service (2026-08-22)
-Verified:       134 test files / 957 tests green; smoke 25/25; perf p75 8.4ms
-Next work:      C3 CoinGecko connection · C4 per-wallet DBs · C5 secret-leak suite
+Last completed: C3 — CoinGecko connection service, key wired at startup (2026-08-22)
+Verified:       135 test files / 967 tests green; smoke 25/25; perf p75 8.4ms
+Next work:      C4 per-wallet DB contexts · C5 secret-leak suite
 BLOCKED ON:     nothing; A6 screenshot review is the one open owner gate
 P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
 ```
@@ -1051,6 +1051,19 @@ fallback multiplies in Decimal, because that figure becomes a cost basis
 record of what has been imported is the ledger itself and cannot drift out of
 sync with it. A CSV *screen* is not built yet — the service and its guarantees
 are, and the file-picker path belongs with P8's surfaces.
+
+**C3 done 2026-08-22.** `CoinGeckoConnectionService` verifies a Demo key before
+storing it, so a connected state always means a key that authenticated at least
+once. Its `status` carries a presence boolean and a tier and nothing else — a
+test asserts the serialised result contains neither the key, nor its prefix, nor
+its length. A malformed key is refused locally rather than sent.
+
+The key is read in `main/index.ts` and passed to `createRuntime` by value, so
+its only journey is keychain → argument → an HTTP client header; the composition
+root holds no secret store, which makes a leak into a service or channel
+structurally impossible rather than merely avoided. Both tiers share the
+rate-limiter registry, because the Demo tier raises the budget rather than
+removing it.
 
 This also lands the **first write channel**, `portfolio.reconciliation.resolve`.
 `CHANNEL_KINDS.write` was deliberately kept as an empty list from the start so
