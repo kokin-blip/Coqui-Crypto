@@ -51,6 +51,7 @@ describe('channel registry', () => {
       'market-data.prices',
       'market-data.trending',
       'market-data.yields',
+      'paper.portfolio',
       'portfolio.allocation',
       'portfolio.reconciliation',
       'portfolio.tax',

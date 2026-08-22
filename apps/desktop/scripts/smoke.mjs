@@ -65,6 +65,10 @@ async function run() {
   runtime = createRuntime({
     databasePath: join(dataDir, 'coqui.db'),
     profileId: 'main',
+    // The smoke gate proves wiring, not cadence. A live scheduler would start a
+    // timer and reach the network to refresh bars, neither of which this
+    // measures.
+    disableScheduler: true,
   });
   check('composition root builds', runtime.handlers !== undefined);
 
@@ -220,6 +224,9 @@ async function run() {
     ['portfolio.allocation', '{}', (v) => `estimateOnly=${v?.plan?.estimateOnly}`],
     ['portfolio.tax', '{}', (v) => `disposals=${v?.disposals?.length}`],
     ['accounts.settings', '{ profileId: "main" }', (v) => `density=${v?.preferences?.density}`],
+    // The literal marker matters more than the number: a paper figure that
+    // crossed IPC without it could be rendered as money.
+    ['paper.portfolio', '{ profileId: "main" }', (v) => `simulation=${v?.simulation}`],
   ]) {
     const outcome = JSON.parse(
       await withTimeout(channel, window.webContents.executeJavaScript(

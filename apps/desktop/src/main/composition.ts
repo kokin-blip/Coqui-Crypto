@@ -16,13 +16,16 @@ import {
   AccountSettingsService,
   PortfolioReadModelService,
   PortfolioTaxService,
+  paperPortfolioView,
   MarketDisplayQueryService,
+  type PricedHolding,
   ResearchReadModelService,
   ResearchScoreboardService,
   RiskEvidenceTrackerService,
   StatusRailService,
 } from '@coqui/services';
 import {
+  getAllocationPolicy,
   getSetting,
   listCoinbaseBalanceDiscrepancies,
   listDisplayUniverse,
@@ -30,8 +33,31 @@ import {
   type Db,
 } from '@coqui/storage';
 
+import { createPaperMarketFeed } from './paper-market.js';
 import { createCandleSource, createReferenceSources } from './reference-sources.js';
+import { startSchedulerRuntime, type SchedulerRuntime } from './scheduler-runtime.js';
 import type { ChannelHandlers } from './dispatch.js';
+
+/**
+ * The per-trade net edge the profitability gate weighs costs against.
+ *
+ * **Zero by default, deliberately.** No study in this repository has registered
+ * a per-trade net-edge estimate for the shipped strategy — its own version
+ * string is `trendvol-legacy-unvalidated` — and inventing one would be exactly
+ * the false confidence invariant 4 exists to prevent. At zero the gate refuses
+ * every intent and the run stands down as `gates_refused`, which the portfolio
+ * screen states in plain words rather than hiding.
+ *
+ * The setting exists so that a *registered* estimate can be supplied once one
+ * exists (invariant 7), not as a knob to make the engine trade.
+ */
+function paperNetEdgeEstimatePct(database: Db): number {
+  const raw = getSetting('paper.net_edge_estimate_pct', database);
+  if (raw === null) return 0;
+  const parsed = Number(raw);
+  // A malformed value falls back to the refusing default, never to a guess.
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+}
 
 /** Epoch of the last Coinbase sync, or null when never run or unparseable. */
 function lastCoinbaseSyncAtMs(database: Db): number | null {
@@ -46,12 +72,21 @@ export interface RuntimeOptions {
   readonly profileId: string;
   /** Supplied by the composition root so `core` never reads the host clock. */
   readonly readSystemTime?: () => number;
+  /** Reported rather than thrown, so one bad tick cannot take down the app. */
+  readonly onUnexpectedError?: (context: string, error: unknown) => void;
+  /**
+   * Leave the paper scheduler stopped. The smoke harness boots the runtime to
+   * check wiring and should not start a timer or reach the network to do it.
+   */
+  readonly disableScheduler?: boolean;
 }
 
 export interface CoquiRuntime {
   readonly handlers: ChannelHandlers;
   readonly database: Db;
   readonly clock: Clock;
+  /** Null when the scheduler is disabled. Exposed so a test can drive a tick. */
+  readonly scheduler: SchedulerRuntime | null;
   dispose(): void;
 }
 
@@ -85,6 +120,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   );
   const portfolio = new PortfolioReadModelService({ database, clock, priceSource });
 
+  const candles = createCandleSource(http);
   const marketData = new MarketDisplayQueryService({
     clock,
     sources: createReferenceSources({
@@ -95,7 +131,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       news: http,
       trackedAssets,
     }),
-    candles: createCandleSource(http),
+    candles,
   });
 
   // PortfolioAllocationPolicyService is deliberately not wired: it only offers
@@ -107,6 +143,52 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   const scoreboard = new ResearchScoreboardService({ database });
   const evidence = new RiskEvidenceTrackerService({ database, clock });
   const statusRail = new StatusRailService({ database, clock });
+
+  // The paper engine. Its decision is synchronous, so the two things it needs
+  // from the outside world — market data and a holdings snapshot — are
+  // refreshed before each tick rather than awaited inside one.
+  const paperMarket = createPaperMarketFeed({
+    database,
+    http,
+    instruments: () => getAllocationPolicy(database).targets.map((target) => target.instrument),
+    bars: (instrument, lookbackDays, nowMs) => candles.dailyBars(instrument, lookbackDays, nowMs),
+    ...(options.onUnexpectedError === undefined
+      ? {}
+      : { onUnexpectedError: options.onUnexpectedError }),
+  });
+
+  let paperHoldings: readonly PricedHolding[] = [];
+  const scheduler = options.disableScheduler === true
+    ? null
+    : startSchedulerRuntime({
+        database,
+        clock,
+        profileId: options.profileId,
+        ...(options.onUnexpectedError === undefined
+          ? {}
+          : { onUnexpectedError: options.onUnexpectedError }),
+        async prepare(nowMs) {
+          await paperMarket.refresh(nowMs);
+          paperHoldings = (await portfolio.portfolioView()).holdings;
+        },
+        paper: {
+          database,
+          clock,
+          profileId: options.profileId,
+          market: paperMarket.view,
+          holdings: () => paperHoldings,
+          // Empty targets mean no policy: `planAutoRebalance` against nothing
+          // would propose selling the whole portfolio.
+          policy: () => {
+            const policy = getAllocationPolicy(database);
+            return policy.targets.length === 0 ? null : policy;
+          },
+          historicalNetEdgeEstimatePct: paperNetEdgeEstimatePct(database),
+          ...(options.onUnexpectedError === undefined
+            ? {}
+            : { onUnexpectedError: options.onUnexpectedError }),
+        },
+      });
 
   const handlers: ChannelHandlers = {
     'market-data.prices': () => marketData.prices(),
@@ -151,6 +233,15 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       };
     },
     'portfolio.tax': () => ({ ok: true, value: tax.view() }),
+    'paper.portfolio': async (payload: { readonly profileId: string }) => ({
+      ok: true,
+      // Priced with the same source as the real portfolio, so the two figures
+      // are comparable rather than differing partly by data.
+      value: await paperPortfolioView(
+        { database, clock, priceSource },
+        payload.profileId,
+      ),
+    }),
     'accounts.settings': (payload: { readonly profileId: string }) =>
       settings.get(payload.profileId),
     'research.scoreboard': () => scoreboard.latest(),
@@ -171,7 +262,9 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     handlers,
     database,
     clock,
+    scheduler,
     dispose() {
+      scheduler?.dispose();
       http.destroy();
       rateLimiters.destroyAll();
       database.close();

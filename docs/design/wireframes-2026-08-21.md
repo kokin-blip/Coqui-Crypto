@@ -158,7 +158,43 @@ never color alone (§1).
 
 ---
 
-## Screen 3 — Paper-action review
+## Screen 3 — Paper-action review · **SUPERSEDED 2026-08-22 (B7)**
+
+> **This screen was not built, deliberately.** It assumed a manual
+> preview-and-submit flow. The engine that shipped in P6 is **scheduler-driven**:
+> a daily UTC slot wakes it, `runExecutionGates` approves or refuses, and the OMS
+> executes without a human in the loop. There is no user-initiated order to
+> confirm, so a review screen would have advertised an interaction that does not
+> exist — and a `[ submit paper order ]` button with nothing behind it is exactly
+> the kind of claim this project refuses to make.
+>
+> The owner's direction (2026-08-21): *"that could cause confusion, maybe we
+> should just integrate the paper trade mode into the app how it is and show it
+> side by side with 'actual portfolio value' 'possible (paper) portfolio value'"*.
+>
+> **What was built instead** — `PaperComparison.tsx`, rendered beside the real
+> total on screen 2:
+>
+> ```
+> ACTUAL PORTFOLIO VALUE  $12,481.06     POSSIBLE (PAPER) VALUE — simulation, not money
+>   priced 6 of 6                          $13,204.11   ▲ +$723.05
+>   unrealised ▲ +$1,204.55                paper started 2026-06-14
+>   cost basis $11,276.51                  ● 68 of 90 days · ○ 41 of 50 decisions · ○ 22 of 30 fills
+>                                          last run 2026-08-21: the guardrails refused every
+>                                          proposed trade.
+>                                          Meeting the evidence bar makes live trading
+>                                          considerable, never enabled.
+> ```
+>
+> The three intents below survive the change and were carried into that
+> component: costs stay itemised, the fill-timing rule stays visible in the run
+> explanation, and there is still no optimistic success — a stand-down is stated
+> in plain words rather than rendered as nothing having happened. The guardrail
+> checklist moves to P8's risk dashboard, where it describes the rules
+> continuously rather than per-order.
+>
+> The original design follows, unedited, as the record of what was decided and
+> why it changed.
 
 The confirmation step for the only financial action that exists in this build.
 
@@ -230,6 +266,9 @@ renders as success. An ambiguous outcome renders as `unknown` — never as eithe
 ## States every screen must define
 
 Designed from real Coqui scenarios, not generic placeholders (§0).
+
+(The `Paper review` column below describes the superseded screen; its states are
+now served by the paper comparison on the portfolio screen.)
 
 | State | Scoreboard | Portfolio | Paper review |
 |---|---|---|---|

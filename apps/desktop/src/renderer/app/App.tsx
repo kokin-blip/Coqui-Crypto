@@ -30,7 +30,7 @@ export function App({ client }: { readonly client: CoquiClient }): React.JSX.Ele
 
       <Scoreboard client={client} />
 
-      <Portfolio client={client} />
+      <Portfolio client={client} profileId="main" />
 
       <Allocation client={client} />
 

@@ -1,6 +1,7 @@
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { formatQuantity, formatUsd, freshnessBadge } from '@coqui/ui-kit';
 
+import { PaperComparison } from './PaperComparison.js';
 import { Reconciliation } from './Reconciliation.js';
 import { useChannel } from '../query/use-channel.js';
 
@@ -110,7 +111,7 @@ function Header({ view }: { readonly view: PortfolioView }): React.JSX.Element {
   return (
     <div className="space-y-1">
       <p className="text-base">
-        <span className="font-semibold">PORTFOLIO VALUE</span>{' '}
+        <span className="font-semibold">ACTUAL PORTFOLIO VALUE</span>{' '}
         <Money value={view.valuation.totalValueUsd} />
         <span className="ml-4 opacity-70">
           priced {view.pricing.pricedCount} of {view.pricing.requestedCount}
@@ -135,7 +136,13 @@ function Header({ view }: { readonly view: PortfolioView }): React.JSX.Element {
   );
 }
 
-export function Portfolio({ client }: { readonly client: CoquiClient }): React.JSX.Element {
+export function Portfolio({
+  client,
+  profileId,
+}: {
+  readonly client: CoquiClient;
+  readonly profileId: string;
+}): React.JSX.Element {
   const portfolio = useChannel(client, 'portfolio.view', {});
 
   if (portfolio.kind === 'loading') return <p aria-live="polite">Loading portfolio…</p>;
@@ -157,7 +164,16 @@ export function Portfolio({ client }: { readonly client: CoquiClient }): React.J
         Portfolio
       </h2>
 
-      <Header view={view} />
+      <div className="grid gap-4 md:grid-cols-2">
+        <Header view={view} />
+        {/* Side by side, so the comparison is the point and neither figure is
+            presented as the other. */}
+        <PaperComparison
+          client={client}
+          profileId={profileId}
+          actualTotalUsd={view.valuation.unpricedCount > 0 ? null : view.valuation.totalValueUsd}
+        />
+      </div>
 
       {view.holdings.length === 0 ? (
         <p>No holdings yet — import a Coinbase report or add a tax lot to begin.</p>

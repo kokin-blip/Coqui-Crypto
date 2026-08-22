@@ -17,11 +17,11 @@ Effort figures assume one part-time developer with assistance.
 > **Update this section as phases complete. It is the first thing to read.**
 
 ```
-Current phase:  P5 — Shell and new UI; scoreboard landed, rest of screens next
-Last completed: P5c — strategy scoreboard wired end to end (2026-08-21)
-Verified:       117 test files / 775 tests green; smoke 15/15; perf p75 8.4ms
-Next work:      portfolio, allocation, tax, markets, paper, settings
-BLOCKED ON:     owner approval of docs/design/wireframes-2026-08-21.md
+Current phase:  P6 — Paper-trading engine; B1-B7 landed, exit criteria next
+Last completed: B7 — paper value beside real value; scheduler wake-up (2026-08-22)
+Verified:       130 test files / 915 tests green; smoke 24/24; perf p75 8.4ms
+Next work:      P6 exit — simulated 7-day run in CI, then a real multi-day run
+BLOCKED ON:     nothing; A6 screenshot review is the one open owner gate
 P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
 ```
 
@@ -967,6 +967,33 @@ unconfirmed financial result as success.
 - Split the simulation lab into scenario definitions + runner — R4
 - **Reconciliation harness** — N4
 - Wire the full chain with no bypass — `ARCHITECTURE.md` §6
+
+**Status 2026-08-22.** The engine exists end to end: gates (`execution-gate.ts`,
+branded so skipping one does not typecheck), venue (`venue.ts`, matching
+`backtest/engine.ts` index-for-index), OMS, run loop, reconciliation harness,
+forward-evidence counters, and the run-level journal. B7 added the paper figure
+beside the real one on the portfolio screen and the **wake-up the scheduler had
+never had** (`apps/desktop/src/main/scheduler-runtime.ts`) —
+`WalletSchedulerService` had no production caller until now, so no decision could
+be reached outside a test.
+
+Two deliberate departures, both recorded where they were decided:
+
+- **R4, the 879-line simulation lab, is deferred** in favour of the
+  reconciliation harness, which `docs/PLAN.md` §6 calls the only mechanism that
+  can reveal a dishonest backtest before real money does.
+- **Screen 3, the paper-action review, was superseded** rather than built — the
+  engine is scheduler-driven, so there is no user-initiated order to confirm.
+  See `docs/design/wireframes-2026-08-21.md` §"Screen 3".
+
+**The engine stands down by default, and this is correct.** The profitability
+gate weighs cost against a *registered* per-trade net-edge estimate, and no study
+in this repository has registered one for the shipped strategy — its own version
+string is `trendvol-legacy-unvalidated`. The composition root therefore supplies
+zero (`paper.net_edge_estimate_pct`, `composition.ts`), every intent is refused,
+and the portfolio screen says so in plain words. Producing fills for the exit
+criteria requires an estimate that comes from evidence (invariant 7), not a
+number chosen to make the engine trade.
 
 **Exit:** 7-day unattended run with a complete journal. Reconciliation reports a
 quantified divergence. **A test proves no path reaches execution while skipping a

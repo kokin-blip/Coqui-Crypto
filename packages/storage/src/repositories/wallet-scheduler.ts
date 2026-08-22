@@ -390,6 +390,18 @@ export function getWalletDecisionRun(
  * rather than elapsed calendar days, which `docs/PLAN.md` P6 rules out with
  * "never elapsed empty days". A week the app was closed contributes nothing.
  */
+/** The most recent decision for a profile, for surfacing "what happened last run". */
+export function latestWalletDecisionRun(
+  profileId: string,
+  database: Db,
+): StoredWalletDecisionRun | null {
+  const row = database.prepare(`
+    SELECT id FROM wallet_decision_runs WHERE profile_id = ?
+    ORDER BY scheduled_for DESC, id LIMIT 1
+  `).get(profileId) as { id: string } | undefined;
+  return row === undefined ? null : getWalletDecisionRun(row.id, database);
+}
+
 export function countObservedDecisionDays(
   profileId: string,
   sinceMs: number,

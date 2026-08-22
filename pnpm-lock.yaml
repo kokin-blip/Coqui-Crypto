@@ -137,6 +137,9 @@ importers:
       '@coqui/storage':
         specifier: workspace:*
         version: link:../storage
+      decimal.js:
+        specifier: 10.6.0
+        version: 10.6.0
 
   packages/storage:
     dependencies:

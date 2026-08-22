@@ -72,7 +72,15 @@ function createWindow(): BrowserWindow {
  * the order in which things are created and torn down.
  */
 function start(): void {
-  runtime = createRuntime({ databasePath: databasePath(), profileId: DEFAULT_PROFILE });
+  runtime = createRuntime({
+    databasePath: databasePath(),
+    profileId: DEFAULT_PROFILE,
+    // Background failures are reported, never thrown: a failed paper tick must
+    // not take down a window the user is reading.
+    onUnexpectedError: (context, error) => {
+      console.error(`[coqui] ${context} failed`, error);
+    },
+  });
 
   const dispatch = createDispatcher({
     handlers: runtime.handlers,

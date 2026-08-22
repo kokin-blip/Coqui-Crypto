@@ -107,6 +107,77 @@ export function saveProductRuleSnapshot(rule: ProductRuleSnapshot, database: Db)
   }).changes === 1;
 }
 
+interface ProductRuleRow {
+  id: string;
+  product_id: string;
+  product_type: 'spot';
+  status: ProductRuleSnapshot['status'];
+  trading_disabled: number;
+  cancel_only: number;
+  limit_only: number;
+  post_only: number;
+  view_only: number;
+  base_increment_text: string;
+  quote_increment_text: string;
+  price_increment_text: string;
+  base_min_size_text: string;
+  base_max_size_text: string | null;
+  quote_min_size_text: string;
+  quote_max_size_text: string | null;
+  source: ProductRuleSnapshot['source'];
+  retrieved_at: number;
+  response_hash: string;
+}
+
+/**
+ * The most recently retrieved rules for a product.
+ *
+ * Snapshots are insert-only and keyed by a content hash, so a product
+ * accumulates one row per distinct rule set. Normalisation must use the newest,
+ * because an increment the venue has since changed would round an order to a
+ * size the venue would now reject.
+ *
+ * Returns null rather than a default when nothing has been retrieved. Invariant
+ * 4: an absent rule is a refusal to trade, never an assumed one.
+ */
+export function latestProductRuleSnapshot(
+  productId: string,
+  database: Db,
+): ProductRuleSnapshot | null {
+  const row = database.prepare(`
+    SELECT * FROM paper_product_rule_snapshots_v3
+    WHERE product_id = ?
+    ORDER BY retrieved_at DESC, id
+    LIMIT 1
+  `).get(productId) as unknown as ProductRuleRow | undefined;
+  if (row === undefined) return null;
+  return Object.freeze({
+    id: row.id,
+    instrument: {
+      venue: 'coinbase' as const,
+      productId: row.product_id,
+      productType: row.product_type,
+    },
+    status: row.status,
+    tradingDisabled: row.trading_disabled === 1,
+    cancelOnly: row.cancel_only === 1,
+    limitOnly: row.limit_only === 1,
+    postOnly: row.post_only === 1,
+    viewOnly: row.view_only === 1,
+    baseIncrement: nonNegativeDecimal(row.base_increment_text),
+    quoteIncrement: nonNegativeDecimal(row.quote_increment_text),
+    priceIncrement: nonNegativeDecimal(row.price_increment_text),
+    baseMinSize: nonNegativeDecimal(row.base_min_size_text),
+    baseMaxSize: row.base_max_size_text === null ? null : nonNegativeDecimal(row.base_max_size_text),
+    quoteMinSize: nonNegativeDecimal(row.quote_min_size_text),
+    quoteMaxSize:
+      row.quote_max_size_text === null ? null : nonNegativeDecimal(row.quote_max_size_text),
+    source: row.source,
+    retrievedAt: row.retrieved_at,
+    responseHash: row.response_hash,
+  });
+}
+
 export function getPaperOrder(id: string, database: Db): PaperOrder | null {
   const row = database.prepare('SELECT * FROM paper_orders_v3 WHERE id = ?').get(id);
   return row ? orderFromRow(row as unknown as OrderRow) : null;

@@ -73,7 +73,12 @@ function percentile(values, fraction) {
  */
 async function measure({ blockRendererMs = 0 } = {}) {
   const dataDir = mkdtempSync(join(tmpdir(), 'coqui-perf-'));
-  const runtime = createRuntime({ databasePath: join(dataDir, 'coqui.db'), profileId: 'main' });
+  const runtime = createRuntime({
+    databasePath: join(dataDir, 'coqui.db'),
+    profileId: 'main',
+    // Background ticks would contaminate an interaction-latency measurement.
+    disableScheduler: true,
+  });
   const dispatch = createDispatcher({ handlers: runtime.handlers });
 
   // The preload invokes a fixed channel name, so the handler is replaced

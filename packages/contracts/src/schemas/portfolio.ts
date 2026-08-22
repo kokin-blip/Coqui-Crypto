@@ -144,7 +144,75 @@ const disposalSchema = z
   })
   .readonly();
 
+const paperPositionSchema = z
+  .strictObject({
+    instrument: instrumentIdentitySchema,
+    quantity: decimalStringSchema,
+    // Null, never zero: a zero would silently shrink the simulation and
+    // flatter whichever side is missing a price.
+    valueUsd: decimalStringSchema.nullable(),
+  })
+  .readonly();
+
+const forwardRequirementSchema = z
+  .strictObject({
+    code: z.enum(['observed_days', 'decisions', 'fills']),
+    observed: z.number().int().nonnegative(),
+    required: z.number().int().positive(),
+    met: z.boolean(),
+  })
+  .readonly();
+
 export const portfolioChannelSchemas = {
+  'paper.portfolio': {
+    request: z.strictObject({ profileId: z.string().min(1).max(64) }).readonly(),
+    response: z
+      .strictObject({
+        profileId: z.string().min(1).max(64),
+        asOfMs: epochMillisecondsSchema,
+        /**
+         * Literal `true`. This figure is a simulation and no surface may
+         * present it as money — the wire type refuses to describe it otherwise.
+         */
+        simulation: z.literal(true),
+        startedAtMs: epochMillisecondsSchema.nullable(),
+        cashUsd: decimalStringSchema,
+        positions: z.array(paperPositionSchema).max(500).readonly(),
+        totalValueUsd: decimalStringSchema.nullable(),
+        unpricedCount: z.number().int().nonnegative(),
+        lastRun: z
+          .strictObject({
+            scheduledForMs: epochMillisecondsSchema,
+            decidedAtMs: epochMillisecondsSchema,
+            standDown: z
+              .enum(['kill_switch_engaged', 'no_policy', 'no_intents', 'gates_refused'])
+              .nullable(),
+            filled: z.number().int().nonnegative(),
+            refused: z.number().int().nonnegative(),
+          })
+          .readonly()
+          .nullable(),
+        evidence: z
+          .strictObject({
+            profileId: z.string().min(1).max(64),
+            asOfMs: epochMillisecondsSchema,
+            sinceMs: epochMillisecondsSchema,
+            evidence: z
+              .strictObject({
+                days: z.number().int().nonnegative(),
+                decisions: z.number().int().nonnegative(),
+                fills: z.number().int().nonnegative(),
+              })
+              .readonly(),
+            requirements: z.array(forwardRequirementSchema).max(8).readonly(),
+            allRequirementsMet: z.boolean(),
+            // Meeting the bar makes live considerable, never enabled.
+            liveExecutionPermitted: z.literal(false),
+          })
+          .readonly(),
+      })
+      .readonly(),
+  },
   'portfolio.allocation': {
     request: emptyPayloadSchema,
     response: z
