@@ -3,6 +3,7 @@ import type { CoquiClient } from '@coqui/contracts';
 import { Allocation } from './Allocation.js';
 import { Markets } from './Markets.js';
 import { Portfolio } from './Portfolio.js';
+import { Risk } from './Risk.js';
 import { Settings } from './Settings.js';
 import { Tax } from './Tax.js';
 import { Scoreboard } from './Scoreboard.js';
@@ -31,6 +32,8 @@ export function App({ client }: { readonly client: CoquiClient }): React.JSX.Ele
       <Scoreboard client={client} />
 
       <Portfolio client={client} profileId="main" />
+
+      <Risk client={client} />
 
       <Allocation client={client} />
 

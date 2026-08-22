@@ -23,6 +23,7 @@ import {
   type PricedHolding,
   ResearchReadModelService,
   ResearchScoreboardService,
+  RiskDashboardService,
   RiskEvidenceTrackerService,
   StatusRailService,
 } from '@coqui/services';
@@ -163,6 +164,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   const research = new ResearchReadModelService({ database });
   const scoreboard = new ResearchScoreboardService({ database });
   const evidence = new RiskEvidenceTrackerService({ database, clock });
+  const riskDashboard = new RiskDashboardService({ database, clock });
   const statusRail = new StatusRailService({ database, clock });
 
   // The paper engine. Its decision is synchronous, so the two things it needs
@@ -296,6 +298,9 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     // The tracker throws only on a broken clock; the dispatcher contains that
     // and reports a stable code rather than letting it cross IPC.
     'risk.evidence-gate': () => ({ ok: true, value: evidence.track() }),
+    // Derived on every read from the equity history. There is no setter, here
+    // or anywhere: a stage the user could set is a guardrail they could disable.
+    'risk.dashboard': () => ({ ok: true, value: riskDashboard.view() }),
     'app.status-rail': (payload: { readonly profileId: string }) =>
       statusRail.status(payload.profileId),
   } as ChannelHandlers;

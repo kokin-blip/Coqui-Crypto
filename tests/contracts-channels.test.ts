@@ -62,6 +62,7 @@ describe('channel registry', () => {
       'research.negative-findings',
       'research.runs',
       'research.scoreboard',
+      'risk.dashboard',
       'risk.evidence-gate',
     ]);
   });

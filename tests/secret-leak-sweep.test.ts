@@ -48,6 +48,7 @@ const LOCAL_CHANNELS: readonly ChannelName[] = [
   'research.scoreboard',
   'research.negative-findings',
   'risk.evidence-gate',
+  'risk.dashboard',
   'portfolio.tax',
   'portfolio.reconciliation',
   'accounts.settings',

@@ -63,6 +63,9 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'portfolio.allocation': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
   // Disposals change only when the user records a sale.
   'portfolio.tax': { refetchIntervalMs: false, staleTimeMs: 5 * MINUTE },
+  // Derived from the same snapshots the portfolio reads, so it moves when they
+  // do and no faster.
+  'risk.dashboard': { refetchIntervalMs: 5 * MINUTE, staleTimeMs: 2 * MINUTE },
   // A write. It is never polled — it runs when the user decides — but the
   // registry requires a policy for every channel, and stating "never" here is
   // better than exempting writes and losing the completeness check.

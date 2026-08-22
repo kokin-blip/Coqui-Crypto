@@ -78,6 +78,50 @@ export const riskChannelSchemas = {
     request: z.strictObject({ profileId: z.string().min(1).max(64) }).readonly(),
     response: statusRailSchema,
   },
+  /**
+   * The risk ladder, read-only by construction.
+   *
+   * There is no write counterpart and there will not be one: P8's exit
+   * criterion is that the gate cannot be edited or overridden from the UI, and
+   * the absence of a channel is the strongest form of that guarantee.
+   */
+  'risk.dashboard': {
+    request: emptyPayloadSchema,
+    response: z
+      .strictObject({
+        asOfMs: epochMillisecondsSchema,
+        stage: z.enum(['normal', 'caution', 'defense', 'hard_stop']),
+        ladder: z
+          .array(
+            z
+              .strictObject({
+                stage: z.enum(['normal', 'caution', 'defense', 'hard_stop']),
+                active: z.boolean(),
+                exposureScale: z.number().min(0).max(1),
+                entryCondition: z.string().min(1).max(400),
+              })
+              .readonly(),
+          )
+          .max(8)
+          .readonly(),
+        exposureScale: z.number().min(0).max(1),
+        drawdownPct: z.number(),
+        expectedShortfallPct: z.number(),
+        realizedVolatilityPct: z.number().nullable(),
+        forecastVolatilityPct: z.number().nullable(),
+        volatilityRatio: z.number().nullable(),
+        maxGrossExposurePct: z.number().nonnegative(),
+        maxTurnoverPct: z.number().nonnegative(),
+        maxTradeCount: z.number().int().nonnegative(),
+        staleMarketData: z.boolean(),
+        blockReason: z.string().min(1).max(200).nullable(),
+        warnings: z.array(z.string().min(1).max(200)).max(20).readonly(),
+        sampleCount: z.number().int().nonnegative(),
+        snapshotAgeMs: z.number().int().nonnegative().nullable(),
+        insufficientHistory: z.boolean(),
+      })
+      .readonly(),
+  },
   'risk.evidence-gate': {
     request: emptyPayloadSchema,
     response: z

@@ -17,10 +17,10 @@ Effort figures assume one part-time developer with assistance.
 > **Update this section as phases complete. It is the first thing to read.**
 
 ```
-Current phase:  P7 — Coinbase read-only; C1-C5 landed, owner-key exit left
-Last completed: C4 per-wallet DB contexts · C5 canary leak sweep (2026-08-22)
-Verified:       137 test files / 982 tests green; smoke 25/25; perf p75 8.4ms
-Next work:      P8 — risk dashboard, evidence tracker, negative results, alerts
+Current phase:  P8 — Risk and evidence surfaces; D1 risk dashboard landed
+Last completed: D1 — risk ladder surfaced, read-only by construction (2026-08-22)
+Verified:       138 test files / 991 tests green; smoke 25/25; perf p75 8.4ms
+Next work:      D2 evidence tracker surface · D3 negative results · D4 alerts
 BLOCKED ON:     nothing; A6 screenshot review is the one open owner gate
 P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
 ```
@@ -1112,6 +1112,16 @@ report.** No cross-wallet data leakage.
 The honesty machinery becomes the product's face.
 
 - Risk dashboard: stage ladder, expected shortfall, exposure scaling, drawdown
+  — **done 2026-08-22.** `resolveRiskControlState` had no reader outside the
+  execution gate, so the ladder deciding whether the engine may trade was
+  invisible to the person it protects. `RiskDashboardService` derives it on
+  every read and has exactly one method; there is no write channel behind the
+  screen, and a test asserts both — the absence of a channel is a stronger
+  guarantee than a disabled control. Every rung is shown, not just the active
+  one, so the absence of a warning cannot be mistaken for nothing being checked.
+  Snapshot age is reported separately from price-feed staleness, because feeding
+  a daily snapshot cadence into a two-hour feed timeout would hard-stop a
+  healthy application and make the dashboard disagree with the gate.
 - Allocation targets and drift; rebalance plan with `estimateOnly` preserved
 - Tax ledger, disposals, harvest, cost-basis method
 - **Evidence tracker**: live-gate progress — 90 observed days / 50 decisions /
