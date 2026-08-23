@@ -2,8 +2,13 @@ packages:
   - "packages/*"
   - "apps/*"
 
-# esbuild's postinstall only verifies the platform binary that its optional
-# dependency already supplies, so the script is denied rather than approved.
-# The bundler is verified to work without it.
 allowBuilds:
+  # electron-winstaller builds Squirrel.Windows installers. Coqui targets NSIS
+  # (apps/desktop/electron-builder.yml), so this code path is never taken and
+  # its postinstall has nothing to prepare. Denied rather than approved: an
+  # unused build script is unused attack surface.
+  electron-winstaller: false
+  # esbuild's postinstall only verifies the platform binary that its optional
+  # dependency already supplies, so the script is denied rather than approved.
+  # The bundler is verified to work without it.
   esbuild: false

@@ -17,10 +17,10 @@ Effort figures assume one part-time developer with assistance.
 > **Update this section as phases complete. It is the first thing to read.**
 
 ```
-Current phase:  P9 — Observability and distribution; E1+E2 landed
-Last completed: E1 logger wired · E2 incidents service (2026-08-23)
-Verified:       140 test files / 1013 tests green; smoke 28/28; perf p75 8.4ms
-Next work:      E3 electron-builder · E4 release job · E5 packaged smoke · E6 guide
+Current phase:  P9 — Observability and distribution; E1-E6 landed
+Last completed: E3 packaging · E4 release job · E5 packaged smoke · E6 guide (2026-08-23)
+Verified:       140 test files / 1013 tests green; smoke 28/28; packaged smoke 8/8
+Next work:      A6 screenshot review (owner gate) · P7 exit needs a real key
 BLOCKED ON:     nothing; A6 screenshot review is the one open owner gate
 P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
 ```
@@ -1157,6 +1157,33 @@ live; it only makes live *considerable*.
 - One `electron-builder` config; macOS + Windows on tag
 - Release checklist, install guide
 - Code signing when funded — the only paid item in this plan
+
+**E3-E6 done 2026-08-23.** `electron-builder` 26.15.7 at
+`apps/desktop/electron-builder.yml`, targeting **macOS arm64 DMG and Windows x64
+NSIS**. ARCHITECTURE §11 also listed macOS x64; that was dropped rather than
+built, because ADR-0003's packaged gate names arm64 and Windows x64 and a binary
+no gate covers is a claim this project cannot back.
+
+Both predecessor build hooks are ported and both are load-bearing.
+`afterPackHardening` denies arbitrary network loads and strips the camera,
+microphone and Bluetooth usage descriptions Electron declares by default — a
+declared capability is one macOS will prompt for. `afterSignAdHoc` applies an
+ad-hoc signature; without it Apple Silicon reports the app as *damaged* with
+only a Move-to-Trash option, not the milder unidentified-developer prompt. It
+no-ops when `CSC_IDENTITY` is set, so adding a real identity later is
+configuration.
+
+**A DMG was built and the ADR-0003 gate passed locally**: `node:sqlite` opened a
+migrated schema-46 database from inside the asar archive of an ad-hoc signed
+bundle. `scripts/packaged-smoke.mjs` is that gate, and the release workflow runs
+it on both platforms before anything is published.
+
+Two supply-chain notes. `electron-builder` 26.0.12 pulls `@electron/node-gyp`
+from a git repository, which the workspace's exotic-subdep policy blocks;
+26.15.7 does not, so the version was raised rather than the policy weakened.
+`electron-winstaller`'s postinstall is denied in `pnpm-workspace.yaml` — it
+builds Squirrel installers and Coqui targets NSIS, so an unused build script is
+unused attack surface.
 
 **Exit:** a background failure is diagnosable from logs alone. A log-redaction
 test injects a known secret and asserts it never appears. CI produces installable

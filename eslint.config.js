@@ -192,6 +192,19 @@ export default tseslint.config(
     },
   },
   {
+    // electron-builder hooks. They are loaded by electron-builder itself, in
+    // CommonJS, before anything of ours runs — hence `.cjs` in an ESM package.
+    files: ['**/*.cjs'],
+    languageOptions: {
+      sourceType: 'commonjs',
+      globals: { module: 'writable', require: 'readonly', process: 'readonly' },
+    },
+    // `require` is the only thing a CommonJS hook can use. The rule is right
+    // everywhere else in this repo, which is why the exemption is scoped to
+    // two files rather than switched off.
+    rules: { '@typescript-eslint/no-require-imports': 'off' },
+  },
+  {
     files: ['apps/desktop/src/renderer/**/*.tsx'],
     rules: {
       'max-lines': ['error', { max: 300, skipBlankLines: true, skipComments: true }],

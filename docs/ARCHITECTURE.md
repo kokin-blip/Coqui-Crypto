@@ -550,7 +550,13 @@ operational runtime. Neither prototype may enter production from this result. Se
 
 ## 11. Deployment
 
-`electron-builder` → macOS DMG (arm64 + x64), Windows NSIS. CI builds on tag.
+`electron-builder` → **macOS arm64 DMG and Windows x64 NSIS**, and only those.
+CI builds on tag. Config lives at `apps/desktop/electron-builder.yml`.
+
+macOS x64 was listed here until 2026-08-23 and is now dropped. Nothing verifies
+it: ADR-0003's packaged `node:sqlite` gate names arm64 and Windows x64, and a
+binary no gate covers is a claim this project cannot back. Adding it back means
+adding it to the gate first.
 
 No server, no containers, no cloud database, no hosted API. Docker is optional
 and only for reproducing the Python research environment.

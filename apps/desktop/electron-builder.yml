@@ -1,0 +1,84 @@
+# Packaging for Coqui.
+#
+# Targets are macOS arm64 and Windows x64, and only those. ARCHITECTURE §11
+# previously also listed macOS x64; that was dropped because nothing verifies
+# it — ADR-0003's packaged `node:sqlite` gate names arm64 and Windows x64, and
+# shipping a binary no gate covers is a claim the project cannot back.
+#
+# Signing stays ad-hoc (see build/afterSignAdHoc.cjs). Real Developer-ID
+# signing is the only recommended paid item in the whole plan and is deferred;
+# the structure here means adding an identity later is configuration rather than
+# a rewrite.
+
+appId: com.kokinmartinez.coqui
+productName: Coqui
+
+directories:
+  output: release
+  buildResources: build
+
+# The compiled main and preload, the built renderer, and the manifest.
+# `node_modules` is resolved by electron-builder from the workspace.
+files:
+  - dist/**/*
+  - package.json
+
+# `node:sqlite` removed the SQLite native addon, but two native modules remain
+# and their .node binaries cannot be read from inside an asar archive.
+asarUnpack:
+  - '**/*.node'
+  - node_modules/@duckdb/**
+  - node_modules/@napi-rs/keyring/**
+
+afterPack: build/afterPackHardening.cjs
+afterSign: build/afterSignAdHoc.cjs
+
+mac:
+  artifactName: ${productName}-${version}-mac-${arch}.${ext}
+  category: public.app-category.finance
+  target:
+    - target: dmg
+      arch: arm64
+    - target: zip
+      arch: arm64
+  # No Developer-ID certificate. The afterSign hook applies an ad-hoc signature,
+  # without which Apple Silicon refuses to run the app at all.
+  identity: null
+  hardenedRuntime: false
+  extendInfo:
+    # The app reads a local database and talks to two public HTTPS APIs. It has
+    # no business asking for anything else, and the hook strips the rest.
+    NSAppTransportSecurity:
+      NSAllowsArbitraryLoads: false
+
+win:
+  artifactName: ${productName}-${version}-win-${arch}.${ext}
+  target:
+    - target: nsis
+      arch: x64
+    - target: zip
+      arch: x64
+
+nsis:
+  artifactName: ${productName}-${version}-win-${arch}-setup.${ext}
+  # Per-user, and never silent: an installer that decides for you is the wrong
+  # first impression for an application whose whole argument is that it does not
+  # do things on your behalf.
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Coqui
+
+dmg:
+  title: Coqui ${version}
+  # Every distributed artifact is accompanied by a guide that is honest about
+  # the unidentified-developer prompt, because signing is ad-hoc.
+  contents:
+    - x: 130
+      y: 220
+    - x: 410
+      y: 220
+      type: link
+      path: /Applications

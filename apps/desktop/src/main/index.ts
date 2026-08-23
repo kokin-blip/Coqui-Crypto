@@ -134,9 +134,51 @@ function shutdown(): void {
   runtime = null;
 }
 
+/**
+ * The ADR-0003 gate, run inside the packaged application.
+ *
+ * `node:sqlite` working under `vitest` proves the code; it does not prove the
+ * *artifact*. Opening a migrated database from inside an asar-packed, ad-hoc
+ * signed bundle is a separate claim, and this is where it is checked. It runs
+ * headless — no window, no scheduler, no network — so CI can gate on it.
+ *
+ * Printed as one machine-readable line because the harness parses stdout: a
+ * packaged process has nowhere else to report to.
+ */
+function runPackagedSmoke(): void {
+  let payload: { opened: boolean; schemaVersion: number | null; error: string | null };
+  let probe: CoquiRuntime | null = null;
+  try {
+    probe = createRuntime({
+      databasePath: databasePath(),
+      profileId: DEFAULT_PROFILE,
+      disableScheduler: true,
+    });
+    const row = probe.database.prepare('PRAGMA user_version').get() as { user_version: number };
+    payload = { opened: true, schemaVersion: Number(row.user_version), error: null };
+  } catch (error) {
+    // The error's *type*, not its message: a failure here is reported in CI
+    // logs, and a message can carry a path.
+    payload = {
+      opened: false,
+      schemaVersion: null,
+      error: error instanceof Error ? error.constructor.name : typeof error,
+    };
+  } finally {
+    probe?.dispose();
+  }
+  console.log(`COQUI_PACKAGED_SMOKE ${JSON.stringify(payload)}`);
+  app.exit(payload.opened ? 0 : 1);
+}
+
 app.enableSandbox();
 
 app.on('ready', () => {
+  if (process.argv.includes('--packaged-smoke')) {
+    runPackagedSmoke();
+    return;
+  }
+
   // The window opens after the key read, so the first market request already
   // uses the connected tier rather than falling back and re-fetching.
   void start();

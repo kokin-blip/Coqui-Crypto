@@ -1,0 +1,143 @@
+name: Release
+
+# Tag-triggered only. A release is a deliberate act, and nothing here should
+# ever fire from a push to a branch.
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  # The full gate runs again before anything is built. A tag can be pushed at a
+  # commit that never went green, and finding that out after publishing an
+  # installer is finding out too late.
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify
+        run: pnpm verify
+
+  build:
+    needs: verify
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            script: package:mac
+            artifact: macos-arm64
+          - os: windows-latest
+            script: package:win
+            artifact: windows-x64
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Package
+        run: pnpm --filter @coqui/desktop ${{ matrix.script }}
+
+      # ADR-0003's actual gate. `node:sqlite` working under vitest proves the
+      # code; opening a migrated database from inside an asar-packed, ad-hoc
+      # signed bundle is a separate claim. A failure here reopens ADR-0003 —
+      # it does not justify adding a second SQLite binding.
+      - name: Packaged smoke (ADR-0003 gate)
+        run: pnpm --filter @coqui/desktop smoke:packaged
+
+      - name: Hash the artifacts
+        shell: bash
+        run: |
+          cd apps/desktop/release
+          # Only distributable artifacts. The unpacked directories are build
+          # intermediates and hashing them would make the manifest unreadable.
+          shasum -a 256 *.dmg *.zip *.exe 2>/dev/null | tee "SHA256SUMS-${{ matrix.artifact }}.txt"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: coqui-${{ matrix.artifact }}
+          path: |
+            apps/desktop/release/*.dmg
+            apps/desktop/release/*.zip
+            apps/desktop/release/*.exe
+            apps/desktop/release/SHA256SUMS-*.txt
+          if-no-files-found: error
+          retention-days: 14
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Download artifacts
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Combine checksums
+        run: |
+          cd artifacts
+          cat SHA256SUMS-*.txt > SHA256SUMS.txt
+          rm SHA256SUMS-*.txt
+          cat SHA256SUMS.txt
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            --repo "${{ github.repository }}" \
+            --title "${{ github.ref_name }}" \
+            --notes-file docs/RELEASE-NOTES-TEMPLATE.md \
+            --draft \
+            artifacts/*
+
+      # The predecessor verified integrity both before *and* after upload, and
+      # that is worth copying: an artifact corrupted in transit passes every
+      # local check and fails only for the person who downloads it.
+      - name: Verify the published assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p verify && cd verify
+          gh release download "${{ github.ref_name }}" \
+            --repo "${{ github.repository }}" --pattern '*' --clobber
+          shasum -a 256 -c SHA256SUMS.txt

@@ -10,3 +10,6 @@ research/python/.venv/
 research/output/
 data/
 .migration-source/
+
+# Packaged artifacts. Built by CI on a tag; never committed.
+apps/desktop/release/

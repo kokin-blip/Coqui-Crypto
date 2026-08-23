@@ -9,7 +9,11 @@
     "dev": "vite",
     "start": "pnpm build && electron .",
     "smoke": "pnpm build && electron scripts/smoke.mjs",
-    "perf": "pnpm build && electron scripts/perf.mjs"
+    "perf": "pnpm build && electron scripts/perf.mjs",
+    "package": "pnpm build && electron-builder --config electron-builder.yml",
+    "package:mac": "pnpm build && electron-builder --config electron-builder.yml --mac --arm64",
+    "package:win": "pnpm build && electron-builder --config electron-builder.yml --win --x64",
+    "smoke:packaged": "node scripts/packaged-smoke.mjs"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",
@@ -31,6 +35,7 @@
     "@types/react-dom": "19.2.4",
     "@vitejs/plugin-react": "6.1.0",
     "electron": "43.4.1",
+    "electron-builder": "26.15.7",
     "esbuild": "0.28.2",
     "tailwindcss": "4.3.3",
     "vite": "8.2.2"
