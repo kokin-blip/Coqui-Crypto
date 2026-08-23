@@ -1,5 +1,6 @@
 import type { CoquiClient } from '@coqui/contracts';
 
+import { Alerts } from './Alerts.js';
 import { Allocation } from './Allocation.js';
 import { Markets } from './Markets.js';
 import { Portfolio } from './Portfolio.js';
@@ -40,6 +41,8 @@ export function App({ client }: { readonly client: CoquiClient }): React.JSX.Ele
       <Tax client={client} />
 
       <Markets client={client} />
+
+      <Alerts client={client} profileId="main" />
 
       <Settings client={client} profileId="main" />
 

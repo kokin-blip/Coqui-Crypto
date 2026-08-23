@@ -43,6 +43,7 @@ describe('channel registry', () => {
   it('matches the boundaries that actually have tested services today', () => {
     expect([...CHANNEL_NAMES].sort()).toEqual([
       'accounts.settings',
+      'alerts.view',
       'app.status-rail',
       'market-data.candles',
       'market-data.fear-greed',

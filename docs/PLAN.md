@@ -17,10 +17,10 @@ Effort figures assume one part-time developer with assistance.
 > **Update this section as phases complete. It is the first thing to read.**
 
 ```
-Current phase:  P8 — Risk and evidence surfaces; D1 risk dashboard landed
-Last completed: D1 — risk ladder surfaced, read-only by construction (2026-08-22)
-Verified:       138 test files / 991 tests green; smoke 25/25; perf p75 8.4ms
-Next work:      D2 evidence tracker surface · D3 negative results · D4 alerts
+Current phase:  P8 — Risk and evidence surfaces; D1-D4 landed
+Last completed: D4 — alerts surfaced and OS notifications wired (2026-08-23)
+Verified:       139 test files / 1003 tests green; smoke 27/27; perf p75 8.4ms
+Next work:      D5 re-phased P4 rows, then P9 observability and distribution
 BLOCKED ON:     nothing; A6 screenshot review is the one open owner gate
 P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
 ```
@@ -1127,7 +1127,23 @@ The honesty machinery becomes the product's face.
 - **Evidence tracker**: live-gate progress — 90 observed days / 50 decisions /
   30 fills / beats hold and passive / clears deflated Sharpe
 - **Negative-results surface** rendered from `docs/studies/`
-- Alerts: rules, cooldown, OS notifications — R9
+- Alerts: rules, cooldown, OS notifications — R9 — **done 2026-08-23.**
+  `AlertsService` had rules, cooldown, price targets and an append-only event
+  log since the transplant, and there were zero `Notification` usages anywhere:
+  alerts were recorded and visible only by opening the app, which is the one
+  situation where a notification is pointless. The `alerts.view` channel is the
+  reader; `main/notifications.ts` is the delivery.
+
+  Quiet hours suppress the *notification*, never the alert — the event stays
+  recorded and unread, so anything raised overnight is waiting in the morning.
+  The window wraps midnight correctly, which the obvious comparison does not:
+  22:00–08:00 is not `start <= hour < end`, and getting it wrong notifies all
+  night. Delivery is tracked in memory rather than by marking events read,
+  because marking read is the user's action and doing it here would make a
+  notification they never saw look like one they dismissed.
+
+**D2 and D3 were already shipped** in P5's scoreboard — the evidence gate panel
+and `NEGATIVE FINDINGS`. Re-checked rather than rebuilt.
 
 **Exit:** every displayed figure has visible provenance. **The gate cannot be
 edited or overridden from the UI** — tested. Reaching the gate does not enable

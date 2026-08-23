@@ -1,7 +1,7 @@
 import { join } from 'node:path';
 
 import { createOsKeyringSecretStore } from '@coqui/adapters';
-import { app, BrowserWindow, ipcMain, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, Notification, shell } from 'electron';
 
 import { createDispatcher } from './dispatch.js';
 import { createRuntime, type CoquiRuntime } from './composition.js';
@@ -92,8 +92,23 @@ async function coinGeckoApiKey(): Promise<string | null> {
   }
 }
 
+/**
+ * The OS notifier.
+ *
+ * Kept behind the `Notifier` interface so the decision of *whether* to notify
+ * stays testable without an operating system — `selectNotifiable` is pure, and
+ * this is the four lines that cannot be.
+ */
+const osNotifier = {
+  isSupported: () => Notification.isSupported(),
+  show(request: { readonly title: string; readonly body: string; readonly silent: boolean }) {
+    new Notification({ title: request.title, body: request.body, silent: request.silent }).show();
+  },
+};
+
 async function start(): Promise<void> {
   runtime = createRuntime({
+    notifier: osNotifier,
     databasePath: databasePath(),
     profileId: DEFAULT_PROFILE,
     coinGeckoApiKey: await coinGeckoApiKey(),

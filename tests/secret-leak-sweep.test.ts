@@ -53,6 +53,7 @@ const LOCAL_CHANNELS: readonly ChannelName[] = [
   'portfolio.reconciliation',
   'accounts.settings',
   'app.status-rail',
+  'alerts.view',
 ];
 
 const PAYLOADS: Partial<Record<ChannelName, unknown>> = {
@@ -60,6 +61,7 @@ const PAYLOADS: Partial<Record<ChannelName, unknown>> = {
   'research.job': { id: 'a'.repeat(64) },
   'accounts.settings': { profileId: 'main' },
   'app.status-rail': { profileId: 'main' },
+  'alerts.view': { profileId: 'main' },
   'portfolio.reconciliation': { profileId: 'main' },
 };
 

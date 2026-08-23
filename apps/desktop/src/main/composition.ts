@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto';
+
 import {
   createCoinbasePriceSource,
   createCoinGeckoDemoHttpClient,
@@ -15,6 +17,7 @@ import {
 } from '@coqui/core';
 import {
   AccountSettingsService,
+  AlertsService,
   PortfolioReadModelService,
   PortfolioTaxService,
   ReconciliationLedgerService,
@@ -36,6 +39,7 @@ import {
   type Db,
 } from '@coqui/storage';
 
+import { createAlertNotificationPump } from './notifications.js';
 import { createPaperMarketFeed } from './paper-market.js';
 import { createCandleSource, createReferenceSources } from './reference-sources.js';
 import { startSchedulerRuntime, type SchedulerRuntime } from './scheduler-runtime.js';
@@ -92,6 +96,12 @@ export interface RuntimeOptions {
    * reach a service or a channel (invariant 3).
    */
   readonly coinGeckoApiKey?: string | null;
+  /**
+   * Delivers OS notifications. Injected because `electron.Notification` is
+   * unavailable under vitest, and because whether to notify must be decidable
+   * without an OS.
+   */
+  readonly notifier?: Parameters<typeof createAlertNotificationPump>[0]['notifier'];
 }
 
 export interface CoquiRuntime {
@@ -164,6 +174,11 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   const research = new ResearchReadModelService({ database });
   const scoreboard = new ResearchScoreboardService({ database });
   const evidence = new RiskEvidenceTrackerService({ database, clock });
+  const alerts = new AlertsService({
+    database,
+    clock,
+    idSource: { nextId: () => randomUUID() },
+  });
   const riskDashboard = new RiskDashboardService({ database, clock });
   const statusRail = new StatusRailService({ database, clock });
 
@@ -180,6 +195,17 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       : { onUnexpectedError: options.onUnexpectedError }),
   });
 
+  const notifications = options.notifier === undefined
+    ? null
+    : createAlertNotificationPump({
+        alerts,
+        notifier: options.notifier,
+        profileId: options.profileId,
+        ...(options.onUnexpectedError === undefined
+          ? {}
+          : { onUnexpectedError: options.onUnexpectedError }),
+      });
+
   let paperHoldings: readonly PricedHolding[] = [];
   const scheduler = options.disableScheduler === true
     ? null
@@ -193,6 +219,9 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
         async prepare(nowMs) {
           await paperMarket.refresh(nowMs);
           paperHoldings = (await portfolio.portfolioView()).holdings;
+          // After the refresh, so an alert raised by this tick's data is
+          // delivered by this tick rather than waiting for the next one.
+          notifications?.deliver(nowMs);
         },
         paper: {
           database,
@@ -301,6 +330,10 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     // Derived on every read from the equity history. There is no setter, here
     // or anywhere: a stage the user could set is a guardrail they could disable.
     'risk.dashboard': () => ({ ok: true, value: riskDashboard.view() }),
+    'alerts.view': (payload: { readonly profileId: string }) => ({
+      ok: true,
+      value: alerts.view(payload.profileId),
+    }),
     'app.status-rail': (payload: { readonly profileId: string }) =>
       statusRail.status(payload.profileId),
   } as ChannelHandlers;

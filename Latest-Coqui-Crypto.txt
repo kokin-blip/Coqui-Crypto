@@ -1,0 +1,2349 @@
+▗ ▗   ▖ ▖  Claude Code v2.1.220
+           Opus 5 · Claude Pro
+  ▘▘ ▝▝    ~/Coqui-Crypto
+
+ ⚠ Your login expires in 1 day · run /login to renew
+
+✻ Conversation compacted (ctrl+o for history)
+
+
+⏺ Now the scheduler wake-up — the piece the scheduler has never had.
+
+⏺ Write(apps/desktop/src/main/scheduler-runtime.ts)
+  ⎿  Wrote 117 lines to apps/desktop/src/main/scheduler-runtime.ts
+       1 import { clearInterval, setInterval } from 'node:timers';
+       2 
+       3 import type { Clock } from '@coqui/core';
+       4 import {
+       5   createPaperRunLoopTask,
+       6   recoverPaperOrdersAtStartup,
+       7   WalletSchedulerService,
+       8   type PaperRunLoopDependencies,
+       9   type WalletSchedulerTask,
+      10 } from '@coqui/services';
+     … +129 lines (ctrl+o to expand)
+
+⏺ Bash(pnpm typecheck > /tmp/tc.log 2>&1; echo "TC=$?"; tail -8 /tmp/tc.log)
+  ⎿  TC=0
+     $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.
+     renderer.json --noEmit
+
+⏺ Now the channel, composition wiring, and the side-by-side on the portfolio
+  screen.
+
+⏺ Bash(python3 - <<'PY'
+      p='packages/contracts/src/schemas/portfolio.ts'…)
+  ⎿  wired
+     TC=0
+     $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.
+     renderer.json --noEmit
+  ⎿  Read apps/desktop/src/main/scheduler-runtime.ts (118 lines)
+  ⎿  Read packages/services/src/paper/paper-portfolio.ts (168 lines)
+  ⎿  Read packages/services/src/paper/forward-evidence.ts (96 lines)
+  ⎿  Read tests/paper-reconciliation.test.ts (271 lines)
+  ⎿  Read packages/services/src/paper/reconciliation.ts (276 lines)
+  ⎿  Plan file referenced (~/.claude/plans/lets-work-on-https-github-com-kokin-b
+     lip-temporal-whale.md)
+
+  Searched for 1 pattern, read 2 files (ctrl+o to expand)
+  ⎿  Loaded CLAUDE.md
+
+⏺ Bash(grep -rln "WalletSchedulerService" packages/services/src | head; echo
+      ---; f=$(grep -rln "class WalletSchedulerService" packages/services/src |
+      head -1); echo "…)
+  ⎿  packages/services/src/paper/run-loop.ts
+     packages/services/src/scheduler/wallet-scheduler.ts
+     ---
+     … +20 lines (ctrl+o to expand)
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n "export interface
+      PaperMarketData" -A 12 packages/services/src/paper/oms.ts; echo === ; grep
+      -rn "export function…)
+  ⎿  Error: Exit code 1
+     72:export interface PaperMarketData {
+     73-  /** Every known bar for an instrument, ascending. The venue picks the 
+     fill bar. */
+     74-  bars(instrumentKey: string): readonly MarketBar[];
+     75-  rules(instrumentKey: string): ProductRuleSnapshot | null;
+     76-}
+     77-
+     78-export interface PaperOmsDependencies {
+     79-  readonly database: Db;
+     80-  readonly clock: Clock;
+     … +5 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -rn "export function
+      list.*[Bb]ars\|export function get.*ProductRule\|export function
+      saveProductRuleSnapshot\|export…)
+  ⎿  packages/storage/src/repositories/market-data.ts:148:export function l
+     istMarketBars(
+     packages/storage/src/repositories/paper.ts:68:export function saveProd
+     uctRuleSnapshot(rule: ProductRuleSnapshot, database: Db): boolean {
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 130,190p
+      packages/storage/src/repositories/market-data.ts; echo ===RULES; sed -n
+      55,120p packages/storage/src/repos…)
+  ⎿  Error: Exit code 1
+             instrumentKey(row.instrument),
+             row.providerAssetId,
+             row.interval,
+             row.startTimeMs,
+             row.endTimeMs,
+             row.open,
+             row.high,
+             row.low,
+             row.close,
+     … +53 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n "ProductRule"
+      packages/storage/src/repositories/paper.ts | head -20; echo ===; grep -rn
+      "productRuleSnapshot\|getP…)
+  ⎿  Error: Exit code 1
+     14:  type ProductRuleSnapshot,
+     68:export function saveProductRuleSnapshot(rule: ProductRuleSnapshot, 
+     database: Db): boolean {
+     (eval):1: == not found
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; ls packages/adapters/src/coinbase/;
+      echo "---"; grep -rn "product_rule" packages/storage/src --include=*.ts |
+      grep -v migr…)
+  ⎿  account-evidence.ts
+     archive.ts
+     auth.ts
+     … +8 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -rn "product_rule"
+      packages/storage/src | grep -v migrations | head; echo "---"; sed -n
+      60,110p packages/storage/src/…)
+  ⎿  packages/storage/src/repositories/paper.ts:36:  product_rule_snapshot_
+     id: string;
+     packages/storage/src/repositories/paper.ts:60:    productRuleSnapshotI
+     … +59 lines (ctrl+o to expand)
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -rn "export interface
+      MarketBar\b" -A 16 packages/core/src | head -25; echo "--- record"; grep
+      -rn "export interface…)
+  ⎿  packages/core/src/market/market-bars.ts:8:export interface MarketBar {
+     packages/core/src/market/market-bars.ts-9-  assetId: InstrumentKey;
+     packages/core/src/market/market-bars.ts-10-  source: MarketBarSource;
+     … +34 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 150,215p
+      packages/adapters/src/coinbase/product-rules.ts; echo "--- candle source";
+      grep -n "createCandleSource" -A…)
+  ⎿  }
+
+     export interface CoinbaseProductRuleOptions {
+     … +77 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n "export function upsert"
+      packages/storage/src/repositories/market-data.ts; echo "--- policy"; grep
+      -rn "Allocation…)
+  ⎿  61:export function upsertDailyCloses(
+     102:export function upsertMarketBars(rows: readonly MarketBarRecord[],
+      database: Db): void {
+     … +40 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n "portfolioView\|holdings"
+      packages/services/src/portfolio/read-model.ts | head -20; echo "---
+      PortfolioView type";…)
+  ⎿  ugrep: warning: packages/services/src/portfolio/read-model.ts: No such
+      file or directory
+     --- PortfolioView type
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; f=$(grep -rln "class
+      PortfolioReadModelService" packages/services/src); echo "$f"; grep -n
+      "async portfolioView\|holdings"…)
+  ⎿  packages/services/src/portfolio/read-models.ts
+     5:  holdingsFromLots,
+     68:  readonly holdings: readonly PricedHolding[];
+     … +13 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 55,80p
+      packages/services/src/portfolio/read-models.ts; sed -n 190,250p
+      packages/services/src/portfolio/read-models.…)
+  ⎿  export interface HoldingPriceProvenance {
+       readonly source: string;
+       readonly quality: SpotPriceQuality;
+     … +84 lines (ctrl+o to expand)
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ Now the product-rules read function storage never had:
+
+⏺ Update(packages/storage/src/repositories/paper.ts)
+  ⎿  Added 67 lines
+      107    }).changes === 1;
+      108  }
+      109  
+      110 +interface ProductRuleRow {                                    
+      111 +  id: string;                                                 
+      112 +  product_id: string;                                         
+      113 +  product_type: 'spot';                                       
+      114 +  status: ProductRuleSnapshot['status'];                      
+      115 +  trading_disabled: number;                                   
+      116 +  cancel_only: number;                                        
+      117 +  limit_only: number;                                         
+      118 +  post_only: number;                                          
+      119 +  view_only: number;                                          
+      120 +  base_increment_text: string;                                
+      121 +  quote_increment_text: string;                               
+      122 +  price_increment_text: string;                               
+      123 +  base_min_size_text: string;                                 
+      124 +  base_max_size_text: string | null;                          
+      125 +  quote_min_size_text: string;                                
+      126 +  quote_max_size_text: string | null;                         
+      127 +  source: ProductRuleSnapshot['source'];                      
+      128 +  retrieved_at: number;                                       
+      129 +  response_hash: string;                                      
+      130 +}                                                             
+      131 +                                                              
+      132 +/**                                                           
+      133 + * The most recently retrieved rules for a product.           
+      134 + *                                                            
+      135 + * Snapshots are insert-only and keyed by a content hash, so a
+          + product                                                      
+      136 + * accumulates one row per distinct rule set. Normalisation mu
+          +st use the newest,                                            
+      137 + * because an increment the venue has since changed would roun
+          +d an order to a                                               
+      138 + * size the venue would now reject.                           
+      139 + *                                                            
+      140 + * Returns null rather than a default when nothing has been re
+          +trieved. Invariant                                            
+      141 + * 4: an absent rule is a refusal to trade, never an assumed o
+          +ne.                                                           
+      142 + */                                                           
+      143 +export function latestProductRuleSnapshot(                    
+      144 +  productId: string,                                          
+      145 +  database: Db,                                               
+      146 +): ProductRuleSnapshot | null {                               
+      147 +  const row = database.prepare(`                              
+      148 +    SELECT * FROM paper_product_rule_snapshots_v3             
+      149 +    WHERE product_id = ?                                      
+      150 +    ORDER BY retrieved_at DESC, id                            
+      151 +    LIMIT 1                                                   
+      152 +  `).get(productId) as unknown as ProductRuleRow | undefined; 
+      153 +  if (row === undefined) return null;                         
+      154 +  return Object.freeze({                                      
+      155 +    id: row.id,                                               
+      156 +    instrument: { venue: 'coinbase', productId: row.product_id
+          +, productType: row.product_type },                            
+      157 +    status: row.status,                                       
+      158 +    tradingDisabled: row.trading_disabled === 1,              
+      159 +    cancelOnly: row.cancel_only === 1,                        
+      160 +    limitOnly: row.limit_only === 1,                          
+      161 +    postOnly: row.post_only === 1,                            
+      162 +    viewOnly: row.view_only === 1,                            
+      163 +    baseIncrement: nonNegativeDecimal(row.base_increment_text)
+          +,                                                             
+      164 +    quoteIncrement: nonNegativeDecimal(row.quote_increment_tex
+          +t),                                                           
+      165 +    priceIncrement: nonNegativeDecimal(row.price_increment_tex
+          +t),                                                           
+      166 +    baseMinSize: nonNegativeDecimal(row.base_min_size_text),  
+      167 +    baseMaxSize: row.base_max_size_text === null ? null : nonN
+          +egativeDecimal(row.base_max_size_text),                       
+      168 +    quoteMinSize: nonNegativeDecimal(row.quote_min_size_text),
+      169 +    quoteMaxSize:                                             
+      170 +      row.quote_max_size_text === null ? null : nonNegativeDec
+          +imal(row.quote_max_size_text),                                
+      171 +    source: row.source,                                       
+      172 +    retrievedAt: row.retrieved_at,                            
+      173 +    responseHash: row.response_hash,                          
+      174 +  });                                                         
+      175 +}                                                             
+      176 +                                                              
+      177  export function getPaperOrder(id: string, database: Db): Paper
+           Order | null {
+      178    const row = database.prepare('SELECT * FROM paper_orders_v3 
+           WHERE id = ?').get(id);
+      179    return row ? orderFromRow(row as unknown as OrderRow) : null
+           ;
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n
+      "saveProductRuleSnapshot\|listPaperFills" packages/storage/src/index.ts)
+  ⎿  No matches found
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n "paper"
+      packages/storage/src/index.ts | head)
+  ⎿  (No output)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; cat packages/storage/src/index.ts |
+      head -30; echo "--- lines"; wc -l packages/storage/src/index.ts)
+  ⎿  /** Operational persistence and immutable research archive adapters. *
+     /
+     export const STORAGE_PACKAGE = '@coqui/storage' as const;
+     … +7 lines (ctrl+o to expand)
+
+⏺ Good — star exports, nothing to add. Now the production market feed:
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 1,60p
+      apps/desktop/src/main/reference-sources.ts)
+  ⎿  import {
+       fetchCoinbaseDailyBars,
+       fetchCoinGeckoMarketSnapshots,
+     … +56 lines (ctrl+o to expand)
+
+⏺ Write(apps/desktop/src/main/paper-market.ts)
+  ⎿  Wrote 160 lines to apps/desktop/src/main/paper-market.ts
+       1 import { fetchCoinbaseProductRules, type HttpClient } from '@coq
+         ui/adapters';
+       2 import { instrumentKey, type InstrumentIdentity, type MarketBar 
+       3 import type { PaperMarketData } from '@coqui/services';
+       4 import {
+       5   latestProductRuleSnapshot,
+       6   listMarketBars,
+       8   upsertMarketBars,
+       9   type Db,
+      10 } from '@coqui/storage';
+     … +181 lines (ctrl+o to expand)
+
+⏺ Now add the prepare hook to the scheduler runtime:
+
+⏺ Update(apps/desktop/src/main/scheduler-runtime.ts)
+  ⎿  Added 6 lines
+      41    readonly clock: Clock;
+      42    readonly profileId: string;
+      43    readonly paper: PaperRunLoopDependencies;
+      44 +  /**                                                          
+      45 +   * Runs before every tick. The decision itself is synchronous
+         + by design, so                                                 
+      46 +   * anything that needs the network — refreshing bars and venu
+         +e rules, taking a                                              
+      47 +   * holdings snapshot — has to happen here, outside the decisi
+         +on.                                                            
+      48 +   */                                                          
+      49 +  readonly prepare?: (nowMs: number) => Promise<void>;         
+      50    readonly pollMs?: number;
+      51    readonly onUnexpectedError?: (context: string, error: unknown
+          ) => void;
+      52  }
+
+⏺ Update(apps/desktop/src/main/scheduler-runtime.ts)
+  ⎿  Added 9 lines
+       99      if (running) return;
+      100      running = true;
+      101      try {
+      102 +      if (options.prepare !== undefined) {                    
+      103 +        try {                                                 
+      104 +          await options.prepare(options.clock.nowMs());       
+      105 +        } catch (error) {                                     
+      106 +          // A stale-data tick is a worse outcome than no tick
+          + only if the data                                             
+      107 +          // is missing entirely, and the engine already refus
+          +es that case.                                                 
+      108 +          report('scheduler_prepare', error);                 
+      109 +        }                                                     
+      110 +      }                                                       
+      111        await scheduler.tick(tasks);
+      112      } catch (error) {
+      113        report('scheduler_tick', error);
+
+⏺ Now wire it in the composition root:
+
+⏺ Update(apps/desktop/src/main/composition.ts)
+  ⎿  Added 3 lines
+      24    StatusRailService,
+      25  } from '@coqui/services';
+      26  import {
+      27 +  getAllocationPolicy,                                         
+      28    getSetting,
+      29    listCoinbaseBalanceDiscrepancies,
+      30    listDisplayUniverse,
+     ...
+      32    type Db,
+      33  } from '@coqui/storage';
+      34  
+      35 +import { createPaperMarketFeed } from './paper-market.js';     
+      36  import { createCandleSource, createReferenceSources } from './r
+          eference-sources.js';
+      37 +import { startSchedulerRuntime, type SchedulerRuntime } from '.
+         +/scheduler-runtime.js';                                        
+      38  import type { ChannelHandlers } from './dispatch.js';
+      39  
+      40  /** Epoch of the last Coinbase sync, or null when never run or 
+          unparseable. */
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -rn
+      "historicalNetEdgeEstimatePct" packages/core/src packages/services/src |
+      head; echo "---"; grep -rn "historicalNe…)
+  ⎿  packages/core/src/realism/index.ts:270:  historicalNetEdgeEstimatePct:
+      number,
+     packages/core/src/realism/index.ts:288:    .mul(Math.max(0, historical
+     … +77 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -rn
+      "netEdge\|avgTradeReturn\|averageTradePct\|expectancy"
+      packages/core/src/research packages/core/src/backtest pack…)
+  ⎿  (No output)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -rn "export interface
+      StrategyMetrics" -A 25 packages/core/src | head -35)
+  ⎿  packages/core/src/backtest/types.ts:19:export interface StrategyMetric
+     s {
+     packages/core/src/backtest/types.ts-20-  totalReturnPct: number;
+     … +23 lines (ctrl+o to expand)
+
+⏺ Update(apps/desktop/src/main/composition.ts)
+  ⎿  Added 21 lines
+      37  import { startSchedulerRuntime, type SchedulerRuntime } from '.
+          /scheduler-runtime.js';
+      38  import type { ChannelHandlers } from './dispatch.js';
+      39  
+      40 +/**                                                            
+      41 + * The per-trade net edge the profitability gate weighs costs a
+         +gainst.                                                        
+      42 + *                                                             
+      43 + * **Zero by default, deliberately.** No study in this reposito
+         +ry has registered                                              
+      44 + * a per-trade net-edge estimate for the shipped strategy — its
+         + own version                                                   
+      45 + * string is `trendvol-legacy-unvalidated` — and inventing one 
+         +would be exactly                                               
+      46 + * the false confidence invariant 4 exists to prevent. At zero 
+         +the gate refuses                                               
+      47 + * every intent and the run stands down as `gates_refused`, whi
+         +ch the portfolio                                               
+      48 + * screen states in plain words rather than hiding.            
+      49 + *                                                             
+      50 + * The setting exists so that a *registered* estimate can be su
+         +pplied once one                                                
+      51 + * exists (invariant 7), not as a knob to make the engine trade
+         +.                                                              
+      52 + */                                                            
+      53 +function paperNetEdgeEstimatePct(database: Db): number {       
+      54 +  const raw = getSetting('paper.net_edge_estimate_pct', databas
+         +e);                                                            
+      55 +  if (raw === null) return 0;                                  
+      56 +  const parsed = Number(raw);                                  
+      57 +  // A malformed value falls back to the refusing default, neve
+         +r to a guess.                                                  
+      58 +  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;  
+      59 +}                                                              
+      60 +                                                               
+      61  /** Epoch of the last Coinbase sync, or null when never run or 
+          unparseable. */
+      62  function lastCoinbaseSyncAtMs(database: Db): number | null {
+      63    const raw = getSetting('coinbase.last_sync_at', database);
+
+⏺ Update(apps/desktop/src/main/composition.ts)
+  ⎿  Added 7 lines
+      71    readonly profileId: string;
+      72    /** Supplied by the composition root so `core` never reads th
+          e host clock. */
+      73    readonly readSystemTime?: () => number;
+      74 +  /** Reported rather than thrown, so one bad tick cannot take 
+         +down the app. */                                               
+      75 +  readonly onUnexpectedError?: (context: string, error: unknown
+         +) => void;                                                     
+      76 +  /**                                                          
+      77 +   * Leave the paper scheduler stopped. The smoke harness boots
+         + the runtime to                                                
+      78 +   * check wiring and should not start a timer or reach the net
+         +work to do it.                                                 
+      79 +   */                                                          
+      80 +  readonly disableScheduler?: boolean;                         
+      81  }
+      82  
+      83  export interface CoquiRuntime {
+
+⏺ Update(apps/desktop/src/main/composition.ts)
+  ⎿  Added 2 lines
+      84    readonly handlers: ChannelHandlers;
+      85    readonly database: Db;
+      86    readonly clock: Clock;
+      87 +  /** Null when the scheduler is disabled. Exposed so a test ca
+         +n drive a tick. */                                             
+      88 +  readonly scheduler: SchedulerRuntime | null;                 
+      89    dispose(): void;
+      90  }
+      91  
+
+⏺ Update(apps/desktop/src/main/composition.ts)
+  ⎿  Added 47 lines
+      142    const evidence = new RiskEvidenceTrackerService({ database, 
+           clock });
+      143    const statusRail = new StatusRailService({ database, clock }
+           );
+      144  
+      145 +  // The paper engine. Its decision is synchronous, so the two
+          + things it needs                                              
+      146 +  // from the outside world — market data and a holdings snaps
+          +hot — are                                                     
+      147 +  // refreshed before each tick rather than awaited inside one
+          +.                                                             
+      148 +  const candles = createCandleSource(http);                   
+      149 +  const paperMarket = createPaperMarketFeed({                 
+      150 +    database,                                                 
+      151 +    http,                                                     
+      152 +    instruments: () => getAllocationPolicy(database).targets.m
+          +ap((target) => target.instrument),                            
+      153 +    bars: (instrument, lookbackDays, nowMs) => candles.dailyBa
+          +rs(instrument, lookbackDays, nowMs),                          
+      154 +    ...(options.onUnexpectedError === undefined               
+      155 +      ? {}                                                    
+      156 +      : { onUnexpectedError: options.onUnexpectedError }),    
+      157 +  });                                                         
+      158 +                                                              
+      159 +  let paperHoldings: readonly PricedHolding[] = [];           
+      160 +  const scheduler = options.disableScheduler === true         
+      161 +    ? null                                                    
+      162 +    : startSchedulerRuntime({                                 
+      163 +        database,                                             
+      164 +        clock,                                                
+      165 +        profileId: options.profileId,                         
+      166 +        ...(options.onUnexpectedError === undefined           
+      167 +          ? {}                                                
+      168 +          : { onUnexpectedError: options.onUnexpectedError }),
+      169 +        async prepare(nowMs) {                                
+      170 +          await paperMarket.refresh(nowMs);                   
+      171 +          paperHoldings = (await portfolio.portfolioView()).ho
+          +ldings;                                                       
+      172 +        },                                                    
+      173 +        paper: {                                              
+      174 +          database,                                           
+      175 +          clock,                                              
+      176 +          profileId: options.profileId,                       
+      177 +          market: paperMarket.view,                           
+      178 +          holdings: () => paperHoldings,                      
+      179 +          // Empty targets mean no policy: `planAutoRebalance`
+          + against nothing                                              
+      180 +          // would propose selling the whole portfolio.       
+      181 +          policy: () => {                                     
+      182 +            const policy = getAllocationPolicy(database);     
+      183 +            return policy.targets.length === 0 ? null : policy
+          +;                                                             
+      184 +          },                                                  
+      185 +          historicalNetEdgeEstimatePct: paperNetEdgeEstimatePc
+          +t(database),                                                  
+      186 +          ...(options.onUnexpectedError === undefined         
+      187 +            ? {}                                              
+      188 +            : { onUnexpectedError: options.onUnexpectedError }
+          +),                                                            
+      189 +        },                                                    
+      190 +      });                                                     
+      191 +                                                              
+      192    const handlers: ChannelHandlers = {
+      193      'market-data.prices': () => marketData.prices(),
+      194      'market-data.markets': () => marketData.markets(),
+
+⏺ Update(apps/desktop/src/main/composition.ts)
+  ⎿  Added 2 lines
+      261      handlers,
+      262      database,
+      263      clock,
+      264 +    scheduler,                                                
+      265      dispose() {
+      266 +      scheduler?.dispose();                                   
+      267        http.destroy();
+      268        rateLimiters.destroyAll();
+      269        database.close();
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='apps/desktop/src/main/composition.ts'…)
+  ⎿  133:    candles,
+     149:  const candles = createCandleSource(http);
+     154:    bars: (instrument, lookbackDays, nowMs) => candles.dailyBars(i
+     … +6 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='apps/desktop/src/main/composition.ts'…)
+  ⎿  TC=2
+     $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.
+     renderer.json --noEmit
+     … +10 lines (ctrl+o to expand)
+  ⎿  (timeout 5m)
+
+⏺ Update(packages/storage/src/repositories/paper.ts)
+  ⎿  Added 5 lines, removed 1 line
+      153    if (row === undefined) return null;
+      154    return Object.freeze({
+      155      id: row.id,
+      156 -    instrument: { venue: 'coinbase', productId: row.product_id
+          -, productType: row.product_type },                            
+      156 +    instrument: {                                             
+      157 +      venue: 'coinbase' as const,                             
+      158 +      productId: row.product_id,                              
+      159 +      productType: row.product_type,                          
+      160 +    },                                                        
+      161      status: row.status,
+      162      tradingDisabled: row.trading_disabled === 1,
+      163      cancelOnly: row.cancel_only === 1,
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; pnpm typecheck > /tmp/tc.log 2>&1;
+      echo "TC=$?"; tail -20 /tmp/tc.log)
+  ⎿  TC=0
+     $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.
+     renderer.json --noEmit
+  ⎿  (timeout 5m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -rn "createRuntime"
+      apps/desktop/src apps/desktop/scripts tests | head)
+  ⎿  apps/desktop/src/main/composition.ts:102:export function createRuntime
+     (options: RuntimeOptions): CoquiRuntime {
+     apps/desktop/src/main/index.ts:6:import { createRuntime, type CoquiRun
+     … +10 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 60,80p
+      apps/desktop/scripts/smoke.mjs; echo ---; sed -n 70,85p
+      apps/desktop/scripts/perf.mjs; echo ---; sed -n 65,8…)
+  ⎿  const dataDir = mkdtempSync(join(tmpdir(), 'coqui-smoke-'));
+     let runtime = null;
+     … +56 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      import re…)
+  ⎿  ok
+
+⏺ Now the renderer side-by-side. Let me look at the Portfolio screen:
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n "profileId\|Portfolio"
+      apps/desktop/src/renderer/app/App.tsx | head -20)
+  ⎿  5:import { Portfolio } from './Portfolio.js';
+     24:      <StatusRail client={client} profileId="main" />
+     33:      <Portfolio client={client} />
+     41:      <Settings client={client} profileId="main" />
+
+⏺ Write(apps/desktop/src/renderer/app/PaperComparison.tsx)  ⎿  Wrote 142 lines to apps/desktop/src/renderer/app/PaperComparison.tsx
+       1 import type { ChannelResponse, CoquiClient } from '@coqui/contra
+         cts';
+       2 import { formatUsd } from '@coqui/ui-kit';
+       4 import { useChannel } from '../query/use-channel.js';
+       5 
+       6 type PaperView = ChannelResponse<'paper.portfolio'>;
+       7 
+       9  * What the strategy *would* be worth, beside what you actually 
+         hold.
+      10  *
+     … +162 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='apps/desktop/src/renderer/app/Portfolio.tsx'; s=open(p).read()…)
+  ⎿  ok
+     TC=0
+     $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.
+     renderer.json --noEmit
+  ⎿  (timeout 5m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='apps/desktop/src/renderer/app/Portfolio.tsx'; s=open(p).read()…)
+  ⎿  accounts-coinbase-connection.test.ts
+     accounts-coinbase-sync.test.ts
+     accounts-profile-backup.test.ts
+     … +37 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; ls tests | grep -i
+      "paper\|desktop\|main-\|shell")
+  ⎿  desktop-dispatch.test.ts
+     desktop-security.test.ts
+     paper-oms.test.ts
+     … +5 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 1,60p
+      tests/paper-run-loop.test.ts)
+  ⎿  import { describe, expect, it } from 'vitest';
+
+     import {
+     … +57 lines (ctrl+o to expand)
+
+⏺ Now the tests for the paper portfolio view:
+
+⏺ Write(tests/paper-portfolio-view.test.ts)
+  ⎿  Wrote 260 lines to tests/paper-portfolio-view.test.ts
+       1 import { describe, expect, it } from 'vitest';
+       2 
+       3 import {
+       4   instrumentKey,
+       5   FixedClock,
+       6   type AllocationPolicy,
+       7   type AssetRef,
+       8   type Holding,
+       9   type InstrumentIdentity,
+      10   type MarketBar,
+     … +277 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; npx vitest run
+      tests/paper-portfolio-view.test.ts 2>&1 | tail -30)
+  ⎿   RUN  v4.1.8 /Users/kokinmartinez/Coqui-Crypto
+
+      ❯ tests/paper-portfolio-view.test.ts (8 tests | 1 failed) 82ms
+     … +22 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 110,135p
+      packages/storage/src/repositories/wallet-audit.ts; grep -rn
+      "activateWalletSafetyStop(" tests/paper-run-lo…)
+  ⎿      profileId: row.profile_id,
+         action: row.action,
+         kind: row.kind,
+     … +26 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 145,165p
+      tests/paper-run-loop.test.ts)
+  ⎿  describe('every run is recorded, including one that trades nothing', (
+     ) => {
+       it('records a decision run when the kill switch halts it', () => {
+     … +19 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='tests/paper-portfolio-view.test.ts'; s=open(p).read()…)
+  ⎿   RUN  v4.1.8 /Users/kokinmartinez/Coqui-Crypto
+     … +5 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; head -20
+      tests/desktop-dispatch.test.ts)
+  ⎿  import { describe, expect, it, vi } from 'vitest';
+
+     import {
+     … +17 lines (ctrl+o to expand)
+
+⏺ Write(tests/desktop-scheduler-runtime.test.ts)
+  ⎿  Wrote 311 lines to tests/desktop-scheduler-runtime.test.ts
+       1 import { describe, expect, it } from 'vitest';
+       2 
+       3 import { createPaperMarketFeed } from '../apps/desktop/src/main/
+       4 import { startSchedulerRuntime } from '../apps/desktop/src/main/
+         scheduler-runtime.js';
+       5 import {
+       6   instrumentKey,
+       8   type AllocationPolicy,
+       9   type AssetRef,
+      10   type Holding,
+     … +327 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; npx vitest run
+      tests/desktop-scheduler-runtime.test.ts 2>&1 | tail -40)
+  ⎿  ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+      FAIL  tests/desktop-scheduler-runtime.test.ts > the scheduler finally
+     … +36 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; npx vitest run
+      tests/desktop-scheduler-runtime.test.ts 2>&1 | head -45)
+  ⎿   RUN  v4.1.8 /Users/kokinmartinez/Coqui-Crypto
+
+      ❯ tests/desktop-scheduler-runtime.test.ts (8 tests | 4 failed) 76ms
+     … +41 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 238,305p
+      packages/services/src/scheduler/wallet-scheduler.ts)
+  ⎿    ensureSchedules(tasks: readonly WalletSchedulerTask[]): readonly Sto
+     redWalletScheduleLease[] {
+         if (this.#disposed) throw new Error('Wallet scheduler is disposed.
+     … +65 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n "export interface Clock" -A
+      12 packages/core/src/clock/index.ts 2>/dev/null || grep -rn "export
+      interface Clock" -…)
+  ⎿  packages/core/src/time/index.ts:2:export interface Clock {
+     packages/core/src/time/index.ts-3-  nowMs(): number;
+     packages/core/src/time/index.ts-4-}
+     … +14 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='tests/desktop-scheduler-runtime.test.ts'; s=open(p).read()…)
+  ⎿  186:export function savePaperOrder(order: PaperOrder, database: Db): v
+     oid {
+     228:export function appendPaperOrderEvent(event: PaperOrderEvent, data
+     base: Db): boolean {
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n
+      "recoverInterruptedPaperOrders" -A 45
+      packages/storage/src/repositories/paper.ts | head -60; echo "---save"; sed
+      -…)  ⎿  455:export function recoverInterruptedPaperOrders(
+     456-  profileId: string,
+     457-  at: number,
+     … +72 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='tests/desktop-scheduler-runtime.test.ts'; s=open(p).read()…)
+  ⎿   RUN  v4.1.8 /Users/kokinmartinez/Coqui-Crypto
+
+      ❯ tests/desktop-scheduler-runtime.test.ts (8 tests | 1 failed) 93ms
+     … +22 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='tests/desktop-scheduler-runtime.test.ts'; s=open(p).read()…)
+  ⎿   RUN  v4.1.8 /Users/kokinmartinez/Coqui-Crypto
+     … +5 lines (ctrl+o to expand)
+
+⏺ Now update the wireframe doc to record the screen-3 revision, then full
+  verify:
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n "Screen 3\|screen
+      3\|Paper\|paper" docs/design/wireframes-2026-08-21.md | head -30)
+  ⎿  11:portfolio, and paper-action review, approved on hierarchy, *before*
+      any visual
+     41:│ [wallet: main ▾]  MODE paper  KILL armed·OFF   data 3m ago ●fresh
+     … +12 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 155,235p
+      docs/design/wireframes-2026-08-21.md)
+  ⎿  **`▲` accompanies every gain and `▼` every loss** — sign plus shape pl
+     us label,
+     never color alone (§1).
+     … +77 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='docs/design/wireframes-2026-08-21.md'; s=open(p).read()…)
+  ⎿  ok
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; pnpm verify > /tmp/v.log 2>&1; echo
+      "EXIT=$?"; tail -35 /tmp/v.log)
+  ⎿  EXIT=2
+     $ pnpm typecheck && pnpm lint && pnpm test && pnpm build
+     $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.
+     … +13 lines (ctrl+o to expand)
+  ⎿  (timeout 10m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='tests/desktop-scheduler-runtime.test.ts'; s=open(p).read()…)
+  ⎿  $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.
+     renderer.json --noEmit
+  ⎿  (timeout 5m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; pnpm verify > /tmp/v.log 2>&1; echo
+      "EXIT=$?"; tail -40 /tmp/v.log)
+  ⎿  EXIT=1
+
+     ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+     … +38 lines (ctrl+o to expand)
+  ⎿  (timeout 10m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='tests/contracts-channels.test.ts'; s=open(p).read()…)
+  ⎿  EXIT=0
+     $ pnpm typecheck && pnpm lint && pnpm test && pnpm build
+     $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.
+     … +14 lines (ctrl+o to expand)
+  ⎿  (timeout 10m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; pnpm smoke > /tmp/s.log 2>&1; echo
+      "EXIT=$?"; tail -35 /tmp/s.log)
+  ⎿  EXIT=0
+     transforming...
+     ✓ 84 modules transformed.
+     … +33 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n "portfolio.tax round-trips"
+      -B 12 -A 4 apps/desktop/scripts/smoke.mjs)
+  ⎿  No matches found
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n "portfolio.tax" -B 14 -A 6
+      apps/desktop/scripts/smoke.mjs)
+  ⎿  211-
+     212-  const reconciliation = JSON.parse(
+     213-    await withTimeout('portfolio.reconciliation', window.webConten
+     … +22 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='apps/desktop/scripts/smoke.mjs'; s=open(p).read()…)
+  ⎿  EXIT=0
+     25
+     PASS  paper.portfolio round-trips  (status=ok, simulation=true)
+     === ALL PASS ===
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n "B6\|B7\|2026-08-2"
+      docs/PLAN.md | tail -25)
+  ⎿  21:Last completed: P5c — strategy scoreboard wired end to end (2026-08
+     -21)
+     24:BLOCKED ON:     owner approval of docs/design/wireframes-2026-08-21
+     … +13 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 14,32p docs/PLAN.md; echo
+      "===P6"; grep -n "^## P6\|^### P6\|P6 " docs/PLAN.md | head)
+  ⎿  ## 1. Where we are
+
+     > **Update this section as phases complete. It is the first thing to r
+     … +22 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 957,1010p docs/PLAN.md)
+  ⎿  ### P6 — Paper-trading engine · 2 weeks
+
+     - Consolidate the simulators — R3
+     … +51 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='docs/PLAN.md'; s=open(p).read()…)
+  ⎿  ok
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; pnpm verify > /tmp/v.log 2>&1;
+      VE=$?; echo "VERIFY=$VE"; tail -8 /tmp/v.log; git add -A && git status
+      --short | head -20)  ⎿  VERIFY=0
+     … +26 lines (ctrl+o to expand)
+  ⎿  (timeout 10m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; git commit -q -F - <<'EOF'
+      P6 B7: paper value beside real value, and the scheduler's missing
+      wake-up…)
+  ⎿  9646e09 P6 B7: paper value beside real value, and the scheduler's miss
+     ing wake-up
+     PUSHED
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; echo ok)
+  ⎿  ok
+
+⏺ B7 is done and pushed (9646e09) — pnpm verify green at 130 files / 915 tests,
+  smoke 24/24.
+
+  What landed:
+
+  The comparison, not a screen. PaperComparison.tsx renders beside the real
+  total on the portfolio screen: ACTUAL PORTFOLIO VALUE | POSSIBLE (PAPER) VALUE
+  — simulation, not money, with the signed difference, the forward-evidence
+  counters, and the latest run explained in plain words (including which gate
+  refused it). paperPortfolioView prices the simulation with the same source as
+  the real portfolio, so the gap between the two figures is the strategy rather
+  than the data; an unpriced position withholds the total instead of
+  understating it; simulation: true is a literal on the wire, verified by the
+  smoke gate.
+
+  The wake-up. apps/desktop/src/main/scheduler-runtime.ts —
+  WalletSchedulerService had cadence, leases and concurrency but no production
+  caller, so no decision could be reached outside a test. It recovers
+  interrupted orders before the first tick, never re-enters a running tick, and
+  unrefs its timer. paper-market.ts serves bars and rules synchronously from the
+  database (the OMS reads them mid-decision) while the network happens in
+  prepare, before the tick — incomplete bars are never persisted, and a product
+  with no retrieved rules is refused rather than defaulted.
+
+  Screen 3 in the wireframes is marked superseded, with your reasoning quoted
+  and what replaced it drawn out.
+
+  One thing you should decide on, flagged rather than solved. The profitability
+  gate weighs cost against a registered per-trade net-edge estimate. No study in
+  this repo has registered one for the shipped strategy — its own version
+  string is trendvol-legacy-unvalidated — so the composition root supplies zero,
+  every intent is refused, and the screen honestly reports the guardrails 
+  refused every proposed trade. That is correct under invariants 4 and 7, but it
+  means a real multi-day run produces observed days and decisions and no fills,
+  and two of the P6 exit criteria (7-day journal with fills, reconciliation
+  reporting a quantified divergence) assume fills. The setting
+  paper.net_edge_estimate_pct exists as the seam; filling it needs a number that
+  comes from evidence, which is a study, not a config edit. The CI harness can
+  supply one directly, so the simulated exit criterion is unblocked either way.
+
+  Next up is that deterministic 7-day simulated run.
+
+◯ Goal not yet met… continuing (ctrl+o to expand)
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ Write(tests/paper-seven-day-run.test.ts)
+  ⎿  Wrote 355 lines to tests/paper-seven-day-run.test.ts
+       1 import { describe, expect, it } from 'vitest';
+       2 
+       3 import {
+       4   instrumentKey,
+       5   type AllocationPolicy,
+       6   type AssetRef,
+       7   type Clock,
+       8   type Holding,
+       9   type InstrumentIdentity,
+      10   type MarketBar,
+     … +395 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; npx vitest run
+      tests/paper-seven-day-run.test.ts 2>&1 | tail -50)
+  ⎿   RUN  v4.1.8 /Users/kokinmartinez/Coqui-Crypto
+     … +5 lines (ctrl+o to expand)
+
+⏺ Write(docs/studies/paper-forward-run-2026-08-22.md)
+  ⎿  Wrote 89 lines to docs/studies/paper-forward-run-2026-08-22.md
+       1 # Study — forward paper run against live Coinbase bars
+       2 
+       4 **Status:** REGISTERED, NOT YET RUN
+       5 **Owner decision it implements:** "Both — simulated in CI, then 
+         a real run"
+       7 ## Why this exists separately from the CI harness
+       8 
+       9 `tests/paper-seven-day-run.test.ts` drives seven days with a ste
+      10 milliseconds. It proves the *mechanism*: one completed decision 
+         per day, a
+     … +121 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; pnpm verify > /tmp/v.log 2>&1; echo
+      "VERIFY=$?"; grep -E "Test Files|Tests " /tmp/v.log | tail -2)
+  ⎿  VERIFY=2
+  ⎿  (timeout 10m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; tail -20 /tmp/v.log)
+  ⎿  $ pnpm typecheck && pnpm lint && pnpm test && pnpm build
+     $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.
+     renderer.json --noEmit
+     … +12 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='tests/paper-seven-day-run.test.ts'; s=open(p).read()…)
+  ⎿  VERIFY=2
+     tests/paper-seven-day-run.test.ts(343,27): error TS2345: Argument of t
+     ype 'string' is not assignable to parameter of type 'InstrumentKey'.
+     … +8 lines (ctrl+o to expand)
+  ⎿  (timeout 10m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 338,350p
+      tests/paper-seven-day-run.test.ts)
+  ⎿      const clock = new StepClock(T0);
+         runWeek(db, clock);
+     … +13 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='tests/paper-seven-day-run.test.ts'; s=open(p).read()…)
+  ⎿  VERIFY=0
+      Test Files  131 passed (131)
+           Tests  923 passed (923)
+     … +5 lines (ctrl+o to expand)
+  ⎿  (timeout 10m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='docs/PLAN.md'; s=open(p).read()…)
+  ⎿  PUSHED
+     0c3f59a P6 exit: seven unattended days, driven rather than waited on
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -rn
+      "coinbase_balance_discrepanc\|reconciliation"
+      packages/storage/src/repositories/ packages/storage/src/migrations/…)
+  ⎿  packages/storage/src/repositories/coinbase-evidence.ts:197:    const d
+     iscrepancyInsert = database.prepare(`INSERT INTO coinbase_balance_disc
+     repancies_v2 (
+     … +20 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 40,95p
+      packages/storage/src/migrations/v42.ts; echo "=== repo"; sed -n 180,250p
+      packages/storage/src/repositories/c…)
+  ⎿          order_id             TEXT NOT NULL,
+             product_id           TEXT NOT NULL,
+             side                 TEXT NOT NULL CHECK (side IN ('BUY', 'SEL
+     … +113 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; cat
+      packages/storage/src/migrations/v45.ts; echo "=== index"; tail -30
+      packages/storage/src/migrations/index.ts)
+  ⎿  import type { Migration } from './types.js';
+
+     /**
+     … +62 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -rn "tax_lots\|CREATE
+      TABLE.*lots" packages/storage/src/migrations/*.ts | head -5; echo "=== lot
+      repo"; grep -n "expo…)
+  ⎿  packages/storage/src/migrations/v18-v23.ts:282:        CREATE TABLE IF
+      NOT EXISTS coinbase_import_stage_lots (
+     packages/storage/src/migrations/v29.ts:10:        CREATE TABLE tax_lot
+     … +22 lines (ctrl+o to expand)
+
+⏺ Now migration 46 — the append-only resolution ledger P7 owes:
+
+⏺ Write(packages/storage/src/migrations/v46.ts)
+  ⎿  Wrote 76 lines to packages/storage/src/migrations/v46.ts
+       1 import type { Migration } from './types.js';
+       3 /**
+       4  * The reconciliation resolution ledger.
+       5  *
+         hich is right:
+       7  * what the venue said is a fact and must not be edited. But it 
+       8  * record what a user *decided* about one, so every exception st
+         ayed open
+       9  * forever and the portfolio screen could only ever list them re
+      10  *
+     … +89 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='packages/storage/src/migrations/index.ts'; s=open(p).read()…)
+  ⎿  tests/accounts-profile-backup.test.ts:104:        schemaVersion: 45,
+     tests/accounts-profile-comparison.test.ts:150:            id: 'main',
+     isActive: true, status: 'available', schemaVersion: 45,
+     … +24 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -rn "\b45\b" tests/*.ts
+      apps/desktop/scripts/*.mjs packages/**/src/**/*.ts 2>/dev/null | grep -v
+      "v45\|migrations45\|…)
+  ⎿  30
+     tests/accounts-profile-backup.test.ts
+     tests/accounts-profiles-service.test.ts
+     … +14 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 195,235p
+      tests/storage-migrations.test.ts; echo "=== 40-50"; sed -n 38,50p
+      tests/storage-migrations.test.ts; sed -n…)
+  ⎿      const backupName = 'wallet.db.pre-migration-v17-123.bak';
+         expect(readdirSync(fixture.directory)).toContain(backupName);
+         const backup = openDatabase(join(fixture.directory, backupName), {
+     … +58 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      import re, pathlib…)
+  ⎿  updated tests/accounts-profile-backup.test.ts
+     updated tests/accounts-profiles-service.test.ts
+     updated tests/accounts-profile-comparison.test.ts
+     … +5 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='tests/storage-migrations.test.ts'; s=open(p).read()…)
+  ⎿   RUN  v4.1.8 /Users/kokinmartinez/Coqui-Crypto
+     … +5 lines (ctrl+o to expand)
+
+⏺ Now the repository functions and the service:
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 1,30p
+      packages/storage/src/repositories/coinbase-evidence.ts; echo "=== index";
+      cat packages/storage/src/repositori…)
+  ⎿  import {
+       coinbaseAccountTotalQuantity,
+       coinbaseEvidenceDatasetHash,
+     … +50 lines (ctrl+o to expand)
+
+⏺ Write(packages/storage/src/repositories/reconciliation.ts)
+  ⎿  Wrote 169 lines to packages/storage/src/repositories/reconciliation.ts
+       1 import { sha256Hex } from '@coqui/core';
+       3 import type { Db } from '../sqlite/index.js';
+       4 
+       5 /**
+          the evidence.
+       7  *
+         ration 42): what
+       9  * the venue reported is a fact. A resolution is what the *user*
+          decided about
+         g a decision
+     … +193 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='packages/storage/src/repositories/index.ts'; s=open(p).read()…)
+  ⎿  $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.
+     renderer.json --noEmit
+  ⎿  (timeout 5m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n "CHANNEL_KINDS\|write"
+      packages/contracts/src/channels.ts | head -20)
+  ⎿  58: * boundary can require confirmation semantics on writes rather tha
+     n retrofitting
+     63:export const CHANNEL_KINDS = {
+     65:  write: [] as readonly ChannelName[],
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 1,110p
+      packages/contracts/src/channels.ts)
+  ⎿  import * as z from 'zod';
+
+     import { accountsChannelSchemas } from './schemas/accounts.js';
+     … +63 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; ls
+      packages/services/src/portfolio/; grep -n "export"
+      packages/services/src/portfolio/index.ts)
+  ⎿  allocation-policy.ts
+     immutable.ts
+     index.ts
+     … +9 lines (ctrl+o to expand)
+
+⏺ Write(packages/services/src/portfolio/reconciliation-ledger.ts)
+  ⎿  Wrote 217 lines to
+     packages/services/src/portfolio/reconciliation-ledger.ts
+       1 import { getTaxLot } from '@coqui/storage';
+       2 import {
+       3   appendReconciliationResolution,
+       4   latestReconciliationResolutions,
+       5   listCoinbaseBalanceDiscrepancies,
+       6   listReconciliationResolutions,
+       7   type CoinbaseDiscrepancyEvidenceView,
+       8   type Db,
+       9   type ReconciliationResolution,
+      10   type ReconciliationResolutionKind,
+     … +248 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='packages/services/src/portfolio/index.ts'; s=open(p).read()…)  ⎿  $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.
+     renderer.json --noEmit
+     $ eslint .
+  ⎿  (timeout 6m 40s)
+
+⏺ Now the tests for the ledger:
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -rn
+      "saveCoinbaseSyncEvidence\|recordCoinbaseSyncEvidence" tests/*.ts | head
+      -3; grep -n "export function.*CoinbaseSy…)
+  ⎿  tests/storage-coinbase-evidence.test.ts:14:  saveCoinbaseSyncEvidence,
+     tests/storage-coinbase-evidence.test.ts:45:    const first = saveCoinb
+     aseSyncEvidence(input(), database);
+     … +14 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 1,60p
+      tests/storage-coinbase-evidence.test.ts; echo "=== taxlot shape"; grep -rn
+      "export interface TaxLot" -A 18 pa…)
+  ⎿  import { describe, expect, it } from 'vitest';
+
+     import {
+     … +77 lines (ctrl+o to expand)
+
+⏺ Write(tests/portfolio-reconciliation-ledger.test.ts)
+  ⎿  Wrote 339 lines to tests/portfolio-reconciliation-ledger.test.ts
+       1 import { describe, expect, it } from 'vitest';
+       2 
+       3 import {
+       4   coinbaseEvidenceDatasetHash,
+       5   decimal,
+       6   FixedClock,
+       7   type AssetQuantity,
+       8   type AssetRef,
+       9   type CoinbaseAccountEvidence,
+      10   type CoinbaseBalanceDiscrepancy,
+     … +358 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; npx vitest run
+      tests/portfolio-reconciliation-ledger.test.ts 2>&1 | tail -40)
+  ⎿   RUN  v4.1.8 /Users/kokinmartinez/Coqui-Crypto
+     … +5 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; cat
+      apps/desktop/src/renderer/app/Reconciliation.tsx; echo "=== use-channel";
+      cat apps/desktop/src/renderer/query/use-chan…)
+  ⎿  import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
+     import { formatQuantity } from '@coqui/ui-kit';
+     … +173 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -rn "export"
+      packages/ui-kit/src/index.ts | head -20; echo "=== action state"; ls
+      packages/ui-kit/src/; grep -rn "exp…)
+  ⎿  packages/ui-kit/src/index.ts:2:export const UI_KIT_PACKAGE = '@coqui/u
+     i-kit' as const;
+     packages/ui-kit/src/index.ts:4:export * from './action.js';
+     … +18 lines (ctrl+o to expand)
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n "portfolio.reconciliation"
+      -A 40 packages/contracts/src/schemas/portfolio.ts | head -55; echo "===
+      head"; sed -n 1…)
+  ⎿  300:  'portfolio.reconciliation': {
+     301-    request: emptyPayloadSchema,
+     302-    response: z
+     … +39 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n "discrepancySchema" -B 2 -A
+      16 packages/contracts/src/schemas/portfolio.ts | head -30)
+  ⎿  94- * them.
+     95- */
+     96:const discrepancySchema = z
+     … +25 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='packages/contracts/src/schemas/portfolio.ts'; s=open(p).read()…)
+  ⎿  ok
+     $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.
+     renderer.json --noEmit
+     … +28 lines (ctrl+o to expand)
+  ⎿  (timeout 5m)
+
+⏺ Good — the registry forces both a handler and a policy, exactly as designed.
+  Wiring both:
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 1,40p
+      apps/desktop/src/renderer/query/refetch.ts)
+  ⎿  import type { ChannelName } from '@coqui/contracts';
+
+     const SECOND = 1_000;
+     … +37 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='apps/desktop/src/renderer/query/refetch.ts'; s=open(p).read()…)
+  ⎿  $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.
+     renderer.json --noEmit
+     apps/desktop/src/renderer/app/Reconciliation.tsx(48,73): error TS2345:
+     … +5 lines (ctrl+o to expand)
+  ⎿  (timeout 5m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 1,90p
+      apps/desktop/src/main/dispatch.ts)
+  ⎿  import {
+       isChannelName,
+       transportFailure,
+     … +87 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='apps/desktop/src/main/dispatch.ts'; s=open(p).read()…)
+  ⎿  $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.
+     renderer.json --noEmit
+     apps/desktop/src/renderer/app/Reconciliation.tsx(48,73): error TS2345:
+     … +5 lines (ctrl+o to expand)
+  ⎿  (timeout 5m)
+
+⏺ Now the command hook — the renderer's first write path:
+
+⏺ Write(apps/desktop/src/renderer/query/use-command.ts)
+  ⎿  Wrote 71 lines to apps/desktop/src/renderer/query/use-command.ts
+       1 import { useQueryClient } from '@tanstack/react-query';
+       2 import { useCallback, useReducer, useState } from 'react';
+       3 
+       4 import { reduceAction, type ActionState } from '@coqui/ui-kit';
+       5 import type {
+       6   ChannelName,
+       7   ChannelRequest,
+       8   ChannelResponse,
+       9   CoquiClient,
+      10 } from '@coqui/contracts';
+     … +73 lines (ctrl+o to expand)
+
+⏺ Now the Reconciliation screen with resolution:
+
+⏺ Write(apps/desktop/src/renderer/app/ResolveException.tsx)
+  ⎿  Wrote 144 lines to apps/desktop/src/renderer/app/ResolveException.tsx
+       1 import { useState } from 'react';
+       2 
+       3 import type { ChannelResponse, CoquiClient } from '@coqui/contra
+       4 import { presentAction } from '@coqui/ui-kit';
+       5 
+       6 import { useCommand } from '../query/use-command.js';
+       7 
+         >;
+       9 type Option = Reconciliation['options'][number];
+      10 type Kind = Option['kind'];
+     … +155 lines (ctrl+o to expand)
+⏺ Write(apps/desktop/src/renderer/app/Reconciliation.tsx)
+  ⎿  Added 88 lines, removed 22 lines
+       1 +import { useState } from 'react';                              
+       2 +                                                               
+       3  import type { ChannelResponse, CoquiClient } from '@coqui/contr
+          acts';
+       4  import { formatQuantity } from '@coqui/ui-kit';
+       5  
+       6 +import { ResolveException } from './ResolveException.js';      
+       7  import { useChannel } from '../query/use-channel.js';
+       8  
+       6 -type Discrepancy = ChannelResponse<'portfolio.reconciliation'>[
+         -'discrepancies'][number];                                      
+       9 +type Reconciliation = ChannelResponse<'portfolio.reconciliation
+         +'>;                                                            
+      10 +type Exception = Reconciliation['exceptions'][number];         
+      11  
+      12  /**
+      13   * The reconciliation strip (wireframe screen 2, region 5).
+      14   *
+      11 - * Read-only in this phase, deliberately. Invariant 12 makes an
+         - unexplained                                                   
+      12 - * balance a *user decision*, and the evidence rows are immutab
+         -le by database                                                 
+      13 - * trigger, so closing one needs a separate append-only record.
+         - That table                                                    
+      14 - * arrives with P7's single reconciliation ledger — building a 
+         -resolve path here                                              
+      15 - * would build that ledger twice.                              
+      16 - *                                                             
+      17 - * What the strip must do meanwhile is refuse to hide the excep
+         -tions, and say                                                 
+      18 - * plainly that Coqui will not close them by itself.           
+      15 + * Read-only through P5; P7 gave it the append-only resolution 
+         +ledger it was                                                  
+      16 + * waiting for. Invariant 12 governs what a resolution may be: 
+         +an unexplained                                                 
+      17 + * balance is a *decision the user records*, never a zero-basis
+         + lot and never a                                               
+      18 + * proportional rescale. The evidence row itself stays exactly 
+         +as the venue                                                   
+      19 + * reported it — immutable by trigger — and a decision is a sep
+         +arate row                                                      
+      20 + * pointing at it.                                             
+      21   */
+      22  
+      21 -function direction(kind: Discrepancy['kind']): string {        
+      23 +function direction(kind: Exception['discrepancy']['kind']): str
+         +ing {                                                          
+      24    return kind === 'provider_exceeds_local'
+      25      ? 'exchange reports more than the ledger'
+      26      : 'the ledger holds more than the exchange';
+      27  }
+      28  
+      27 -function Row({ item }: { readonly item: Discrepancy }): React.J
+         -SX.Element {                                                   
+      29 +function day(atMs: number): string {                           
+      30 +  return new Date(atMs).toISOString().slice(0, 10);            
+      31 +}                                                              
+      32 +                                                               
+      33 +function Decision({ exception }: { readonly exception: Exceptio
+         +n }): React.JSX.Element | null {                               
+      34 +  const { resolution } = exception;                            
+      35 +  if (resolution === null) return null;                        
+      36    return (
+      37 +    <p className="opacity-70">                                 
+      38 +      <span aria-hidden="true">{resolution.kind === 'investigat
+         +ing' ? '○' : '●'} </span>                                      
+      39 +      {resolution.kind.replaceAll('_', ' ')} · {day(resolution.
+         +decidedAt)} · {resolution.note}                                
+      40 +      {exception.history.length > 1 && (                       
+      41 +        <span> · {exception.history.length} decisions recorded<
+         +/span>                                                         
+      42 +      )}                                                       
+      43 +    </p>                                                       
+      44 +  );                                                           
+      45 +}                                                              
+      46 +                                                               
+      47 +function Row({                                                 
+      48 +  exception,                                                   
+      49 +  client,                                                      
+      50 +  profileId,                                                   
+      51 +  options,                                                     
+      52 +}: {                                                           
+      53 +  readonly exception: Exception;                               
+      54 +  readonly client: CoquiClient;                                
+      55 +  readonly profileId: string;                                  
+      56 +  readonly options: Reconciliation['options'];                 
+      57 +}): React.JSX.Element {                                        
+      58 +  const [open, setOpen] = useState(false);                     
+      59 +  const item = exception.discrepancy;                          
+      60 +  const unresolved =                                           
+      61 +    exception.resolution === null || exception.resolution.kind 
+         +=== 'investigating';                                           
+      62 +                                                               
+      63 +  return (                                                     
+      64      <li className="py-1">
+      65        <span className="font-semibold">{item.currency}</span>{' 
+          '}
+      66        <span className="tabular-nums">
+     ...
+       70        <span className="tabular-nums">
+       71          · difference {formatQuantity(item.deltaQuantity) ?? it
+           em.deltaQuantity}
+       72        </span>
+       38 -      <span className="opacity-70"> · {direction(item.kind)} →
+          - needs your decision</span>                                   
+       73 +      <span className="opacity-70">                           
+       74 +        {' '}                                                 
+       75 +        · {direction(item.kind)}                              
+       76 +        {unresolved ? ' → needs your decision' : ''}          
+       77 +      </span>                                                 
+       78 +      <button                                                 
+       79 +        type="button"                                         
+       80 +        className="ml-3 underline"                            
+       81 +        aria-expanded={open}                                  
+       82 +        onClick={() => setOpen((previous) => !previous)}      
+       83 +      >                                                       
+       84 +        {open ? 'close' : unresolved ? 'resolve' : 'change dec
+          +ision'}                                                       
+       85 +      </button>                                               
+       86 +                                                              
+       87 +      <Decision exception={exception} />                      
+       88 +                                                              
+       89 +      {open && (                                              
+       90 +        <ResolveException                                     
+       91 +          client={client}                                     
+       92 +          profileId={profileId}                               
+       93 +          discrepancyId={item.id}                             
+       94 +          options={options}                                   
+       95 +        />                                                    
+       96 +      )}                                                      
+       97      </li>
+       98    );
+       99  }
+      100  
+      101  export function Reconciliation({
+      102    client,
+      103 +  profileId,                                                  
+      104  }: {
+      105    readonly client: CoquiClient;
+      106 +  readonly profileId: string;                                 
+      107  }): React.JSX.Element {
+       48 -  const reconciliation = useChannel(client, 'portfolio.reconci
+          -liation', {});                                                
+      108 +  const reconciliation = useChannel(client, 'portfolio.reconci
+          +liation', { profileId });                                     
+      109  
+      110    if (reconciliation.kind === 'loading') return <p aria-live="
+           polite">Loading reconciliation…</p>;
+      111  
+     ...
+      118      );
+      119    }
+      120  
+       61 -  const { discrepancies, lastRunAtMs } = reconciliation.value;
+      121 +  const { exceptions, unresolvedCount, options, lastRunAtMs } 
+          += reconciliation.value;                                       
+      122    const lastRun =
+      123      lastRunAtMs === null ? 'never run' : `${new Date(lastRunAt
+           Ms).toISOString().slice(11, 16)}Z`;
+      124  
+     ...
+      128          Reconciliation
+      129          <span className="ml-3 font-normal opacity-70">
+      130            last run {lastRun} ·{' '}
+       71 -          {discrepancies.length === 0                         
+      131 +          {exceptions.length === 0                            
+      132              ? 'settled'
+       73 -            : `${discrepancies.length} exception${discrepancie
+          -s.length === 1 ? '' : 's'}, unresolved`}                      
+      133 +            : `${unresolvedCount} unresolved of ${exceptions.l
+          +ength}`}                                                      
+      134          </span>
+      135        </h3>
+      136  
+       77 -      {discrepancies.length === 0 ? (                         
+      137 +      {exceptions.length === 0 ? (                            
+      138          <p className="opacity-70">
+      139            {lastRunAtMs === null
+      140              ? 'No Coinbase sync has run for this profile yet.'
+     ...
+      143        ) : (
+      144          <>
+      145            <ul>
+       86 -            {discrepancies.map((item) => (                    
+       87 -              <Row key={item.id} item={item} />               
+      146 +            {exceptions.map((exception) => (                  
+      147 +              <Row                                            
+      148 +                key={exception.discrepancy.id}                
+      149 +                exception={exception}                         
+      150 +                client={client}                               
+      151 +                profileId={profileId}                         
+      152 +                options={options}                             
+      153 +              />                                              
+      154              ))}
+      155            </ul>
+      156            {/*
+     ...
+      159              not is the point of showing them at all.
+      160            */}
+      161            <p className="opacity-70">
+       96 -            Coqui will not invent a tax lot or rescale existin
+          -g ones to close these. Resolving                              
+       97 -            an exception is a decision you record, and that pa
+          -th arrives with the Coinbase                                  
+       98 -            import ledger.                                    
+      162 +            Coqui will not invent a tax lot or rescale existin
+          +g ones to close these. A                                      
+      163 +            resolution records what you decided; every decisio
+          +n is kept, and the exchange’s                                 
+      164 +            own figures are never edited.                     
+      165            </p>
+      166          </>
+      167        )}
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='apps/desktop/src/renderer/app/ResolveException.tsx'; s=open(p).read()…)
+  ⎿  $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.
+     renderer.json --noEmit
+  ⎿  (timeout 5m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; pnpm verify > /tmp/v.log 2>&1; echo
+      "VERIFY=$?"; grep -E "Test Files|Tests |error|✕|×" /tmp/v.log | head -20)
+  ⎿  VERIFY=1
+          × clones a consistent database and rewrites every discovered prof
+     ile identity 49ms
+     … +10 lines (ctrl+o to expand)
+  ⎿  (timeout 10m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n "declares no write channel
+      before P6" -A 25 tests/contracts-channels.test.ts; echo "=== resolved
+      flag"; grep -rn "…)
+  ⎿  75:  it('classifies every channel, and declares no write channel befor
+     e P6', () => {
+     76-    expect([...CHANNEL_KINDS.read].sort()).toEqual([...CHANNEL_NAME
+     … +50 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='tests/contracts-channels.test.ts'; s=open(p).read()…)
+  ⎿         |                                       ^
+          45|       'accounts.settings',
+          46|       'app.status-rail',
+     … +9 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; npx vitest run
+      tests/contracts-channels.test.ts 2>&1 | grep -A 20 "to deeply equal" |
+      head -30)
+  ⎿  AssertionError: expected [ 'accounts.settings', …(20) ] to deeply equa
+     l [ 'accounts.settings', …(20) ]
+     … +19 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='tests/contracts-channels.test.ts'; s=open(p).read()…)
+  ⎿   RUN  v4.1.8 /Users/kokinmartinez/Coqui-Crypto
+     … +5 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; npx vitest run
+      tests/accounts-profile-duplication.test.ts 2>&1 | grep -B 5 -A 18 "Failed
+      Tests" | head -50)
+  ⎿   ❯ tests/accounts-profile-duplication.test.ts (7 tests | 2 failed) 122
+     ms
+          × clones a consistent database and rewrites every discovered prof
+     … +23 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n
+      "profileScopedTableCount\|databaseSha256"
+      tests/accounts-profile-duplication.test.ts | head)
+  ⎿  133:        profileScopedTableCount: 31,
+     143:    expect(hash(targetPath)).toBe(result.evidence.databaseSha256);
+     279:        profileScopedTableCount: 31,
+     … +2 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 125,140p
+      tests/accounts-profile-duplication.test.ts)
+  ⎿        targetProfileId: TARGET_ID,
+           targetDbFilename: `wallet-${TARGET_ID}.db`,
+         });
+     … +13 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='tests/accounts-profile-duplication.test.ts'; s=open(p).read()…)
+  ⎿  VERIFY=0
+      Test Files  132 passed (132)
+           Tests  937 passed (937)
+  ⎿  (timeout 10m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='apps/desktop/scripts/smoke.mjs'; s=open(p).read()…)
+  ⎿  SMOKE=0
+     PASS  portfolio.reconciliation round-trips  (status=ok)
+     === ALL PASS ===
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='apps/desktop/scripts/smoke.mjs'; s=open(p).read()…)
+  ⎿  288:  console.log('\n=== STAGE 2.4 SMOKE GATE ===');
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 262,292p
+      apps/desktop/scripts/smoke.mjs)
+  ⎿    try {
+         await run();
+       } catch (error) {
+     … +28 lines (ctrl+o to expand)
+
+⏺ It landed in the wrong scope (outside run(), where window isn't in scope).
+  Moving it inside:
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='apps/desktop/scripts/smoke.mjs'; s=open(p).read()…)
+  ⎿    const reconciliation = JSON.parse(
+         await withTimeout('portfolio.reconciliation', window.webContents.e
+     xecuteJavaScript(
+     … +31 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='apps/desktop/scripts/smoke.mjs'; s=open(p).read()…)
+  ⎿  SMOKE=0
+     PASS  portfolio.reconciliation round-trips  (status=ok)
+     PASS  reconciliation write refuses unbacked evidence  (status=failed,
+     code=unknown_discrepancy)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; tail -5 /tmp/s.log; pnpm verify >
+      /tmp/v.log 2>&1; echo "VERIFY=$?"; grep -E "Test Files|Tests " /tmp/v.log)
+  ⎿  PASS  app.status-rail round-trips  (status=ok, mode=paper)
+     (node:29341) UnhandledPromiseRejectionWarning: ReferenceError: window
+     is not defined
+     … +12 lines (ctrl+o to expand)
+  ⎿  (timeout 10m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 282,315p
+      apps/desktop/scripts/smoke.mjs)  ⎿    try {
+         await run();
+       } catch (error) {
+     … +31 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='apps/desktop/scripts/smoke.mjs'; s=open(p).read()…)
+  ⎿  app.whenReady().then(async () => {
+       let fatal = null;
+       try {
+     … +18 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -E "×|FAIL " /tmp/v.log | head
+      -10)
+  ⎿  (No output)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; tail -30 /tmp/v.log)
+  ⎿  $ pnpm typecheck && pnpm lint && pnpm test && pnpm build
+     $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.
+     renderer.json --noEmit
+     … +9 lines (ctrl+o to expand)
+
+⏺ That was the stray block — already removed. Re-running both gates:
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; pnpm verify > /tmp/v.log 2>&1; echo
+      "VERIFY=$?"; grep -E "Test Files|Tests " /tmp/v.log; pnpm smoke >
+      /tmp/s.log 2>&1; ech…)
+  ⎿  VERIFY=0
+      Test Files  132 passed (132)
+           Tests  937 passed (937)
+     … +3 lines (ctrl+o to expand)
+  ⎿  (timeout 10m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='docs/PLAN.md'; s=open(p).read()…)
+  ⎿  PUSHED
+     9a64096 P7 C1: the reconciliation ledger, and the first write channel
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; wc -l
+      packages/core/src/portfolio/import-csv.ts; sed -n 1,80p
+      packages/core/src/portfolio/import-csv.ts)
+  ⎿       187 packages/core/src/portfolio/import-csv.ts
+     import { Decimal } from 'decimal.js';
+     import {
+     … +78 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 80,187p
+      packages/core/src/portfolio/import-csv.ts)
+  ⎿      return parsed.isFinite() ? parsed.toFixed() : null;
+       } catch {
+         return null;
+     … +105 lines (ctrl+o to expand)
+
+⏺ Bash(ls -d ~/kokin-trading-framework 2>/dev/null && cd
+      ~/kokin-trading-framework && git log --oneline -1 && find . -name
+      "import-csv*" -not -path "*/node_modules/*"…)
+  ⎿  /Users/kokinmartinez/kokin-trading-framework
+     80b5a1b CSV importer hardening: Coinbase report support + duplicate-im
+     port protection
+     … +2 lines (ctrl+o to expand)
+
+⏺ Bash(cd ~/kokin-trading-framework; wc -l src/core/portfolio/import-csv.ts;
+      grep -n "reward\|fingerprint\|BOM\|preamble\|buildCsvImportPlan\|export "
+      src/core/portfol…)
+  ⎿       287 src/core/portfolio/import-csv.ts
+     4:export type CsvTradeAction = 'buy' | 'sell' | 'reward';
+     6:export interface CsvTradeRow {
+     … +24 lines (ctrl+o to expand)
+
+⏺ Bash(cd ~/kokin-trading-framework; sed -n 95,200p
+      src/core/portfolio/import-csv.ts)
+  ⎿    'cost',
+       'subtotal',
+       'valueusd',
+     … +103 lines (ctrl+o to expand)
+
+⏺ Bash(cd ~/kokin-trading-framework; sed -n 199,287p
+      src/core/portfolio/import-csv.ts)
+  ⎿  export interface CsvImportPlan {
+       /** The final open-lot book to persist (existing lots adjusted by se
+     lls + new lots). */
+     … +86 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -rn "export function
+      disposeLots\|export type CostBasisMethod\|export function sha256Hex"
+      packages/core/src | head; e…)
+  ⎿  packages/core/src/crypto/sha256.ts:8:export function sha256Hex(text: s
+     tring): string {
+     packages/core/src/types/portfolio.ts:14:export type CostBasisMethod =
+     … +26 lines (ctrl+o to expand)
+
+⏺ Now the port — adding rewards, fingerprints, preamble detection, and the plan
+  builder:
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='packages/core/src/portfolio/import-csv.ts'; s=open(p).read()…)
+  ⎿  part 1 ok
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='packages/core/src/portfolio/import-csv.ts'; s=open(p).read()…)
+  ⎿  $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.
+     renderer.json --noEmit
+          383 packages/core/src/portfolio/import-csv.ts
+  ⎿  (timeout 5m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; npx vitest run tests/ 2>&1 | grep
+      -E "×|Test Files|Tests " | head -12)
+  ⎿       × does not create data when the CSV has no data rows 3ms
+     ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Test Files  1 failed | 131 passed (132)
+           Tests  1 failed | 936 passed (937)
+  ⎿  (timeout 10m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -rn "does not create data when
+      the CSV has no data rows" -A 12 tests/*.ts)
+  ⎿  tests/import-csv.test.ts:50:  it('does not create data when the CSV ha
+     s no data rows', () => {
+     tests/import-csv.test.ts-51-    expect(parsePortfolioCsv('Date,Type,Sy
+     … +7 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='tests/import-csv.test.ts'; s=open(p).read()…)  ⎿   Test Files  1 passed (1)
+           Tests  5 passed (5)
+        Start at  14:57:06
+     … +2 lines (ctrl+o to expand)
+
+⏺ Now tests for the new importer behaviour:
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 1,50p
+      tests/import-csv.test.ts)
+  ⎿  import { describe, expect, it } from 'vitest';
+     import { parsePortfolioCsv, type CsvInstrumentResolver } from '../pack
+     ages/core/src/index.js';
+     … +47 lines (ctrl+o to expand)
+
+⏺ Write(tests/import-csv-plan.test.ts)
+  ⎿  Wrote 183 lines to tests/import-csv-plan.test.ts
+       1 import { describe, expect, it } from 'vitest';
+       2 
+       3 import {
+       4   buildCsvImportPlan,
+       5   parsePortfolioCsv,
+       6   type AssetQuantity,
+       7   type AssetRef,
+       8   type CsvAssetResolver,
+       9   type CsvInstrumentResolver,
+      10   type TaxLot,
+     … +198 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; npx vitest run
+      tests/import-csv-plan.test.ts 2>&1 | tail -35)
+  ⎿   RUN  v4.1.8 /Users/kokinmartinez/Coqui-Crypto
+
+      ❯ tests/import-csv-plan.test.ts (11 tests | 1 failed) 7ms
+     … +28 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='packages/core/src/portfolio/import-csv.ts'; s=open(p).read()…)
+  ⎿   RUN  v4.1.8 /Users/kokinmartinez/Coqui-Crypto
+     … +5 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 289,330p
+      packages/storage/src/repositories/portfolio.ts)
+  ⎿  export interface TaxLotRemainingUpdate {
+       readonly id: string;
+       readonly remaining: string;
+     … +39 lines (ctrl+o to expand)
+
+⏺ Write(packages/services/src/portfolio/csv-import.ts)
+  ⎿  Wrote 147 lines to packages/services/src/portfolio/csv-import.ts
+       1 import {
+       2   buildCsvImportPlan,
+       3   parsePortfolioCsv,
+       4   type CostBasisMethod,
+       5   type CsvAssetResolver,
+       6   type CsvImportPlan,
+       7   type CsvImportSkip,
+       8   type CsvInstrumentResolver,
+       9   type CsvTradeRow,
+      10 } from '@coqui/core';
+     … +164 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='packages/services/src/portfolio/index.ts'; s=open(p).read()…)
+  ⎿  $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.
+     renderer.json --noEmit
+  ⎿  (timeout 5m)
+
+⏺ Write(tests/portfolio-csv-import-service.test.ts)
+  ⎿  Wrote 125 lines to tests/portfolio-csv-import-service.test.ts
+       1 import { describe, expect, it } from 'vitest';
+       3 import type { CsvAssetResolver, CsvInstrumentResolver } from '..
+         /packages/core/src/index.js';
+       4 import { PortfolioCsvImportService } from '../packages/services/
+       5 import { listDisposals, listTaxLots, openDatabase, type Db } fro
+         m '../packages/storage/src/index.js';
+       7 const resolveInstrument: CsvInstrumentResolver = (symbol) =>
+       8   ['BTC', 'ETH'].includes(symbol)
+       9     ? { venue: 'coinbase', productId: `${symbol}-USD`, productTy
+      10     : null;
+     … +137 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; npx vitest run
+      tests/portfolio-csv-import-service.test.ts 2>&1 | tail -35)
+  ⎿   RUN  v4.1.8 /Users/kokinmartinez/Coqui-Crypto
+
+      ❯ tests/portfolio-csv-import-service.test.ts (7 tests | 1 failed) 73m
+     … +29 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; cat > /tmp/dbg.mjs <<'EOF'
+      EOF…)
+  ⎿   RUN  v4.1.8 /Users/kokinmartinez/Coqui-Crypto
+
+      ↓ tests/portfolio-csv-import-service.test.ts > preview shows what a f
+     … +3 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; npx vitest run
+      tests/portfolio-csv-import-service.test.ts 2>&1 | grep -B2 -A6 "stdout" |
+      head -20)
+  ⎿  (No output)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; npx vitest run
+      tests/portfolio-csv-import-service.test.ts --reporter=basic 2>&1 | head
+      -25)
+  ⎿  ⎯⎯⎯⎯⎯⎯⎯ Startup Error ⎯⎯⎯⎯⎯⎯⎯⎯
+     Error: Failed to load custom Reporter from basic
+         at loadCustomReporterModule (file:///Users/kokinmartinez/Coqui-Cry
+     … +56 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; npx vitest run
+      tests/portfolio-csv-import-service.test.ts 2>&1 | grep -iE "console|\[
+      *\[|'0'" | head)
+  ⎿  (No output)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; npx vitest run
+      tests/portfolio-csv-import-service.test.ts 2>&1 | tail -25)
+  ⎿   RUN  v4.1.8 /Users/kokinmartinez/Coqui-Crypto
+     … +5 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='tests/portfolio-csv-import-service.test.ts'; s=open(p).read()…)
+  ⎿   RUN  v4.1.8 /Users/kokinmartinez/Coqui-Crypto
+     … +5 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; pnpm verify > /tmp/v.log 2>&1; echo
+      "VERIFY=$?"; grep -E "Test Files|Tests |error|×" /tmp/v.log | head)
+  ⎿  VERIFY=0
+      Test Files  134 passed (134)
+           Tests  957 passed (957)
+  ⎿  (timeout 10m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='docs/PLAN.md'; s=open(p).read()…)
+  ⎿  PUSHED
+     8a2501e P7 C2: finish the CSV importer and give it a service
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -rn "createCoinGeckoDemo"
+      packages/adapters/src --include=*.ts | head -5; echo "--- secrets"; grep
+      -rn "coingecko" pa…)
+  ⎿  (eval):1: no matches found: --include=*.ts
+     --- secrets
+     packages/services/src/market-data/display-universe.ts:145:    coingeck
+     … +15 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -rn "Demo"
+      packages/adapters/src | grep -i coingecko | head -8; echo "--- secret
+      store"; grep -rn "coingecko\|CoinGec…)
+  ⎿  packages/adapters/src/config/provider-env.ts:5:  readonly coinGeckoDem
+     o: string | null;
+     packages/adapters/src/config/provider-env.ts:19:    coinGeckoDemo: opt
+     … +18 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; cat
+      packages/adapters/src/coingecko/authenticated.ts | head -70; echo "===
+      secret store"; grep -rln "SecretStore\|secret"…)
+  ⎿  import { instrumentKey, type InstrumentKey } from '@coqui/core';
+
+     import {
+     … +75 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n "SecretStore\|interface.*Se
+      cret\|readSecret\|writeSecret\|deleteSecret\|coingecko"
+      packages/services/src/accounts/…)
+  ⎿  11:  type SecretStore,
+     12:  type SecretStoreErrorCode,
+     120:  readonly secretStore: SecretStore;
+     … +4 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -rn "interface SecretStore" -A
+      25 packages/core/src packages/adapters/src 2>/dev/null | head -35; echo
+      "--- slots"; g…)
+  ⎿  packages/adapters/src/secrets/store.ts:18:export interface SecretStore
+     Failure {
+     packages/adapters/src/secrets/store.ts-19-  ok: false;
+     … +34 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 1,18p
+      packages/adapters/src/secrets/store.ts; grep -rn "SecretKey"
+      packages/adapters/src/secrets/*.ts | grep -n "ty…)
+  ⎿  import type { CoinbaseCredentials } from '../coinbase/auth.js';
+
+     export const SECRET_STORE_SERVICE = 'kokincrypto';
+     … +16 lines (ctrl+o to expand)
+
+⏺ Now the CoinGecko connection service:
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 100,180p
+      packages/services/src/accounts/coinbase-connection.ts)
+  ⎿    | { readonly ok: true; readonly portfolioUuid: string }
+       | {
+         readonly ok: false;
+     … +77 lines (ctrl+o to expand)
+
+⏺ Write(packages/services/src/market-data/coingecko-connection.ts)
+  ⎿  Wrote 154 lines to
+     packages/services/src/market-data/coingecko-connection.ts
+       1 import type { Clock } from '@coqui/core';
+       2 import type { SecretStore, SecretStoreErrorCode } from '@coqui/a
+       3 
+       4 /**
+       5  * Connect, verify and forget a CoinGecko Demo key.
+       7  * The authenticated adapter and the `coingecko-api-key` secret 
+         slot both
+       8  * existed; nothing wrapped them, so the composition root could 
+       9  * an unauthenticated client and the key slot was unreachable.
+      10  *
+     … +179 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n "export"
+      packages/services/src/market-data/index.ts; python3 - <<'PY'
+      p='packages/services/src/market-data/index.t…)
+  ⎿  1:export * from './binance-archive.js';
+     2:export * from './kraken-archive.js';
+     3:export * from './decision-dataset.js';
+     … +7 lines (ctrl+o to expand)
+  ⎿  (timeout 5m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; ls packages/adapters/src/secrets/;
+      grep -rn "export function create.*SecretStore\|export class .*SecretStore"
+      packages/ada…)
+  ⎿  index.ts
+     store.ts
+     packages/adapters/src/secrets/store.ts:136:export function createCache
+     … +8 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 200,235p
+      packages/adapters/src/secrets/store.ts; sed -n 100,120p
+      apps/desktop/src/main/index.ts)
+  ⎿  }
+
+     /**
+     … +53 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='apps/desktop/src/main/composition.ts'; s=open(p).read()…)
+  ⎿  $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.
+     renderer.json --noEmit
+  ⎿  (timeout 5m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 1,20p
+      apps/desktop/src/main/index.ts; sed -n 70,100p
+      apps/desktop/src/main/index.ts)
+  ⎿  import { join } from 'node:path';
+
+     import { app, BrowserWindow, ipcMain, shell } from 'electron';
+     … +48 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='apps/desktop/src/main/index.ts'; s=open(p).read()…)
+  ⎿  $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.
+     renderer.json --noEmit
+  ⎿  (timeout 5m)
+
+⏺ Now tests for the connection service:
+
+⏺ Write(tests/coingecko-connection.test.ts)
+  ⎿  Wrote 131 lines to tests/coingecko-connection.test.ts
+      1 import { describe, expect, it } from 'vitest';
+      2 
+      3 import { createMemorySecretStore, type SecretStore } from '../pac
+        kages/adapters/src/index.js';
+      4 import { FixedClock } from '../packages/core/src/index.js';
+      5 import {
+      6   CoinGeckoConnectionService,
+      7   type CoinGeckoKeyVerifier,
+      8   type CoinGeckoVerificationResult,
+      9 } from '../packages/services/src/index.js';
+     … +141 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; npx vitest run
+      tests/coingecko-connection.test.ts 2>&1 | tail -25)
+  ⎿   RUN  v4.1.8 /Users/kokinmartinez/Coqui-Crypto
+     … +5 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; pnpm verify > /tmp/v.log 2>&1; echo
+      "VERIFY=$?"; grep -E "Test Files|Tests |×|error" /tmp/v.log | head)
+  ⎿  VERIFY=0
+      Test Files  135 passed (135)
+           Tests  967 passed (967)
+  ⎿  (timeout 10m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; pnpm smoke > /tmp/s.log 2>&1; echo
+      "SMOKE=$?"; grep -E "FAIL|ALL PASS" /tmp/s.log; python3 - <<'PY'
+      p='docs/PLAN.md'; s=op…)
+  ⎿  SMOKE=0
+     === ALL PASS ===
+     PUSHED
+  ⎿  (timeout 10m)
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -rn
+      "openProfileContext\|ProfileDatabaseProvisioner\|ProfileContextManager"
+      packages --include=*.ts -l 2>/dev/null |…)
+  ⎿  (eval):1: no matches found: --include=*.ts
+     packages/services/src/accounts/coinbase-sync.ts:232:  readonly openPro
+     fileContext: CoinbaseProfileContextFactory;
+     … +2 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -rn "ProfileDatabaseProvisione
+      r\|ProfileContextManager\|CoinbaseProfileContextFactory" packages/
+      2>/dev/null | grep -…)
+  ⎿  packages/services/dist/accounts/profiles.d.ts:8:export interface Profi
+     leDatabaseProvisioner {
+     packages/services/dist/accounts/profiles.d.ts:21:export interface Prof
+     … +19 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 25,70p
+      packages/services/src/accounts/profiles.ts; echo "=== sync ctx"; sed -n
+      210,240p packages/services/src/accou…)
+  ⎿  const UUID_V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{
+     3}-[0-9a-f]{12}$/iu;
+     const MAX_PROFILES = 32;
+     … +74 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; ls packages/storage/src/profiles/;
+      grep -n "export" packages/storage/src/profiles/*.ts | head -20; grep -n
+      "export functio…)
+  ⎿  backup.ts
+     comparison.ts
+     dashboard.ts
+     … +42 lines (ctrl+o to expand)
+
+⏺ Write(apps/desktop/src/main/profile-contexts.ts)
+  ⎿  Wrote 160 lines to apps/desktop/src/main/profile-contexts.ts
+      1 import { isAbsolute, join } from 'node:path';
+      2 
+      3 import type {
+      4   CoinbaseProfileContext,
+      5   PreparedProfileContext,
+      6   ProfileContextManager,
+      7   ProfileDatabaseProvisioner,
+      8 } from '@coqui/services';
+      9 import { openDatabase, type Db } from '@coqui/storage';
+     … +180 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; pnpm typecheck 2>&1 | tail -6)
+  ⎿  $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.
+     renderer.json --noEmit
+  ⎿  (timeout 5m)
+
+⏺ Write(tests/desktop-profile-contexts.test.ts)
+  ⎿  Wrote 131 lines to tests/desktop-profile-contexts.test.ts
+       1 import { mkdtempSync, rmSync } from 'node:fs';
+       2 import { tmpdir } from 'node:os';
+       3 import { join } from 'node:path';
+       4 
+       5 import { afterEach, beforeEach, describe, expect, it } from 'vit
+       6 
+       7 import {
+       8   createCoinbaseProfileContextFactory,
+       9   createProfileContexts,
+      10   createProfileDatabaseProvisioner,
+     … +152 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; npx vitest run
+      tests/desktop-profile-contexts.test.ts 2>&1 | tail -30)
+  ⎿   RUN  v4.1.8 /Users/kokinmartinez/Coqui-Crypto
+     … +5 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 90,140p
+      apps/desktop/src/main/dispatch.ts)
+  ⎿      const request = schemas.request.safeParse(payload);
+         if (!request.success) return transportFailure('invalid_request_pay
+     load');
+     … +27 lines (ctrl+o to expand)
+
+⏺ Write(tests/secret-leak-sweep.test.ts)
+  ⎿  Wrote 196 lines to tests/secret-leak-sweep.test.ts
+       1 import { mkdtempSync, rmSync } from 'node:fs';
+       3 import { join } from 'node:path';
+       4 
+         est';
+       6 
+         ion.js';
+       8 import { createDispatcher, type ChannelHandlers } from '../apps/
+       9 import { createMemorySecretStore } from '../packages/adapters/sr
+         c/index.js';
+         tracts/src/index.js';
+     … +224 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; npx vitest run
+      tests/secret-leak-sweep.test.ts 2>&1 | tail -35)
+  ⎿   RUN  v4.1.8 /Users/kokinmartinez/Coqui-Crypto
+     … +5 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; pnpm verify > /tmp/v.log 2>&1; echo
+      "VERIFY=$?"; grep -E "Test Files|Tests |×|error" /tmp/v.log | head -6)
+  ⎿  VERIFY=0
+      Test Files  137 passed (137)
+           Tests  982 passed (982)
+  ⎿  (timeout 10m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='docs/PLAN.md'; s=open(p).read()…)
+  ⎿  PUSHED
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; ls packages/services/src/risk/;
+      grep -n "export class\|export function\|export interface"
+      packages/services/src/risk/*.ts…)
+  ⎿  evidence-tracker.ts
+     immutable.ts
+     index.ts
+     … +23 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -rn "export function
+      resolveRiskControlState" -A 30 packages/core/src | head -45; echo "===
+      risk budget"; grep -n "ex…)
+  ⎿  packages/core/src/risk/risk-controls.ts:211:export function resolveRis
+     kControlState(input: RiskControlInput): RiskControlState {
+     packages/core/src/risk/risk-controls.ts-212-  const profile = resolveR
+     … +44 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 240,260p
+      packages/core/src/risk/risk-controls.ts; echo "=== equity source"; grep
+      -rn "listPortfolioSnapshots" -A 6…)
+  ⎿    return {
+         profile,
+         stage,
+     … +26 lines (ctrl+o to expand)
+
+⏺ Now the risk dashboard service:
+
+⏺ Write(packages/services/src/risk/dashboard.ts)
+  ⎿  Wrote 157 lines to packages/services/src/risk/dashboard.ts
+       1 import {
+       2   resolveKillSwitchDisplay,
+       3   resolveRiskControlState,
+       4   type Clock,
+       5   type RiskControlStage,
+       7 } from '@coqui/core';
+       8 import { listPortfolioSnapshots, type Db } from '@coqui/storage'
+         ;
+       9 
+      10 /**
+     … +170 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='packages/services/src/risk/index.ts'; s=open(p).read()…)
+  ⎿  packages/services/src/risk/dashboard.ts(2,3): error TS2305: Module '"@
+     coqui/core"' has no exported member 'resolveKillSwitchDisplay'.
+     packages/services/src/risk/dashboard.ts(133,5): error TS2322: Type 'Re
+     … +9 lines (ctrl+o to expand)
+  ⎿  (timeout 5m)
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='packages/services/src/risk/dashboard.ts'; s=open(p).read()…)
+  ⎿  $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.
+     renderer.json --noEmit
+  ⎿  (timeout 5m)
+
+⏺ Now the channel, wiring, and the Risk screen:
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n "risk.evidence-gate" -B 4
+      -A 10 packages/contracts/src/schemas/risk.ts | head -30; tail -5
+      packages/contracts/src/…)
+  ⎿  77-  'app.status-rail': {
+     78-    request: z.strictObject({ profileId: z.string().min(1).max(64)
+     }).readonly(),
+     … +18 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='packages/contracts/src/schemas/risk.ts'; s=open(p).read()…)
+  ⎿  $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.
+     renderer.json --noEmit
+  ⎿  (timeout 5m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 1,60p
+      apps/desktop/src/renderer/app/App.tsx)
+  ⎿  import type { CoquiClient } from '@coqui/contracts';
+
+     import { Allocation } from './Allocation.js';
+     … +57 lines (ctrl+o to expand)
+
+⏺ Write(apps/desktop/src/renderer/app/Risk.tsx)
+  ⎿  Wrote 135 lines to apps/desktop/src/renderer/app/Risk.tsx
+       1 import type { ChannelResponse, CoquiClient } from '@coqui/contra
+         cts';
+       2 
+       3 import { useChannel } from '../query/use-channel.js';
+       4 
+       6 type Rung = RiskView['ladder'][number];
+       7 
+       8 /**
+       9  * The risk ladder, shown but not offered.
+      10  *
+     … +143 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='apps/desktop/src/renderer/app/App.tsx'; s=open(p).read()…)
+  ⎿  VERIFY=1
+          × names every channel it does not exercise 3ms
+          × matches the boundaries that actually have tested services today
+     … +4 lines (ctrl+o to expand)
+  ⎿  (timeout 10m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='tests/contracts-channels.test.ts'; s=open(p).read()…)
+  ⎿        Tests  29 passed (29)
+        Start at  15:10:51
+        Duration  735ms (transform 496ms, setup 0ms, import 726ms, tests 47
+     ms, environment 0ms)
+
+⏺ Now a test that the risk gate is read-only by construction:
+
+⏺ Write(tests/risk-dashboard.test.ts)
+  ⎿  Wrote 123 lines to tests/risk-dashboard.test.ts
+      1 import { describe, expect, it } from 'vitest';
+      2 
+        ts/src/index.js';
+      4 import { FixedClock, type UsdAmount } from '../packages/core/src/
+        index.js';
+        dex.js';
+      6 import { openDatabase, savePortfolioSnapshot, type Db } from '../
+        packages/storage/src/index.js';
+      8 const DAY = 86_400_000;
+      9 const T0 = Date.UTC(2026, 0, 1);
+     … +145 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; npx vitest run
+      tests/risk-dashboard.test.ts 2>&1 | tail -30)
+  ⎿       45|     expect(result.exposureScale).toBe(1);
+          46|   });
+     … +30 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n "resolveRiskControlState"
+      -A 8 packages/services/src/paper/execution-gate.ts | head -15; grep -n
+      "staleDataTimeout…)
+  ⎿  5:  resolveRiskControlState,
+     6-  DEFAULT_AUTO_TRADE_GUARDRAILS,
+     7-  DEFAULT_VENUE_COST_PROFILE,
+     … +21 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n "resolveRiskControlState({"
+      -A 6 packages/services/src/paper/execution-gate.ts)
+  ⎿  No matches found
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n "resolveRiskControlState"
+      -B 3 -A 10 packages/services/src/paper/execution-gate.ts | sed -n
+      '15,45p')
+  ⎿  --
+     112- * Run the chain in `ARCHITECTURE.md` §6 order.
+     113- *
+     … +20 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='packages/services/src/risk/dashboard.ts'; s=open(p).read()…)
+  ⎿   RUN  v4.1.8 /Users/kokinmartinez/Coqui-Crypto
+     … +5 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='apps/desktop/src/renderer/app/Risk.tsx'; s=open(p).read()…)
+  ⎿  VERIFY=0
+      Test Files  138 passed (138)
+           Tests  991 passed (991)
+     … +2 lines (ctrl+o to expand)
+  ⎿  (timeout 10m)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; python3 - <<'PY'
+      p='docs/PLAN.md'; s=open(p).read()…)
+  ⎿  PUSHED
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; wc -l
+      apps/desktop/src/renderer/app/*.tsx | tail -20; grep -n "evidence"
+      apps/desktop/src/renderer/app/Scoreboard.tsx | he…)
+  ⎿       133 apps/desktop/src/renderer/app/Allocation.tsx
+           87 apps/desktop/src/renderer/app/App.tsx
+           28 apps/desktop/src/renderer/app/DeferredPanel.tsx
+     … +23 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; grep -n "export class\|export
+      interface\|export function" packages/services/src/alerts/*.ts | head -20;
+      grep -rn "Notifica…)
+  ⎿  packages/services/src/alerts/service.ts:35:export interface AlertIdSou
+     rce {
+     packages/services/src/alerts/service.ts:39:export interface AlertRuleC
+     … +15 lines (ctrl+o to expand)
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 89,135p
+      packages/services/src/alerts/service.ts; grep -n "  [a-zA-Z]*("
+      packages/services/src/alerts/service.ts | s…)
+  ⎿  export interface AlertMutationIssue {
+       readonly path: readonly string[];
+       readonly code: AlertMutationIssueCode;
+     … +57 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 39,60p
+      packages/services/src/alerts/service.ts; grep -n
+      "StoredAlertKind\|listAlertPriceTargets" packages/storage/s…)
+  ⎿  export interface AlertRuleConfigInput {
+       readonly driftEnabled: boolean;
+       readonly regimeEnabled: boolean;
+     … +36 lines (ctrl+o to expand)
+
+⏺ Bash(cd /Users/kokinmartinez/Coqui-Crypto; sed -n 31,40p
+      packages/storage/src/repositories/alerts.ts; grep -n
+      "markAlertPriceTargetTriggered\|export function" packag…)
+  ⎿  export type StoredAlertKind =
+       | 'allocation_drift'
+       | 'regime_change'
+     … +69 lines (ctrl+o to expand)
+  ⎿  You've hit your session limit · resets 6:50pm (America/Phoenix)
+     /upgrade to increase your usage limit.
+
+✻ Worked for 1h 14m 2s

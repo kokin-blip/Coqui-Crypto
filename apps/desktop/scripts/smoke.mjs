@@ -247,6 +247,8 @@ async function run() {
     // The literal marker matters more than the number: a paper figure that
     // crossed IPC without it could be rendered as money.
     ['paper.portfolio', '{ profileId: "main" }', (v) => `simulation=${v?.simulation}`],
+    ['risk.dashboard', '{}', (v) => `stage=${v?.stage}`],
+    ['alerts.view', '{ profileId: "main" }', (v) => `unread=${v?.unreadCount}`],
   ]) {
     const outcome = JSON.parse(
       await withTimeout(channel, window.webContents.executeJavaScript(

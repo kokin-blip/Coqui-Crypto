@@ -122,6 +122,84 @@ export const riskChannelSchemas = {
       })
       .readonly(),
   },
+  /**
+   * Recorded alerts, their rules, and the price targets behind them.
+   *
+   * Read-only. Configuring alerts is a write and belongs with the settings
+   * screen; surfacing what has already fired does not need one, and P8's job
+   * here was that the events existed and nothing could see them.
+   */
+  'alerts.view': {
+    request: z.strictObject({ profileId: z.string().min(1).max(64) }).readonly(),
+    response: z
+      .strictObject({
+        asOfMs: epochMillisecondsSchema,
+        profileId: z.string().min(1).max(64),
+        unreadCount: z.number().int().nonnegative(),
+        config: z
+          .strictObject({
+            driftEnabled: z.boolean(),
+            regimeEnabled: z.boolean(),
+            bigMoveEnabled: z.boolean(),
+            bigMovePct: z.string().min(1).max(32),
+            priceTargetEnabled: z.boolean(),
+            soundEnabled: z.boolean(),
+            quietHoursEnabled: z.boolean(),
+            quietStartHour: z.number().int().min(0).max(23),
+            quietEndHour: z.number().int().min(0).max(23),
+            source: z.enum(['default', 'stored']),
+            updatedAtMs: epochMillisecondsSchema.nullable(),
+          })
+          .readonly(),
+        priceTargets: z
+          .array(
+            z
+              .strictObject({
+                id: z.string().min(1).max(128),
+                profileId: z.string().min(1).max(64),
+                venue: z.literal('coinbase'),
+                productId: z.string().min(1).max(64),
+                productType: z.literal('spot'),
+                direction: z.enum(['above', 'below']),
+                priceUsd: z.string().min(1).max(64),
+                enabled: z.boolean(),
+                createdAt: epochMillisecondsSchema,
+                triggeredAt: epochMillisecondsSchema.nullable(),
+                removedAt: epochMillisecondsSchema.nullable(),
+              })
+              .readonly(),
+          )
+          .max(200)
+          .readonly(),
+        alerts: z
+          .array(
+            z
+              .strictObject({
+                id: z.string().min(1).max(128),
+                profileId: z.string().min(1).max(64),
+                eventKey: z.string().min(1).max(200),
+                kind: z.enum([
+                  'allocation_drift', 'regime_change', 'big_move',
+                  'price_target', 'policy_event', 'evidence_change',
+                ]),
+                severity: z.enum(['info', 'warn']),
+                reasonCode: z.string().min(1).max(64),
+                evidenceHash: sha256HexSchema,
+                venue: z.literal('coinbase').nullable(),
+                productId: z.string().min(1).max(64).nullable(),
+                productType: z.literal('spot').nullable(),
+                occurredAt: epochMillisecondsSchema,
+                recordedAt: epochMillisecondsSchema,
+                readAt: epochMillisecondsSchema.nullable(),
+                archivedAt: epochMillisecondsSchema.nullable(),
+              })
+              .readonly(),
+          )
+          .max(500)
+          .readonly(),
+      })
+      .readonly(),
+  },
   'risk.evidence-gate': {
     request: emptyPayloadSchema,
     response: z
