@@ -17,13 +17,40 @@ Effort figures assume one part-time developer with assistance.
 > **Update this section as phases complete. It is the first thing to read.**
 
 ```
-Current phase:  P9 — Observability and distribution; E1-E6 landed
-Last completed: E3 packaging · E4 release job · E5 packaged smoke · E6 guide (2026-08-23)
+Current phase:  P5-P9 code complete (2026-08-23). Three exits need the owner.
+Last completed: E3-E6 packaging, release job, packaged gate, install guide
 Verified:       140 test files / 1013 tests green; smoke 28/28; packaged smoke 8/8
-Next work:      A6 screenshot review (owner gate) · P7 exit needs a real key
-BLOCKED ON:     nothing; A6 screenshot review is the one open owner gate
+BLOCKED ON:     A6 screenshot review · a real Coinbase key · a registered
+                net-edge estimate (see "What is left" below)
 P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
 ```
+
+### What is left, and why it is not code
+
+Every work item from P5 through P9 is built, tested and pushed. Three exit
+criteria remain open, and none of them can be closed by writing more:
+
+1. **A6, the screenshot review.** The one owner gate. Two of the states
+   `docs/UI-UX.md` §7.9 requires — a blocked paper action and negative evidence
+   — could not exist until the paper engine did, which is why it was sequenced
+   after Stage B. It is now producible.
+
+2. **P7's exit needs a real view-only Coinbase key.** The connect flow, the
+   four-permission probe, the sync, the reconciliation ledger and the canary
+   leak sweep are all built and green. What is untested is a real key against
+   the real venue, and no amount of fixture work substitutes for it.
+
+3. **P6's real multi-day run is registered but blocked**
+   (`docs/studies/paper-forward-run-2026-08-22.md`). The profitability gate
+   weighs cost against a *registered* per-trade net-edge estimate; no study has
+   registered one for `trendvol-legacy-unvalidated`, so the default is zero,
+   every intent is refused, and a real week would record seven honest
+   stand-downs and no fills. Setting the value without a study behind it is
+   precisely the false confidence invariant 4 exists to prevent. The study
+   names both options and leaves the choice to the owner.
+
+Not in scope, and deliberately: P10 webhook ingestion and P11 live-trading
+preparation, both gated in §4.
 
 **The application runs.** `pnpm smoke` boots a real Electron main process,
 opens a migrated profile database through `node:sqlite`, and round-trips
