@@ -44,6 +44,7 @@ describe('channel registry', () => {
     expect([...CHANNEL_NAMES].sort()).toEqual([
       'accounts.settings',
       'alerts.view',
+      'app.incidents',
       'app.status-rail',
       'market-data.candles',
       'market-data.fear-greed',

@@ -17,10 +17,10 @@ Effort figures assume one part-time developer with assistance.
 > **Update this section as phases complete. It is the first thing to read.**
 
 ```
-Current phase:  P8 — Risk and evidence surfaces; D1-D4 landed
-Last completed: D4 — alerts surfaced and OS notifications wired (2026-08-23)
-Verified:       139 test files / 1003 tests green; smoke 27/27; perf p75 8.4ms
-Next work:      D5 re-phased P4 rows, then P9 observability and distribution
+Current phase:  P9 — Observability and distribution; E1+E2 landed
+Last completed: E1 logger wired · E2 incidents service (2026-08-23)
+Verified:       140 test files / 1013 tests green; smoke 28/28; perf p75 8.4ms
+Next work:      E3 electron-builder · E4 release job · E5 packaged smoke · E6 guide
 BLOCKED ON:     nothing; A6 screenshot review is the one open owner gate
 P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
 ```

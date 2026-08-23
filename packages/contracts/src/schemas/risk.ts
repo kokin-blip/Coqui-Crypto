@@ -200,6 +200,48 @@ export const riskChannelSchemas = {
       })
       .readonly(),
   },
+  /**
+   * Runtime incidents — what went wrong in the background.
+   *
+   * The table is append-only and a resolution is a later row, so there is no
+   * write channel here either: a surface that could clear an incident would be
+   * a surface that could hide one.
+   */
+  'app.incidents': {
+    request: z
+      .strictObject({
+        profileId: z.string().min(1).max(64),
+        limit: z.number().int().min(1).max(200),
+      })
+      .readonly(),
+    response: z
+      .strictObject({
+        asOfMs: epochMillisecondsSchema,
+        incidents: z
+          .array(
+            z
+              .strictObject({
+                id: z.string().min(1).max(128),
+                profileId: z.string().min(1).max(64),
+                runId: z.string().min(1).max(128).nullable(),
+                kind: z.enum([
+                  'stale_data', 'sequence_gap', 'reconciliation', 'scheduler_failure',
+                  'risk_stop', 'execution_fault', 'provider_invalid', 'worker_failure',
+                ]),
+                severity: z.enum(['warning', 'blocking', 'critical']),
+                source: z.string().min(1).max(64),
+                detailJson: z.string().max(4_000),
+                occurredAt: epochMillisecondsSchema,
+                resolvedAt: epochMillisecondsSchema.nullable(),
+                resolution: z.string().max(500).nullable(),
+              })
+              .readonly(),
+          )
+          .max(200)
+          .readonly(),
+      })
+      .readonly(),
+  },
   'risk.evidence-gate': {
     request: emptyPayloadSchema,
     response: z

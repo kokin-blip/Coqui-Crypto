@@ -66,6 +66,8 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   // Derived from the same snapshots the portfolio reads, so it moves when they
   // do and no faster.
   'risk.dashboard': { refetchIntervalMs: 5 * MINUTE, staleTimeMs: 2 * MINUTE },
+  // Written by the same background work the alerts come from.
+  'app.incidents': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
   // Alerts are produced by the scheduler, which wakes at most once a minute.
   'alerts.view': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
   // A write. It is never polled — it runs when the user decides — but the

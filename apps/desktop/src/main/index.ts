@@ -112,19 +112,14 @@ async function start(): Promise<void> {
     databasePath: databasePath(),
     profileId: DEFAULT_PROFILE,
     coinGeckoApiKey: await coinGeckoApiKey(),
-    // Background failures are reported, never thrown: a failed paper tick must
-    // not take down a window the user is reading.
-    onUnexpectedError: (context, error) => {
-      console.error(`[coqui] ${context} failed`, error);
-    },
   });
 
   const dispatch = createDispatcher({
     handlers: runtime.handlers,
-    onUnexpectedError: (channel, error) => {
-      // Detail stays local. It must never travel to the renderer (invariant 3).
-      console.error(`[coqui] channel ${channel} failed`, error);
-    },
+    // Detail stays local, and now lands somewhere durable rather than only on
+    // a console nobody reads after the fact. It must never travel to the
+    // renderer (invariant 3).
+    onUnexpectedError: (channel, error) => runtime?.report(`channel:${channel}`, error),
   });
 
   ipcMain.handle(QUERY_CHANNEL, async (_event, channel: unknown, payload: unknown) =>

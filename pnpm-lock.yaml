@@ -47,6 +47,9 @@ importers:
       '@coqui/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@coqui/observability':
+        specifier: workspace:*
+        version: link:../../packages/observability
       '@coqui/services':
         specifier: workspace:*
         version: link:../../packages/services

@@ -16,6 +16,7 @@
     "@coqui/adapters": "workspace:*",
     "@coqui/contracts": "workspace:*",
     "@coqui/core": "workspace:*",
+    "@coqui/observability": "workspace:*",
     "@coqui/services": "workspace:*",
     "@coqui/storage": "workspace:*",
     "@coqui/ui-kit": "workspace:*",

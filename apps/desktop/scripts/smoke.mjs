@@ -249,6 +249,7 @@ async function run() {
     ['paper.portfolio', '{ profileId: "main" }', (v) => `simulation=${v?.simulation}`],
     ['risk.dashboard', '{}', (v) => `stage=${v?.stage}`],
     ['alerts.view', '{ profileId: "main" }', (v) => `unread=${v?.unreadCount}`],
+    ['app.incidents', '{ profileId: "main", limit: 50 }', (v) => `incidents=${v?.incidents?.length}`],
   ]) {
     const outcome = JSON.parse(
       await withTimeout(channel, window.webContents.executeJavaScript(

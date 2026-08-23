@@ -33,12 +33,14 @@ import {
 import {
   getAllocationPolicy,
   getSetting,
+  listRuntimeIncidents,
   listCoinbaseBalanceDiscrepancies,
   listDisplayUniverse,
   openDatabase,
   type Db,
 } from '@coqui/storage';
 
+import { createDiagnostics } from './diagnostics.js';
 import { createAlertNotificationPump } from './notifications.js';
 import { createPaperMarketFeed } from './paper-market.js';
 import { createCandleSource, createReferenceSources } from './reference-sources.js';
@@ -106,6 +108,8 @@ export interface RuntimeOptions {
 
 export interface CoquiRuntime {
   readonly handlers: ChannelHandlers;
+  /** Every background failure lands here first (`diagnostics.ts`). */
+  readonly report: (context: string, error: unknown) => void;
   readonly database: Db;
   readonly clock: Clock;
   /** Null when the scheduler is disabled. Exposed so a test can drive a tick. */
@@ -125,6 +129,23 @@ export interface CoquiRuntime {
 export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   const clock = new SystemClock(options.readSystemTime ?? (() => Date.now()));
   const database = openDatabase(options.databasePath);
+
+  // Every background failure in the application goes through here: a structured
+  // log line always, and an incident row when the fault is durable. Before this,
+  // `createStructuredLogger` had no production caller and nothing but the
+  // reconciliation harness ever wrote an incident.
+  const diagnostics = createDiagnostics({
+    database,
+    clock,
+    profileId: options.profileId,
+    ...(options.coinGeckoApiKey === undefined || options.coinGeckoApiKey === null
+      ? {}
+      : { secrets: [options.coinGeckoApiKey] }),
+  });
+  const report = (context: string, error: unknown): void => {
+    diagnostics.report(context, error);
+    options.onUnexpectedError?.(context, error);
+  };
 
   // One client over one shared registry. `createHttpClient` derives the
   // hostname from each URL and takes its budget from `forDomain`, so per-host
@@ -190,9 +211,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     http,
     instruments: () => getAllocationPolicy(database).targets.map((target) => target.instrument),
     bars: (instrument, lookbackDays, nowMs) => candles.dailyBars(instrument, lookbackDays, nowMs),
-    ...(options.onUnexpectedError === undefined
-      ? {}
-      : { onUnexpectedError: options.onUnexpectedError }),
+    onUnexpectedError: report,
   });
 
   const notifications = options.notifier === undefined
@@ -201,9 +220,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
         alerts,
         notifier: options.notifier,
         profileId: options.profileId,
-        ...(options.onUnexpectedError === undefined
-          ? {}
-          : { onUnexpectedError: options.onUnexpectedError }),
+        onUnexpectedError: report,
       });
 
   let paperHoldings: readonly PricedHolding[] = [];
@@ -213,9 +230,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
         database,
         clock,
         profileId: options.profileId,
-        ...(options.onUnexpectedError === undefined
-          ? {}
-          : { onUnexpectedError: options.onUnexpectedError }),
+        onUnexpectedError: report,
         async prepare(nowMs) {
           await paperMarket.refresh(nowMs);
           paperHoldings = (await portfolio.portfolioView()).holdings;
@@ -236,9 +251,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
             return policy.targets.length === 0 ? null : policy;
           },
           historicalNetEdgeEstimatePct: paperNetEdgeEstimatePct(database),
-          ...(options.onUnexpectedError === undefined
-            ? {}
-            : { onUnexpectedError: options.onUnexpectedError }),
+          onUnexpectedError: report,
         },
       });
 
@@ -330,6 +343,14 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     // Derived on every read from the equity history. There is no setter, here
     // or anywhere: a stage the user could set is a guardrail they could disable.
     'risk.dashboard': () => ({ ok: true, value: riskDashboard.view() }),
+    // Append-only by construction; a resolution is a later row, never an edit.
+    'app.incidents': (payload: { readonly profileId: string; readonly limit: number }) => ({
+      ok: true,
+      value: {
+        incidents: listRuntimeIncidents(payload.profileId, false, payload.limit, database),
+        asOfMs: clock.nowMs(),
+      },
+    }),
     'alerts.view': (payload: { readonly profileId: string }) => ({
       ok: true,
       value: alerts.view(payload.profileId),
@@ -340,6 +361,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
 
   return {
     handlers,
+    report,
     database,
     clock,
     scheduler,

@@ -54,6 +54,7 @@ const LOCAL_CHANNELS: readonly ChannelName[] = [
   'accounts.settings',
   'app.status-rail',
   'alerts.view',
+  'app.incidents',
 ];
 
 const PAYLOADS: Partial<Record<ChannelName, unknown>> = {
@@ -62,6 +63,7 @@ const PAYLOADS: Partial<Record<ChannelName, unknown>> = {
   'accounts.settings': { profileId: 'main' },
   'app.status-rail': { profileId: 'main' },
   'alerts.view': { profileId: 'main' },
+  'app.incidents': { profileId: 'main', limit: 50 },
   'portfolio.reconciliation': { profileId: 'main' },
 };
 
