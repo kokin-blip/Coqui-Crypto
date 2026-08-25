@@ -28,4 +28,8 @@ The pending/succeeded/unknown rows were created in a throwaway database by the e
 3. Are pending, blocked, failed, succeeded, and unknown distinguishable without relying on color?
 4. Is the workstation atmosphere restrained enough for financial controls?
 
-Owner approval remains open until the owner answers these questions. Creating this set does not close A6 automatically.
+## Owner decision
+
+Approved by the owner on 2026-08-24. A6 is closed for this visual direction.
+Future material changes to navigation, financial-state communication, or the
+design tokens require a new review; ordinary implementation fixes do not reopen it.

@@ -67,7 +67,7 @@ Start with [the plan](./docs/PLAN.md), [architecture](./docs/ARCHITECTURE.md), [
 
 ## Known limitations and open owner gates
 
-- Screenshot review still requires owner approval.
+- The 2026-08-24 screenshot review set is owner-approved; material visual-direction changes require a new review.
 - The Coinbase permission flow still requires verification with a real View-only key.
 - No registered net-edge estimate exists for the unvalidated shipped strategy, so profitability checks correctly block proposals.
 - Daily paper valuation evidence begins when the scheduler records it; missing historical days are never fabricated or backfilled.

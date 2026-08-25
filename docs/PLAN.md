@@ -18,10 +18,10 @@ Effort figures assume one part-time developer with assistance.
 
 ```
 Current phase:  P5 additive UI and authoritative paper-execution continuation
-Baseline:       d25101f · P5-P9 engineering present · three exits need the owner
+Baseline:       d25101f · P5-P9 engineering present · two evidence exits remain
 Verified now:   146 test files / 1039 tests; Electron smoke 35/35;
-                packaged smoke 8/8; warm shell 158ms; interaction p75 8.4ms
-BLOCKED ON:     A6 screenshot review · a real Coinbase key · a registered
+                packaged smoke 8/8; warm shell 171ms; interaction p75 8.6ms
+BLOCKED ON:     a real Coinbase key · a registered
                 net-edge estimate (see "What is left" below)
 P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
 ```
@@ -29,20 +29,20 @@ P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
 ### What is left, and why it is not code
 
 The fetched P5–P9 baseline is built and tested. Additive shell, profile,
-performance, and execution-boundary work continues without replacing it. Three
-exit criteria remain open, and none can be closed with fixtures or prose:
+performance, and execution-boundary work continues without replacing it. A6 is
+closed; two evidence criteria remain open and cannot be closed with fixtures or prose:
 
-1. **A6, the screenshot review.** The one owner gate. Two of the states
+- **A6, the screenshot review — CLOSED 2026-08-24.** Two of the states
    `docs/UI-UX.md` §7.9 requires — a blocked paper action and negative evidence
    — could not exist until the paper engine did, which is why it was sequenced
-   after Stage B. It is now producible.
+   after Stage B. The owner approved the final review set on 2026-08-24.
 
-2. **P7's exit needs a real view-only Coinbase key.** The connect flow, the
+1. **P7's exit needs a real view-only Coinbase key.** The connect flow, the
    four-permission probe, the sync, the reconciliation ledger and the canary
    leak sweep are all built and green. What is untested is a real key against
    the real venue, and no amount of fixture work substitutes for it.
 
-3. **P6's real multi-day run is registered but blocked**
+2. **P6's real multi-day run is registered but blocked**
    (`docs/studies/paper-forward-run-2026-08-22.md`). The profitability gate
    weighs cost against a *registered* per-trade net-edge estimate; no study has
    registered one for `trendvol-legacy-unvalidated`, so the default is zero,

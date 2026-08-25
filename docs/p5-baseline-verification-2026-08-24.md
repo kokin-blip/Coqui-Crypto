@@ -44,8 +44,8 @@ After the routed shell, profile boundary, paper execution service, performance e
 - Tests: 146 files / 1,039 tests passed
 - Production build: passed
 - Electron smoke: 35 checks passed through the production profile controller
-- Performance: 158 ms warm useful shell; 8.4 ms interaction p75
-- Sensitivity control: 250.3 ms and correctly over budget
+- Performance: 171 ms warm useful shell; 8.6 ms interaction p75
+- Sensitivity control: 250.4 ms and correctly over budget
 - macOS arm64 package: built and ad-hoc signed
 - Packaged smoke: 8 checks passed; `node:sqlite` opened schema 48 under asar
 - Production dependency audit: no known vulnerabilities
@@ -62,8 +62,9 @@ The production-build stacked-shell baseline is preserved at [stacked-shell-dark.
 
 Fixtures and documentation cannot close these:
 
-1. Owner approval of the final screenshot review set.
-2. Verification with a real Coinbase key whose permissions are View-only.
-3. A registered per-trade net-edge estimate for the shipped strategy.
+1. Verification with a real Coinbase key whose permissions are View-only.
+2. A registered per-trade net-edge estimate for the shipped strategy.
+
+The final screenshot review set was owner-approved on 2026-08-24.
 
 The negative TrendVol replacement result remains authoritative and visible. It is not an owner gate and cannot be reinterpreted as validation.

@@ -34,6 +34,7 @@ afterPack: build/afterPackHardening.cjs
 afterSign: build/afterSignAdHoc.cjs
 
 mac:
+  icon: build/icon.icns
   artifactName: ${productName}-${version}-mac-${arch}.${ext}
   category: public.app-category.finance
   target:
@@ -52,6 +53,7 @@ mac:
       NSAllowsArbitraryLoads: false
 
 win:
+  icon: build/icon.ico
   artifactName: ${productName}-${version}-win-${arch}.${ext}
   target:
     - target: nsis
