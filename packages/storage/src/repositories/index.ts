@@ -5,6 +5,7 @@ export * from './canonical-assets.js';
 export * from './coinbase-evidence.js';
 export * from './display-universe.js';
 export * from './evidence.js';
+export * from './forward-edge.js';
 export * from './market-data.js';
 export * from './operational-metrics.js';
 export * from './paper.js';

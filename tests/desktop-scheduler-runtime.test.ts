@@ -140,7 +140,7 @@ function paperDeps(db: Db, clock: Clock = new FixedClock(T0)): PaperRunLoopDepen
     market: { bars: () => bars(), rules: () => RULES },
     holdings: () => [holding(BTC_REF, '100.00', '1'), holding(ETH_REF, '900.00', '9')],
     policy: () => POLICY,
-    historicalNetEdgeEstimatePct: 12,
+    historicalGrossEdgeLowerBoundPct: 12,
   };
 }
 

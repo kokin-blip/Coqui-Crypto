@@ -53,11 +53,15 @@ import {
   listPaperFillPerformanceFacts,
   listPaperPerformanceDayFacts,
   openDatabase,
+  readForwardEdgeStudyStatus,
+  readProfitabilityEstimateEvidence,
+  registerForwardEdgeStudy,
   setPaperExecutionPolicy,
   type Db,
 } from '@coqui/storage';
 
 import { createDiagnostics } from './diagnostics.js';
+import { SHIPPED_FORWARD_EDGE_PLAN } from './forward-edge-plan.js';
 import { createAlertNotificationPump } from './notifications.js';
 import { createPaperMarketFeed } from './paper-market.js';
 import { capturePaperPerformanceEvidence } from './paper-performance-evidence.js';
@@ -65,25 +69,9 @@ import { createCandleSource, createReferenceSources } from './reference-sources.
 import { startSchedulerRuntime, type SchedulerRuntime } from './scheduler-runtime.js';
 import type { ChannelHandlers } from './dispatch.js';
 
-/**
- * The per-trade net edge the profitability gate weighs costs against.
- *
- * **Zero by default, deliberately.** No study in this repository has registered
- * a per-trade net-edge estimate for the shipped strategy — its own version
- * string is `trendvol-legacy-unvalidated` — and inventing one would be exactly
- * the false confidence invariant 4 exists to prevent. At zero the gate refuses
- * every intent and the run stands down as `gates_refused`, which the portfolio
- * screen states in plain words rather than hiding.
- *
- * The setting exists so that a *registered* estimate can be supplied once one
- * exists (invariant 7), not as a knob to make the engine trade.
- */
-function paperNetEdgeEstimatePct(database: Db): number {
-  const raw = getSetting('paper.net_edge_estimate_pct', database);
-  if (raw === null) return 0;
-  const parsed = Number(raw);
-  // A malformed value falls back to the refusing default, never to a guess.
-  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+/** Only an integrity-verified passing forward result can supply execution edge. */
+function paperGrossEdgeLowerBoundPct(profileId: string, database: Db): number {
+  return readProfitabilityEstimateEvidence(profileId, database)?.grossEdgeLowerBoundPct ?? 0;
 }
 
 /** Epoch of the last Coinbase sync, or null when never run or unparseable. */
@@ -172,6 +160,7 @@ export interface CoquiRuntime {
 export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   const clock = new SystemClock(options.readSystemTime ?? (() => Date.now()));
   const database = openDatabase(options.databasePath);
+  registerForwardEdgeStudy(SHIPPED_FORWARD_EDGE_PLAN, database);
 
   // Every background failure in the application goes through here: a structured
   // log line always, and an incident row when the fault is durable. Before this,
@@ -276,7 +265,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       holdings: paperHoldings,
       killSwitchEngaged: resolveKillSwitch(options.profileId, database).engaged,
       evidenceVerified: evidence.track().conversationEligible,
-      historicalNetEdgeEstimatePct: paperNetEdgeEstimatePct(database),
+      historicalGrossEdgeLowerBoundPct: paperGrossEdgeLowerBoundPct(options.profileId, database),
     }),
     onUnexpectedError: report,
   });
@@ -308,7 +297,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
             const policy = getAllocationPolicy(database);
             return policy.targets.length === 0 ? null : policy;
           },
-          historicalNetEdgeEstimatePct: paperNetEdgeEstimatePct(database),
+          historicalGrossEdgeLowerBoundPct: paperGrossEdgeLowerBoundPct(options.profileId, database),
           evidenceVerified: () => evidence.track().conversationEligible,
           captureEvidence: (summary) => capturePaperPerformanceEvidence({
             profileId: options.profileId,
@@ -454,6 +443,28 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     }) => marketData.candles(payload.instrument, payload.lookbackDays),
     'research.runs': () => research.runs(),
     'research.performance': () => research.performance(),
+    'research.edge-study': () => {
+      const status = readForwardEdgeStudyStatus(database);
+      const outcome = status.result?.outcome ?? 'not_registered';
+      return { ok: true, value: {
+        status: status.plan === null ? 'not_registered' : outcome === 'not_registered' ? 'collecting' : outcome,
+        planHash: status.planHash,
+        costProfileHash: status.plan?.costProfileHash ?? null,
+        resultHash: status.resultHash,
+        registeredAtMs: status.plan?.registeredAtMs ?? null,
+        firstEligibleDayUtcMs: status.plan?.firstEligibleDayUtcMs ?? null,
+        completedDays: status.result?.completedDays ?? 0,
+        minimumCompletedDays: 365 as const,
+        costBearingRebalances: status.result?.costBearingRebalances ?? 0,
+        minimumCostBearingRebalances: 30 as const,
+        trialUpperBound: 215 as const,
+        grossEdgeLowerBoundPct: status.result?.grossEdgeLowerConfidenceBoundPct ?? null,
+        netEdgeLowerBoundPct: status.result?.netEdgeLowerConfidenceBoundPct ?? null,
+        sourceHashes: status.result?.sourceHashes ?? [],
+        outcome,
+        activated: status.activated,
+      } };
+    },
     'research.jobs': (payload: { readonly limit: number }) => research.jobs(payload.limit),
     'research.job': (payload: { readonly id: string }) => research.job(payload.id),
     'portfolio.view': async () => ({ ok: true, value: await portfolio.portfolioView() }),

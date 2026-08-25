@@ -7,9 +7,21 @@ import { useChannel } from '../query/use-channel.js';
 export function Research({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const jobs = useChannel(client, 'research.jobs', { limit: 50 });
   const performance = useChannel(client, 'research.performance', {});
+  const edgeStudy = useChannel(client, 'research.edge-study', {});
   return (
     <div className="screen-stack">
       <ResearchRuns client={client} />
+      <section className="panel" aria-labelledby="forward-edge-heading">
+        <div className="panel-heading"><div><p className="eyebrow">Prospective evidence only</p><h2 id="forward-edge-heading">Forward edge study</h2></div></div>
+        {edgeStudy.kind === 'loading' && <p aria-live="polite">Reading the registered study…</p>}
+        {edgeStudy.kind === 'ready' && <>
+          <p><strong>{edgeStudy.value.status.replaceAll('_', ' ')}</strong> · {edgeStudy.value.completedDays}/365 completed forward days · {edgeStudy.value.costBearingRebalances}/30 cost-bearing rebalances.</p>
+          <p className="muted">No historical backfill or parameter reselection. Registered trial upper bound: {edgeStudy.value.trialUpperBound}. Activation: {edgeStudy.value.activated ? 'integrity-verified passing result active' : 'none—execution edge remains zero'}.</p>
+          {edgeStudy.value.grossEdgeLowerBoundPct !== null && <p>Gross lower bound {edgeStudy.value.grossEdgeLowerBoundPct.toFixed(3)}% · current costs applied once · net lower bound {edgeStudy.value.netEdgeLowerBoundPct?.toFixed(3) ?? 'unavailable'}%</p>}
+          {edgeStudy.value.planHash !== null && <p className="mono muted">plan {edgeStudy.value.planHash.slice(0, 16)}… · costs {edgeStudy.value.costProfileHash?.slice(0, 16)}…{edgeStudy.value.resultHash === null ? '' : ` · result ${edgeStudy.value.resultHash.slice(0, 16)}… · ${edgeStudy.value.sourceHashes.length} source hashes`}</p>}
+        </>}
+        {edgeStudy.kind !== 'loading' && edgeStudy.kind !== 'ready' && <p role="alert">Forward study unavailable: {edgeStudy.issues.map((issue) => issue.code).join(', ')}</p>}
+      </section>
       <section className="panel" aria-labelledby="research-jobs-heading">
         <div className="panel-heading"><div><p className="eyebrow">Durable worker queue</p><h2 id="research-jobs-heading">Research jobs</h2></div></div>
         {jobs.kind === 'loading' && <p aria-live="polite">Loading research jobs…</p>}

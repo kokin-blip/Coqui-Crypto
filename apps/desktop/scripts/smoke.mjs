@@ -257,6 +257,7 @@ async function run() {
     ['paper.execution.proposals', '{ limit: 20 }', (v) => `proposals=${v?.proposals?.length}`],
     ['paper.performance', '{}', (v) => `points=${v?.points?.length}`],
     ['research.performance', '{}', (v) => `runs=${v?.length}`],
+    ['research.edge-study', '{}', (v) => `status=${v?.status}`],
     ['risk.dashboard', '{}', (v) => `stage=${v?.stage}`],
     ['alerts.view', '{}', (v) => `unread=${v?.unreadCount}`],
     ['app.incidents', '{ limit: 50 }', (v) => `incidents=${v?.incidents?.length}`],

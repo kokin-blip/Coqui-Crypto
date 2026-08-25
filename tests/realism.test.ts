@@ -129,7 +129,7 @@ describe('trade profitability gate', () => {
     expect(check.ok).toBe(false);
     expect(check.estimatedCostUsd).toBeCloseTo(0.85, 6);
     expect(check.requiredEdgeUsd).toBeCloseTo(1.7, 6);
-    expect(check.reason).toContain('historical net-edge estimate');
+    expect(check.reason).toContain('historical gross-edge lower bound');
   });
 
   it('adds tax drag to sell suppression and allows loss-harvest credit to help', () => {

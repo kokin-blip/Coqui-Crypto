@@ -129,7 +129,7 @@ function runOnce(db: Db, market: PaperMarketData): void {
     market,
     holdings: () => [holding(BTC_REF, '100.00', '1'), holding(ETH_REF, '900.00', '9')],
     policy: () => POLICY,
-    historicalNetEdgeEstimatePct: 12,
+    historicalGrossEdgeLowerBoundPct: 12,
     evidenceVerified: () => true,
   };
   runPaperDecision(deps, T0 + DAY);

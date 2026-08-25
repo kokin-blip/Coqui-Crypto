@@ -44,6 +44,7 @@ afterEach(() => {
 const LOCAL_CHANNELS: readonly ChannelName[] = [
   'activity.feed',
   'research.runs',
+  'research.edge-study',
   'research.jobs',
   'research.job',
   'research.scoreboard',

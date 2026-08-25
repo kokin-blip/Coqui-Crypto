@@ -58,7 +58,7 @@ export interface TradeProfitabilityCheck {
   symbol: string;
   side: 'buy' | 'sell';
   amountUsd: number;
-  historicalNetEdgeEstimateUsd: number;
+  historicalGrossEdgeLowerBoundUsd: number;
   estimatedCostUsd: number;
   requiredEdgeUsd: number;
   taxDragUsd: number;
@@ -267,7 +267,7 @@ export function bestActiveReadiness(
 export function checkTradeProfitability(
   intent: ExecutionIntent,
   profile: VenueCostProfile,
-  historicalNetEdgeEstimatePct: number,
+  historicalGrossEdgeLowerBoundPct: number,
   options: ProfitabilityGateOptions,
   taxDragUsd = 0,
 ): TradeProfitabilityCheck {
@@ -284,23 +284,23 @@ export function checkTradeProfitability(
     DEFAULT_RISK_CONTROL_PROFILE,
   );
   const amountUsd = Decimal.max(0, new Decimal(intent.amountUsd));
-  const historicalNetEdgeEstimateUsd = amountUsd
-    .mul(Math.max(0, historicalNetEdgeEstimatePct))
+  const historicalGrossEdgeLowerBoundUsd = amountUsd
+    .mul(Math.max(0, historicalGrossEdgeLowerBoundPct))
     .div(100)
     .toNumber();
   const taxPenaltyUsd = Math.max(0, taxDragUsd);
   const estimatedCostUsd = Math.max(estimate.totalCostUsd, executionPolicy.estimatedCostUsd);
   const requiredEdgeUsd = (estimatedCostUsd + taxPenaltyUsd) * profile.profitBufferMultiple;
-  const netEdgeUsd = historicalNetEdgeEstimateUsd - estimatedCostUsd - taxDragUsd;
-  const availableEdgeUsd = historicalNetEdgeEstimateUsd - taxDragUsd;
+  const netEdgeUsd = historicalGrossEdgeLowerBoundUsd - estimatedCostUsd - taxDragUsd;
+  const availableEdgeUsd = historicalGrossEdgeLowerBoundUsd - taxDragUsd;
   const blockReasons: string[] = [];
   if (options.riskState?.blockReason) blockReasons.push(options.riskState.blockReason);
   if (executionPolicy.reason) blockReasons.push(executionPolicy.reason);
   if (availableEdgeUsd < requiredEdgeUsd) {
     blockReasons.push(
       intent.side === 'sell' && taxPenaltyUsd > 0
-        ? `blocked by tax drag: historical net-edge estimate $${historicalNetEdgeEstimateUsd.toFixed(2)} is below ${profile.profitBufferMultiple.toFixed(1)}x costs + taxes ($${requiredEdgeUsd.toFixed(2)})`
-        : `historical net-edge estimate $${historicalNetEdgeEstimateUsd.toFixed(2)} is below ${profile.profitBufferMultiple.toFixed(1)}x estimated cost buffer ($${requiredEdgeUsd.toFixed(2)})`,
+        ? `blocked by tax drag: historical gross-edge lower bound $${historicalGrossEdgeLowerBoundUsd.toFixed(2)} is below ${profile.profitBufferMultiple.toFixed(1)}x costs + taxes ($${requiredEdgeUsd.toFixed(2)})`
+        : `historical gross-edge lower bound $${historicalGrossEdgeLowerBoundUsd.toFixed(2)} is below ${profile.profitBufferMultiple.toFixed(1)}x estimated cost buffer ($${requiredEdgeUsd.toFixed(2)})`,
     );
   }
   const ok = blockReasons.length === 0;
@@ -315,7 +315,7 @@ export function checkTradeProfitability(
     symbol: intent.asset.symbol,
     side: intent.side,
     amountUsd: amountUsd.toNumber(),
-    historicalNetEdgeEstimateUsd,
+    historicalGrossEdgeLowerBoundUsd,
     estimatedCostUsd,
     requiredEdgeUsd,
     taxDragUsd,
@@ -332,7 +332,7 @@ export function checkTradeProfitability(
 export function applyProfitabilityGate(
   intents: ExecutionIntent[],
   profile: VenueCostProfile,
-  historicalNetEdgeEstimatePct: number,
+  historicalGrossEdgeLowerBoundPct: number,
   options: ProfitabilityGateOptions,
   taxDragUsdForIntent: (intent: ExecutionIntent) => number = () => 0,
 ): ProfitabilityGateResult {
@@ -344,7 +344,7 @@ export function applyProfitabilityGate(
     const check = checkTradeProfitability(
       intent,
       profile,
-      historicalNetEdgeEstimatePct,
+      historicalGrossEdgeLowerBoundPct,
       options,
       taxDragUsdForIntent(intent),
     );

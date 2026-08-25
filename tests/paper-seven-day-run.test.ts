@@ -200,7 +200,7 @@ function runWeek(db: Db, clock: StepClock): void {
     // zero because no study has registered an estimate for the shipped
     // strategy; a run that never fills could not exercise fills or
     // reconciliation, so the harness states its own assumption explicitly.
-    historicalNetEdgeEstimatePct: 15,
+    historicalGrossEdgeLowerBoundPct: 15,
     evidenceVerified: () => true,
   };
 
@@ -297,7 +297,7 @@ describe('a restart mid-week loses nothing', () => {
       market: MARKET,
       holdings: () => [holding(BTC_REF, '100.00', '1'), holding(ETH_REF, '9000.00', '400')],
       policy: () => POLICY,
-      historicalNetEdgeEstimatePct: 15,
+      historicalGrossEdgeLowerBoundPct: 15,
       evidenceVerified: () => true,
     };
 

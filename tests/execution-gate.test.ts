@@ -66,7 +66,7 @@ function input(overrides: Partial<ExecutionGateInput> = {}): ExecutionGateInput 
     holdings: [holding('10000.00')],
     // Comfortably above the cost model so profitability is not the thing under
     // test in the cases that are about something else.
-    historicalNetEdgeEstimatePct: 12,
+    historicalGrossEdgeLowerBoundPct: 12,
     guardrails: DEFAULT_AUTO_TRADE_GUARDRAILS,
     ...overrides,
   };
@@ -126,7 +126,7 @@ describe('kill switch halts everything, including paper', () => {
   });
 
   it('refuses even when every other condition would have passed', () => {
-    const permissive = input({ killSwitchEngaged: true, historicalNetEdgeEstimatePct: 100 });
+    const permissive = input({ killSwitchEngaged: true, historicalGrossEdgeLowerBoundPct: 100 });
     expect(isApproved(runExecutionGates(permissive))).toBe(false);
   });
 });
@@ -156,7 +156,7 @@ describe('risk control', () => {
 describe('guardrails and profitability', () => {
   it('refuses when no intent survives, naming the gate that filtered it', () => {
     // An edge below the cost model means nothing clears the profit buffer.
-    const outcome = runExecutionGates(input({ historicalNetEdgeEstimatePct: 0 }));
+    const outcome = runExecutionGates(input({ historicalGrossEdgeLowerBoundPct: 0 }));
     expect(isApproved(outcome)).toBe(false);
     if (isApproved(outcome)) return;
     expect(outcome.code).toBe('all_intents_filtered');

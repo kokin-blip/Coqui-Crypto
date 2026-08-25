@@ -23,9 +23,9 @@ applies to parameter searches, applied to an operational claim.
 ## Precondition — currently unmet
 
 The profitability gate weighs estimated cost against a **registered** per-trade
-net-edge estimate. No study in this repository has registered one for the shipped
+gross-edge lower bound. No completed study in this repository has validated one for the shipped
 strategy, whose own version string is `trendvol-legacy-unvalidated`, so
-`paper.net_edge_estimate_pct` defaults to zero, every intent is refused, and
+the immutable evidence repository returns zero, every intent is refused, and
 every run stands down as `gates_refused`.
 
 A run under that default is still worth something — it exercises cadence,
@@ -35,10 +35,10 @@ data. Two options, and the choice belongs to the owner:
 
 1. **Run it as-is.** Records seven honest days of stand-down. Proves scheduling
    and recovery. Leaves fills and reconciliation unproven against live data.
-2. **Register an estimate first.** Requires a pre-registered study that derives a
-   per-trade net edge from the holdout window, with its trial count reaching the
-   deflated-Sharpe calculation. That is a research task, not a configuration
-   change, and it is the honest route to a run that fills.
+2. **Wait for the registered forward study.** It must derive an integrity-verified
+   conservative edge from at least 365 prospective days and 30 cost-bearing events,
+   with the 215-trial upper bound reaching the deflated-Sharpe calculation. That is
+   a research result, not a configuration change, and it is the honest route to fills.
 
 Setting the value without a study behind it would be exactly the false
 confidence invariant 4 exists to prevent, and this document exists partly to make

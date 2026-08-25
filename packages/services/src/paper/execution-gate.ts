@@ -102,7 +102,7 @@ export interface ExecutionGateInput {
    * default. Overriding this is for tests that are specifically about cost.
    */
   readonly costProfile?: VenueCostProfile;
-  readonly historicalNetEdgeEstimatePct: number;
+  readonly historicalGrossEdgeLowerBoundPct: number;
   readonly guardrails?: AutoTradeGuardrails;
   readonly riskInput?: RiskControlInput;
   readonly marketQuality?: MarketQualitySnapshot | null;
@@ -163,7 +163,7 @@ export function runExecutionGates(input: ExecutionGateInput): ExecutionGateOutco
   const profitable = applyProfitabilityGate(
     [...guarded.intents],
     input.costProfile ?? DEFAULT_VENUE_COST_PROFILE,
-    input.historicalNetEdgeEstimatePct,
+    input.historicalGrossEdgeLowerBoundPct,
     {
       asOfMs: input.nowMs,
       riskState,

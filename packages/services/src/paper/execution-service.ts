@@ -26,7 +26,7 @@ export interface PaperExecutionState {
   readonly holdings: readonly Holding[];
   readonly killSwitchEngaged: boolean;
   readonly evidenceVerified: boolean;
-  readonly historicalNetEdgeEstimatePct: number;
+  readonly historicalGrossEdgeLowerBoundPct: number;
   readonly riskInput?: RiskControlInput;
   readonly marketQuality?: MarketQualitySnapshot | null;
 }
@@ -124,7 +124,7 @@ export class PaperExecutionService {
           killSwitchEngaged: snapshot.killSwitchEngaged,
           intents: action.intents,
           holdings: snapshot.holdings,
-          historicalNetEdgeEstimatePct: snapshot.historicalNetEdgeEstimatePct,
+          historicalGrossEdgeLowerBoundPct: snapshot.historicalGrossEdgeLowerBoundPct,
           ...(snapshot.riskInput === undefined ? {} : { riskInput: snapshot.riskInput }),
           ...(snapshot.marketQuality === undefined ? {} : { marketQuality: snapshot.marketQuality }),
         })
@@ -229,7 +229,7 @@ export class PaperExecutionService {
           killSwitchEngaged: snapshot.killSwitchEngaged,
           intents,
           holdings: snapshot.holdings,
-          historicalNetEdgeEstimatePct: snapshot.historicalNetEdgeEstimatePct,
+          historicalGrossEdgeLowerBoundPct: snapshot.historicalGrossEdgeLowerBoundPct,
           ...(snapshot.riskInput === undefined ? {} : { riskInput: snapshot.riskInput }),
           ...(snapshot.marketQuality === undefined ? {} : { marketQuality: snapshot.marketQuality }),
         })

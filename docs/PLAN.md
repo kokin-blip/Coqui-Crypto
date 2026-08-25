@@ -19,10 +19,11 @@ Effort figures assume one part-time developer with assistance.
 ```
 Current phase:  P5 additive UI and authoritative paper-execution continuation
 Baseline:       d25101f · P5-P9 engineering present · two evidence exits remain
-Verified now:   146 test files / 1039 tests; Electron smoke 35/35;
-                packaged smoke 8/8; warm shell 171ms; interaction p75 8.6ms
-BLOCKED ON:     a real Coinbase key · a registered
-                net-edge estimate (see "What is left" below)
+Verified now:   148 test files / 1049 tests; Electron smoke 36/36;
+                packaged smoke 8/8; warm shell 171ms; interaction p75 8.4ms
+                macOS package + packaged smoke; Windows x64 cross-build only
+BLOCKED ON:     a real Coinbase key · the prospective forward-study result
+                and elapsed seven-day campaign (see "What is left" below)
 P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
 ```
 
@@ -44,12 +45,10 @@ closed; two evidence criteria remain open and cannot be closed with fixtures or 
 
 2. **P6's real multi-day run is registered but blocked**
    (`docs/studies/paper-forward-run-2026-08-22.md`). The profitability gate
-   weighs cost against a *registered* per-trade net-edge estimate; no study has
-   registered one for `trendvol-legacy-unvalidated`, so the default is zero,
-   every intent is refused, and a real week would record seven honest
-   stand-downs and no fills. Setting the value without a study behind it is
-   precisely the false confidence invariant 4 exists to prevent. The study
-   names both options and leaves the choice to the owner.
+   now reads only integrity-verified migration 49 evidence. The forward study is
+   pre-registered, but its minimum 365 prospective days and 30 cost-bearing
+   rebalances have not elapsed. Until it passes, execution edge is zero and a
+   real week records honest stand-downs rather than fabricated fills.
 
 Not in scope, and deliberately: P10 webhook ingestion and P11 live-trading
 preparation, both gated in §4.
@@ -78,8 +77,8 @@ ADR-0005 pins Base UI as the single headless primitive layer — it is the only
 candidate that injects no `<style>` element and therefore the only one that runs
 under `style-src 'self'` without a per-load CSP nonce.
 
-The performance harness is built and passing ahead of feature polish, with its
-own sensitivity control: warm shell 128 ms against a 1500 ms budget, interaction
+The performance harness is built and passing, with its own sensitivity control:
+warm shell 171 ms against a 1500 ms budget, interaction
 p75 8.4 ms against 200 ms, and a deliberately injected 250 ms regression that
 must breach the budget or the harness fails.
 
@@ -93,7 +92,7 @@ by the wire type.
 **The hierarchy direction is resolved for implementation.** The persistent
 sidebar, one-screen-at-a-time route shell, status rail, Overview order, and
 paper review chain are defined by the 2026-08-24 additive continuation. Final
-visual acceptance remains the A6 owner screenshot gate; it no longer blocks
+visual acceptance was recorded at the A6 owner screenshot gate; it no longer blocks
 incremental implementation across portfolio, allocation, tax, markets, paper,
 research, activity, risk, and settings.
 
@@ -1018,10 +1017,10 @@ Two deliberate departures, both recorded where they were decided:
   revision, and submission reruns every gate against fresh state.
 
 **The engine stands down by default, and this is correct.** The profitability
-gate weighs cost against a *registered* per-trade net-edge estimate, and no study
+gate weighs cost against an immutable gross-edge lower bound, and no completed study
 in this repository has registered one for the shipped strategy — its own version
 string is `trendvol-legacy-unvalidated`. The composition root therefore supplies
-zero (`paper.net_edge_estimate_pct`, `composition.ts`), every intent is refused,
+zero from the migration 49 evidence repository. The former manual setting is ignored; every intent is refused,
 and the portfolio screen says so in plain words. Producing fills for the exit
 criteria requires an estimate that comes from evidence (invariant 7), not a
 number chosen to make the engine trade.
@@ -1043,9 +1042,9 @@ authoritative.
 The **real** multi-day run is registered as
 `docs/studies/paper-forward-run-2026-08-22.md` with its success criteria fixed in
 advance. It cannot be a CI gate — it takes a week and depends on the venue being
-up — and it is blocked on the same precondition described above: without a
-registered net-edge estimate it would record seven honest days of stand-down and
-no fills. The document states both options and leaves the choice to the owner.
+up — and it is blocked on the prospective study described above. Until an
+integrity-verified passing result exists it records honest stand-downs and no
+fills; fixtures cannot close the elapsed-time gate.
 
 ---
 

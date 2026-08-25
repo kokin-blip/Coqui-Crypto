@@ -78,7 +78,7 @@ function service(database: Db, state: PaperExecutionState) {
 function readyState(): PaperExecutionState {
   return {
     holdings: [HOLDING], killSwitchEngaged: false, evidenceVerified: true,
-    historicalNetEdgeEstimatePct: 12,
+    historicalGrossEdgeLowerBoundPct: 12,
   };
 }
 

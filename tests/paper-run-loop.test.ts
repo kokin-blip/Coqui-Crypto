@@ -123,7 +123,7 @@ function deps(db: Db, clock: FixedClock, overrides: Partial<PaperRunLoopDependen
     market: MARKET,
     holdings,
     policy: () => POLICY,
-    historicalNetEdgeEstimatePct: 12,
+    historicalGrossEdgeLowerBoundPct: 12,
     evidenceVerified: () => true,
     ...overrides,
   } satisfies PaperRunLoopDependencies;
@@ -187,7 +187,7 @@ describe('every run is recorded, including one that trades nothing', () => {
     const db = seeded();
     // An edge below the cost model means profitability filters everything.
     const summary = runPaperDecision(
-      deps(db, new FixedClock(T0 + DAY), { historicalNetEdgeEstimatePct: 0 }),
+      deps(db, new FixedClock(T0 + DAY), { historicalGrossEdgeLowerBoundPct: 0 }),
       T0 + DAY,
     );
     expect(summary.standDown).toBe('gates_refused');
@@ -200,7 +200,7 @@ describe('every run is recorded, including one that trades nothing', () => {
 
   it('journals no raw error text, only stable codes', () => {
     const db = seeded();
-    runPaperDecision(deps(db, new FixedClock(T0 + DAY), { historicalNetEdgeEstimatePct: 0 }), T0 + DAY);
+    runPaperDecision(deps(db, new FixedClock(T0 + DAY), { historicalGrossEdgeLowerBoundPct: 0 }), T0 + DAY);
     const journal = JSON.stringify(listWalletRunAudits(PROFILE, 50, db));
     expect(journal).not.toMatch(/Error|stack|\/Users\//u);
     expect(journal).toContain('paperOnly');

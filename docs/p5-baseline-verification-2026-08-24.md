@@ -37,7 +37,7 @@ These are baseline measurements, not the final continuation counts. Final counts
 
 ## Additive continuation result
 
-After the routed shell, profile boundary, paper execution service, performance evidence, Activity/Research surfaces, visual modes, and migration 48 were integrated, the Node 24 gates produced:
+After the routed shell, profile boundary, paper execution service, performance evidence, Activity/Research surfaces, visual modes, and migration 48 were integrated, the original Node 24 baseline gates produced:
 
 - Typecheck before build: passed
 - Lint and architectural rules: passed
@@ -52,7 +52,7 @@ After the routed shell, profile boundary, paper execution service, performance e
 - Peer dependency check: clean
 - `git diff --check`: passed
 
-Windows x64 packaging remains covered by the repository CI definition and cannot be executed on this macOS host.
+The later completion pass produced a Windows x64 zip and NSIS installer by cross-build on macOS. That is artifact construction only; Windows packaged runtime verification remains an authorized Windows CI responsibility.
 
 ## Visual capture
 

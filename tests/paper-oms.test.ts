@@ -115,7 +115,7 @@ function approval(amountUsd = '250.00') {
     killSwitchEngaged: false,
     intents: [intent],
     holdings: [holding],
-    historicalNetEdgeEstimatePct: 12,
+    historicalGrossEdgeLowerBoundPct: 12,
     guardrails: DEFAULT_AUTO_TRADE_GUARDRAILS,
   });
   if (!isApproved(outcome)) throw new Error('fixture must be approved');

@@ -69,7 +69,7 @@ Start with [the plan](./docs/PLAN.md), [architecture](./docs/ARCHITECTURE.md), [
 
 - The 2026-08-24 screenshot review set is owner-approved; material visual-direction changes require a new review.
 - The Coinbase permission flow still requires verification with a real View-only key.
-- No registered net-edge estimate exists for the unvalidated shipped strategy, so profitability checks correctly block proposals.
+- A forward-only confirmatory edge study is registered, but it has no result yet. Manual edge settings are ignored and profitability checks correctly block proposals until an integrity-verified pass exists.
 - Daily paper valuation evidence begins when the scheduler records it; missing historical days are never fabricated or backfilled.
 - Strategy curves appear only when an immutable artifact explicitly contains them. Existing artifacts without curves show an unavailable state.
 - Live execution remains hard-disabled.

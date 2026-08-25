@@ -70,6 +70,7 @@ describe('channel registry', () => {
       'portfolio.reconciliation.resolve',
       'portfolio.tax',
       'portfolio.view',
+      'research.edge-study',
       'research.job',
       'research.jobs',
       'research.negative-findings',

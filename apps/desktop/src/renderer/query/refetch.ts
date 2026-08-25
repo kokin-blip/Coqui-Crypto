@@ -51,6 +51,7 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'market-data.candles': { refetchIntervalMs: false, staleTimeMs: 60 * MINUTE },
   // Research runs are immutable once written.
   'research.runs': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
+  'research.edge-study': { refetchIntervalMs: 5 * MINUTE, staleTimeMs: 2 * MINUTE },
   'research.performance': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
   'research.jobs': { refetchIntervalMs: 30 * SECOND, staleTimeMs: 10 * SECOND },
   // A study run is immutable once written; a new one arrives only when a study

@@ -105,6 +105,27 @@ const negativeFindingSchema = z
   .readonly();
 
 export const researchChannelSchemas = {
+  'research.edge-study': {
+    request: emptyPayloadSchema,
+    response: z.strictObject({
+      status: z.enum(['not_registered', 'collecting', 'incomplete', 'passed', 'failed']),
+      planHash: sha256HexSchema.nullable(),
+      costProfileHash: sha256HexSchema.nullable(),
+      resultHash: sha256HexSchema.nullable(),
+      registeredAtMs: epochMillisecondsSchema.nullable(),
+      firstEligibleDayUtcMs: epochMillisecondsSchema.nullable(),
+      completedDays: z.number().int().nonnegative(),
+      minimumCompletedDays: z.literal(365),
+      costBearingRebalances: z.number().int().nonnegative(),
+      minimumCostBearingRebalances: z.literal(30),
+      trialUpperBound: z.literal(215),
+      grossEdgeLowerBoundPct: z.number().finite().nullable(),
+      netEdgeLowerBoundPct: z.number().finite().nullable(),
+      sourceHashes: z.array(sha256HexSchema).max(10_000).readonly(),
+      outcome: z.enum(['not_registered', 'incomplete', 'passed', 'failed']),
+      activated: z.boolean(),
+    }).readonly(),
+  },
   'research.performance': {
     request: emptyPayloadSchema,
     response: z.array(z.strictObject({

@@ -63,7 +63,7 @@ export interface PaperRunLoopDependencies {
    */
   readonly holdings: () => readonly Holding[];
   readonly policy: () => AllocationPolicy | null;
-  readonly historicalNetEdgeEstimatePct: number;
+  readonly historicalGrossEdgeLowerBoundPct: number;
   /** A verified immutable research snapshot, checked again at submission. */
   readonly evidenceVerified?: () => boolean;
   /** Append the post-decision daily valuation; missing days are never backfilled. */
@@ -195,7 +195,7 @@ export function runPaperDecision(
       holdings: dependencies.holdings(),
       killSwitchEngaged: resolveKillSwitch(profileId, database).engaged,
       evidenceVerified: dependencies.evidenceVerified?.() ?? false,
-      historicalNetEdgeEstimatePct: dependencies.historicalNetEdgeEstimatePct,
+      historicalGrossEdgeLowerBoundPct: dependencies.historicalGrossEdgeLowerBoundPct,
     }),
     ...(dependencies.onUnexpectedError === undefined
       ? {}
