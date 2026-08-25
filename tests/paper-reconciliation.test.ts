@@ -21,6 +21,7 @@ import {
   bootstrapPaperBalances,
   listRuntimeIncidents,
   openDatabase,
+  setPaperExecutionPolicy,
   type Db,
 } from '../packages/storage/src/index.js';
 
@@ -113,6 +114,10 @@ function seeded(): Db {
     T0,
     db,
   );
+  setPaperExecutionPolicy({
+    commandId: '00000000-0000-4000-8000-000000000003', profileId: PROFILE,
+    mode: 'unattended', confirmedAt: T0, explicitUnattendedConfirmation: true,
+  }, db);
   return db;
 }
 
@@ -125,6 +130,7 @@ function runOnce(db: Db, market: PaperMarketData): void {
     holdings: () => [holding(BTC_REF, '100.00', '1'), holding(ETH_REF, '900.00', '9')],
     policy: () => POLICY,
     historicalNetEdgeEstimatePct: 12,
+    evidenceVerified: () => true,
   };
   runPaperDecision(deps, T0 + DAY);
 }

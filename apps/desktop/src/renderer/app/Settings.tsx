@@ -1,6 +1,7 @@
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 
 import { DeferredPanel } from './DeferredPanel.js';
+import { ExecutionPolicySettings } from './ExecutionPolicySettings.js';
 import { useChannel } from '../query/use-channel.js';
 
 type SettingsView = ChannelResponse<'accounts.settings'>;
@@ -16,14 +17,8 @@ type SettingsView = ChannelResponse<'accounts.settings'>;
  * Read-only for now: writing needs the action-feedback contract wired to a
  * write channel, and there are no write channels before P6.
  */
-export function Settings({
-  client,
-  profileId,
-}: {
-  readonly client: CoquiClient;
-  readonly profileId: string;
-}): React.JSX.Element {
-  const settings = useChannel(client, 'accounts.settings', { profileId });
+export function Settings({ client }: { readonly client: CoquiClient }): React.JSX.Element {
+  const settings = useChannel(client, 'accounts.settings', {});
 
   if (settings.kind === 'loading') return <p aria-live="polite">Loading settings…</p>;
   if (settings.kind !== 'ready') {
@@ -59,6 +54,8 @@ export function Settings({
           ? 'These are the defaults — nothing has been changed for this profile.'
           : 'Saved for this profile.'}
       </p>
+
+      <ExecutionPolicySettings client={client} />
 
       <DeferredPanel
         title="Data sources"

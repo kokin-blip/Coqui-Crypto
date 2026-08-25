@@ -13,13 +13,19 @@ import {
   SystemClock,
   NEGATIVE_FINDINGS,
   NEGATIVE_FINDING_LEDGER_NOTE,
+  planAutoRebalance,
+  calculatePaperPerformance,
+  deriveFifoPaperLots,
+  sha256Hex,
   type Clock,
+  type ExecutionIntent,
 } from '@coqui/core';
 import {
   AccountSettingsService,
   AlertsService,
   PortfolioReadModelService,
   PortfolioTaxService,
+  PaperExecutionService,
   ReconciliationLedgerService,
   paperPortfolioView,
   MarketDisplayQueryService,
@@ -28,21 +34,33 @@ import {
   ResearchScoreboardService,
   RiskDashboardService,
   RiskEvidenceTrackerService,
+  resolveKillSwitch,
   StatusRailService,
 } from '@coqui/services';
 import {
   getAllocationPolicy,
+  getLatestPaperExecutionReview,
+  getPaperDailyValuationEvidence,
+  getPaperExecutionPolicy,
+  getPaperExecutionProposal,
   getSetting,
+  listActivityFeed,
   listRuntimeIncidents,
   listCoinbaseBalanceDiscrepancies,
   listDisplayUniverse,
+  listPaperExecutionProposals,
+  listPaperDailyValuationEvidence,
+  listPaperFillPerformanceFacts,
+  listPaperPerformanceDayFacts,
   openDatabase,
+  setPaperExecutionPolicy,
   type Db,
 } from '@coqui/storage';
 
 import { createDiagnostics } from './diagnostics.js';
 import { createAlertNotificationPump } from './notifications.js';
 import { createPaperMarketFeed } from './paper-market.js';
+import { capturePaperPerformanceEvidence } from './paper-performance-evidence.js';
 import { createCandleSource, createReferenceSources } from './reference-sources.js';
 import { startSchedulerRuntime, type SchedulerRuntime } from './scheduler-runtime.js';
 import type { ChannelHandlers } from './dispatch.js';
@@ -74,6 +92,29 @@ function lastCoinbaseSyncAtMs(database: Db): number | null {
   if (raw === null) return null;
   const parsed = Number(raw);
   return Number.isSafeInteger(parsed) && parsed > 0 ? parsed : null;
+}
+
+function paperProposalView(
+  proposal: ReturnType<typeof getPaperExecutionProposal> & {},
+  database: Db,
+) {
+  const intents = JSON.parse(proposal.intentsJson) as readonly ExecutionIntent[];
+  return {
+    id: proposal.id,
+    runId: proposal.runId,
+    revision: proposal.revision,
+    proposalHash: proposal.proposalHash,
+    status: proposal.status,
+    createdAt: proposal.createdAt,
+    updatedAt: proposal.updatedAt,
+    actions: intents.map((intent) => ({
+      productId: intent.asset.instrument.productId,
+      side: intent.side,
+      amountUsd: String(intent.amountUsd),
+      origin: 'rebalance' as const,
+    })),
+    review: getLatestPaperExecutionReview(proposal.id, database),
+  };
 }
 
 export interface RuntimeOptions {
@@ -114,6 +155,8 @@ export interface CoquiRuntime {
   readonly clock: Clock;
   /** Null when the scheduler is disabled. Exposed so a test can drive a tick. */
   readonly scheduler: SchedulerRuntime | null;
+  /** Start after a prepared profile becomes authoritative. Idempotent. */
+  startScheduler(): void;
   dispose(): void;
 }
 
@@ -224,9 +267,24 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       });
 
   let paperHoldings: readonly PricedHolding[] = [];
-  const scheduler = options.disableScheduler === true
-    ? null
-    : startSchedulerRuntime({
+  const paperExecution = () => new PaperExecutionService({
+    database,
+    profileId: options.profileId,
+    nowMs: () => clock.nowMs(),
+    market: paperMarket.view,
+    state: () => ({
+      holdings: paperHoldings,
+      killSwitchEngaged: resolveKillSwitch(options.profileId, database).engaged,
+      evidenceVerified: evidence.track().conversationEligible,
+      historicalNetEdgeEstimatePct: paperNetEdgeEstimatePct(database),
+    }),
+    onUnexpectedError: report,
+  });
+  let scheduler: SchedulerRuntime | null = null;
+  let disposed = false;
+  const startScheduler = (): void => {
+    if (disposed || scheduler !== null) return;
+    scheduler = startSchedulerRuntime({
         database,
         clock,
         profileId: options.profileId,
@@ -251,11 +309,139 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
             return policy.targets.length === 0 ? null : policy;
           },
           historicalNetEdgeEstimatePct: paperNetEdgeEstimatePct(database),
+          evidenceVerified: () => evidence.track().conversationEligible,
+          captureEvidence: (summary) => capturePaperPerformanceEvidence({
+            profileId: options.profileId,
+            runId: summary.runId,
+            scheduledForMs: summary.scheduledForMs,
+            database, clock, priceSource,
+          }),
           onUnexpectedError: report,
         },
       });
+  };
+  if (options.disableScheduler !== true) startScheduler();
 
   const handlers: ChannelHandlers = {
+    'activity.feed': (payload: { readonly limit: number; readonly cursor: string | null }) => ({
+      ok: true,
+      value: {
+        ...listActivityFeed(options.profileId, payload.limit, payload.cursor, database),
+        asOfMs: clock.nowMs(),
+      },
+    }),
+    'paper.performance': () => {
+      const valuations = listPaperDailyValuationEvidence(options.profileId, database);
+      const fills = listPaperFillPerformanceFacts(options.profileId, database);
+      const fifo = deriveFifoPaperLots(fills);
+      return {
+        ok: true,
+        value: {
+          ...calculatePaperPerformance({
+            valuations: valuations.map((item) => ({
+              dayUtc: item.dayUtc,
+              equityUsd: item.equityUsd,
+              benchmarkUsd: item.benchmarkUsd,
+              evidenceHash: item.evidenceHash,
+              unpricedCount: item.unpricedCount,
+            })),
+            closedLots: fifo.closedLots,
+            costs: fills,
+            unattributedOpeningBalance: fifo.unattributedOpeningBalanceExcluded,
+          }),
+          benchmarkStatus: valuations.some((item) => item.benchmarkUsd !== null)
+            ? 'available' as const
+            : 'unavailable_starting_evidence' as const,
+        },
+      };
+    },
+    'paper.performance-day': (payload: { readonly dayUtc: number }) => {
+      const evidence = getPaperDailyValuationEvidence(options.profileId, payload.dayUtc, database);
+      const facts = listPaperPerformanceDayFacts(options.profileId, payload.dayUtc, database);
+      return {
+        ok: true,
+        value: {
+          dayUtc: payload.dayUtc,
+          evidence: evidence === null ? null : {
+            capturedAt: evidence.capturedAt,
+            cashUsd: evidence.cashUsd,
+            equityUsd: evidence.equityUsd,
+            benchmarkUsd: evidence.benchmarkUsd,
+            unpricedCount: evidence.unpricedCount,
+            evidenceHash: evidence.evidenceHash,
+            provenanceJson: evidence.provenanceJson,
+          },
+          fills: facts.fills,
+          transitions: facts.transitions,
+        },
+      };
+    },
+    'paper.execution.policy': () => ({
+      ok: true,
+      value: getPaperExecutionPolicy(options.profileId, database),
+    }),
+    'paper.execution.policy.set': (payload: {
+      readonly commandId: string;
+      readonly mode: 'off' | 'review_required' | 'unattended';
+      readonly explicitUnattendedConfirmation: boolean;
+    }) => {
+      if (payload.mode === 'unattended' && !payload.explicitUnattendedConfirmation) {
+        return { ok: false, issues: [{ code: 'unattended_confirmation_required' }] };
+      }
+      return {
+        ok: true,
+        value: setPaperExecutionPolicy({
+          ...payload,
+          profileId: options.profileId,
+          confirmedAt: clock.nowMs(),
+        }, database),
+      };
+    },
+    'paper.execution.proposals': (payload: { readonly limit: number }) => ({
+      ok: true,
+      value: {
+        proposals: listPaperExecutionProposals(options.profileId, payload.limit, database)
+          .map((proposal) => paperProposalView(proposal, database)),
+      },
+    }),
+    'paper.execution.proposal': (payload: { readonly proposalId: string }) => {
+      const proposal = getPaperExecutionProposal(payload.proposalId, database);
+      return proposal === null
+        ? { ok: false, issues: [{ code: 'proposal_not_found' }] }
+        : { ok: true, value: paperProposalView(proposal, database) };
+    },
+    'paper.execution.prepare': async (payload: { readonly commandId: string }) => {
+      const now = clock.nowMs();
+      await paperMarket.refresh(now);
+      paperHoldings = (await portfolio.portfolioView()).holdings;
+      const policy = getAllocationPolicy(database);
+      const intents = policy.targets.length === 0
+        ? []
+        : planAutoRebalance(paperHoldings, policy, now);
+      const runId = sha256Hex(`paper-ui:${options.profileId}:${payload.commandId}`);
+      return {
+        ok: true,
+        value: paperExecution().prepare({
+          proposalId: sha256Hex(`paper-proposal:${runId}:1`),
+          runId,
+          revision: 1,
+          intents,
+        }),
+      };
+    },
+    'paper.execution.review': async (payload: {
+      readonly commandId: string;
+      readonly proposalId: string;
+      readonly proposalHash: string;
+      readonly decision: 'approve' | 'reject';
+      readonly reviewer: string;
+      readonly note: string;
+    }) => {
+      const now = clock.nowMs();
+      await paperMarket.refresh(now);
+      paperHoldings = (await portfolio.portfolioView()).holdings;
+      return { ok: true, value: paperExecution().review(payload) };
+    },
     'market-data.prices': () => marketData.prices(),
     'market-data.markets': () => marketData.markets(),
     'market-data.fear-greed': () => marketData.fearGreed(),
@@ -267,11 +453,12 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       readonly lookbackDays: number;
     }) => marketData.candles(payload.instrument, payload.lookbackDays),
     'research.runs': () => research.runs(),
+    'research.performance': () => research.performance(),
     'research.jobs': (payload: { readonly limit: number }) => research.jobs(payload.limit),
     'research.job': (payload: { readonly id: string }) => research.job(payload.id),
     'portfolio.view': async () => ({ ok: true, value: await portfolio.portfolioView() }),
-    'portfolio.reconciliation': (payload: { readonly profileId: string }) => {
-      const ledger = reconciliation.view(payload.profileId);
+    'portfolio.reconciliation': () => {
+      const ledger = reconciliation.view(options.profileId);
       return {
         ok: true,
         value: {
@@ -286,13 +473,19 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       };
     },
     'portfolio.reconciliation.resolve': (payload: {
-      readonly profileId: string;
+      readonly commandId: string;
       readonly discrepancyId: string;
       readonly kind: Parameters<ReconciliationLedgerService['resolve']>[0]['kind'];
       readonly linkedLotId: string | null;
       readonly note: string;
     }) => {
-      const result = reconciliation.resolve(payload);
+      const result = reconciliation.resolve({
+        profileId: options.profileId,
+        discrepancyId: payload.discrepancyId,
+        kind: payload.kind,
+        linkedLotId: payload.linkedLotId,
+        note: payload.note,
+      });
       // A refusal is `blocked`, not `failed`: nothing went wrong, a rule
       // declined. The four-way outcome exists so the surface can tell those
       // apart rather than showing an error for a correct refusal.
@@ -319,17 +512,16 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       };
     },
     'portfolio.tax': () => ({ ok: true, value: tax.view() }),
-    'paper.portfolio': async (payload: { readonly profileId: string }) => ({
+    'paper.portfolio': async () => ({
       ok: true,
       // Priced with the same source as the real portfolio, so the two figures
       // are comparable rather than differing partly by data.
       value: await paperPortfolioView(
         { database, clock, priceSource },
-        payload.profileId,
+        options.profileId,
       ),
     }),
-    'accounts.settings': (payload: { readonly profileId: string }) =>
-      settings.get(payload.profileId),
+    'accounts.settings': () => settings.get(options.profileId),
     'research.scoreboard': () => scoreboard.latest(),
     // Static, frozen core data — there is no service to fail, so this cannot
     // return anything but ok.
@@ -344,19 +536,18 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     // or anywhere: a stage the user could set is a guardrail they could disable.
     'risk.dashboard': () => ({ ok: true, value: riskDashboard.view() }),
     // Append-only by construction; a resolution is a later row, never an edit.
-    'app.incidents': (payload: { readonly profileId: string; readonly limit: number }) => ({
+    'app.incidents': (payload: { readonly limit: number }) => ({
       ok: true,
       value: {
-        incidents: listRuntimeIncidents(payload.profileId, false, payload.limit, database),
+        incidents: listRuntimeIncidents(options.profileId, false, payload.limit, database),
         asOfMs: clock.nowMs(),
       },
     }),
-    'alerts.view': (payload: { readonly profileId: string }) => ({
+    'alerts.view': () => ({
       ok: true,
-      value: alerts.view(payload.profileId),
+      value: alerts.view(options.profileId),
     }),
-    'app.status-rail': (payload: { readonly profileId: string }) =>
-      statusRail.status(payload.profileId),
+    'app.status-rail': () => statusRail.status(options.profileId),
   } as ChannelHandlers;
 
   return {
@@ -364,8 +555,11 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     report,
     database,
     clock,
-    scheduler,
+    get scheduler() { return scheduler; },
+    startScheduler,
     dispose() {
+      if (disposed) return;
+      disposed = true;
       scheduler?.dispose();
       if (coinGeckoHttp !== http) coinGeckoHttp.destroy();
       http.destroy();

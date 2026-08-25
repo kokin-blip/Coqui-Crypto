@@ -24,6 +24,9 @@ const STAND_DOWN_COPY: Record<string, string> = {
   no_policy: 'no allocation policy is set, so there was nothing to rebalance towards',
   no_intents: 'holdings were already within the rebalance band, so no trade was needed',
   gates_refused: 'the guardrails refused every proposed trade',
+  pending_review: 'a proposal is waiting for human review',
+  execution_failed: 'the paper submission failed before a confirmed outcome',
+  execution_unknown: 'the paper submission outcome is unknown and requires reconciliation',
 };
 
 const REQUIREMENT_COPY: Record<string, string> = {
@@ -76,15 +79,13 @@ function Evidence({ evidence }: { readonly evidence: PaperView['evidence'] }): R
 
 export function PaperComparison({
   client,
-  profileId,
   actualTotalUsd,
 }: {
   readonly client: CoquiClient;
-  readonly profileId: string;
   /** The real portfolio total, or null when it is only a priced subtotal. */
   readonly actualTotalUsd: string | null;
 }): React.JSX.Element | null {
-  const paper = useChannel(client, 'paper.portfolio', { profileId });
+  const paper = useChannel(client, 'paper.portfolio', {});
 
   // A failure here must not disturb the real portfolio above it, so the
   // comparison simply does not appear.

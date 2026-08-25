@@ -47,12 +47,10 @@ function Decision({ exception }: { readonly exception: Exception }): React.JSX.E
 function Row({
   exception,
   client,
-  profileId,
   options,
 }: {
   readonly exception: Exception;
   readonly client: CoquiClient;
-  readonly profileId: string;
   readonly options: Reconciliation['options'];
 }): React.JSX.Element {
   const [open, setOpen] = useState(false);
@@ -89,7 +87,6 @@ function Row({
       {open && (
         <ResolveException
           client={client}
-          profileId={profileId}
           discrepancyId={item.id}
           options={options}
         />
@@ -98,14 +95,8 @@ function Row({
   );
 }
 
-export function Reconciliation({
-  client,
-  profileId,
-}: {
-  readonly client: CoquiClient;
-  readonly profileId: string;
-}): React.JSX.Element {
-  const reconciliation = useChannel(client, 'portfolio.reconciliation', { profileId });
+export function Reconciliation({ client }: { readonly client: CoquiClient }): React.JSX.Element {
+  const reconciliation = useChannel(client, 'portfolio.reconciliation', {});
 
   if (reconciliation.kind === 'loading') return <p aria-live="polite">Loading reconciliation…</p>;
 
@@ -148,7 +139,6 @@ export function Reconciliation({
                 key={exception.discrepancy.id}
                 exception={exception}
                 client={client}
-                profileId={profileId}
                 options={options}
               />
             ))}

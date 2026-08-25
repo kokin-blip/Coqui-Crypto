@@ -193,7 +193,7 @@ const forwardRequirementSchema = z
 
 export const portfolioChannelSchemas = {
   'paper.portfolio': {
-    request: z.strictObject({ profileId: z.string().min(1).max(64) }).readonly(),
+    request: emptyPayloadSchema,
     response: z
       .strictObject({
         profileId: z.string().min(1).max(64),
@@ -213,7 +213,10 @@ export const portfolioChannelSchemas = {
             scheduledForMs: epochMillisecondsSchema,
             decidedAtMs: epochMillisecondsSchema,
             standDown: z
-              .enum(['kill_switch_engaged', 'no_policy', 'no_intents', 'gates_refused'])
+              .enum([
+                'kill_switch_engaged', 'no_policy', 'no_intents', 'gates_refused',
+                'pending_review', 'execution_failed', 'execution_unknown',
+              ])
               .nullable(),
             filled: z.number().int().nonnegative(),
             refused: z.number().int().nonnegative(),
@@ -326,7 +329,7 @@ export const portfolioChannelSchemas = {
       .readonly(),
   },
   'portfolio.reconciliation': {
-    request: z.strictObject({ profileId: z.string().min(1).max(64) }).readonly(),
+    request: emptyPayloadSchema,
     response: z
       .strictObject({
         discrepancies: z.array(discrepancySchema).max(250).readonly(),
@@ -362,7 +365,7 @@ export const portfolioChannelSchemas = {
   'portfolio.reconciliation.resolve': {
     request: z
       .strictObject({
-        profileId: z.string().min(1).max(64),
+        commandId: z.string().uuid(),
         discrepancyId: z.string().min(1).max(128),
         kind: resolutionKindSchema,
         linkedLotId: z.string().min(1).max(128).nullable(),

@@ -31,6 +31,7 @@
     "package": "pnpm --filter @coqui/desktop package"
   },
   "devDependencies": {
+    "@emnapi/runtime": "2.0.0-alpha.3",
     "@eslint/js": "10.0.1",
     "@napi-rs/cli": "3.8.0",
     "@types/node": "25.9.3",

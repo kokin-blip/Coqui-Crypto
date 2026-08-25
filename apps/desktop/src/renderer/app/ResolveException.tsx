@@ -32,12 +32,10 @@ const REFUSAL_COPY: Record<string, string> = {
 
 export function ResolveException({
   client,
-  profileId,
   discrepancyId,
   options,
 }: {
   readonly client: CoquiClient;
-  readonly profileId: string;
   readonly discrepancyId: string;
   readonly options: Reconciliation['options'];
 }): React.JSX.Element {
@@ -63,7 +61,7 @@ export function ResolveException({
       onSubmit={(event) => {
         event.preventDefault();
         void command.run({
-          profileId,
+          commandId: crypto.randomUUID(),
           discrepancyId,
           kind,
           linkedLotId: kind === 'matched_to_lot' ? lotId.trim() : null,

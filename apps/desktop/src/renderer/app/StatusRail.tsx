@@ -2,6 +2,7 @@ import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { freshnessBadge } from '@coqui/ui-kit';
 
 import { useChannel } from '../query/use-channel.js';
+import { ProfileSwitcher } from './ProfileSwitcher.js';
 
 type RailView = ChannelResponse<'app.status-rail'>;
 
@@ -46,19 +47,26 @@ function Freshness({ client }: { readonly client: CoquiClient }): React.JSX.Elem
   );
 }
 
-export function StatusRail({
-  client,
-  profileId,
-}: {
-  readonly client: CoquiClient;
-  readonly profileId: string;
-}): React.JSX.Element {
-  const rail = useChannel(client, 'app.status-rail', { profileId });
+function ExecutionPolicy({ client }: { readonly client: CoquiClient }): React.JSX.Element {
+  const policy = useChannel(client, 'paper.execution.policy', {});
+  if (policy.kind !== 'ready') return <span><strong>MODE UNKNOWN</strong></span>;
+  const readOnly = policy.value.mode === 'off';
+  return (
+    <>
+      <span><strong>{readOnly ? 'READ ONLY' : 'PAPER'}</strong></span>
+      <span>review {policy.value.mode.replaceAll('_', ' ')}</span>
+    </>
+  );
+}
+
+export function StatusRail({ client }: { readonly client: CoquiClient }): React.JSX.Element {
+  const rail = useChannel(client, 'app.status-rail', {});
 
   if (rail.kind === 'loading') {
     return (
-      <header className="border-b pb-2 opacity-70" aria-live="polite">
-        Loading status…
+      <header className="status-rail" aria-live="polite">
+        <ProfileSwitcher client={client} />
+        <span>Loading status…</span>
       </header>
     );
   }
@@ -67,7 +75,8 @@ export function StatusRail({
     // The rail failing is itself decision-critical: a user must not read a
     // blank rail as "nothing is wrong".
     return (
-      <header className="border-b pb-2" role="alert">
+      <header className="status-rail" role="alert">
+        <ProfileSwitcher client={client} />
         Status unavailable — {rail.issues.map((issue) => issue.code).join(', ')}. Treat mode,
         kill-switch and freshness as unknown.
       </header>
@@ -77,11 +86,13 @@ export function StatusRail({
   const view = rail.value;
 
   return (
-    <header className="flex flex-wrap gap-x-6 gap-y-1 border-b pb-2">
-      <span>wallet: {view.profileId}</span>
+    <header className="status-rail">
+      <ProfileSwitcher client={client} />
+
+      <ExecutionPolicy client={client} />
 
       <span>
-        MODE <span className="font-semibold">{view.mode}</span>
+        Coinbase {view.reconciliation.neverRun ? 'not synced' : 'read only'}
       </span>
 
       {/* Sign plus word, never colour alone (§1). */}
@@ -111,7 +122,9 @@ export function StatusRail({
 
       <span>cost model {view.costModelBps}bps</span>
 
-      {view.riskStage !== null && <span>risk {view.riskStage}</span>}
+      <span>
+        risk {view.riskStage ?? 'unknown'} · {view.executionPermitted ? 'paper permitted' : 'paper blocked'}
+      </span>
     </header>
   );
 }

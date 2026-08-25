@@ -55,14 +55,8 @@ function Target({ target }: { readonly target: PriceTarget }): React.JSX.Element
   );
 }
 
-export function Alerts({
-  client,
-  profileId,
-}: {
-  readonly client: CoquiClient;
-  readonly profileId: string;
-}): React.JSX.Element {
-  const alerts = useChannel(client, 'alerts.view', { profileId });
+export function Alerts({ client }: { readonly client: CoquiClient }): React.JSX.Element {
+  const alerts = useChannel(client, 'alerts.view', {});
 
   if (alerts.kind === 'loading') return <p aria-live="polite">Loading alerts…</p>;
 

@@ -105,7 +105,13 @@ describe('the gate cannot be edited from the UI', () => {
     // P8's exit criterion, asserted structurally. The absence of a channel is a
     // stronger guarantee than a disabled control, and this test is what keeps
     // one from being added without the reasoning being revisited.
-    expect(CHANNEL_KINDS.write).toEqual(['portfolio.reconciliation.resolve']);
+    expect(CHANNEL_KINDS.write).toEqual([
+      'accounts.profile.switch',
+      'paper.execution.policy.set',
+      'paper.execution.prepare',
+      'paper.execution.review',
+      'portfolio.reconciliation.resolve',
+    ]);
     expect(CHANNEL_NAMES.filter((channel) => channel.startsWith('risk.'))).toEqual([
       'risk.dashboard',
       'risk.evidence-gate',

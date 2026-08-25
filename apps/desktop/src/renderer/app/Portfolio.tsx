@@ -136,13 +136,7 @@ function Header({ view }: { readonly view: PortfolioView }): React.JSX.Element {
   );
 }
 
-export function Portfolio({
-  client,
-  profileId,
-}: {
-  readonly client: CoquiClient;
-  readonly profileId: string;
-}): React.JSX.Element {
+export function Portfolio({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const portfolio = useChannel(client, 'portfolio.view', {});
 
   if (portfolio.kind === 'loading') return <p aria-live="polite">Loading portfolio…</p>;
@@ -170,7 +164,6 @@ export function Portfolio({
             presented as the other. */}
         <PaperComparison
           client={client}
-          profileId={profileId}
           actualTotalUsd={view.valuation.unpricedCount > 0 ? null : view.valuation.totalValueUsd}
         />
       </div>
@@ -203,7 +196,7 @@ export function Portfolio({
         pricing {view.pricing.status} · {view.pricing.requestedSource}
       </p>
 
-      <Reconciliation client={client} profileId={profileId} />
+      <Reconciliation client={client} />
     </section>
   );
 }

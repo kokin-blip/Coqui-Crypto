@@ -193,6 +193,39 @@ describe('ResearchReadModelService.runs', () => {
   });
 });
 
+describe('ResearchReadModelService.performance', () => {
+  it('returns only a curve explicitly recorded in the immutable artifact', () => {
+    const db = database();
+    const run = studyRun({
+      preRegistrationHash: registerPlan(db),
+      resultJson: '{"equityCurve":[{"atMs":1723000000000,"equityUsd":"1000.25"}]}',
+    });
+    saveResearchStudyRun({ ...run, runHash: researchStudyRunHash(run) }, db);
+    expect(service(db).performance()).toEqual({
+      ok: true,
+      value: [{
+        runId: run.id, runHash: researchStudyRunHash(run), datasetHash: run.datasetHash,
+        status: 'available', curve: [{ atMs: 1_723_000_000_000, equityUsd: '1000.25' }],
+      }],
+    });
+    db.close();
+  });
+
+  it('marks legacy artifacts unavailable instead of reconstructing a decorative curve', () => {
+    const db = database();
+    const run = studyRun({ preRegistrationHash: registerPlan(db) });
+    saveResearchStudyRun({ ...run, runHash: researchStudyRunHash(run) }, db);
+    expect(service(db).performance()).toEqual({
+      ok: true,
+      value: [{
+        runId: run.id, runHash: researchStudyRunHash(run), datasetHash: run.datasetHash,
+        status: 'unavailable_not_recorded', curve: [],
+      }],
+    });
+    db.close();
+  });
+});
+
 describe('ResearchReadModelService.jobs', () => {
   it('summarises jobs and bounds the limit', () => {
     const db = database();

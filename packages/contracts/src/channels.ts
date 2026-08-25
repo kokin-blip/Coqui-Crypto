@@ -1,7 +1,10 @@
 import * as z from 'zod';
 
+import { activityChannelSchemas } from './schemas/activity.js';
 import { accountsChannelSchemas } from './schemas/accounts.js';
 import { marketDataChannelSchemas } from './schemas/market-data.js';
+import { paperExecutionChannelSchemas } from './schemas/paper-execution.js';
+import { paperPerformanceChannelSchemas } from './schemas/paper-performance.js';
 import { portfolioChannelSchemas } from './schemas/portfolio.js';
 import { researchChannelSchemas } from './schemas/research.js';
 import { riskChannelSchemas } from './schemas/risk.js';
@@ -22,8 +25,11 @@ import type { ContractSchema, DeepReadonly } from './messages.js';
  * more than the services can honour.
  */
 export const CHANNEL_SCHEMAS = {
+  ...activityChannelSchemas,
   ...accountsChannelSchemas,
   ...marketDataChannelSchemas,
+  ...paperExecutionChannelSchemas,
+  ...paperPerformanceChannelSchemas,
   ...portfolioChannelSchemas,
   ...researchChannelSchemas,
   ...riskChannelSchemas,
@@ -64,7 +70,13 @@ export function isChannelName(value: unknown): value is ChannelName {
  * reconciliation *resolution* — a recorded decision about immutable evidence,
  * which changes no balance and no tax lot.
  */
-const WRITE_CHANNELS = ['portfolio.reconciliation.resolve'] as const satisfies readonly ChannelName[];
+const WRITE_CHANNELS = [
+  'accounts.profile.switch',
+  'paper.execution.policy.set',
+  'paper.execution.prepare',
+  'paper.execution.review',
+  'portfolio.reconciliation.resolve',
+] as const satisfies readonly ChannelName[];
 
 export const CHANNEL_KINDS = {
   read: CHANNEL_NAMES.filter(

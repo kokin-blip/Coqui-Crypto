@@ -80,6 +80,28 @@ export interface ResearchJobDetailView extends ResearchJobSummaryView {
   readonly hasResult: boolean;
 }
 
+export interface ResearchPerformanceView {
+  readonly runId: string;
+  readonly runHash: string;
+  readonly datasetHash: string;
+  readonly status: 'available' | 'unavailable_not_recorded';
+  readonly curve: readonly { readonly atMs: number; readonly equityUsd: string }[];
+}
+
+function recordedCurve(resultJson: string): ResearchPerformanceView['curve'] {
+  const value = JSON.parse(resultJson) as Record<string, unknown>;
+  if (!Array.isArray(value['equityCurve'])) return [];
+  const curve: Array<{ atMs: number; equityUsd: string }> = [];
+  for (const point of value['equityCurve']) {
+    if (typeof point !== 'object' || point === null) return [];
+    const item = point as Record<string, unknown>;
+    if (!Number.isSafeInteger(item['atMs']) || Number(item['atMs']) < 0 ||
+        typeof item['equityUsd'] !== 'string' || !/^-?(?:0|[1-9]\d*)(?:\.\d+)?$/u.test(item['equityUsd'])) return [];
+    curve.push({ atMs: Number(item['atMs']), equityUsd: item['equityUsd'] });
+  }
+  return curve;
+}
+
 function issue<T>(path: readonly string[], code: ResearchReadIssueCode): ResearchReadResult<T> {
   return { ok: false, issues: [{ path, code }] };
 }
@@ -176,6 +198,29 @@ export class ResearchReadModelService {
       return issue(['runs'], 'storage_rejected');
     }
     return { ok: true, value: stored.map(runView) };
+  }
+
+  /** Returns only curves explicitly stored in the immutable result artifact. */
+  performance(): ResearchReadResult<readonly ResearchPerformanceView[]> {
+    let stored: readonly StoredResearchStudyRun[];
+    try {
+      stored = verifiedResearchStudyRuns(this.#database);
+    } catch {
+      return issue(['performance'], 'storage_rejected');
+    }
+    return {
+      ok: true,
+      value: stored.map((run) => {
+        const curve = recordedCurve(run.resultJson);
+        return {
+          runId: run.id,
+          runHash: run.runHash,
+          datasetHash: run.datasetHash,
+          status: curve.length === 0 ? 'unavailable_not_recorded' as const : 'available' as const,
+          curve,
+        };
+      }),
+    };
   }
 
   /** Bounded job summaries with stable status and reason codes. */

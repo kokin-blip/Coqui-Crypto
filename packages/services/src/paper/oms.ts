@@ -12,6 +12,7 @@ import {
 import {
   appendPaperOrderEvent,
   commitPaperFill,
+  inTransaction,
   listPaperBalances,
   saveProductRuleSnapshot,
   savePaperOrder,
@@ -204,9 +205,10 @@ export class PaperOmsService {
     });
 
     try {
-      // The rule snapshot is immutable evidence of what the venue permitted at
-      // the moment the order was priced. It is written before the order so a
-      // stored order can never reference a snapshot that does not exist.
+      return inTransaction(this.#database, () => {
+        // The rule snapshot is immutable evidence of what the venue permitted at
+        // the moment the order was priced. It is written before the order so a
+        // stored order can never reference a snapshot that does not exist.
       saveProductRuleSnapshot(rules, this.#database);
 
       const order: PaperOrder = {
@@ -299,6 +301,7 @@ export class PaperOmsService {
         filledQuantity: outcome.quantity,
         issue: null,
       };
+      });
     } catch (error) {
       this.#onUnexpectedError(productId, error);
       return {

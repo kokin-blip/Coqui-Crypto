@@ -15,9 +15,9 @@ import {
 import {
   isApproved,
   runExecutionGates,
-  PaperOmsService,
   type PaperMarketData,
 } from '../packages/services/src/index.js';
+import { PaperOmsService } from '../packages/services/src/paper/oms.js';
 import {
   bootstrapPaperBalances,
   getPaperOrder,

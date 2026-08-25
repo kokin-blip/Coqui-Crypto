@@ -95,7 +95,13 @@ function Leader({ gate }: { readonly gate: GateView }): React.JSX.Element {
   );
 }
 
-export function Scoreboard({ client }: { readonly client: CoquiClient }): React.JSX.Element {
+export function Scoreboard({
+  client,
+  detail = 'full',
+}: {
+  readonly client: CoquiClient;
+  readonly detail?: 'summary' | 'full';
+}): React.JSX.Element {
   const gate: ChannelState<GateView> = useChannel(client, 'risk.evidence-gate', {});
 
   if (gate.kind === 'loading') return <p aria-live="polite">Loading evidence…</p>;
@@ -137,7 +143,7 @@ export function Scoreboard({ client }: { readonly client: CoquiClient }): React.
 
       <Leader gate={view} />
 
-      <TrackTable client={client} />
+      {detail === 'full' && <TrackTable client={client} />}
 
       <div>
         <h3 className="mb-1 font-semibold">Evidence gate</h3>
@@ -164,12 +170,12 @@ export function Scoreboard({ client }: { readonly client: CoquiClient }): React.
         </p>
       </div>
 
-      <NegativeFindings client={client} />
+      {detail === 'full' && <NegativeFindings client={client} />}
 
-      <div>
+      {detail === 'full' && <div>
         <h3 className="mb-1 font-semibold">Provenance</h3>
         <Provenance gate={view} />
-      </div>
+      </div>}
     </section>
   );
 }

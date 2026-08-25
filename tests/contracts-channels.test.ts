@@ -42,7 +42,10 @@ describe('channel registry', () => {
 
   it('matches the boundaries that actually have tested services today', () => {
     expect([...CHANNEL_NAMES].sort()).toEqual([
+      'accounts.profile.switch',
+      'accounts.profiles',
       'accounts.settings',
+      'activity.feed',
       'alerts.view',
       'app.incidents',
       'app.status-rail',
@@ -53,6 +56,14 @@ describe('channel registry', () => {
       'market-data.prices',
       'market-data.trending',
       'market-data.yields',
+      'paper.execution.policy',
+      'paper.execution.policy.set',
+      'paper.execution.prepare',
+      'paper.execution.proposal',
+      'paper.execution.proposals',
+      'paper.execution.review',
+      'paper.performance',
+      'paper.performance-day',
       'paper.portfolio',
       'portfolio.allocation',
       'portfolio.reconciliation',
@@ -62,6 +73,7 @@ describe('channel registry', () => {
       'research.job',
       'research.jobs',
       'research.negative-findings',
+      'research.performance',
       'research.runs',
       'research.scoreboard',
       'risk.dashboard',
@@ -83,7 +95,13 @@ describe('channel registry', () => {
     // write would not have to retrofit it. A read must never drift into this
     // list: `docs/UI-UX.md` §3.1's no-optimistic-success rule is enforceable
     // only if the transport knows which channels are commands.
-    expect(CHANNEL_KINDS.write).toEqual(['portfolio.reconciliation.resolve']);
+    expect(CHANNEL_KINDS.write).toEqual([
+      'accounts.profile.switch',
+      'paper.execution.policy.set',
+      'paper.execution.prepare',
+      'paper.execution.review',
+      'portfolio.reconciliation.resolve',
+    ]);
     expect(CHANNEL_KINDS.read).not.toContain('portfolio.reconciliation.resolve');
   });
 });
@@ -377,7 +395,7 @@ describe('portfolio contract', () => {
   it('offers no resolution that touches a tax lot', () => {
     const kinds = CHANNEL_SCHEMAS['portfolio.reconciliation.resolve'].request;
     const valid = {
-      profileId: 'main',
+      commandId: '3f8a1c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b',
       discrepancyId: 'a'.repeat(64),
       linkedLotId: null,
       note: 'Transferred in from a hardware wallet.',

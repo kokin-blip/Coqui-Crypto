@@ -25,6 +25,9 @@
       ],
       "@coqui/storage": [
         "./packages/storage/src/index.ts"
+      ],
+      "@coqui/ui-kit": [
+        "./packages/ui-kit/src/index.ts"
       ]
     },
     "types": [

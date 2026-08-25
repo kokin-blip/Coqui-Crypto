@@ -25,6 +25,18 @@ export interface ChannelPolicy {
 }
 
 export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
+  'activity.feed': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
+  // Profile metadata changes only through explicit account commands.
+  'accounts.profiles': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
+  'accounts.profile.switch': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.execution.policy': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
+  'paper.execution.policy.set': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.execution.proposals': { refetchIntervalMs: 30 * SECOND, staleTimeMs: 10 * SECOND },
+  'paper.execution.proposal': { refetchIntervalMs: 30 * SECOND, staleTimeMs: 10 * SECOND },
+  'paper.execution.prepare': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.execution.review': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.performance': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
+  'paper.performance-day': { refetchIntervalMs: false, staleTimeMs: 30 * SECOND },
   // Reference prices move continuously, and this is the figure a user watches.
   'market-data.prices': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
   'market-data.markets': { refetchIntervalMs: 5 * MINUTE, staleTimeMs: 2 * MINUTE },
@@ -39,6 +51,7 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'market-data.candles': { refetchIntervalMs: false, staleTimeMs: 60 * MINUTE },
   // Research runs are immutable once written.
   'research.runs': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
+  'research.performance': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
   'research.jobs': { refetchIntervalMs: 30 * SECOND, staleTimeMs: 10 * SECOND },
   // A study run is immutable once written; a new one arrives only when a study
   // is executed, which is a deliberate operator action.

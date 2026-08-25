@@ -10,6 +10,7 @@ export * from './harvest.js';
 export * from './tax-aware.js';
 export * from './risk-budget.js';
 export * from './performance.js';
+export * from './paper-performance.js';
 export * from './snapshot-evidence.js';
 export * from './policy.js';
 export * from './contribution.js';

@@ -75,7 +75,7 @@ const statusRailSchema = z
 
 export const riskChannelSchemas = {
   'app.status-rail': {
-    request: z.strictObject({ profileId: z.string().min(1).max(64) }).readonly(),
+    request: emptyPayloadSchema,
     response: statusRailSchema,
   },
   /**
@@ -130,7 +130,7 @@ export const riskChannelSchemas = {
    * here was that the events existed and nothing could see them.
    */
   'alerts.view': {
-    request: z.strictObject({ profileId: z.string().min(1).max(64) }).readonly(),
+    request: emptyPayloadSchema,
     response: z
       .strictObject({
         asOfMs: epochMillisecondsSchema,
@@ -210,7 +210,6 @@ export const riskChannelSchemas = {
   'app.incidents': {
     request: z
       .strictObject({
-        profileId: z.string().min(1).max(64),
         limit: z.number().int().min(1).max(200),
       })
       .readonly(),

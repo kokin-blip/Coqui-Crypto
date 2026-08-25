@@ -3,6 +3,7 @@ import { existsSync, mkdtempSync, rmSync } from 'node:fs';
 import { setTimeout } from 'node:timers';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
+import { DatabaseSync } from 'node:sqlite';
 import { fileURLToPath } from 'node:url';
 
 /**
@@ -31,7 +32,7 @@ for (const artifact of ['dist/main/composition.js', 'dist/preload/index.cjs', 'd
   }
 }
 
-const { createRuntime } = await import(join(root, 'dist/main/composition.js'));
+const { createRuntimeProfileController } = await import(join(root, 'dist/main/profile-runtime.js'));
 const { createDispatcher } = await import(join(root, 'dist/main/dispatch.js'));
 const { applyWindowHardening, WEB_PREFERENCES, CONTENT_SECURITY_POLICY } = await import(
   join(root, 'dist/main/security.js')
@@ -62,20 +63,23 @@ const dataDir = mkdtempSync(join(tmpdir(), 'coqui-smoke-'));
 let runtime = null;
 
 async function run() {
-  runtime = createRuntime({
-    databasePath: join(dataDir, 'coqui.db'),
-    profileId: 'main',
+  runtime = createRuntimeProfileController({
+    dataDirectory: dataDir,
+    legacyDatabaseFilename: 'coqui.db',
     // The smoke gate proves wiring, not cadence. A live scheduler would start a
     // timer and reach the network to refresh bars, neither of which this
     // measures.
     disableScheduler: true,
+    runtime: {},
   });
-  check('composition root builds', runtime.handlers !== undefined);
+  check('composition root builds', typeof runtime.handlers === 'function');
 
-  const version = runtime.database.prepare('PRAGMA user_version').get();
+  const probe = new DatabaseSync(join(dataDir, 'coqui.db'), { readOnly: true });
+  const version = probe.prepare('PRAGMA user_version').get();
+  probe.close();
   check('profile database migrated', Number(version?.user_version) > 0, `user_version=${Number(version?.user_version)}`);
 
-  const dispatch = createDispatcher({ handlers: runtime.handlers });
+  const dispatch = createDispatcher({ handlers: () => runtime?.handlers() ?? {} });
   ipcMain.handle('coqui:query', async (_event, channel, payload) => dispatch(channel, payload));
 
   const entry = join(root, 'dist/renderer/index.html');
@@ -211,7 +215,7 @@ async function run() {
 
   const reconciliation = JSON.parse(
     await withTimeout('portfolio.reconciliation', window.webContents.executeJavaScript(
-      'window.coqui.query("portfolio.reconciliation", { profileId: "main" }).then(JSON.stringify)',
+      'window.coqui.query("portfolio.reconciliation", {}).then(JSON.stringify)',
     )),
   );
   check(
@@ -226,7 +230,7 @@ async function run() {
   const resolve = JSON.parse(
     await withTimeout('portfolio.reconciliation.resolve', window.webContents.executeJavaScript(
       `window.coqui.query("portfolio.reconciliation.resolve", {
-        profileId: "main",
+        commandId: "00000000-0000-4000-8000-000000000001",
         discrepancyId: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         kind: "provider_error",
         linkedLotId: null,
@@ -241,15 +245,21 @@ async function run() {
   );
 
   for (const [channel, payload, describe] of [
+    ['accounts.profiles', '{}', (v) => `profiles=${v?.profiles?.length}`],
+    ['activity.feed', '{ limit: 20, cursor: null }', (v) => `events=${v?.events?.length}`],
     ['portfolio.allocation', '{}', (v) => `estimateOnly=${v?.plan?.estimateOnly}`],
     ['portfolio.tax', '{}', (v) => `disposals=${v?.disposals?.length}`],
-    ['accounts.settings', '{ profileId: "main" }', (v) => `density=${v?.preferences?.density}`],
+    ['accounts.settings', '{}', (v) => `density=${v?.preferences?.density}`],
     // The literal marker matters more than the number: a paper figure that
     // crossed IPC without it could be rendered as money.
-    ['paper.portfolio', '{ profileId: "main" }', (v) => `simulation=${v?.simulation}`],
+    ['paper.portfolio', '{}', (v) => `simulation=${v?.simulation}`],
+    ['paper.execution.policy', '{}', (v) => `policy=${v?.mode}`],
+    ['paper.execution.proposals', '{ limit: 20 }', (v) => `proposals=${v?.proposals?.length}`],
+    ['paper.performance', '{}', (v) => `points=${v?.points?.length}`],
+    ['research.performance', '{}', (v) => `runs=${v?.length}`],
     ['risk.dashboard', '{}', (v) => `stage=${v?.stage}`],
-    ['alerts.view', '{ profileId: "main" }', (v) => `unread=${v?.unreadCount}`],
-    ['app.incidents', '{ profileId: "main", limit: 50 }', (v) => `incidents=${v?.incidents?.length}`],
+    ['alerts.view', '{}', (v) => `unread=${v?.unreadCount}`],
+    ['app.incidents', '{ limit: 50 }', (v) => `incidents=${v?.incidents?.length}`],
   ]) {
     const outcome = JSON.parse(
       await withTimeout(channel, window.webContents.executeJavaScript(
@@ -266,7 +276,7 @@ async function run() {
   // The rail is reused by every screen, so a failure here breaks all of them.
   const railOutcome = JSON.parse(
     await withTimeout('app.status-rail', window.webContents.executeJavaScript(
-      'window.coqui.query("app.status-rail", { profileId: "main" }).then(JSON.stringify)',
+      'window.coqui.query("app.status-rail", {}).then(JSON.stringify)',
     )),
   );
   check(

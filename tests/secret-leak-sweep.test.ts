@@ -42,11 +42,13 @@ afterEach(() => {
 
 /** Channels that answer from local state. The rest would reach the network. */
 const LOCAL_CHANNELS: readonly ChannelName[] = [
+  'activity.feed',
   'research.runs',
   'research.jobs',
   'research.job',
   'research.scoreboard',
   'research.negative-findings',
+  'research.performance',
   'risk.evidence-gate',
   'risk.dashboard',
   'portfolio.tax',
@@ -55,16 +57,19 @@ const LOCAL_CHANNELS: readonly ChannelName[] = [
   'app.status-rail',
   'alerts.view',
   'app.incidents',
+  'paper.execution.policy',
+  'paper.execution.proposals',
+  'paper.performance',
+  'paper.performance-day',
 ];
 
 const PAYLOADS: Partial<Record<ChannelName, unknown>> = {
+  'activity.feed': { limit: 40, cursor: null },
   'research.jobs': { limit: 10 },
   'research.job': { id: 'a'.repeat(64) },
-  'accounts.settings': { profileId: 'main' },
-  'app.status-rail': { profileId: 'main' },
-  'alerts.view': { profileId: 'main' },
-  'app.incidents': { profileId: 'main', limit: 50 },
-  'portfolio.reconciliation': { profileId: 'main' },
+  'app.incidents': { limit: 50 },
+  'paper.execution.proposals': { limit: 50 },
+  'paper.performance-day': { dayUtc: 1_799_971_200_000 },
 };
 
 /** Every value in every column of every table, as one string. */
@@ -195,6 +200,12 @@ describe('the sweep covers the whole registry', () => {
       || channel === 'portfolio.view'
       || channel === 'portfolio.allocation'
       || channel === 'paper.portfolio'
+      || channel === 'paper.execution.proposal'
+      || channel === 'paper.execution.policy.set'
+      || channel === 'paper.execution.prepare'
+      || channel === 'paper.execution.review'
+      || channel === 'accounts.profiles'
+      || channel === 'accounts.profile.switch'
       || channel === 'portfolio.reconciliation.resolve',
     )).toBe(true);
   });

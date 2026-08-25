@@ -13,9 +13,9 @@ import {
   type Db,
 } from '@coqui/storage';
 
-import { isApproved, runExecutionGates } from './execution-gate.js';
+import { PaperExecutionService } from './execution-service.js';
 import { resolveKillSwitch } from './kill-switch.js';
-import { PaperOmsService, type PaperMarketData } from './oms.js';
+import type { PaperMarketData } from './oms.js';
 
 /**
  * The paper decision loop, as a scheduler task.
@@ -36,7 +36,10 @@ export type PaperRunStandDown =
   | 'kill_switch_engaged'
   | 'no_policy'
   | 'no_intents'
-  | 'gates_refused';
+  | 'gates_refused'
+  | 'pending_review'
+  | 'execution_failed'
+  | 'execution_unknown';
 
 export interface PaperRunSummary {
   readonly profileId: string;
@@ -61,6 +64,10 @@ export interface PaperRunLoopDependencies {
   readonly holdings: () => readonly Holding[];
   readonly policy: () => AllocationPolicy | null;
   readonly historicalNetEdgeEstimatePct: number;
+  /** A verified immutable research snapshot, checked again at submission. */
+  readonly evidenceVerified?: () => boolean;
+  /** Append the post-decision daily valuation; missing days are never backfilled. */
+  readonly captureEvidence?: (summary: PaperRunSummary) => Promise<void>;
   readonly onUnexpectedError?: (context: string, error: unknown) => void;
 }
 
@@ -179,52 +186,49 @@ export function runPaperDecision(
   const intents = planAutoRebalance(holdings, policy, decidedAtMs);
   if (intents.length === 0) return finish('no_intents');
 
-  const approval = runExecutionGates({
-    profileId,
-    runId,
-    nowMs: decidedAtMs,
-    mode: 'paper',
-    killSwitchEngaged: false,
-    intents,
-    holdings,
-    historicalNetEdgeEstimatePct: dependencies.historicalNetEdgeEstimatePct,
-  });
-
-  if (!isApproved(approval)) {
-    journal(database, profileId, runId, decidedAtMs, 'gates', 'refused', {
-      code: approval.code,
-      gate: approval.gate,
-      skipped: approval.skipped.length,
-    });
-    return finish('gates_refused');
-  }
-
-  const oms = new PaperOmsService({
+  const execution = new PaperExecutionService({
     database,
-    clock: dependencies.clock,
+    profileId,
+    nowMs: () => dependencies.clock.nowMs(),
     market: dependencies.market,
+    state: () => ({
+      holdings: dependencies.holdings(),
+      killSwitchEngaged: resolveKillSwitch(profileId, database).engaged,
+      evidenceVerified: dependencies.evidenceVerified?.() ?? false,
+      historicalNetEdgeEstimatePct: dependencies.historicalNetEdgeEstimatePct,
+    }),
     ...(dependencies.onUnexpectedError === undefined
       ? {}
       : {
-          onUnexpectedError: (productId: string, error: unknown) =>
-            dependencies.onUnexpectedError?.(`oms:${productId}`, error),
+          onUnexpectedError: dependencies.onUnexpectedError,
         }),
   });
-  const result = oms.execute(approval);
-
-  journal(database, profileId, runId, decidedAtMs, 'orders', 'placed', {
-    filled: result.filledCount,
-    refused: result.refusedCount,
-    orders: result.orders.map((order) => ({
-      productId: order.productId,
-      side: order.side,
-      state: order.finalState,
-      // A stable issue code, never a raw message (invariant 3).
-      issue: order.issue?.code ?? null,
-    })),
+  const outcome = execution.prepare({
+    proposalId: sha256Hex(`paper-proposal:${runId}:1`),
+    runId,
+    revision: 1,
+    intents,
   });
 
-  return finish(null, result.filledCount, result.refusedCount);
+  journal(database, profileId, runId, decidedAtMs, 'execution', outcome.status, {
+    proposalId: outcome.proposalId,
+    proposalHash: outcome.proposalHash,
+    reasonCode: outcome.reasonCode,
+    filled: outcome.filledCount,
+    refused: outcome.refusedCount,
+  });
+
+  if (outcome.status === 'pending') return finish('pending_review');
+  if (outcome.status === 'unknown') return finish('execution_unknown', 0, outcome.refusedCount);
+  if (outcome.status === 'failed') return finish('execution_failed', 0, outcome.refusedCount);
+  if (outcome.status === 'blocked') {
+    return finish(
+      outcome.reasonCode === 'kill_switch_engaged' ? 'kill_switch_engaged' : 'gates_refused',
+      0,
+      outcome.refusedCount,
+    );
+  }
+  return finish(null, outcome.filledCount, outcome.refusedCount);
 }
 
 /**
@@ -272,7 +276,8 @@ export function createPaperRunLoopTask(
     utcOffsetMs,
     async execute(context) {
       try {
-        runPaperDecision(dependencies, context.scheduledForMs);
+        const summary = runPaperDecision(dependencies, context.scheduledForMs);
+        await dependencies.captureEvidence?.(summary);
         return { status: 'completed' };
       } catch (error) {
         dependencies.onUnexpectedError?.('paper_run', error);

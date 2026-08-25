@@ -24,6 +24,7 @@ import {
   countCompletedDecisionRuns,
   listWalletRunAudits,
   openDatabase,
+  setPaperExecutionPolicy,
   type Db,
 } from '../packages/storage/src/index.js';
 
@@ -123,6 +124,7 @@ function deps(db: Db, clock: FixedClock, overrides: Partial<PaperRunLoopDependen
     holdings,
     policy: () => POLICY,
     historicalNetEdgeEstimatePct: 12,
+    evidenceVerified: () => true,
     ...overrides,
   } satisfies PaperRunLoopDependencies;
 }
@@ -140,6 +142,13 @@ function seeded(): Db {
     T0,
     db,
   );
+  setPaperExecutionPolicy({
+    commandId: '00000000-0000-4000-8000-000000000001',
+    profileId: PROFILE,
+    mode: 'unattended',
+    confirmedAt: T0,
+    explicitUnattendedConfirmation: true,
+  }, db);
   return db;
 }
 
@@ -183,9 +192,9 @@ describe('every run is recorded, including one that trades nothing', () => {
     );
     expect(summary.standDown).toBe('gates_refused');
 
-    const gateAudit = listWalletRunAudits(PROFILE, 50, db).find((a) => a.kind === 'gates');
-    expect(gateAudit?.status).toBe('refused');
-    expect(JSON.parse(gateAudit!.detailJson)).toMatchObject({ gate: 'profitability' });
+    const gateAudit = listWalletRunAudits(PROFILE, 50, db).find((a) => a.kind === 'execution');
+    expect(gateAudit?.status).toBe('blocked');
+    expect(JSON.parse(gateAudit!.detailJson)).toMatchObject({ reasonCode: 'all_intents_filtered' });
     db.close();
   });
 
@@ -207,8 +216,8 @@ describe('a trading run', () => {
     expect(summary.standDown).toBeNull();
     expect(summary.filledCount).toBeGreaterThan(0);
 
-    const orders = listWalletRunAudits(PROFILE, 50, db).find((a) => a.kind === 'orders');
-    expect(orders?.status).toBe('placed');
+    const orders = listWalletRunAudits(PROFILE, 50, db).find((a) => a.kind === 'execution');
+    expect(orders?.status).toBe('succeeded');
     db.close();
   });
 });

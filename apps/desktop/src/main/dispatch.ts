@@ -17,7 +17,7 @@ export type ServiceResult<TValue> =
 
 export type ChannelHandler = (payload: never) => Promise<ServiceResult<unknown>> | ServiceResult<unknown>;
 
-export type ChannelHandlers = Readonly<Record<ChannelName, ChannelHandler>>;
+export type ChannelHandlers = Readonly<Partial<Record<ChannelName, ChannelHandler>>>;
 
 /**
  * Issue codes that mean "a guardrail said no", not "something broke".
@@ -57,7 +57,8 @@ function classify<TValue>(issues: readonly ContractIssue[]): Outcome<TValue> {
 }
 
 export interface DispatcherOptions {
-  readonly handlers: ChannelHandlers;
+  /** Resolve at dispatch time so an atomic profile switch cannot leave stale closures behind. */
+  readonly handlers: ChannelHandlers | (() => ChannelHandlers);
   /**
    * Called with a thrown error so it reaches the log with full detail. The
    * dispatcher itself never puts a message on the wire.
@@ -94,7 +95,12 @@ export function createDispatcher(options: DispatcherOptions) {
     // returned nothing would otherwise throw past it, and a dispatcher that
     // can throw defeats the point of having one.
     try {
-      const handler = handlers[channel];
+      const available = typeof handlers === 'function' ? handlers() : handlers;
+      const handler = available[channel];
+      if (handler === undefined) {
+        onUnexpectedError?.(channel, new TypeError(`No handler registered for ${channel}.`));
+        return transportFailure('transport_unavailable');
+      }
       const result: ServiceResult<unknown> = await handler(request.data as never);
 
       if (typeof result !== 'object' || result === null || typeof result.ok !== 'boolean') {

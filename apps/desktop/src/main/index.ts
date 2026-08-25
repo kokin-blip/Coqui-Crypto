@@ -1,10 +1,11 @@
-import { join } from 'node:path';
+import { basename, dirname, join } from 'node:path';
 
 import { createOsKeyringSecretStore } from '@coqui/adapters';
 import { app, BrowserWindow, ipcMain, Notification, shell } from 'electron';
 
 import { createDispatcher } from './dispatch.js';
 import { createRuntime, type CoquiRuntime } from './composition.js';
+import { createRuntimeProfileController, type RuntimeProfileController } from './profile-runtime.js';
 import {
   applyWindowHardening,
   CONTENT_SECURITY_POLICY,
@@ -14,8 +15,7 @@ import {
 
 const QUERY_CHANNEL = 'coqui:query';
 const DEFAULT_PROFILE = 'main';
-
-let runtime: CoquiRuntime | null = null;
+let runtime: RuntimeProfileController | null = null;
 
 function databasePath(): string {
   // A packaged application has an unpredictable working directory, so the
@@ -107,15 +107,18 @@ const osNotifier = {
 };
 
 async function start(): Promise<void> {
-  runtime = createRuntime({
-    notifier: osNotifier,
-    databasePath: databasePath(),
-    profileId: DEFAULT_PROFILE,
-    coinGeckoApiKey: await coinGeckoApiKey(),
+  const path = databasePath();
+  runtime = createRuntimeProfileController({
+    dataDirectory: dirname(path),
+    legacyDatabaseFilename: basename(path),
+    runtime: {
+      notifier: osNotifier,
+      coinGeckoApiKey: await coinGeckoApiKey(),
+    },
   });
 
   const dispatch = createDispatcher({
-    handlers: runtime.handlers,
+    handlers: () => runtime?.handlers() ?? {},
     // Detail stays local, and now lands somewhere durable rather than only on
     // a console nobody reads after the fact. It must never travel to the
     // renderer (invariant 3).

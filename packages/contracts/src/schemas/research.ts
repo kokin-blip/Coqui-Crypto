@@ -105,6 +105,19 @@ const negativeFindingSchema = z
   .readonly();
 
 export const researchChannelSchemas = {
+  'research.performance': {
+    request: emptyPayloadSchema,
+    response: z.array(z.strictObject({
+      runId: z.string().min(1).max(200),
+      runHash: sha256HexSchema,
+      datasetHash: sha256HexSchema,
+      status: z.enum(['available', 'unavailable_not_recorded']),
+      curve: z.array(z.strictObject({
+        atMs: epochMillisecondsSchema,
+        equityUsd: z.string().regex(/^-?(?:0|[1-9]\d*)(?:\.\d+)?$/u),
+      }).readonly()).max(20_000).readonly(),
+    }).readonly()).max(500).readonly(),
+  },
   'research.negative-findings': {
     request: emptyPayloadSchema,
     response: z

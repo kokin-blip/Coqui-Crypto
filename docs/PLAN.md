@@ -17,9 +17,10 @@ Effort figures assume one part-time developer with assistance.
 > **Update this section as phases complete. It is the first thing to read.**
 
 ```
-Current phase:  P5-P9 code complete (2026-08-23). Three exits need the owner.
-Last completed: E3-E6 packaging, release job, packaged gate, install guide
-Verified:       140 test files / 1013 tests green; smoke 28/28; packaged smoke 8/8
+Current phase:  P5 additive UI and authoritative paper-execution continuation
+Baseline:       d25101f · P5-P9 engineering present · three exits need the owner
+Verified now:   146 test files / 1039 tests; Electron smoke 35/35;
+                packaged smoke 8/8; warm shell 158ms; interaction p75 8.4ms
 BLOCKED ON:     A6 screenshot review · a real Coinbase key · a registered
                 net-edge estimate (see "What is left" below)
 P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
@@ -27,8 +28,9 @@ P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
 
 ### What is left, and why it is not code
 
-Every work item from P5 through P9 is built, tested and pushed. Three exit
-criteria remain open, and none of them can be closed by writing more:
+The fetched P5–P9 baseline is built and tested. Additive shell, profile,
+performance, and execution-boundary work continues without replacing it. Three
+exit criteria remain open, and none can be closed with fixtures or prose:
 
 1. **A6, the screenshot review.** The one owner gate. Two of the states
    `docs/UI-UX.md` §7.9 requires — a blocked paper action and negative evidence
@@ -88,11 +90,12 @@ its upper-bound badge rather than a bare figure, and failure/blocked/unknown
 rendered distinctly. `liveExecutionPermitted` is pinned to the literal `false`
 by the wire type.
 
-**P5 is blocked here.** `docs/UI-UX.md` §0 requires owner approval of the
-information hierarchy in `docs/design/wireframes-2026-08-21.md` before the
-visual language propagates to portfolio, allocation, tax, markets, paper and
-settings. Three questions are open at the foot of that document. Styling stays
-deliberately minimal until then.
+**The hierarchy direction is resolved for implementation.** The persistent
+sidebar, one-screen-at-a-time route shell, status rail, Overview order, and
+paper review chain are defined by the 2026-08-24 additive continuation. Final
+visual acceptance remains the A6 owner screenshot gate; it no longer blocks
+incremental implementation across portfolio, allocation, tax, markets, paper,
+research, activity, risk, and settings.
 
 P3's trial-count blocker is cleared. Recovering the predecessor's Obsidian vault
 moved the registry from 178 `known-lower-bound` to **215
@@ -107,19 +110,20 @@ still render as legacy/unvalidated wherever they appear. The scoreboard must als
 state the bound's direction — "deflated against an upper bound of 215 trials" —
 never a bare number.
 
-P3 executed its registered replacement study and recorded a negative result; it
-remains blocked on the missing predecessor private-vault trial count, so
-**strategy defaults stay labelled legacy/unvalidated everywhere they are
-displayed** and no run is presented as proof of edge.
+P3 executed its registered replacement study and recorded a negative result.
+The private-vault recovery later established a conservative upper bound of 215
+trials, but did not change that outcome, so **strategy defaults stay labelled
+legacy/unvalidated everywhere they are displayed** and no run is proof of edge.
 
 The P4 remainder is 23 `Adapt` handler rows. Ten are closed during P5 because the
 first screens need them; thirteen are **re-phased to the phase that owns their
 screen** — see `docs/p4-completion-audit.md` §"Re-phasing decision (2026-08-20)"
 for the row-by-row destinations and the reason. Nothing is dropped.
 
-P5 is greenfield: `apps/desktop/src/index.ts` and `packages/ui-kit/src/index.ts`
-are still placeholders, and `packages/contracts` carries envelope factories but
-no `CoquiClient`, channel registry, or request/response schemas.
+P5 is established, not greenfield. The secure Electron composition root,
+sandboxed preload, `CoquiClient`, validated channel registry, TanStack Query
+layer, UI kit, routed renderer, and working screens are all additive foundations
+that must be preserved.
 
 ---
 
@@ -940,9 +944,9 @@ The UX problem is solved, not relocated.
 - **Query layer** — N9
 - Implement the design, motion, accessibility, and performance contract in
   `docs/UI-UX.md`; `ui-kit` first, then screens — `ARCHITECTURE.md` §9
-- Begin with task maps and low-fidelity wireframes for the scoreboard, portfolio,
-  and paper-action review. Obtain owner approval on information hierarchy before
-  applying a visual theme or propagating components to other screens
+- Preserve the approved task maps and low-fidelity wireframes for the
+  scoreboard, portfolio, and paper-action review. Apply the additive hierarchy
+  incrementally and reserve owner approval for the final screenshot review set
 - Screen the user's
   [UI-library catalogue](https://github.com/gabrielizalo/Awesome-CSS-Frameworks-and-UI-Libraries)
   as a discovery index. Audit each candidate's own license and maintenance; do
@@ -1009,9 +1013,9 @@ Two deliberate departures, both recorded where they were decided:
 - **R4, the 879-line simulation lab, is deferred** in favour of the
   reconciliation harness, which `docs/PLAN.md` §6 calls the only mechanism that
   can reveal a dishonest backtest before real money does.
-- **Screen 3, the paper-action review, was superseded** rather than built — the
-  engine is scheduler-driven, so there is no user-initiated order to confirm.
-  See `docs/design/wireframes-2026-08-21.md` §"Screen 3".
+- **Screen 3, the paper-action review, reviews system-generated rebalances.** It
+  does not add arbitrary buy/sell controls. Review is bound to proposal hash and
+  revision, and submission reruns every gate against fresh state.
 
 **The engine stands down by default, and this is correct.** The profitability
 gate weighs cost against a *registered* per-trade net-edge estimate, and no study
@@ -1026,13 +1030,15 @@ number chosen to make the engine trade.
 quantified divergence. **A test proves no path reaches execution while skipping a
 gate.** Kill switch halts everything including paper.
 
-**Exit met 2026-08-22, with one part registered rather than run.**
+**Historical engine exit met 2026-08-22, with one part registered rather than run.**
 `tests/paper-seven-day-run.test.ts` drives seven UTC slots on a stepped clock:
 one completed decision per day, a complete journal, fills that move the
 simulated balances, a replayed slot that changes nothing, recovery across a
 restart, and a reconciliation harness reporting a quantified basis-point
-divergence against a restated week. The no-bypass test (B2) and both kill-switch
-halt sources stay green.
+divergence against a restated week. The additive continuation consolidates the
+gate, scheduler, and OMS behind `PaperExecutionService`; the architectural
+boundary test must remain green before the application describes that route as
+authoritative.
 
 The **real** multi-day run is registered as
 `docs/studies/paper-forward-run-2026-08-22.md` with its success criteria fixed in

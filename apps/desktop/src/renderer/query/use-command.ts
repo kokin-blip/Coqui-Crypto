@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useReducer, useState } from 'react';
+import { useCallback, useReducer, useRef, useState } from 'react';
 
 import { reduceAction, type ActionState } from '@coqui/ui-kit';
 import type {
@@ -39,26 +39,33 @@ export function useCommand<TChannel extends ChannelName>(
   const queryClient = useQueryClient();
   const [state, dispatch] = useReducer(reduceAction, { kind: 'idle' } as ActionState);
   const [value, setValue] = useState<ChannelResponse<TChannel> | null>(null);
+  const inFlight = useRef(false);
 
   const run = useCallback(
     async (payload: ChannelRequest<TChannel>) => {
+      if (inFlight.current) return;
+      inFlight.current = true;
       dispatch({ type: 'activate' });
-      const outcome = await client.query(channel, payload);
-      if (outcome.status === 'ok') {
-        setValue(outcome.value as ChannelResponse<TChannel>);
-        dispatch({ type: 'settled', status: 'ok' });
-        // Invalidate only after confirmation. Refetching on activation would
-        // paint the pre-write value back over the pending state.
-        await Promise.all(
-          invalidates.map((name) => queryClient.invalidateQueries({ queryKey: [name] })),
-        );
-        return;
+      try {
+        const outcome = await client.query(channel, payload);
+        if (outcome.status === 'ok') {
+          setValue(outcome.value as ChannelResponse<TChannel>);
+          dispatch({ type: 'settled', status: 'ok' });
+          // Invalidate only after confirmation. Refetching on activation would
+          // paint the pre-write value back over the pending state.
+          await Promise.all(
+            invalidates.map((name) => queryClient.invalidateQueries({ queryKey: [name] })),
+          );
+          return;
+        }
+        dispatch({
+          type: 'settled',
+          status: outcome.status,
+          codes: outcome.issues.map((issue) => issue.code),
+        });
+      } finally {
+        inFlight.current = false;
       }
-      dispatch({
-        type: 'settled',
-        status: outcome.status,
-        codes: outcome.issues.map((issue) => issue.code),
-      });
     },
     [channel, client, invalidates, queryClient],
   );

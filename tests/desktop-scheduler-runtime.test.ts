@@ -190,9 +190,10 @@ describe('the scheduler finally has a wake-up', () => {
     clock.advance(DAY);
     await runtime.tick();
 
-    // Bars and holdings are refreshed outside the decision, because an await
-    // inside one would let the market move between two intents of a single run.
-    expect(order).toEqual(['prepare', 'decide']);
+    // Preparation happens first. The authoritative execution service then
+    // reads holdings for proposal sizing and again for the mandatory fresh
+    // submission checks; the stored preflight never substitutes for that read.
+    expect(order).toEqual(['prepare', 'decide', 'decide']);
     runtime.dispose();
     db.close();
   });

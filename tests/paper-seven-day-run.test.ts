@@ -27,6 +27,7 @@ import {
   listPaperBalances,
   listWalletRunAudits,
   openDatabase,
+  setPaperExecutionPolicy,
   type Db,
 } from '../packages/storage/src/index.js';
 
@@ -172,6 +173,10 @@ function seeded(): Db {
     T0 - DAY,
     db,
   );
+  setPaperExecutionPolicy({
+    commandId: '00000000-0000-4000-8000-000000000002', profileId: PROFILE,
+    mode: 'unattended', confirmedAt: T0, explicitUnattendedConfirmation: true,
+  }, db);
   return db;
 }
 
@@ -196,6 +201,7 @@ function runWeek(db: Db, clock: StepClock): void {
     // strategy; a run that never fills could not exercise fills or
     // reconciliation, so the harness states its own assumption explicitly.
     historicalNetEdgeEstimatePct: 15,
+    evidenceVerified: () => true,
   };
 
   for (let day = 0; day < DAYS; day += 1) {
@@ -227,7 +233,7 @@ describe('seven unattended days', () => {
 
     // Order placement is journalled separately from the run outcome, so a run
     // that placed nothing is distinguishable from a run that never happened.
-    expect(audits.filter((audit) => audit.kind === 'orders').length).toBeGreaterThan(0);
+    expect(audits.filter((audit) => audit.kind === 'execution').length).toBeGreaterThan(0);
     db.close();
   });
 
@@ -292,6 +298,7 @@ describe('a restart mid-week loses nothing', () => {
       holdings: () => [holding(BTC_REF, '100.00', '1'), holding(ETH_REF, '9000.00', '400')],
       policy: () => POLICY,
       historicalNetEdgeEstimatePct: 15,
+      evidenceVerified: () => true,
     };
 
     for (let day = 0; day < 3; day += 1) {

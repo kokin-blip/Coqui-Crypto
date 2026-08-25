@@ -1,0 +1,94 @@
+import type { CoquiClient } from '@coqui/contracts';
+import { presentAction } from '@coqui/ui-kit';
+
+import { PaperProposalReview } from './PaperProposalReview.js';
+import { Performance } from './Performance.js';
+import type { AppRoute } from './routes.js';
+import { useChannel } from '../query/use-channel.js';
+import { useCommand } from '../query/use-command.js';
+
+const PREPARE_INVALIDATIONS = ['paper.execution.proposals', 'paper.execution.policy'] as const;
+
+function statusLabel(status: string): string {
+  return status.replaceAll('_', ' ');
+}
+
+export function PaperTrading({
+  client,
+  route,
+}: {
+  readonly client: CoquiClient;
+  readonly route: AppRoute;
+}): React.JSX.Element {
+  const policy = useChannel(client, 'paper.execution.policy', {});
+  const proposals = useChannel(client, 'paper.execution.proposals', { limit: 100 });
+  const prepare = useCommand(client, 'paper.execution.prepare', PREPARE_INVALIDATIONS);
+  const presentation = presentAction(prepare.state, {
+    idle: 'Prepare current rebalance', pending: 'Preparing proposal…',
+  }, 'consequential');
+
+  if (route === 'paper/performance') {
+    return <Performance client={client} />;
+  }
+
+  const rows = proposals.kind === 'ready' ? proposals.value.proposals : [];
+  return (
+    <div className="screen-stack">
+      <section className="paper-control-panel">
+        <div>
+          <p className="eyebrow">Execution policy</p>
+          <h2>{policy.kind === 'ready' ? statusLabel(policy.value.mode) : 'policy unavailable'}</h2>
+          <p className="muted">System-generated rebalances only. Every submission reruns all gates.</p>
+        </div>
+        {route === 'paper/overview' && (
+          <button
+            type="button"
+            className="button-primary"
+            disabled={presentation.disabled}
+            aria-busy={presentation.busy}
+            onClick={() => void prepare.run({ commandId: crypto.randomUUID() })}
+          >
+            {presentation.label}
+          </button>
+        )}
+      </section>
+
+      {prepare.value !== null && (
+        <p className={`execution-outcome outcome-${prepare.value.status}`} role="status">
+          {prepare.value.status.toUpperCase()} ·{' '}
+          {prepare.value.reasonCode?.replaceAll('_', ' ') ?? 'proposal settled'}
+        </p>
+      )}
+
+      <section aria-labelledby="proposal-heading" className="panel">
+        <div className="panel-heading">
+          <div><p className="eyebrow">Durable queue</p><h2 id="proposal-heading">Paper proposals</h2></div>
+          <span className="muted">{rows.length} recorded</span>
+        </div>
+        {proposals.kind === 'loading' && <p aria-live="polite">Loading proposals…</p>}
+        {proposals.kind !== 'loading' && proposals.kind !== 'ready' && (
+          <p role="alert">Could not load proposals: {proposals.issues.map((issue) => issue.code).join(', ')}</p>
+        )}
+        {proposals.kind === 'ready' && rows.length === 0 && (
+          <p className="empty-state">No paper proposal has been prepared for this profile.</p>
+        )}
+        {rows.length > 0 && (
+          <ul className="proposal-list">
+            {rows.map((proposal) => (
+              <li key={proposal.id}>
+                <div>
+                  <strong>{proposal.actions.length} rebalance action{proposal.actions.length === 1 ? '' : 's'}</strong>
+                  <span className="muted">revision {proposal.revision} · {proposal.proposalHash.slice(0, 12)}…</span>
+                </div>
+                <span className={`status-text status-${proposal.status}`}>{statusLabel(proposal.status)}</span>
+                {proposal.status === 'pending_review' && (
+                  <PaperProposalReview client={client} proposal={proposal} />
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </div>
+  );
+}
