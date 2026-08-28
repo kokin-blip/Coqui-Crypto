@@ -25,6 +25,8 @@ export interface ChannelPolicy {
 }
 
 export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
+  'paper.campaign': { refetchIntervalMs: 60_000, staleTimeMs: 30_000 },
+  'paper.campaign.kill-switch': { refetchIntervalMs: false, staleTimeMs: Infinity },
   'activity.feed': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
   // Profile metadata changes only through explicit account commands.
   'accounts.profiles': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },

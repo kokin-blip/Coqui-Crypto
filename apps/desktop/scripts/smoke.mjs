@@ -253,6 +253,7 @@ async function run() {
     // The literal marker matters more than the number: a paper figure that
     // crossed IPC without it could be rendered as money.
     ['paper.portfolio', '{}', (v) => `simulation=${v?.simulation}`],
+    ['paper.campaign', '{}', (v) => `state=${v?.state ?? 'not_started'}`],
     ['paper.execution.policy', '{}', (v) => `policy=${v?.mode}`],
     ['paper.execution.proposals', '{ limit: 20 }', (v) => `proposals=${v?.proposals?.length}`],
     ['paper.performance', '{}', (v) => `points=${v?.points?.length}`],

@@ -18,12 +18,13 @@ Effort figures assume one part-time developer with assistance.
 
 ```
 Current phase:  P5 additive UI and authoritative paper-execution continuation
-Baseline:       d25101f · P5-P9 engineering present · two evidence exits remain
-Verified now:   148 test files / 1049 tests; Electron smoke 36/36;
-                packaged smoke 8/8; warm shell 171ms; interaction p75 8.4ms
+Baseline:       d25101f · additive local continuation through 818bc39
+Verified now:   149 test files / 1056 tests; Electron smoke 36/36;
+                packaged smoke 8/8; warm shell 168ms; interaction p75 8.4ms
                 macOS package + packaged smoke; Windows x64 cross-build only
-BLOCKED ON:     a real Coinbase key · the prospective forward-study result
-                and elapsed seven-day campaign (see "What is left" below)
+WAITING ON:     prospective observations (365 complete days + 30 cost-bearing
+                rebalances) and an elapsed seven-day campaign
+OWNER-DEFERRED: real Coinbase View-only-key verification
 P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
 ```
 
@@ -31,24 +32,29 @@ P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
 
 The fetched P5–P9 baseline is built and tested. Additive shell, profile,
 performance, and execution-boundary work continues without replacing it. A6 is
-closed; two evidence criteria remain open and cannot be closed with fixtures or prose:
+closed; the remaining evidence criteria cannot be closed with fixtures or prose:
 
 - **A6, the screenshot review — CLOSED 2026-08-24.** Two of the states
    `docs/UI-UX.md` §7.9 requires — a blocked paper action and negative evidence
    — could not exist until the paper engine did, which is why it was sequenced
    after Stage B. The owner approved the final review set on 2026-08-24.
 
-1. **P7's exit needs a real view-only Coinbase key.** The connect flow, the
+1. **P7's real-key exit is owner-deferred.** Coinbase keys are personal. The owner
+   explicitly deferred credential-backed verification on 2026-08-27. The connect flow, the
    four-permission probe, the sync, the reconciliation ledger and the canary
    leak sweep are all built and green. What is untested is a real key against
    the real venue, and no amount of fixture work substitutes for it.
 
-2. **P6's real multi-day run is registered but blocked**
+2. **The prospective collector and real multi-day campaign are implemented and waiting on time.**
    (`docs/studies/paper-forward-run-2026-08-22.md`). The profitability gate
-   now reads only integrity-verified migration 49 evidence. The forward study is
-   pre-registered, but its minimum 365 prospective days and 30 cost-bearing
-   rebalances have not elapsed. Until it passes, execution edge is zero and a
-   real week records honest stand-downs rather than fabricated fills.
+   now reads only integrity-verified migration 49 evidence. Migration 50 appends
+   actual scheduler observations, exact no-trade counterfactuals, current costs,
+   market-source hashes, and seven-day campaign events. The study's minimum 365
+   prospective days and 30 cost-bearing rebalances have not elapsed. Until it
+   passes, execution edge is zero and the campaign records honest stand-downs.
+   Settings exposes the explicit safety-stop exercise and normal acknowledgement;
+   campaign completion additionally requires reconciliation. Missing days fail
+   the consecutive run and start a new prospective campaign—none are backfilled.
 
 Not in scope, and deliberately: P10 webhook ingestion and P11 live-trading
 preparation, both gated in §4.

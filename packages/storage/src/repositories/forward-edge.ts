@@ -1,5 +1,6 @@
 import {
   hashForwardEdgePlan,
+  nonNegativeDecimal,
   sha256Hex,
   type ForwardEdgeStudyPlan,
   type ForwardEdgeStudyResult,
@@ -7,6 +8,39 @@ import {
 } from '@coqui/core';
 
 import type { Db } from '../sqlite/index.js';
+
+const DAY_MS = 86_400_000;
+
+export interface ForwardEdgeObservationRecord {
+  readonly id: string;
+  readonly planHash: string;
+  readonly profileId: string;
+  readonly dayUtc: number;
+  readonly runId: string;
+  readonly observedAt: number;
+  readonly actualEquityUsd: string | null;
+  readonly holdEquityUsd: string | null;
+  readonly noTradeEquityUsd: string | null;
+  readonly turnoverUsd: string;
+  readonly recordedCostUsd: string;
+  readonly marketPricesJson: string;
+  readonly valuationComplete: boolean;
+  readonly stateHash: string;
+  readonly provenanceJson: string;
+  readonly evidenceHash: string;
+}
+
+export interface PaperCampaignStatus {
+  readonly id: string;
+  readonly kind: 'zero_edge_stand_down' | 'validated_unattended';
+  readonly startDayUtc: number;
+  readonly requiredDays: 7;
+  readonly observedDays: number;
+  readonly killSwitchExercised: boolean;
+  readonly killSwitchAcknowledged: boolean;
+  readonly reconciled: boolean;
+  readonly state: 'registered' | 'running' | 'completed' | 'failed';
+}
 
 export interface ForwardEdgeStudyStatus {
   readonly plan: ForwardEdgeStudyPlan | null;
@@ -158,4 +192,129 @@ export function readProfitabilityEstimateEvidence(
     sourceHashes: JSON.parse(row.source_hashes_json) as string[],
     integrityVerified: true,
   });
+}
+
+interface ObservationRow {
+  id: string; plan_hash: string; profile_id: string; day_utc: number; run_id: string;
+  observed_at: number; actual_equity_usd_text: string | null; hold_equity_usd_text: string | null;
+  no_trade_equity_usd_text: string | null; turnover_usd_text: string;
+  recorded_cost_usd_text: string; market_prices_json: string; valuation_complete: number;
+  state_hash: string; provenance_json: string; evidence_hash: string;
+}
+
+function observationFromRow(row: ObservationRow): ForwardEdgeObservationRecord {
+  return Object.freeze({
+    id: row.id, planHash: row.plan_hash, profileId: row.profile_id, dayUtc: row.day_utc,
+    runId: row.run_id, observedAt: row.observed_at,
+    actualEquityUsd: row.actual_equity_usd_text, holdEquityUsd: row.hold_equity_usd_text,
+    noTradeEquityUsd: row.no_trade_equity_usd_text, turnoverUsd: row.turnover_usd_text,
+    recordedCostUsd: row.recorded_cost_usd_text, marketPricesJson: row.market_prices_json,
+    valuationComplete: row.valuation_complete === 1, stateHash: row.state_hash,
+    provenanceJson: row.provenance_json, evidenceHash: row.evidence_hash,
+  });
+}
+
+export function saveForwardEdgeObservation(
+  observation: ForwardEdgeObservationRecord,
+  database: Db,
+): boolean {
+  for (const value of [observation.turnoverUsd, observation.recordedCostUsd,
+    observation.actualEquityUsd, observation.holdEquityUsd, observation.noTradeEquityUsd]) {
+    if (value !== null) nonNegativeDecimal(value);
+  }
+  JSON.parse(observation.marketPricesJson) as unknown;
+  JSON.parse(observation.provenanceJson) as unknown;
+  const prior = database.prepare(`SELECT * FROM forward_edge_observations_v1
+    WHERE plan_hash = ? AND profile_id = ? AND day_utc = ?`)
+    .get(observation.planHash, observation.profileId, observation.dayUtc) as
+      unknown as ObservationRow | undefined;
+  if (prior !== undefined) {
+    if (JSON.stringify(observationFromRow(prior)) !== JSON.stringify(observation)) {
+      throw new Error('Forward edge observation cannot be replaced.');
+    }
+    return false;
+  }
+  return database.prepare(`INSERT INTO forward_edge_observations_v1
+    (id, plan_hash, profile_id, day_utc, run_id, observed_at, actual_equity_usd_text,
+      hold_equity_usd_text, no_trade_equity_usd_text, turnover_usd_text,
+      recorded_cost_usd_text, market_prices_json, valuation_complete, state_hash,
+      provenance_json, evidence_hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  ).run(observation.id, observation.planHash, observation.profileId, observation.dayUtc,
+    observation.runId, observation.observedAt, observation.actualEquityUsd,
+    observation.holdEquityUsd, observation.noTradeEquityUsd, observation.turnoverUsd,
+    observation.recordedCostUsd, observation.marketPricesJson,
+    observation.valuationComplete ? 1 : 0, observation.stateHash,
+    observation.provenanceJson, observation.evidenceHash).changes === 1;
+}
+
+export function listForwardEdgeObservations(
+  planHash: string,
+  profileId: string,
+  database: Db,
+): readonly ForwardEdgeObservationRecord[] {
+  const rows = database.prepare(`SELECT * FROM forward_edge_observations_v1
+    WHERE plan_hash = ? AND profile_id = ? ORDER BY day_utc, id`)
+    .all(planHash, profileId) as unknown as ObservationRow[];
+  return Object.freeze(rows.map(observationFromRow));
+}
+
+export function ensurePaperCampaign(input: {
+  readonly profileId: string;
+  readonly kind: PaperCampaignStatus['kind'];
+  readonly startDayUtc: number;
+  readonly registeredAt: number;
+}, database: Db): PaperCampaignStatus {
+  const planHash = sha256Hex(JSON.stringify({ ...input, requiredDays: 7 }));
+  const id = sha256Hex(`paper-campaign:${planHash}`);
+  database.prepare(`INSERT OR IGNORE INTO paper_campaign_plans_v1
+    (id, profile_id, kind, start_day_utc, required_days, registered_at, plan_hash)
+    VALUES (?, ?, ?, ?, 7, ?, ?)`
+  ).run(id, input.profileId, input.kind, input.startDayUtc, input.registeredAt, planHash);
+  return readPaperCampaign(id, database)!;
+}
+
+export function appendPaperCampaignEvent(input: {
+  readonly campaignId: string; readonly dayUtc: number; readonly runId: string;
+  readonly status: 'observed' | 'kill_switch_exercised' | 'kill_switch_acknowledged' |
+    'reconciled' | 'failed';
+  readonly at: number; readonly detail: Record<string, unknown>;
+}, database: Db): boolean {
+  const detailJson = JSON.stringify(input.detail);
+  const evidenceHash = sha256Hex(JSON.stringify({ ...input, detail: input.detail }));
+  const id = sha256Hex(`paper-campaign-event:${input.campaignId}:${input.status}:${input.dayUtc}:${input.runId}`);
+  return database.prepare(`INSERT OR IGNORE INTO paper_campaign_events_v1
+    (id, campaign_id, day_utc, run_id, status, at, evidence_hash, detail_json)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+  ).run(id, input.campaignId, input.dayUtc, input.runId, input.status, input.at,
+    evidenceHash, detailJson).changes === 1;
+}
+
+export function readPaperCampaign(id: string, database: Db): PaperCampaignStatus | null {
+  const plan = database.prepare('SELECT * FROM paper_campaign_plans_v1 WHERE id = ?').get(id) as
+    unknown as { id: string; kind: PaperCampaignStatus['kind']; start_day_utc: number;
+      required_days: 7 } | undefined;
+  if (plan === undefined) return null;
+  const rows = database.prepare(`SELECT day_utc, status FROM paper_campaign_events_v1
+    WHERE campaign_id = ? ORDER BY day_utc, at, id`).all(id) as unknown as
+      Array<{ day_utc: number; status: string }>;
+  const observed = new Set(rows.filter((row) => row.status === 'observed' &&
+    row.day_utc >= plan.start_day_utc && row.day_utc < plan.start_day_utc + 7 * DAY_MS)
+    .map((row) => row.day_utc));
+  const failed = rows.some((row) => row.status === 'failed');
+  const killSwitchExercised = rows.some((row) => row.status === 'kill_switch_exercised');
+  const killSwitchAcknowledged = rows.some((row) => row.status === 'kill_switch_acknowledged');
+  const reconciled = rows.some((row) => row.status === 'reconciled');
+  const completed = observed.size === 7 && killSwitchExercised && killSwitchAcknowledged && reconciled;
+  return Object.freeze({
+    id: plan.id, kind: plan.kind, startDayUtc: plan.start_day_utc, requiredDays: 7,
+    observedDays: observed.size, killSwitchExercised, killSwitchAcknowledged, reconciled,
+    state: failed ? 'failed' : completed ? 'completed' : observed.size > 0 ? 'running' : 'registered',
+  });
+}
+
+export function latestPaperCampaign(profileId: string, database: Db): PaperCampaignStatus | null {
+  const row = database.prepare(`SELECT id FROM paper_campaign_plans_v1
+    WHERE profile_id = ? ORDER BY registered_at DESC, id DESC LIMIT 1`)
+    .get(profileId) as { id: string } | undefined;
+  return row === undefined ? null : readPaperCampaign(row.id, database);
 }

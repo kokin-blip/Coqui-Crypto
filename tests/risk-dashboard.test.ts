@@ -107,6 +107,7 @@ describe('the gate cannot be edited from the UI', () => {
     // one from being added without the reasoning being revisited.
     expect(CHANNEL_KINDS.write).toEqual([
       'accounts.profile.switch',
+      'paper.campaign.kill-switch',
       'paper.execution.policy.set',
       'paper.execution.prepare',
       'paper.execution.review',

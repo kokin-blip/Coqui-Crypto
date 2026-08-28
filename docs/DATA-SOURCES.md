@@ -19,6 +19,10 @@ smoke test before its limits or response shape become a runtime dependency.
 5. **Do not buy an aggregator yet.** Free exchange history is sufficient to
    re-derive the current price-based strategies. Paid history requires a
    pre-registered study showing that a specific unavailable feature is needed.
+6. **TradingView is not a Coqui research or execution source.** Its visible and
+   exportable chart history does not grant non-display or automated-processing
+   rights. Coqui does not scrape it, call undocumented endpoints, or use it for
+   backtests, risk, reconciliation, pricing, or paper decisions.
 
 ## Sources to use
 
@@ -82,6 +86,36 @@ first-party archive exists: provenance is weaker and the upstream data may have
 been normalized or republished.
 
 Source: [CryptoDataDownload free historical data](https://www.cryptodatadownload.com/data/)
+
+### TradingView — evaluated, not adopted
+
+TradingView can display long daily histories and lets a person export the data
+already loaded in a chart. That makes it useful for a manual visual cross-check,
+but not automatically usable as an application dataset.
+
+- TradingView's Advanced Charts `getBars` interface is an API that asks an
+  integrator's own datafeed for bars; it is not a TradingView historical-data
+  API. TradingView's own tutorial obtains the sample bars from other providers.
+- The free chart tier currently exposes a bounded intraday history; daily-based
+  charts can show a longer range. Those are product display limits, not a stable
+  acquisition contract.
+- TradingView's current policy licenses its market data for display use and
+  explicitly prohibits non-display processing including automated decisions,
+  price referencing, risk controls, and machine-driven use. Its support policy
+  also prohibits automated collection and scraping.
+- Manual CSV export remains a user feature. Coqui will not import those files
+  into research or decision evidence without written provider/data-owner rights
+  that expressly cover the intended processing and redistribution.
+
+Therefore no TradingView adapter, scraper, or dataset import is added. Coqui's
+existing `lightweight-charts` dependency is only a local renderer for data Coqui
+already has lawful provenance for; it does not fetch TradingView market data.
+
+Sources: [Datafeed API](https://www.tradingview.com/charting-library-docs/latest/connecting_data/Datafeed-API/),
+[chart-data export](https://www.tradingview.com/support/solutions/43000537255-how-to-export-chart-data/),
+[historical bar limits](https://www.tradingview.com/support/solutions/43000480679-historical-intraday-data-bars-and-limits-explained/),
+[TradingView policies](https://www.tradingview.com/policies/), and
+[automated-collection policy](https://www.tradingview.com/support/solutions/43000674726-why-is-my-account-banned-due-to-suspicious-activity/).
 
 ## Reference providers
 

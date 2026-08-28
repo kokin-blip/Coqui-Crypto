@@ -2,6 +2,7 @@ import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 
 import { DeferredPanel } from './DeferredPanel.js';
 import { ExecutionPolicySettings } from './ExecutionPolicySettings.js';
+import { PaperCampaignSettings } from './PaperCampaignSettings.js';
 import { useChannel } from '../query/use-channel.js';
 
 type SettingsView = ChannelResponse<'accounts.settings'>;
@@ -56,6 +57,7 @@ export function Settings({ client }: { readonly client: CoquiClient }): React.JS
       </p>
 
       <ExecutionPolicySettings client={client} />
+      <PaperCampaignSettings client={client} />
 
       <DeferredPanel
         title="Data sources"

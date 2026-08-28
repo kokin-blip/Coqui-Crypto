@@ -152,6 +152,30 @@ export function listPaperFillPerformanceFacts(
   })));
 }
 
+export function listPaperFillPerformanceFactsForRun(
+  profileId: string,
+  runId: string,
+  database: Db,
+): readonly PaperFillPerformanceFact[] {
+  const rows = database.prepare(`
+    SELECT f.order_id, o.product_id, o.side, f.quantity_text, f.execution_price_text,
+           f.notional_text, f.venue_fee_text, f.spread_cost_text,
+           f.slippage_cost_text, f.impact_cost_text, f.filled_at, f.market_snapshot_hash
+    FROM paper_fills_v3 f
+    JOIN paper_orders_v3 o ON o.id = f.order_id
+    WHERE f.profile_id = ? AND o.run_id = ?
+    ORDER BY f.filled_at, f.id
+  `).all(profileId, runId) as unknown as Array<Record<string, unknown>>;
+  return Object.freeze(rows.map((row) => Object.freeze({
+    orderId: String(row['order_id']), productId: String(row['product_id']),
+    side: row['side'] as 'buy' | 'sell', quantity: String(row['quantity_text']),
+    executionPrice: String(row['execution_price_text']), notionalUsd: String(row['notional_text']),
+    venueFeeUsd: String(row['venue_fee_text']), spreadUsd: String(row['spread_cost_text']),
+    slippageUsd: String(row['slippage_cost_text']), impactUsd: String(row['impact_cost_text']),
+    filledAt: Number(row['filled_at']), marketSnapshotHash: String(row['market_snapshot_hash']),
+  })));
+}
+
 export function listPaperPerformanceDayFacts(
   profileId: string,
   dayUtc: number,

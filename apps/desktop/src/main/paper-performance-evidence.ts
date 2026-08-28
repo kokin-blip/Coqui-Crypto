@@ -10,6 +10,7 @@ import {
   listPaperDailyValuationEvidence,
   savePaperDailyValuationEvidence,
   type Db,
+  type PaperDailyValuationEvidence,
 } from '@coqui/storage';
 
 interface EvidencePosition {
@@ -41,9 +42,10 @@ export async function capturePaperPerformanceEvidence(input: {
   readonly database: Db;
   readonly clock: Clock;
   readonly priceSource: PriceSource;
-}): Promise<void> {
+}): Promise<PaperDailyValuationEvidence> {
   const dayUtc = Math.floor(input.scheduledForMs / 86_400_000) * 86_400_000;
-  if (getPaperDailyValuationEvidence(input.profileId, dayUtc, input.database) !== null) return;
+  const existing = getPaperDailyValuationEvidence(input.profileId, dayUtc, input.database);
+  if (existing !== null) return existing;
   const view = await paperPortfolioView(
     { database: input.database, clock: input.clock, priceSource: input.priceSource },
     input.profileId,
@@ -76,10 +78,12 @@ export async function capturePaperPerformanceEvidence(input: {
     cashUsd: view.cashUsd, equityUsd: view.totalValueUsd, benchmarkUsd,
     unpricedCount: view.unpricedCount, positionsJson, provenanceJson,
   }));
-  savePaperDailyValuationEvidence({
+  const evidence = {
     id: sha256Hex(`paper-daily:${input.profileId}:${dayUtc}`),
     profileId: input.profileId, dayUtc, capturedAt: view.asOfMs,
     cashUsd: view.cashUsd, equityUsd: view.totalValueUsd, benchmarkUsd,
     unpricedCount: view.unpricedCount, positionsJson, provenanceJson, evidenceHash,
-  }, input.database);
+  } satisfies PaperDailyValuationEvidence;
+  savePaperDailyValuationEvidence(evidence, input.database);
+  return evidence;
 }

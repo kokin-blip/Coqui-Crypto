@@ -202,6 +202,8 @@ describe('the sweep covers the whole registry', () => {
       || channel === 'portfolio.allocation'
       || channel === 'paper.portfolio'
       || channel === 'paper.execution.proposal'
+      || channel === 'paper.campaign'
+      || channel === 'paper.campaign.kill-switch'
       || channel === 'paper.execution.policy.set'
       || channel === 'paper.execution.prepare'
       || channel === 'paper.execution.review'

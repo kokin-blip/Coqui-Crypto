@@ -48,6 +48,7 @@ import {
   listRuntimeIncidents,
   listCoinbaseBalanceDiscrepancies,
   listDisplayUniverse,
+  listForwardEdgeObservations,
   listPaperExecutionProposals,
   listPaperDailyValuationEvidence,
   listPaperFillPerformanceFacts,
@@ -62,9 +63,12 @@ import {
 
 import { createDiagnostics } from './diagnostics.js';
 import { SHIPPED_FORWARD_EDGE_PLAN } from './forward-edge-plan.js';
+import {
+  captureScheduledForwardEvidence,
+} from './forward-edge-runtime.js';
 import { createAlertNotificationPump } from './notifications.js';
 import { createPaperMarketFeed } from './paper-market.js';
-import { capturePaperPerformanceEvidence } from './paper-performance-evidence.js';
+import { createPaperCampaignHandlers } from './paper-campaign-handlers.js';
 import { createCandleSource, createReferenceSources } from './reference-sources.js';
 import { startSchedulerRuntime, type SchedulerRuntime } from './scheduler-runtime.js';
 import type { ChannelHandlers } from './dispatch.js';
@@ -160,7 +164,7 @@ export interface CoquiRuntime {
 export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   const clock = new SystemClock(options.readSystemTime ?? (() => Date.now()));
   const database = openDatabase(options.databasePath);
-  registerForwardEdgeStudy(SHIPPED_FORWARD_EDGE_PLAN, database);
+  const forwardPlanHash = registerForwardEdgeStudy(SHIPPED_FORWARD_EDGE_PLAN, database);
 
   // Every background failure in the application goes through here: a structured
   // log line always, and an incident row when the fault is durable. Before this,
@@ -299,12 +303,18 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
           },
           historicalGrossEdgeLowerBoundPct: paperGrossEdgeLowerBoundPct(options.profileId, database),
           evidenceVerified: () => evidence.track().conversationEligible,
-          captureEvidence: (summary) => capturePaperPerformanceEvidence({
-            profileId: options.profileId,
-            runId: summary.runId,
-            scheduledForMs: summary.scheduledForMs,
-            database, clock, priceSource,
-          }),
+          captureEvidence: async (summary) => {
+            await captureScheduledForwardEvidence({
+              profileId: options.profileId,
+              plan: SHIPPED_FORWARD_EDGE_PLAN,
+              planHash: forwardPlanHash,
+              summary,
+              clock,
+              priceSource,
+              market: paperMarket.view,
+              database,
+            });
+          },
           onUnexpectedError: report,
         },
       });
@@ -312,6 +322,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   if (options.disableScheduler !== true) startScheduler();
 
   const handlers: ChannelHandlers = {
+    ...createPaperCampaignHandlers(options.profileId, clock, database),
     'activity.feed': (payload: { readonly limit: number; readonly cursor: string | null }) => ({
       ok: true,
       value: {
@@ -445,6 +456,10 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     'research.performance': () => research.performance(),
     'research.edge-study': () => {
       const status = readForwardEdgeStudyStatus(database);
+      const observations = status.planHash === null ? []
+        : listForwardEdgeObservations(status.planHash, options.profileId, database);
+      const completedDays = observations.filter((item) => item.valuationComplete).length;
+      const costBearingRebalances = observations.filter((item) => Number(item.turnoverUsd) > 0).length;
       const outcome = status.result?.outcome ?? 'not_registered';
       return { ok: true, value: {
         status: status.plan === null ? 'not_registered' : outcome === 'not_registered' ? 'collecting' : outcome,
@@ -453,9 +468,9 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
         resultHash: status.resultHash,
         registeredAtMs: status.plan?.registeredAtMs ?? null,
         firstEligibleDayUtcMs: status.plan?.firstEligibleDayUtcMs ?? null,
-        completedDays: status.result?.completedDays ?? 0,
+        completedDays: status.result?.completedDays ?? completedDays,
         minimumCompletedDays: 365 as const,
-        costBearingRebalances: status.result?.costBearingRebalances ?? 0,
+        costBearingRebalances: status.result?.costBearingRebalances ?? costBearingRebalances,
         minimumCostBearingRebalances: 30 as const,
         trialUpperBound: 215 as const,
         grossEdgeLowerBoundPct: status.result?.grossEdgeLowerConfidenceBoundPct ?? null,

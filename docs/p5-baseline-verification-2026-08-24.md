@@ -68,3 +68,29 @@ Fixtures and documentation cannot close these:
 The final screenshot review set was owner-approved on 2026-08-24.
 
 The negative TrendVol replacement result remains authoritative and visible. It is not an owner gate and cannot be reinterpreted as validation.
+
+## Prospective runtime and release re-verification — 2026-08-27
+
+Migration 50 adds append-only prospective observations and paper-campaign evidence. The production
+scheduler now records the exact pre-decision paper state, post-decision valuation, no-trade
+counterfactual, one-time execution costs, completed venue prices, and provenance hashes. Once the
+pre-registered minimum sample exists, the runtime deterministically materializes a terminal pass or
+failure; it does not persist or activate a partial result.
+
+- Node.js: 24.15.0; pnpm: 11.9.0
+- Typecheck before build: passed
+- Lint and architectural rules: passed
+- Tests: 149 files / 1,056 tests passed
+- Production build: passed
+- Electron smoke: 36 checks passed; schema 50 opened through the sandboxed production path
+- Performance: 168.0 ms warm useful shell; 8.4 ms interaction p75
+- Sensitivity control: 250.4 ms and correctly over budget
+- Production audit: no known vulnerabilities
+- macOS arm64 DMG/zip: built for `0.1.0-beta.1`
+- macOS packaged smoke: 8 checks passed; schema 50 opened under asar
+- Windows x64 zip/NSIS installer: cross-built on macOS; runtime remains unverified until Windows CI
+- `git diff --check`: passed
+
+The real Coinbase key check is intentionally deferred by the owner because credentials are personal.
+This leaves the P7 evidence exit open without blocking public market data, research, or paper-only use.
+The 365-day study and seven-day campaign also remain open until their real observations accrue.

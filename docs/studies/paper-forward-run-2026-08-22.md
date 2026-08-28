@@ -1,7 +1,7 @@
 # Study — forward paper run against live Coinbase bars
 
 **Registered:** 2026-08-22
-**Status:** REGISTERED, NOT YET RUN
+**Status:** COLLECTOR IMPLEMENTED; AWAITING FIRST REAL UTC OBSERVATION
 **Owner decision it implements:** "Both — simulated in CI, then a real run"
 
 ## Why this exists separately from the CI harness
@@ -20,7 +20,7 @@ This study is registered **before** the run so that its success criteria cannot
 be chosen after seeing the result. That is the same discipline invariant 7
 applies to parameter searches, applied to an operational claim.
 
-## Precondition — currently unmet
+## Precondition and selected campaign
 
 The profitability gate weighs estimated cost against a **registered** per-trade
 gross-edge lower bound. No completed study in this repository has validated one for the shipped
@@ -34,7 +34,7 @@ and therefore cannot exercise the OMS or the reconciliation harness against live
 data. Two options, and the choice belongs to the owner:
 
 1. **Run it as-is.** Records seven honest days of stand-down. Proves scheduling
-   and recovery. Leaves fills and reconciliation unproven against live data.
+   and recovery. Leaves fill-specific reconciliation unproven against live data.
 2. **Wait for the registered forward study.** It must derive an integrity-verified
    conservative edge from at least 365 prospective days and 30 cost-bearing events,
    with the 215-trial upper bound reaching the deflated-Sharpe calculation. That is
@@ -44,6 +44,11 @@ Setting the value without a study behind it would be exactly the false
 confidence invariant 4 exists to prevent, and this document exists partly to make
 that temptation visible.
 
+On 2026-08-27 the owner selected option 1. Migration 50 starts a
+`zero_edge_stand_down` campaign on the first actual daily scheduler observation.
+It records seven consecutive UTC observations prospectively; a missed day fails
+that attempt and the next real observation starts a new one. No day is backfilled.
+
 ## Protocol
 
 | | |
@@ -52,10 +57,11 @@ that temptation visible.
 | Cadence | Daily, `86_400_000` ms, offset 0 — the scheduler's own UTC boundaries |
 | Venue | Coinbase public `/products` and daily candles; no key required |
 | Machine | The owner's Mac, ordinary use, sleeping overnight |
-| Recording | `wallet_decision_runs`, `wallet_execution_journal`, `paper_orders_v3`, `paper_fills_v3`, `runtime_incidents` |
+| Recording | Existing decision/journal/order/fill/incident tables plus immutable `forward_edge_observations_v1`, `paper_campaign_plans_v1`, and `paper_campaign_events_v1` |
 
-Start the app and leave it. No intervention; an intervention ends the run and it
-restarts.
+Start the app and leave it. The only planned intervention is the explicit
+safety-stop exercise in Settings followed by acknowledgement through the normal
+restore path. Any other intervention ends the attempt and it restarts.
 
 ## What will be reported, whatever it says
 
@@ -78,7 +84,11 @@ restarts.
    what the venue said that made it ambiguous.
 4. If fills occur: the reconciliation harness reports a *quantified* divergence,
    whatever its magnitude. A harness that reports nothing has not been exercised.
-5. The kill switch, engaged mid-run, halts paper from both halt sources.
+5. The paper safety stop is explicitly engaged and acknowledged through its
+   normal path. The risk hard-stop source remains deterministically covered and
+   is not manufactured on a real account for this campaign.
+6. Reconciliation completes with aligned/diverged/unverifiable counts. With zero
+   fills it proves the stand-down ledger but leaves the fill-specific P6 exit open.
 
 ## What would count as a failure worth recording
 

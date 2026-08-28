@@ -106,10 +106,12 @@ describe('append-only wallet audit trail', () => {
     expect(() => activateWalletSafetyStop({
       eventId: 'stop-1', profileId: 'family-b', kind: 'other', reason: 'Changed.', at: 11,
     }, database)).toThrow('identity cannot change');
-    acknowledgeWalletSafetyStop({
+    const acknowledgement = {
       eventId: 'ack-1', profileId: 'family-a', reason: 'Reviewed and accepted.', at: 20,
-    }, database);
+    };
+    acknowledgeWalletSafetyStop(acknowledgement, database);
     expect(getWalletSafetyStop('family-a', database)?.active).toBe(false);
+    expect(acknowledgeWalletSafetyStop(acknowledgement, database).active).toBe(false);
     expect(listWalletSafetyStopEvents('family-a', 10, database).map((event) => event.action))
       .toEqual(['acknowledged', 'activated']);
     database.close();

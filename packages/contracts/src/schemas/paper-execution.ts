@@ -53,7 +53,31 @@ const executionResultSchema = z.strictObject({
   refusedCount: z.number().int().nonnegative(),
 }).readonly();
 
+const campaignSchema = z.strictObject({
+  id: sha256HexSchema,
+  kind: z.enum(['zero_edge_stand_down', 'validated_unattended']),
+  startDayUtc: epochMillisecondsSchema,
+  requiredDays: z.literal(7),
+  observedDays: z.number().int().min(0).max(7),
+  killSwitchExercised: z.boolean(),
+  killSwitchAcknowledged: z.boolean(),
+  reconciled: z.boolean(),
+  state: z.enum(['registered', 'running', 'completed', 'failed']),
+}).readonly().nullable();
+
 export const paperExecutionChannelSchemas = {
+  'paper.campaign': {
+    request: emptyPayloadSchema,
+    response: campaignSchema,
+  },
+  'paper.campaign.kill-switch': {
+    request: z.strictObject({
+      commandId: commandIdSchema,
+      action: z.enum(['exercise', 'acknowledge']),
+      explicitConfirmation: z.literal(true),
+    }).readonly(),
+    response: campaignSchema,
+  },
   'paper.execution.policy': {
     request: emptyPayloadSchema,
     response: policySchema,

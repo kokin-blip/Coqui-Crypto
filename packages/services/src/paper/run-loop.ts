@@ -8,6 +8,7 @@ import {
 import {
   appendWalletRunAudit,
   getWalletDecisionRun,
+  listPaperBalances,
   recoverInterruptedPaperOrders,
   saveWalletDecisionRun,
   type Db,
@@ -50,6 +51,8 @@ export interface PaperRunSummary {
   readonly standDown: PaperRunStandDown | null;
   readonly filledCount: number;
   readonly refusedCount: number;
+  /** Exact paper balances before this decision; persisted with the run for replay-safe evidence. */
+  readonly preDecisionBalances: readonly { readonly assetId: string; readonly quantity: string }[];
 }
 
 export interface PaperRunLoopDependencies {
@@ -113,6 +116,10 @@ export function runPaperDecision(
   const { database, profileId } = dependencies;
   const decidedAtMs = dependencies.clock.nowMs();
   const runId = runIdFor(profileId, scheduledForMs);
+  let preDecisionBalances: PaperRunSummary['preDecisionBalances'] = listPaperBalances(
+    profileId,
+    database,
+  ).map(({ assetId, quantity }) => Object.freeze({ assetId, quantity }));
 
   const finish = (standDown: PaperRunStandDown | null, filled = 0, refused = 0): PaperRunSummary => {
     // The decision run is written whatever happened. A stand-down is a decision.
@@ -123,7 +130,7 @@ export function runPaperDecision(
         scheduledFor: scheduledForMs,
         strategyVersion: STRATEGY_VERSION,
         snapshotHash: sha256Hex(`${runId}:${standDown ?? 'traded'}:${filled}`),
-        snapshotJson: JSON.stringify({ standDown, filled, refused }),
+        snapshotJson: JSON.stringify({ standDown, filled, refused, preDecisionBalances }),
         status: 'completed',
         createdAt: decidedAtMs,
         updatedAt: decidedAtMs,
@@ -144,6 +151,7 @@ export function runPaperDecision(
       standDown,
       filledCount: filled,
       refusedCount: refused,
+      preDecisionBalances,
     };
   };
 
@@ -157,7 +165,9 @@ export function runPaperDecision(
       standDown: PaperRunStandDown | null;
       filled: number;
       refused: number;
+      preDecisionBalances?: readonly { readonly assetId: string; readonly quantity: string }[];
     };
+    preDecisionBalances = snapshot.preDecisionBalances?.map((balance) => Object.freeze(balance)) ?? [];
     return {
       profileId,
       runId,
@@ -166,6 +176,7 @@ export function runPaperDecision(
       standDown: snapshot.standDown,
       filledCount: snapshot.filled,
       refusedCount: snapshot.refused,
+      preDecisionBalances,
     };
   }
 

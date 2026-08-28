@@ -56,6 +56,8 @@ describe('channel registry', () => {
       'market-data.prices',
       'market-data.trending',
       'market-data.yields',
+      'paper.campaign',
+      'paper.campaign.kill-switch',
       'paper.execution.policy',
       'paper.execution.policy.set',
       'paper.execution.prepare',
@@ -98,6 +100,7 @@ describe('channel registry', () => {
     // only if the transport knows which channels are commands.
     expect(CHANNEL_KINDS.write).toEqual([
       'accounts.profile.switch',
+      'paper.campaign.kill-switch',
       'paper.execution.policy.set',
       'paper.execution.prepare',
       'paper.execution.review',

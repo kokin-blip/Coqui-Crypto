@@ -182,6 +182,18 @@ export function acknowledgeWalletSafetyStop(
   if (reason.length < 3 || reason.length > 500) {
     throw new Error('A safety-stop acknowledgement reason between 3 and 500 characters is required.');
   }
+  const priorEvent = database.prepare(
+    'SELECT profile_id, action, reason, at FROM wallet_safety_stop_events WHERE id = ?',
+  ).get(acknowledgement.eventId) as unknown as {
+    profile_id: string; action: string; reason: string; at: number;
+  } | undefined;
+  if (priorEvent !== undefined) {
+    const same = priorEvent.profile_id === acknowledgement.profileId &&
+      priorEvent.action === 'acknowledged' && priorEvent.reason === reason &&
+      priorEvent.at === acknowledgement.at;
+    if (!same) throw new Error('A safety-stop event identity cannot change after persistence.');
+    return getWalletSafetyStop(acknowledgement.profileId, database)!;
+  }
   const current = getWalletSafetyStop(acknowledgement.profileId, database);
   if (!current?.active) throw new Error('There is no active safety stop to acknowledge.');
   inTransaction(database, () => {
