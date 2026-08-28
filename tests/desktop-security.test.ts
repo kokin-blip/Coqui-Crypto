@@ -42,6 +42,7 @@ describe('content security policy presence', () => {
     expect(directives.get('default-src')).toBe("'none'");
     // Load-bearing: all network I/O belongs to the main process.
     expect(directives.get('connect-src')).toBe("'none'");
+    expect(directives.get('frame-src')).toBe("'none'");
     expect(directives.get('object-src')).toBe("'none'");
     expect(directives.get('frame-src')).toBe("'none'");
     expect(directives.get('frame-ancestors')).toBe("'none'");

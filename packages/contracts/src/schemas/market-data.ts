@@ -97,6 +97,18 @@ const marketBarSchema = z
   })
   .readonly();
 
+const liveQuoteSchema = z
+  .strictObject({
+    instrument: instrumentIdentitySchema,
+    priceUsd: decimalStringSchema,
+    bestBidUsd: decimalStringSchema.nullable(),
+    bestAskUsd: decimalStringSchema.nullable(),
+    volume24h: decimalStringSchema.nullable(),
+    observedAtMs: epochMillisecondsSchema,
+    sequence: z.number().int().nonnegative().nullable(),
+  })
+  .readonly();
+
 export const marketDataChannelSchemas = {
   'market-data.prices': {
     request: emptyPayloadSchema,
@@ -141,6 +153,22 @@ export const marketDataChannelSchemas = {
         instrument: instrumentIdentitySchema,
         bars: z.array(marketBarSchema).max(2000).readonly(),
         provenance: barProvenanceSchema,
+      })
+      .readonly(),
+  },
+  'market-data.live': {
+    request: emptyPayloadSchema,
+    response: z
+      .strictObject({
+        connection: z.enum(['offline', 'connecting', 'live', 'stale', 'reconnecting']),
+        source: z.literal('coinbase_exchange_ws'),
+        endpointKind: z.literal('public_production'),
+        informationalOnly: z.literal(true),
+        decisionEligible: z.literal(false),
+        subscribedProducts: z.array(z.string().min(1).max(64)).max(100).readonly(),
+        quotes: z.array(liveQuoteSchema).max(100).readonly(),
+        lastMessageAtMs: epochMillisecondsSchema.nullable(),
+        asOfMs: epochMillisecondsSchema,
       })
       .readonly(),
   },

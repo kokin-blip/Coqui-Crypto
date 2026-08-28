@@ -51,6 +51,8 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   // Daily bars only change when a day closes. Polling is pointless; the user
   // refetches by changing the range, which changes the query key.
   'market-data.candles': { refetchIntervalMs: false, staleTimeMs: 60 * MINUTE },
+  // The renderer reads a bounded main-process cache. It never owns the socket.
+  'market-data.live': { refetchIntervalMs: SECOND, staleTimeMs: SECOND },
   // Research runs are immutable once written.
   'research.runs': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
   'research.edge-study': { refetchIntervalMs: 5 * MINUTE, staleTimeMs: 2 * MINUTE },

@@ -1,113 +1,126 @@
-import type { CoquiClient } from '@coqui/contracts';
-import { freshnessBadge, provenanceBadge } from '@coqui/ui-kit';
+import { useEffect, useMemo, useState } from 'react';
+import { Activity, Clock3, Radio, ShieldCheck } from 'lucide-react';
 
-import { DeferredPanel } from './DeferredPanel.js';
+import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
+import { CHART_COLORS, formatUsd, freshnessBadge, provenanceBadge } from '@coqui/ui-kit';
+
+import { FinancialChart } from './FinancialChart.js';
 import { useChannel } from '../query/use-channel.js';
 
-/**
- * Reference market data.
- *
- * Every figure on this screen is informational and none of it reaches a
- * strategy — the service types it `informationalOnly` and `neverASignal`, and
- * the screen repeats that where a user can see it. Trending in particular ranks
- * what people are *searching for*, not what is performing.
- */
+type LiveView = ChannelResponse<'market-data.live'>;
+type LiveQuote = LiveView['quotes'][number];
 
-function Provenance({
-  source,
-  freshness,
-  ageMs,
-}: {
-  readonly source: string;
-  readonly freshness: 'fresh' | 'aging' | 'stale' | 'unknown';
-  readonly ageMs: number | null;
+function sourceState(connection: LiveView['connection']): string {
+  switch (connection) {
+    case 'live': return 'Live';
+    case 'stale': return 'Stale';
+    case 'connecting': return 'Connecting';
+    case 'reconnecting': return 'Reconnecting';
+    case 'offline': return 'Offline';
+  }
+}
+
+function QuoteValue({ value }: { readonly value: string | null }): React.JSX.Element {
+  return <>{value === null ? '—' : (formatUsd(value)?.text ?? value)}</>;
+}
+
+function MarketDetail({ client, productId, quote }: {
+  readonly client: CoquiClient;
+  readonly productId: string;
+  readonly quote: LiveQuote | undefined;
 }): React.JSX.Element {
-  const fresh = freshnessBadge(freshness, ageMs);
-  const badge = provenanceBadge({ source, informationalOnly: true });
+  const candles = useChannel(client, 'market-data.candles', {
+    instrument: { venue: 'coinbase', productId, productType: 'spot' },
+    lookbackDays: 365,
+  });
+  const series = useMemo(() => candles.kind !== 'ready' ? [] : [{
+    id: 'market-close', label: `${productId} completed daily close`, color: CHART_COLORS.primary,
+    values: candles.value.bars.map((bar) => ({
+      day: new Date(bar.startTimeMs).toISOString().slice(0, 10), value: bar.close,
+    })),
+  }], [candles, productId]);
+
   return (
-    <p className="opacity-70">
-      <span aria-hidden="true">{fresh.marker}</span> {fresh.text} · {badge.text}
-      <span className="sr-only">
-        {' '}
-        {fresh.label}. {badge.label}.
-      </span>
-    </p>
+    <section className="market-detail" aria-labelledby="market-detail-heading">
+      <div className="market-detail-heading">
+        <div><p className="section-label">Selected market</p><h2 id="market-detail-heading">{productId}</h2></div>
+        <div className="market-last-price"><span>Last observed</span><strong><QuoteValue value={quote?.priceUsd ?? null} /></strong></div>
+      </div>
+      <dl className="market-quote-strip">
+        <div><dt>Best bid</dt><dd><QuoteValue value={quote?.bestBidUsd ?? null} /></dd></div>
+        <div><dt>Best ask</dt><dd><QuoteValue value={quote?.bestAskUsd ?? null} /></dd></div>
+        <div><dt>24h volume</dt><dd>{quote?.volume24h ?? '—'}</dd></div>
+        <div><dt>Observed</dt><dd>{quote === undefined ? 'Awaiting quote' : new Date(quote.observedAtMs).toISOString().slice(11, 19) + 'Z'}</dd></div>
+      </dl>
+      <div className="market-chart-panel">
+        <div className="panel-heading">
+          <div><p className="section-label">Verified venue history</p><h3>Completed daily prices</h3></div>
+          <span className="data-boundary"><ShieldCheck size={14} aria-hidden="true" /> Coinbase REST · complete bars only</span>
+        </div>
+        {candles.kind === 'loading' && <div className="chart-skeleton" aria-label="Loading completed daily prices" />}
+        {candles.kind === 'ready' && <FinancialChart series={series} summary={`${candles.value.bars.length} completed Coinbase daily closes for ${productId}.`} />}
+        {candles.kind !== 'loading' && candles.kind !== 'ready' && <p role="alert" className="empty-copy">Completed daily history unavailable. No alternative source was substituted.</p>}
+      </div>
+    </section>
+  );
+}
+
+function ReferenceContext({ client }: { readonly client: CoquiClient }): React.JSX.Element {
+  const fearGreed = useChannel(client, 'market-data.fear-greed', {});
+  const trending = useChannel(client, 'market-data.trending', {});
+  return (
+    <section className="market-reference" aria-labelledby="reference-context-heading">
+      <div className="panel-heading">
+        <div><p className="section-label">Human context only</p><h2 id="reference-context-heading">Reference signals</h2></div>
+        <span className="data-boundary"><ShieldCheck size={14} aria-hidden="true" /> Never a strategy input</span>
+      </div>
+      <div className="reference-grid">
+        <div>
+          <span className="reference-name">Market sentiment</span>
+          <strong>{fearGreed.kind === 'ready' ? `${fearGreed.value.data.value} · ${fearGreed.value.data.classification}` : 'Unavailable'}</strong>
+          {fearGreed.kind === 'ready' && <small>{freshnessBadge(fearGreed.value.provenance.freshness, fearGreed.value.provenance.ageMs).text} · {provenanceBadge({ source: fearGreed.value.provenance.source, informationalOnly: true }).text}</small>}
+        </div>
+        <div><span className="reference-name">Trending searches</span><strong>{trending.kind === 'ready' ? `${trending.value.data.length} observed` : 'Unavailable'}</strong><small>Attention, not performance</small></div>
+      </div>
+    </section>
   );
 }
 
 export function Markets({ client }: { readonly client: CoquiClient }): React.JSX.Element {
-  const fearGreed = useChannel(client, 'market-data.fear-greed', {});
-  const trending = useChannel(client, 'market-data.trending', {});
+  const live = useChannel(client, 'market-data.live', {});
+  const [selected, setSelected] = useState<string | null>(null);
+  const products = useMemo(() => live.kind === 'ready' ? live.value.subscribedProducts : [], [live]);
+
+  useEffect(() => {
+    if (selected === null && products[0] !== undefined) setSelected(products[0]);
+    if (selected !== null && products.length > 0 && !products.includes(selected)) setSelected(products[0] ?? null);
+  }, [products, selected]);
+
+  const quote = live.kind === 'ready' && selected !== null
+    ? live.value.quotes.find((item) => item.instrument.productId === selected)
+    : undefined;
 
   return (
-    <section aria-labelledby="markets-heading" className="space-y-4">
-      <h2 id="markets-heading" className="font-semibold">
-        Markets
-      </h2>
-
-      <p role="note" className="border-l-2 pl-3">
-        Reference data. None of this reaches a trading decision — it is context for a
-        person, not an input to a strategy.
-      </p>
-
-      <div>
-        <h3 className="font-semibold">Sentiment</h3>
-        {fearGreed.kind === 'loading' && <p aria-live="polite">Loading…</p>}
-        {fearGreed.kind === 'ready' && (
-          <>
-            <p className="text-base tabular-nums">
-              {fearGreed.value.data.value} · {fearGreed.value.data.classification}
-            </p>
-            <Provenance
-              source={fearGreed.value.provenance.source}
-              freshness={fearGreed.value.provenance.freshness}
-              ageMs={fearGreed.value.provenance.ageMs}
-            />
-          </>
-        )}
-        {fearGreed.kind === 'failed' && (
-          <p>Sentiment unavailable — {fearGreed.issues.map((i) => i.code).join(', ')}.</p>
-        )}
+    <div className="market-workspace">
+      <section className="market-source-bar" aria-label="Live market data boundary">
+        <span className={`connection-state connection-${live.kind === 'ready' ? live.value.connection : 'offline'}`}><Radio size={15} aria-hidden="true" /> {live.kind === 'ready' ? sourceState(live.value.connection) : 'Unavailable'}</span>
+        <span><Activity size={15} aria-hidden="true" /> Coinbase public market feed</span>
+        <span><Clock3 size={15} aria-hidden="true" /> {live.kind === 'ready' && live.value.lastMessageAtMs !== null ? `last message ${new Date(live.value.lastMessageAtMs).toISOString().slice(11, 19)}Z` : 'awaiting first message'}</span>
+        <span className="market-boundary-copy">Display only · never used for research, risk, or execution</span>
+      </section>
+      <div className="market-layout">
+        <aside className="market-watchlist" aria-labelledby="watchlist-heading">
+          <div className="watchlist-heading"><div><p className="section-label">Profile universe</p><h2 id="watchlist-heading">Watchlist</h2></div><span>{products.length}</span></div>
+          {products.length === 0 ? <p className="empty-copy">No Coinbase USD products are tracked for this profile.</p> : (
+            <ul>{products.map((product) => {
+              const item = live.kind === 'ready' ? live.value.quotes.find((candidate) => candidate.instrument.productId === product) : undefined;
+              return <li key={product}><button type="button" aria-pressed={selected === product} onClick={() => setSelected(product)}><span><strong>{product.replace('-USD', '')}</strong><small>{product}</small></span><span className="watch-price"><QuoteValue value={item?.priceUsd ?? null} /></span></button></li>;
+            })}</ul>
+          )}
+        </aside>
+        {selected === null ? <section className="market-detail market-empty"><h2>Select a tracked market</h2><p>Completed Coinbase history and live display quotes will appear here without changing any decision dataset.</p></section> : <MarketDetail client={client} productId={selected} quote={quote} />}
       </div>
-
-      <div>
-        <h3 className="font-semibold">Trending searches</h3>
-        <p className="opacity-70">
-          What people are looking up, not what is performing.
-        </p>
-        {trending.kind === 'loading' && <p aria-live="polite">Loading…</p>}
-        {trending.kind === 'ready' && trending.value.data.length === 0 && (
-          <p>Nothing trending right now.</p>
-        )}
-        {trending.kind === 'ready' && trending.value.data.length > 0 && (
-          <>
-            <ul>
-              {trending.value.data.map((coin) => (
-                <li key={coin.coingeckoId}>
-                  {coin.symbol} · {coin.name}
-                  {coin.marketCapRank !== null && (
-                    <span className="opacity-70"> · rank {coin.marketCapRank}</span>
-                  )}
-                </li>
-              ))}
-            </ul>
-            <Provenance
-              source={trending.value.provenance.source}
-              freshness={trending.value.provenance.freshness}
-              ageMs={trending.value.provenance.ageMs}
-            />
-          </>
-        )}
-        {trending.kind === 'failed' && (
-          <p>Trending unavailable — {trending.issues.map((i) => i.code).join(', ')}.</p>
-        )}
-      </div>
-
-      <DeferredPanel
-        title="Watchlist"
-        phase="P8"
-        reason="The predecessor's watchlist tracked attributed public blockchain addresses, not coins. It stays out until attribution can be modelled without implying it has been verified."
-      />
-    </section>
+      <ReferenceContext client={client} />
+    </div>
   );
 }

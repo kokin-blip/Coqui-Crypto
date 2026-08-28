@@ -1,0 +1,97 @@
+.route-content {
+  width: min(1440px, 100%);
+  padding: var(--coqui-space-5) clamp(20px, 3vw, 48px) var(--coqui-space-7);
+  margin: 0 auto;
+  animation: route-enter var(--coqui-duration-route) var(--coqui-ease-standard) both;
+}
+
+@keyframes route-enter {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.route-screen,
+.screen-stack {
+  display: grid;
+  gap: var(--density-section-gap);
+}
+
+.screen-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--coqui-space-4);
+  min-height: 58px;
+  padding-bottom: var(--coqui-space-4);
+  border-bottom: 1px solid var(--coqui-border);
+}
+
+.screen-heading h1 {
+  margin: 2px 0 0;
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+
+.screen-heading h1:focus {
+  outline: none;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--coqui-text-subtle);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.screen-mode {
+  padding: 5px 9px;
+  color: var(--coqui-positive);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  border: 1px solid var(--coqui-positive);
+  border-radius: var(--coqui-radius-sm);
+}
+
+.route-screen > section,
+.route-screen > .screen-stack > section,
+.panel {
+  padding: var(--coqui-space-5);
+  background: var(--coqui-surface-1);
+  border: 1px solid var(--coqui-border);
+  border-radius: var(--coqui-radius-lg);
+  box-shadow: var(--coqui-shadow);
+}
+
+.route-screen h2,
+.route-screen h3,
+.panel h2,
+.panel h3 {
+  color: var(--coqui-text);
+  letter-spacing: -0.015em;
+}
+
+.route-screen table {
+  border-collapse: collapse;
+}
+
+.route-screen tr {
+  min-height: var(--density-row-height);
+  border-color: var(--coqui-border);
+}
+
+.route-screen th,
+.route-screen td {
+  padding-top: var(--density-cell-padding-y);
+  padding-bottom: var(--density-cell-padding-y);
+}
+
+.route-screen .opacity-70,
+.route-screen .opacity-80,
+.muted {
+  color: var(--coqui-text-muted);
+  opacity: 1;
+}

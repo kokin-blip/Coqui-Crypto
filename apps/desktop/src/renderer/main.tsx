@@ -4,7 +4,13 @@ import { createRoot } from 'react-dom/client';
 
 import { App } from './app/App.js';
 import { createIpcClient } from './query/client.js';
-import './styles.css';
+import './styles/base.css';
+import './styles/shell.css';
+import './styles/primitives.css';
+import './styles/data-visualization.css';
+import './styles/features.css';
+import './styles/motion.css';
+import './styles/workstation.css';
 
 const client = createIpcClient();
 

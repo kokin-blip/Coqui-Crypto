@@ -62,6 +62,8 @@ import {
 } from '@coqui/storage';
 
 import { createDiagnostics } from './diagnostics.js';
+import { CoinbaseMarketStreamService } from './coinbase-market-stream.js';
+import { createMarketHandlers } from './market-handlers.js';
 import { SHIPPED_FORWARD_EDGE_PLAN } from './forward-edge-plan.js';
 import {
   captureScheduledForwardEvidence,
@@ -221,6 +223,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     }),
     candles,
   });
+  const liveMarket = new CoinbaseMarketStreamService({ nowMs: () => clock.nowMs(), onUnexpectedError: report });
 
   // PortfolioAllocationPolicyService is deliberately not wired: it only offers
   // savePolicy/clearPolicy, and there are no write channels before P6.
@@ -277,6 +280,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   let disposed = false;
   const startScheduler = (): void => {
     if (disposed || scheduler !== null) return;
+    liveMarket.start(trackedAssets().map((asset) => asset.instrument.productId));
     scheduler = startSchedulerRuntime({
         database,
         clock,
@@ -442,16 +446,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       paperHoldings = (await portfolio.portfolioView()).holdings;
       return { ok: true, value: paperExecution().review(payload) };
     },
-    'market-data.prices': () => marketData.prices(),
-    'market-data.markets': () => marketData.markets(),
-    'market-data.fear-greed': () => marketData.fearGreed(),
-    'market-data.trending': () => marketData.trending(),
-    'market-data.yields': () => marketData.yields(),
-    'market-data.news': (payload: { readonly limit: number }) => marketData.news(payload.limit),
-    'market-data.candles': (payload: {
-      readonly instrument: Parameters<MarketDisplayQueryService['candles']>[0];
-      readonly lookbackDays: number;
-    }) => marketData.candles(payload.instrument, payload.lookbackDays),
+    ...createMarketHandlers(marketData, liveMarket, trackedAssets),
     'research.runs': () => research.runs(),
     'research.performance': () => research.performance(),
     'research.edge-study': () => {
@@ -587,6 +582,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       if (disposed) return;
       disposed = true;
       scheduler?.dispose();
+      liveMarket.dispose();
       if (coinGeckoHttp !== http) coinGeckoHttp.destroy();
       http.destroy();
       rateLimiters.destroyAll();

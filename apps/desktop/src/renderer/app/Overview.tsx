@@ -12,9 +12,12 @@ export function Overview({ client }: { readonly client: CoquiClient }): React.JS
   const portfolio = useChannel(client, 'portfolio.view', {});
   const risk = useChannel(client, 'risk.dashboard', {});
   const reconciliation = useChannel(client, 'portfolio.reconciliation', {});
+  const status = useChannel(client, 'app.status-rail', {});
   const activity = useChannel(client, 'activity.feed', { limit: 4, cursor: null });
   const proposals = useChannel(client, 'paper.execution.proposals', { limit: 1 });
   const performance = useChannel(client, 'paper.performance', {});
+  const edgeStudy = useChannel(client, 'research.edge-study', {});
+  const campaign = useChannel(client, 'paper.campaign', {});
   const chart = useMemo(() => performance.kind !== 'ready' ? [] : [{
     id: 'overview-equity', label: 'Paper equity', color: CHART_COLORS.primary,
     values: performance.value.points.map((point) => ({
@@ -36,21 +39,30 @@ export function Overview({ client }: { readonly client: CoquiClient }): React.JS
         <p>The leading strategy remains unvalidated. The complete evidence and risk chain is rerun at submission.</p>
       </section>
 
-      <section className="overview-grid" aria-label="Portfolio and operating exposure">
-        <article className="panel overview-number">
+      <section className="overview-health" aria-label="Portfolio and operating exposure">
+        <article className="overview-number">
           <p className="eyebrow">Actual portfolio</p>
           <strong>{portfolio.kind === 'ready' ? formatUsd(portfolio.value.valuation.totalValueUsd)?.text : 'Unavailable'}</strong>
           <span>{portfolio.kind === 'ready' ? `${portfolio.value.valuation.unpricedCount} unpriced · ${portfolio.value.holdings.length} holdings` : 'Portfolio evidence loading'}</span>
         </article>
-        <article className="panel overview-number">
+        <article className="overview-number">
           <p className="eyebrow">Risk permission</p>
           <strong>{risk.kind === 'ready' ? risk.value.stage.replaceAll('_', ' ').toUpperCase() : 'UNKNOWN'}</strong>
           <span>{risk.kind === 'ready' ? (risk.value.blockReason ?? `Sizing ×${risk.value.exposureScale}`) : 'Risk evidence loading'}</span>
         </article>
-        <article className="panel overview-number">
+        <article className="overview-number">
           <p className="eyebrow">Reconciliation</p>
-          <strong>{reconciliation.kind === 'ready' && reconciliation.value.unresolvedCount === 0 ? 'HEALTHY' : 'REVIEW'}</strong>
-          <span>{reconciliation.kind === 'ready' ? `${reconciliation.value.unresolvedCount} unresolved` : 'State loading'}</span>
+          <strong>{status.kind === 'ready' && status.value.reconciliation.neverRun
+            ? 'NOT RUN'
+            : reconciliation.kind === 'ready' && reconciliation.value.unresolvedCount === 0 ? 'SETTLED' : 'REVIEW'}</strong>
+          <span>{status.kind === 'ready' && status.value.reconciliation.neverRun
+            ? 'No completed reconciliation evidence'
+            : reconciliation.kind === 'ready' ? `${reconciliation.value.unresolvedCount} unresolved` : 'State loading'}</span>
+        </article>
+        <article className="overview-number">
+          <p className="eyebrow">Forward evidence</p>
+          <strong>{edgeStudy.kind === 'ready' ? `${edgeStudy.value.completedDays} / 365` : 'UNKNOWN'}</strong>
+          <span>{campaign.kind === 'ready' && campaign.value !== null ? `campaign ${campaign.value.observedDays}/7 days · ${campaign.value.state}` : 'campaign awaiting first eligible day'}</span>
         </article>
       </section>
 

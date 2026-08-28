@@ -28,9 +28,9 @@ function percent(value: number | null, digits = 1): string {
 
 function Rung({ rung }: { readonly rung: Rung }): React.JSX.Element {
   return (
-    <li className={rung.active ? 'border-l-2 pl-3 font-semibold' : 'pl-3 opacity-70'}>
-      <span aria-hidden="true">{rung.active ? '▶ ' : '  '}</span>
-      {STAGE_LABEL[rung.stage]}
+    <li className={rung.active ? 'risk-rung active font-semibold' : 'risk-rung opacity-70'}>
+      <span className="risk-rung-marker" aria-hidden="true">{rung.active ? 'Current' : ''}</span>
+      <strong>{STAGE_LABEL[rung.stage]}</strong>
       <span className="ml-3 font-normal">
         sizing ×{rung.exposureScale}
         {rung.active && <span className="sr-only"> — current stage</span>}
@@ -56,7 +56,7 @@ export function Risk({ client }: { readonly client: CoquiClient }): React.JSX.El
   const view = risk.value;
 
   return (
-    <section aria-labelledby="risk-heading" className="space-y-2">
+    <section aria-labelledby="risk-heading" className="risk-workspace">
       <h2 id="risk-heading" className="font-semibold">
         Risk controls
         <span className="ml-3 font-normal opacity-70">
@@ -67,7 +67,7 @@ export function Risk({ client }: { readonly client: CoquiClient }): React.JSX.El
       {view.insufficientHistory && (
         // Said outright. A drawdown computed over three observations looks
         // exactly like a measurement, and reads as one.
-        <p role="note" className="border-l-2 pl-3">
+        <p role="note" className="risk-callout warning">
           <span aria-hidden="true">⚠ </span>
           {view.sampleCount} equity observation{view.sampleCount === 1 ? '' : 's'} — too few for
           these figures to describe anything yet. The ladder still applies; the numbers do not
@@ -76,13 +76,13 @@ export function Risk({ client }: { readonly client: CoquiClient }): React.JSX.El
       )}
 
       {view.blockReason !== null && (
-        <p role="alert" className="border-l-2 pl-3">
+        <p role="alert" className="risk-callout danger">
           <span aria-hidden="true">■ </span>
           Trading halted: {view.blockReason}
         </p>
       )}
 
-      <dl className="grid grid-cols-2 gap-x-6 tabular-nums md:grid-cols-3">
+      <dl className="risk-summary tabular-nums">
         <div>
           <dt className="opacity-70">drawdown</dt>
           <dd>{percent(view.drawdownPct)}</dd>
@@ -119,7 +119,7 @@ export function Risk({ client }: { readonly client: CoquiClient }): React.JSX.El
         </div>
       </dl>
 
-      <ul className="space-y-1">
+      <ul className="risk-ladder">
         {view.ladder.map((rung) => (
           <Rung key={rung.stage} rung={rung} />
         ))}

@@ -25,7 +25,7 @@ const OUTCOME_LABELS: Readonly<Record<Finding['outcome'], string>> = {
 function Row({ finding }: { readonly finding: Finding }): React.JSX.Element {
   const recorded = finding.source === 'predecessor-vault';
   return (
-    <li className="border-b py-1 last:border-b-0">
+    <li className="border-b py-1 last:border-b-0" data-finding-id={finding.id}>
       <div className="flex justify-between gap-4">
         <span>{finding.title}</span>
         <span className="shrink-0 opacity-80">{OUTCOME_LABELS[finding.outcome]}</span>
@@ -63,7 +63,7 @@ export function NegativeFindings({
   const { findings, ledgerNote } = ledger.value;
 
   return (
-    <section aria-labelledby="findings-heading" className="space-y-2">
+    <section aria-labelledby="findings-heading" className="space-y-2" data-review-target="negative-findings">
       <h3 id="findings-heading" className="font-semibold">
         NEGATIVE FINDINGS ({findings.length})
       </h3>

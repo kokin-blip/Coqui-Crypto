@@ -18,26 +18,27 @@ Effort figures assume one part-time developer with assistance.
 
 ```
 Current phase:  P5 additive UI and authoritative paper-execution continuation
-Baseline:       d25101f · additive local continuation through 818bc39
-Verified now:   149 test files / 1056 tests; Electron smoke 36/36;
-                packaged smoke 8/8; warm shell 168ms; interaction p75 8.4ms
+Baseline:       d25101f · preserved local continuation through 76d8777
+Verified now:   151 test files / 1062 tests; Electron smoke 37/37;
+                packaged smoke 8/8; warm shell 172ms; interaction p75 8.4ms
                 macOS package + packaged smoke; Windows x64 cross-build only
 WAITING ON:     prospective observations (365 complete days + 30 cost-bearing
                 rebalances) and an elapsed seven-day campaign
-OWNER-DEFERRED: real Coinbase View-only-key verification
+OWNER-DEFERRED: real Coinbase View-only-key verification; revised screenshot approval
 P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
 ```
 
 ### What is left, and why it is not code
 
 The fetched P5–P9 baseline is built and tested. Additive shell, profile,
-performance, and execution-boundary work continues without replacing it. A6 is
-closed; the remaining evidence criteria cannot be closed with fixtures or prose:
+performance, live-display market data, and execution-boundary work continues without replacing it.
+The revised visual direction reopens A6; the remaining evidence criteria cannot be closed with
+fixtures or prose:
 
-- **A6, the screenshot review — CLOSED 2026-08-24.** Two of the states
-   `docs/UI-UX.md` §7.9 requires — a blocked paper action and negative evidence
-   — could not exist until the paper engine did, which is why it was sequenced
-   after Stage B. The owner approved the final review set on 2026-08-24.
+- **A6, the screenshot review — REOPENED 2026-08-27.** The owner approved the prior
+  direction on 2026-08-24. The two-level status header, Markets workspace, and primary
+  evidence layouts are material changes, so the new production-renderer set in
+  `docs/design/owner-screenshot-review-2026-08-27.md` requires a new owner decision.
 
 1. **P7's real-key exit is owner-deferred.** Coinbase keys are personal. The owner
    explicitly deferred credential-backed verification on 2026-08-27. The connect flow, the
@@ -84,7 +85,7 @@ candidate that injects no `<style>` element and therefore the only one that runs
 under `style-src 'self'` without a per-load CSP nonce.
 
 The performance harness is built and passing, with its own sensitivity control:
-warm shell 171 ms against a 1500 ms budget, interaction
+warm shell 172 ms against a 1500 ms budget, interaction
 p75 8.4 ms against 200 ms, and a deliberately injected 250 ms regression that
 must breach the budget or the harness fails.
 
@@ -98,9 +99,9 @@ by the wire type.
 **The hierarchy direction is resolved for implementation.** The persistent
 sidebar, one-screen-at-a-time route shell, status rail, Overview order, and
 paper review chain are defined by the 2026-08-24 additive continuation. Final
-visual acceptance was recorded at the A6 owner screenshot gate; it no longer blocks
-incremental implementation across portfolio, allocation, tax, markets, paper,
-research, activity, risk, and settings.
+the implementation direction is established across portfolio, allocation, tax, markets,
+paper, research, activity, risk, and settings. The material 2026-08-27 polish reopened
+the final A6 owner screenshot gate without reopening the engineering decisions.
 
 P3's trial-count blocker is cleared. Recovering the predecessor's Obsidian vault
 moved the registry from 178 `known-lower-bound` to **215

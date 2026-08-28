@@ -119,7 +119,9 @@ export function Reconciliation({ client }: { readonly client: CoquiClient }): Re
         Reconciliation
         <span className="ml-3 font-normal opacity-70">
           last run {lastRun} ·{' '}
-          {exceptions.length === 0
+          {lastRunAtMs === null
+            ? 'not run'
+            : exceptions.length === 0
             ? 'settled'
             : `${unresolvedCount} unresolved of ${exceptions.length}`}
         </span>

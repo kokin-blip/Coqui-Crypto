@@ -48,12 +48,13 @@ const destinations: readonly PrimaryDestination[] = [
 ] as const;
 
 function NavLink({
-  route, label, currentRoute, child = false,
+  route, label, currentRoute, child = false, icon: Icon,
 }: {
   readonly route: AppRoute;
   readonly label: string;
   readonly currentRoute: AppRoute;
   readonly child?: boolean;
+  readonly icon?: LucideIcon;
 }): React.JSX.Element {
   const active = route === currentRoute;
   return (
@@ -61,8 +62,10 @@ function NavLink({
       className={child ? 'sidebar-sub-link' : 'sidebar-link'}
       href={routeHash(route)}
       aria-current={active ? 'page' : undefined}
+      title={child ? undefined : label}
     >
-      {label}
+      {Icon !== undefined && <Icon aria-hidden="true" size={18} strokeWidth={1.8} />}
+      <span className={child ? undefined : 'sidebar-label'}>{label}</span>
     </a>
   );
 }
@@ -83,14 +86,12 @@ export function Sidebar({ route }: { readonly route: AppRoute }): React.JSX.Elem
             const sectionActive = destination === currentSection;
             return (
               <li key={destination}>
-                <div className="sidebar-destination">
-                  <Icon aria-hidden="true" size={17} strokeWidth={1.8} />
-                  <NavLink
-                    route={destination}
-                    label={label}
-                    currentRoute={sectionActive ? destination : route}
-                  />
-                </div>
+                <NavLink
+                  route={destination}
+                  label={label}
+                  currentRoute={sectionActive ? destination : route}
+                  icon={Icon}
+                />
                 {children !== undefined && sectionActive && (
                   <ul className="sidebar-sub-list">
                     {children.map((item) => (

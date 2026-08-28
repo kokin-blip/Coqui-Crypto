@@ -85,7 +85,7 @@ export function Performance({ client }: { readonly client: CoquiClient }): React
         <div className="panel-heading"><div><p className="eyebrow">Select a day for provenance</p><h2 id="calendar-heading">P&amp;L calendar</h2></div></div>
         <div className="pnl-calendar">
           {view.points.map((point) => (
-            <button key={point.dayUtc} onClick={() => setSelectedDay(point.dayUtc)}>
+            <button key={point.dayUtc} aria-expanded={selectedDay === point.dayUtc} onClick={() => setSelectedDay(point.dayUtc)}>
               <time>{new Date(point.dayUtc).toISOString().slice(5, 10)}</time>
               <strong>{point.pnlUsd === null ? 'Opening' : formatUsd(point.pnlUsd, { signed: true })?.text}</strong>
               <span>{point.returnPct === null ? '—' : formatPercent(Number(point.returnPct))?.text}</span>

@@ -250,6 +250,7 @@ async function run() {
     ['portfolio.allocation', '{}', (v) => `estimateOnly=${v?.plan?.estimateOnly}`],
     ['portfolio.tax', '{}', (v) => `disposals=${v?.disposals?.length}`],
     ['accounts.settings', '{}', (v) => `density=${v?.preferences?.density}`],
+    ['market-data.live', '{}', (v) => `connection=${v?.connection}`],
     // The literal marker matters more than the number: a paper figure that
     // crossed IPC without it could be rendered as money.
     ['paper.portfolio', '{}', (v) => `simulation=${v?.simulation}`],

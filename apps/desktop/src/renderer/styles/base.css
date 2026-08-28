@@ -1,0 +1,53 @@
+@import '@fontsource-variable/inter';
+@import '@coqui/ui-kit/theme.css';
+@import 'tailwindcss';
+
+/*
+ * Coqui owns every visual token. Tailwind is the styling engine only; the
+ * primitive layer (ADR-0005) supplies behaviour and no appearance.
+ *
+ * Financial figures use tabular numerals and stable column widths so a value
+ * changing from 9 to 10 does not reflow the row (docs/UI-UX.md §1).
+ */
+@theme {
+  --font-sans: 'Inter Variable', Inter, system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Motion tokens. Three durations, not a scale — UI-UX §3. */
+  --duration-fast: 83ms;
+  --duration-base: 167ms;
+  --duration-slow: 250ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+:root {
+  color-scheme: dark light;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--coqui-canvas);
+  color: var(--coqui-text);
+  font-family: var(--font-sans);
+  font-size: var(--density-font-size);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--density-line-height);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--coqui-focus);
+  outline-offset: 3px;
+}

@@ -1,5 +1,5 @@
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
-import { freshnessBadge } from '@coqui/ui-kit';
+import { Activity, CircleDollarSign, Database, Radio, ShieldCheck } from 'lucide-react';
 
 import { useChannel } from '../query/use-channel.js';
 import { ProfileSwitcher } from './ProfileSwitcher.js';
@@ -32,17 +32,13 @@ function reconciliationText(reconciliation: RailView['reconciliation']): string 
 }
 
 function Freshness({ client }: { readonly client: CoquiClient }): React.JSX.Element {
-  const prices = useChannel(client, 'market-data.prices', {});
-  if (prices.kind !== 'ready') return <span>data —</span>;
-
-  const badge = freshnessBadge(
-    prices.value.provenance.freshness,
-    prices.value.provenance.ageMs,
-  );
+  const live = useChannel(client, 'market-data.live', {});
+  if (live.kind !== 'ready') return <span className="rail-state"><Radio size={13} aria-hidden="true" /> Market feed unknown</span>;
+  const state = live.value.connection;
   return (
-    <span title={badge.label}>
-      data {badge.text} <span aria-hidden="true">{badge.marker}</span>
-      <span className="sr-only">{badge.label}</span>
+    <span className={`rail-state rail-${state}`}>
+      <Radio size={13} aria-hidden="true" /> Market feed {state}
+      {live.value.lastMessageAtMs === null ? '' : ` · ${new Date(live.value.lastMessageAtMs).toISOString().slice(11, 16)}Z`}
     </span>
   );
 }
@@ -52,10 +48,7 @@ function ExecutionPolicy({ client }: { readonly client: CoquiClient }): React.JS
   if (policy.kind !== 'ready') return <span><strong>MODE UNKNOWN</strong></span>;
   const readOnly = policy.value.mode === 'off';
   return (
-    <>
-      <span><strong>{readOnly ? 'READ ONLY' : 'PAPER'}</strong></span>
-      <span>review {policy.value.mode.replaceAll('_', ' ')}</span>
-    </>
+    <span className="rail-mode"><strong>{readOnly ? 'READ ONLY' : 'PAPER'}</strong><small>{policy.value.mode.replaceAll('_', ' ')}</small></span>
   );
 }
 
@@ -87,44 +80,21 @@ export function StatusRail({ client }: { readonly client: CoquiClient }): React.
 
   return (
     <header className="status-rail">
-      <ProfileSwitcher client={client} />
-
-      <ExecutionPolicy client={client} />
-
-      <span>
-        Coinbase {view.reconciliation.neverRun ? 'not synced' : 'read only'}
-      </span>
-
-      {/* Sign plus word, never colour alone (§1). */}
-      {/* Both halt sources feed this, and the rail says which one engaged —
-          a manual safety stop used to display as "armed·off". */}
-      <span>
-        KILL{' '}
-        <span className="font-semibold">
-          {view.killSwitchEngaged ? 'ENGAGED' : 'armed·off'}
-        </span>
-        {view.killSwitchReason !== null && (
-          <span className="opacity-80">
-            {' '}
-            ({view.killSwitchReason === 'safety_stop' ? 'safety stop' : 'risk hard stop'})
-          </span>
-        )}
-      </span>
-
-      <Freshness client={client} />
-
-      <span>
-        jobs: {view.activeJobCount === 0 ? 'idle' : `${view.activeJobCount} running`}
-        {view.scheduledJobCount > 0 ? ` of ${view.scheduledJobCount}` : ''}
-      </span>
-
-      <span>{reconciliationText(view.reconciliation)}</span>
-
-      <span>cost model {view.costModelBps}bps</span>
-
-      <span>
-        risk {view.riskStage ?? 'unknown'} · {view.executionPermitted ? 'paper permitted' : 'paper blocked'}
-      </span>
+      <div className="status-primary">
+        <ProfileSwitcher client={client} />
+        <ExecutionPolicy client={client} />
+        <span className={`rail-decision ${view.executionPermitted ? 'rail-positive' : 'rail-negative'}`}><ShieldCheck size={14} aria-hidden="true" /><span><small>Risk permission</small><strong>{view.executionPermitted ? 'Paper permitted' : 'Paper blocked'}</strong></span></span>
+        <span className={`rail-decision ${view.reconciliation.unresolvedCount === 0 && !view.reconciliation.neverRun ? 'rail-positive' : 'rail-warning'}`}><Database size={14} aria-hidden="true" /><span><small>Reconciliation</small><strong>{view.reconciliation.neverRun ? 'Not run' : view.reconciliation.unresolvedCount === 0 ? 'Settled' : `${view.reconciliation.unresolvedCount} unresolved`}</strong></span></span>
+        <Freshness client={client} />
+      </div>
+      <div className="status-secondary">
+        <span>Coinbase account {view.reconciliation.neverRun ? 'not synced' : 'read only'}</span>
+        <span className={view.killSwitchEngaged ? 'rail-negative' : ''}>KILL <strong>{view.killSwitchEngaged ? 'ENGAGED' : 'armed · off'}</strong>{view.killSwitchReason === null ? '' : ` · ${view.killSwitchReason.replaceAll('_', ' ')}`}</span>
+        <span><Activity size={12} aria-hidden="true" /> jobs {view.activeJobCount === 0 ? 'idle' : `${view.activeJobCount} running`}{view.scheduledJobCount > 0 ? ` / ${view.scheduledJobCount}` : ''}</span>
+        <span>{reconciliationText(view.reconciliation)}</span>
+        <span><CircleDollarSign size={12} aria-hidden="true" /> costs {view.costModelBps}bps</span>
+        <span>risk stage {view.riskStage?.replaceAll('_', ' ') ?? 'unknown'}</span>
+      </div>
     </header>
   );
 }

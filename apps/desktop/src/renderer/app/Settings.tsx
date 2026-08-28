@@ -38,23 +38,16 @@ export function Settings({ client }: { readonly client: CoquiClient }): React.JS
         Settings
       </h2>
 
-      <dl className="grid grid-cols-[10rem_1fr] gap-x-4">
-        <dt>theme</dt>
-        <dd>{view.preferences.theme}</dd>
-        <dt>density</dt>
-        <dd>{view.preferences.density}</dd>
-        <dt>motion</dt>
-        <dd>{view.preferences.motion}</dd>
-        <dt>language</dt>
-        <dd>{view.preferences.language}</dd>
-      </dl>
-
-      {/* source distinguishes an unset default from an explicit choice. */}
-      <p className="opacity-70">
-        {view.source === 'default'
-          ? 'These are the defaults — nothing has been changed for this profile.'
-          : 'Saved for this profile.'}
-      </p>
+      <section className="settings-section" aria-labelledby="appearance-settings-heading">
+        <div><p className="section-label">Profile presentation</p><h3 id="appearance-settings-heading">Appearance and access</h3></div>
+        <dl className="settings-readout">
+          <div><dt>Theme</dt><dd>{view.preferences.theme}</dd></div>
+          <div><dt>Density</dt><dd>{view.preferences.density}</dd></div>
+          <div><dt>Motion</dt><dd>{view.preferences.motion}</dd></div>
+          <div><dt>Language</dt><dd>{view.preferences.language}</dd></div>
+        </dl>
+        <p className="opacity-70">{view.source === 'default' ? 'Using verified workstation defaults for this profile.' : 'Saved for this profile.'}</p>
+      </section>
 
       <ExecutionPolicySettings client={client} />
       <PaperCampaignSettings client={client} />

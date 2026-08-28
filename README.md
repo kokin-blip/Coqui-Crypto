@@ -67,7 +67,7 @@ Start with [the plan](./docs/PLAN.md), [architecture](./docs/ARCHITECTURE.md), [
 
 ## Known limitations and open owner gates
 
-- The 2026-08-24 screenshot review set is owner-approved; material visual-direction changes require a new review.
+- The 2026-08-24 screenshot set approved the prior direction. Material 2026-08-27 shell and market-workspace changes have a [new review set](./docs/design/owner-screenshot-review-2026-08-27.md) awaiting owner approval.
 - Real Coinbase permission verification is owner-deferred because API keys are personal. No key is bundled, requested, or needed for public market data and paper-only operation.
 - A forward-only confirmatory edge study is registered and its prospective collector is active, but 365 complete observed days and 30 cost-bearing rebalances cannot be manufactured. Manual edge settings are ignored and profitability checks block proposals until an integrity-verified pass exists.
 - The seven-day zero-edge stand-down campaign starts on the first real scheduler observation. It requires seven consecutive observed UTC days, a confirmed safety-stop exercise and acknowledgement, and reconciliation; missed days are never backfilled.

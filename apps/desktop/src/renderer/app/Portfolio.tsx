@@ -1,5 +1,6 @@
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { formatQuantity, formatUsd, freshnessBadge } from '@coqui/ui-kit';
+import { useState } from 'react';
 
 import { PaperComparison } from './PaperComparison.js';
 import { Reconciliation } from './Reconciliation.js';
@@ -77,14 +78,20 @@ function Money({
 function Row({
   holding,
   asOfMs,
+  selected,
+  onSelect,
 }: {
   readonly holding: Holding;
   readonly asOfMs: number;
+  readonly selected: boolean;
+  readonly onSelect: () => void;
 }): React.JSX.Element {
   return (
-    <tr>
+    <tr aria-selected={selected}>
       <th scope="row" className="pr-4 text-left font-normal">
-        {holding.asset.symbol}
+        <button type="button" className="holding-select" onClick={onSelect} aria-pressed={selected}>
+          <strong>{holding.asset.symbol}</strong><span>{holding.asset.name}</span>
+        </button>
       </th>
       <td className="pr-4 text-right tabular-nums">
         {formatQuantity(holding.quantity) ?? holding.quantity}
@@ -138,6 +145,7 @@ function Header({ view }: { readonly view: PortfolioView }): React.JSX.Element {
 
 export function Portfolio({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const portfolio = useChannel(client, 'portfolio.view', {});
+  const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
 
   if (portfolio.kind === 'loading') return <p aria-live="polite">Loading portfolio…</p>;
 
@@ -151,6 +159,8 @@ export function Portfolio({ client }: { readonly client: CoquiClient }): React.J
   }
 
   const view = portfolio.value;
+  const selected = view.holdings.find((holding) => holding.asset.symbol === selectedSymbol)
+    ?? view.holdings[0];
 
   return (
     <section aria-labelledby="portfolio-heading" className="space-y-4">
@@ -171,25 +181,27 @@ export function Portfolio({ client }: { readonly client: CoquiClient }): React.J
       {view.holdings.length === 0 ? (
         <p>No holdings yet — import a Coinbase report or add a tax lot to begin.</p>
       ) : (
-        <table className="w-full text-left">
-          <caption className="sr-only">Holdings with cost basis, value and price freshness</caption>
-          <thead>
-            <tr className="border-b">
-              <th scope="col" className="pr-4 font-normal opacity-70">ASSET</th>
-              <th scope="col" className="pr-4 text-right font-normal opacity-70">QTY</th>
-              <th scope="col" className="pr-4 text-right font-normal opacity-70">PRICE</th>
-              <th scope="col" className="pr-4 text-right font-normal opacity-70">VALUE</th>
-              <th scope="col" className="pr-4 text-right font-normal opacity-70">COST</th>
-              <th scope="col" className="pr-4 text-right font-normal opacity-70">UNREAL</th>
-              <th scope="col" className="text-right font-normal opacity-70">PRICE AS OF</th>
-            </tr>
-          </thead>
-          <tbody>
-            {view.holdings.map((holding) => (
-              <Row key={holding.asset.symbol} holding={holding} asOfMs={view.asOfMs} />
-            ))}
-          </tbody>
-        </table>
+        <div className="portfolio-master-detail">
+          <div className="portfolio-table-scroll"><table className="w-full text-left">
+            <caption className="sr-only">Holdings with cost basis, value and price freshness</caption>
+            <thead><tr className="border-b">
+              <th scope="col" className="pr-4 font-normal opacity-70">Asset</th>
+              <th scope="col" className="pr-4 text-right font-normal opacity-70">Quantity</th>
+              <th scope="col" className="pr-4 text-right font-normal opacity-70">Price</th>
+              <th scope="col" className="pr-4 text-right font-normal opacity-70">Value</th>
+              <th scope="col" className="pr-4 text-right font-normal opacity-70">Cost</th>
+              <th scope="col" className="pr-4 text-right font-normal opacity-70">Unrealized</th>
+              <th scope="col" className="text-right font-normal opacity-70">Observed</th>
+            </tr></thead>
+            <tbody>{view.holdings.map((holding) => (
+              <Row key={holding.asset.symbol} holding={holding} asOfMs={view.asOfMs} selected={selected?.asset.symbol === holding.asset.symbol} onSelect={() => setSelectedSymbol(holding.asset.symbol)} />
+            ))}</tbody>
+          </table></div>
+          {selected !== undefined && <aside className="holding-detail" aria-label={`${selected.asset.symbol} evidence detail`}>
+            <p className="section-label">Selected holding</p><h3>{selected.asset.name}</h3><strong className="holding-detail-symbol">{selected.asset.symbol}</strong>
+            <dl><div><dt>Market value</dt><dd><Money value={selected.valueUsd} /></dd></div><div><dt>Average cost</dt><dd><Money value={selected.avgCostUsd} /></dd></div><div><dt>Unrealized P&amp;L</dt><dd><Money value={selected.unrealizedPnlUsd} signed /></dd></div><div><dt>Price evidence</dt><dd>{priceAge(selected, view.asOfMs)}</dd></div></dl>
+          </aside>}
+        </div>
       )}
 
       <p className="opacity-70">

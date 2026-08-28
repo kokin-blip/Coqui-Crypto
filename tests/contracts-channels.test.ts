@@ -51,6 +51,7 @@ describe('channel registry', () => {
       'app.status-rail',
       'market-data.candles',
       'market-data.fear-greed',
+      'market-data.live',
       'market-data.markets',
       'market-data.news',
       'market-data.prices',

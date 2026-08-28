@@ -12,6 +12,7 @@
     "start": "pnpm build && electron .",
     "smoke": "pnpm build && electron scripts/smoke.mjs",
     "perf": "pnpm build && electron scripts/perf.mjs",
+    "screenshots:review": "pnpm build && electron scripts/visual-review.mjs",
     "package": "pnpm build && electron-builder --config electron-builder.yml",
     "package:mac": "pnpm build && electron-builder --config electron-builder.yml --mac --arm64",
     "package:win": "pnpm build && electron-builder --config electron-builder.yml --win --x64",

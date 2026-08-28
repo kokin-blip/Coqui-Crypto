@@ -5,6 +5,8 @@ import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { useChannel } from '../query/use-channel.js';
 
 type FeedEvent = ChannelResponse<'activity.feed'>['events'][number];
+type EventFilter = 'all' | FeedEvent['status'];
+const FILTERS: readonly EventFilter[] = ['all', 'info', 'pending', 'blocked', 'failed', 'succeeded', 'unknown'];
 
 function eventTime(at: number): string {
   return new Date(at).toISOString().replace('T', ' ').slice(0, 16) + 'Z';
@@ -13,6 +15,7 @@ function eventTime(at: number): string {
 export function Activity({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const [cursor, setCursor] = useState<string | null>(null);
   const [events, setEvents] = useState<readonly FeedEvent[]>([]);
+  const [filter, setFilter] = useState<EventFilter>('all');
   const payload = useMemo(() => ({ limit: 40, cursor }), [cursor]);
   const feed = useChannel(client, 'activity.feed', payload);
   const page = feed.kind === 'ready' ? feed.value : null;
@@ -34,6 +37,7 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
   }
 
   const nextCursor = feed.kind === 'ready' ? feed.value.nextCursor : null;
+  const visibleEvents = filter === 'all' ? events : events.filter((event) => event.status === filter);
   return (
     <section className="panel" aria-labelledby="activity-feed-heading">
       <div className="panel-heading">
@@ -43,11 +47,14 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
         </div>
         <span className="metric-note">Newest first · immutable facts</span>
       </div>
-      {events.length === 0 ? (
+      <div className="feed-filters" aria-label="Filter activity by outcome">
+        {FILTERS.map((item) => <button key={item} type="button" aria-pressed={filter === item} onClick={() => setFilter(item)}>{item}</button>)}
+      </div>
+      {visibleEvents.length === 0 ? (
         <p className="empty-copy">No scheduler decisions, paper events, fills, alerts, reconciliation incidents, or operational failures have been recorded.</p>
       ) : (
         <ol className="activity-feed">
-          {events.map((event) => (
+          {visibleEvents.map((event) => (
             <li key={event.id}>
               <span className={`event-marker status-${event.status}`} aria-hidden="true" />
               <div>
