@@ -19,8 +19,8 @@ Effort figures assume one part-time developer with assistance.
 ```
 Current phase:  P5 additive UI and authoritative paper-execution continuation
 Baseline:       d25101f · preserved local continuation through 76d8777
-Verified now:   151 test files / 1062 tests; Electron smoke 37/37;
-                packaged smoke 8/8; warm shell 172ms; interaction p75 8.4ms
+Verified now:   154 test files / 1070 tests; Electron smoke 37/37;
+                packaged smoke 8/8; warm shell 152ms; interaction p75 8.4ms
                 macOS package + packaged smoke; Windows x64 cross-build only
 WAITING ON:     prospective observations (365 complete days + 30 cost-bearing
                 rebalances) and an elapsed seven-day campaign
@@ -36,9 +36,10 @@ The revised visual direction reopens A6; the remaining evidence criteria cannot 
 fixtures or prose:
 
 - **A6, the screenshot review — REOPENED 2026-08-27.** The owner approved the prior
-  direction on 2026-08-24. The two-level status header, Markets workspace, and primary
-  evidence layouts are material changes, so the new production-renderer set in
-  `docs/design/owner-screenshot-review-2026-08-27.md` requires a new owner decision.
+  direction on 2026-08-24. The two-level status header, dual Advanced/Simple
+  workspaces, Markets and Performance views, and primary evidence layouts are material
+  changes, so the production-renderer set in
+  `docs/design/screenshots/review-2026-08-28-dual-mode/` requires a new owner decision.
 
 1. **P7's real-key exit is owner-deferred.** Coinbase keys are personal. The owner
    explicitly deferred credential-backed verification on 2026-08-27. The connect flow, the
@@ -85,7 +86,7 @@ candidate that injects no `<style>` element and therefore the only one that runs
 under `style-src 'self'` without a per-load CSP nonce.
 
 The performance harness is built and passing, with its own sensitivity control:
-warm shell 172 ms against a 1500 ms budget, interaction
+warm shell 152 ms against a 1500 ms budget, interaction
 p75 8.4 ms against 200 ms, and a deliberately injected 250 ms regression that
 must breach the budget or the harness fails.
 
@@ -102,6 +103,17 @@ paper review chain are defined by the 2026-08-24 additive continuation. Final
 the implementation direction is established across portfolio, allocation, tax, markets,
 paper, research, activity, risk, and settings. The material 2026-08-27 polish reopened
 the final A6 owner screenshot gate without reopening the engineering decisions.
+
+**The dual-mode rebuild is engineering-complete as of 2026-08-29.** Advanced is
+the profile-scoped default and provides the persistent workstation navigation,
+two-level status command area, dominant evidence surfaces, linked tables, and
+resizable evidence inspector. Simple preserves the same routes and safety state
+with focused composition and progressive disclosure. Migration 51 stores mode,
+inspector, chart-view, and range preferences per profile. Manrope, the owner-selected
+hash-locked coquí mark, the restrained dot texture, optional allocation rings,
+completed-candle chart modes, honest unavailable states, and the refreshed
+production-renderer review set are in place. Internal comparison is recorded in
+`design-qa.md`; only the owner screenshot decision remains open.
 
 P3's trial-count blocker is cleared. Recovering the predecessor's Obsidian vault
 moved the registry from 178 `known-lower-bound` to **215

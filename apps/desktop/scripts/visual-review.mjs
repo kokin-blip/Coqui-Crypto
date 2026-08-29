@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { randomUUID } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
@@ -14,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const repository = dirname(dirname(root));
-const output = join(repository, 'docs/design/screenshots/review-2026-08-27');
+const output = join(repository, 'docs/design/screenshots/review-2026-08-28-dual-mode');
 const entry = join(root, 'dist/renderer/index.html');
 
 if (!existsSync(entry)) {
@@ -27,14 +28,16 @@ const { createDispatcher } = await import(join(root, 'dist/main/dispatch.js'));
 const { applyWindowHardening, WEB_PREFERENCES } = await import(join(root, 'dist/main/security.js'));
 
 const captures = [
-  { name: 'overview-dark', route: 'overview', theme: 'dark', density: 'comfortable', zoom: 1 },
-  { name: 'portfolio-light', route: 'portfolio/holdings', theme: 'light', density: 'comfortable', zoom: 1 },
-  { name: 'risk-high-contrast', route: 'risk', theme: 'high-contrast', density: 'comfortable', zoom: 1 },
-  { name: 'markets-compact-offline', route: 'markets', theme: 'dark', density: 'compact', zoom: 1 },
-  { name: 'overview-200-percent', route: 'overview', theme: 'dark', density: 'compact', zoom: 2 },
-  { name: 'research-negative-evidence', route: 'research', theme: 'dark', density: 'comfortable', zoom: 1, scrollTarget: '[data-finding-id="trendvol-replacement-v1"]' },
-  { name: 'activity-empty-evidence', route: 'activity', theme: 'dark', density: 'comfortable', zoom: 1 },
-  { name: 'performance-empty-evidence', route: 'paper/performance', theme: 'dark', density: 'comfortable', zoom: 1 },
+  { name: 'advanced-overview-dark', route: 'overview', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1 },
+  { name: 'simple-overview-dark', route: 'overview', mode: 'simple', theme: 'dark', density: 'comfortable', zoom: 1 },
+  { name: 'advanced-portfolio-light', route: 'portfolio/holdings', mode: 'advanced', theme: 'light', density: 'comfortable', zoom: 1 },
+  { name: 'simple-portfolio-allocation', route: 'portfolio/holdings', mode: 'simple', theme: 'dark', density: 'comfortable', zoom: 1, portfolioChart: 'allocation' },
+  { name: 'risk-high-contrast', route: 'risk', mode: 'advanced', theme: 'high-contrast', density: 'comfortable', zoom: 1 },
+  { name: 'markets-compact-offline', route: 'markets', mode: 'advanced', theme: 'dark', density: 'compact', zoom: 1 },
+  { name: 'overview-200-percent', route: 'overview', mode: 'advanced', theme: 'dark', density: 'compact', zoom: 2 },
+  { name: 'research-negative-evidence', route: 'research', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1, scrollTarget: '[data-finding-id="trendvol-replacement-v1"]' },
+  { name: 'activity-empty-evidence', route: 'activity', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1 },
+  { name: 'performance-empty-evidence', route: 'paper/performance', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1 },
 ];
 
 const dataDirectory = mkdtempSync(join(tmpdir(), 'coqui-visual-review-'));
@@ -46,7 +49,8 @@ async function waitForReady(window) {
       const started = performance.now();
       const check = () => {
         const heading = document.querySelector('[data-route-heading]');
-        if (heading || performance.now() - started > 5000) resolve(Boolean(heading));
+        const statusReady = !document.body.innerText.includes('MODE UNKNOWN');
+        if ((heading && statusReady) || performance.now() - started > 5000) resolve(Boolean(heading && statusReady));
         else requestAnimationFrame(check);
       };
       check();
@@ -68,8 +72,9 @@ async function run() {
 
   const window = new BrowserWindow({
     show: false,
-    width: 1280,
-    height: 800,
+    width: 1536,
+    height: 1024,
+    useContentSize: true,
     backgroundColor: '#050914',
     webPreferences: {
       ...WEB_PREFERENCES,
@@ -80,16 +85,32 @@ async function run() {
   applyWindowHardening(window.webContents, `file://${entry}`, shell);
 
   for (const [index, capture] of captures.entries()) {
+    if (capture.mode !== undefined) {
+      const workspaceOutcome = await dispatch('accounts.workspace.set', {
+        commandId: randomUUID(),
+        patch: {
+          workspaceMode: capture.mode,
+          ...(capture.portfolioChart === undefined ? {} : { portfolioChart: capture.portfolioChart }),
+        },
+      });
+      if (workspaceOutcome.status !== 'ok') {
+        throw new Error(`Could not prepare ${capture.mode} workspace capture: ${workspaceOutcome.issues.map((issue) => issue.code).join(',')}`);
+      }
+      const confirmedWorkspace = await dispatch('accounts.workspace', {});
+      if (confirmedWorkspace.status !== 'ok' || confirmedWorkspace.value.preferences.workspaceMode !== capture.mode) {
+        throw new Error(`Workspace capture mode did not persist for ${capture.name}.`);
+      }
+    }
     await window.webContents.setZoomFactor(capture.zoom);
     if (index === 0) {
-      const loaded = new Promise((resolve) => window.webContents.once('did-finish-load', resolve));
-      window.loadFile(entry, { hash: `/${capture.route}` }).catch(() => {});
-      await loaded;
+      await window.loadFile(entry, { hash: `/${capture.route}` });
     } else {
       await window.webContents.executeJavaScript(
         `window.location.hash = ${JSON.stringify(`/${capture.route}`)}`,
       );
-      await delay(150);
+      const loaded = new Promise((resolve) => window.webContents.once('did-finish-load', resolve));
+      window.webContents.reload();
+      await loaded;
     }
     await waitForReady(window);
     await window.webContents.executeJavaScript(`
