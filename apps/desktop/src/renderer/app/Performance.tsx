@@ -4,61 +4,116 @@ import type { CoquiClient } from '@coqui/contracts';
 import { CHART_COLORS, formatPercent, formatUsd } from '@coqui/ui-kit';
 
 import { FinancialChart } from './FinancialChart.js';
+import { ChartRangeControl, filterPointsByRange } from './ChartRangeControl.js';
+import { ChartViewControl } from './ChartViewControl.js';
 import { PerformanceDayDrawer } from './PerformanceDayDrawer.js';
+import { useWorkspace } from './WorkspaceContext.js';
 import { useChannel } from '../query/use-channel.js';
 
 function metric(value: string | null, suffix = ''): string {
   return value === null ? 'Unavailable' : `${value}${suffix}`;
 }
 
+const PERFORMANCE_VIEWS = [
+  { value: 'equity', label: 'Equity' },
+  { value: 'drawdown', label: 'Drawdown' },
+  { value: 'calendar', label: 'Calendar' },
+  { value: 'distribution', label: 'Distribution' },
+] as const;
+
+function EmptyPerformance(): React.JSX.Element {
+  return (
+    <div className="screen-stack performance-screen performance-empty-workspace">
+      <section className="panel chart-panel" aria-labelledby="performance-empty-heading">
+        <div className="panel-heading">
+          <div><p className="eyebrow">Daily immutable evidence</p><h2 id="performance-empty-heading">Equity and benchmark</h2></div>
+          <ChartRangeControl surface="performance" />
+        </div>
+        <div className="chart-empty-canvas" role="img" aria-label="No verified paper performance observations are available.">
+          <strong>No verified daily paper history yet</strong>
+          <span>Coqui records a valuation only after a scheduled decision. Missing days are never fabricated or backfilled.</span>
+        </div>
+      </section>
+      <section className="panel" aria-labelledby="performance-empty-metrics">
+        <div className="panel-heading"><div><p className="eyebrow">Verified observations only</p><h2 id="performance-empty-metrics">Risk and return metrics</h2></div></div>
+        <dl className="metric-grid metric-grid-unavailable">
+          {['Annualized return', 'Volatility', 'Sharpe', 'Sortino', 'Calmar', 'Max drawdown', 'Win rate', 'Profit factor', 'Turnover', 'Time below high'].map((label) => (
+            <div key={label}><dt>{label}</dt><dd>—</dd></div>
+          ))}
+        </dl>
+        <p className="metric-note">Metrics remain unavailable until immutable daily valuations provide sufficient evidence.</p>
+      </section>
+      <section className="performance-lower-grid" aria-label="Unavailable performance evidence">
+        {['P&L calendar', 'Drawdown history', 'Recorded costs'].map((label) => (
+          <article className="panel performance-unavailable-panel" key={label}><h2>{label}</h2><p>Unavailable until verified observations exist.</p></article>
+        ))}
+      </section>
+    </div>
+  );
+}
+
 export function Performance({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const performance = useChannel(client, 'paper.performance', {});
+  const workspace = useWorkspace();
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  const range = workspace.preferences?.chartRanges.performance ?? '1y';
+  const selectedView = workspace.preferences?.performanceChart ?? 'equity';
+  const visiblePoints = useMemo(() => performance.kind !== 'ready' ? [] : filterPointsByRange(
+    performance.value.points.map((point) => ({ ...point, day: new Date(point.dayUtc).toISOString().slice(0, 10) })),
+    range,
+  ), [performance, range]);
   const chartSeries = useMemo(() => performance.kind !== 'ready' ? [] : [
     {
       id: 'equity', label: 'Paper equity', color: CHART_COLORS.primary,
-      values: performance.value.points.map((point) => ({
-        day: new Date(point.dayUtc).toISOString().slice(0, 10), value: Number(point.equityUsd),
+      values: visiblePoints.map((point) => ({
+        day: point.day, value: Number(point.equityUsd),
       })),
     },
     {
       id: 'benchmark', label: 'Starting-portfolio hold benchmark', color: CHART_COLORS.benchmark,
-      values: performance.value.points.filter((point) => point.benchmarkUsd !== null).map((point) => ({
-        day: new Date(point.dayUtc).toISOString().slice(0, 10), value: Number(point.benchmarkUsd),
+      values: visiblePoints.filter((point) => point.benchmarkUsd !== null).map((point) => ({
+        day: point.day, value: Number(point.benchmarkUsd),
       })),
     },
-  ], [performance]);
+  ], [performance.kind, visiblePoints]);
 
   if (performance.kind === 'loading') return <p aria-live="polite">Loading performance evidence…</p>;
   if (performance.kind !== 'ready') {
     return <p role="alert">Could not load performance: {performance.issues.map((issue) => issue.code).join(', ')}</p>;
   }
   const view = performance.value;
-  if (view.points.length === 0) {
-    return (
-      <section className="panel empty-state" aria-labelledby="performance-empty-heading">
-        <h2 id="performance-empty-heading">No verified daily paper history yet</h2>
-        <p>Coqui records a valuation only after a scheduled decision. Missing days are never fabricated or backfilled.</p>
-      </section>
-    );
-  }
+  if (view.points.length === 0) return <EmptyPerformance />;
 
   const drawdownSeries = [{
     id: 'drawdown', label: 'Drawdown', color: CHART_COLORS.negative,
-    values: view.points.map((point) => ({
-      day: new Date(point.dayUtc).toISOString().slice(0, 10), value: Number(point.drawdownPct),
+    values: visiblePoints.map((point) => ({
+      day: point.day, value: Number(point.drawdownPct),
     })),
   }];
   return (
     <div className="screen-stack performance-screen">
+      <div className="performance-command-row">
+        <ChartViewControl
+          ariaLabel="Performance view"
+          value={selectedView}
+          options={PERFORMANCE_VIEWS}
+          disabled={workspace.pending}
+          onChange={(performanceChart) => void workspace.update({ performanceChart })}
+        />
+        <ChartRangeControl surface="performance" />
+      </div>
       <section className="panel chart-panel" aria-labelledby="equity-heading">
         <div className="panel-heading">
           <div><p className="eyebrow">Daily immutable evidence</p><h2 id="equity-heading">Equity and benchmark</h2></div>
         </div>
-        <FinancialChart
-          series={chartSeries}
-          summary={`${view.points.length} verified paper equity observations. Benchmark ${view.benchmarkStatus === 'available' ? 'available' : 'unavailable because starting evidence is missing'}.`}
-        />
+        {selectedView === 'drawdown' ? (
+          <FinancialChart series={drawdownSeries} summary={`Worst verified drawdown ${view.metrics.maxDrawdownPct} percent.`} />
+        ) : (
+          <FinancialChart
+            series={chartSeries}
+            summary={`${visiblePoints.length} verified paper equity observations in the selected range. Benchmark ${view.benchmarkStatus === 'available' ? 'available' : 'unavailable because starting evidence is missing'}.`}
+          />
+        )}
         {view.benchmarkStatus !== 'available' && (
           <p className="metric-note">Benchmark unavailable: no immutable starting-portfolio evidence exists. Coqui will not reconstruct it.</p>
         )}
@@ -81,7 +136,7 @@ export function Performance({ client }: { readonly client: CoquiClient }): React
         <p className="metric-note">Sharpe and Sortino assume a displayed 0% risk-free rate. Figures exclude incomplete valuations and unattributed opening balances where cost basis is required.</p>
       </section>
 
-      <section className="panel" aria-labelledby="calendar-heading">
+      <section className={`panel ${selectedView === 'calendar' ? 'performance-focus-panel' : ''}`} aria-labelledby="calendar-heading">
         <div className="panel-heading"><div><p className="eyebrow">Select a day for provenance</p><h2 id="calendar-heading">P&amp;L calendar</h2></div></div>
         <div className="pnl-calendar">
           {view.points.map((point) => (
@@ -94,7 +149,7 @@ export function Performance({ client }: { readonly client: CoquiClient }): React
         </div>
       </section>
 
-      <section className="panel" aria-labelledby="drawdown-heading">
+      <section className={`panel ${selectedView === 'drawdown' ? 'performance-focus-panel' : ''}`} aria-labelledby="drawdown-heading">
         <div className="panel-heading"><div><p className="eyebrow">Distance from prior high</p><h2 id="drawdown-heading">Drawdown history</h2></div></div>
         <FinancialChart series={drawdownSeries} summary={`Worst verified drawdown ${view.metrics.maxDrawdownPct} percent.`} />
         <div className="drawdown-cards">
@@ -109,7 +164,7 @@ export function Performance({ client }: { readonly client: CoquiClient }): React
       </section>
 
       <section className="performance-lower-grid">
-        <div className="panel">
+        <div className={`panel ${selectedView === 'distribution' ? 'performance-focus-panel' : ''}`}>
           <p className="eyebrow">Seasonality</p><h2>Monthly P&amp;L</h2>
           <ul className="monthly-list">{view.monthlyPnl.map((month) => <li key={month.month}><span>{month.month}</span><strong>{formatUsd(month.pnlUsd, { signed: true })?.text}</strong></li>)}</ul>
         </div>

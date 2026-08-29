@@ -25,3 +25,25 @@
   transition-duration: 1ms !important;
   scroll-behavior: auto !important;
 }
+
+.coqui-status-emphasis {
+  display: inline-flex;
+  animation: coqui-status-change var(--coqui-duration-local) var(--coqui-ease-standard);
+}
+
+.coqui-interactive-panel {
+  border: 1px solid var(--coqui-border);
+  transition: border-color var(--coqui-duration-local) var(--coqui-ease-standard),
+    background-color var(--coqui-duration-local) var(--coqui-ease-standard);
+}
+
+.coqui-interactive-panel:hover,
+.coqui-interactive-panel:focus-within {
+  border-color: var(--coqui-border-strong);
+  background: var(--coqui-surface-2);
+}
+
+@keyframes coqui-status-change {
+  from { transform: translateY(2px); }
+  to { transform: translateY(0); }
+}

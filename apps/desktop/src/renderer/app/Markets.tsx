@@ -2,10 +2,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { Activity, Clock3, Radio, ShieldCheck } from 'lucide-react';
 
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
-import { CHART_COLORS, formatUsd, freshnessBadge, provenanceBadge } from '@coqui/ui-kit';
+import { formatUsd, freshnessBadge, provenanceBadge } from '@coqui/ui-kit';
 
-import { FinancialChart } from './FinancialChart.js';
+import { ChartRangeControl, rangeLookbackDays } from './ChartRangeControl.js';
+import { ChartViewControl } from './ChartViewControl.js';
+import { MarketHistoryChart } from './MarketHistoryChart.js';
 import { useChannel } from '../query/use-channel.js';
+import { useWorkspace } from './WorkspaceContext.js';
 
 type LiveView = ChannelResponse<'market-data.live'>;
 type LiveQuote = LiveView['quotes'][number];
@@ -29,17 +32,13 @@ function MarketDetail({ client, productId, quote }: {
   readonly productId: string;
   readonly quote: LiveQuote | undefined;
 }): React.JSX.Element {
+  const workspace = useWorkspace();
+  const range = workspace.preferences?.chartRanges.markets ?? '1y';
+  const chartMode = workspace.preferences?.marketsChart ?? 'candles';
   const candles = useChannel(client, 'market-data.candles', {
     instrument: { venue: 'coinbase', productId, productType: 'spot' },
-    lookbackDays: 365,
+    lookbackDays: rangeLookbackDays(range),
   });
-  const series = useMemo(() => candles.kind !== 'ready' ? [] : [{
-    id: 'market-close', label: `${productId} completed daily close`, color: CHART_COLORS.primary,
-    values: candles.value.bars.map((bar) => ({
-      day: new Date(bar.startTimeMs).toISOString().slice(0, 10), value: bar.close,
-    })),
-  }], [candles, productId]);
-
   return (
     <section className="market-detail" aria-labelledby="market-detail-heading">
       <div className="market-detail-heading">
@@ -55,10 +54,15 @@ function MarketDetail({ client, productId, quote }: {
       <div className="market-chart-panel">
         <div className="panel-heading">
           <div><p className="section-label">Verified venue history</p><h3>Completed daily prices</h3></div>
-          <span className="data-boundary"><ShieldCheck size={14} aria-hidden="true" /> Coinbase REST · complete bars only</span>
+          <div className="chart-toolbar">
+            <ChartViewControl ariaLabel="Market chart type" disabled={workspace.pending} value={chartMode} options={[{ value: 'candles', label: 'Candles' }, { value: 'line', label: 'Line' }]} onChange={(value) => void workspace.update({ marketsChart: value })} />
+            <ChartRangeControl surface="markets" />
+          </div>
         </div>
+        <span className="data-boundary"><ShieldCheck size={14} aria-hidden="true" /> Coinbase REST · complete bars only</span>
         {candles.kind === 'loading' && <div className="chart-skeleton" aria-label="Loading completed daily prices" />}
-        {candles.kind === 'ready' && <FinancialChart series={series} summary={`${candles.value.bars.length} completed Coinbase daily closes for ${productId}.`} />}
+        {candles.kind === 'ready' && candles.value.bars.length > 0 && <MarketHistoryChart bars={candles.value.bars} mode={chartMode} productId={productId} />}
+        {candles.kind === 'ready' && candles.value.bars.length === 0 && <div className="chart-empty-canvas"><strong>No completed bars in this range</strong><span>Choose a longer range. Coqui never substitutes another venue or an incomplete candle.</span></div>}
         {candles.kind !== 'loading' && candles.kind !== 'ready' && <p role="alert" className="empty-copy">Completed daily history unavailable. No alternative source was substituted.</p>}
       </div>
     </section>

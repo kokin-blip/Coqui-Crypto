@@ -1,14 +1,24 @@
 import { useMemo } from 'react';
 
 import type { CoquiClient } from '@coqui/contracts';
-import { CHART_COLORS, formatUsd } from '@coqui/ui-kit';
+import { CHART_COLORS, formatUsd, InteractivePanel } from '@coqui/ui-kit';
 
 import { FinancialChart } from './FinancialChart.js';
+import { AllocationRing } from './AllocationRing.js';
+import { ChartRangeControl, filterPointsByRange } from './ChartRangeControl.js';
+import { ChartViewControl } from './ChartViewControl.js';
 import { NegativeFindings } from './NegativeFindings.js';
 import { Scoreboard } from './Scoreboard.js';
 import { useChannel } from '../query/use-channel.js';
+import { useCommand } from '../query/use-command.js';
+import { useWorkspace } from './WorkspaceContext.js';
+
+const OVERVIEW_VIEWS = [{ value: 'equity', label: 'Equity' }, { value: 'allocation', label: 'Allocation' }] as const;
+const WORKSPACE_INVALIDATIONS = ['accounts.workspace', 'accounts.settings'] as const;
 
 export function Overview({ client }: { readonly client: CoquiClient }): React.JSX.Element {
+  const workspace = useWorkspace();
+  const workspaceCommand = useCommand(client, 'accounts.workspace.set', WORKSPACE_INVALIDATIONS);
   const portfolio = useChannel(client, 'portfolio.view', {});
   const risk = useChannel(client, 'risk.dashboard', {});
   const reconciliation = useChannel(client, 'portfolio.reconciliation', {});
@@ -31,9 +41,31 @@ export function Overview({ client }: { readonly client: CoquiClient }): React.JS
   }], [performance]);
 
   const latest = proposals.kind === 'ready' ? proposals.value.proposals[0] : undefined;
+  const overviewChart = workspace.preferences?.overviewChart ?? 'equity';
+  const overviewRange = workspace.preferences?.chartRanges.overview ?? '1y';
+  const rangedChart = chart.map((series) => ({
+    ...series,
+    values: filterPointsByRange(series.values, overviewRange),
+  }));
+  const allocation = portfolio.kind !== 'ready' ? [] : portfolio.value.holdings.flatMap((holding) =>
+    holding.valueUsd === null ? [] : [{ id: holding.asset.symbol, label: holding.asset.symbol, valueUsd: holding.valueUsd }]);
+  const scoreboardPanel = <section className="panel overview-scoreboard"><Scoreboard client={client} detail="summary" /></section>;
+  const activityPanels = <section className="overview-two-column">
+    <div className="panel">
+      <p className="eyebrow">Recent decisions</p><h2>Operational activity</h2>
+      {activity.kind === 'ready' && activity.value.events.length > 0 ? (
+        <ul className="overview-activity">{activity.value.events.map((event) => <li key={event.id}><strong>{event.title}</strong><span>{event.status} · {new Date(event.occurredAt).toISOString().slice(0, 10)}</span></li>)}</ul>
+      ) : <p className="empty-copy">No recorded decisions yet.</p>}
+    </div>
+    <InteractivePanel className="panel">
+      <p className="eyebrow">Paper proposal preview</p><h2>{latest === undefined ? 'No proposal pending' : `${latest.actions.length} rebalance action${latest.actions.length === 1 ? '' : 's'}`}</h2>
+      <p>{latest === undefined ? 'Prepare a system-generated rebalance in Paper Trading.' : `${latest.status.replaceAll('_', ' ')} · revision ${latest.revision} · ${latest.proposalHash.slice(0, 12)}…`}</p>
+    </InteractivePanel>
+  </section>;
+  const negativePanel = <div className="overview-negative"><NegativeFindings client={client} /></div>;
   return (
     <div className="screen-stack overview-screen">
-      <section className="decision-banner" aria-labelledby="decision-summary-heading">
+      <section className="decision-banner overview-decision" aria-labelledby="decision-summary-heading">
         <p className="eyebrow">Decision summary</p>
         <h2 id="decision-summary-heading">Research evidence does not permit a paper action</h2>
         <p>The leading strategy remains unvalidated. The complete evidence and risk chain is rerun at submission.</p>
@@ -66,27 +98,18 @@ export function Overview({ client }: { readonly client: CoquiClient }): React.JS
         </article>
       </section>
 
-      <section className="panel"><Scoreboard client={client} detail="summary" /></section>
-
       <section className="panel overview-chart" aria-labelledby="overview-equity-heading">
-        <div className="panel-heading"><div><p className="eyebrow">Verified paper evidence</p><h2 id="overview-equity-heading">Equity and benchmark preview</h2></div></div>
-        {chart[0]?.values.length ? <FinancialChart series={chart} summary="Verified paper equity preview with starting-portfolio hold benchmark where available." /> : <p className="empty-copy">No daily paper valuation history yet. Coqui never reconstructs or decorates missing curves.</p>}
+        <div className="panel-heading"><div><p className="eyebrow">Verified paper evidence</p><h2 id="overview-equity-heading">{overviewChart === 'equity' ? 'Equity and benchmark' : 'Current allocation'}</h2></div><div className="chart-toolbar"><ChartViewControl ariaLabel="Overview chart view" disabled={workspaceCommand.state.kind === 'pending'} value={overviewChart} options={OVERVIEW_VIEWS} onChange={(value) => void workspaceCommand.run({ commandId: crypto.randomUUID(), patch: { overviewChart: value } })} />{overviewChart === 'equity' && <ChartRangeControl surface="overview" />}</div></div>
+        {overviewChart === 'allocation'
+          ? <AllocationRing data={allocation} />
+          : rangedChart[0]?.values.length ? <FinancialChart series={rangedChart} summary="Verified paper equity with starting-portfolio hold benchmark where available." /> : <div className="chart-empty-canvas"><strong>No verified equity history in this range</strong><span>Coqui records a point only after a scheduled decision. Missing curves are never reconstructed or decorated.</span></div>}
       </section>
-
-      <section className="overview-two-column">
-        <div className="panel">
-          <p className="eyebrow">Recent decisions</p><h2>Operational activity</h2>
-          {activity.kind === 'ready' && activity.value.events.length > 0 ? (
-            <ul className="overview-activity">{activity.value.events.map((event) => <li key={event.id}><strong>{event.title}</strong><span>{event.status} · {new Date(event.occurredAt).toISOString().slice(0, 10)}</span></li>)}</ul>
-          ) : <p className="empty-copy">No recorded decisions yet.</p>}
-        </div>
-        <div className="panel">
-          <p className="eyebrow">Paper proposal preview</p><h2>{latest === undefined ? 'No proposal pending' : `${latest.actions.length} rebalance action${latest.actions.length === 1 ? '' : 's'}`}</h2>
-          <p>{latest === undefined ? 'Prepare a system-generated rebalance in Paper Trading.' : `${latest.status.replaceAll('_', ' ')} · revision ${latest.revision} · ${latest.proposalHash.slice(0, 12)}…`}</p>
-        </div>
-      </section>
-
-      <NegativeFindings client={client} />
+      {workspace.mode === 'simple' ? (
+        <details className="simple-disclosure">
+          <summary>Show strategy, activity, and negative evidence</summary>
+          <div className="simple-disclosure-content">{scoreboardPanel}{activityPanels}{negativePanel}</div>
+        </details>
+      ) : <>{scoreboardPanel}{activityPanels}{negativePanel}</>}
     </div>
   );
 }

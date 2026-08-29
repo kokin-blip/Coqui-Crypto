@@ -1,9 +1,11 @@
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 
 import { DeferredPanel } from './DeferredPanel.js';
+import { DisplaySettings } from './DisplaySettings.js';
 import { ExecutionPolicySettings } from './ExecutionPolicySettings.js';
 import { PaperCampaignSettings } from './PaperCampaignSettings.js';
 import { useChannel } from '../query/use-channel.js';
+import { WorkspaceSettings } from './WorkspaceSettings.js';
 
 type SettingsView = ChannelResponse<'accounts.settings'>;
 
@@ -15,8 +17,8 @@ type SettingsView = ChannelResponse<'accounts.settings'>;
  * excluded by the service, which rejects them rather than dropping them
  * silently — so this screen has nothing to show for them either.
  *
- * Read-only for now: writing needs the action-feedback contract wired to a
- * write channel, and there are no write channels before P6.
+ * Every change is confirmed by a durable, profile-scoped command before the
+ * interface reports success.
  */
 export function Settings({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const settings = useChannel(client, 'accounts.settings', {});
@@ -40,13 +42,13 @@ export function Settings({ client }: { readonly client: CoquiClient }): React.JS
 
       <section className="settings-section" aria-labelledby="appearance-settings-heading">
         <div><p className="section-label">Profile presentation</p><h3 id="appearance-settings-heading">Appearance and access</h3></div>
-        <dl className="settings-readout">
-          <div><dt>Theme</dt><dd>{view.preferences.theme}</dd></div>
-          <div><dt>Density</dt><dd>{view.preferences.density}</dd></div>
-          <div><dt>Motion</dt><dd>{view.preferences.motion}</dd></div>
-          <div><dt>Language</dt><dd>{view.preferences.language}</dd></div>
-        </dl>
+        <DisplaySettings client={client} preferences={view.preferences} />
         <p className="opacity-70">{view.source === 'default' ? 'Using verified workstation defaults for this profile.' : 'Saved for this profile.'}</p>
+      </section>
+
+      <section className="settings-section" aria-labelledby="workspace-settings-heading">
+        <div><p className="section-label">Workspace</p><h3 id="workspace-settings-heading">Mode and chart defaults</h3></div>
+        <WorkspaceSettings client={client} preferences={view.preferences} />
       </section>
 
       <ExecutionPolicySettings client={client} />

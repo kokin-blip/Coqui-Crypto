@@ -3,8 +3,12 @@ import { formatQuantity, formatUsd, freshnessBadge } from '@coqui/ui-kit';
 import { useState } from 'react';
 
 import { PaperComparison } from './PaperComparison.js';
+import { AllocationRing } from './AllocationRing.js';
+import { ChartViewControl } from './ChartViewControl.js';
 import { Reconciliation } from './Reconciliation.js';
 import { useChannel } from '../query/use-channel.js';
+import { useCommand } from '../query/use-command.js';
+import { useWorkspace } from './WorkspaceContext.js';
 
 type PortfolioView = ChannelResponse<'portfolio.view'>;
 type Holding = PortfolioView['holdings'][number];
@@ -20,6 +24,8 @@ type Holding = PortfolioView['holdings'][number];
 
 const FRESHNESS_WINDOW_MS = 5 * 60_000;
 const AGING_WINDOW_MS = 30 * 60_000;
+const PORTFOLIO_VIEWS = [{ value: 'holdings', label: 'Holdings' }, { value: 'allocation', label: 'Allocation' }] as const;
+const WORKSPACE_INVALIDATIONS = ['accounts.workspace', 'accounts.settings'] as const;
 
 function priceAge(holding: Holding, asOfMs: number): React.JSX.Element {
   const observed = holding.priceProvenance?.observedAtMs ?? null;
@@ -145,6 +151,8 @@ function Header({ view }: { readonly view: PortfolioView }): React.JSX.Element {
 
 export function Portfolio({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const portfolio = useChannel(client, 'portfolio.view', {});
+  const workspace = useWorkspace();
+  const workspaceCommand = useCommand(client, 'accounts.workspace.set', WORKSPACE_INVALIDATIONS);
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
 
   if (portfolio.kind === 'loading') return <p aria-live="polite">Loading portfolio…</p>;
@@ -161,12 +169,21 @@ export function Portfolio({ client }: { readonly client: CoquiClient }): React.J
   const view = portfolio.value;
   const selected = view.holdings.find((holding) => holding.asset.symbol === selectedSymbol)
     ?? view.holdings[0];
+  const portfolioChart = workspace.preferences?.portfolioChart ?? 'holdings';
+  const allocation = view.holdings.flatMap((holding) => holding.valueUsd === null ? [] : [{
+    id: holding.asset.symbol, label: holding.asset.symbol, valueUsd: holding.valueUsd,
+  }]);
 
   return (
     <section aria-labelledby="portfolio-heading" className="space-y-4">
       <h2 id="portfolio-heading" className="font-semibold">
         Portfolio
       </h2>
+
+      <div className="surface-toolbar">
+        <span>Portfolio view</span>
+        <ChartViewControl ariaLabel="Portfolio view" disabled={workspaceCommand.state.kind === 'pending'} value={portfolioChart} options={PORTFOLIO_VIEWS} onChange={(value) => void workspaceCommand.run({ commandId: crypto.randomUUID(), patch: { portfolioChart: value } })} />
+      </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <Header view={view} />
@@ -181,6 +198,8 @@ export function Portfolio({ client }: { readonly client: CoquiClient }): React.J
       {view.holdings.length === 0 ? (
         <p>No holdings yet — import a Coinbase report or add a tax lot to begin.</p>
       ) : (
+        <>
+        {portfolioChart === 'allocation' && <section className="panel portfolio-allocation-view" aria-label="Portfolio allocation"><AllocationRing data={allocation} selectedId={selected?.asset.symbol ?? null} onSelect={setSelectedSymbol} /></section>}
         <div className="portfolio-master-detail">
           <div className="portfolio-table-scroll"><table className="w-full text-left">
             <caption className="sr-only">Holdings with cost basis, value and price freshness</caption>
@@ -202,6 +221,7 @@ export function Portfolio({ client }: { readonly client: CoquiClient }): React.J
             <dl><div><dt>Market value</dt><dd><Money value={selected.valueUsd} /></dd></div><div><dt>Average cost</dt><dd><Money value={selected.avgCostUsd} /></dd></div><div><dt>Unrealized P&amp;L</dt><dd><Money value={selected.unrealizedPnlUsd} signed /></dd></div><div><dt>Price evidence</dt><dd>{priceAge(selected, view.asOfMs)}</dd></div></dl>
           </aside>}
         </div>
+        </>
       )}
 
       <p className="opacity-70">

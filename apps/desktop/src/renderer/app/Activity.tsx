@@ -51,7 +51,18 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
         {FILTERS.map((item) => <button key={item} type="button" aria-pressed={filter === item} onClick={() => setFilter(item)}>{item}</button>)}
       </div>
       {visibleEvents.length === 0 ? (
-        <p className="empty-copy">No scheduler decisions, paper events, fills, alerts, reconciliation incidents, or operational failures have been recorded.</p>
+        <div className="activity-empty-workspace">
+          <div className="activity-empty-message">
+            <strong>No operational evidence recorded yet</strong>
+            <p>Events appear only after the scheduler, paper workflow, alerts, or reconciliation records a durable fact.</p>
+          </div>
+          <div className="activity-empty-categories" aria-label="Evidence categories monitored by this feed">
+            <article><strong>Decisions</strong><span>Scheduler runs and blocked proposals</span></article>
+            <article><strong>Execution</strong><span>Reviews, fills, failures, and unknown outcomes</span></article>
+            <article><strong>Operations</strong><span>Alerts, incidents, recovery, and reconciliation</span></article>
+          </div>
+          <p className="metric-note">No placeholder events are created. This feed remains empty until immutable records exist.</p>
+        </div>
       ) : (
         <ol className="activity-feed">
           {visibleEvents.map((event) => (

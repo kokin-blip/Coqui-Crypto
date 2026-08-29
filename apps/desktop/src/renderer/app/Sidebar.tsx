@@ -76,7 +76,7 @@ export function Sidebar({ route }: { readonly route: AppRoute }): React.JSX.Elem
   return (
     <aside className="sidebar">
       <div className="brand-lockup" aria-label="Coqui Crypto">
-        <span className="brand-mark" aria-hidden="true">C</span>
+        <img className="brand-mark" src={new URL('../coqui-mark.png', import.meta.url).href} alt="" />
         <span><strong>Coqui</strong><small>research workstation</small></span>
       </div>
 

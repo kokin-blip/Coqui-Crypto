@@ -1,4 +1,4 @@
-@import '@fontsource-variable/inter';
+@import '@fontsource-variable/manrope';
 @import '@coqui/ui-kit/theme.css';
 @import 'tailwindcss';
 
@@ -10,7 +10,7 @@
  * changing from 9 to 10 does not reflow the row (docs/UI-UX.md §1).
  */
 @theme {
-  --font-sans: 'Inter Variable', Inter, system-ui, sans-serif;
+  --font-sans: 'Manrope Variable', Manrope, system-ui, sans-serif;
   --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
 
   /* Motion tokens. Three durations, not a scale — UI-UX §3. */

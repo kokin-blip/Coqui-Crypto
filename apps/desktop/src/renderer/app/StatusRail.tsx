@@ -1,8 +1,10 @@
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
+import { StatusEmphasis } from '@coqui/ui-kit';
 import { Activity, CircleDollarSign, Database, Radio, ShieldCheck } from 'lucide-react';
 
 import { useChannel } from '../query/use-channel.js';
 import { ProfileSwitcher } from './ProfileSwitcher.js';
+import { CommandMenu } from './CommandMenu.js';
 
 type RailView = ChannelResponse<'app.status-rail'>;
 
@@ -52,6 +54,20 @@ function ExecutionPolicy({ client }: { readonly client: CoquiClient }): React.JS
   );
 }
 
+function StrategyDecision({ client }: { readonly client: CoquiClient }): React.JSX.Element {
+  const gate = useChannel(client, 'risk.evidence-gate', {});
+  if (gate.kind !== 'ready') {
+    return <span className="rail-strategy rail-warning"><small>Leading strategy</small><strong>Evidence unavailable</strong></span>;
+  }
+  return (
+    <span className="rail-strategy rail-negative">
+      <small>Leading strategy</small>
+      <strong>{gate.value.facts?.leader ?? 'No eligible leader'} · not validated</strong>
+      <span>{gate.value.status.replaceAll('_', ' ')}</span>
+    </span>
+  );
+}
+
 export function StatusRail({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const rail = useChannel(client, 'app.status-rail', {});
 
@@ -83,9 +99,10 @@ export function StatusRail({ client }: { readonly client: CoquiClient }): React.
       <div className="status-primary">
         <ProfileSwitcher client={client} />
         <ExecutionPolicy client={client} />
-        <span className={`rail-decision ${view.executionPermitted ? 'rail-positive' : 'rail-negative'}`}><ShieldCheck size={14} aria-hidden="true" /><span><small>Risk permission</small><strong>{view.executionPermitted ? 'Paper permitted' : 'Paper blocked'}</strong></span></span>
+        <StatusEmphasis stateKey={view.executionPermitted ? 'permitted' : 'blocked'}><span className={`rail-decision ${view.executionPermitted ? 'rail-positive' : 'rail-negative'}`}><ShieldCheck size={14} aria-hidden="true" /><span><small>Risk permission</small><strong>{view.executionPermitted ? 'Paper permitted' : 'Paper blocked'}</strong></span></span></StatusEmphasis>
         <span className={`rail-decision ${view.reconciliation.unresolvedCount === 0 && !view.reconciliation.neverRun ? 'rail-positive' : 'rail-warning'}`}><Database size={14} aria-hidden="true" /><span><small>Reconciliation</small><strong>{view.reconciliation.neverRun ? 'Not run' : view.reconciliation.unresolvedCount === 0 ? 'Settled' : `${view.reconciliation.unresolvedCount} unresolved`}</strong></span></span>
         <Freshness client={client} />
+        <StrategyDecision client={client} />
       </div>
       <div className="status-secondary">
         <span>Coinbase account {view.reconciliation.neverRun ? 'not synced' : 'read only'}</span>
@@ -94,6 +111,7 @@ export function StatusRail({ client }: { readonly client: CoquiClient }): React.
         <span>{reconciliationText(view.reconciliation)}</span>
         <span><CircleDollarSign size={12} aria-hidden="true" /> costs {view.costModelBps}bps</span>
         <span>risk stage {view.riskStage?.replaceAll('_', ' ') ?? 'unknown'}</span>
+        <CommandMenu />
       </div>
     </header>
   );
