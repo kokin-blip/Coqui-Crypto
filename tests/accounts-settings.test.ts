@@ -22,6 +22,10 @@ describe('account settings service', () => {
       profileId: 'main', asOfMs: 10, updatedAtMs: null, source: 'default',
       preferences: {
         theme: 'system', density: 'comfortable', motion: 'system', language: 'en',
+        workspaceMode: 'advanced', overviewChart: 'equity', portfolioChart: 'holdings',
+        marketsChart: 'candles', performanceChart: 'equity', inspectorOpen: true,
+        inspectorWidthPx: 320,
+        chartRanges: { overview: '1y', portfolio: '1y', markets: '1y', performance: '1y' },
       },
     } });
     expect(readAccountPreferences('main', database)).toBeNull();
@@ -39,7 +43,13 @@ describe('account settings service', () => {
       ok: true,
       value: {
         profileId: 'main', asOfMs: 20, updatedAtMs: 20, source: 'saved',
-        preferences: { theme: 'dark', density: 'comfortable', motion: 'none', language: 'en' },
+        preferences: {
+          theme: 'dark', density: 'comfortable', motion: 'none', language: 'en',
+          workspaceMode: 'advanced', overviewChart: 'equity', portfolioChart: 'holdings',
+          marketsChart: 'candles', performanceChart: 'equity', inspectorOpen: true,
+          inspectorWidthPx: 320,
+          chartRanges: { overview: '1y', portfolio: '1y', markets: '1y', performance: '1y' },
+        },
       },
     });
     now = 21;
@@ -155,6 +165,44 @@ describe('account settings service', () => {
       ok: false, issues: [{ path: [], code: 'clock_unavailable' }],
     });
     expect(readAccountPreferences('main', database)?.density).toBe('comfortable');
+    database.close();
+  });
+
+  it('stores workspace preferences per profile and replays duplicate commands exactly once', () => {
+    const database = openDatabase(':memory:');
+    let now = 30;
+    const service = new AccountSettingsService({ database, clock: { nowMs: () => now } });
+    const command = {
+      commandId: '10000000-0000-4000-8000-000000000001',
+      patch: { workspaceMode: 'simple', overviewChart: 'allocation', inspectorWidthPx: 360 },
+    } as const;
+    const first = service.setCommand('main', command);
+    expect(first).toMatchObject({ ok: true, value: { preferences: {
+      workspaceMode: 'simple', overviewChart: 'allocation', inspectorWidthPx: 360,
+    } } });
+    now = 40;
+    expect(service.setCommand('main', command)).toEqual(first);
+    expect(readAccountPreferences('main', database)?.updatedAtMs).toBe(30);
+    expect(service.get(OTHER)).toMatchObject({ ok: true, value: { preferences: {
+      workspaceMode: 'advanced', overviewChart: 'equity', inspectorWidthPx: 320,
+    } } });
+    database.close();
+  });
+
+  it('rejects command reuse with changed input and invalid workspace patches', () => {
+    const database = openDatabase(':memory:');
+    const service = new AccountSettingsService({ database, clock: { nowMs: () => 30 } });
+    const commandId = '10000000-0000-4000-8000-000000000002';
+    expect(service.setCommand('main', { commandId, patch: { workspaceMode: 'simple' } }).ok).toBe(true);
+    expect(service.setCommand('main', { commandId, patch: { workspaceMode: 'advanced' } }))
+      .toEqual({ ok: false, issues: [{ path: ['commandId'], code: 'command_conflict' }] });
+    expect(service.set('main', { inspectorWidthPx: 900, marketsChart: 'depth' })).toEqual({
+      ok: false,
+      issues: [
+        { path: ['inspectorWidthPx'], code: 'invalid_inspector_state' },
+        { path: ['marketsChart'], code: 'invalid_chart_view' },
+      ],
+    });
     database.close();
   });
 });

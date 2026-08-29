@@ -96,6 +96,9 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'paper.portfolio': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
   // Preferences change only when the user changes them.
   'accounts.settings': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
+  'accounts.settings.set': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'accounts.workspace': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
+  'accounts.workspace.set': { refetchIntervalMs: false, staleTimeMs: 0 },
   'app.status-rail': { refetchIntervalMs: 30 * SECOND, staleTimeMs: 10 * SECOND },
 };
 

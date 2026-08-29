@@ -10,7 +10,7 @@ const ROOT = process.cwd();
 describe('active profile is a main-process boundary', () => {
   it('rejects renderer-supplied profile ids on profile-scoped channels', () => {
     for (const channel of [
-      'accounts.settings', 'app.status-rail', 'alerts.view', 'portfolio.reconciliation',
+      'accounts.settings', 'accounts.workspace', 'app.status-rail', 'alerts.view', 'portfolio.reconciliation',
       'paper.portfolio', 'paper.performance',
     ] as const) {
       expect(CHANNEL_SCHEMAS[channel].request.safeParse({ profileId: 'main' }).success).toBe(false);

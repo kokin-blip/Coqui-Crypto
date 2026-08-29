@@ -62,6 +62,7 @@ import {
 } from '@coqui/storage';
 
 import { createDiagnostics } from './diagnostics.js';
+import { createAccountPreferenceHandlers } from './account-preference-handlers.js';
 import { CoinbaseMarketStreamService } from './coinbase-market-stream.js';
 import { createMarketHandlers } from './market-handlers.js';
 import { SHIPPED_FORWARD_EDGE_PLAN } from './forward-edge-plan.js';
@@ -542,7 +543,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
         options.profileId,
       ),
     }),
-    'accounts.settings': () => settings.get(options.profileId),
+    ...createAccountPreferenceHandlers(options.profileId, settings),
     'research.scoreboard': () => scoreboard.latest(),
     // Static, frozen core data — there is no service to fail, so this cannot
     // return anything but ok.

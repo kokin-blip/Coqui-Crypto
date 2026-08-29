@@ -25,14 +25,52 @@ const profileSchema = z
  * deliberately excluded, and the service rejects them rather than dropping them
  * silently.
  */
+const workspacePreferenceFields = {
+  workspaceMode: z.enum(['advanced', 'simple']),
+  overviewChart: z.enum(['equity', 'allocation']),
+  portfolioChart: z.enum(['holdings', 'allocation']),
+  marketsChart: z.enum(['candles', 'line']),
+  performanceChart: z.enum(['equity', 'drawdown', 'calendar', 'distribution']),
+  inspectorOpen: z.boolean(),
+  inspectorWidthPx: z.number().int().min(280).max(420),
+  chartRanges: z.strictObject({
+    overview: z.enum(['1d', '1w', '1m', '3m', '1y', 'all']),
+    portfolio: z.enum(['1d', '1w', '1m', '3m', '1y', 'all']),
+    markets: z.enum(['1d', '1w', '1m', '3m', '1y', 'all']),
+    performance: z.enum(['1d', '1w', '1m', '3m', '1y', 'all']),
+  }).readonly(),
+} as const;
+const workspacePreferencesSchema = z.strictObject(workspacePreferenceFields).readonly();
+
+const displayPreferenceFields = {
+  theme: z.enum(['system', 'light', 'dark', 'high_contrast']),
+  density: z.enum(['comfortable', 'compact']),
+  motion: z.enum(['system', 'reduced', 'none']),
+  language: z.enum(['en', 'es']),
+} as const;
+
 const preferencesSchema = z
   .strictObject({
-    theme: z.enum(['system', 'light', 'dark', 'high_contrast']),
-    density: z.enum(['comfortable', 'compact']),
-    motion: z.enum(['system', 'reduced', 'none']),
-    language: z.enum(['en', 'es']),
+    ...displayPreferenceFields,
+    ...workspacePreferenceFields,
   })
   .readonly();
+
+const preferenceViewFields = {
+  profileId: z.string().min(1).max(64),
+  asOfMs: epochMillisecondsSchema,
+  updatedAtMs: epochMillisecondsSchema.nullable(),
+  source: z.enum(['default', 'saved']),
+} as const;
+
+const displayPatchSchema = z.strictObject({
+  theme: displayPreferenceFields.theme.optional(),
+  density: displayPreferenceFields.density.optional(),
+  motion: displayPreferenceFields.motion.optional(),
+  language: displayPreferenceFields.language.optional(),
+});
+
+const workspacePatchSchema = z.strictObject(workspacePreferenceFields).partial();
 
 export const accountsChannelSchemas = {
   'accounts.profiles': {
@@ -62,13 +100,37 @@ export const accountsChannelSchemas = {
     request: emptyPayloadSchema,
     response: z
       .strictObject({
-        profileId: z.string().min(1).max(64),
-        asOfMs: epochMillisecondsSchema,
-        updatedAtMs: epochMillisecondsSchema.nullable(),
+        ...preferenceViewFields,
         /** Lets a surface distinguish an unset default from an explicit choice. */
-        source: z.enum(['default', 'saved']),
         preferences: preferencesSchema,
       })
       .readonly(),
+  },
+  'accounts.settings.set': {
+    request: z.strictObject({
+      commandId: z.string().uuid(),
+      patch: displayPatchSchema,
+    }).readonly(),
+    response: z.strictObject({
+      ...preferenceViewFields,
+      preferences: preferencesSchema,
+    }).readonly(),
+  },
+  'accounts.workspace': {
+    request: emptyPayloadSchema,
+    response: z.strictObject({
+      ...preferenceViewFields,
+      preferences: workspacePreferencesSchema,
+    }).readonly(),
+  },
+  'accounts.workspace.set': {
+    request: z.strictObject({
+      commandId: z.string().uuid(),
+      patch: workspacePatchSchema,
+    }).readonly(),
+    response: z.strictObject({
+      ...preferenceViewFields,
+      preferences: workspacePreferencesSchema,
+    }).readonly(),
   },
 } as const;

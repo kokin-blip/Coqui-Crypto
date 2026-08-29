@@ -45,6 +45,9 @@ describe('channel registry', () => {
       'accounts.profile.switch',
       'accounts.profiles',
       'accounts.settings',
+      'accounts.settings.set',
+      'accounts.workspace',
+      'accounts.workspace.set',
       'activity.feed',
       'alerts.view',
       'app.incidents',
@@ -101,6 +104,8 @@ describe('channel registry', () => {
     // only if the transport knows which channels are commands.
     expect(CHANNEL_KINDS.write).toEqual([
       'accounts.profile.switch',
+      'accounts.settings.set',
+      'accounts.workspace.set',
       'paper.campaign.kill-switch',
       'paper.execution.policy.set',
       'paper.execution.prepare',

@@ -55,6 +55,7 @@ const LOCAL_CHANNELS: readonly ChannelName[] = [
   'portfolio.tax',
   'portfolio.reconciliation',
   'accounts.settings',
+  'accounts.workspace',
   'app.status-rail',
   'alerts.view',
   'app.incidents',
@@ -209,6 +210,8 @@ describe('the sweep covers the whole registry', () => {
       || channel === 'paper.execution.review'
       || channel === 'accounts.profiles'
       || channel === 'accounts.profile.switch'
+      || channel === 'accounts.settings.set'
+      || channel === 'accounts.workspace.set'
       || channel === 'portfolio.reconciliation.resolve',
     )).toBe(true);
   });

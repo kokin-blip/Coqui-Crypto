@@ -72,6 +72,8 @@ export function isChannelName(value: unknown): value is ChannelName {
  */
 const WRITE_CHANNELS = [
   'accounts.profile.switch',
+  'accounts.settings.set',
+  'accounts.workspace.set',
   'paper.campaign.kill-switch',
   'paper.execution.policy.set',
   'paper.execution.prepare',

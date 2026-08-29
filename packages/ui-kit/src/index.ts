@@ -7,3 +7,4 @@ export * from './chart.js';
 export * from './density.js';
 export * from './format.js';
 export * from './help.js';
+export * from './motion.js';
