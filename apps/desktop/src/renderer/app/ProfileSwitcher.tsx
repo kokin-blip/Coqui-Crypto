@@ -9,7 +9,7 @@ import { useCommand } from '../query/use-command.js';
 
 const PROFILE_INVALIDATIONS = ['accounts.profiles'] as const;
 
-export function ProfileSwitcher({ client }: { readonly client: CoquiClient }): React.JSX.Element {
+export function ProfileSwitcher({ client, compact = false }: { readonly client: CoquiClient; readonly compact?: boolean }): React.JSX.Element {
   const profiles = useChannel(client, 'accounts.profiles', {});
   const command = useCommand(client, 'accounts.profile.switch', PROFILE_INVALIDATIONS);
   const queryClient = useQueryClient();
@@ -31,7 +31,7 @@ export function ProfileSwitcher({ client }: { readonly client: CoquiClient }): R
 
   return (
     <label className="profile-switcher">
-      <strong>PROFILE</strong>
+      <strong className={compact ? 'sr-only' : undefined}>PROFILE</strong>
       <select
         aria-label="Active profile"
         value={profiles.value.activeProfile.id}

@@ -1,6 +1,7 @@
 import type { CoquiClient } from '@coqui/contracts';
 
 import { useChannel } from '../query/use-channel.js';
+import { ValidationState } from './StatusIndicator.js';
 
 const BLOCK_REASON: Readonly<Record<string, string>> = {
   blocked_trial_history_incomplete: 'Historical trial evidence is incomplete.',
@@ -21,7 +22,7 @@ export function EvidenceStack({ client }: { readonly client: CoquiClient }): Rea
   return (
     <aside className="evidence-stack panel" aria-labelledby="evidence-stack-heading">
       <header><h2 id="evidence-stack-heading">Evidence Stack</h2></header>
-      <section className="evidence-decision"><div className="evidence-decision-row"><span className="section-label">Decision summary</span><span className="status-chip warning">Review required</span></div><span className="section-label">Leading strategy</span><strong>{leader}</strong><span className="validation-state"><i aria-hidden="true" /> Not validated</span></section>
+      <section className="evidence-decision"><div className="evidence-decision-row"><span className="section-label">Decision summary</span><span className="status-chip warning">Review required</span></div><div className="evidence-leader-row"><span><span className="section-label">Leading strategy</span><strong>{leader}</strong></span><span><span className="section-label">Status</span><ValidationState /></span></div></section>
       <section><span className="section-label">Blocking reason</span><strong className="rail-negative">{reason}</strong><p>Submission reruns profitability, evidence, risk, permission, and safety-stop checks.</p></section>
       <section><span className="section-label">Forward study</span>{edge.kind === 'ready' ? <dl><div><dt>Completed days</dt><dd>{edge.value.completedDays} / {edge.value.minimumCompletedDays}</dd></div><div><dt>Cost-bearing events</dt><dd>{edge.value.costBearingRebalances} / {edge.value.minimumCostBearingRebalances}</dd></div></dl> : <p>Study progress unavailable.</p>}</section>
       <section><span className="section-label">Campaign</span><p>{campaign.kind === 'ready' && campaign.value !== null ? `${campaign.value.observedDays} / ${campaign.value.requiredDays} days · ${campaign.value.state}` : 'Awaiting first eligible UTC day.'}</p></section>

@@ -16,7 +16,7 @@ import { assertNoTextClipping } from './visual-overflow-audit.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const repository = dirname(dirname(root));
-const output = join(repository, 'docs/design/screenshots/review-2026-08-29-research-grid');
+const output = join(repository, 'docs/design/screenshots/review-2026-08-30-advanced-fidelity');
 const entry = join(root, 'dist/renderer/index.html');
 
 if (!existsSync(entry)) {
@@ -36,6 +36,14 @@ const captures = [
   { name: 'simple-overview-dark', route: 'overview', mode: 'simple', theme: 'dark', density: 'comfortable', zoom: 1 },
   { name: 'advanced-portfolio-light', route: 'portfolio/holdings', mode: 'advanced', theme: 'light', density: 'comfortable', zoom: 1 },
   { name: 'simple-portfolio-allocation', route: 'portfolio/holdings', mode: 'simple', theme: 'dark', density: 'comfortable', zoom: 1, portfolioChart: 'allocation' },
+  { name: 'advanced-portfolio-allocation', route: 'portfolio/allocation', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1 },
+  { name: 'advanced-portfolio-tax', route: 'portfolio/tax', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1 },
+  { name: 'advanced-portfolio-reconciliation', route: 'portfolio/reconciliation', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1 },
+  { name: 'advanced-paper-overview', route: 'paper/overview', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1 },
+  { name: 'advanced-paper-orders', route: 'paper/orders', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1 },
+  { name: 'advanced-strategies', route: 'strategies', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1 },
+  { name: 'advanced-research', route: 'research', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1 },
+  { name: 'advanced-settings', route: 'settings', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1 },
   { name: 'risk-high-contrast', route: 'risk', mode: 'advanced', theme: 'high-contrast', density: 'comfortable', zoom: 1 },
   { name: 'markets-compact-offline', route: 'markets', mode: 'advanced', theme: 'dark', density: 'compact', zoom: 1 },
   { name: 'overview-200-percent', route: 'overview', mode: 'advanced', preset: 'research_grid', theme: 'dark', density: 'compact', zoom: 2 },

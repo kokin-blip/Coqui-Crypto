@@ -16,6 +16,8 @@ describe('mockup-fidelity advanced workspace', () => {
     expect(shell).toContain('grid-template-columns: 164px minmax(0, 1fr)');
     expect(workstation).toContain('grid-template-columns: minmax(520px, 58fr) minmax(235px, 18fr) minmax(270px, 24fr)');
     expect(workstation).toContain('.panel-empty-body');
+    expect(workstation).toContain('.screen-heading-integrated');
+    expect(workstation).toContain('.route-local-tabs');
   });
 
   it('uses the owner-selected identity and keeps operational status in the required order', () => {
@@ -25,6 +27,7 @@ describe('mockup-fidelity advanced workspace', () => {
 
     expect(sidebar).toContain('<span><strong>coqui</strong></span>');
     expect(sidebar).not.toContain('research workstation</small>');
+    expect(sidebar).not.toContain('sidebar-sub-list');
     expect(readyRail.indexOf('<Freshness client={client} />')).toBeLessThan(readyRail.indexOf('Reconciliation'));
     expect(readyRail.indexOf('Reconciliation')).toBeLessThan(readyRail.indexOf('Risk permission'));
     for (const text of ['KILL', 'jobs', 'costs', 'risk stage']) expect(readyRail).toContain(text);
@@ -35,6 +38,17 @@ describe('mockup-fidelity advanced workspace', () => {
     const audit = read('apps/desktop/scripts/visual-overflow-audit.mjs');
     expect(review.indexOf('assertNoTextClipping')).toBeLessThan(review.indexOf('capturePage()'));
     expect(audit).toContain('.panel-empty-body p');
+    expect(audit).toContain('[data-status-indicator]');
     expect(audit).toContain('element.scrollHeight');
+    expect(audit).toContain("['hidden', 'clip']");
+  });
+
+  it('contains validation markers in reusable padded status structures', () => {
+    const detail = read('apps/desktop/src/renderer/app/OverviewStrategyWorkspace.tsx');
+    const indicator = read('apps/desktop/src/renderer/app/StatusIndicator.tsx');
+    expect(detail).toContain('<header><div><p className="eyebrow">Strategy detail</p>');
+    expect(detail).toContain('<ValidationState /></header>');
+    expect(indicator).toContain('data-status-indicator');
+    expect(indicator).toContain('<span>{label}</span>');
   });
 });

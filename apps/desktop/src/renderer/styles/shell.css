@@ -13,7 +13,7 @@
   flex-direction: column;
   width: 164px;
   height: 100vh;
-  padding: var(--coqui-space-4) var(--coqui-space-3);
+  padding: 10px 0 12px;
   overflow-y: auto;
   background: var(--coqui-canvas-raised);
   border-right: 1px solid var(--coqui-border);
@@ -43,8 +43,9 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  min-height: 58px;
-  padding: 0 6px 14px;
+  min-height: 66px;
+  padding: 0 18px 10px;
+  border-bottom: 1px solid var(--coqui-border);
 }
 
 .brand-lockup strong,
@@ -53,9 +54,9 @@
 }
 
 .brand-lockup strong {
-  font-size: 23px;
-  font-weight: 720;
-  letter-spacing: -0.035em;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
 }
 
 .brand-lockup small {
@@ -74,8 +75,7 @@
   border-radius: 50%;
 }
 
-.sidebar-list,
-.sidebar-sub-list {
+.sidebar-list {
   padding: 0;
   margin: 0;
   list-style: none;
@@ -86,59 +86,23 @@
   gap: 1px;
 }
 
-.sidebar-destination {
-  display: grid;
-  grid-template-columns: 20px 1fr;
-  align-items: center;
-  gap: var(--coqui-space-2);
-  min-height: 55px;
-  padding: 0 10px;
-  color: var(--coqui-text-muted);
-  border-radius: 0;
-}
-
-.sidebar-destination:has(.sidebar-link[aria-current='page']) {
-  color: var(--coqui-text);
-  background: var(--coqui-surface-2);
-  box-shadow: 3px 0 0 var(--coqui-accent) inset;
-}
-
-.sidebar-link,
-.sidebar-sub-link {
+.sidebar-link {
   color: inherit;
   font-weight: 560;
   text-decoration: none;
 }
 
 .sidebar-link {
-  display: flex;
-  align-items: center;
-  align-self: stretch;
-}
-
-.sidebar-sub-list {
   display: grid;
-  gap: 1px;
-  padding: 3px 0 6px 37px;
-}
-
-.sidebar-sub-link {
-  display: flex;
+  grid-template-columns: 20px minmax(0, 1fr);
   align-items: center;
-  min-height: 30px;
-  padding: 0 var(--coqui-space-2);
-  color: var(--coqui-text-subtle);
-  font-size: 12px;
-  border-radius: var(--coqui-radius-sm);
+  gap: 11px;
+  min-height: 54px;
+  padding: 0 18px;
+  color: var(--coqui-text-muted);
 }
 
-.sidebar-sub-link[aria-current='page'] {
-  color: var(--coqui-accent-strong);
-  background: var(--coqui-accent-soft);
-}
-
-.sidebar-destination:hover,
-.sidebar-sub-link:hover {
+.sidebar-link:hover {
   color: var(--coqui-text);
   background: var(--coqui-surface-2);
 }
@@ -147,7 +111,7 @@
   display: flex;
   align-items: center;
   gap: var(--coqui-space-2);
-  padding: 12px 6px 2px;
+  padding: 12px 18px 2px;
   margin: auto 0 0;
   color: var(--coqui-positive);
   font-size: 11px;

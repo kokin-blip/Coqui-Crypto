@@ -24,6 +24,12 @@
   color-scheme: dark light;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html,
 body,
 #root {

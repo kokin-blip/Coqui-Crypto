@@ -17,29 +17,13 @@ interface PrimaryDestination {
   readonly route: AppRoute;
   readonly label: string;
   readonly icon: LucideIcon;
-  readonly children?: readonly { readonly route: AppRoute; readonly label: string }[];
 }
 
 const destinations: readonly PrimaryDestination[] = [
   { route: 'overview', label: 'Overview', icon: LayoutDashboard },
-  {
-    route: 'portfolio/holdings', label: 'Portfolio', icon: WalletCards,
-    children: [
-      { route: 'portfolio/holdings', label: 'Holdings' },
-      { route: 'portfolio/allocation', label: 'Allocation' },
-      { route: 'portfolio/tax', label: 'Tax' },
-      { route: 'portfolio/reconciliation', label: 'Reconciliation' },
-    ],
-  },
   { route: 'markets', label: 'Markets', icon: CandlestickChart },
-  {
-    route: 'paper/overview', label: 'Paper Trading', icon: BarChart3,
-    children: [
-      { route: 'paper/overview', label: 'Overview' },
-      { route: 'paper/orders', label: 'Orders' },
-      { route: 'paper/performance', label: 'Performance' },
-    ],
-  },
+  { route: 'portfolio/holdings', label: 'Portfolio', icon: WalletCards },
+  { route: 'paper/overview', label: 'Paper', icon: BarChart3 },
   { route: 'strategies', label: 'Strategies', icon: BookOpenCheck },
   { route: 'research', label: 'Research', icon: FlaskConical },
   { route: 'activity', label: 'Activity', icon: Activity },
@@ -48,24 +32,23 @@ const destinations: readonly PrimaryDestination[] = [
 ] as const;
 
 function NavLink({
-  route, label, currentRoute, child = false, icon: Icon,
+  route, label, currentRoute, icon: Icon,
 }: {
   readonly route: AppRoute;
   readonly label: string;
   readonly currentRoute: AppRoute;
-  readonly child?: boolean;
   readonly icon?: LucideIcon;
 }): React.JSX.Element {
   const active = route === currentRoute;
   return (
     <a
-      className={child ? 'sidebar-sub-link' : 'sidebar-link'}
+      className="sidebar-link"
       href={routeHash(route)}
       aria-current={active ? 'page' : undefined}
-      title={child ? undefined : label}
+      title={label}
     >
-      {Icon !== undefined && <Icon aria-hidden="true" size={18} strokeWidth={1.8} />}
-      <span className={child ? undefined : 'sidebar-label'}>{label}</span>
+      {Icon !== undefined && <Icon aria-hidden="true" size={20} strokeWidth={1.75} />}
+      <span className="sidebar-label">{label}</span>
     </a>
   );
 }
@@ -82,7 +65,7 @@ export function Sidebar({ route }: { readonly route: AppRoute }): React.JSX.Elem
 
       <nav aria-label="Primary">
         <ul className="sidebar-list">
-          {destinations.map(({ route: destination, label, icon: Icon, children }) => {
+          {destinations.map(({ route: destination, label, icon: Icon }) => {
             const sectionActive = destination === currentSection;
             return (
               <li key={destination}>
@@ -92,15 +75,6 @@ export function Sidebar({ route }: { readonly route: AppRoute }): React.JSX.Elem
                   currentRoute={sectionActive ? destination : route}
                   icon={Icon}
                 />
-                {children !== undefined && sectionActive && (
-                  <ul className="sidebar-sub-list">
-                    {children.map((item) => (
-                      <li key={item.route}>
-                        <NavLink {...item} currentRoute={route} child />
-                      </li>
-                    ))}
-                  </ul>
-                )}
               </li>
             );
           })}
