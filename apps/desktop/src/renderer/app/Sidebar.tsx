@@ -77,7 +77,7 @@ export function Sidebar({ route }: { readonly route: AppRoute }): React.JSX.Elem
     <aside className="sidebar">
       <div className="brand-lockup" aria-label="Coqui Crypto">
         <img className="brand-mark" src={new URL('../coqui-mark.png', import.meta.url).href} alt="" />
-        <span><strong>Coqui</strong><small>research workstation</small></span>
+        <span><strong>coqui</strong></span>
       </div>
 
       <nav aria-label="Primary">
@@ -108,7 +108,7 @@ export function Sidebar({ route }: { readonly route: AppRoute }): React.JSX.Elem
       </nav>
 
       <p className="sidebar-safety">
-        <ShieldCheck aria-hidden="true" size={16} /> Live execution unavailable
+        <ShieldCheck aria-hidden="true" size={15} /> Paper research only
       </p>
     </aside>
   );

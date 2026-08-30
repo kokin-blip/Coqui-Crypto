@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
+import { assertNoTextClipping } from './visual-overflow-audit.mjs';
 
 /**
  * Deterministic visual-review capture for the production renderer.
@@ -138,6 +139,7 @@ async function run() {
       })()
     `);
     await delay(50);
+    await assertNoTextClipping(window.webContents, capture.name);
     const image = await window.webContents.capturePage();
     writeFileSync(join(output, `${capture.name}.png`), image.toPNG());
     console.log(`CAPTURED  ${capture.name}.png`);

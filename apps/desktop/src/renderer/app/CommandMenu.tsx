@@ -1,4 +1,4 @@
-import { Command, Settings2 } from 'lucide-react';
+import { Search, Settings2 } from 'lucide-react';
 import { lazy, Suspense, useState } from 'react';
 
 import { routeHash } from './routes.js';
@@ -14,7 +14,7 @@ export function CommandMenu(): React.JSX.Element {
   return (
     <>
       <button className="command-menu-trigger" type="button" aria-label="Open command menu" onClick={(click) => setEvent(click.nativeEvent)}>
-        <Command size={14} aria-hidden="true" /> Commands
+        <Search size={14} aria-hidden="true" /> <span>Search commands…</span>
       </button>
       {event !== undefined && <Suspense fallback={null}><IonicCommandPopover anchor={event} onClose={() => setEvent(undefined)}>
         <div className="command-menu-content">

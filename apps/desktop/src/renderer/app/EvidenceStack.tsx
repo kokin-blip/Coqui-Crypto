@@ -20,8 +20,8 @@ export function EvidenceStack({ client }: { readonly client: CoquiClient }): Rea
 
   return (
     <aside className="evidence-stack panel" aria-labelledby="evidence-stack-heading">
-      <header><div><p className="eyebrow">Evidence stack</p><h2 id="evidence-stack-heading">Decision summary</h2></div><span className="status-chip warning">Review required</span></header>
-      <section><span className="section-label">Leading strategy</span><strong>{leader}</strong><span className="validation-state"><i aria-hidden="true" /> Not validated</span></section>
+      <header><h2 id="evidence-stack-heading">Evidence Stack</h2></header>
+      <section className="evidence-decision"><div className="evidence-decision-row"><span className="section-label">Decision summary</span><span className="status-chip warning">Review required</span></div><span className="section-label">Leading strategy</span><strong>{leader}</strong><span className="validation-state"><i aria-hidden="true" /> Not validated</span></section>
       <section><span className="section-label">Blocking reason</span><strong className="rail-negative">{reason}</strong><p>Submission reruns profitability, evidence, risk, permission, and safety-stop checks.</p></section>
       <section><span className="section-label">Forward study</span>{edge.kind === 'ready' ? <dl><div><dt>Completed days</dt><dd>{edge.value.completedDays} / {edge.value.minimumCompletedDays}</dd></div><div><dt>Cost-bearing events</dt><dd>{edge.value.costBearingRebalances} / {edge.value.minimumCostBearingRebalances}</dd></div></dl> : <p>Study progress unavailable.</p>}</section>
       <section><span className="section-label">Campaign</span><p>{campaign.kind === 'ready' && campaign.value !== null ? `${campaign.value.observedDays} / ${campaign.value.requiredDays} days · ${campaign.value.state}` : 'Awaiting first eligible UTC day.'}</p></section>

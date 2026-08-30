@@ -99,9 +99,9 @@ export function StatusRail({ client }: { readonly client: CoquiClient }): React.
       <div className="status-primary">
         <ProfileSwitcher client={client} />
         <ExecutionPolicy client={client} />
-        <StatusEmphasis stateKey={view.executionPermitted ? 'permitted' : 'blocked'}><span className={`rail-decision ${view.executionPermitted ? 'rail-positive' : 'rail-negative'}`}><ShieldCheck size={14} aria-hidden="true" /><span><small>Risk permission</small><strong>{view.executionPermitted ? 'Paper permitted' : 'Paper blocked'}</strong></span></span></StatusEmphasis>
-        <span className={`rail-decision ${view.reconciliation.unresolvedCount === 0 && !view.reconciliation.neverRun ? 'rail-positive' : 'rail-warning'}`}><Database size={14} aria-hidden="true" /><span><small>Reconciliation</small><strong>{view.reconciliation.neverRun ? 'Not run' : view.reconciliation.unresolvedCount === 0 ? 'Settled' : `${view.reconciliation.unresolvedCount} unresolved`}</strong></span></span>
         <Freshness client={client} />
+        <span className={`rail-decision ${view.reconciliation.unresolvedCount === 0 && !view.reconciliation.neverRun ? 'rail-positive' : 'rail-warning'}`}><Database size={14} aria-hidden="true" /><span><small>Reconciliation</small><strong>{view.reconciliation.neverRun ? 'Not run' : view.reconciliation.unresolvedCount === 0 ? 'Settled' : `${view.reconciliation.unresolvedCount} unresolved`}</strong></span></span>
+        <StatusEmphasis stateKey={view.executionPermitted ? 'permitted' : 'blocked'}><span className={`rail-decision ${view.executionPermitted ? 'rail-positive' : 'rail-negative'}`}><ShieldCheck size={14} aria-hidden="true" /><span><small>Risk permission</small><strong>{view.executionPermitted ? 'Paper permitted' : 'Paper blocked'}</strong></span></span></StatusEmphasis>
         <StrategyDecision client={client} />
       </div>
       <div className="status-secondary">
