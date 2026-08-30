@@ -188,7 +188,7 @@ describe('display universe service', () => {
     expect(await service.search('../bad', 'btc')).toMatchObject({ ok: false });
     expect(await service.search('main', '')).toMatchObject({ ok: false });
     expect(await service.view('main', -1, 10)).toMatchObject({ ok: false });
-    expect(await service.view('main', 0, 51)).toMatchObject({ ok: false });
+    expect(await service.view('main', 0, 52)).toMatchObject({ ok: false });
     expect(service.setTracked('main', null)).toMatchObject({ ok: false });
     expect(source.search).not.toHaveBeenCalled();
     expect(source.page).not.toHaveBeenCalled();

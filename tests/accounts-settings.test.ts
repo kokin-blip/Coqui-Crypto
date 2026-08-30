@@ -26,6 +26,10 @@ describe('account settings service', () => {
         marketsChart: 'candles', performanceChart: 'equity', inspectorOpen: true,
         inspectorWidthPx: 320,
         chartRanges: { overview: '1y', portfolio: '1y', markets: '1y', performance: '1y' },
+        advancedOverviewPreset: 'research_grid',
+        advancedOverviewPanels: { strategyDetail: true, strategyComparison: true, recentActivity: true, proposalPreview: true, healthStrip: true, negativeFindings: true },
+        overviewSeriesStyle: 'area', overviewBenchmarkVisible: true, marketVolumeVisible: true,
+        marketIndicators: { sma20: false, sma50: false, ema20: false, bollinger20: false, rsi14: false, macd: false },
       },
     } });
     expect(readAccountPreferences('main', database)).toBeNull();
@@ -49,6 +53,10 @@ describe('account settings service', () => {
           marketsChart: 'candles', performanceChart: 'equity', inspectorOpen: true,
           inspectorWidthPx: 320,
           chartRanges: { overview: '1y', portfolio: '1y', markets: '1y', performance: '1y' },
+          advancedOverviewPreset: 'research_grid',
+          advancedOverviewPanels: { strategyDetail: true, strategyComparison: true, recentActivity: true, proposalPreview: true, healthStrip: true, negativeFindings: true },
+          overviewSeriesStyle: 'area', overviewBenchmarkVisible: true, marketVolumeVisible: true,
+          marketIndicators: { sma20: false, sma50: false, ema20: false, bollinger20: false, rsi14: false, macd: false },
         },
       },
     });
@@ -202,6 +210,23 @@ describe('account settings service', () => {
         { path: ['inspectorWidthPx'], code: 'invalid_inspector_state' },
         { path: ['marketsChart'], code: 'invalid_chart_view' },
       ],
+    });
+    database.close();
+  });
+
+  it('stores research-grid composition atomically and rejects incomplete visibility records', () => {
+    const database = openDatabase(':memory:');
+    const service = new AccountSettingsService({ database, clock: { nowMs: () => 50 } });
+    const panels = { strategyDetail: false, strategyComparison: true, recentActivity: false, proposalPreview: true, healthStrip: true, negativeFindings: true };
+    expect(service.setCommand('main', {
+      commandId: '10000000-0000-4000-8000-000000000020',
+      patch: { advancedOverviewPreset: 'chart_focus', advancedOverviewPanels: panels, overviewSeriesStyle: 'baseline', overviewBenchmarkVisible: false },
+    })).toMatchObject({ ok: true, value: { preferences: {
+      advancedOverviewPreset: 'chart_focus', advancedOverviewPanels: panels,
+      overviewSeriesStyle: 'baseline', overviewBenchmarkVisible: false,
+    } } });
+    expect(service.set('main', { advancedOverviewPanels: { strategyDetail: true } })).toEqual({
+      ok: false, issues: [{ path: ['advancedOverviewPanels'], code: 'invalid_panel_visibility' }],
     });
     database.close();
   });

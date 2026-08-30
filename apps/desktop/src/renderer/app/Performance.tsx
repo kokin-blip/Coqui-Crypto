@@ -107,9 +107,11 @@ export function Performance({ client }: { readonly client: CoquiClient }): React
           <div><p className="eyebrow">Daily immutable evidence</p><h2 id="equity-heading">Equity and benchmark</h2></div>
         </div>
         {selectedView === 'drawdown' ? (
-          <FinancialChart series={drawdownSeries} summary={`Worst verified drawdown ${view.metrics.maxDrawdownPct} percent.`} />
+          <FinancialChart client={client} filenameStem="coqui-performance-drawdown" series={drawdownSeries} summary={`Worst verified drawdown ${view.metrics.maxDrawdownPct} percent.`} />
         ) : (
           <FinancialChart
+            client={client}
+            filenameStem="coqui-paper-performance"
             series={chartSeries}
             summary={`${visiblePoints.length} verified paper equity observations in the selected range. Benchmark ${view.benchmarkStatus === 'available' ? 'available' : 'unavailable because starting evidence is missing'}.`}
           />
@@ -151,7 +153,7 @@ export function Performance({ client }: { readonly client: CoquiClient }): React
 
       <section className={`panel ${selectedView === 'drawdown' ? 'performance-focus-panel' : ''}`} aria-labelledby="drawdown-heading">
         <div className="panel-heading"><div><p className="eyebrow">Distance from prior high</p><h2 id="drawdown-heading">Drawdown history</h2></div></div>
-        <FinancialChart series={drawdownSeries} summary={`Worst verified drawdown ${view.metrics.maxDrawdownPct} percent.`} />
+        <FinancialChart client={client} filenameStem="coqui-drawdown-history" series={drawdownSeries} summary={`Worst verified drawdown ${view.metrics.maxDrawdownPct} percent.`} />
         <div className="drawdown-cards">
           {view.worstDrawdowns.map((episode, index) => (
             <article key={`${episode.peakDayUtc}:${episode.troughDayUtc}`}>

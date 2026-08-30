@@ -1,6 +1,7 @@
 import * as z from 'zod';
 
 import { activityChannelSchemas } from './schemas/activity.js';
+import { appChannelSchemas } from './schemas/app.js';
 import { accountsChannelSchemas } from './schemas/accounts.js';
 import { marketDataChannelSchemas } from './schemas/market-data.js';
 import { paperExecutionChannelSchemas } from './schemas/paper-execution.js';
@@ -26,6 +27,7 @@ import type { ContractSchema, DeepReadonly } from './messages.js';
  */
 export const CHANNEL_SCHEMAS = {
   ...activityChannelSchemas,
+  ...appChannelSchemas,
   ...accountsChannelSchemas,
   ...marketDataChannelSchemas,
   ...paperExecutionChannelSchemas,
@@ -74,6 +76,7 @@ const WRITE_CHANNELS = [
   'accounts.profile.switch',
   'accounts.settings.set',
   'accounts.workspace.set',
+  'app.chart.snapshot.save',
   'paper.campaign.kill-switch',
   'paper.execution.policy.set',
   'paper.execution.prepare',

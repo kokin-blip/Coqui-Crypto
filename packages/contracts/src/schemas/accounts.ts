@@ -39,6 +39,26 @@ const workspacePreferenceFields = {
     markets: z.enum(['1d', '1w', '1m', '3m', '1y', 'all']),
     performance: z.enum(['1d', '1w', '1m', '3m', '1y', 'all']),
   }).readonly(),
+  advancedOverviewPreset: z.enum(['research_grid', 'chart_focus', 'evidence_review', 'custom']),
+  advancedOverviewPanels: z.strictObject({
+    strategyDetail: z.boolean(),
+    strategyComparison: z.boolean(),
+    recentActivity: z.boolean(),
+    proposalPreview: z.boolean(),
+    healthStrip: z.boolean(),
+    negativeFindings: z.boolean(),
+  }).readonly(),
+  overviewSeriesStyle: z.enum(['line', 'area', 'baseline']),
+  overviewBenchmarkVisible: z.boolean(),
+  marketVolumeVisible: z.boolean(),
+  marketIndicators: z.strictObject({
+    sma20: z.boolean(),
+    sma50: z.boolean(),
+    ema20: z.boolean(),
+    bollinger20: z.boolean(),
+    rsi14: z.boolean(),
+    macd: z.boolean(),
+  }).readonly(),
 } as const;
 const workspacePreferencesSchema = z.strictObject(workspacePreferenceFields).readonly();
 

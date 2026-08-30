@@ -1,7 +1,8 @@
 import { basename, dirname, join } from 'node:path';
+import { writeFile } from 'node:fs/promises';
 
 import { createOsKeyringSecretStore } from '@coqui/adapters';
-import { app, BrowserWindow, ipcMain, Notification, shell } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, Notification, shell } from 'electron';
 
 import { createDispatcher } from './dispatch.js';
 import { createRuntime, type CoquiRuntime } from './composition.js';
@@ -114,6 +115,16 @@ async function start(): Promise<void> {
     runtime: {
       notifier: osNotifier,
       coinGeckoApiKey: await coinGeckoApiKey(),
+      async saveChartSnapshot(filenameStem, png) {
+        const result = await dialog.showSaveDialog({
+          title: 'Save chart snapshot',
+          defaultPath: `${filenameStem}.png`,
+          filters: [{ name: 'PNG image', extensions: ['png'] }],
+        });
+        if (result.canceled || result.filePath === undefined) return 'cancelled';
+        await writeFile(result.filePath, png, { flag: 'w' });
+        return 'saved';
+      },
     },
   });
 

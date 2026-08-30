@@ -31,7 +31,7 @@ function WorkspaceApp({ client }: { readonly client: CoquiClient }): React.JSX.E
           <main id="main-content" className="route-content" key={route}>
             <RouteScreen client={client} route={route} />
           </main>
-          {mode === 'advanced' && (preferences?.inspectorOpen ?? true) && <EvidenceInspector client={client} />}
+          {mode === 'advanced' && route !== 'overview' && (preferences?.inspectorOpen ?? true) && <EvidenceInspector client={client} />}
         </div>
       </div>
     </div>

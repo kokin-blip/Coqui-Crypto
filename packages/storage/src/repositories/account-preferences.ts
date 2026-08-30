@@ -12,6 +12,26 @@ export type AccountPortfolioChart = 'holdings' | 'allocation';
 export type AccountMarketsChart = 'candles' | 'line';
 export type AccountPerformanceChart = 'equity' | 'drawdown' | 'calendar' | 'distribution';
 export type AccountChartRange = '1d' | '1w' | '1m' | '3m' | '1y' | 'all';
+export type AccountAdvancedOverviewPreset = 'research_grid' | 'chart_focus' | 'evidence_review' | 'custom';
+export type AccountOverviewSeriesStyle = 'line' | 'area' | 'baseline';
+
+export interface AccountAdvancedOverviewPanels {
+  readonly strategyDetail: boolean;
+  readonly strategyComparison: boolean;
+  readonly recentActivity: boolean;
+  readonly proposalPreview: boolean;
+  readonly healthStrip: boolean;
+  readonly negativeFindings: boolean;
+}
+
+export interface AccountMarketIndicators {
+  readonly sma20: boolean;
+  readonly sma50: boolean;
+  readonly ema20: boolean;
+  readonly bollinger20: boolean;
+  readonly rsi14: boolean;
+  readonly macd: boolean;
+}
 
 export interface AccountChartRanges {
   readonly overview: AccountChartRange;
@@ -34,6 +54,12 @@ export interface StoredAccountPreferences {
   readonly inspectorOpen: boolean;
   readonly inspectorWidthPx: number;
   readonly chartRanges: AccountChartRanges;
+  readonly advancedOverviewPreset: AccountAdvancedOverviewPreset;
+  readonly advancedOverviewPanels: AccountAdvancedOverviewPanels;
+  readonly overviewSeriesStyle: AccountOverviewSeriesStyle;
+  readonly overviewBenchmarkVisible: boolean;
+  readonly marketVolumeVisible: boolean;
+  readonly marketIndicators: AccountMarketIndicators;
   readonly updatedAtMs: number;
 }
 
@@ -51,6 +77,12 @@ interface PreferenceRow {
   inspector_open: number;
   inspector_width_px: number;
   chart_ranges_json: string;
+  advanced_overview_preset: AccountAdvancedOverviewPreset;
+  advanced_overview_panels_json: string;
+  overview_series_style: AccountOverviewSeriesStyle;
+  overview_benchmark_visible: number;
+  market_volume_visible: number;
+  market_indicators_json: string;
   updated_at_ms: number;
 }
 
@@ -94,6 +126,18 @@ function parseRanges(value: string): AccountChartRanges {
   return Object.freeze(ranges);
 }
 
+function parseBooleanRecord<T extends object>(value: string, keys: readonly string[]): T {
+  const parsed = JSON.parse(value) as Record<string, unknown>;
+  if (Object.keys(parsed).length !== keys.length ||
+    !keys.every((key) => Object.hasOwn(parsed, key) && typeof parsed[key] === 'boolean')) {
+    throw new TypeError('Invalid boolean preference record.');
+  }
+  return Object.freeze(parsed) as T;
+}
+
+const PANEL_KEYS = ['strategyDetail', 'strategyComparison', 'recentActivity', 'proposalPreview', 'healthStrip', 'negativeFindings'] as const;
+const INDICATOR_KEYS = ['sma20', 'sma50', 'ema20', 'bollinger20', 'rsi14', 'macd'] as const;
+
 function validate(preferences: StoredAccountPreferences): void {
   if (!PROFILE_ID.test(preferences.profileId) ||
     !['system', 'light', 'dark', 'high_contrast'].includes(preferences.theme) ||
@@ -110,6 +154,14 @@ function validate(preferences: StoredAccountPreferences): void {
     preferences.inspectorWidthPx < 280 || preferences.inspectorWidthPx > 420 ||
     !validRanges(preferences.chartRanges) || !validTime(preferences.updatedAtMs)) {
     throw new TypeError('Invalid account preferences.');
+  }
+  if (!['research_grid', 'chart_focus', 'evidence_review', 'custom'].includes(preferences.advancedOverviewPreset) ||
+    !['line', 'area', 'baseline'].includes(preferences.overviewSeriesStyle) ||
+    typeof preferences.overviewBenchmarkVisible !== 'boolean' ||
+    typeof preferences.marketVolumeVisible !== 'boolean' ||
+    !PANEL_KEYS.every((key) => typeof preferences.advancedOverviewPanels[key] === 'boolean') ||
+    !INDICATOR_KEYS.every((key) => typeof preferences.marketIndicators[key] === 'boolean')) {
+    throw new TypeError('Invalid advanced workspace preferences.');
   }
 }
 
@@ -135,6 +187,12 @@ export function readAccountPreferences(
     inspectorOpen: row.inspector_open === 1,
     inspectorWidthPx: row.inspector_width_px,
     chartRanges: parseRanges(row.chart_ranges_json),
+    advancedOverviewPreset: row.advanced_overview_preset,
+    advancedOverviewPanels: parseBooleanRecord<AccountAdvancedOverviewPanels>(row.advanced_overview_panels_json, PANEL_KEYS),
+    overviewSeriesStyle: row.overview_series_style,
+    overviewBenchmarkVisible: row.overview_benchmark_visible === 1,
+    marketVolumeVisible: row.market_volume_visible === 1,
+    marketIndicators: parseBooleanRecord<AccountMarketIndicators>(row.market_indicators_json, INDICATOR_KEYS),
     updatedAtMs: row.updated_at_ms,
   };
   validate(preferences);
@@ -150,21 +208,33 @@ export function saveAccountPreferences(
   database.prepare(`INSERT INTO account_preferences_v1 (
     profile_id, theme, density, motion, language, workspace_mode,
     overview_chart, portfolio_chart, markets_chart, performance_chart,
-    inspector_open, inspector_width_px, chart_ranges_json, updated_at_ms
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    inspector_open, inspector_width_px, chart_ranges_json,
+    advanced_overview_preset, advanced_overview_panels_json, overview_series_style,
+    overview_benchmark_visible, market_volume_visible, market_indicators_json, updated_at_ms
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   ON CONFLICT(profile_id) DO UPDATE SET
     theme = excluded.theme, density = excluded.density, motion = excluded.motion,
     language = excluded.language, workspace_mode = excluded.workspace_mode,
     overview_chart = excluded.overview_chart, portfolio_chart = excluded.portfolio_chart,
     markets_chart = excluded.markets_chart, performance_chart = excluded.performance_chart,
     inspector_open = excluded.inspector_open, inspector_width_px = excluded.inspector_width_px,
-    chart_ranges_json = excluded.chart_ranges_json, updated_at_ms = excluded.updated_at_ms`)
+    chart_ranges_json = excluded.chart_ranges_json,
+    advanced_overview_preset = excluded.advanced_overview_preset,
+    advanced_overview_panels_json = excluded.advanced_overview_panels_json,
+    overview_series_style = excluded.overview_series_style,
+    overview_benchmark_visible = excluded.overview_benchmark_visible,
+    market_volume_visible = excluded.market_volume_visible,
+    market_indicators_json = excluded.market_indicators_json,
+    updated_at_ms = excluded.updated_at_ms`)
     .run(
       preferences.profileId, preferences.theme, preferences.density,
       preferences.motion, preferences.language, preferences.workspaceMode,
       preferences.overviewChart, preferences.portfolioChart, preferences.marketsChart,
       preferences.performanceChart, preferences.inspectorOpen ? 1 : 0,
       preferences.inspectorWidthPx, JSON.stringify(preferences.chartRanges),
+      preferences.advancedOverviewPreset, JSON.stringify(preferences.advancedOverviewPanels),
+      preferences.overviewSeriesStyle, preferences.overviewBenchmarkVisible ? 1 : 0,
+      preferences.marketVolumeVisible ? 1 : 0, JSON.stringify(preferences.marketIndicators),
       preferences.updatedAtMs,
     );
   return Object.freeze({ ...preferences });

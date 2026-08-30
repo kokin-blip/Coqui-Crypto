@@ -7,6 +7,10 @@ import {
   saveAccountSettingsCommand,
   type AccountChartRange,
   type AccountChartRanges,
+  type AccountAdvancedOverviewPanels,
+  type AccountAdvancedOverviewPreset,
+  type AccountMarketIndicators,
+  type AccountOverviewSeriesStyle,
   type AccountDensity,
   type AccountLanguage,
   type AccountMarketsChart,
@@ -25,6 +29,8 @@ const ALLOWED = new Set([
   'theme', 'density', 'motion', 'language', 'workspaceMode', 'overviewChart',
   'portfolioChart', 'marketsChart', 'performanceChart', 'inspectorOpen',
   'inspectorWidthPx', 'chartRanges',
+  'advancedOverviewPreset', 'advancedOverviewPanels', 'overviewSeriesStyle',
+  'overviewBenchmarkVisible', 'marketVolumeVisible', 'marketIndicators',
 ]);
 const COMMAND_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 const CHART_RANGES = ['1d', '1w', '1m', '3m', '1y', 'all'] as const;
@@ -47,11 +53,19 @@ export interface AccountPresentationPreferences {
   readonly inspectorOpen: boolean;
   readonly inspectorWidthPx: number;
   readonly chartRanges: AccountChartRanges;
+  readonly advancedOverviewPreset: AccountAdvancedOverviewPreset;
+  readonly advancedOverviewPanels: AccountAdvancedOverviewPanels;
+  readonly overviewSeriesStyle: AccountOverviewSeriesStyle;
+  readonly overviewBenchmarkVisible: boolean;
+  readonly marketVolumeVisible: boolean;
+  readonly marketIndicators: AccountMarketIndicators;
 }
 
 export type AccountWorkspacePreferences = Pick<AccountPresentationPreferences,
   'workspaceMode' | 'overviewChart' | 'portfolioChart' | 'marketsChart' |
-  'performanceChart' | 'inspectorOpen' | 'inspectorWidthPx' | 'chartRanges'>;
+  'performanceChart' | 'inspectorOpen' | 'inspectorWidthPx' | 'chartRanges' |
+  'advancedOverviewPreset' | 'advancedOverviewPanels' | 'overviewSeriesStyle' |
+  'overviewBenchmarkVisible' | 'marketVolumeVisible' | 'marketIndicators'>;
 
 export const DEFAULT_ACCOUNT_PRESENTATION_PREFERENCES: AccountPresentationPreferences =
   Object.freeze({
@@ -68,6 +82,18 @@ export const DEFAULT_ACCOUNT_PRESENTATION_PREFERENCES: AccountPresentationPrefer
     inspectorWidthPx: 320,
     chartRanges: Object.freeze({
       overview: '1y', portfolio: '1y', markets: '1y', performance: '1y',
+    }),
+    advancedOverviewPreset: 'research_grid',
+    advancedOverviewPanels: Object.freeze({
+      strategyDetail: true, strategyComparison: true, recentActivity: true,
+      proposalPreview: true, healthStrip: true, negativeFindings: true,
+    }),
+    overviewSeriesStyle: 'area',
+    overviewBenchmarkVisible: true,
+    marketVolumeVisible: true,
+    marketIndicators: Object.freeze({
+      sma20: false, sma50: false, ema20: false, bollinger20: false,
+      rsi14: false, macd: false,
     }),
   });
 
@@ -94,6 +120,9 @@ export type AccountSettingsIssueCode =
   | 'invalid_chart_view'
   | 'invalid_inspector_state'
   | 'invalid_chart_range'
+  | 'invalid_overview_preset'
+  | 'invalid_panel_visibility'
+  | 'invalid_indicator_selection'
   | 'invalid_command_id'
   | 'command_conflict'
   | 'clock_unavailable'
@@ -156,6 +185,12 @@ function preferences(value: StoredAccountPreferences | null): AccountPresentatio
       inspectorOpen: value.inspectorOpen,
       inspectorWidthPx: value.inspectorWidthPx,
       chartRanges: value.chartRanges,
+      advancedOverviewPreset: value.advancedOverviewPreset,
+      advancedOverviewPanels: value.advancedOverviewPanels,
+      overviewSeriesStyle: value.overviewSeriesStyle,
+      overviewBenchmarkVisible: value.overviewBenchmarkVisible,
+      marketVolumeVisible: value.marketVolumeVisible,
+      marketIndicators: value.marketIndicators,
     });
 }
 
@@ -186,6 +221,23 @@ interface ValidatedPatch {
   inspectorOpen?: boolean;
   inspectorWidthPx?: number;
   chartRanges?: AccountChartRanges;
+  advancedOverviewPreset?: AccountAdvancedOverviewPreset;
+  advancedOverviewPanels?: AccountAdvancedOverviewPanels;
+  overviewSeriesStyle?: AccountOverviewSeriesStyle;
+  overviewBenchmarkVisible?: boolean;
+  marketVolumeVisible?: boolean;
+  marketIndicators?: AccountMarketIndicators;
+}
+
+const PANEL_KEYS = ['strategyDetail', 'strategyComparison', 'recentActivity', 'proposalPreview', 'healthStrip', 'negativeFindings'] as const;
+const INDICATOR_KEYS = ['sma20', 'sma50', 'ema20', 'bollinger20', 'rsi14', 'macd'] as const;
+
+function booleanRecord<T extends object>(value: unknown, keys: readonly string[]): T | null {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) return null;
+  const row = value as Record<string, unknown>;
+  if (Object.keys(row).length !== keys.length ||
+    !keys.every((key) => Object.hasOwn(row, key) && typeof row[key] === 'boolean')) return null;
+  return freeze({ ...row }) as T;
 }
 
 function chartRanges(value: unknown): AccountChartRanges | null {
@@ -264,6 +316,25 @@ function validatePatch(value: unknown):
       const ranges = chartRanges(field);
       if (ranges === null) issues.push(issue([key], 'invalid_chart_range'));
       else patch.chartRanges = ranges;
+    } else if (key === 'advancedOverviewPreset') {
+      if (field === 'research_grid' || field === 'chart_focus' || field === 'evidence_review' || field === 'custom') {
+        patch.advancedOverviewPreset = field;
+      } else issues.push(issue([key], 'invalid_overview_preset'));
+    } else if (key === 'advancedOverviewPanels') {
+      const panels = booleanRecord<AccountAdvancedOverviewPanels>(field, PANEL_KEYS);
+      if (panels === null) issues.push(issue([key], 'invalid_panel_visibility'));
+      else patch.advancedOverviewPanels = panels;
+    } else if (key === 'overviewSeriesStyle') {
+      if (field === 'line' || field === 'area' || field === 'baseline') patch.overviewSeriesStyle = field;
+      else issues.push(issue([key], 'invalid_chart_view'));
+    } else if (key === 'overviewBenchmarkVisible' || key === 'marketVolumeVisible') {
+      if (typeof field !== 'boolean') issues.push(issue([key], 'invalid_chart_view'));
+      else if (key === 'overviewBenchmarkVisible') patch.overviewBenchmarkVisible = field;
+      else patch.marketVolumeVisible = field;
+    } else if (key === 'marketIndicators') {
+      const indicators = booleanRecord<AccountMarketIndicators>(field, INDICATOR_KEYS);
+      if (indicators === null) issues.push(issue([key], 'invalid_indicator_selection'));
+      else patch.marketIndicators = indicators;
     }
   }
   return issues.length > 0
@@ -330,6 +401,12 @@ export class AccountSettingsService {
           inspectorOpen: validated.patch.inspectorOpen ?? current.inspectorOpen,
           inspectorWidthPx: validated.patch.inspectorWidthPx ?? current.inspectorWidthPx,
           chartRanges: validated.patch.chartRanges ?? current.chartRanges,
+          advancedOverviewPreset: validated.patch.advancedOverviewPreset ?? current.advancedOverviewPreset,
+          advancedOverviewPanels: validated.patch.advancedOverviewPanels ?? current.advancedOverviewPanels,
+          overviewSeriesStyle: validated.patch.overviewSeriesStyle ?? current.overviewSeriesStyle,
+          overviewBenchmarkVisible: validated.patch.overviewBenchmarkVisible ?? current.overviewBenchmarkVisible,
+          marketVolumeVisible: validated.patch.marketVolumeVisible ?? current.marketVolumeVisible,
+          marketIndicators: validated.patch.marketIndicators ?? current.marketIndicators,
           updatedAtMs,
         }, this.#database);
       });
@@ -378,6 +455,12 @@ export class AccountSettingsService {
           inspectorOpen: validated.patch.inspectorOpen ?? current.inspectorOpen,
           inspectorWidthPx: validated.patch.inspectorWidthPx ?? current.inspectorWidthPx,
           chartRanges: validated.patch.chartRanges ?? current.chartRanges,
+          advancedOverviewPreset: validated.patch.advancedOverviewPreset ?? current.advancedOverviewPreset,
+          advancedOverviewPanels: validated.patch.advancedOverviewPanels ?? current.advancedOverviewPanels,
+          overviewSeriesStyle: validated.patch.overviewSeriesStyle ?? current.overviewSeriesStyle,
+          overviewBenchmarkVisible: validated.patch.overviewBenchmarkVisible ?? current.overviewBenchmarkVisible,
+          marketVolumeVisible: validated.patch.marketVolumeVisible ?? current.marketVolumeVisible,
+          marketIndicators: validated.patch.marketIndicators ?? current.marketIndicators,
           updatedAtMs: recordedAtMs,
         }, this.#database);
         const outcome = freeze({ ok: true, value: view(profileId, recordedAtMs, stored) } as const);

@@ -62,6 +62,7 @@ import {
 } from '@coqui/storage';
 
 import { createDiagnostics } from './diagnostics.js';
+import { createChartSnapshotHandlers } from './chart-snapshot-handlers.js';
 import { createAccountPreferenceHandlers } from './account-preference-handlers.js';
 import { CoinbaseMarketStreamService } from './coinbase-market-stream.js';
 import { createMarketHandlers } from './market-handlers.js';
@@ -140,6 +141,8 @@ export interface RuntimeOptions {
    * without an OS.
    */
   readonly notifier?: Parameters<typeof createAlertNotificationPump>[0]['notifier'];
+  /** Native shell save boundary. Paths never return to the renderer or diagnostics. */
+  readonly saveChartSnapshot?: (filenameStem: string, png: Uint8Array) => Promise<'saved' | 'cancelled'>;
 }
 
 export interface CoquiRuntime {
@@ -327,6 +330,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   if (options.disableScheduler !== true) startScheduler();
 
   const handlers: ChannelHandlers = {
+    ...createChartSnapshotHandlers({ profileId: options.profileId, database, clock, ...(options.saveChartSnapshot === undefined ? {} : { save: options.saveChartSnapshot }) }),
     ...createPaperCampaignHandlers(options.profileId, clock, database),
     'activity.feed': (payload: { readonly limit: number; readonly cursor: string | null }) => ({
       ok: true,

@@ -212,6 +212,7 @@ describe('the sweep covers the whole registry', () => {
       || channel === 'accounts.profile.switch'
       || channel === 'accounts.settings.set'
       || channel === 'accounts.workspace.set'
+      || channel === 'app.chart.snapshot.save'
       || channel === 'portfolio.reconciliation.resolve',
     )).toBe(true);
   });

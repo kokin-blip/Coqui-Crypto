@@ -19,8 +19,8 @@ Effort figures assume one part-time developer with assistance.
 ```
 Current phase:  P5 additive UI and authoritative paper-execution continuation
 Baseline:       d25101f · preserved local continuation through 76d8777
-Verified now:   154 test files / 1070 tests; Electron smoke 37/37;
-                packaged smoke 8/8; warm shell 152ms; interaction p75 8.4ms
+Verified now:   158 test files / 1082 tests; Electron smoke 37/37;
+                packaged smoke 8/8; warm shell 167ms; interaction p75 9.0ms
                 macOS package + packaged smoke; Windows x64 cross-build only
 WAITING ON:     prospective observations (365 complete days + 30 cost-bearing
                 rebalances) and an elapsed seven-day campaign
@@ -39,7 +39,7 @@ fixtures or prose:
   direction on 2026-08-24. The two-level status header, dual Advanced/Simple
   workspaces, Markets and Performance views, and primary evidence layouts are material
   changes, so the production-renderer set in
-  `docs/design/screenshots/review-2026-08-28-dual-mode/` requires a new owner decision.
+  `docs/design/screenshots/review-2026-08-29-research-grid/` requires a new owner decision.
 
 1. **P7's real-key exit is owner-deferred.** Coinbase keys are personal. The owner
    explicitly deferred credential-backed verification on 2026-08-27. The connect flow, the
@@ -86,8 +86,8 @@ candidate that injects no `<style>` element and therefore the only one that runs
 under `style-src 'self'` without a per-load CSP nonce.
 
 The performance harness is built and passing, with its own sensitivity control:
-warm shell 152 ms against a 1500 ms budget, interaction
-p75 8.4 ms against 200 ms, and a deliberately injected 250 ms regression that
+warm shell 167 ms against a 1500 ms budget, interaction
+p75 9.0 ms against 200 ms, and a deliberately injected 250 ms regression that
 must breach the budget or the harness fails.
 
 **The scoreboard exists.** `RiskEvidenceTrackerService` → `risk.evidence-gate`

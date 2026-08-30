@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const repository = dirname(dirname(root));
-const output = join(repository, 'docs/design/screenshots/review-2026-08-28-dual-mode');
+const output = join(repository, 'docs/design/screenshots/review-2026-08-29-research-grid');
 const entry = join(root, 'dist/renderer/index.html');
 
 if (!existsSync(entry)) {
@@ -28,13 +28,16 @@ const { createDispatcher } = await import(join(root, 'dist/main/dispatch.js'));
 const { applyWindowHardening, WEB_PREFERENCES } = await import(join(root, 'dist/main/security.js'));
 
 const captures = [
-  { name: 'advanced-overview-dark', route: 'overview', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1 },
+  { name: 'research-grid-dark', route: 'overview', mode: 'advanced', preset: 'research_grid', theme: 'dark', density: 'comfortable', zoom: 1 },
+  { name: 'research-grid-light', route: 'overview', mode: 'advanced', preset: 'research_grid', theme: 'light', density: 'comfortable', zoom: 1 },
+  { name: 'chart-focus-dark', route: 'overview', mode: 'advanced', preset: 'chart_focus', theme: 'dark', density: 'comfortable', zoom: 1 },
+  { name: 'evidence-review-dark', route: 'overview', mode: 'advanced', preset: 'evidence_review', theme: 'dark', density: 'comfortable', zoom: 1 },
   { name: 'simple-overview-dark', route: 'overview', mode: 'simple', theme: 'dark', density: 'comfortable', zoom: 1 },
   { name: 'advanced-portfolio-light', route: 'portfolio/holdings', mode: 'advanced', theme: 'light', density: 'comfortable', zoom: 1 },
   { name: 'simple-portfolio-allocation', route: 'portfolio/holdings', mode: 'simple', theme: 'dark', density: 'comfortable', zoom: 1, portfolioChart: 'allocation' },
   { name: 'risk-high-contrast', route: 'risk', mode: 'advanced', theme: 'high-contrast', density: 'comfortable', zoom: 1 },
   { name: 'markets-compact-offline', route: 'markets', mode: 'advanced', theme: 'dark', density: 'compact', zoom: 1 },
-  { name: 'overview-200-percent', route: 'overview', mode: 'advanced', theme: 'dark', density: 'compact', zoom: 2 },
+  { name: 'overview-200-percent', route: 'overview', mode: 'advanced', preset: 'research_grid', theme: 'dark', density: 'compact', zoom: 2 },
   { name: 'research-negative-evidence', route: 'research', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1, scrollTarget: '[data-finding-id="trendvol-replacement-v1"]' },
   { name: 'activity-empty-evidence', route: 'activity', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1 },
   { name: 'performance-empty-evidence', route: 'paper/performance', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1 },
@@ -90,6 +93,14 @@ async function run() {
         commandId: randomUUID(),
         patch: {
           workspaceMode: capture.mode,
+          ...(capture.preset === undefined ? {} : {
+            advancedOverviewPreset: capture.preset,
+            advancedOverviewPanels: capture.preset === 'chart_focus'
+              ? { strategyDetail: false, strategyComparison: true, recentActivity: false, proposalPreview: true, healthStrip: true, negativeFindings: false }
+              : capture.preset === 'evidence_review'
+                ? { strategyDetail: true, strategyComparison: true, recentActivity: true, proposalPreview: false, healthStrip: false, negativeFindings: true }
+                : { strategyDetail: true, strategyComparison: true, recentActivity: true, proposalPreview: true, healthStrip: true, negativeFindings: true },
+          }),
           ...(capture.portfolioChart === undefined ? {} : { portfolioChart: capture.portfolioChart }),
         },
       });

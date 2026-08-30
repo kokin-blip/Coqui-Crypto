@@ -21,6 +21,12 @@ function workspacePreferences(view: ReturnType<AccountSettingsService['get']>) {
         inspectorOpen: preferences.inspectorOpen,
         inspectorWidthPx: preferences.inspectorWidthPx,
         chartRanges: preferences.chartRanges,
+        advancedOverviewPreset: preferences.advancedOverviewPreset,
+        advancedOverviewPanels: preferences.advancedOverviewPanels,
+        overviewSeriesStyle: preferences.overviewSeriesStyle,
+        overviewBenchmarkVisible: preferences.overviewBenchmarkVisible,
+        marketVolumeVisible: preferences.marketVolumeVisible,
+        marketIndicators: preferences.marketIndicators,
       },
     },
   };

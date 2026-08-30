@@ -1,15 +1,16 @@
-# Dual-mode UI design QA
+# Advanced Overview Research Grid design QA
 
-Date: 2026-08-29  
-Viewport: 1536 × 1024 CSS pixels  
-Reference set: `docs/design/dual-mode-reference/`  
-Implementation set: `docs/design/screenshots/review-2026-08-28-dual-mode/`
+Date: 2026-08-29
+Viewport: 1536 × 1024 CSS pixels
+Reference: `docs/design/dual-mode-reference/advanced-workstation.png`
+Implementation set: `docs/design/screenshots/review-2026-08-29-research-grid/`
 
 ## Blocking comparison
 
-- Advanced source and implementation were compared side-by-side in `docs/design/qa/advanced-comparison.png`.
-- Simple source and implementation were compared side-by-side in `docs/design/qa/simple-comparison.png`.
-- The canonical coquí mark is the exact owner-selected bitmap. Its SHA-256 is locked by `tests/icon-assets.test.ts`; packaging refuses a different source image.
+- The default Advanced Overview was compared with the approved workstation hierarchy at a matching viewport.
+- The rebuilt first viewport contains the persistent navigation and status header, dominant verified chart, Evidence Stack, optional Strategy Detail, and the start of the comparison/activity row.
+- The exact owner-selected coquí bitmap remains hash-locked by `tests/icon-assets.test.ts`: `55dab8864e0463256ffec43de29e4c27da6f820f77737b58c59fbac855c3691a`.
+- The restrained dot field remains a navigation accent and does not compete with financial evidence.
 
 ## Results
 
@@ -19,37 +20,39 @@ None.
 
 ### P1 — major hierarchy or interaction defects
 
-None.
+None after correction.
 
-- Advanced preserves the source hierarchy: persistent labeled navigation, compact operating status, dominant evidence chart, linked operational context, and a persistent evidence inspector.
-- Simple preserves the route and status context while removing the inspector and revealing secondary evidence progressively.
-- Both modes expose profile, paper policy, freshness, reconciliation, risk permission, leading-strategy validation, and the blocking reason in the first viewport.
+- `research_grid` is the Advanced default. `chart_focus`, `evidence_review`, and custom visibility choices preserve the mandatory chart and Evidence Stack.
+- Strategy selection is ephemeral and linked to the detail inspector without issuing a financial query.
+- Simple mode retains its existing decision-first composition and progressive disclosure.
+- At constrained widths the same evidence order stacks; no panel is replaced with decorative content.
 
 ### P2 — material visual or accessibility defects
 
 None after correction.
 
-- The formerly sparse Performance and Activity empty states now retain the intended workstation structure without inventing observations.
-- At 200% zoom the navigation collapses to icons with accessible names; content remains readable without horizontal page scrolling.
-- Light, dark, compact, high-contrast, reduced-motion, no-motion, stale/offline, negative-evidence, and unavailable-data states use semantic tokens rather than feature-owned colors.
-- Financial charts remain primary. Allocation rings are optional companion views and include textual summaries and linked filtering.
+- Chart observations support keyboard Left/Right inspection, a live text legend, accessible summary, fullscreen, and a validated native PNG-save flow.
+- Dark, light, high-contrast, compact, Simple, Advanced, and 200% captures use shared semantic tokens and non-color status labels.
+- Empty charts and strategy areas clearly state why verified evidence is unavailable.
+- The four-metric health strip remains below the comparison/proposal area, and negative findings remain last.
 
-### P3 — intentional differences and follow-up evidence
+### P3 — intentional differences and external evidence
 
-- Reference mockups contain illustrative market curves and strategy rows. Production screenshots show honest unavailable states when the local profile lacks immutable observations; no decorative financial data was introduced to mimic the reference.
-- The Advanced reference includes trading-terminal controls that Coqui intentionally rejects. The implementation contains no buy/sell, order-book, leverage, transfer, or live-execution surface.
-- Windows artifacts cross-build locally, but packaged runtime verification remains open for an authorized Windows runner.
-- The refreshed screenshot set still requires owner review before visual approval is recorded in the release plan.
+- The reference contains illustrative curves and strategy rows. Production captures use an isolated migrated profile and never fabricate immutable financial evidence.
+- Coqui continues using the installed Lightweight Charts renderer with completed Coinbase observations. No TradingView data, remote widget, iframe, script, or renderer network path was added.
+- Display indicators are informational only, default off except volume, and cannot enter research, risk, storage, OMS, or execution.
+- Windows zip and installer cross-build locally; packaged runtime verification remains open for an authorized Windows runner.
+- This implementation QA passed. Owner approval of the refreshed screenshot set remains an external release gate.
 
 ## Verification evidence
 
-- Typecheck and lint: passed on Node 24.15.0.
-- Tests: 154 files, 1,070 tests passed.
+- Typecheck and lint: passed on Node 24.
+- Tests: 158 files, 1,082 tests passed.
 - Electron security smoke: passed; renderer sandbox and restrictive CSP retained.
-- Performance: warm useful shell 152.0 ms; interaction p75 8.4 ms.
+- Performance: warm useful shell 167.0 ms; interaction p75 9.0 ms.
 - Production dependency audit: no known vulnerabilities.
-- macOS arm64 package and packaged smoke: passed, migration 51 applied under asar.
+- macOS arm64 package and packaged smoke: passed with migration 52 under asar.
 - Windows x64 installer and zip: cross-build passed; runtime verification not claimed.
 - `git diff --check`: passed.
 
-Final result: passed. Owner screenshot approval and Windows runtime evidence remain external release gates.
+Final implementation result: passed. Owner screenshot approval and Windows runtime evidence remain external release gates.

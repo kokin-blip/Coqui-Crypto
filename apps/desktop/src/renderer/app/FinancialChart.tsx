@@ -1,7 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import {
   ColorType,
+  AreaSeries,
+  BaselineSeries,
   LineSeries,
   createChart,
   type ISeriesApi,
@@ -9,6 +11,8 @@ import {
   type Time,
 } from 'lightweight-charts';
 import { CHART_COLORS } from '@coqui/ui-kit';
+import type { CoquiClient } from '@coqui/contracts';
+import { ChartFrame } from './ChartFrame.js';
 
 export interface FinancialChartSeries {
   readonly id: string;
@@ -20,13 +24,21 @@ export interface FinancialChartSeries {
 export function FinancialChart({
   series,
   summary,
+  style = 'line',
+  client,
+  filenameStem = 'coqui-chart',
 }: {
   readonly series: readonly FinancialChartSeries[];
   readonly summary: string;
+  readonly style?: 'line' | 'area' | 'baseline';
+  readonly client?: CoquiClient;
+  readonly filenameStem?: string;
 }): React.JSX.Element {
   const container = useRef<HTMLDivElement>(null);
   const apis = useRef(new Map<string, ISeriesApi<'Line'>>());
   const priorLengths = useRef(new Map<string, number>());
+  const chartApi = useRef<ReturnType<typeof createChart> | null>(null);
+  const [cursorLabel, setCursorLabel] = useState<string | null>(null);
 
   useEffect(() => {
     if (container.current === null) return;
@@ -46,15 +58,26 @@ export function FinancialChart({
       handleScroll: true,
       handleScale: true,
     });
+    chartApi.current = chart;
     for (const definition of series) {
-      apis.current.set(definition.id, chart.addSeries(LineSeries, {
-        color: definition.color,
-        lineWidth: 2,
-        title: definition.label,
-        priceLineVisible: false,
-        lastValueVisible: true,
-      }));
+      const shared = { lineWidth: 2 as const, title: definition.label, priceLineVisible: false, lastValueVisible: true };
+      const api = style === 'area' ? chart.addSeries(AreaSeries, {
+        ...shared, lineColor: definition.color, topColor: `${definition.color}55`, bottomColor: `${definition.color}05`,
+      }) : style === 'baseline' ? chart.addSeries(BaselineSeries, {
+        ...shared, topLineColor: definition.color, topFillColor1: `${definition.color}55`, topFillColor2: `${definition.color}05`,
+        bottomLineColor: CHART_COLORS.negative, bottomFillColor1: 'rgb(255 107 122 / 5%)', bottomFillColor2: 'rgb(255 107 122 / 32%)',
+      }) : chart.addSeries(LineSeries, { ...shared, color: definition.color });
+      apis.current.set(definition.id, api as ISeriesApi<'Line'>);
     }
+    chart.subscribeCrosshairMove((parameter) => {
+      if (parameter.time === undefined) { setCursorLabel(null); return; }
+      const values = series.flatMap((definition) => {
+        const api = apis.current.get(definition.id);
+        const point = api === undefined ? undefined : parameter.seriesData.get(api) as { value?: number } | undefined;
+        return point?.value === undefined ? [] : [`${definition.label} ${point.value.toLocaleString()}`];
+      });
+      setCursorLabel(`${String(parameter.time)}${values.length === 0 ? '' : ` · ${values.join(' · ')}`}`);
+    });
     const observer = new ResizeObserver(([entry]) => {
       if (entry !== undefined) chart.applyOptions({ width: Math.floor(entry.contentRect.width) });
     });
@@ -64,9 +87,10 @@ export function FinancialChart({
       apis.current.clear();
       priorLengths.current.clear();
       chart.remove();
+      chartApi.current = null;
     };
     // Series identities are fixed by each chart surface; values update below.
-  }, []);
+  }, [style]);
 
   useEffect(() => {
     for (const definition of series) {
@@ -83,10 +107,11 @@ export function FinancialChart({
     }
   }, [series]);
 
-  return (
-    <figure className="financial-chart">
-      <div ref={container} aria-hidden="true" />
-      <figcaption className="sr-only">{summary}</figcaption>
-    </figure>
-  );
+  const observations = series[0]?.values.map((point) => ({ day: point.day, label: `${point.day}: ${point.value.toLocaleString()}` })) ?? [];
+  const snapshot = client === undefined ? undefined : async (): Promise<void> => {
+    const png = chartApi.current?.takeScreenshot().toDataURL('image/png').split(',')[1];
+    if (png === undefined) return;
+    await client.query('app.chart.snapshot.save', { commandId: crypto.randomUUID(), filenameStem, pngBase64: png });
+  };
+  return <ChartFrame className="financial-chart" containerRef={container} observations={observations} summary={summary} cursorLabel={cursorLabel} {...(snapshot === undefined ? {} : { onSnapshot: snapshot })} />;
 }
