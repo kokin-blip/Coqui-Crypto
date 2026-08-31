@@ -64,6 +64,7 @@ import {
 import { createDiagnostics } from './diagnostics.js';
 import { createChartSnapshotHandlers } from './chart-snapshot-handlers.js';
 import { createChartWorkspaceHandlers } from './chart-workspace-handlers.js';
+import { createChartExtensionHandlers } from './chart-extension-handlers.js';
 import { createAccountPreferenceHandlers } from './account-preference-handlers.js';
 import { CoinbaseMarketStreamService } from './coinbase-market-stream.js';
 import { createMarketHandlers } from './market-handlers.js';
@@ -169,9 +170,7 @@ export interface CoquiRuntime {
  * whichever service happened to need it first.
  */
 export function createRuntime(options: RuntimeOptions): CoquiRuntime {
-  const clock = new SystemClock(options.readSystemTime ?? (() => Date.now()));
-  const database = openDatabase(options.databasePath);
-  const forwardPlanHash = registerForwardEdgeStudy(SHIPPED_FORWARD_EDGE_PLAN, database);
+  const clock = new SystemClock(options.readSystemTime ?? (() => Date.now())), database = openDatabase(options.databasePath), forwardPlanHash = registerForwardEdgeStudy(SHIPPED_FORWARD_EDGE_PLAN, database);
 
   // Every background failure in the application goes through here: a structured
   // log line always, and an incident row when the fault is durable. Before this,
@@ -330,6 +329,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   if (options.disableScheduler !== true) startScheduler();
 
   const handlers: ChannelHandlers = {
+    ...createChartExtensionHandlers({ profileId: options.profileId, database, clock }),
     ...createChartSnapshotHandlers({ profileId: options.profileId, database, clock, ...(options.saveChartSnapshot === undefined ? {} : { save: options.saveChartSnapshot }) }),
     ...createChartWorkspaceHandlers({ profileId: options.profileId, database, clock }),
     ...createPaperCampaignHandlers(options.profileId, clock, database),

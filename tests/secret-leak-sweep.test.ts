@@ -215,6 +215,7 @@ describe('the sweep covers the whole registry', () => {
       || channel === 'app.chart.snapshot.save'
       || channel === 'app.chart.workspace'
       || channel === 'app.chart.workspace.set'
+      || channel.startsWith('chart-extensions.')
       || channel === 'portfolio.reconciliation.resolve',
     )).toBe(true);
   });

@@ -2,12 +2,13 @@ import { useMemo, useState } from 'react';
 import {
   BarChart3, CandlestickChart, ChevronDown, CircleDot, Columns2, Grid2X2,
   Layers3, LineChart, MousePointer2, PanelTop, RectangleHorizontal, Save, Search,
-  SlidersHorizontal, TextCursorInput, TrendingUp, Waves,
+  SlidersHorizontal, TextCursorInput, TrendingUp, Waves, Puzzle,
 } from 'lucide-react';
 
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 
 import { MarketFactsPanel } from './MarketFactsPanel.js';
+import { ChartExtensionManager } from './ChartExtensionManager.js';
 import { TradingWorkstationChart } from './TradingWorkstationChart.js';
 import type {
   ChartDrawing, DrawingTool, WorkstationBar, WorkstationChartStyle, WorkstationInterval,
@@ -68,6 +69,7 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
   const [style, setStyle] = useState<WorkstationChartStyle>('candles');
   const [activeTool, setActiveTool] = useState<DrawingTool>('cursor');
   const [analystOpen, setAnalystOpen] = useState(false);
+  const [extensionsOpen, setExtensionsOpen] = useState(false);
   const [historyAnchor] = useState(() => Date.now());
   const interval = workspace.preferences?.marketInterval ?? '1d';
   const selectedProduct = catalog.find((product) => product.instrument.productId === selected) ?? catalog[0];
@@ -92,6 +94,7 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
       <div className="market-timeframes" aria-label="Chart interval">{INTERVALS.map((item) => <button key={item} type="button" aria-pressed={item === interval} onClick={() => void workspace.update({ marketInterval: item })}>{item}</button>)}</div>
       <div className="market-style-control"><button type="button" aria-label="Candlestick chart" aria-pressed={style === 'candles'} onClick={() => setStyle('candles')}><CandlestickChart size={16} /></button><button type="button" aria-label="Line chart" aria-pressed={style === 'line'} onClick={() => setStyle('line')}><LineChart size={16} /></button><button type="button" aria-label="Area chart" aria-pressed={style === 'area'} onClick={() => setStyle('area')}><BarChart3 size={16} /></button></div>
       <button type="button" className="compact-control" onClick={() => void workspace.update({ marketLayout: layout === 'single' ? 'grid' : 'single' })}>{layout === 'single' ? <Grid2X2 size={15} /> : <Layers3 size={15} />} {layout === 'single' ? 'Multi-chart' : 'Single'} <ChevronDown size={13} /></button>
+      <button type="button" className="compact-control" onClick={() => setExtensionsOpen(true)}><Puzzle size={14} /> Extensions</button>
       <button type="button" className="compact-control save-chart-view" disabled={chartCommand.state.kind === 'pending'} onClick={() => void chartCommand.run({ commandId: crypto.randomUUID(), action: { kind: 'save_layout', id: crypto.randomUUID(), name: `${productId} workspace`, layout, tiles: tileProducts.map((tile) => ({ productId: tile, interval, linkGroup: 'primary' })) } })}><Save size={14} /> Save view</button>
     </header>
     <div className="market-workstation-grid">
@@ -102,5 +105,6 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
     </div>
     <footer className="market-workstation-footer"><span>Coinbase display data · informational only</span><label><input type="checkbox" checked={workspace.preferences?.marketLiveCandle ?? false} onChange={(event) => void workspace.update({ marketLiveCandle: event.target.checked })} /> Show provisional candle</label><span>UTC</span></footer>
     {analystOpen && <div className="analyst-sheet-backdrop" role="presentation" onMouseDown={() => setAnalystOpen(false)}><section role="dialog" aria-modal="true" aria-labelledby="analyst-title" className="analyst-sheet" onMouseDown={(event) => event.stopPropagation()}><header><div><span className="violet-kicker">Coqui analyst</span><h2 id="analyst-title">Ask about {productId}</h2></div><button type="button" onClick={() => setAnalystOpen(false)}>Close</button></header><p>Deterministic facts are available now. Provider-enriched analysis requires an explicitly connected advisor and selected context.</p><div className="advisor-context-options"><label><input type="checkbox" defaultChecked /> Chart data</label><label><input type="checkbox" /> Visible Coqui evidence</label><label><input type="checkbox" /> Sanitized portfolio context</label></div><textarea aria-label="Question for Coqui analyst" placeholder="What stands out in this completed price history?" /><button type="button" className="primary-button" disabled>Connect an advisor in Settings</button><small>Advisory only · No execution authority</small></section></div>}
+    {extensionsOpen && <ChartExtensionManager client={client} onClose={() => setExtensionsOpen(false)} />}
   </div>;
 }

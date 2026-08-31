@@ -714,6 +714,27 @@
 .analyst-sheet .primary-button { width: 100%; margin-top: 10px; }
 .analyst-sheet > small { display: block; margin-top: 10px; color: var(--coqui-text-subtle); text-align: center; }
 
+.extension-manager-backdrop { position: fixed; z-index: var(--coqui-z-modal-backdrop); inset: 0; display: grid; place-items: center; padding: 24px; background: rgb(0 0 0 / 66%); }
+.extension-manager { z-index: var(--coqui-z-modal); width: min(760px, 96vw); max-height: min(900px, 92vh); overflow-y: auto; color: var(--coqui-text); background: #06150f; border: 1px solid #245c44; border-radius: 7px; box-shadow: 0 18px 60px rgb(0 0 0 / 45%); }
+.extension-manager > header, .extension-manager > section, .extension-manager > footer { padding: 14px 16px; border-bottom: 1px solid #17382b; }
+.extension-manager > header { display: flex; align-items: flex-start; justify-content: space-between; }
+.extension-manager h2, .extension-manager h3 { margin: 4px 0 0; }
+.extension-manager h3 { margin-bottom: 11px; font-size: 13px; }
+.extension-safety { display: flex; gap: 10px; margin: 14px 16px 0; padding: 11px; color: #c9c3ff; background: #17132a; border: 1px solid #453b80; border-radius: 5px; }
+.extension-safety div, .extension-field, .extension-list li > div:first-child, .extension-signer-list span { display: grid; gap: 3px; }
+.extension-safety span, .extension-list span, .extension-list small, .extension-signer-list small, .extension-field > span { color: var(--coqui-text-subtle); font-size: 11px; }
+.extension-empty { padding: 14px; color: var(--coqui-text-subtle); text-align: center; background: #04110c; border: 1px dashed #17382b; }
+.extension-list, .extension-signer-list { padding: 0; margin: 0; list-style: none; }
+.extension-list li, .extension-signer-list li { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 10px 0; border-top: 1px solid #17382b; }
+.extension-list li > div:last-child, .extension-key-form { display: flex; align-items: end; gap: 8px; }
+.extension-manager button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 32px; padding: 5px 10px; color: var(--coqui-text); cursor: pointer; background: #091d15; border: 1px solid #245c44; border-radius: 5px; }
+.extension-manager button:disabled { cursor: not-allowed; opacity: .5; }
+.extension-manager .danger-quiet { color: #ff9aa5; border-color: #5d2830; }
+.extension-field { flex: 1; margin-bottom: 10px; }
+.extension-field input, .extension-field textarea { min-width: 0; padding: 8px; color: var(--coqui-text); background: #020b08; border: 1px solid #17382b; border-radius: 5px; }
+.extension-field textarea { width: 100%; min-height: 90px; resize: vertical; font: 11px ui-monospace, monospace; }
+.extension-manager > footer { color: var(--coqui-text-subtle); font-size: 10px; text-align: center; border-bottom: 0; }
+
 @media (max-width: 1320px) {
   .market-workstation-grid { grid-template-columns: 42px minmax(520px, 1fr) 210px; }
   .market-facts-inspector { grid-column: 2 / -1; border-top: 1px solid #17382b; border-left: 0; }
