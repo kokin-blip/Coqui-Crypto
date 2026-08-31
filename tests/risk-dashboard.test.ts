@@ -110,6 +110,7 @@ describe('the gate cannot be edited from the UI', () => {
       'accounts.settings.set',
       'accounts.workspace.set',
       'app.chart.snapshot.save',
+      'app.chart.workspace.set',
       'paper.campaign.kill-switch',
       'paper.execution.policy.set',
       'paper.execution.prepare',

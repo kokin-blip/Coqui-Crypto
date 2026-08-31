@@ -77,6 +77,7 @@ const WRITE_CHANNELS = [
   'accounts.settings.set',
   'accounts.workspace.set',
   'app.chart.snapshot.save',
+  'app.chart.workspace.set',
   'paper.campaign.kill-switch',
   'paper.execution.policy.set',
   'paper.execution.prepare',

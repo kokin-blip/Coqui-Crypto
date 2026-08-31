@@ -30,6 +30,8 @@ describe('account settings service', () => {
         advancedOverviewPanels: { strategyDetail: true, strategyComparison: true, recentActivity: true, proposalPreview: true, healthStrip: true, negativeFindings: true },
         overviewSeriesStyle: 'area', overviewBenchmarkVisible: true, marketVolumeVisible: true,
         marketIndicators: { sma20: false, sma50: false, ema20: false, bollinger20: false, rsi14: false, macd: false },
+        marketInterval: '1d', marketScaleMode: 'linear', marketLiveCandle: false,
+        marketLayout: 'single',
       },
     } });
     expect(readAccountPreferences('main', database)).toBeNull();
@@ -57,6 +59,8 @@ describe('account settings service', () => {
           advancedOverviewPanels: { strategyDetail: true, strategyComparison: true, recentActivity: true, proposalPreview: true, healthStrip: true, negativeFindings: true },
           overviewSeriesStyle: 'area', overviewBenchmarkVisible: true, marketVolumeVisible: true,
           marketIndicators: { sma20: false, sma50: false, ema20: false, bollinger20: false, rsi14: false, macd: false },
+          marketInterval: '1d', marketScaleMode: 'linear', marketLiveCandle: false,
+          marketLayout: 'single',
         },
       },
     });

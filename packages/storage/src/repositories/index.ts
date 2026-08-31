@@ -2,6 +2,7 @@ export * from './alerts.js';
 export * from './account-preferences.js';
 export * from './advisor.js';
 export * from './canonical-assets.js';
+export * from './chart-workspace.js';
 export * from './coinbase-evidence.js';
 export * from './display-universe.js';
 export * from './display-market.js';

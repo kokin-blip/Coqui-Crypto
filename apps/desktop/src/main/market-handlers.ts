@@ -1,4 +1,3 @@
-import type { AssetRef } from '@coqui/core';
 import type { CoinbaseDisplayDataService, MarketDisplayQueryService } from '@coqui/services';
 
 import type { CoinbaseMarketStreamService } from './coinbase-market-stream.js';
@@ -9,7 +8,6 @@ export function createMarketHandlers(
   marketData: MarketDisplayQueryService,
   displayData: CoinbaseDisplayDataService,
   liveMarket: CoinbaseMarketStreamService,
-  trackedAssets: () => readonly AssetRef[],
 ): ChannelHandlers {
   return {
     'market-data.prices': () => marketData.prices(),
@@ -22,10 +20,7 @@ export function createMarketHandlers(
       readonly instrument: Parameters<MarketDisplayQueryService['candles']>[0];
       readonly lookbackDays: number;
     }) => marketData.candles(payload.instrument, payload.lookbackDays),
-    'market-data.live': () => ({
-      ok: true,
-      value: liveMarket.snapshot(trackedAssets().map((asset) => asset.instrument.productId)),
-    }),
+    'market-data.live': () => ({ ok: true, value: liveMarket.snapshot() }),
     'market-data.products': async (payload: { readonly query: string; readonly limit: number }) => {
       const result = await displayData.products(payload.query, payload.limit);
       return result.ok ? { ok: true, value: {

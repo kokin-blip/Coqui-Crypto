@@ -9,6 +9,7 @@ import { ChartViewControl } from './ChartViewControl.js';
 import { MarketHistoryChart } from './MarketHistoryChart.js';
 import { useChannel } from '../query/use-channel.js';
 import { useWorkspace } from './WorkspaceContext.js';
+import { AdvancedMarkets } from './AdvancedMarkets.js';
 
 type LiveView = ChannelResponse<'market-data.live'>;
 type LiveQuote = LiveView['quotes'][number];
@@ -93,6 +94,8 @@ function ReferenceContext({ client }: { readonly client: CoquiClient }): React.J
 }
 
 export function Markets({ client }: { readonly client: CoquiClient }): React.JSX.Element {
+  const workspace = useWorkspace();
+  if (workspace.preferences?.workspaceMode !== 'simple') return <AdvancedMarkets client={client} />;
   const live = useChannel(client, 'market-data.live', {});
   const [selected, setSelected] = useState<string | null>(null);
   const products = useMemo(() => live.kind === 'ready' ? live.value.subscribedProducts : [], [live]);

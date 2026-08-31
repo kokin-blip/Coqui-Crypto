@@ -63,6 +63,7 @@ import {
 
 import { createDiagnostics } from './diagnostics.js';
 import { createChartSnapshotHandlers } from './chart-snapshot-handlers.js';
+import { createChartWorkspaceHandlers } from './chart-workspace-handlers.js';
 import { createAccountPreferenceHandlers } from './account-preference-handlers.js';
 import { CoinbaseMarketStreamService } from './coinbase-market-stream.js';
 import { createMarketHandlers } from './market-handlers.js';
@@ -234,9 +235,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
 
   // PortfolioAllocationPolicyService is deliberately not wired: it only offers
   // savePolicy/clearPolicy, and there are no write channels before P6.
-  const tax = new PortfolioTaxService({ database, clock });
-  const reconciliation = new ReconciliationLedgerService({ database, clock });
-  const settings = new AccountSettingsService({ database, clock });
+  const tax = new PortfolioTaxService({ database, clock }), reconciliation = new ReconciliationLedgerService({ database, clock }), settings = new AccountSettingsService({ database, clock });
 
   const research = new ResearchReadModelService({ database }), scoreboard = new ResearchScoreboardService({ database });
   const evidence = new RiskEvidenceTrackerService({ database, clock });
@@ -332,6 +331,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
 
   const handlers: ChannelHandlers = {
     ...createChartSnapshotHandlers({ profileId: options.profileId, database, clock, ...(options.saveChartSnapshot === undefined ? {} : { save: options.saveChartSnapshot }) }),
+    ...createChartWorkspaceHandlers({ profileId: options.profileId, database, clock }),
     ...createPaperCampaignHandlers(options.profileId, clock, database),
     'activity.feed': (payload: { readonly limit: number; readonly cursor: string | null }) => ({
       ok: true,
@@ -452,7 +452,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       paperHoldings = (await portfolio.portfolioView()).holdings;
       return { ok: true, value: paperExecution().review(payload) };
     },
-    ...createMarketHandlers(marketData, displayData, liveMarket, trackedAssets),
+    ...createMarketHandlers(marketData, displayData, liveMarket),
     'research.runs': () => research.runs(),
     'research.performance': () => research.performance(),
     'research.edge-study': () => {
