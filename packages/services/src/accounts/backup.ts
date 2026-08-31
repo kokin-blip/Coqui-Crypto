@@ -74,7 +74,7 @@ function validImpact(value: unknown): value is StoredProfileDeletionImpact {
 
 function validCredentialKinds(value: unknown): value is readonly ProfileCredentialKind[] {
   return Array.isArray(value) && value.length === new Set(value).size && value.every(
-    (kind) => kind === 'coinbase' || kind === 'advisor_gemini',
+    (kind) => ['coinbase', 'advisor_gemini', 'advisor_openai', 'advisor_anthropic', 'advisor_history'].includes(kind),
   );
 }
 

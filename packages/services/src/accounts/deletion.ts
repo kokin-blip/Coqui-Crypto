@@ -113,7 +113,7 @@ function sameImpact(left: StoredProfileDeletionImpact, right: StoredProfileDelet
 
 function validKinds(value: unknown): value is readonly StoredProfileBackupCredentialKind[] {
   return Array.isArray(value) && value.length === new Set(value).size && value.every(
-    (kind) => kind === 'coinbase' || kind === 'advisor_gemini',
+    (kind) => ['coinbase', 'advisor_gemini', 'advisor_openai', 'advisor_anthropic', 'advisor_history'].includes(kind),
   );
 }
 
@@ -170,7 +170,10 @@ function outcome(
 export function createProfileCredentialRemover(secretStore: SecretStore): ProfileCredentialRemover {
   return Object.freeze({
     async remove(profileId: string, kind: StoredProfileBackupCredentialKind) {
-      const key = kind === 'coinbase' ? 'coinbase-credentials' : 'gemini-api-key';
+      const key = kind === 'coinbase' ? 'coinbase-credentials'
+        : kind === 'advisor_openai' ? 'openai-api-key'
+          : kind === 'advisor_anthropic' ? 'anthropic-api-key'
+            : kind === 'advisor_history' ? 'advisor-history-key' : 'gemini-api-key';
       const result = await secretStore.remove(key, profileId);
       return { ok: result.ok };
     },

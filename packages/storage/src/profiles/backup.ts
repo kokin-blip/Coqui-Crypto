@@ -14,7 +14,8 @@ import { DatabaseSync } from 'node:sqlite';
 import { backupDatabase } from '../sqlite/index.js';
 import type { StoredProfileDeletionImpact } from '../repositories/profile-impact.js';
 
-export type StoredProfileBackupCredentialKind = 'coinbase' | 'advisor_gemini';
+export type StoredProfileBackupCredentialKind = 'coinbase' | 'advisor_gemini' |
+  'advisor_openai' | 'advisor_anthropic' | 'advisor_history';
 
 export interface CreateProfileBackupInput {
   readonly backupId: string;
@@ -119,7 +120,7 @@ function totalImpact(value: StoredProfileDeletionImpact): number | null {
 
 function validCredentialKinds(value: unknown): value is readonly StoredProfileBackupCredentialKind[] {
   return Array.isArray(value) && value.length === new Set(value).size && value.every(
-    (kind) => kind === 'coinbase' || kind === 'advisor_gemini',
+    (kind) => ['coinbase', 'advisor_gemini', 'advisor_openai', 'advisor_anthropic', 'advisor_history'].includes(kind),
   );
 }
 

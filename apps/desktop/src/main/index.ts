@@ -1,7 +1,7 @@
 import { basename, dirname, join } from 'node:path';
 import { writeFile } from 'node:fs/promises';
 
-import { createOsKeyringSecretStore } from '@coqui/adapters';
+import { createOsKeyringSecretStore, type SecretStore } from '@coqui/adapters';
 import { app, BrowserWindow, dialog, ipcMain, Notification, shell } from 'electron';
 
 import { createDispatcher } from './dispatch.js';
@@ -84,9 +84,9 @@ function createWindow(): BrowserWindow {
  * A keychain that will not open is not a startup failure: the application runs
  * on the public tier and says so.
  */
-async function coinGeckoApiKey(): Promise<string | null> {
+async function coinGeckoApiKey(secrets: SecretStore): Promise<string | null> {
   try {
-    const read = await createOsKeyringSecretStore().read('coingecko-api-key', null);
+    const read = await secrets.read('coingecko-api-key', null);
     return read.ok ? read.value : null;
   } catch {
     return null;
@@ -109,12 +109,21 @@ const osNotifier = {
 
 async function start(): Promise<void> {
   const path = databasePath();
+  const secrets = createOsKeyringSecretStore();
   runtime = createRuntimeProfileController({
     dataDirectory: dirname(path),
     legacyDatabaseFilename: basename(path),
     runtime: {
       notifier: osNotifier,
-      coinGeckoApiKey: await coinGeckoApiKey(),
+      coinGeckoApiKey: await coinGeckoApiKey(secrets),
+      secrets,
+      async saveHistory(data) {
+        const result = await dialog.showSaveDialog({ title: 'Export advisor conversation',
+          defaultPath: 'coqui-advisor-history.json', filters: [{ name: 'JSON', extensions: ['json'] }] });
+        if (result.canceled || result.filePath === undefined) return 'cancelled';
+        await writeFile(result.filePath, data, { encoding: 'utf8', flag: 'w' });
+        return 'saved';
+      },
       async saveChartSnapshot(filenameStem, png) {
         const result = await dialog.showSaveDialog({
           title: 'Save chart snapshot',

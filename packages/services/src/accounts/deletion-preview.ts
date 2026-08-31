@@ -20,7 +20,8 @@ const IMPACT_KEYS = [
   'operationalEvidenceRecords',
 ] as const;
 
-export type ProfileCredentialKind = 'coinbase' | 'advisor_gemini';
+export type ProfileCredentialKind = 'coinbase' | 'advisor_gemini' |
+  'advisor_openai' | 'advisor_anthropic' | 'advisor_history';
 
 export interface ProfileDeletionImpactReader {
   inspect(
@@ -120,7 +121,7 @@ function totalImpact(impact: StoredProfileDeletionImpact): number | null {
 
 function validCredentialKinds(value: unknown): value is readonly ProfileCredentialKind[] {
   return Array.isArray(value) && new Set(value).size === value.length && value.every(
-    (kind) => kind === 'coinbase' || kind === 'advisor_gemini',
+    (kind) => ['coinbase', 'advisor_gemini', 'advisor_openai', 'advisor_anthropic', 'advisor_history'].includes(kind),
   );
 }
 
@@ -146,13 +147,16 @@ export function createProfileCredentialPresenceSource(
     async inspect(profileId: string) {
       const presence = await readSecretPresence(
         secretStore,
-        ['coinbase-credentials', 'gemini-api-key'],
+        ['coinbase-credentials', 'gemini-api-key', 'openai-api-key', 'anthropic-api-key', 'advisor-history-key'],
         profileId,
       );
       if (!presence.ok) return { ok: false as const };
       const kinds: ProfileCredentialKind[] = [];
       if (presence.present.includes('coinbase-credentials')) kinds.push('coinbase');
       if (presence.present.includes('gemini-api-key')) kinds.push('advisor_gemini');
+      if (presence.present.includes('openai-api-key')) kinds.push('advisor_openai');
+      if (presence.present.includes('anthropic-api-key')) kinds.push('advisor_anthropic');
+      if (presence.present.includes('advisor-history-key')) kinds.push('advisor_history');
       return { ok: true as const, credentialKinds: Object.freeze(kinds) };
     },
   };

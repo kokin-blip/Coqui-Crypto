@@ -4,6 +4,7 @@ import { activityChannelSchemas } from './schemas/activity.js';
 import { appChannelSchemas } from './schemas/app.js';
 import { chartExtensionChannelSchemas } from './schemas/chart-extensions.js';
 import { accountsChannelSchemas } from './schemas/accounts.js';
+import { advisorAnalystChannelSchemas } from './schemas/advisor-analyst.js';
 import { marketDataChannelSchemas } from './schemas/market-data.js';
 import { paperExecutionChannelSchemas } from './schemas/paper-execution.js';
 import { paperPerformanceChannelSchemas } from './schemas/paper-performance.js';
@@ -31,6 +32,7 @@ export const CHANNEL_SCHEMAS = {
   ...appChannelSchemas,
   ...chartExtensionChannelSchemas,
   ...accountsChannelSchemas,
+  ...advisorAnalystChannelSchemas,
   ...marketDataChannelSchemas,
   ...paperExecutionChannelSchemas,
   ...paperPerformanceChannelSchemas,
@@ -80,6 +82,12 @@ const WRITE_CHANNELS = [
   'accounts.workspace.set',
   'app.chart.snapshot.save',
   'app.chart.workspace.set',
+  'advisor.chat.history.delete',
+  'advisor.chat.history.export',
+  'advisor.chat.send',
+  'advisor.facts.generate',
+  'advisor.provider.connect',
+  'advisor.provider.disconnect',
   'chart-extensions.install',
   'chart-extensions.remove',
   'chart-extensions.set',

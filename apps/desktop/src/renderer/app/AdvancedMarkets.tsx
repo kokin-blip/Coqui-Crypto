@@ -9,6 +9,7 @@ import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 
 import { MarketFactsPanel } from './MarketFactsPanel.js';
 import { ChartExtensionManager } from './ChartExtensionManager.js';
+import { AdvisorSheet } from './AdvisorSheet.js';
 import { TradingWorkstationChart } from './TradingWorkstationChart.js';
 import type {
   ChartDrawing, DrawingTool, WorkstationBar, WorkstationChartStyle, WorkstationInterval,
@@ -104,7 +105,7 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
       <MarketFactsPanel productId={productId} bars={factsBars} freshness={products.kind === 'ready' ? new Date(products.value.asOfMs).toISOString() : 'Unavailable'} onOpenAnalyst={() => setAnalystOpen(true)} />
     </div>
     <footer className="market-workstation-footer"><span>Coinbase display data · informational only</span><label><input type="checkbox" checked={workspace.preferences?.marketLiveCandle ?? false} onChange={(event) => void workspace.update({ marketLiveCandle: event.target.checked })} /> Show provisional candle</label><span>UTC</span></footer>
-    {analystOpen && <div className="analyst-sheet-backdrop" role="presentation" onMouseDown={() => setAnalystOpen(false)}><section role="dialog" aria-modal="true" aria-labelledby="analyst-title" className="analyst-sheet" onMouseDown={(event) => event.stopPropagation()}><header><div><span className="violet-kicker">Coqui analyst</span><h2 id="analyst-title">Ask about {productId}</h2></div><button type="button" onClick={() => setAnalystOpen(false)}>Close</button></header><p>Deterministic facts are available now. Provider-enriched analysis requires an explicitly connected advisor and selected context.</p><div className="advisor-context-options"><label><input type="checkbox" defaultChecked /> Chart data</label><label><input type="checkbox" /> Visible Coqui evidence</label><label><input type="checkbox" /> Sanitized portfolio context</label></div><textarea aria-label="Question for Coqui analyst" placeholder="What stands out in this completed price history?" /><button type="button" className="primary-button" disabled>Connect an advisor in Settings</button><small>Advisory only · No execution authority</small></section></div>}
+    {analystOpen && <AdvisorSheet client={client} productId={productId} bars={factsBars} onClose={() => setAnalystOpen(false)} />}
     {extensionsOpen && <ChartExtensionManager client={client} onClose={() => setExtensionsOpen(false)} />}
   </div>;
 }

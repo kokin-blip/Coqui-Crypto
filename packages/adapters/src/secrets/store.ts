@@ -7,6 +7,9 @@ export const MAX_SECRET_BYTES = 64 * 1_024;
 export type SecretKey =
   | 'coinbase-credentials'
   | 'gemini-api-key'
+  | 'openai-api-key'
+  | 'anthropic-api-key'
+  | 'advisor-history-key'
   | 'coingecko-api-key'
   | 'coinmarketcap-api-key';
 

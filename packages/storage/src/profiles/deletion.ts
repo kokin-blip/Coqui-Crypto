@@ -102,7 +102,7 @@ function safeFilename(value: unknown): value is string {
 
 function validKinds(value: unknown): value is readonly StoredProfileBackupCredentialKind[] {
   return Array.isArray(value) && value.length === new Set(value).size && value.every(
-    (kind) => kind === 'coinbase' || kind === 'advisor_gemini',
+    (kind) => ['coinbase', 'advisor_gemini', 'advisor_openai', 'advisor_anthropic', 'advisor_history'].includes(kind),
   );
 }
 
@@ -381,7 +381,7 @@ export function createFileProfileDeletionStore(
       operationId: string,
       kind: StoredProfileBackupCredentialKind,
     ): Promise<ProfileDeletionStoreResult<StoredProfileDeletionTicket>> {
-      if (kind !== 'coinbase' && kind !== 'advisor_gemini') return { ok: false, code: 'invalid_input' };
+      if (!['coinbase', 'advisor_gemini', 'advisor_openai', 'advisor_anthropic', 'advisor_history'].includes(kind)) return { ok: false, code: 'invalid_input' };
       let resolved: ReturnType<typeof roots>;
       try {
         resolved = roots();

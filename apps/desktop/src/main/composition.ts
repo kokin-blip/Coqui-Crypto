@@ -62,16 +62,13 @@ import {
 } from '@coqui/storage';
 
 import { createDiagnostics } from './diagnostics.js';
-import { createChartSnapshotHandlers } from './chart-snapshot-handlers.js';
-import { createChartWorkspaceHandlers } from './chart-workspace-handlers.js';
-import { createChartExtensionHandlers } from './chart-extension-handlers.js';
+import { createAdvisorHandlers } from './advisor-handlers.js';
+import { createChartExtensionHandlers, createChartSnapshotHandlers, createChartWorkspaceHandlers } from './chart-handler-factories.js';
 import { createAccountPreferenceHandlers } from './account-preference-handlers.js';
 import { CoinbaseMarketStreamService } from './coinbase-market-stream.js';
 import { createMarketHandlers } from './market-handlers.js';
 import { SHIPPED_FORWARD_EDGE_PLAN } from './forward-edge-plan.js';
-import {
-  captureScheduledForwardEvidence,
-} from './forward-edge-runtime.js';
+import { captureScheduledForwardEvidence } from './forward-edge-runtime.js';
 import { createAlertNotificationPump } from './notifications.js';
 import { createPaperMarketFeed } from './paper-market.js';
 import { createPaperCampaignHandlers } from './paper-campaign-handlers.js';
@@ -115,7 +112,7 @@ function paperProposalView(
   };
 }
 
-export interface RuntimeOptions {
+export interface RuntimeOptions extends Partial<Pick<Parameters<typeof createAdvisorHandlers>[0], 'secrets' | 'saveHistory'>> {
   readonly databasePath: string;
   readonly profileId: string;
   /** Supplied by the composition root so `core` never reads the host clock. */
@@ -329,6 +326,9 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   if (options.disableScheduler !== true) startScheduler();
 
   const handlers: ChannelHandlers = {
+    ...createAdvisorHandlers({ profileId: options.profileId, database, clock, http,
+      ...(options.secrets === undefined ? {} : { secrets: options.secrets }),
+      ...(options.saveHistory === undefined ? {} : { saveHistory: options.saveHistory }) }),
     ...createChartExtensionHandlers({ profileId: options.profileId, database, clock }),
     ...createChartSnapshotHandlers({ profileId: options.profileId, database, clock, ...(options.saveChartSnapshot === undefined ? {} : { save: options.saveChartSnapshot }) }),
     ...createChartWorkspaceHandlers({ profileId: options.profileId, database, clock }),
