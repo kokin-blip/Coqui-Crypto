@@ -6,6 +6,11 @@ const DECIMAL = /^(?:0|[1-9]\d*)(?:\.\d+)?$/u;
 const MAX_PRODUCTS = 100;
 const STALE_AFTER_MS = 15_000;
 const MAX_RECONNECT_MS = 30_000;
+const DISPLAY_INTERVAL_MS = {
+  '1m': 60_000, '5m': 300_000, '15m': 900_000,
+  '1h': 3_600_000, '6h': 21_600_000, '1d': 86_400_000,
+} as const;
+export type LiveCandleInterval = keyof typeof DISPLAY_INTERVAL_MS;
 
 export interface MarketSocket {
   readonly readyState: number;
@@ -47,6 +52,22 @@ export interface LiveMarketView {
   readonly asOfMs: number;
 }
 
+export interface ProvisionalMarketCandle {
+  readonly productId: string;
+  readonly interval: LiveCandleInterval;
+  readonly startTimeMs: number;
+  readonly endTimeMs: number;
+  readonly open: string;
+  readonly high: string;
+  readonly low: string;
+  readonly close: string;
+  readonly volume: string;
+  readonly isComplete: false;
+  readonly observedAtMs: number;
+  readonly informationalOnly: true;
+  readonly decisionEligible: false;
+}
+
 function validTime(value: number): boolean {
   return Number.isSafeInteger(value) && value >= 0;
 }
@@ -74,6 +95,31 @@ function productList(products: readonly string[]): readonly string[] {
   return Object.freeze(unique);
 }
 
+function compareDecimal(left: string, right: string): number {
+  const [leftWhole = '0', leftFraction = ''] = left.split('.');
+  const [rightWhole = '0', rightFraction = ''] = right.split('.');
+  if (leftWhole.length !== rightWhole.length) return leftWhole.length - rightWhole.length;
+  const whole = leftWhole.localeCompare(rightWhole);
+  if (whole !== 0) return whole;
+  const width = Math.max(leftFraction.length, rightFraction.length);
+  return leftFraction.padEnd(width, '0').localeCompare(rightFraction.padEnd(width, '0'));
+}
+
+function addDecimal(left: string, right: string): string {
+  const leftParts = left.split('.');
+  const rightParts = right.split('.');
+  const width = Math.max(leftParts[1]?.length ?? 0, rightParts[1]?.length ?? 0);
+  const integer = (value: string): bigint => {
+    const [whole = '0', fraction = ''] = value.split('.');
+    return BigInt(`${whole}${fraction.padEnd(width, '0')}`);
+  };
+  const value = (integer(left) + integer(right)).toString().padStart(width + 1, '0');
+  if (width === 0) return value;
+  const whole = value.slice(0, -width);
+  const fraction = value.slice(-width).replace(/0+$/u, '');
+  return fraction.length === 0 ? whole : `${whole}.${fraction}`;
+}
+
 /**
  * Display-only Coinbase streaming owned by Electron's main process.
  * Raw socket messages never cross IPC and never become completed decision bars.
@@ -86,6 +132,7 @@ export class CoinbaseMarketStreamService {
   readonly #onUnexpectedError: (context: string, error: unknown) => void;
   readonly #quotes = new Map<string, LiveMarketQuote>();
   readonly #sequences = new Map<string, number>();
+  readonly #candles = new Map<string, ProvisionalMarketCandle>();
   #products: readonly string[] = [];
   #socket: MarketSocket | null = null;
   #reconnect: ReturnType<typeof setTimeout> | null = null;
@@ -117,6 +164,9 @@ export class CoinbaseMarketStreamService {
     const retained = new Set(next);
     for (const key of this.#quotes.keys()) if (!retained.has(key)) this.#quotes.delete(key);
     for (const key of this.#sequences.keys()) if (!retained.has(key)) this.#sequences.delete(key);
+    for (const key of this.#candles.keys()) {
+      if (!retained.has(key.slice(key.indexOf(':') + 1))) this.#candles.delete(key);
+    }
     if (!this.#started || this.#disposed) return;
     this.#disconnect();
     if (next.length > 0) this.#connect();
@@ -146,6 +196,28 @@ export class CoinbaseMarketStreamService {
     });
   }
 
+  snapshotCandles(products: readonly string[], interval: LiveCandleInterval): {
+    readonly connection: LiveMarketView['connection'];
+    readonly candles: readonly ProvisionalMarketCandle[];
+    readonly informationalOnly: true;
+    readonly decisionEligible: false;
+    readonly asOfMs: number;
+  } {
+    if (products.length > 12) throw new RangeError('Live candle subscription exceeds 12 products.');
+    this.configure([...new Set([...this.#products, ...products])]);
+    const view = this.snapshot();
+    return Object.freeze({
+      connection: view.connection,
+      candles: Object.freeze(products.flatMap((product) => {
+        const candle = this.#candles.get(`${interval}:${product}`);
+        return candle === undefined ? [] : [candle];
+      })),
+      informationalOnly: true,
+      decisionEligible: false,
+      asOfMs: view.asOfMs,
+    });
+  }
+
   dispose(): void {
     if (this.#disposed) return;
     this.#disposed = true;
@@ -172,7 +244,7 @@ export class CoinbaseMarketStreamService {
         socket.send(JSON.stringify({
           type: 'subscribe',
           product_ids: this.#products,
-          channels: ['ticker_batch', 'heartbeat'],
+          channels: ['ticker_batch', 'matches', 'heartbeat'],
         }));
       } catch (error) {
         this.#onUnexpectedError('market_stream_subscribe', error);
@@ -206,6 +278,10 @@ export class CoinbaseMarketStreamService {
       this.#reconnectAttempt = 0;
       return;
     }
+    if (message['type'] === 'match' || message['type'] === 'last_match') {
+      this.#receiveTrade(message, now);
+      return;
+    }
     if (message['type'] !== 'ticker') return;
     const product = message['product_id'];
     const price = decimal(message['price']);
@@ -223,6 +299,40 @@ export class CoinbaseMarketStreamService {
       observedAtMs: eventTime(message['time'], now),
       sequence: nextSequence,
     }));
+    this.#lastMessageAtMs = now;
+    this.#state = 'live';
+    this.#reconnectAttempt = 0;
+  }
+
+  #receiveTrade(message: Record<string, unknown>, now: number): void {
+    const product = message['product_id'];
+    const price = decimal(message['price']);
+    const size = decimal(message['size']);
+    if (typeof product !== 'string' || !this.#products.includes(product) ||
+      price === null || size === null) return;
+    const observedAtMs = eventTime(message['time'], now);
+    for (const [interval, intervalMs] of Object.entries(DISPLAY_INTERVAL_MS) as
+      Array<[LiveCandleInterval, number]>) {
+      const startTimeMs = Math.floor(observedAtMs / intervalMs) * intervalMs;
+      const key = `${interval}:${product}`;
+      const prior = this.#candles.get(key);
+      const candle = prior === undefined || prior.startTimeMs !== startTimeMs
+        ? {
+            productId: product, interval, startTimeMs, endTimeMs: startTimeMs + intervalMs,
+            open: price, high: price, low: price, close: price, volume: size,
+            isComplete: false as const, observedAtMs,
+            informationalOnly: true as const, decisionEligible: false as const,
+          }
+        : {
+            ...prior,
+            high: compareDecimal(price, prior.high) > 0 ? price : prior.high,
+            low: compareDecimal(price, prior.low) < 0 ? price : prior.low,
+            close: price,
+            volume: addDecimal(prior.volume, size),
+            observedAtMs,
+          };
+      this.#candles.set(key, Object.freeze(candle));
+    }
     this.#lastMessageAtMs = now;
     this.#state = 'live';
     this.#reconnectAttempt = 0;

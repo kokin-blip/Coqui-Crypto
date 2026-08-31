@@ -41,7 +41,7 @@ describe('CoinbaseMarketStreamService', () => {
     expect(JSON.parse(socket.sent[0]!)).toEqual({
       type: 'subscribe',
       product_ids: ['BTC-USD', 'ETH-USD'],
-      channels: ['ticker_batch', 'heartbeat'],
+      channels: ['ticker_batch', 'matches', 'heartbeat'],
     });
 
     socket.message({

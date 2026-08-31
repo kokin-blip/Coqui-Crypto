@@ -11,6 +11,9 @@ import {
   type AccountAdvancedOverviewPreset,
   type AccountMarketIndicators,
   type AccountOverviewSeriesStyle,
+  type AccountMarketInterval,
+  type AccountMarketScaleMode,
+  type AccountMarketLayout,
   type AccountDensity,
   type AccountLanguage,
   type AccountMarketsChart,
@@ -31,6 +34,7 @@ const ALLOWED = new Set([
   'inspectorWidthPx', 'chartRanges',
   'advancedOverviewPreset', 'advancedOverviewPanels', 'overviewSeriesStyle',
   'overviewBenchmarkVisible', 'marketVolumeVisible', 'marketIndicators',
+  'marketInterval', 'marketScaleMode', 'marketLiveCandle', 'marketLayout',
 ]);
 const COMMAND_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 const CHART_RANGES = ['1d', '1w', '1m', '3m', '1y', 'all'] as const;
@@ -59,13 +63,18 @@ export interface AccountPresentationPreferences {
   readonly overviewBenchmarkVisible: boolean;
   readonly marketVolumeVisible: boolean;
   readonly marketIndicators: AccountMarketIndicators;
+  readonly marketInterval: AccountMarketInterval;
+  readonly marketScaleMode: AccountMarketScaleMode;
+  readonly marketLiveCandle: boolean;
+  readonly marketLayout: AccountMarketLayout;
 }
 
 export type AccountWorkspacePreferences = Pick<AccountPresentationPreferences,
   'workspaceMode' | 'overviewChart' | 'portfolioChart' | 'marketsChart' |
   'performanceChart' | 'inspectorOpen' | 'inspectorWidthPx' | 'chartRanges' |
   'advancedOverviewPreset' | 'advancedOverviewPanels' | 'overviewSeriesStyle' |
-  'overviewBenchmarkVisible' | 'marketVolumeVisible' | 'marketIndicators'>;
+  'overviewBenchmarkVisible' | 'marketVolumeVisible' | 'marketIndicators' |
+  'marketInterval' | 'marketScaleMode' | 'marketLiveCandle' | 'marketLayout'>;
 
 export const DEFAULT_ACCOUNT_PRESENTATION_PREFERENCES: AccountPresentationPreferences =
   Object.freeze({
@@ -95,6 +104,10 @@ export const DEFAULT_ACCOUNT_PRESENTATION_PREFERENCES: AccountPresentationPrefer
       sma20: false, sma50: false, ema20: false, bollinger20: false,
       rsi14: false, macd: false,
     }),
+    marketInterval: '1d',
+    marketScaleMode: 'linear',
+    marketLiveCandle: false,
+    marketLayout: 'single',
   });
 
 export interface AccountPreferencesView {
@@ -191,6 +204,10 @@ function preferences(value: StoredAccountPreferences | null): AccountPresentatio
       overviewBenchmarkVisible: value.overviewBenchmarkVisible,
       marketVolumeVisible: value.marketVolumeVisible,
       marketIndicators: value.marketIndicators,
+      marketInterval: value.marketInterval,
+      marketScaleMode: value.marketScaleMode,
+      marketLiveCandle: value.marketLiveCandle,
+      marketLayout: value.marketLayout,
     });
 }
 
@@ -227,6 +244,10 @@ interface ValidatedPatch {
   overviewBenchmarkVisible?: boolean;
   marketVolumeVisible?: boolean;
   marketIndicators?: AccountMarketIndicators;
+  marketInterval?: AccountMarketInterval;
+  marketScaleMode?: AccountMarketScaleMode;
+  marketLiveCandle?: boolean;
+  marketLayout?: AccountMarketLayout;
 }
 
 const PANEL_KEYS = ['strategyDetail', 'strategyComparison', 'recentActivity', 'proposalPreview', 'healthStrip', 'negativeFindings'] as const;
@@ -335,6 +356,21 @@ function validatePatch(value: unknown):
       const indicators = booleanRecord<AccountMarketIndicators>(field, INDICATOR_KEYS);
       if (indicators === null) issues.push(issue([key], 'invalid_indicator_selection'));
       else patch.marketIndicators = indicators;
+    } else if (key === 'marketInterval') {
+      if (field === '1m' || field === '5m' || field === '15m' || field === '1h' || field === '6h' || field === '1d') {
+        patch.marketInterval = field;
+      } else issues.push(issue([key], 'invalid_chart_view'));
+    } else if (key === 'marketScaleMode') {
+      if (field === 'linear' || field === 'percentage' || field === 'indexed' || field === 'logarithmic') {
+        patch.marketScaleMode = field;
+      } else issues.push(issue([key], 'invalid_chart_view'));
+    } else if (key === 'marketLiveCandle') {
+      if (typeof field === 'boolean') patch.marketLiveCandle = field;
+      else issues.push(issue([key], 'invalid_chart_view'));
+    } else if (key === 'marketLayout') {
+      if (field === 'single' || field === 'horizontal' || field === 'vertical' || field === 'grid' || field === 'dominant') {
+        patch.marketLayout = field;
+      } else issues.push(issue([key], 'invalid_chart_view'));
     }
   }
   return issues.length > 0
@@ -407,6 +443,10 @@ export class AccountSettingsService {
           overviewBenchmarkVisible: validated.patch.overviewBenchmarkVisible ?? current.overviewBenchmarkVisible,
           marketVolumeVisible: validated.patch.marketVolumeVisible ?? current.marketVolumeVisible,
           marketIndicators: validated.patch.marketIndicators ?? current.marketIndicators,
+          marketInterval: validated.patch.marketInterval ?? current.marketInterval,
+          marketScaleMode: validated.patch.marketScaleMode ?? current.marketScaleMode,
+          marketLiveCandle: validated.patch.marketLiveCandle ?? current.marketLiveCandle,
+          marketLayout: validated.patch.marketLayout ?? current.marketLayout,
           updatedAtMs,
         }, this.#database);
       });
@@ -461,6 +501,10 @@ export class AccountSettingsService {
           overviewBenchmarkVisible: validated.patch.overviewBenchmarkVisible ?? current.overviewBenchmarkVisible,
           marketVolumeVisible: validated.patch.marketVolumeVisible ?? current.marketVolumeVisible,
           marketIndicators: validated.patch.marketIndicators ?? current.marketIndicators,
+          marketInterval: validated.patch.marketInterval ?? current.marketInterval,
+          marketScaleMode: validated.patch.marketScaleMode ?? current.marketScaleMode,
+          marketLiveCandle: validated.patch.marketLiveCandle ?? current.marketLiveCandle,
+          marketLayout: validated.patch.marketLayout ?? current.marketLayout,
           updatedAtMs: recordedAtMs,
         }, this.#database);
         const outcome = freeze({ ok: true, value: view(profileId, recordedAtMs, stored) } as const);

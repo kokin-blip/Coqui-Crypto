@@ -1,5 +1,7 @@
 import {
   fetchCoinbaseDailyBars,
+  fetchCoinbaseDisplayBars,
+  createCoinbaseAssetCatalog,
   fetchCoinGeckoMarketSnapshots,
   fetchFearGreed,
   fetchNewsHeadlines,
@@ -12,7 +14,8 @@ import {
   type ReferenceResult,
 } from '@coqui/adapters';
 import type { AssetRef, InstrumentIdentity, InstrumentKey, MarketBar } from '@coqui/core';
-import type { CandleSource, ReferenceSources } from '@coqui/services';
+import { CoinbaseDisplayDataService, type CandleSource, type DisplayBarSource, type ReferenceSources } from '@coqui/services';
+import type { Db } from '@coqui/storage';
 
 /**
  * Binds the display-query ports to real adapters.
@@ -115,6 +118,35 @@ export function createCandleSource(http: HttpClient): CandleSource {
       return result.ok ? { ok: true, bars: result.data } : { ok: false };
     },
   };
+}
+
+export function createDisplayBarSource(http: HttpClient): DisplayBarSource {
+  return {
+    async fetch(input) {
+      const result = await fetchCoinbaseDisplayBars(http, input.instrument, {
+        interval: input.interval,
+        startTimeMs: input.startTimeMs,
+        endTimeMs: input.endTimeMs,
+        nowMs: input.nowMs,
+      });
+      return result.ok ? { ok: true, bars: result.data } : { ok: false };
+    },
+  };
+}
+
+export function createDisplayDataService(input: {
+  readonly http: HttpClient;
+  readonly database: Db;
+  readonly profileId: string;
+  readonly nowMs: () => number;
+}): CoinbaseDisplayDataService {
+  return new CoinbaseDisplayDataService({
+    profileId: input.profileId,
+    database: input.database,
+    catalog: createCoinbaseAssetCatalog(input.http),
+    source: createDisplayBarSource(input.http),
+    nowMs: input.nowMs,
+  });
 }
 
 /** Re-exported so the composition root maps transport failures consistently. */

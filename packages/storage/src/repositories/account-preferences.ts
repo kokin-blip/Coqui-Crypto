@@ -14,6 +14,9 @@ export type AccountPerformanceChart = 'equity' | 'drawdown' | 'calendar' | 'dist
 export type AccountChartRange = '1d' | '1w' | '1m' | '3m' | '1y' | 'all';
 export type AccountAdvancedOverviewPreset = 'research_grid' | 'chart_focus' | 'evidence_review' | 'custom';
 export type AccountOverviewSeriesStyle = 'line' | 'area' | 'baseline';
+export type AccountMarketInterval = '1m' | '5m' | '15m' | '1h' | '6h' | '1d';
+export type AccountMarketScaleMode = 'linear' | 'percentage' | 'indexed' | 'logarithmic';
+export type AccountMarketLayout = 'single' | 'horizontal' | 'vertical' | 'grid' | 'dominant';
 
 export interface AccountAdvancedOverviewPanels {
   readonly strategyDetail: boolean;
@@ -60,6 +63,10 @@ export interface StoredAccountPreferences {
   readonly overviewBenchmarkVisible: boolean;
   readonly marketVolumeVisible: boolean;
   readonly marketIndicators: AccountMarketIndicators;
+  readonly marketInterval: AccountMarketInterval;
+  readonly marketScaleMode: AccountMarketScaleMode;
+  readonly marketLiveCandle: boolean;
+  readonly marketLayout: AccountMarketLayout;
   readonly updatedAtMs: number;
 }
 
@@ -83,6 +90,10 @@ interface PreferenceRow {
   overview_benchmark_visible: number;
   market_volume_visible: number;
   market_indicators_json: string;
+  market_interval: AccountMarketInterval;
+  market_scale_mode: AccountMarketScaleMode;
+  market_live_candle: number;
+  market_layout: AccountMarketLayout;
   updated_at_ms: number;
 }
 
@@ -163,6 +174,12 @@ function validate(preferences: StoredAccountPreferences): void {
     !INDICATOR_KEYS.every((key) => typeof preferences.marketIndicators[key] === 'boolean')) {
     throw new TypeError('Invalid advanced workspace preferences.');
   }
+  if (!['1m', '5m', '15m', '1h', '6h', '1d'].includes(preferences.marketInterval) ||
+    !['linear', 'percentage', 'indexed', 'logarithmic'].includes(preferences.marketScaleMode) ||
+    typeof preferences.marketLiveCandle !== 'boolean' ||
+    !['single', 'horizontal', 'vertical', 'grid', 'dominant'].includes(preferences.marketLayout)) {
+    throw new TypeError('Invalid market workspace preferences.');
+  }
 }
 
 export function readAccountPreferences(
@@ -193,6 +210,10 @@ export function readAccountPreferences(
     overviewBenchmarkVisible: row.overview_benchmark_visible === 1,
     marketVolumeVisible: row.market_volume_visible === 1,
     marketIndicators: parseBooleanRecord<AccountMarketIndicators>(row.market_indicators_json, INDICATOR_KEYS),
+    marketInterval: row.market_interval,
+    marketScaleMode: row.market_scale_mode,
+    marketLiveCandle: row.market_live_candle === 1,
+    marketLayout: row.market_layout,
     updatedAtMs: row.updated_at_ms,
   };
   validate(preferences);
@@ -210,8 +231,9 @@ export function saveAccountPreferences(
     overview_chart, portfolio_chart, markets_chart, performance_chart,
     inspector_open, inspector_width_px, chart_ranges_json,
     advanced_overview_preset, advanced_overview_panels_json, overview_series_style,
-    overview_benchmark_visible, market_volume_visible, market_indicators_json, updated_at_ms
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    overview_benchmark_visible, market_volume_visible, market_indicators_json,
+    market_interval, market_scale_mode, market_live_candle, market_layout, updated_at_ms
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   ON CONFLICT(profile_id) DO UPDATE SET
     theme = excluded.theme, density = excluded.density, motion = excluded.motion,
     language = excluded.language, workspace_mode = excluded.workspace_mode,
@@ -225,6 +247,10 @@ export function saveAccountPreferences(
     overview_benchmark_visible = excluded.overview_benchmark_visible,
     market_volume_visible = excluded.market_volume_visible,
     market_indicators_json = excluded.market_indicators_json,
+    market_interval = excluded.market_interval,
+    market_scale_mode = excluded.market_scale_mode,
+    market_live_candle = excluded.market_live_candle,
+    market_layout = excluded.market_layout,
     updated_at_ms = excluded.updated_at_ms`)
     .run(
       preferences.profileId, preferences.theme, preferences.density,
@@ -235,6 +261,8 @@ export function saveAccountPreferences(
       preferences.advancedOverviewPreset, JSON.stringify(preferences.advancedOverviewPanels),
       preferences.overviewSeriesStyle, preferences.overviewBenchmarkVisible ? 1 : 0,
       preferences.marketVolumeVisible ? 1 : 0, JSON.stringify(preferences.marketIndicators),
+      preferences.marketInterval, preferences.marketScaleMode,
+      preferences.marketLiveCandle ? 1 : 0, preferences.marketLayout,
       preferences.updatedAtMs,
     );
   return Object.freeze({ ...preferences });

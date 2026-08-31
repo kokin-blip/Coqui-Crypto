@@ -41,7 +41,7 @@ function tableNames(database: Db): Set<string> {
 describe('ported predecessor migration manifest', () => {
   it('preserves predecessor versions 1-28 and appends Coqui-native migrations', () => {
     expect(migrations.map((migration) => migration.version)).toEqual(
-      Array.from({ length: 52 }, (_, index) => index + 1),
+      Array.from({ length: 56 }, (_, index) => index + 1),
     );
     expect(migrations.map((migration) => migration.name)).toEqual([
       'initial_schema',
@@ -96,13 +96,17 @@ describe('ported predecessor migration manifest', () => {
       'forward_observations_and_paper_campaigns',
       'profile_workspace_preferences_v1',
       'advanced_overview_research_grid_v1',
+      'profile_display_bar_cache_v1',
+      'chart_workspace_preferences_v1',
+      'signed_chart_extensions_v1',
+      'advisor_encrypted_history_v1',
     ]);
   });
 
   it('creates the current schema while retaining only intended legacy tables', () => {
     const database = openDatabase(':memory:');
     const tables = tableNames(database);
-    expect(userVersion(database)).toBe(52);
+    expect(userVersion(database)).toBe(56);
     for (const expected of [
       'app_settings',
       'tax_lots',
@@ -167,6 +171,17 @@ describe('ported predecessor migration manifest', () => {
       'paper_campaign_events_v1',
       'account_settings_commands_v1',
       'chart_snapshot_commands_v1',
+      'display_market_bars_v1',
+      'chart_watchlists_v1',
+      'chart_layouts_v1',
+      'chart_drawings_v1',
+      'chart_workspace_commands_v1',
+      'chart_extension_signers_v1',
+      'chart_extensions_v1',
+      'chart_extension_events_v1',
+      'advisor_conversations_v1',
+      'advisor_messages_v1',
+      'advisor_audit_events_v1',
     ]) expect(tables.has(expected), `${expected} should exist`).toBe(true);
     for (const retired of ['tokens', 'trades', 'signals', 'sim_accounts', 'wallet_hits']) {
       expect(tables.has(retired), `${retired} should be retired`).toBe(false);
@@ -174,7 +189,7 @@ describe('ported predecessor migration manifest', () => {
     database.close();
   });
 
-  // Opens and fully upgrades a database once per migration — 52 of them and
+  // Opens and fully upgrades a database once per migration — 56 of them and
   // growing by one each phase. It runs in ~2.5s idle, which is close enough to
   // vitest's 5s default to flake on a loaded CI runner, so the budget is
   // explicit rather than implicit.
@@ -190,7 +205,7 @@ describe('ported predecessor migration manifest', () => {
       database.prepare('INSERT INTO migration_sentinel VALUES (?, ?)')
         .run(9_007_199_254_740_993n, '1234567890.123456789');
 
-      expect(runMigrations(database)).toBe(52);
+      expect(runMigrations(database)).toBe(56);
       const statement = database.prepare('SELECT id, amount_text FROM migration_sentinel');
       statement.setReadBigInts(true);
       expect(statement.get()).toEqual({
@@ -210,7 +225,7 @@ describe('forward migration safety', () => {
     old.close();
 
     const migrated = openDatabase(fixture.path, { now: () => 123 });
-    expect(userVersion(migrated)).toBe(52);
+    expect(userVersion(migrated)).toBe(56);
     expect(migrated.prepare("SELECT value FROM app_settings WHERE key = 'preserved'").get())
       .toEqual({ value: 'yes' });
     migrated.close();
@@ -227,7 +242,7 @@ describe('forward migration safety', () => {
   it('rolls back schema changes and version advancement when a migration fails', () => {
     const database = openDatabase(':memory:');
     const failing: Migration = {
-      version: 53,
+      version: 57,
       name: 'failure_fixture',
       up(db) {
         db.exec('CREATE TABLE should_rollback (id INTEGER);');
@@ -237,7 +252,7 @@ describe('forward migration safety', () => {
 
     expect(() => runMigrations(database, [...migrations, failing]))
       .toThrow('injected migration failure');
-    expect(userVersion(database)).toBe(52);
+    expect(userVersion(database)).toBe(56);
     expect(tableNames(database).has('should_rollback')).toBe(false);
     database.close();
   });
@@ -246,7 +261,7 @@ describe('forward migration safety', () => {
     const database = openDatabase(':memory:');
     expect(() => runMigrations(database, [migrations[1]!, migrations[0]!]))
       .toThrow('contiguous and ordered');
-    database.exec('PRAGMA user_version = 53');
+    database.exec('PRAGMA user_version = 57');
     expect(() => runMigrations(database)).toThrow('newer than this application');
     database.close();
   });

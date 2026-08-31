@@ -109,6 +109,49 @@ const liveQuoteSchema = z
   })
   .readonly();
 
+const displayIntervalSchema = z.enum(['1m', '5m', '15m', '1h', '6h', '1d']);
+const productIdSchema = z.string().regex(/^[A-Z0-9][A-Z0-9._-]{0,63}$/);
+
+const displayProductSchema = z.strictObject({
+  instrument: instrumentIdentitySchema,
+  symbol: z.string().regex(/^[A-Z0-9][A-Z0-9._-]{0,31}$/),
+  name: z.string().min(1).max(128),
+  baseAsset: z.string().min(1).max(32),
+  quoteAsset: z.literal('USD'),
+}).readonly();
+
+const displayBarSchema = z.strictObject({
+  productId: productIdSchema,
+  interval: displayIntervalSchema,
+  startTimeMs: epochMillisecondsSchema,
+  endTimeMs: epochMillisecondsSchema,
+  open: decimalStringSchema,
+  high: decimalStringSchema,
+  low: decimalStringSchema,
+  close: decimalStringSchema,
+  volume: decimalStringSchema.nullable(),
+  isComplete: z.literal(true),
+  retrievedAtMs: epochMillisecondsSchema,
+  informationalOnly: z.literal(true),
+  decisionEligible: z.literal(false),
+}).readonly();
+
+const provisionalCandleSchema = z.strictObject({
+  productId: productIdSchema,
+  interval: displayIntervalSchema,
+  startTimeMs: epochMillisecondsSchema,
+  endTimeMs: epochMillisecondsSchema,
+  open: decimalStringSchema,
+  high: decimalStringSchema,
+  low: decimalStringSchema,
+  close: decimalStringSchema,
+  volume: decimalStringSchema,
+  isComplete: z.literal(false),
+  observedAtMs: epochMillisecondsSchema,
+  informationalOnly: z.literal(true),
+  decisionEligible: z.literal(false),
+}).readonly();
+
 export const marketDataChannelSchemas = {
   'market-data.prices': {
     request: emptyPayloadSchema,
@@ -171,5 +214,49 @@ export const marketDataChannelSchemas = {
         asOfMs: epochMillisecondsSchema,
       })
       .readonly(),
+  },
+  'market-data.products': {
+    request: z.strictObject({
+      query: z.string().max(80).default(''),
+      limit: z.number().int().min(1).max(500).default(100),
+    }).readonly(),
+    response: z.strictObject({
+      products: z.array(displayProductSchema).max(500).readonly(),
+      source: z.literal('coinbase_exchange_rest'),
+      informationalOnly: z.literal(true),
+      decisionEligible: z.literal(false),
+      asOfMs: epochMillisecondsSchema,
+    }).readonly(),
+  },
+  'market-data.display-bars': {
+    request: z.strictObject({
+      productId: productIdSchema,
+      interval: displayIntervalSchema,
+      startTimeMs: epochMillisecondsSchema,
+      endTimeMs: epochMillisecondsSchema,
+    }).readonly(),
+    response: z.strictObject({
+      productId: productIdSchema,
+      interval: displayIntervalSchema,
+      bars: z.array(displayBarSchema).max(20_000).readonly(),
+      source: z.literal('coinbase_exchange_rest'),
+      completeness: z.literal('completed_only'),
+      informationalOnly: z.literal(true),
+      decisionEligible: z.literal(false),
+      asOfMs: epochMillisecondsSchema,
+    }).readonly(),
+  },
+  'market-data.live-candles': {
+    request: z.strictObject({
+      productIds: z.array(productIdSchema).min(1).max(12).readonly(),
+      interval: displayIntervalSchema,
+    }).readonly(),
+    response: z.strictObject({
+      connection: z.enum(['offline', 'connecting', 'live', 'stale', 'reconnecting']),
+      candles: z.array(provisionalCandleSchema).max(12).readonly(),
+      informationalOnly: z.literal(true),
+      decisionEligible: z.literal(false),
+      asOfMs: epochMillisecondsSchema,
+    }).readonly(),
   },
 } as const;

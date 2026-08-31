@@ -73,7 +73,7 @@ import {
 import { createAlertNotificationPump } from './notifications.js';
 import { createPaperMarketFeed } from './paper-market.js';
 import { createPaperCampaignHandlers } from './paper-campaign-handlers.js';
-import { createCandleSource, createReferenceSources } from './reference-sources.js';
+import { createCandleSource, createDisplayDataService, createReferenceSources } from './reference-sources.js';
 import { startSchedulerRuntime, type SchedulerRuntime } from './scheduler-runtime.js';
 import type { ChannelHandlers } from './dispatch.js';
 
@@ -189,8 +189,8 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     options.onUnexpectedError?.(context, error);
   };
 
-  // One client over one shared registry. `createHttpClient` derives the
-  // hostname from each URL and takes its budget from `forDomain`, so per-host
+  // One client over one shared registry. `createHttpClient` derives the hostname
+  // and takes its budget from `forDomain`, so per-host
   // scoping is already handled; separate clients would only make it possible
   // for two of them to disagree about the same provider's limit.
   const rateLimiters = createRateLimiterRegistry();
@@ -227,6 +227,9 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     }),
     candles,
   });
+  const displayData = createDisplayDataService({
+    http, database, profileId: options.profileId, nowMs: () => clock.nowMs(),
+  });
   const liveMarket = new CoinbaseMarketStreamService({ nowMs: () => clock.nowMs(), onUnexpectedError: report });
 
   // PortfolioAllocationPolicyService is deliberately not wired: it only offers
@@ -235,8 +238,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   const reconciliation = new ReconciliationLedgerService({ database, clock });
   const settings = new AccountSettingsService({ database, clock });
 
-  const research = new ResearchReadModelService({ database });
-  const scoreboard = new ResearchScoreboardService({ database });
+  const research = new ResearchReadModelService({ database }), scoreboard = new ResearchScoreboardService({ database });
   const evidence = new RiskEvidenceTrackerService({ database, clock });
   const alerts = new AlertsService({
     database,
@@ -280,8 +282,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     }),
     onUnexpectedError: report,
   });
-  let scheduler: SchedulerRuntime | null = null;
-  let disposed = false;
+  let scheduler: SchedulerRuntime | null = null, disposed = false;
   const startScheduler = (): void => {
     if (disposed || scheduler !== null) return;
     liveMarket.start(trackedAssets().map((asset) => asset.instrument.productId));
@@ -451,7 +452,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       paperHoldings = (await portfolio.portfolioView()).holdings;
       return { ok: true, value: paperExecution().review(payload) };
     },
-    ...createMarketHandlers(marketData, liveMarket, trackedAssets),
+    ...createMarketHandlers(marketData, displayData, liveMarket, trackedAssets),
     'research.runs': () => research.runs(),
     'research.performance': () => research.performance(),
     'research.edge-study': () => {

@@ -4,6 +4,7 @@ export * from './advisor.js';
 export * from './canonical-assets.js';
 export * from './coinbase-evidence.js';
 export * from './display-universe.js';
+export * from './display-market.js';
 export * from './evidence.js';
 export * from './forward-edge.js';
 export * from './market-data.js';

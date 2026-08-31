@@ -5,5 +5,6 @@ export * from './decision-dataset.js';
 export * from './display-provenance.js';
 export * from './display-queries.js';
 export * from './display-universe.js';
+export * from './display-workstation.js';
 export * from './point-in-time-universe.js';
 export * from './provider-comparison.js';

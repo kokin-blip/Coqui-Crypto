@@ -53,6 +53,30 @@ export interface CoinbaseDailyBarsOptions {
   retrievedAtMs?: number;
 }
 
+export type CoinbaseDisplayInterval = '1m' | '5m' | '15m' | '1h' | '6h' | '1d';
+
+export interface CoinbaseDisplayBar {
+  readonly productId: string;
+  readonly interval: CoinbaseDisplayInterval;
+  readonly startTimeMs: number;
+  readonly endTimeMs: number;
+  readonly open: string;
+  readonly high: string;
+  readonly low: string;
+  readonly close: string;
+  readonly volume: string | null;
+  readonly isComplete: true;
+  readonly retrievedAtMs: number;
+}
+
+export interface CoinbaseDisplayBarsOptions {
+  readonly interval: CoinbaseDisplayInterval;
+  readonly startTimeMs: number;
+  readonly endTimeMs: number;
+  readonly nowMs: number;
+  readonly retrievedAtMs?: number;
+}
+
 function productPath(instrument: InstrumentIdentity, suffix: string): string {
   return `https://${COINBASE_EXCHANGE_HOST}/products/${encodeURIComponent(instrument.productId)}${suffix}`;
 }
@@ -263,6 +287,80 @@ export async function fetchCoinbaseDailyBars(
       (left, right) => left.startTimeMs - right.startTimeMs,
     ),
   };
+}
+
+/**
+ * Fetch one bounded display-only candle window.
+ *
+ * Coinbase caps a request at 300 buckets. This adapter refuses a larger window
+ * rather than silently truncating it; pagination belongs to the display-data
+ * service, where cache coverage and retention are visible together.
+ */
+export async function fetchCoinbaseDisplayBars(
+  http: HttpClient,
+  instrument: InstrumentIdentity,
+  options: CoinbaseDisplayBarsOptions,
+): Promise<HttpResult<CoinbaseDisplayBar[]>> {
+  const seconds = GRANULARITY[options.interval];
+  if (
+    seconds === undefined ||
+    !Number.isSafeInteger(options.startTimeMs) || options.startTimeMs < 0 ||
+    !Number.isSafeInteger(options.endTimeMs) || options.endTimeMs <= options.startTimeMs ||
+    !Number.isSafeInteger(options.nowMs) || options.nowMs < 0 ||
+    options.endTimeMs - options.startTimeMs > seconds * 1_000 * CANDLES_PER_PAGE ||
+    (options.retrievedAtMs !== undefined &&
+      (!Number.isSafeInteger(options.retrievedAtMs) || options.retrievedAtMs < 0))
+  ) return parseFailure(0);
+
+  const query = new URLSearchParams({
+    granularity: String(seconds),
+    start: new Date(options.startTimeMs).toISOString(),
+    end: new Date(options.endTimeMs).toISOString(),
+  });
+  const result = await http.getJson<unknown>(
+    `${productPath(instrument, '/candles')}?${query.toString()}`,
+  );
+  if (!result.ok) return result;
+  if (!Array.isArray(result.data) || result.data.length > CANDLES_PER_PAGE) {
+    return parseFailure(result.status);
+  }
+  const intervalMs = seconds * 1_000;
+  const retrievedAtMs = options.retrievedAtMs ?? options.nowMs;
+  const bars = new Map<number, CoinbaseDisplayBar>();
+  for (const value of result.data) {
+    if (!Array.isArray(value) || value.length < 6) return parseFailure(result.status);
+    const [timeS, low, high, open, close, volume] = value as unknown[];
+    if (
+      !validNumber(timeS) || !Number.isSafeInteger(timeS) || timeS < 0 ||
+      !validNumber(low) || !validNumber(high) || !validNumber(open) ||
+      !validNumber(close) || !validNumber(volume) || low <= 0 || high < low ||
+      open < low || open > high || close < low || close > high || volume < 0
+    ) return parseFailure(result.status);
+    const startTimeMs = timeS * 1_000;
+    const endTimeMs = startTimeMs + intervalMs;
+    // The final venue bucket is displayable only after it has closed. Missing
+    // buckets stay missing and an in-progress bucket is represented separately.
+    if (startTimeMs < options.startTimeMs || startTimeMs >= options.endTimeMs ||
+      endTimeMs > options.nowMs) continue;
+    const bar: CoinbaseDisplayBar = Object.freeze({
+      productId: instrument.productId,
+      interval: options.interval,
+      startTimeMs,
+      endTimeMs,
+      open: String(open), high: String(high), low: String(low), close: String(close),
+      volume: String(volume),
+      isComplete: true,
+      retrievedAtMs,
+    });
+    const duplicate = bars.get(startTimeMs);
+    if (duplicate !== undefined && JSON.stringify(duplicate) !== JSON.stringify(bar)) {
+      return parseFailure(result.status);
+    }
+    bars.set(startTimeMs, bar);
+  }
+  return { ok: true, status: result.status, data: [...bars.values()].sort(
+    (left, right) => left.startTimeMs - right.startTimeMs,
+  ) };
 }
 
 /** Coinbase's online USD spot-product catalog with canonical venue identities. */

@@ -27,6 +27,10 @@ function workspacePreferences(view: ReturnType<AccountSettingsService['get']>) {
         overviewBenchmarkVisible: preferences.overviewBenchmarkVisible,
         marketVolumeVisible: preferences.marketVolumeVisible,
         marketIndicators: preferences.marketIndicators,
+        marketInterval: preferences.marketInterval,
+        marketScaleMode: preferences.marketScaleMode,
+        marketLiveCandle: preferences.marketLiveCandle,
+        marketLayout: preferences.marketLayout,
       },
     },
   };

@@ -59,6 +59,10 @@ const workspacePreferenceFields = {
     rsi14: z.boolean(),
     macd: z.boolean(),
   }).readonly(),
+  marketInterval: z.enum(['1m', '5m', '15m', '1h', '6h', '1d']),
+  marketScaleMode: z.enum(['linear', 'percentage', 'indexed', 'logarithmic']),
+  marketLiveCandle: z.boolean(),
+  marketLayout: z.enum(['single', 'horizontal', 'vertical', 'grid', 'dominant']),
 } as const;
 const workspacePreferencesSchema = z.strictObject(workspacePreferenceFields).readonly();
 
