@@ -41,6 +41,7 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'chart-extensions.signer.trust': { refetchIntervalMs: false, staleTimeMs: 0 },
   'chart-extensions.signer.remove': { refetchIntervalMs: false, staleTimeMs: 0 },
   'chart-extensions.install': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'chart-extensions.install.pick': { refetchIntervalMs: false, staleTimeMs: 0 },
   'chart-extensions.set': { refetchIntervalMs: false, staleTimeMs: 0 },
   'chart-extensions.remove': { refetchIntervalMs: false, staleTimeMs: 0 },
   'chart-extensions.evaluate': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },

@@ -1,5 +1,5 @@
 import { basename, dirname, join } from 'node:path';
-import { writeFile } from 'node:fs/promises';
+import { readFile, stat, writeFile } from 'node:fs/promises';
 
 import { createOsKeyringSecretStore, type SecretStore } from '@coqui/adapters';
 import { app, BrowserWindow, dialog, ipcMain, Notification, shell } from 'electron';
@@ -133,6 +133,14 @@ async function start(): Promise<void> {
         if (result.canceled || result.filePath === undefined) return 'cancelled';
         await writeFile(result.filePath, png, { flag: 'w' });
         return 'saved';
+      },
+      async pickChartExtension() {
+        const result = await dialog.showOpenDialog({ title: 'Install chart extension',
+          properties: ['openFile'], filters: [{ name: 'Coqui chart extension', extensions: ['coquichart'] }] });
+        if (result.canceled || result.filePaths[0] === undefined) return null;
+        const path = result.filePaths[0], metadata = await stat(path);
+        if (!metadata.isFile() || metadata.size < 2 || metadata.size > 2_800_000) throw new TypeError('invalid_chart_extension');
+        return readFile(path, 'utf8');
       },
     },
   });

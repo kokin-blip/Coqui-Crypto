@@ -26,6 +26,27 @@ function fixture() {
     signatureBase64: sign(null, Buffer.from(canonical(unsigned)), privateKey).toString('base64') } });
   return { database, service, packageJson, signerKeyId };
 }
+function modernFixture() {
+  const value = fixture(), parsed = JSON.parse(value.packageJson) as { signature: { signerKeyId: string } };
+  const database = value.database, service = value.service;
+  const { publicKey, privateKey } = generateKeyPairSync('ed25519');
+  const publicKeyBase64 = publicKey.export({ format: 'der', type: 'spki' }).toString('base64');
+  const signerKeyId = service.trustSigner('Modern owner key', publicKeyBase64);
+  const unsigned = { format: 'coqui-chart-extension-v1' as const,
+    manifest: { id: 'coqui.modern', name: 'Modern extension', version: '1.1.0',
+      compatibility: { min: '0.1.0', maxExclusive: '0.2.0' }, author: 'Coqui tests', license: 'MIT',
+      permissions: ['immutable_display_bars'],
+      settingsSchema: [{ key: 'threshold', label: 'Threshold', type: 'number', required: true, default: 0, minimum: -10, maximum: 10 }],
+      outputs: [
+        { id: 'modern-line', kind: 'series', title: 'Modern line', pane: 1, color: '#2ee98b' },
+        { id: 'positive', kind: 'markers', title: 'Positive', condition: 'positive', tone: 'positive' },
+      ] },
+    payload: { wasmBase64: WASM.toString('base64'), sha256: createHash('sha256').update(WASM).digest('hex') } };
+  const packageJson = JSON.stringify({ ...unsigned, signature: { signerKeyId,
+    signatureBase64: sign(null, Buffer.from(canonical(unsigned)), privateKey).toString('base64') } });
+  void parsed;
+  return { database, service, packageJson };
+}
 
 describe('signed chart extensions', () => {
   it('installs disabled after verifying an owner-approved Ed25519 signer', () => {
@@ -74,6 +95,22 @@ describe('signed chart extensions', () => {
     const value = fixture();
     value.service.install(value.packageJson);
     expect(() => value.database.prepare('DELETE FROM chart_extension_events_v1').run()).toThrow(/immutable/u);
+    value.database.close();
+  });
+
+  it('validates modern compatibility, permissions, settings, series, and marker declarations', async () => {
+    const value = modernFixture();
+    value.service.install(value.packageJson);
+    expect(value.service.catalog().extensions[0]).toMatchObject({
+      compatibility: { min: '0.1.0', maxExclusive: '0.2.0' },
+      permissions: ['immutable_display_bars'],
+      outputs: [{ kind: 'series' }, { kind: 'markers' }],
+    });
+    expect(() => value.service.set('coqui.modern', true, { unknown: true })).toThrow('invalid_settings');
+    value.service.set('coqui.modern', true, { threshold: 1 });
+    const result = await value.service.evaluate('coqui.modern', [{ timeMs: 1_000, close: '2' }]);
+    expect(result.series[0]).toMatchObject({ id: 'modern-line', pane: 1 });
+    expect(result.markers).toEqual([{ timeMs: 1_000, label: 'Positive', tone: 'positive' }]);
     value.database.close();
   });
 });

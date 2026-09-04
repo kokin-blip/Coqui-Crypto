@@ -87,4 +87,27 @@ describe('provider-neutral advisor analyst', () => {
     expect(database.prepare('SELECT COUNT(*) AS count FROM advisor_messages_v1').get()).toEqual({ count: 0 });
     database.close();
   });
+
+  it('rejects oversized prepared context before it can reach a provider', () => {
+    const database = openDatabase(':memory:'), service = new AdvisorAnalystService({ profileId: 'main',
+      database, clock: new FixedClock(T0), http: fakeHttp([]), secrets: createMemorySecretStore() });
+    expect(() => service.prepare({ productId: 'BTC-USD', bars: [],
+      evidence: Array.from({ length: 700 }, (_, index) => ({ label: `Evidence ${index}`, value: 'x'.repeat(100), tone: 'neutral' as const })),
+      portfolio: [], scope: { chartData: false, visibleEvidence: true, sanitizedPortfolio: false } })).toThrow('context_too_large');
+    database.close();
+  });
+
+  it('rejects malformed provider output and records only a sanitized failure audit', async () => {
+    const database = openDatabase(':memory:'), http = fakeHttp([]);
+    http.postJson = async <T>() => ({ ok: true, status: 200, data: { output_text: '   ' } as T });
+    const service = new AdvisorAnalystService({ profileId: 'main', database,
+      clock: new FixedClock(T0), http,
+      secrets: createMemorySecretStore({ 'openai-api-key': 'secret-test-key-that-never-leaves-header' }) });
+    const prepared = context(service);
+    await expect(service.generate(prepared.contextHash, 'openai')).rejects.toThrow('provider_response_invalid');
+    const events = database.prepare('SELECT provider, operation, outcome, context_hash FROM advisor_audit_events_v1').all();
+    expect(events).toEqual([{ provider: 'openai', operation: 'facts', outcome: 'failed', context_hash: prepared.contextHash }]);
+    expect(JSON.stringify(events)).not.toContain('secret-test-key');
+    database.close();
+  });
 });

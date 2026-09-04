@@ -63,6 +63,13 @@ export interface WorkstationExtensionSeries {
   readonly points: readonly ChartPoint[];
 }
 
+export interface WorkstationExtensionMarker {
+  readonly extensionId: string;
+  readonly timeMs: number;
+  readonly label: string;
+  readonly tone: 'neutral' | 'positive' | 'negative' | 'warning';
+}
+
 export interface WorkstationComparisonSeries {
   readonly productId: string;
   readonly points: readonly ChartPoint[];

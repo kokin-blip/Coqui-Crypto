@@ -37,8 +37,12 @@ export function createAdvisorHandlers(input: { readonly profileId: string; reado
     'advisor.chat.history': async (payload: { readonly conversationId: string | null }) => ({ ok: true, value: await service.history(payload.conversationId) }),
     'advisor.chat.history.delete': (payload: Command & { readonly conversationId: string }) => command(payload, payload, () => service.delete(payload.conversationId)),
     'advisor.chat.history.export': (payload: Command & { readonly conversationId: string }) => command(payload, payload, async () => {
-      const data = await service.exportData(payload.conversationId);
-      return { outcome: input.saveHistory === undefined ? 'cancelled' as const : await input.saveHistory(data) };
+      try {
+        const data = await service.exportData(payload.conversationId);
+        const outcome = input.saveHistory === undefined ? 'cancelled' as const : await input.saveHistory(data);
+        service.auditExport(outcome === 'saved' ? 'succeeded' : 'cancelled');
+        return { outcome };
+      } catch (error) { service.auditExport('failed'); throw error; }
     }),
   } as ChannelHandlers;
 }

@@ -120,7 +120,7 @@ function ChartTile({ client, tile, tileId, layoutId, style, activeTool, height,
     <TradingWorkstationChart client={client} bars={bars} productId={tile.productId}
       style={style} scaleMode={scaleMode} volumeVisible={volumeVisible} indicators={indicators}
       comparisons={comparisons.series}
-      extensionSeries={extensionState.series} activeTool={activeTool} drawings={drawings}
+      extensionSeries={extensionState.series} extensionMarkers={extensionState.markers} activeTool={activeTool} drawings={drawings}
       onDrawing={onDrawing} height={height} syncId={tileId} linkGroup={tile.linkGroup}
       linkController={linkController} />
     <ChartDrawingManager drawings={drawings} onSave={onDrawing} onDelete={onDeleteDrawing} />

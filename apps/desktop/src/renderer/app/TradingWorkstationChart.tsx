@@ -4,8 +4,8 @@ import type { CoquiClient } from '@coqui/contracts';
 import { CHART_COLORS } from '@coqui/ui-kit';
 import {
   AreaSeries, BaselineSeries, CandlestickSeries, ColorType, HistogramSeries,
-  LineSeries, PriceScaleMode, createChart,
-  type CandlestickData, type HistogramData, type ISeriesApi, type LineData, type Time,
+  LineSeries, PriceScaleMode, createChart, createSeriesMarkers,
+  type CandlestickData, type HistogramData, type ISeriesApi, type LineData, type SeriesMarker, type Time,
 } from 'lightweight-charts';
 
 import { ChartFrame } from './ChartFrame.js';
@@ -14,7 +14,7 @@ import type { ChartLinkController } from './chart-link-controller.js';
 import { bollinger, ema, macd, rsi, sma } from './chart-indicators.js';
 import type {
   ChartDrawing, DrawingTool, WorkstationBar,
-  WorkstationChartStyle, WorkstationComparisonSeries, WorkstationExtensionSeries,
+  WorkstationChartStyle, WorkstationComparisonSeries, WorkstationExtensionMarker, WorkstationExtensionSeries,
   WorkstationIndicators, WorkstationScaleMode,
 } from './chart-workstation-types.js';
 
@@ -33,7 +33,7 @@ function timeOf(bar: WorkstationBar): Time {
 }
 
 export function TradingWorkstationChart({ bars, productId, style, scaleMode,
-  volumeVisible, indicators, comparisons, extensionSeries, activeTool, drawings, onDrawing,
+  volumeVisible, indicators, comparisons, extensionSeries, extensionMarkers, activeTool, drawings, onDrawing,
   client, height = 520, syncId, linkGroup, linkController }: {
   readonly bars: readonly WorkstationBar[];
   readonly productId: string;
@@ -43,6 +43,7 @@ export function TradingWorkstationChart({ bars, productId, style, scaleMode,
   readonly indicators: WorkstationIndicators;
   readonly comparisons?: readonly WorkstationComparisonSeries[];
   readonly extensionSeries?: readonly WorkstationExtensionSeries[];
+  readonly extensionMarkers?: readonly WorkstationExtensionMarker[];
   readonly activeTool: DrawingTool;
   readonly drawings: readonly ChartDrawing[];
   readonly onDrawing: (drawing: ChartDrawing) => void;
@@ -131,6 +132,15 @@ export function TradingWorkstationChart({ bars, productId, style, scaleMode,
     for (const series of extensionSeries ?? []) {
       addLine(series.points.map((point) => ({ day: String(Math.floor(point.timeMs / 1_000)), value: Number(point.value) })), series.color, series.title, series.pane);
     }
+    if ((extensionMarkers?.length ?? 0) > 0) {
+      const colors = { neutral: CHART_COLORS.supportingText, positive: CHART_COLORS.primary,
+        negative: CHART_COLORS.negative, warning: '#f2b84b' } as const;
+      createSeriesMarkers(price, extensionMarkers!.map((marker): SeriesMarker<Time> => ({
+        time: Math.floor(marker.timeMs / 1_000) as Time, position: 'aboveBar',
+        shape: marker.tone === 'positive' ? 'arrowUp' : marker.tone === 'negative' ? 'arrowDown' : 'circle',
+        color: colors[marker.tone], text: marker.label,
+      })));
+    }
     const updateDrawingShapes = (): void => {
       const width = container.current?.clientWidth ?? 0;
       const chartHeight = container.current?.clientHeight ?? height;
@@ -200,7 +210,7 @@ export function TradingWorkstationChart({ bars, productId, style, scaleMode,
     });
     observer.observe(container.current);
     return () => { unsubscribeLink(); observer.disconnect(); chart.timeScale().unsubscribeVisibleLogicalRangeChange(updateDrawingShapes); chart.timeScale().unsubscribeVisibleTimeRangeChange(publishRange); chart.remove(); chartApi.current = null; priceApi.current = null; };
-  }, [bars, comparisons, drawings, extensionSeries, height, indicators, linkController, linkGroup, scaleMode, style, syncId, volumeVisible]);
+  }, [bars, comparisons, drawings, extensionMarkers, extensionSeries, height, indicators, linkController, linkGroup, scaleMode, style, syncId, volumeVisible]);
 
   const capturePoint = (event: React.PointerEvent<HTMLDivElement>): void => {
     if (activeTool === 'cursor' || chartApi.current === null || priceApi.current === null) return;

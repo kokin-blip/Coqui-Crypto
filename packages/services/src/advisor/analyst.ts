@@ -22,6 +22,15 @@ const PROVIDERS: Readonly<Record<AnalystProvider, { readonly key: SecretKey; rea
   openai: { key: 'openai-api-key', model: 'gpt-5-mini' },
   anthropic: { key: 'anthropic-api-key', model: 'claude-sonnet-4-5' },
 };
+const MAX_CONTEXT_BYTES = 65_536;
+const MAX_ANSWER_CHARS = 20_000;
+
+function validatedAnswer(value: unknown): string {
+  if (typeof value !== 'string') throw new TypeError('provider_response_invalid');
+  const text = value.trim();
+  if (text.length === 0 || text.length > MAX_ANSWER_CHARS) throw new TypeError('provider_response_invalid');
+  return text;
+}
 
 function localFacts(input: ContextInput): readonly Fact[] {
   const complete = input.bars.filter((bar) => bar.complete);
@@ -76,8 +85,10 @@ export class AdvisorAnalystService {
     const facts = localFacts(value), bars = value.scope.chartData ? value.bars.slice(-500) : [];
     const selected = { product: value.productId, bars, evidence: value.scope.visibleEvidence ? value.evidence : [], portfolio: value.scope.sanitizedPortfolio ? value.portfolio : [], facts, scope: value.scope };
     const providerSummary = JSON.stringify(selected), contextHash = sha256Hex(providerSummary);
+    const payloadBytes = Buffer.byteLength(providerSummary);
+    if (payloadBytes > MAX_CONTEXT_BYTES) throw new TypeError('context_too_large');
     const context = { contextHash, dataTimestampMs: bars.at(-1)?.timeMs ?? this.input.clock.nowMs(),
-      scope: value.scope, localFacts: facts, payloadBytes: Buffer.byteLength(providerSummary), providerSummary,
+      scope: value.scope, localFacts: facts, payloadBytes, providerSummary,
       provenance: bars.length === 0 ? [] : ['Coinbase completed display candles'] };
     this.#contexts.set(contextHash, context);
     while (this.#contexts.size > 20) this.#contexts.delete(this.#contexts.keys().next().value as string);
@@ -87,13 +98,24 @@ export class AdvisorAnalystService {
   async generate(contextHash: string, provider: AnalystProvider | null) {
     const context = this.#requireContext(contextHash);
     if (provider === null) return this.#answer(context, 'local', 'deterministic-v1', 'analysis', context.localFacts.map((fact) => `${fact.label}: ${fact.value}`).join('\n'));
-    const text = await this.#request(provider, 'analysis', 'Summarize the key facts and caveats in this market context.', context);
-    appendAdvisorAuditEvent(this.input.profileId, provider, 'facts', 'succeeded', contextHash, this.input.clock.nowMs(), this.input.database);
-    return this.#answer(context, provider, PROVIDERS[provider].model, 'analysis', text);
+    try {
+      const text = await this.#request(provider, 'analysis', 'Summarize the key facts and caveats in this market context.', context);
+      appendAdvisorAuditEvent(this.input.profileId, provider, 'facts', 'succeeded', contextHash, this.input.clock.nowMs(), this.input.database);
+      return this.#answer(context, provider, PROVIDERS[provider].model, 'analysis', text);
+    } catch (error) {
+      appendAdvisorAuditEvent(this.input.profileId, provider, 'facts', 'failed', contextHash, this.input.clock.nowMs(), this.input.database);
+      throw error;
+    }
   }
 
   async send(value: { readonly contextHash: string; readonly provider: AnalystProvider; readonly mode: AnalystMode; readonly message: string; readonly conversationId: string | null; readonly retention: 'session' | 'encrypted' }) {
-    const context = this.#requireContext(value.contextHash), answerText = await this.#request(value.provider, value.mode, value.message, context);
+    const context = this.#requireContext(value.contextHash);
+    let answerText: string;
+    try { answerText = await this.#request(value.provider, value.mode, value.message, context); }
+    catch (error) {
+      appendAdvisorAuditEvent(this.input.profileId, value.provider, 'chat', 'failed', value.contextHash, this.input.clock.nowMs(), this.input.database);
+      throw error;
+    }
     const id = value.conversationId ?? randomUUID(), now = this.input.clock.nowMs();
     const answer = this.#answer(context, value.provider, PROVIDERS[value.provider].model, value.mode, answerText);
     const messages: readonly MessageView[] = [{ id: randomUUID(), role: 'user', text: value.message, createdAtMs: now }, { id: randomUUID(), role: 'assistant', text: answer.text, createdAtMs: now }];
@@ -128,25 +150,30 @@ export class AdvisorAnalystService {
     return JSON.stringify({ exportedAtMs: this.input.clock.nowMs(), advisoryOnly: true, executionAuthority: false, conversation }, null, 2);
   }
 
+  auditExport(outcome: 'succeeded' | 'failed' | 'cancelled'): void {
+    appendAdvisorAuditEvent(this.input.profileId, 'local', 'export', outcome, '0'.repeat(64), this.input.clock.nowMs(), this.input.database);
+  }
+
   #requireContext(hash: string): PreparedContext { const value = this.#contexts.get(hash); if (value === undefined) throw new TypeError('context_stale'); return value; }
   #answer(context: PreparedContext, provider: AnalystProvider | 'local', model: string, mode: AnalystMode, text: string) { return { text, provider, model, mode, contextHash: context.contextHash, generatedAtMs: this.input.clock.nowMs(), dataTimestampMs: context.dataTimestampMs, scope: context.scope, provenance: context.provenance, advisoryOnly: true as const, executionAuthority: false as const }; }
 
   async #request(provider: AnalystProvider, mode: AnalystMode, question: string, context: PreparedContext): Promise<string> {
+    if (context.payloadBytes > MAX_CONTEXT_BYTES || Buffer.byteLength(context.providerSummary) > MAX_CONTEXT_BYTES) throw new TypeError('context_too_large');
     const config = PROVIDERS[provider], secret = await this.input.secrets.read(config.key, this.input.profileId);
     if (!secret.ok || secret.value === null) throw new TypeError('provider_disconnected');
     const system = `You are Coqui's analytical assistant. Use only the supplied context. ${mode === 'scenario_ideas' ? 'Offer clearly labelled non-binding scenarios.' : 'Do not issue buy, sell, or execution instructions.'} Always state uncertainty. Advisory only; no execution authority.`;
     if (provider === 'openai') {
       const result = await this.input.http.postJson<{ output_text?: string }>('https://api.openai.com/v1/responses', { model: config.model, input: `${system}\nContext: ${context.providerSummary}\nQuestion: ${question}`, max_output_tokens: 1200 }, { headers: { authorization: `Bearer ${secret.value}` } });
-      if (!result.ok || typeof result.data.output_text !== 'string') throw new TypeError('provider_failed'); return result.data.output_text;
+      if (!result.ok) throw new TypeError('provider_failed'); return validatedAnswer(result.data.output_text);
     }
     if (provider === 'anthropic') {
       const result = await this.input.http.postJson<{ content?: readonly { type?: string; text?: string }[] }>('https://api.anthropic.com/v1/messages', { model: config.model, max_tokens: 1200, system, messages: [{ role: 'user', content: `Context: ${context.providerSummary}\nQuestion: ${question}` }] }, { headers: { 'x-api-key': secret.value, 'anthropic-version': '2023-06-01' } });
       const text = result.ok ? result.data.content?.find((item) => item.type === 'text')?.text : undefined;
-      if (text === undefined) throw new TypeError('provider_failed'); return text;
+      if (text === undefined) throw new TypeError('provider_failed'); return validatedAnswer(text);
     }
     const result = await this.input.http.postJson<{ candidates?: readonly { content?: { parts?: readonly { text?: string }[] } }[] }>(`https://generativelanguage.googleapis.com/v1beta/models/${config.model}:generateContent`, { system_instruction: { parts: [{ text: system }] }, contents: [{ role: 'user', parts: [{ text: `Context: ${context.providerSummary}\nQuestion: ${question}` }] }] }, { headers: { 'x-goog-api-key': secret.value } });
     const text = result.ok ? result.data.candidates?.[0]?.content?.parts?.[0]?.text : undefined;
-    if (text === undefined) throw new TypeError('provider_failed'); return text;
+    if (text === undefined) throw new TypeError('provider_failed'); return validatedAnswer(text);
   }
 
   async #historyKey(create: boolean): Promise<Buffer | null> {

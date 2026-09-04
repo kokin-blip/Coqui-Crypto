@@ -6,10 +6,30 @@ const settingValue = z.union([z.string().max(200), z.number().finite(), z.boolea
 const settings = z.record(z.string().regex(/^[a-z][a-z0-9_-]{0,39}$/u), settingValue).refine(
   (value) => Object.keys(value).length <= 32,
 );
+const settingDefinition = z.strictObject({
+  key: z.string().regex(/^[a-z][a-z0-9_-]{0,39}$/u),
+  label: z.string().min(1).max(80),
+  type: z.enum(['boolean', 'number', 'string']),
+  required: z.boolean(),
+  default: settingValue.optional(),
+  minimum: z.number().finite().optional(),
+  maximum: z.number().finite().optional(),
+}).readonly();
+const declaredOutput = z.discriminatedUnion('kind', [
+  z.strictObject({ id, kind: z.literal('series'), title: z.string().min(1).max(80),
+    pane: z.number().int().min(0).max(3), color: z.string().regex(/^#[0-9a-f]{6}$/iu) }).readonly(),
+  z.strictObject({ id, kind: z.literal('markers'), title: z.string().min(1).max(80),
+    condition: z.enum(['positive', 'negative', 'nonzero']),
+    tone: z.enum(['neutral', 'positive', 'negative', 'warning']) }).readonly(),
+]);
 const extension = z.strictObject({
   id, name: z.string().min(1).max(80), version: z.string().regex(/^\d+\.\d+\.\d+$/u),
   author: z.string().min(1).max(80), license: z.string().min(1).max(80),
   signerKeyId: hash, payloadHash: hash, enabled: z.boolean(), settings,
+  compatibility: z.strictObject({ min: z.string(), maxExclusive: z.string() }).readonly(),
+  permissions: z.tuple([z.literal('immutable_display_bars')]).readonly(),
+  settingsSchema: z.array(settingDefinition).max(32).readonly(),
+  outputs: z.array(declaredOutput).min(1).max(8).readonly(),
   installedAtMs: z.number().int().nonnegative(),
 }).readonly();
 const bar = z.strictObject({
@@ -37,6 +57,13 @@ export const chartExtensionChannelSchemas = {
   'chart-extensions.install': {
     request: z.strictObject({ commandId: z.string().uuid(), packageJson: z.string().min(2).max(2_800_000), confirmed: z.literal(true) }).readonly(),
     response: z.strictObject({ outcome: z.enum(['installed', 'updated']), extensionId: id }).readonly(),
+  },
+  'chart-extensions.install.pick': {
+    request: z.strictObject({ commandId: z.string().uuid(), confirmed: z.literal(true) }).readonly(),
+    response: z.discriminatedUnion('outcome', [
+      z.strictObject({ outcome: z.enum(['installed', 'updated']), extensionId: id }).readonly(),
+      z.strictObject({ outcome: z.literal('cancelled') }).readonly(),
+    ]),
   },
   'chart-extensions.set': {
     request: z.strictObject({ commandId: z.string().uuid(), extensionId: id,

@@ -89,6 +89,7 @@ const WRITE_CHANNELS = [
   'advisor.provider.connect',
   'advisor.provider.disconnect',
   'chart-extensions.install',
+  'chart-extensions.install.pick',
   'chart-extensions.remove',
   'chart-extensions.set',
   'chart-extensions.signer.remove',

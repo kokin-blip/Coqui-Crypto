@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Bot, Download, LockKeyhole, Send, Sparkles, Trash2, X } from 'lucide-react';
 
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
@@ -33,13 +33,24 @@ export function AdvisorSheet({ client, productId, bars, onClose }: {
   const [busy, setBusy] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
   const [apiKey, setApiKey] = useState('');
+  const [preparedContextHash, setPreparedContextHash] = useState<string | null>(null);
   const selected = available.find((item) => item.provider === provider);
   const contextBars = useMemo(() => bars.slice(-500).map((bar) => ({ timeMs: bar.startTimeMs,
     open: bar.open, high: bar.high, low: bar.low, close: bar.close, volume: bar.volume,
     complete: bar.isComplete })), [bars]);
-  const prepare = async () => client.query('advisor.context.prepare', { productId,
+  const prepare = useCallback(async () => client.query('advisor.context.prepare', { productId,
     bars: contextBars, evidence: [], portfolio: [], scope: { chartData: includeChart,
-      visibleEvidence: includeEvidence, sanitizedPortfolio: includePortfolio } });
+      visibleEvidence: includeEvidence, sanitizedPortfolio: includePortfolio } }),
+  [client, contextBars, includeChart, includeEvidence, includePortfolio, productId]);
+  useEffect(() => {
+    let active = true;
+    setPreparedContextHash(null);
+    void prepare().then((result) => {
+      if (active && result.status === 'ok') setPreparedContextHash(result.value.contextHash);
+    });
+    return () => { active = false; };
+  }, [prepare]);
+  const answerIsStale = answer !== null && answer.contextHash !== preparedContextHash;
   const generateFacts = async (cloud: boolean): Promise<void> => {
     setBusy(true); setFailure(null);
     const context = await prepare();
@@ -69,7 +80,7 @@ export function AdvisorSheet({ client, productId, bars, onClose }: {
       <div className="advisor-provider-row"><label>Provider<select value={provider} onChange={(event) => setProvider(event.target.value as Provider)}>{available.map((item) => <option key={item.provider} value={item.provider}>{item.provider} · {item.credentialState}</option>)}</select></label><label>Response<select value={mode} onChange={(event) => setMode(event.target.value as 'analysis' | 'scenario_ideas')}><option value="analysis">Analysis</option><option value="scenario_ideas">Scenario ideas</option></select></label></div>
       {selected?.credentialState !== 'connected' ? <div className="advisor-connect"><label><span>{provider} API key</span><input type="password" autoComplete="off" value={apiKey} onChange={(event) => setApiKey(event.target.value)} placeholder="Stored in the OS secret store" /></label><button type="button" disabled={apiKey.length < 20 || connectProvider.state.kind === 'pending'} onClick={() => { void connectProvider.run({ commandId: crypto.randomUUID(), provider, apiKey, confirmed: true }); setApiKey(''); }}>Connect</button></div> : <button type="button" className="advisor-disconnect" onClick={() => void disconnectProvider.run({ commandId: crypto.randomUUID(), provider, confirmed: true })}>Disconnect {provider}</button>}
       <div className="advisor-fact-actions"><button type="button" disabled={busy} onClick={() => void generateFacts(false)}>Generate local facts</button><button type="button" disabled={busy || selected?.credentialState !== 'connected'} onClick={() => void generateFacts(true)}>Enrich with {provider}</button></div>
-      {answer !== null && <article className="advisor-answer"><header><strong>{answer.provider === 'local' ? 'Deterministic local facts' : `${answer.provider} · ${answer.model}`}</strong><span>{answer.mode === 'scenario_ideas' ? 'SCENARIOS' : 'ANALYSIS'}</span></header><p>{answer.text}</p><footer>Context {answer.contextHash.slice(0, 10)}… · data {new Date(answer.dataTimestampMs).toISOString()}<br />Advisory only · No execution authority</footer></article>}
+      {answer !== null && <article className="advisor-answer" data-stale={answerIsStale || undefined}><header><strong>{answer.provider === 'local' ? 'Deterministic local facts' : `${answer.provider} · ${answer.model}`}</strong><span>{answerIsStale ? 'STALE' : answer.mode === 'scenario_ideas' ? 'SCENARIOS' : 'ANALYSIS'}</span></header>{answerIsStale && <p className="advisor-stale" role="status">Source context changed. Generate a new answer before relying on this analysis.</p>}<p>{answer.text}</p><footer>Context {answer.contextHash.slice(0, 10)}… · data {new Date(answer.dataTimestampMs).toISOString()}<br />Advisory only · No execution authority</footer></article>}
       {failure !== null && <p className="advisor-failure" role="alert">{failure}</p>}
       <label className="advisor-question"><span>Ask a question</span><textarea value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="What stands out in this completed price history?" /></label>
       <label className="advisor-retention"><input type="checkbox" checked={encrypted} onChange={(event) => setEncrypted(event.target.checked)} /><LockKeyhole size={14} /> Keep this conversation encrypted on this profile</label>

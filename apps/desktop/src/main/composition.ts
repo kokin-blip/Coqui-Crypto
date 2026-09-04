@@ -140,8 +140,7 @@ export interface RuntimeOptions extends Partial<Pick<Parameters<typeof createAdv
    * without an OS.
    */
   readonly notifier?: Parameters<typeof createAlertNotificationPump>[0]['notifier'];
-  /** Native shell save boundary. Paths never return to the renderer or diagnostics. */
-  readonly saveChartSnapshot?: (filenameStem: string, png: Uint8Array) => Promise<'saved' | 'cancelled'>;
+  readonly saveChartSnapshot?: (filenameStem: string, png: Uint8Array) => Promise<'saved' | 'cancelled'>; readonly pickChartExtension?: () => Promise<string | null>;
 }
 
 export interface CoquiRuntime {
@@ -329,7 +328,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     ...createAdvisorHandlers({ profileId: options.profileId, database, clock, http,
       ...(options.secrets === undefined ? {} : { secrets: options.secrets }),
       ...(options.saveHistory === undefined ? {} : { saveHistory: options.saveHistory }) }),
-    ...createChartExtensionHandlers({ profileId: options.profileId, database, clock }),
+    ...createChartExtensionHandlers({ profileId: options.profileId, database, clock, ...(options.pickChartExtension === undefined ? {} : { pickPackage: options.pickChartExtension }) }),
     ...createChartSnapshotHandlers({ profileId: options.profileId, database, clock, ...(options.saveChartSnapshot === undefined ? {} : { save: options.saveChartSnapshot }) }),
     ...createChartWorkspaceHandlers({ profileId: options.profileId, database, clock }),
     ...createPaperCampaignHandlers(options.profileId, clock, database),
