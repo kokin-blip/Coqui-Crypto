@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { FileUp, KeyRound, PackageCheck, ShieldCheck, Trash2, X } from 'lucide-react';
+import { createPortal } from 'react-dom';
 
 import type { CoquiClient } from '@coqui/contracts';
 
@@ -25,7 +26,7 @@ export function ChartExtensionManager({ client, onClose }: {
   const dialogRef = useRef<HTMLElement>(null);
   useDialogFocus(dialogRef, onClose);
   const value = catalog.kind === 'ready' ? catalog.value : { extensions: [], signers: [] };
-  return <div className="extension-manager-backdrop" role="presentation" onMouseDown={onClose}>
+  return createPortal(<div className="extension-manager-backdrop" role="presentation" onMouseDown={onClose}>
     <section ref={dialogRef} className="extension-manager" role="dialog" aria-modal="true" aria-labelledby="extensions-title" onMouseDown={(event) => event.stopPropagation()}>
       <header><div><span className="violet-kicker"><PackageCheck size={13} /> Presentation only</span><h2 id="extensions-title">Chart extensions</h2></div><button type="button" className="icon-button" aria-label="Close extension manager" onClick={onClose}><X size={17} /></button></header>
       <div className="extension-safety"><ShieldCheck size={18} /><div><strong>Signed, isolated output</strong><span>Packages cannot run JavaScript, access files or networking, or contribute to research, risk, proposals, or execution.</span></div></div>
@@ -34,5 +35,5 @@ export function ChartExtensionManager({ client, onClose }: {
       <section><h3>Trusted owner keys</h3><div className="extension-key-form"><label className="extension-field"><span>Display name</span><input value={signerName} onChange={(event) => setSignerName(event.target.value)} /></label><label className="extension-field"><span>Ed25519 public key (DER, base64)</span><input value={publicKey} onChange={(event) => setPublicKey(event.target.value)} /></label><button type="button" disabled={publicKey.trim().length === 0 || trust.state.kind === 'pending'} onClick={() => void trust.run({ commandId: crypto.randomUUID(), displayName: signerName, publicKeyBase64: publicKey, confirmed: true })}><KeyRound size={14} /> Trust owner key</button></div><ul className="extension-signer-list">{value.signers.map((signer) => <li key={signer.keyId}><span><strong>{signer.displayName}</strong><small>{signer.revokedAtMs === null ? 'Trusted' : 'Revoked'} · {signer.keyId.slice(0, 12)}…</small></span>{signer.revokedAtMs === null && <button type="button" onClick={() => void removeSigner.run({ commandId: crypto.randomUUID(), keyId: signer.keyId, confirmed: true })}>Remove trust</button>}</li>)}</ul></section>
       <footer>Declarative series and optional import-free WebAssembly only · Advisory display surface</footer>
     </section>
-  </div>;
+  </div>, document.body);
 }

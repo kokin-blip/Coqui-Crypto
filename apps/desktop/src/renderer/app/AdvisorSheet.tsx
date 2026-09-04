@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Bot, Download, LockKeyhole, Send, Sparkles, Trash2, X } from 'lucide-react';
+import { createPortal } from 'react-dom';
 
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 
@@ -75,7 +76,7 @@ export function AdvisorSheet({ client, productId, bars, onClose }: {
     else setFailure(result.issues[0]?.code ?? 'Advisor request failed.');
     setBusy(false);
   };
-  return <div className="analyst-sheet-backdrop" role="presentation" onMouseDown={onClose}>
+  return createPortal(<div className="analyst-sheet-backdrop" role="presentation" onMouseDown={onClose}>
     <section ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="analyst-title" className="analyst-sheet" onMouseDown={(event) => event.stopPropagation()}>
       <header><div><span className="violet-kicker"><Sparkles size={13} /> Coqui analyst</span><h2 id="analyst-title">Key facts · {productId}</h2></div><button type="button" className="icon-button" aria-label="Close analyst" onClick={onClose}><X size={17} /></button></header>
       <p className="analyst-boundary"><Bot size={17} /> Explanations and non-binding scenarios only. This surface cannot create, approve, or alter an order.</p>
@@ -91,5 +92,5 @@ export function AdvisorSheet({ client, productId, bars, onClose }: {
       {history.kind === 'ready' && history.value.conversations.length > 0 && <section className="advisor-history"><h3>Saved conversations</h3><ul>{history.value.conversations.slice(0, 5).map((item) => <li key={item.id}><span><strong>{item.title}</strong><small>{item.retention} · {item.messages.length} messages</small></span><div><button type="button" aria-label={`Export ${item.title}`} onClick={() => void exportHistory.run({ commandId: crypto.randomUUID(), conversationId: item.id })}><Download size={13} /></button><button type="button" aria-label={`Delete ${item.title}`} onClick={() => void removeHistory.run({ commandId: crypto.randomUUID(), conversationId: item.id, confirmed: true })}><Trash2 size={13} /></button></div></li>)}</ul></section>}
       <small>Session memory is the default. Cloud context is sent only when you press Generate or Send.</small>
     </section>
-  </div>;
+  </div>, document.body);
 }

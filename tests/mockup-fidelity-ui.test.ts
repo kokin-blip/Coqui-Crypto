@@ -59,6 +59,8 @@ describe('mockup-fidelity advanced workspace', () => {
     const workstation = read('apps/desktop/src/renderer/styles/workstation.css');
     expect(advisor).toContain('data-stale={answerIsStale || undefined}');
     expect(advisor).toContain('useDialogFocus(dialogRef, onClose)');
+    expect(advisor).toContain('createPortal(');
+    expect(extensions).toContain('createPortal(');
     expect(extensions).toContain('Choose .coquichart package');
     expect(extensions).toContain('Advanced: paste canonical package JSON');
     expect(focus).toContain("event.key === 'Escape'");
