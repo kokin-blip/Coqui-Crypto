@@ -5,6 +5,15 @@ export type WorkstationLayout = 'single' | 'horizontal' | 'vertical' | 'grid' | 
 export type DrawingTool = 'cursor' | 'horizontal' | 'vertical' | 'trend' | 'ray' |
   'rectangle' | 'fibonacci' | 'text' | 'measure';
 
+export interface WorkstationIndicators {
+  readonly sma20: boolean;
+  readonly sma50: boolean;
+  readonly ema20: boolean;
+  readonly bollinger20: boolean;
+  readonly rsi14: boolean;
+  readonly macd: boolean;
+}
+
 export interface WorkstationBar {
   readonly productId: string;
   readonly interval: WorkstationInterval;
@@ -28,4 +37,24 @@ export interface ChartDrawing {
   readonly kind: Exclude<DrawingTool, 'cursor'>;
   readonly points: readonly ChartPoint[];
   readonly label: string | null;
+}
+
+export interface ChartTileConfiguration {
+  readonly productId: string;
+  readonly interval: WorkstationInterval;
+  readonly linkGroup: string | null;
+}
+
+export interface ChartVisibleRange {
+  readonly fromTimeMs: number;
+  readonly toTimeMs: number;
+}
+
+export interface WorkstationExtensionSeries {
+  readonly extensionId: string;
+  readonly id: string;
+  readonly title: string;
+  readonly pane: number;
+  readonly color: string;
+  readonly points: readonly ChartPoint[];
 }

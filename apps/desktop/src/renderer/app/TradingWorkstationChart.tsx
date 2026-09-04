@@ -10,9 +10,11 @@ import {
 
 import { ChartFrame } from './ChartFrame.js';
 import { ChartDrawingLayer, type DrawingShape } from './ChartDrawingLayer.js';
+import type { ChartLinkController } from './chart-link-controller.js';
 import { bollinger, ema, macd, rsi, sma } from './chart-indicators.js';
 import type {
-  ChartDrawing, DrawingTool, WorkstationBar, WorkstationChartStyle, WorkstationScaleMode,
+  ChartDrawing, DrawingTool, WorkstationBar,
+  WorkstationChartStyle, WorkstationExtensionSeries, WorkstationIndicators, WorkstationScaleMode,
 } from './chart-workstation-types.js';
 
 type PriceSeries = ISeriesApi<'Candlestick'> | ISeriesApi<'Line'> |
@@ -29,35 +31,37 @@ function timeOf(bar: WorkstationBar): Time {
   return Math.floor(bar.startTimeMs / 1_000) as Time;
 }
 
-export interface WorkstationIndicators {
-  readonly sma20: boolean; readonly sma50: boolean; readonly ema20: boolean;
-  readonly bollinger20: boolean; readonly rsi14: boolean; readonly macd: boolean;
-}
-
 export function TradingWorkstationChart({ bars, productId, style, scaleMode,
-  volumeVisible, indicators, activeTool, drawings, onDrawing, client }: {
+  volumeVisible, indicators, extensionSeries, activeTool, drawings, onDrawing,
+  client, height = 520, syncId, linkGroup, linkController }: {
   readonly bars: readonly WorkstationBar[];
   readonly productId: string;
   readonly style: WorkstationChartStyle;
   readonly scaleMode: WorkstationScaleMode;
   readonly volumeVisible: boolean;
   readonly indicators: WorkstationIndicators;
+  readonly extensionSeries?: readonly WorkstationExtensionSeries[];
   readonly activeTool: DrawingTool;
   readonly drawings: readonly ChartDrawing[];
   readonly onDrawing: (drawing: ChartDrawing) => void;
   readonly client: CoquiClient;
+  readonly height?: number;
+  readonly syncId: string;
+  readonly linkGroup: string | null;
+  readonly linkController: ChartLinkController;
 }): React.JSX.Element {
   const container = useRef<HTMLDivElement>(null);
   const chartApi = useRef<ReturnType<typeof createChart> | null>(null);
   const priceApi = useRef<PriceSeries | null>(null);
   const pendingPoint = useRef<{ timeMs: number; value: string } | null>(null);
+  const suppressSync = useRef(false);
   const [cursorLabel, setCursorLabel] = useState<string | null>(null);
   const [drawingShapes, setDrawingShapes] = useState<readonly DrawingShape[]>([]);
 
   useEffect(() => {
     if (container.current === null) return;
     const chart = createChart(container.current, {
-      height: 520,
+      height,
       layout: { background: { type: ColorType.Solid, color: 'transparent' },
         textColor: CHART_COLORS.supportingText, attributionLogo: false },
       grid: { vertLines: { color: CHART_COLORS.grid }, horzLines: { color: CHART_COLORS.grid } },
@@ -116,9 +120,12 @@ export function TradingWorkstationChart({ bars, productId, style, scaleMode,
       addLine(values, CHART_COLORS.primary, 'MACD', pane);
       addLine(values.map(({ day, signal }) => ({ day, value: signal })), '#f2b84b', 'Signal', pane);
     }
+    for (const series of extensionSeries ?? []) {
+      addLine(series.points.map((point) => ({ day: String(Math.floor(point.timeMs / 1_000)), value: Number(point.value) })), series.color, series.title, series.pane);
+    }
     const updateDrawingShapes = (): void => {
       const width = container.current?.clientWidth ?? 0;
-      const height = container.current?.clientHeight ?? 520;
+      const chartHeight = container.current?.clientHeight ?? height;
       const coordinate = (point: ChartDrawing['points'][number]): readonly [number, number] | null => {
         const x = chart.timeScale().timeToCoordinate(Math.floor(point.timeMs / 1_000) as Time);
         const y = price.priceToCoordinate(Number(point.value));
@@ -130,7 +137,7 @@ export function TradingWorkstationChart({ bars, productId, style, scaleMode,
         const second = drawing.points[1] === undefined ? null : coordinate(drawing.points[1]);
         if (first === null) continue;
         if (drawing.kind === 'horizontal') next.push({ id: drawing.id, kind: 'line', x1: 0, y1: first[1], x2: width, y2: first[1], dashed: true });
-        else if (drawing.kind === 'vertical') next.push({ id: drawing.id, kind: 'line', x1: first[0], y1: 0, x2: first[0], y2: height, dashed: true });
+        else if (drawing.kind === 'vertical') next.push({ id: drawing.id, kind: 'line', x1: first[0], y1: 0, x2: first[0], y2: chartHeight, dashed: true });
         else if (drawing.kind === 'text') next.push({ id: drawing.id, kind: 'text', x: first[0], y: first[1], text: drawing.label ?? 'Note' });
         else if (second !== null && drawing.kind === 'rectangle') next.push({ id: drawing.id, kind: 'rectangle', x: Math.min(first[0], second[0]), y: Math.min(first[1], second[1]), width: Math.abs(second[0] - first[0]), height: Math.abs(second[1] - first[1]) });
         else if (second !== null && drawing.kind === 'fibonacci') next.push({ id: drawing.id, kind: 'fibonacci', x1: first[0], x2: second[0], y1: first[1], y2: second[1] });
@@ -143,20 +150,49 @@ export function TradingWorkstationChart({ bars, productId, style, scaleMode,
       setDrawingShapes(next);
     };
     chart.subscribeCrosshairMove((parameter) => {
-      if (parameter.time === undefined) { setCursorLabel(null); return; }
+      if (parameter.time === undefined) {
+        setCursorLabel(null);
+        if (!suppressSync.current && linkGroup !== null) linkController.publish(linkGroup, { kind: 'crosshair', sourceId: syncId, timeMs: null });
+        return;
+      }
       const match = bars.find((bar) => Number(timeOf(bar)) === Number(parameter.time));
       setCursorLabel(match === undefined ? String(parameter.time) :
         `${new Date(match.startTimeMs).toISOString()} · O ${match.open} H ${match.high} L ${match.low} C ${match.close}${match.isComplete ? '' : ' · LIVE'}`);
+      if (!suppressSync.current && linkGroup !== null) linkController.publish(linkGroup, { kind: 'crosshair', sourceId: syncId, timeMs: Number(parameter.time) * 1_000 });
     });
     chart.timeScale().fitContent();
     updateDrawingShapes();
     chart.timeScale().subscribeVisibleLogicalRangeChange(updateDrawingShapes);
+    const publishRange = (range: { readonly from: Time; readonly to: Time } | null): void => {
+      if (suppressSync.current || linkGroup === null) return;
+      linkController.publish(linkGroup, { kind: 'range', sourceId: syncId, range: range === null ? null : {
+        fromTimeMs: Number(range.from) * 1_000,
+        toTimeMs: Number(range.to) * 1_000,
+      } });
+    };
+    chart.timeScale().subscribeVisibleTimeRangeChange(publishRange);
+    const unsubscribeLink = linkGroup === null ? () => undefined : linkController.subscribe(linkGroup, (event) => {
+      if (event.sourceId === syncId) return;
+      suppressSync.current = true;
+      if (event.kind === 'range') {
+        if (event.range !== null) chart.timeScale().setVisibleRange({
+          from: Math.floor(event.range.fromTimeMs / 1_000) as Time,
+          to: Math.floor(event.range.toTimeMs / 1_000) as Time,
+        });
+      } else if (event.timeMs === null) chart.clearCrosshairPosition();
+      else {
+        const nearest = bars.reduce<WorkstationBar | null>((best, bar) =>
+          best === null || Math.abs(bar.startTimeMs - event.timeMs!) < Math.abs(best.startTimeMs - event.timeMs!) ? bar : best, null);
+        if (nearest !== null) chart.setCrosshairPosition(Number(nearest.close), timeOf(nearest), price);
+      }
+      queueMicrotask(() => { suppressSync.current = false; });
+    });
     const observer = new ResizeObserver(([entry]) => {
       if (entry !== undefined) { chart.applyOptions({ width: Math.floor(entry.contentRect.width) }); updateDrawingShapes(); }
     });
     observer.observe(container.current);
-    return () => { observer.disconnect(); chart.timeScale().unsubscribeVisibleLogicalRangeChange(updateDrawingShapes); chart.remove(); chartApi.current = null; priceApi.current = null; };
-  }, [bars, drawings, indicators, scaleMode, style, volumeVisible]);
+    return () => { unsubscribeLink(); observer.disconnect(); chart.timeScale().unsubscribeVisibleLogicalRangeChange(updateDrawingShapes); chart.timeScale().unsubscribeVisibleTimeRangeChange(publishRange); chart.remove(); chartApi.current = null; priceApi.current = null; };
+  }, [bars, drawings, extensionSeries, height, indicators, linkController, linkGroup, scaleMode, style, syncId, volumeVisible]);
 
   const capturePoint = (event: React.PointerEvent<HTMLDivElement>): void => {
     if (activeTool === 'cursor' || chartApi.current === null || priceApi.current === null) return;

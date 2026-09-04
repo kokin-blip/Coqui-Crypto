@@ -1,5 +1,7 @@
 import { createHash, createPublicKey, verify } from 'node:crypto';
+import { existsSync } from 'node:fs';
 import { Worker } from 'node:worker_threads';
+import { fileURLToPath } from 'node:url';
 
 import type { Clock } from '@coqui/core';
 import {
@@ -25,6 +27,10 @@ function canonical(value: unknown): string {
   return JSON.stringify(value);
 }
 function hashBytes(value: Uint8Array): string { return createHash('sha256').update(value).digest('hex'); }
+function extensionWorkerUrl(): URL {
+  const built = new URL('./extension-worker.js', import.meta.url);
+  return existsSync(fileURLToPath(built)) ? built : new URL('./extension-worker.mjs', import.meta.url);
+}
 function parsePackage(packageJson: string): ExtensionPackage {
   const value = JSON.parse(packageJson) as Partial<ExtensionPackage>;
   if (value === null || typeof value !== 'object' || !exactKeys(value, ['format', 'manifest', 'payload', 'signature']) || value.format !== 'coqui-chart-extension-v1') throw new TypeError('invalid_package');
@@ -116,7 +122,7 @@ export class ChartExtensionService {
     if (item === null || !item.enabled) throw new TypeError('extension_unavailable');
     const parsed = parsePackage(Buffer.from(item.packageBlob).toString('utf8'));
     const values = await new Promise<readonly number[]>((resolve, reject) => {
-      const worker = new Worker(new URL('./extension-worker.js', import.meta.url), { workerData: { wasm: Buffer.from(parsed.payload.wasmBase64, 'base64'), closes: bars.map((bar) => Number(bar.close)) }, resourceLimits: { maxOldGenerationSizeMb: 16, maxYoungGenerationSizeMb: 4 } });
+      const worker = new Worker(extensionWorkerUrl(), { workerData: { wasm: Buffer.from(parsed.payload.wasmBase64, 'base64'), closes: bars.map((bar) => Number(bar.close)) }, resourceLimits: { maxOldGenerationSizeMb: 16, maxYoungGenerationSizeMb: 4 } });
       const timer = setTimeout(() => { void worker.terminate(); reject(new Error('extension_timeout')); }, 100);
       worker.once('message', (result: { readonly ok: boolean; readonly values?: readonly number[]; readonly code?: string }) => {
         clearTimeout(timer); void worker.terminate();

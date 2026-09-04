@@ -53,6 +53,23 @@ describe('signed chart extensions', () => {
     value.database.close();
   });
 
+  it('evaluates enabled import-free WebAssembly into declarative display series', async () => {
+    const value = fixture();
+    value.service.install(value.packageJson);
+    value.service.set('coqui.identity', true, {});
+    await expect(value.service.evaluate('coqui.identity', [
+      { timeMs: 1_000, close: '100.125' },
+      { timeMs: 2_000, close: '101.5' },
+    ])).resolves.toEqual({
+      series: [{
+        id: 'identity', title: 'Identity', pane: 0, color: '#8b7cff',
+        points: [{ timeMs: 1_000, value: '100.125' }, { timeMs: 2_000, value: '101.5' }],
+      }],
+      markers: [], informationalOnly: true, decisionEligible: false,
+    });
+    value.database.close();
+  });
+
   it('keeps extension lifecycle evidence append-only', () => {
     const value = fixture();
     value.service.install(value.packageJson);
