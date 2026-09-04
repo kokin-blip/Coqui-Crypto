@@ -26,7 +26,7 @@ Verified now:   Node 24.15.0 · 167 test files / 1,112 tests; Electron smoke 37/
                 its packaging path invokes signing (runtime verification open)
 WAITING ON:     prospective observations (365 complete days + 30 cost-bearing
                 rebalances) and an elapsed seven-day campaign
-OWNER-DEFERRED: real Coinbase View-only-key verification; revised screenshot approval
+OWNER-DEFERRED: real Coinbase View-only-key verification
 P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
 ```
 
@@ -34,14 +34,12 @@ P3 blocker:     CLEARED 2026-08-21 — registry is 215, conservative-upper-bound
 
 The fetched P5–P9 baseline is built and tested. Additive shell, profile,
 performance, live-display market data, and execution-boundary work continues without replacing it.
-The revised visual direction reopens A6; the remaining evidence criteria cannot be closed with
-fixtures or prose:
+The remaining evidence criteria cannot be closed with fixtures or prose:
 
-- **A6, the screenshot review — REOPENED 2026-08-27.** The owner approved the prior
-  direction on 2026-08-24. The two-level status header, dual Advanced/Simple
-  workspaces, Markets and Performance views, and primary evidence layouts are material
-  changes, so the 30-capture production-renderer set in
-  `docs/design/screenshots/review-2026-08-30-advanced-fidelity/` requires a new owner decision.
+- **A6, the screenshot review — CLOSED 2026-09-04.** The owner approved the
+  refreshed 30-capture production-renderer set in
+  `docs/design/screenshots/review-2026-08-30-advanced-fidelity/`. The decision is
+  recorded in `docs/design/owner-screenshot-review-2026-09-04.md`.
 
 1. **P7's real-key exit is owner-deferred.** Coinbase keys are personal. The owner
    explicitly deferred credential-backed verification on 2026-08-27. The connect flow, the
@@ -105,6 +103,7 @@ paper review chain are defined by the 2026-08-24 additive continuation. Final
 the implementation direction is established across portfolio, allocation, tax, markets,
 paper, research, activity, risk, and settings. The material 2026-08-27 polish reopened
 the final A6 owner screenshot gate without reopening the engineering decisions.
+That gate was subsequently closed by the owner on 2026-09-04.
 
 **The dual-mode rebuild is engineering-complete as of 2026-08-29.** Advanced is
 the profile-scoped default and provides the persistent workstation navigation,
@@ -115,7 +114,7 @@ inspector, chart-view, and range preferences per profile. Manrope, the owner-sel
 hash-locked coquí mark, the restrained dot texture, optional allocation rings,
 completed-candle chart modes, honest unavailable states, and the refreshed
 production-renderer review set are in place. Internal comparison is recorded in
-`design-qa.md`; only the owner screenshot decision remains open.
+`design-qa.md`; the refreshed direction was owner-approved on 2026-09-04.
 
 **The TradingView-inspired workstation continuation is engineering-complete as of
 2026-09-04.** Local checkpoints `630279b`, `2ec5a15`, `5e1d069`, `f3aa7d5`,

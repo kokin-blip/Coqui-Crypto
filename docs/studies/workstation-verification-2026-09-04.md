@@ -54,7 +54,6 @@ inventing a live connection state in this real-data review profile.
 
 ## Gates intentionally still open
 
-- Owner approval of the refreshed screenshot set.
 - Windows packaged runtime verification on an authorized Windows runner.
 - Owner-deferred real Coinbase View-only-key verification.
 - Seven genuine consecutive UTC campaign observations, owner safety-stop
@@ -62,3 +61,9 @@ inventing a live connection state in this real-data review profile.
 - The registered forward study's 365 completed prospective days and 30
   cost-bearing rebalances. The execution estimate remains zero until every
   immutable adoption criterion passes.
+
+## Owner decision
+
+The owner approved the complete refreshed screenshot set on 2026-09-04. A6 is
+closed for this workstation direction; see
+`docs/design/owner-screenshot-review-2026-09-04.md`.
