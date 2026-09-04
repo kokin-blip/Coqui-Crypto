@@ -17,11 +17,13 @@ Effort figures assume one part-time developer with assistance.
 > **Update this section as phases complete. It is the first thing to read.**
 
 ```
-Current phase:  P5 additive UI and authoritative paper-execution continuation
-Baseline:       d25101f · preserved local continuation through 76d8777
-Verified now:   159 test files / 1085 tests; Electron smoke 37/37;
-                packaged smoke 8/8; warm shell 173ms; interaction p75 8.7ms
-                macOS package + packaged smoke; Windows x64 cross-build only
+Current phase:  P5 workstation implementation complete; elapsed evidence remains
+Baseline:       d25101f · local workstation checkpoints through b063988
+Verified now:   Node 24.15.0 · 167 test files / 1,112 tests; Electron smoke 37/37;
+                packaged smoke 8/8; warm shell 238ms; interaction p75 8.5ms;
+                production audit clean; macOS package + packaged smoke;
+                prior Windows x64 cross-build complete; final rerun deferred because
+                its packaging path invokes signing (runtime verification open)
 WAITING ON:     prospective observations (365 complete days + 30 cost-bearing
                 rebalances) and an elapsed seven-day campaign
 OWNER-DEFERRED: real Coinbase View-only-key verification; revised screenshot approval
@@ -38,8 +40,8 @@ fixtures or prose:
 - **A6, the screenshot review — REOPENED 2026-08-27.** The owner approved the prior
   direction on 2026-08-24. The two-level status header, dual Advanced/Simple
   workspaces, Markets and Performance views, and primary evidence layouts are material
-  changes, so the production-renderer set in
-  `docs/design/screenshots/review-2026-08-29-research-grid/` requires a new owner decision.
+  changes, so the 30-capture production-renderer set in
+  `docs/design/screenshots/review-2026-08-30-advanced-fidelity/` requires a new owner decision.
 
 1. **P7's real-key exit is owner-deferred.** Coinbase keys are personal. The owner
    explicitly deferred credential-backed verification on 2026-08-27. The connect flow, the
@@ -86,8 +88,8 @@ candidate that injects no `<style>` element and therefore the only one that runs
 under `style-src 'self'` without a per-load CSP nonce.
 
 The performance harness is built and passing, with its own sensitivity control:
-warm shell 173 ms against a 1500 ms budget, interaction
-p75 8.7 ms against 200 ms, and a deliberately injected 250 ms regression that
+warm shell 238 ms against a 1500 ms budget, interaction
+p75 8.5 ms against 200 ms, and a deliberately injected 250.5 ms regression that
 must breach the budget or the harness fails.
 
 **The scoreboard exists.** `RiskEvidenceTrackerService` → `risk.evidence-gate`
@@ -114,6 +116,21 @@ hash-locked coquí mark, the restrained dot texture, optional allocation rings,
 completed-candle chart modes, honest unavailable states, and the refreshed
 production-renderer review set are in place. Internal comparison is recorded in
 `design-qa.md`; only the owner screenshot decision remains open.
+
+**The TradingView-inspired workstation continuation is engineering-complete as of
+2026-09-04.** Local checkpoints `630279b`, `2ec5a15`, `5e1d069`, `f3aa7d5`,
+and `b063988`
+complete linked multi-chart layouts, persisted per-tile controls, comparison and
+drawing workflows, bounded recents and watchlists, the signed declarative/WASM
+extension boundary, native extension selection, and the consent-bound AI analyst.
+The analyst rechecks its 500-bar/65,536-byte limits at the provider boundary,
+rejects malformed responses, records sanitized outcomes, and marks answers stale
+when context changes. Extension output remains presentation-only and is rendered
+only through trusted Coqui series/marker primitives. The renderer remains
+network-inert. The final 30-state visual matrix passed the clipping audit; the
+Impeccable mechanical detector reported zero findings. No TradingView data,
+Advanced Charts, hosted widget, Pine code, order form, or live-execution authority
+was added.
 
 P3's trial-count blocker is cleared. Recovering the predecessor's Obsidian vault
 moved the registry from 178 `known-lower-bound` to **215

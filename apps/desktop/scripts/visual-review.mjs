@@ -46,6 +46,15 @@ const captures = [
   { name: 'advanced-settings', route: 'settings', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1 },
   { name: 'risk-high-contrast', route: 'risk', mode: 'advanced', theme: 'high-contrast', density: 'comfortable', zoom: 1 },
   { name: 'markets-compact-offline', route: 'markets', mode: 'advanced', theme: 'dark', density: 'compact', zoom: 1 },
+  { name: 'markets-single-chart', route: 'markets', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1, marketLayout: 'single' },
+  { name: 'markets-four-chart-grid', route: 'markets', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1, marketLayout: 'single', action: 'grid' },
+  { name: 'markets-indicator-controls', route: 'markets', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1, marketLayout: 'single', action: 'indicators' },
+  { name: 'markets-drawing-tools', route: 'markets', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1, marketLayout: 'single', action: 'drawing' },
+  { name: 'markets-comparison-unavailable', route: 'markets', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1, marketLayout: 'single' },
+  { name: 'chart-extension-manager', route: 'markets', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1, marketLayout: 'single', action: 'extensions' },
+  { name: 'advisor-local-facts', route: 'markets', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1, marketLayout: 'single', action: 'local-facts' },
+  { name: 'advisor-chat-disconnected', route: 'markets', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1, marketLayout: 'single', action: 'analyst' },
+  { name: 'markets-reduced-motion', route: 'markets', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1, marketLayout: 'single', motion: 'reduced' },
   { name: 'overview-200-percent', route: 'overview', mode: 'advanced', preset: 'research_grid', theme: 'dark', density: 'compact', zoom: 2 },
   { name: 'research-negative-evidence', route: 'research', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1, scrollTarget: '[data-finding-id="trendvol-replacement-v1"]' },
   { name: 'activity-empty-evidence', route: 'activity', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1 },
@@ -111,6 +120,7 @@ async function run() {
                 : { strategyDetail: true, strategyComparison: true, recentActivity: true, proposalPreview: true, healthStrip: true, negativeFindings: true },
           }),
           ...(capture.portfolioChart === undefined ? {} : { portfolioChart: capture.portfolioChart }),
+          ...(capture.marketLayout === undefined ? {} : { marketLayout: capture.marketLayout }),
         },
       });
       if (workspaceOutcome.status !== 'ok') {
@@ -137,7 +147,7 @@ async function run() {
       (() => {
         document.documentElement.dataset.theme = ${JSON.stringify(capture.theme)};
         document.documentElement.dataset.density = ${JSON.stringify(capture.density)};
-        document.documentElement.dataset.motion = 'none';
+        document.documentElement.dataset.motion = ${JSON.stringify(capture.motion ?? 'none')};
         const target = ${JSON.stringify(capture.scrollTarget ?? null)};
         if (target === null) window.scrollTo(0, 0);
         else {
@@ -146,6 +156,24 @@ async function run() {
         }
       })()
     `);
+    if (capture.action !== undefined) {
+      await window.webContents.executeJavaScript(`
+        (() => {
+          const action = ${JSON.stringify(capture.action)};
+          const buttons = [...document.querySelectorAll('button')];
+          if (action === 'grid') {
+            const select = [...document.querySelectorAll('select')].find((item) => [...item.options].some((option) => option.value === 'grid'));
+            if (select) { select.value = 'grid'; select.dispatchEvent(new Event('change', { bubbles: true })); }
+          }
+          if (action === 'indicators') document.querySelector('.chart-options-popover')?.setAttribute('open', '');
+          if (action === 'drawing') buttons.find((button) => button.getAttribute('aria-label') === 'Trend line')?.click();
+          if (action === 'extensions') buttons.find((button) => button.textContent?.includes('Extensions'))?.click();
+          if (action === 'analyst' || action === 'local-facts') buttons.find((button) => button.textContent?.includes('Ask Coqui analyst'))?.click();
+          if (action === 'local-facts') setTimeout(() => [...document.querySelectorAll('button')].find((button) => button.textContent?.includes('Generate local facts'))?.click(), 25);
+        })()
+      `);
+      await delay(capture.action === 'local-facts' ? 250 : 80);
+    }
     await delay(50);
     await assertNoTextClipping(window.webContents, capture.name);
     const image = await window.webContents.capturePage();
