@@ -12,6 +12,7 @@ const RENDERER = [
   'apps/desktop/src/renderer/app/ChartExtensionManager.tsx',
   'apps/desktop/src/renderer/app/use-comparison-series.ts',
   'apps/desktop/src/renderer/app/ChartDrawingManager.tsx',
+  'apps/desktop/src/renderer/app/use-dialog-focus.ts',
 ];
 
 describe('chart, extension, and advisor authority boundaries', () => {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Bot, Download, LockKeyhole, Send, Sparkles, Trash2, X } from 'lucide-react';
 
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
@@ -6,6 +6,7 @@ import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { useChannel } from '../query/use-channel.js';
 import { useCommand } from '../query/use-command.js';
 import type { WorkstationBar } from './chart-workstation-types.js';
+import { useDialogFocus } from './use-dialog-focus.js';
 
 type Provider = 'gemini' | 'openai' | 'anthropic';
 type Answer = ChannelResponse<'advisor.facts.generate'>;
@@ -34,6 +35,8 @@ export function AdvisorSheet({ client, productId, bars, onClose }: {
   const [failure, setFailure] = useState<string | null>(null);
   const [apiKey, setApiKey] = useState('');
   const [preparedContextHash, setPreparedContextHash] = useState<string | null>(null);
+  const dialogRef = useRef<HTMLElement>(null);
+  useDialogFocus(dialogRef, onClose);
   const selected = available.find((item) => item.provider === provider);
   const contextBars = useMemo(() => bars.slice(-500).map((bar) => ({ timeMs: bar.startTimeMs,
     open: bar.open, high: bar.high, low: bar.low, close: bar.close, volume: bar.volume,
@@ -73,7 +76,7 @@ export function AdvisorSheet({ client, productId, bars, onClose }: {
     setBusy(false);
   };
   return <div className="analyst-sheet-backdrop" role="presentation" onMouseDown={onClose}>
-    <section role="dialog" aria-modal="true" aria-labelledby="analyst-title" className="analyst-sheet" onMouseDown={(event) => event.stopPropagation()}>
+    <section ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="analyst-title" className="analyst-sheet" onMouseDown={(event) => event.stopPropagation()}>
       <header><div><span className="violet-kicker"><Sparkles size={13} /> Coqui analyst</span><h2 id="analyst-title">Key facts · {productId}</h2></div><button type="button" className="icon-button" aria-label="Close analyst" onClick={onClose}><X size={17} /></button></header>
       <p className="analyst-boundary"><Bot size={17} /> Explanations and non-binding scenarios only. This surface cannot create, approve, or alter an order.</p>
       <fieldset className="advisor-context-options"><legend>Share for this request</legend><label><input type="checkbox" checked={includeChart} onChange={(event) => setIncludeChart(event.target.checked)} /> Chart data</label><label><input type="checkbox" checked={includeEvidence} onChange={(event) => setIncludeEvidence(event.target.checked)} /> Visible Coqui evidence</label><label><input type="checkbox" checked={includePortfolio} onChange={(event) => setIncludePortfolio(event.target.checked)} /> Sanitized portfolio context</label></fieldset>

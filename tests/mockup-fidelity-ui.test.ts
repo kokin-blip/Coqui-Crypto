@@ -51,4 +51,19 @@ describe('mockup-fidelity advanced workspace', () => {
     expect(indicator).toContain('data-status-indicator');
     expect(indicator).toContain('<span>{label}</span>');
   });
+
+  it('contains modal focus, stale-analysis, forced-color, and constrained-layout safeguards', () => {
+    const advisor = read('apps/desktop/src/renderer/app/AdvisorSheet.tsx');
+    const extensions = read('apps/desktop/src/renderer/app/ChartExtensionManager.tsx');
+    const focus = read('apps/desktop/src/renderer/app/use-dialog-focus.ts');
+    const workstation = read('apps/desktop/src/renderer/styles/workstation.css');
+    expect(advisor).toContain('data-stale={answerIsStale || undefined}');
+    expect(advisor).toContain('useDialogFocus(dialogRef, onClose)');
+    expect(extensions).toContain('Choose .coquichart package');
+    expect(extensions).toContain('Advanced: paste canonical package JSON');
+    expect(focus).toContain("event.key === 'Escape'");
+    expect(focus).toContain("event.key !== 'Tab'");
+    expect(workstation).toContain('@media (forced-colors: active)');
+    expect(workstation).toContain('overflow-x: hidden; overflow-y: auto');
+  });
 });

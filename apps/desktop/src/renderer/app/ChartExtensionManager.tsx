@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { FileUp, KeyRound, PackageCheck, ShieldCheck, Trash2, X } from 'lucide-react';
 
 import type { CoquiClient } from '@coqui/contracts';
 
 import { useChannel } from '../query/use-channel.js';
 import { useCommand } from '../query/use-command.js';
+import { useDialogFocus } from './use-dialog-focus.js';
 
 const INVALIDATE = ['chart-extensions.catalog'] as const;
 
@@ -21,9 +22,11 @@ export function ChartExtensionManager({ client, onClose }: {
   const [signerName, setSignerName] = useState('Owner key');
   const [publicKey, setPublicKey] = useState('');
   const [packageJson, setPackageJson] = useState('');
+  const dialogRef = useRef<HTMLElement>(null);
+  useDialogFocus(dialogRef, onClose);
   const value = catalog.kind === 'ready' ? catalog.value : { extensions: [], signers: [] };
   return <div className="extension-manager-backdrop" role="presentation" onMouseDown={onClose}>
-    <section className="extension-manager" role="dialog" aria-modal="true" aria-labelledby="extensions-title" onMouseDown={(event) => event.stopPropagation()}>
+    <section ref={dialogRef} className="extension-manager" role="dialog" aria-modal="true" aria-labelledby="extensions-title" onMouseDown={(event) => event.stopPropagation()}>
       <header><div><span className="violet-kicker"><PackageCheck size={13} /> Presentation only</span><h2 id="extensions-title">Chart extensions</h2></div><button type="button" className="icon-button" aria-label="Close extension manager" onClick={onClose}><X size={17} /></button></header>
       <div className="extension-safety"><ShieldCheck size={18} /><div><strong>Signed, isolated output</strong><span>Packages cannot run JavaScript, access files or networking, or contribute to research, risk, proposals, or execution.</span></div></div>
       <section><h3>Installed</h3>{value.extensions.length === 0 ? <p className="extension-empty">No chart extensions installed.</p> : <ul className="extension-list">{value.extensions.map((item) => <li key={item.id}><div><strong>{item.name}</strong><span>{item.id} · v{item.version} · {item.author}</span><small>{item.enabled ? 'Enabled' : 'Disabled'} · signer {item.signerKeyId.slice(0, 10)}…</small></div><div><button type="button" onClick={() => void setState.run({ commandId: crypto.randomUUID(), extensionId: item.id, enabled: !item.enabled, settings: item.settings })}>{item.enabled ? 'Disable' : 'Enable'}</button><button type="button" className="danger-quiet" aria-label={`Uninstall ${item.name}`} onClick={() => void remove.run({ commandId: crypto.randomUUID(), extensionId: item.id, confirmed: true })}><Trash2 size={14} /></button></div></li>)}</ul>}</section>
