@@ -10,6 +10,8 @@ const RENDERER = [
   'apps/desktop/src/renderer/app/TradingWorkstationChart.tsx',
   'apps/desktop/src/renderer/app/AdvisorSheet.tsx',
   'apps/desktop/src/renderer/app/ChartExtensionManager.tsx',
+  'apps/desktop/src/renderer/app/use-comparison-series.ts',
+  'apps/desktop/src/renderer/app/ChartDrawingManager.tsx',
 ];
 
 describe('chart, extension, and advisor authority boundaries', () => {

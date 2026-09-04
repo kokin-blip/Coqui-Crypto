@@ -11,7 +11,10 @@ export interface StoredWatchlist { readonly id: string; readonly profileId: stri
   readonly name: string; readonly productIds: readonly string[]; readonly isDefault: boolean;
   readonly updatedAtMs: number }
 export interface StoredChartTile { readonly productId: string; readonly interval: DisplayInterval;
-  readonly linkGroup: string | null }
+  readonly linkGroup: string | null; readonly chartStyle?: 'candles' | 'line' | 'area' | 'baseline';
+  readonly scaleMode?: 'linear' | 'percentage' | 'indexed' | 'logarithmic';
+  readonly indicatorSet?: Readonly<Record<'sma20' | 'sma50' | 'ema20' | 'bollinger20' | 'rsi14' | 'macd', boolean>>;
+  readonly compareProductIds?: readonly string[] }
 export interface StoredChartLayout { readonly id: string; readonly profileId: string;
   readonly name: string; readonly layout: StoredChartLayoutKind;
   readonly tiles: readonly StoredChartTile[]; readonly updatedAtMs: number }
@@ -61,7 +64,8 @@ export function listChartLayouts(profileId: string, database: Db): StoredChartLa
 export function saveChartLayout(value: StoredChartLayout, database: Db): void {
   if (!ID.test(value.id) || !PROFILE.test(value.profileId) || value.name.length < 1 || value.name.length > 60 ||
     !['single', 'horizontal', 'vertical', 'grid', 'dominant'].includes(value.layout) ||
-    value.tiles.length < 1 || value.tiles.length > 4 || value.tiles.some((tile) => !PRODUCT.test(tile.productId)) ||
+    value.tiles.length < 1 || value.tiles.length > 4 || value.tiles.some((tile) => !PRODUCT.test(tile.productId) ||
+      (tile.compareProductIds?.length ?? 0) > 3 || tile.compareProductIds?.some((product) => !PRODUCT.test(product))) ||
     !validTime(value.updatedAtMs)) throw new TypeError('Invalid chart layout.');
   database.prepare(`INSERT INTO chart_layouts_v1 (id, profile_id, name, layout, tiles_json, updated_at_ms)
     VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET name = excluded.name,

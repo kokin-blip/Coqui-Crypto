@@ -14,7 +14,8 @@ import type { ChartLinkController } from './chart-link-controller.js';
 import { bollinger, ema, macd, rsi, sma } from './chart-indicators.js';
 import type {
   ChartDrawing, DrawingTool, WorkstationBar,
-  WorkstationChartStyle, WorkstationExtensionSeries, WorkstationIndicators, WorkstationScaleMode,
+  WorkstationChartStyle, WorkstationComparisonSeries, WorkstationExtensionSeries,
+  WorkstationIndicators, WorkstationScaleMode,
 } from './chart-workstation-types.js';
 
 type PriceSeries = ISeriesApi<'Candlestick'> | ISeriesApi<'Line'> |
@@ -32,7 +33,7 @@ function timeOf(bar: WorkstationBar): Time {
 }
 
 export function TradingWorkstationChart({ bars, productId, style, scaleMode,
-  volumeVisible, indicators, extensionSeries, activeTool, drawings, onDrawing,
+  volumeVisible, indicators, comparisons, extensionSeries, activeTool, drawings, onDrawing,
   client, height = 520, syncId, linkGroup, linkController }: {
   readonly bars: readonly WorkstationBar[];
   readonly productId: string;
@@ -40,6 +41,7 @@ export function TradingWorkstationChart({ bars, productId, style, scaleMode,
   readonly scaleMode: WorkstationScaleMode;
   readonly volumeVisible: boolean;
   readonly indicators: WorkstationIndicators;
+  readonly comparisons?: readonly WorkstationComparisonSeries[];
   readonly extensionSeries?: readonly WorkstationExtensionSeries[];
   readonly activeTool: DrawingTool;
   readonly drawings: readonly ChartDrawing[];
@@ -120,6 +122,12 @@ export function TradingWorkstationChart({ bars, productId, style, scaleMode,
       addLine(values, CHART_COLORS.primary, 'MACD', pane);
       addLine(values.map(({ day, signal }) => ({ day, value: signal })), '#f2b84b', 'Signal', pane);
     }
+    const comparisonColors = [CHART_COLORS.benchmark, '#f2b84b', '#57a8ff'] as const;
+    for (const [index, comparison] of (comparisons ?? []).entries()) {
+      addLine(comparison.points.map((point) => ({
+        day: String(Math.floor(point.timeMs / 1_000)), value: Number(point.value),
+      })), comparisonColors[index % comparisonColors.length]!, comparison.productId);
+    }
     for (const series of extensionSeries ?? []) {
       addLine(series.points.map((point) => ({ day: String(Math.floor(point.timeMs / 1_000)), value: Number(point.value) })), series.color, series.title, series.pane);
     }
@@ -192,7 +200,7 @@ export function TradingWorkstationChart({ bars, productId, style, scaleMode,
     });
     observer.observe(container.current);
     return () => { unsubscribeLink(); observer.disconnect(); chart.timeScale().unsubscribeVisibleLogicalRangeChange(updateDrawingShapes); chart.timeScale().unsubscribeVisibleTimeRangeChange(publishRange); chart.remove(); chartApi.current = null; priceApi.current = null; };
-  }, [bars, drawings, extensionSeries, height, indicators, linkController, linkGroup, scaleMode, style, syncId, volumeVisible]);
+  }, [bars, comparisons, drawings, extensionSeries, height, indicators, linkController, linkGroup, scaleMode, style, syncId, volumeVisible]);
 
   const capturePoint = (event: React.PointerEvent<HTMLDivElement>): void => {
     if (activeTool === 'cursor' || chartApi.current === null || priceApi.current === null) return;

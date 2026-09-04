@@ -43,6 +43,10 @@ export interface ChartTileConfiguration {
   readonly productId: string;
   readonly interval: WorkstationInterval;
   readonly linkGroup: string | null;
+  readonly chartStyle: WorkstationChartStyle;
+  readonly scaleMode: WorkstationScaleMode;
+  readonly indicators: WorkstationIndicators;
+  readonly compareProductIds: readonly string[];
 }
 
 export interface ChartVisibleRange {
@@ -56,5 +60,10 @@ export interface WorkstationExtensionSeries {
   readonly title: string;
   readonly pane: number;
   readonly color: string;
+  readonly points: readonly ChartPoint[];
+}
+
+export interface WorkstationComparisonSeries {
+  readonly productId: string;
   readonly points: readonly ChartPoint[];
 }

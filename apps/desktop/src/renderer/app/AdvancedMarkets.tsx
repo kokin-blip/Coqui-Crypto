@@ -1,7 +1,7 @@
-import { useDeferredValue, useMemo, useState } from 'react';
+import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import {
-  CircleDot, Columns2, Link2, MousePointer2, PanelTop, RectangleHorizontal,
-  Save, Search, SlidersHorizontal, TextCursorInput, TrendingUp, Unlink2, Waves,
+  ArrowDownAZ, CircleDot, Columns2, MousePointer2, PanelTop, RectangleHorizontal,
+  Save, Search, SlidersHorizontal, TextCursorInput, TrendingUp, Waves,
 } from 'lucide-react';
 
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
@@ -9,6 +9,8 @@ import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { AdvisorSheet } from './AdvisorSheet.js';
 import { ChartExtensionManager } from './ChartExtensionManager.js';
 import { ChartLinkController } from './chart-link-controller.js';
+import { ChartDrawingManager } from './ChartDrawingManager.js';
+import { MarketChartTileHeader } from './MarketChartTileHeader.js';
 import type {
   ChartDrawing, ChartTileConfiguration, DrawingTool, WorkstationBar,
   WorkstationChartStyle, WorkstationIndicators, WorkstationInterval, WorkstationLayout,
@@ -17,6 +19,7 @@ import { MarketFactsPanel } from './MarketFactsPanel.js';
 import { MarketWorkspaceToolbar } from './MarketWorkspaceToolbar.js';
 import { TradingWorkstationChart } from './TradingWorkstationChart.js';
 import { useChartExtensionSeries } from './use-chart-extension-series.js';
+import { useComparisonSeries } from './use-comparison-series.js';
 import { useChannel } from '../query/use-channel.js';
 import { useCommand } from '../query/use-command.js';
 import { useWorkspace } from './WorkspaceContext.js';
@@ -44,11 +47,28 @@ function tileCount(layout: WorkstationLayout): number {
   return layout === 'single' ? 1 : layout === 'horizontal' || layout === 'vertical' ? 2 : 4;
 }
 
+function makeTile(productId: string, interval: WorkstationInterval, chartStyle: WorkstationChartStyle,
+  scaleMode: ChartTileConfiguration['scaleMode'], indicators: WorkstationIndicators): ChartTileConfiguration {
+  return { productId, interval, linkGroup: 'primary', chartStyle, scaleMode,
+    indicators, compareProductIds: [] };
+}
+
+function normalizeTile(tile: { readonly productId: string; readonly interval: WorkstationInterval;
+  readonly linkGroup: string | null; readonly chartStyle?: WorkstationChartStyle | undefined;
+  readonly scaleMode?: ChartTileConfiguration['scaleMode'] | undefined;
+  readonly indicatorSet?: WorkstationIndicators | undefined;
+  readonly compareProductIds?: readonly string[] | undefined }, fallback: ChartTileConfiguration): ChartTileConfiguration {
+  return { productId: tile.productId, interval: tile.interval, linkGroup: tile.linkGroup,
+    chartStyle: tile.chartStyle ?? fallback.chartStyle, scaleMode: tile.scaleMode ?? fallback.scaleMode,
+    indicators: tile.indicatorSet ?? fallback.indicators,
+    compareProductIds: [...new Set(tile.compareProductIds ?? [])].filter((id) => id !== tile.productId).slice(0, 3) };
+}
+
 function resizeTiles(current: readonly ChartTileConfiguration[], layout: WorkstationLayout,
-  productIds: readonly string[], interval: WorkstationInterval): readonly ChartTileConfiguration[] {
+  productIds: readonly string[], fallback: ChartTileConfiguration): readonly ChartTileConfiguration[] {
   const products = [...new Set([...current.map((tile) => tile.productId), ...productIds])];
   return Array.from({ length: Math.min(tileCount(layout), Math.max(1, products.length)) }, (_, index) =>
-    current[index] ?? { productId: products[index] ?? products[0] ?? 'BTC-USD', interval, linkGroup: 'primary' });
+    current[index] ?? { ...fallback, productId: products[index] ?? products[0] ?? 'BTC-USD' });
 }
 
 function chartHeight(layout: WorkstationLayout, index: number): number {
@@ -60,13 +80,14 @@ function chartHeight(layout: WorkstationLayout, index: number): number {
 
 function ChartTile({ client, tile, tileId, layoutId, style, activeTool, height,
   indicators, scaleMode, volumeVisible, liveVisible, extensionIds, linkController,
-  onDrawing }: {
+  onDrawing, onDeleteDrawing }: {
   readonly client: CoquiClient; readonly tile: ChartTileConfiguration; readonly tileId: string;
   readonly layoutId: string | null; readonly style: WorkstationChartStyle;
   readonly activeTool: DrawingTool; readonly height: number; readonly indicators: WorkstationIndicators;
   readonly scaleMode: 'linear' | 'percentage' | 'indexed' | 'logarithmic';
   readonly volumeVisible: boolean; readonly liveVisible: boolean; readonly extensionIds: readonly string[];
   readonly linkController: ChartLinkController; readonly onDrawing: (drawing: ChartDrawing) => void;
+  readonly onDeleteDrawing: (id: string) => void;
 }): React.JSX.Element {
   const [anchor] = useState(() => Date.now());
   const history = useChannel(client, 'market-data.display-bars', {
@@ -82,6 +103,8 @@ function ChartTile({ client, tile, tileId, layoutId, style, activeTool, height,
     return provisional === undefined ? completed : [...completed, provisional];
   }, [history, live, liveVisible]);
   const extensionState = useChartExtensionSeries(client, extensionIds, bars);
+  const comparisons = useComparisonSeries(client, tile.compareProductIds, tile.interval,
+    anchor - rangeMs(tile.interval), anchor);
   const drawings: readonly ChartDrawing[] = chartWorkspace.kind === 'ready'
     ? chartWorkspace.value.drawings.filter((drawing) => drawing.layoutId === null || drawing.layoutId === layoutId)
       .map((drawing) => ({ id: drawing.id, kind: drawing.kind, points: drawing.points, label: drawing.label }))
@@ -92,16 +115,21 @@ function ChartTile({ client, tile, tileId, layoutId, style, activeTool, height,
   return <div className="chart-render-stack">
     {extensionState.kind === 'loading' && <span className="chart-extension-state">Evaluating extensions…</span>}
     {extensionState.failedCount > 0 && <span className="chart-extension-state warning">{extensionState.failedCount} extension{extensionState.failedCount === 1 ? '' : 's'} unavailable</span>}
+    {comparisons.loading && <span className="chart-comparison-state">Loading comparisons…</span>}
+    {comparisons.failedCount > 0 && <span className="chart-comparison-state warning">{comparisons.failedCount} comparison{comparisons.failedCount === 1 ? '' : 's'} unavailable</span>}
     <TradingWorkstationChart client={client} bars={bars} productId={tile.productId}
       style={style} scaleMode={scaleMode} volumeVisible={volumeVisible} indicators={indicators}
+      comparisons={comparisons.series}
       extensionSeries={extensionState.series} activeTool={activeTool} drawings={drawings}
       onDrawing={onDrawing} height={height} syncId={tileId} linkGroup={tile.linkGroup}
       linkController={linkController} />
+    <ChartDrawingManager drawings={drawings} onSave={onDrawing} onDelete={onDeleteDrawing} />
   </div>;
 }
 
 export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const workspace = useWorkspace();
+  const profiles = useChannel(client, 'accounts.profiles', {});
   const [query, setQuery] = useState('');
   const deferredQuery = useDeferredValue(query);
   const productSearch = useChannel(client, 'market-data.products', { query: deferredQuery, limit: 100 });
@@ -109,7 +137,8 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
   const searchCatalog = productSearch.kind === 'ready' ? productSearch.value.products : [];
   const catalog = allProducts.kind === 'ready' ? allProducts.value.products : searchCatalog;
   const [selected, setSelected] = useState('BTC-USD');
-  const [styleOverride, setStyleOverride] = useState<WorkstationChartStyle | null>(null);
+  const [recentProducts, setRecentProducts] = useState<readonly string[]>([]);
+  const [sortAscending, setSortAscending] = useState(true);
   const [activeTool, setActiveTool] = useState<DrawingTool>('cursor');
   const [analystOpen, setAnalystOpen] = useState(false);
   const [extensionsOpen, setExtensionsOpen] = useState(false);
@@ -127,14 +156,19 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
   const effectiveWatchlistId = activeWatchlistId === undefined ? defaultWatchlist?.id ?? null : activeWatchlistId;
   const activeWatchlist = stored.watchlists.find((item) => item.id === effectiveWatchlistId);
   const watchlistProducts = new Set(activeWatchlist?.productIds ?? []);
-  const visibleProducts = searchCatalog.filter((item) => activeWatchlist === undefined || watchlistProducts.has(item.instrument.productId));
+  const visibleProducts = [...searchCatalog
+    .filter((item) => activeWatchlist === undefined || watchlistProducts.has(item.instrument.productId))]
+    .sort((left, right) => (sortAscending ? 1 : -1) * left.symbol.localeCompare(right.symbol));
   const preferredLayout = workspace.preferences?.marketLayout ?? 'single';
   const layout = stored.layouts.find((item) => item.id === activeLayoutId)?.layout ?? preferredLayout;
-  const defaultTiles = resizeTiles([{ productId: selected, interval: defaultInterval, linkGroup: 'primary' }], layout,
-    catalog.map((item) => item.instrument.productId), defaultInterval);
+  const fallbackTile = makeTile(selected, defaultInterval, workspace.preferences?.marketsChart ?? 'candles',
+    workspace.preferences?.marketScaleMode ?? 'linear', workspace.preferences?.marketIndicators ?? EMPTY_INDICATORS);
+  const defaultTiles = resizeTiles([fallbackTile], layout,
+    catalog.map((item) => item.instrument.productId), fallbackTile);
   const tiles = draftTiles ?? defaultTiles;
-  const style = styleOverride ?? workspace.preferences?.marketsChart ?? 'candles';
-  const indicators = workspace.preferences?.marketIndicators ?? EMPTY_INDICATORS;
+  const primaryTile = tiles[0] ?? fallbackTile;
+  const style = primaryTile.chartStyle;
+  const indicators = primaryTile.indicators;
   const enabledExtensionIds = extensionCatalog.kind === 'ready'
     ? extensionCatalog.value.extensions.filter((item) => item.enabled).map((item) => item.id) : [];
   const completed = useChannel(client, 'market-data.display-bars', {
@@ -142,26 +176,40 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
     startTimeMs: historyAnchor - rangeMs(defaultInterval), endTimeMs: historyAnchor,
   });
   const factsBars: readonly WorkstationBar[] = completed.kind === 'ready' ? completed.value.bars : [];
+  const activeProfileId = profiles.kind === 'ready' ? profiles.value.activeProfile.id : null;
 
+  useEffect(() => {
+    setRecentProducts([]);
+  }, [activeProfileId]);
+
+  const updateTile = (index: number, patch: Partial<ChartTileConfiguration>): void => {
+    const source = tiles[index];
+    if (source === undefined) return;
+    setActiveLayoutId(null);
+    setDraftTiles(tiles.map((tile, tileIndex) => {
+      const linkedIdentityChange = ('productId' in patch || 'interval' in patch) && source.linkGroup !== null && tile.linkGroup === source.linkGroup;
+      return tileIndex === index || linkedIdentityChange ? { ...tile, ...patch } : tile;
+    }));
+    if (index === 0 && patch.productId !== undefined) setSelected(patch.productId);
+  };
   const chooseProduct = (productId: string): void => {
-    setSelected(productId);
-    setDraftTiles(tiles.map((tile, index) => index === 0 ? { ...tile, productId } : tile));
+    setRecentProducts((current) => [productId, ...current.filter((item) => item !== productId)].slice(0, 8));
+    updateTile(0, { productId, compareProductIds: primaryTile.compareProductIds.filter((id) => id !== productId) });
   };
   const changeInterval = (interval: WorkstationInterval): void => {
-    const group = tiles[0]?.linkGroup;
-    setDraftTiles(tiles.map((tile, index) => index === 0 || (group !== null && tile.linkGroup === group) ? { ...tile, interval } : tile));
+    updateTile(0, { interval });
     void workspace.update({ marketInterval: interval });
   };
   const changeLayout = (next: WorkstationLayout): void => {
     setActiveLayoutId(null);
-    setDraftTiles(resizeTiles(tiles, next, catalog.map((item) => item.instrument.productId), defaultInterval));
+    setDraftTiles(resizeTiles(tiles, next, catalog.map((item) => item.instrument.productId), fallbackTile));
     void workspace.update({ marketLayout: next });
   };
   const applyLayout = (id: string | null): void => {
     setActiveLayoutId(id);
     const saved = stored.layouts.find((item) => item.id === id);
     if (saved === undefined) { setDraftTiles(null); return; }
-    setDraftTiles(saved.tiles);
+    setDraftTiles(saved.tiles.map((tile) => normalizeTile(tile, fallbackTile)));
     setSelected(saved.tiles[0]?.productId ?? selected);
     void workspace.update({ marketLayout: saved.layout, marketInterval: saved.tiles[0]?.interval ?? defaultInterval });
   };
@@ -174,7 +222,10 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
     const existing = stored.layouts.find((item) => item.id === activeLayoutId);
     void chartCommand.run({ commandId: crypto.randomUUID(), action: {
       kind: 'save_layout', id: existing?.id ?? crypto.randomUUID(),
-      name: existing?.name ?? `${selected} view ${stored.layouts.length + 1}`, layout, tiles,
+      name: existing?.name ?? `${selected} view ${stored.layouts.length + 1}`, layout,
+      tiles: tiles.map((tile) => ({ productId: tile.productId, interval: tile.interval,
+        linkGroup: tile.linkGroup, chartStyle: tile.chartStyle, scaleMode: tile.scaleMode,
+        indicatorSet: tile.indicators, compareProductIds: tile.compareProductIds })),
     } });
   };
   const saveWatchlist = (): void => {
@@ -190,13 +241,13 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
     <header className="market-command-bar">
       <div className="market-symbol"><CircleDot size={15} /><div><strong>{selected}</strong><span>Coinbase spot · {defaultInterval}</span></div></div>
       <div className="market-timeframes" aria-label="Chart interval">{INTERVALS.map((item) => <button key={item} type="button" aria-pressed={item === defaultInterval} onClick={() => changeInterval(item)}>{item}</button>)}</div>
-      <MarketWorkspaceToolbar style={style} scaleMode={workspace.preferences?.marketScaleMode ?? 'linear'}
+      <MarketWorkspaceToolbar style={style} scaleMode={primaryTile.scaleMode}
         indicators={indicators} volumeVisible={workspace.preferences?.marketVolumeVisible ?? true}
         layout={layout} savedLayouts={stored.layouts} activeLayoutId={activeLayoutId}
         saving={chartCommand.state.kind === 'pending'} extensionsOpen={extensionsOpen}
-        onStyle={(next) => { setStyleOverride(next); if (next === 'candles' || next === 'line') void workspace.update({ marketsChart: next }); }}
-        onScale={(marketScaleMode) => void workspace.update({ marketScaleMode })}
-        onIndicators={(marketIndicators) => void workspace.update({ marketIndicators })}
+        onStyle={(chartStyle) => { updateTile(0, { chartStyle }); if (chartStyle === 'candles' || chartStyle === 'line') void workspace.update({ marketsChart: chartStyle }); }}
+        onScale={(scaleMode) => updateTile(0, { scaleMode })}
+        onIndicators={(next) => updateTile(0, { indicators: next })}
         onVolume={(marketVolumeVisible) => void workspace.update({ marketVolumeVisible })}
         onLayout={changeLayout} onApplyLayout={applyLayout} onSave={saveLayout}
         onOpenExtensions={() => setExtensionsOpen(true)} />
@@ -206,18 +257,23 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
       <section className={`market-chart-grid layout-${layout}`} aria-label="Market charts">{tiles.map((tile, index) => {
         const tileId = `${index}:${tile.productId}:${tile.interval}`;
         return <article className="market-chart-tile" key={tileId}>
-          <div className="chart-tile-label"><span><strong>{tile.productId}</strong><small>{tile.interval} · {workspace.preferences?.marketLiveCandle ? 'live candle visible' : 'completed only'}</small></span><button type="button" className="chart-link-toggle" aria-label={`${tile.linkGroup === null ? 'Link' : 'Unlink'} ${tile.productId} chart`} aria-pressed={tile.linkGroup !== null} onClick={() => toggleLink(index)}>{tile.linkGroup === null ? <Unlink2 size={13} /> : <Link2 size={13} />}<span>{tile.linkGroup === null ? 'Independent' : 'Linked'}</span></button></div>
+          <MarketChartTileHeader tile={tile} products={catalog.map((item) => ({
+            productId: item.instrument.productId, label: item.symbol,
+          }))} liveVisible={workspace.preferences?.marketLiveCandle ?? false}
+            onChange={(patch) => updateTile(index, patch)} onToggleLink={() => toggleLink(index)} />
           <ChartTile client={client} tile={tile} tileId={tileId} layoutId={activeLayoutId}
-            style={style} activeTool={activeTool} height={chartHeight(layout, index)} indicators={indicators}
-            scaleMode={workspace.preferences?.marketScaleMode ?? 'linear'} volumeVisible={workspace.preferences?.marketVolumeVisible ?? true}
+            style={tile.chartStyle} activeTool={activeTool} height={chartHeight(layout, index)} indicators={tile.indicators}
+            scaleMode={tile.scaleMode} volumeVisible={workspace.preferences?.marketVolumeVisible ?? true}
             liveVisible={workspace.preferences?.marketLiveCandle ?? false} extensionIds={enabledExtensionIds}
-            linkController={linkController} onDrawing={(drawing) => void chartCommand.run({ commandId: crypto.randomUUID(), action: { kind: 'save_drawing', drawing: { ...drawing, productId: tile.productId, interval: tile.interval, layoutId: activeLayoutId } } })} />
+            linkController={linkController} onDrawing={(drawing) => void chartCommand.run({ commandId: crypto.randomUUID(), action: { kind: 'save_drawing', drawing: { ...drawing, productId: tile.productId, interval: tile.interval, layoutId: activeLayoutId } } })}
+            onDeleteDrawing={(drawingId) => void chartCommand.run({ commandId: crypto.randomUUID(), action: { kind: 'delete_drawing', drawingId } })} />
         </article>;
       })}</section>
       <aside className="advanced-watchlist">
         <header><strong>Watchlist</strong><label className="watchlist-picker"><span className="sr-only">Saved watchlist</span><select value={effectiveWatchlistId ?? ''} onChange={(event) => setActiveWatchlistId(event.target.value === '' ? null : event.target.value)}><option value="">All products</option>{stored.watchlists.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><button type="button" className="icon-button" aria-label="Save current watchlist" disabled={visibleProducts.length === 0} onClick={saveWatchlist}><Save size={14} /></button></header>
         <label><Search size={15} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search Coinbase USD" /></label>
-        <div className="watchlist-columns"><span>Symbol</span><span>Venue</span></div>
+        <div className="recent-products" aria-label="Recent products">{recentProducts.map((productId) => <button key={productId} type="button" onClick={() => chooseProduct(productId)}>{productId.replace('-USD', '')}</button>)}</div>
+        <div className="watchlist-columns"><button type="button" aria-label={`Sort symbols ${sortAscending ? 'descending' : 'ascending'}`} onClick={() => setSortAscending((value) => !value)}>Symbol <ArrowDownAZ className={sortAscending ? '' : 'sort-descending'} size={11} /></button><span>Venue</span></div>
         <ul>{visibleProducts.map((product: Product) => <li key={product.instrument.productId}><button type="button" aria-pressed={product.instrument.productId === selected} onClick={() => chooseProduct(product.instrument.productId)}><span><strong>{product.symbol}</strong><small>{product.name}</small></span><span>USD</span></button></li>)}</ul>
       </aside>
       <MarketFactsPanel productId={selected} bars={factsBars} freshness={productSearch.kind === 'ready' ? new Date(productSearch.value.asOfMs).toISOString() : 'Unavailable'} onOpenAnalyst={() => setAnalystOpen(true)} />

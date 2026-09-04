@@ -13,7 +13,11 @@ type Action =
   | { readonly kind: 'save_layout'; readonly id: string; readonly name: string;
       readonly layout: 'single' | 'horizontal' | 'vertical' | 'grid' | 'dominant';
       readonly tiles: readonly { readonly productId: string; readonly interval: DisplayInterval;
-        readonly linkGroup: string | null }[] }
+        readonly linkGroup: string | null;
+        readonly chartStyle?: 'candles' | 'line' | 'area' | 'baseline';
+        readonly scaleMode?: 'linear' | 'percentage' | 'indexed' | 'logarithmic';
+        readonly indicatorSet?: Readonly<Record<'sma20' | 'sma50' | 'ema20' | 'bollinger20' | 'rsi14' | 'macd', boolean>>;
+        readonly compareProductIds?: readonly string[] }[] }
   | { readonly kind: 'save_drawing'; readonly drawing: { readonly id: string;
       readonly productId: string; readonly interval: DisplayInterval; readonly layoutId: string | null;
       readonly kind: 'horizontal' | 'vertical' | 'trend' | 'ray' | 'rectangle' | 'fibonacci' | 'text' | 'measure';

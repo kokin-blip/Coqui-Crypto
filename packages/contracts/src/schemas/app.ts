@@ -3,6 +3,21 @@ import * as z from 'zod';
 const productIdSchema = z.string().regex(/^[A-Z0-9][A-Z0-9._-]{0,63}$/u);
 const intervalSchema = z.enum(['1m', '5m', '15m', '1h', '6h', '1d']);
 const layoutSchema = z.enum(['single', 'horizontal', 'vertical', 'grid', 'dominant']);
+const chartStyleSchema = z.enum(['candles', 'line', 'area', 'baseline']);
+const scaleModeSchema = z.enum(['linear', 'percentage', 'indexed', 'logarithmic']);
+const indicatorSetSchema = z.strictObject({
+  sma20: z.boolean(), sma50: z.boolean(), ema20: z.boolean(),
+  bollinger20: z.boolean(), rsi14: z.boolean(), macd: z.boolean(),
+}).readonly();
+const chartTileSchema = z.strictObject({
+  productId: productIdSchema,
+  interval: intervalSchema,
+  linkGroup: z.string().max(32).nullable(),
+  chartStyle: chartStyleSchema.optional(),
+  scaleMode: scaleModeSchema.optional(),
+  indicatorSet: indicatorSetSchema.optional(),
+  compareProductIds: z.array(productIdSchema).max(3).readonly().optional(),
+}).readonly();
 const drawingKindSchema = z.enum(['horizontal', 'vertical', 'trend', 'ray', 'rectangle', 'fibonacci', 'text', 'measure']);
 const drawingSchema = z.strictObject({
   id: z.string().uuid(),
@@ -35,10 +50,7 @@ export const appChannelSchemas = {
       }).readonly()).max(20).readonly(),
       layouts: z.array(z.strictObject({
         id: z.string().uuid(), name: z.string().min(1).max(60), layout: layoutSchema,
-        tiles: z.array(z.strictObject({
-          productId: productIdSchema, interval: intervalSchema,
-          linkGroup: z.string().max(32).nullable(),
-        }).readonly()).min(1).max(4).readonly(),
+        tiles: z.array(chartTileSchema).min(1).max(4).readonly(),
       }).readonly()).max(20).readonly(),
       drawings: z.array(drawingSchema).max(500).readonly(),
     }).readonly(),
@@ -52,8 +64,7 @@ export const appChannelSchemas = {
           isDefault: z.boolean() }).readonly(),
         z.strictObject({ kind: z.literal('save_layout'), id: z.string().uuid(),
           name: z.string().min(1).max(60), layout: layoutSchema,
-          tiles: z.array(z.strictObject({ productId: productIdSchema, interval: intervalSchema,
-            linkGroup: z.string().max(32).nullable() }).readonly()).min(1).max(4).readonly() }).readonly(),
+          tiles: z.array(chartTileSchema).min(1).max(4).readonly() }).readonly(),
         z.strictObject({ kind: z.literal('save_drawing'), drawing: drawingSchema }).readonly(),
         z.strictObject({ kind: z.literal('delete_drawing'), drawingId: z.string().uuid() }).readonly(),
       ]),
