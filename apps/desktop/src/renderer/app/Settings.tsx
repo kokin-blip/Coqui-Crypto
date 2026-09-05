@@ -1,9 +1,10 @@
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 
-import { DeferredPanel } from './DeferredPanel.js';
+import { CoinbaseConnectionSettings } from './CoinbaseConnectionSettings.js';
 import { DisplaySettings } from './DisplaySettings.js';
 import { ExecutionPolicySettings } from './ExecutionPolicySettings.js';
 import { PaperCampaignSettings } from './PaperCampaignSettings.js';
+import { SurfaceState } from './SurfaceState.js';
 import { useChannel } from '../query/use-channel.js';
 import { WorkspaceSettings } from './WorkspaceSettings.js';
 
@@ -23,13 +24,9 @@ type SettingsView = ChannelResponse<'accounts.settings'>;
 export function Settings({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const settings = useChannel(client, 'accounts.settings', {});
 
-  if (settings.kind === 'loading') return <p aria-live="polite">Loading settings…</p>;
+  if (settings.kind === 'loading') return <SurfaceState kind="loading" title="Loading settings" />;
   if (settings.kind !== 'ready') {
-    return (
-      <p role="alert">
-        Could not load settings: {settings.issues.map((issue) => issue.code).join(', ')}
-      </p>
-    );
+    return <SurfaceState kind="error" title="Could not load settings" detail={settings.issues.map((issue) => issue.code).join(', ')} />;
   }
 
   const view: SettingsView = settings.value;
@@ -54,11 +51,7 @@ export function Settings({ client }: { readonly client: CoquiClient }): React.JS
       <ExecutionPolicySettings client={client} />
       <PaperCampaignSettings client={client} />
 
-      <DeferredPanel
-        title="Data sources"
-        phase="P7"
-        reason="The optional CoinGecko key is entered here once the secret-safe connection service ships alongside the Coinbase connect flow."
-      />
+      <CoinbaseConnectionSettings key={view.profileId} client={client} />
     </section>
   );
 }

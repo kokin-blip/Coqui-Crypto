@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import { fileURLToPath } from 'node:url';
+import { coinbaseSmokeFixture, checkCoinbaseSettings, seedCoinbaseSmokeProfile } from './coinbase-settings-smoke.mjs';
 
 /**
  * Stage 2.4 smoke gate.
@@ -63,6 +64,8 @@ const dataDir = mkdtempSync(join(tmpdir(), 'coqui-smoke-'));
 let runtime = null;
 
 async function run() {
+  const coinbaseFixture = coinbaseSmokeFixture();
+  await seedCoinbaseSmokeProfile(dataDir);
   runtime = createRuntimeProfileController({
     dataDirectory: dataDir,
     legacyDatabaseFilename: 'coqui.db',
@@ -70,7 +73,8 @@ async function run() {
     // timer and reach the network to refresh bars, neither of which this
     // measures.
     disableScheduler: true,
-    runtime: {},
+    coinbaseVerifier: coinbaseFixture.coinbaseVerifier,
+    runtime: coinbaseFixture.runtime,
   });
   check('composition root builds', typeof runtime.handlers === 'function');
 
@@ -288,6 +292,7 @@ async function run() {
     `status=${railOutcome.status}, mode=${railOutcome.value?.mode}`,
   );
 
+  await withTimeout('Coinbase Settings interactions', checkCoinbaseSettings(window, coinbaseFixture, check));
   window.destroy();
 }
 

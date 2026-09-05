@@ -4,6 +4,10 @@ import { join } from 'node:path';
 import { SystemClock } from '@coqui/core';
 import {
   AccountsProfileService,
+  CoinbaseConnectionService,
+  createProfileOperationGate,
+  createCoinbaseViewOnlyVerifier,
+  type CoinbaseCredentialVerifier,
   type AccountProfileView,
   type PreparedProfileContext,
 } from '@coqui/services';
@@ -19,6 +23,8 @@ export interface RuntimeProfileControllerOptions {
   /** Test/smoke only: build contexts without starting background cadence. */
   readonly disableScheduler?: boolean;
   readonly runtime: Omit<RuntimeOptions, 'databasePath' | 'profileId' | 'disableScheduler'>;
+  /** Offline verifier injection for boundary tests; production uses Coinbase's GET-only probe. */
+  readonly coinbaseVerifier?: CoinbaseCredentialVerifier;
 }
 
 export interface RuntimeProfileController {
@@ -47,6 +53,7 @@ export function createRuntimeProfileController(
   const manifestStore = createFileProfileManifestStore(
     join(options.dataDirectory, 'wallet-profiles.json'),
   );
+  const profileOperationGate = createProfileOperationGate();
   let current: CoquiRuntime | null = null;
 
   const createCandidate = (profileId: string, databaseFilename: string): CoquiRuntime =>
@@ -97,7 +104,17 @@ export function createRuntimeProfileController(
         return { ok: true, context };
       },
     },
+    operationGate: profileOperationGate,
   });
+  const coinbaseConnection = options.runtime.secrets === undefined
+    ? null
+    : new CoinbaseConnectionService({
+        clock,
+        manifestStore,
+        secretStore: options.runtime.secrets,
+        verifier: options.coinbaseVerifier ?? createCoinbaseViewOnlyVerifier(),
+        operationGate: profileOperationGate,
+      });
 
   const initialized = profiles.initializeMain(options.legacyDatabaseFilename);
   if (!initialized.ok) throw new Error('Could not initialize profile manifest.');
@@ -117,7 +134,58 @@ export function createRuntimeProfileController(
   });
 
   const switchOutcomes = new Map<string, ServiceResult<unknown>>();
+  const coinbaseOutcomes = new Map<string, ServiceResult<unknown>>();
   const globalHandlers: ChannelHandlers = {
+    'accounts.coinbase.status': async () => {
+      if (coinbaseConnection === null) return serviceFailure('secret_store_unavailable');
+      const active = profiles.active();
+      return active.ok && active.value !== null
+        ? await coinbaseConnection.status(active.value.id)
+        : serviceFailure('profile_store_unavailable');
+    },
+    'accounts.coinbase.connect': async (payload: {
+      readonly commandId: string;
+      readonly keyName: string;
+      readonly privateKey: string;
+    }) => {
+      if (coinbaseConnection === null) return serviceFailure('secret_store_unavailable');
+      const active = profiles.active();
+      const prior = coinbaseOutcomes.get(payload.commandId);
+      if (prior !== undefined) return prior;
+      const result = active.ok && active.value !== null
+        ? await coinbaseConnection.connect(active.value.id, {
+            keyName: payload.keyName,
+            privateKey: payload.privateKey,
+          })
+        : serviceFailure('profile_store_unavailable');
+      coinbaseOutcomes.set(payload.commandId, result);
+      return result;
+    },
+    'accounts.coinbase.connect-json': async (payload: {
+      readonly commandId: string;
+      readonly contents: string;
+    }) => {
+      if (coinbaseConnection === null) return serviceFailure('secret_store_unavailable');
+      const active = profiles.active();
+      const prior = coinbaseOutcomes.get(payload.commandId);
+      if (prior !== undefined) return prior;
+      const result = active.ok && active.value !== null
+        ? await coinbaseConnection.connectJson(active.value.id, payload.contents)
+        : serviceFailure('profile_store_unavailable');
+      coinbaseOutcomes.set(payload.commandId, result);
+      return result;
+    },
+    'accounts.coinbase.disconnect': async (payload: { readonly commandId: string }) => {
+      if (coinbaseConnection === null) return serviceFailure('secret_store_unavailable');
+      const active = profiles.active();
+      const prior = coinbaseOutcomes.get(payload.commandId);
+      if (prior !== undefined) return prior;
+      const result = active.ok && active.value !== null
+        ? await coinbaseConnection.disconnect(active.value.id)
+        : serviceFailure('profile_store_unavailable');
+      coinbaseOutcomes.set(payload.commandId, result);
+      return result;
+    },
     'accounts.profiles': () => {
       const listed = profiles.list();
       if (!listed.ok) return listed;

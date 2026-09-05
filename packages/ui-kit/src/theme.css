@@ -12,6 +12,7 @@
   --coqui-text-muted: #8fa59a;
   --coqui-text-subtle: #6f897d;
   --coqui-accent: #2ee98b;
+  --coqui-accent-text: #020b08;
   --coqui-accent-strong: #62f2a8;
   --coqui-accent-soft: #0b3725;
   --coqui-positive: #57e39b;
@@ -21,6 +22,14 @@
   --coqui-warning: #f2b84b;
   --coqui-warning-soft: #3d2e12;
   --coqui-info: #8b7cff;
+  --coqui-advisory: #b7adff;
+  --coqui-advisory-strong: #c9c3ff;
+  --coqui-advisory-soft: #17132a;
+  --coqui-advisory-surface: #090f19;
+  --coqui-advisory-border: #453b80;
+  --coqui-overlay: rgb(0 0 0 / 66%);
+  --coqui-selection: #2ee98b;
+  --coqui-selection-text: #020b08;
   --coqui-focus: #8b7cff;
   --coqui-shadow: 0 2px 8px rgb(0 0 0 / 28%);
 
@@ -62,6 +71,7 @@
   --coqui-text-muted: #52685b;
   --coqui-text-subtle: #708377;
   --coqui-accent: #087f49;
+  --coqui-accent-text: #ffffff;
   --coqui-accent-strong: #05643a;
   --coqui-accent-soft: #d7f4e3;
   --coqui-positive: #087f49;
@@ -71,6 +81,14 @@
   --coqui-warning: #8b5d00;
   --coqui-warning-soft: #fff0c8;
   --coqui-info: #5948d6;
+  --coqui-advisory: #5948d6;
+  --coqui-advisory-strong: #3929ad;
+  --coqui-advisory-soft: #ece9ff;
+  --coqui-advisory-surface: #f8f7ff;
+  --coqui-advisory-border: #a79ee9;
+  --coqui-overlay: rgb(11 23 16 / 54%);
+  --coqui-selection: #087f49;
+  --coqui-selection-text: #ffffff;
   --coqui-focus: #5948d6;
   --coqui-shadow: 0 14px 40px rgb(24 41 72 / 12%);
 }
@@ -88,6 +106,7 @@
   --coqui-text-muted: #ffffff;
   --coqui-text-subtle: #e6e6e6;
   --coqui-accent: #b5a9ff;
+  --coqui-accent-text: #000000;
   --coqui-accent-strong: #ffffff;
   --coqui-accent-soft: #201b45;
   --coqui-positive: #75ffd0;
@@ -97,6 +116,14 @@
   --coqui-warning: #ffda73;
   --coqui-warning-soft: #342600;
   --coqui-info: #99bdff;
+  --coqui-advisory: #ffffff;
+  --coqui-advisory-strong: #ffffff;
+  --coqui-advisory-soft: #000000;
+  --coqui-advisory-surface: #000000;
+  --coqui-advisory-border: #ffffff;
+  --coqui-overlay: rgb(0 0 0 / 80%);
+  --coqui-selection: Highlight;
+  --coqui-selection-text: HighlightText;
   --coqui-focus: #ffffff;
   --coqui-shadow: none;
 }

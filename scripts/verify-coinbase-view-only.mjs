@@ -159,7 +159,7 @@ async function main() {
     permissionHttpStatusClass: statusClass(diagnostics.permissionHttpStatus),
     accountsHttpStatusClass: statusClass(diagnostics.accountsHttpStatus),
     permissions: connected
-      ? { view: true, trade: false, transfer: false, receive: false }
+      ? { view: true, trade: false, transfer: false }
       : null,
     outcomeCode,
     cleanup,

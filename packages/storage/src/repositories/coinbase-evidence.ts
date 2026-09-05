@@ -7,6 +7,8 @@ import {
   type CoinbaseAccountEvidence,
   type CoinbaseBalanceDiscrepancy,
   type CoinbaseFillEvidence,
+  type CoinbaseFeeTierEvidence,
+  type CoinbaseTransactionEvidence,
 } from '@coqui/core';
 import { Decimal } from 'decimal.js';
 
@@ -25,9 +27,12 @@ export interface CoinbaseSyncEvidenceInput {
   readonly receivedAtMs: number;
   readonly accountPageCount: number;
   readonly fillPageCount: number;
+  readonly transactionPageCount?: number;
   readonly datasetHash: string;
   readonly accounts: readonly CoinbaseAccountEvidence[];
   readonly fills: readonly CoinbaseFillEvidence[];
+  readonly transactions?: readonly CoinbaseTransactionEvidence[];
+  readonly feeTier?: CoinbaseFeeTierEvidence | null;
   readonly discrepancies: readonly CoinbaseBalanceDiscrepancy[];
 }
 
@@ -40,6 +45,8 @@ export interface CoinbaseSyncEvidenceSummary {
   readonly fillPageCount: number;
   readonly accountRowCount: number;
   readonly fillRowCount: number;
+  readonly transactionPageCount: number;
+  readonly transactionRowCount: number;
   readonly discrepancyCount: number;
   readonly datasetHash: string;
 }
@@ -54,6 +61,8 @@ function validTime(value: number): boolean {
 }
 
 function validate(input: CoinbaseSyncEvidenceInput): void {
+  const transactions = input.transactions ?? [];
+  const feeTier = input.feeTier ?? null;
   if (!PROFILE_ID.test(input.profileId)) throw new TypeError('Invalid profile identity.');
   if (!validTime(input.requestedAtMs) || !validTime(input.receivedAtMs) ||
     input.receivedAtMs < input.requestedAtMs) throw new TypeError('Invalid sync timing.');
@@ -63,9 +72,12 @@ function validate(input: CoinbaseSyncEvidenceInput): void {
     throw new TypeError('Invalid provider page counts.');
   }
   if (!HASH.test(input.datasetHash) ||
-    coinbaseEvidenceDatasetHash(input.accounts, input.fills) !== input.datasetHash) {
+    coinbaseEvidenceDatasetHash(input.accounts, input.fills, transactions, feeTier) !== input.datasetHash) {
     throw new TypeError('Coinbase evidence hash mismatch.');
   }
+  const transactionPageCount = input.transactionPageCount ?? 0;
+  if (!Number.isSafeInteger(transactionPageCount) || transactionPageCount < 0 ||
+    transactionPageCount > 1_000) throw new TypeError('Invalid transaction page count.');
   const accounts = new Set<string>();
   for (const account of input.accounts) {
     if (!UUID.test(account.accountUuid) || !CURRENCY.test(account.currency) ||
@@ -93,15 +105,53 @@ function validate(input: CoinbaseSyncEvidenceInput): void {
     }
     if (fills.has(fill.tradeId)) throw new TypeError('Duplicate fill evidence.');
     fills.add(fill.tradeId);
+    if (fill.entryId !== undefined && fill.entryId !== null && !IDENTIFIER.test(fill.entryId)) {
+      throw new TypeError('Invalid fill entry identity.');
+    }
     nonNegativeDecimal(fill.price);
     nonNegativeDecimal(fill.size);
     nonNegativeDecimal(fill.commission);
+    if (fill.commissionDetail !== undefined && fill.commissionDetail !== null) {
+      for (const [key, value] of Object.entries(fill.commissionDetail)) {
+        if (!/^[a-z][a-z0-9_]{0,63}$/u.test(key)) {
+          throw new TypeError('Invalid commission component.');
+        }
+        nonNegativeDecimal(value);
+      }
+    }
     if (new Decimal(fill.price).lte(0) || new Decimal(fill.size).lte(0)) {
       throw new TypeError('Fill price and size must be positive.');
     }
     if (!validTime(fill.tradeAtMs) || !validTime(fill.sequenceAtMs)) {
       throw new TypeError('Invalid provider fill time.');
     }
+  }
+  const transactionIds = new Set<string>();
+  for (const transaction of transactions) {
+    if (!UUID.test(transaction.accountUuid) || !accounts.has(transaction.accountUuid) ||
+      !IDENTIFIER.test(transaction.transactionId) ||
+      !IDENTIFIER.test(transaction.type) || !IDENTIFIER.test(transaction.status) ||
+      !CURRENCY.test(transaction.amountCurrency) || !CURRENCY.test(transaction.nativeCurrency) ||
+      !validTime(transaction.createdAtMs) ||
+      (transaction.updatedAtMs !== null &&
+        (!validTime(transaction.updatedAtMs) || transaction.updatedAtMs < transaction.createdAtMs)) ||
+      !transaction.resourcePath.startsWith('/v2/') || transaction.resourcePath.length > 1_024) {
+      throw new TypeError('Invalid transaction evidence metadata.');
+    }
+    const identity = `${transaction.accountUuid}:${transaction.transactionId}`;
+    if (transactionIds.has(identity)) throw new TypeError('Duplicate transaction evidence.');
+    transactionIds.add(identity);
+    decimal(transaction.amount);
+    decimal(transaction.nativeAmount);
+  }
+  if (feeTier !== null) {
+    if (!/^[A-Za-z0-9][A-Za-z0-9 ._:-]{0,127}$/u.test(feeTier.pricingTier)) {
+      throw new TypeError('Invalid Coinbase fee pricing tier.');
+    }
+    nonNegativeDecimal(feeTier.makerFeeRate);
+    nonNegativeDecimal(feeTier.takerFeeRate);
+    nonNegativeDecimal(feeTier.usdFrom);
+    if (feeTier.usdTo !== null) nonNegativeDecimal(feeTier.usdTo);
   }
   const currencies = new Set<string>();
   for (const discrepancy of input.discrepancies) {
@@ -131,6 +181,8 @@ function identity(input: CoinbaseSyncEvidenceInput): string {
     receivedAtMs: input.receivedAtMs,
     accountPageCount: input.accountPageCount,
     fillPageCount: input.fillPageCount,
+    transactionPageCount: input.transactionPageCount ?? 0,
+    feeTier: input.feeTier ?? null,
     datasetHash: input.datasetHash,
     discrepancies: [...input.discrepancies]
       .sort((left, right) => left.currency.localeCompare(right.currency)),
@@ -145,8 +197,10 @@ function summary(input: CoinbaseSyncEvidenceInput, id: string): CoinbaseSyncEvid
     receivedAtMs: input.receivedAtMs,
     accountPageCount: input.accountPageCount,
     fillPageCount: input.fillPageCount,
+    transactionPageCount: input.transactionPageCount ?? 0,
     accountRowCount: input.accounts.length,
     fillRowCount: input.fills.length,
+    transactionRowCount: input.transactions?.length ?? 0,
     discrepancyCount: input.discrepancies.length,
     datasetHash: input.datasetHash,
   });
@@ -169,11 +223,14 @@ export function saveCoinbaseSyncEvidence(
     }
     database.prepare(`INSERT INTO coinbase_sync_runs_v2 (
       id, origin_profile_id, requested_at_ms, received_at_ms, account_page_count,
-      fill_page_count, account_row_count, fill_row_count, dataset_hash
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(
+      fill_page_count, transaction_page_count, account_row_count, fill_row_count,
+      transaction_row_count, fee_tier_captured, dataset_hash
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(
       id, input.profileId, input.requestedAtMs, input.receivedAtMs,
-      input.accountPageCount, input.fillPageCount, input.accounts.length,
-      input.fills.length, input.datasetHash,
+      input.accountPageCount, input.fillPageCount, input.transactionPageCount ?? 0,
+      input.accounts.length, input.fills.length, input.transactions?.length ?? 0,
+      input.feeTier === undefined || input.feeTier === null ? 0 : 1,
+      input.datasetHash,
     );
     const accountInsert = database.prepare(`INSERT INTO coinbase_account_evidence_v2 (
       run_id, account_uuid, currency, available_quantity_text, hold_quantity_text,
@@ -186,14 +243,35 @@ export function saveCoinbaseSyncEvidence(
       account.providerUpdatedAtMs,
     );
     const fillInsert = database.prepare(`INSERT INTO coinbase_fill_evidence_v2 (
-      run_id, trade_id, order_id, product_id, side, price_text, size_text,
-      commission_text, size_in_quote, trade_at_ms, sequence_at_ms
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+      run_id, trade_id, entry_id, order_id, product_id, side, price_text, size_text,
+      commission_text, commission_detail_json, size_in_quote, trade_at_ms, sequence_at_ms
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
     for (const fill of input.fills) fillInsert.run(
-      id, fill.tradeId, fill.orderId, fill.productId, fill.side, fill.price,
-      fill.size, fill.commission, fill.sizeInQuote ? 1 : 0,
+      id, fill.tradeId, fill.entryId ?? null, fill.orderId, fill.productId, fill.side, fill.price,
+      fill.size, fill.commission, fill.commissionDetail === undefined || fill.commissionDetail === null
+        ? null
+        : JSON.stringify(Object.fromEntries(Object.entries(fill.commissionDetail)
+            .sort(([left], [right]) => left.localeCompare(right)))), fill.sizeInQuote ? 1 : 0,
       fill.tradeAtMs, fill.sequenceAtMs,
     );
+    const transactionInsert = database.prepare(`INSERT INTO coinbase_transaction_evidence_v1 (
+      run_id, account_uuid, transaction_id, type, status, amount_text, amount_currency,
+      native_amount_text, native_currency, created_at_ms, updated_at_ms, resource_path
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+    for (const transaction of input.transactions ?? []) transactionInsert.run(
+      id, transaction.accountUuid, transaction.transactionId, transaction.type,
+      transaction.status, transaction.amount, transaction.amountCurrency,
+      transaction.nativeAmount, transaction.nativeCurrency, transaction.createdAtMs,
+      transaction.updatedAtMs, transaction.resourcePath,
+    );
+    if (input.feeTier !== undefined && input.feeTier !== null) {
+      database.prepare(`INSERT INTO coinbase_fee_tier_evidence_v1 (
+        run_id, pricing_tier, maker_rate_text, taker_rate_text, usd_from_text, usd_to_text
+      ) VALUES (?, ?, ?, ?, ?, ?)`).run(
+        id, input.feeTier.pricingTier, input.feeTier.makerFeeRate,
+        input.feeTier.takerFeeRate, input.feeTier.usdFrom, input.feeTier.usdTo,
+      );
+    }
     const discrepancyInsert = database.prepare(`INSERT INTO coinbase_balance_discrepancies_v2 (
       id, run_id, currency, kind, provider_quantity_text, local_quantity_text,
       delta_quantity_text

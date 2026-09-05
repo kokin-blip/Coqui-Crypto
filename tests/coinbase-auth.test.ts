@@ -12,6 +12,7 @@ import {
   fetchCoinbaseClockOffset,
   MAX_COINBASE_KEY_FILE_BYTES,
   parseCoinbaseKeyFileJson,
+  parseCoinbasePrivateKey,
   validateCoinbaseCredentials,
   type FetchLikeResponse,
   type HttpResult,
@@ -31,6 +32,20 @@ function ecdsaCredentials(): {
   publicKey: ReturnType<typeof createPublicKey>;
 } {
   const pair = generateKeyPairSync('ec', { namedCurve: 'P-256' });
+  return {
+    credentials: {
+      keyName: KEY_NAME,
+      privateKey: pair.privateKey.export({ format: 'pem', type: 'pkcs8' }) as string,
+    },
+    publicKey: pair.publicKey,
+  };
+}
+
+function ed25519Credentials(): {
+  credentials: { keyName: string; privateKey: string };
+  publicKey: ReturnType<typeof createPublicKey>;
+} {
+  const pair = generateKeyPairSync('ed25519');
   return {
     credentials: {
       keyName: KEY_NAME,
@@ -123,6 +138,36 @@ describe('Coinbase App JWT authentication', () => {
     expect(decode(tokens[0]!.split('.')[1]!)['uri']).toBe(
       `GET api.coinbase.com${PATH}`,
     );
+    expect(fetch.mock.calls[0]?.[1]?.redirect).toBe('error');
+  });
+
+  it('builds and verifies an EdDSA request-bound JWT', () => {
+    const { credentials, publicKey } = ed25519Credentials();
+    const jwt = buildCoinbaseJwt(credentials, PATH, NOW, 'fixture-nonce');
+    const [header, payload, signature] = jwt.split('.');
+
+    expect(decode(header!)['alg']).toBe('EdDSA');
+    expect(verify(
+      null,
+      Buffer.from(`${header}.${payload}`),
+      publicKey,
+      Buffer.from(signature!, 'base64url'),
+    )).toBe(true);
+  });
+
+  it.each([32, 64])('builds verifiable EdDSA JWTs from %i-byte raw keys', (length) => {
+    const privateKey = Buffer.alloc(length, 7).toString('base64');
+    const parsed = parseCoinbasePrivateKey(privateKey);
+    const jwt = buildCoinbaseJwt({ keyName: KEY_NAME, privateKey }, PATH, NOW, 'raw-nonce');
+    const [header, payload, signature] = jwt.split('.');
+
+    expect(parsed.algorithm).toBe('EdDSA');
+    expect(verify(
+      null,
+      Buffer.from(`${header}.${payload}`),
+      createPublicKey(parsed.key),
+      Buffer.from(signature!, 'base64url'),
+    )).toBe(true);
   });
 
   it('never attaches credentials to another host or insecure URL', async () => {
@@ -167,11 +212,14 @@ describe('Coinbase credential validation', () => {
     });
   });
 
-  it('rejects Ed25519 because Coinbase App currently requires ECDSA', () => {
+  it('accepts a raw Ed25519 seed for SDK parity', () => {
     const seed = Buffer.alloc(32, 7).toString('base64');
     const result = validateCoinbaseCredentials({ keyName: KEY_NAME, privateKey: seed });
-    expect(result).toMatchObject({ ok: false, code: 'unsupported_algorithm' });
-    if (!result.ok) expect(result.error).toContain('ECDSA P-256');
+    expect(result).toMatchObject({
+      ok: true,
+      algorithm: 'EdDSA',
+      keyFormat: 'ed25519-raw-32',
+    });
   });
 
   it('returns secret-safe errors for malformed keys and identifiers', () => {

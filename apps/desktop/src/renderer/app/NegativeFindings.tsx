@@ -1,6 +1,7 @@
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 
 import { useChannel } from '../query/use-channel.js';
+import { SurfaceState } from './SurfaceState.js';
 
 type Finding = ChannelResponse<'research.negative-findings'>['findings'][number];
 
@@ -51,13 +52,9 @@ export function NegativeFindings({
 }): React.JSX.Element {
   const ledger = useChannel(client, 'research.negative-findings', {});
 
-  if (ledger.kind === 'loading') return <p aria-live="polite">Loading findings…</p>;
+  if (ledger.kind === 'loading') return <SurfaceState kind="loading" title="Loading findings" compact />;
   if (ledger.kind !== 'ready') {
-    return (
-      <p role="alert">
-        Could not load findings: {ledger.issues.map((issue) => issue.code).join(', ')}
-      </p>
-    );
+    return <SurfaceState kind="error" title="Could not load findings" detail={ledger.issues.map((issue) => issue.code).join(', ')} compact />;
   }
 
   const { findings, ledgerNote } = ledger.value;

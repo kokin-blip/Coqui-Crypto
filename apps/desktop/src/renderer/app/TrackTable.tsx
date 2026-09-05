@@ -2,6 +2,7 @@ import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { formatPercent, validationBadge } from '@coqui/ui-kit';
 
 import { useChannel } from '../query/use-channel.js';
+import { SurfaceState } from './SurfaceState.js';
 
 type ScoreboardView = ChannelResponse<'research.scoreboard'>;
 type Track = ScoreboardView['tracks'][number];
@@ -83,17 +84,16 @@ function Row({ track }: { readonly track: Track }): React.JSX.Element {
 export function TrackTable({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const scoreboard = useChannel(client, 'research.scoreboard', {});
 
-  if (scoreboard.kind === 'loading') return <p aria-live="polite">Loading tracks…</p>;
+  if (scoreboard.kind === 'loading') return <SurfaceState kind="loading" title="Loading tracks" compact />;
 
   if (scoreboard.kind !== 'ready') {
     const noRun = scoreboard.issues.some((issue) => issue.code === 'no_verified_run');
-    return (
-      <p role={noRun ? undefined : 'alert'}>
-        {noRun
-          ? 'No study has been run against this profile yet, so there is nothing to compare.'
-          : `Could not load tracks: ${scoreboard.issues.map((issue) => issue.code).join(', ')}`}
-      </p>
-    );
+    return <SurfaceState
+      kind={noRun ? 'empty' : 'error'}
+      title={noRun ? 'No verified study to compare' : 'Could not load tracks'}
+      detail={noRun ? 'Run a registered study for this profile before comparing strategies.' : scoreboard.issues.map((issue) => issue.code).join(', ')}
+      compact
+    />;
   }
 
   const view = scoreboard.value;

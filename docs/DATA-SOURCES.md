@@ -43,6 +43,21 @@ Coinbase is already integrated as the daily decision-dataset source.
 
 Source: [Coinbase Get product candles](https://docs.cdp.coinbase.com/api-reference/exchange-api/rest-api/products/get-product-candles)
 
+### Coinbase authenticated account evidence
+
+The profile-scoped, GET-only Coinbase adapter uses Advanced Trade for permissions, accounts, fills,
+and fee-tier strings, plus Coinbase V2 account transactions for deposits, withdrawals, rewards, and
+adjustments. Accounts retain `has_next` pagination; fills follow the current cursor-only response;
+transaction `next_uri` values are accepted only when they remain on the same Coinbase host and
+account path. Exact decimal strings are retained without float coercion. Fee evidence records only
+string-valued maker/taker tier facts and does not consume deprecated Coinbase Pro aggregates or
+change Coqui's conservative cost policy.
+
+Sources: [Advanced Trade accounts](https://docs.cdp.coinbase.com/api-reference/advanced-trade-api/rest-api/accounts/list-accounts),
+[fills](https://docs.cdp.coinbase.com/api-reference/advanced-trade-api/rest-api/orders/list-fills),
+[fees](https://docs.cdp.coinbase.com/api-reference/advanced-trade-api/rest-api/fees/get-transaction-summary),
+and [V2 transactions](https://docs.cdp.coinbase.com/coinbase-business/track-apis/transactions).
+
 ### Binance public archive
 
 `data.binance.vision` is the preferred free bulk source for cross-venue research.

@@ -106,6 +106,10 @@ describe('the gate cannot be edited from the UI', () => {
     // stronger guarantee than a disabled control, and this test is what keeps
     // one from being added without the reasoning being revisited.
     expect(CHANNEL_KINDS.write).toEqual([
+      'accounts.coinbase.connect',
+      'accounts.coinbase.connect-json',
+      'accounts.coinbase.disconnect',
+      'accounts.coinbase.sync',
       'accounts.profile.switch',
       'accounts.settings.set',
       'accounts.workspace.set',

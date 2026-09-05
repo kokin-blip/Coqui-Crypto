@@ -22,6 +22,7 @@ import {
 } from '@coqui/core';
 import {
   AccountSettingsService,
+  type CoinbaseEvidenceAcquirer,
   AlertsService,
   PortfolioReadModelService,
   PortfolioTaxService,
@@ -43,7 +44,6 @@ import {
   getPaperDailyValuationEvidence,
   getPaperExecutionPolicy,
   getPaperExecutionProposal,
-  getSetting,
   listActivityFeed,
   listRuntimeIncidents,
   listCoinbaseBalanceDiscrepancies,
@@ -66,6 +66,7 @@ import { createAdvisorHandlers } from './advisor-handlers.js';
 import { createChartExtensionHandlers, createChartSnapshotHandlers, createChartWorkspaceHandlers } from './chart-handler-factories.js';
 import { createAccountPreferenceHandlers } from './account-preference-handlers.js';
 import { CoinbaseMarketStreamService } from './coinbase-market-stream.js';
+import { createCoinbaseSyncHandlers, lastCoinbaseSyncAtMs } from './coinbase-handlers.js';
 import { createMarketHandlers } from './market-handlers.js';
 import { SHIPPED_FORWARD_EDGE_PLAN } from './forward-edge-plan.js';
 import { captureScheduledForwardEvidence } from './forward-edge-runtime.js';
@@ -79,14 +80,6 @@ import type { ChannelHandlers } from './dispatch.js';
 /** Only an integrity-verified passing forward result can supply execution edge. */
 function paperGrossEdgeLowerBoundPct(profileId: string, database: Db): number {
   return readProfitabilityEstimateEvidence(profileId, database)?.grossEdgeLowerBoundPct ?? 0;
-}
-
-/** Epoch of the last Coinbase sync, or null when never run or unparseable. */
-function lastCoinbaseSyncAtMs(database: Db): number | null {
-  const raw = getSetting('coinbase.last_sync_at', database);
-  if (raw === null) return null;
-  const parsed = Number(raw);
-  return Number.isSafeInteger(parsed) && parsed > 0 ? parsed : null;
 }
 
 function paperProposalView(
@@ -134,6 +127,8 @@ export interface RuntimeOptions extends Partial<Pick<Parameters<typeof createAdv
    * reach a service or a channel (invariant 3).
    */
   readonly coinGeckoApiKey?: string | null;
+  /** Testable authenticated acquisition boundary; production uses the hardened Coinbase adapter. */
+  readonly coinbaseAcquirer?: CoinbaseEvidenceAcquirer;
   /**
    * Delivers OS notifications. Injected because `electron.Notification` is
    * unavailable under vitest, and because whether to notify must be decidable
@@ -323,8 +318,11 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       });
   };
   if (options.disableScheduler !== true) startScheduler();
-
   const handlers: ChannelHandlers = {
+    ...createCoinbaseSyncHandlers({ profileId: options.profileId, database, clock,
+      ...(options.secrets === undefined ? {} : { secrets: options.secrets }),
+      ...(options.coinbaseAcquirer === undefined ? {} : { acquirer: options.coinbaseAcquirer }),
+    }),
     ...createAdvisorHandlers({ profileId: options.profileId, database, clock, http,
       ...(options.secrets === undefined ? {} : { secrets: options.secrets }),
       ...(options.saveHistory === undefined ? {} : { saveHistory: options.saveHistory }) }),

@@ -4,6 +4,7 @@ import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { formatQuantity } from '@coqui/ui-kit';
 
 import { ResolveException } from './ResolveException.js';
+import { SurfaceState } from './SurfaceState.js';
 import { useChannel } from '../query/use-channel.js';
 
 type Reconciliation = ChannelResponse<'portfolio.reconciliation'>;
@@ -98,15 +99,10 @@ function Row({
 export function Reconciliation({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const reconciliation = useChannel(client, 'portfolio.reconciliation', {});
 
-  if (reconciliation.kind === 'loading') return <p aria-live="polite">Loading reconciliation…</p>;
+  if (reconciliation.kind === 'loading') return <SurfaceState kind="loading" title="Loading reconciliation" compact />;
 
   if (reconciliation.kind !== 'ready') {
-    return (
-      <p role="alert">
-        Could not load reconciliation:{' '}
-        {reconciliation.issues.map((issue) => issue.code).join(', ')}
-      </p>
-    );
+    return <SurfaceState kind="error" title="Could not load reconciliation" detail={reconciliation.issues.map((issue) => issue.code).join(', ')} compact />;
   }
 
   const { exceptions, unresolvedCount, options, lastRunAtMs } = reconciliation.value;

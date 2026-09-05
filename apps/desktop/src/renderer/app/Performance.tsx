@@ -9,6 +9,7 @@ import { ChartViewControl } from './ChartViewControl.js';
 import { PerformanceDayDrawer } from './PerformanceDayDrawer.js';
 import { useWorkspace } from './WorkspaceContext.js';
 import { useChannel } from '../query/use-channel.js';
+import { SurfaceState } from './SurfaceState.js';
 
 function metric(value: string | null, suffix = ''): string {
   return value === null ? 'Unavailable' : `${value}${suffix}`;
@@ -77,9 +78,9 @@ export function Performance({ client }: { readonly client: CoquiClient }): React
     },
   ], [performance.kind, visiblePoints]);
 
-  if (performance.kind === 'loading') return <p aria-live="polite">Loading performance evidence…</p>;
+  if (performance.kind === 'loading') return <SurfaceState kind="loading" title="Loading performance evidence" />;
   if (performance.kind !== 'ready') {
-    return <p role="alert">Could not load performance: {performance.issues.map((issue) => issue.code).join(', ')}</p>;
+    return <SurfaceState kind="error" title="Could not load performance evidence" detail={performance.issues.map((issue) => issue.code).join(', ')} />;
   }
   const view = performance.value;
   if (view.points.length === 0) return <EmptyPerformance />;

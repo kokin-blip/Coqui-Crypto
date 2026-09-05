@@ -237,7 +237,7 @@
   padding: 3px 7px;
   color: var(--coqui-warning);
   font-size: 10px;
-  font-weight: 750;
+  font-weight: 700;
   background: var(--coqui-warning-soft);
   border: 1px solid color-mix(in srgb, var(--coqui-warning) 38%, transparent);
   border-radius: 999px;

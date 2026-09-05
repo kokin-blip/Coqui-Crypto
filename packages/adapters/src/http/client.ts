@@ -181,11 +181,11 @@ function retryDelay(
   maxRetryAfterMs: number,
   random: () => number,
   now: () => number,
-): number {
+): number | null {
   const requested = response
     ? retryAfterMilliseconds(response, now)
     : undefined;
-  if (requested !== undefined) return Math.min(requested, maxRetryAfterMs);
+  if (requested !== undefined) return requested <= maxRetryAfterMs ? requested : null;
   return baseDelayMs * 2 ** attempt + random() * baseDelayMs;
 }
 
@@ -339,7 +339,7 @@ export function createHttpClient(options: HttpClientOptions = {}): HttpClient {
               maxRetryAfterMs,
               random,
               now,
-            ));
+            ) ?? 0);
             if (waited === CANCELED) return failure('canceled', 0, retried);
             if (waited === SHUTDOWN) return failure('shutdown', 0, retried);
             if (waited === ELAPSED_BUDGET) return failure('elapsed-budget', 0, retried);
@@ -359,7 +359,7 @@ export function createHttpClient(options: HttpClientOptions = {}): HttpClient {
             maxRetryAfterMs,
             random,
             now,
-          ));
+          ) ?? 0);
           if (waited === CANCELED) return failure('canceled', 0, retried);
           if (waited === SHUTDOWN) return failure('shutdown', 0, retried);
           if (waited === ELAPSED_BUDGET) return failure('elapsed-budget', 0, retried);
@@ -375,15 +375,17 @@ export function createHttpClient(options: HttpClientOptions = {}): HttpClient {
           attemptIndex < maxRetries
         ) {
           discardResponse?.();
-          retried += 1;
-          const waited = await waitBeforeRetry(retryDelay(
+          const delay = retryDelay(
             response,
             attemptIndex,
             baseDelayMs,
             maxRetryAfterMs,
             random,
             now,
-          ));
+          );
+          if (delay === null) return failure('http', response.status, retried, response);
+          retried += 1;
+          const waited = await waitBeforeRetry(delay);
           if (waited === CANCELED) return failure('canceled', 0, retried);
           if (waited === SHUTDOWN) return failure('shutdown', 0, retried);
           if (waited === ELAPSED_BUDGET) return failure('elapsed-budget', 0, retried);

@@ -77,6 +77,10 @@ export function isChannelName(value: unknown): value is ChannelName {
  * which changes no balance and no tax lot.
  */
 const WRITE_CHANNELS = [
+  'accounts.coinbase.connect',
+  'accounts.coinbase.connect-json',
+  'accounts.coinbase.disconnect',
+  'accounts.coinbase.sync',
   'accounts.profile.switch',
   'accounts.settings.set',
   'accounts.workspace.set',

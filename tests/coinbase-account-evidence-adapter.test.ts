@@ -24,9 +24,10 @@ function account(overrides: Record<string, unknown> = {}) {
 
 function fill(overrides: Record<string, unknown> = {}) {
   return {
-    trade_id: 'trade-1', order_id: 'order-1', product_id: 'BTC-USD',
+    entry_id: 'entry-1', trade_id: 'trade-1', order_id: 'order-1', product_id: 'BTC-USD',
     trade_type: 'FILL', side: 'BUY', price: '50000.01', size: '0.1',
     commission: '1.25', size_in_quote: false,
+    commission_detail_total: { total_commission: '1.25', venue_commission: '1.00' },
     trade_time: '2026-08-10T12:01:00Z',
     sequence_timestamp: '2026-08-10T12:01:00.000001Z',
     ...overrides,
@@ -39,7 +40,7 @@ function success(data: unknown): HttpResult<unknown> {
 
 function client(results: readonly HttpResult<unknown>[]) {
   const queue = [...results];
-  const getJson = vi.fn(async () => queue.shift() ?? success({ has_next: false }));
+  const getJson = vi.fn(async () => queue.shift() ?? success({ fills: [] }));
   return { getJson } as unknown as Pick<CoinbaseReadHttpClient, 'getJson'>;
 }
 
@@ -48,8 +49,8 @@ describe('Coinbase account evidence adapter', () => {
     const http = client([
       success({ accounts: [account()], has_next: true, cursor: 'next/account=' }),
       success({ accounts: [account()], has_next: false, cursor: '' }),
-      success({ fills: [fill()], has_next: true, cursor: 'fill-next' }),
-      success({ fills: [fill()], has_next: false, cursor: null }),
+      success({ fills: [fill()], cursor: 'fill-next' }),
+      success({ fills: [fill()] }),
     ]);
     const result = await fetchCoinbaseAccountEvidence(http);
     expect(result.ok).toBe(true);
@@ -65,25 +66,28 @@ describe('Coinbase account evidence adapter', () => {
       providerUpdatedAtMs: Date.parse('2026-08-10T12:00:00.123456Z'),
     }]);
     expect(result.value.fills[0]).toMatchObject({
-      tradeId: 'trade-1', orderId: 'order-1', productId: 'BTC-USD',
+      entryId: 'entry-1', tradeId: 'trade-1', orderId: 'order-1', productId: 'BTC-USD',
       price: '50000.01', size: '0.1', commission: '1.25', side: 'BUY',
+      commissionDetail: { total_commission: '1.25', venue_commission: '1.00' },
     });
     expect(result.value.datasetHash).toMatch(/^[0-9a-f]{64}$/u);
     expect(Object.isFrozen(result.value)).toBe(true);
     expect(Object.isFrozen(result.value.accounts)).toBe(true);
     expect(Object.isFrozen(result.value.accounts[0])).toBe(true);
     expect(http.getJson).toHaveBeenNthCalledWith(
-      2, expect.stringContaining('cursor=next%2Faccount%3D'), undefined,
+      2, expect.stringContaining('cursor=next%2Faccount%3D'),
+      { signal: expect.any(AbortSignal) },
     );
     expect(http.getJson).toHaveBeenNthCalledWith(
-      3, expect.stringContaining('product_types=SPOT'), undefined,
+      3, expect.stringContaining('product_types=SPOT'),
+      { signal: expect.any(AbortSignal) },
     );
   });
 
   it('still fetches fill evidence when the provider has no accounts', async () => {
     const http = client([
       success({ accounts: [], has_next: false }),
-      success({ fills: [fill()], has_next: false, proof_token_required: false }),
+      success({ fills: [fill()], proof_token_required: false }),
     ]);
     const result = await fetchCoinbaseAccountEvidence(http);
     expect(result.ok && result.value.accounts).toEqual([]);
@@ -106,7 +110,7 @@ describe('Coinbase account evidence adapter', () => {
   it('preserves a missing authoritative account timestamp as null', async () => {
     const result = await fetchCoinbaseAccountEvidence(client([
       success({ accounts: [account({ updated_at: undefined })], has_next: false }),
-      success({ fills: [], has_next: false }),
+      success({ fills: [] }),
     ]));
     expect(result.ok && result.value.accounts[0]?.providerUpdatedAtMs).toBeNull();
   });
@@ -114,8 +118,8 @@ describe('Coinbase account evidence adapter', () => {
   it('fails closed on conflicting duplicate fill identities', async () => {
     const result = await fetchCoinbaseAccountEvidence(client([
       success({ accounts: [], has_next: false }),
-      success({ fills: [fill()], has_next: true, cursor: 'two' }),
-      success({ fills: [fill({ price: '50001' })], has_next: false }),
+      success({ fills: [fill()], cursor: 'two' }),
+      success({ fills: [fill({ price: '50001' })] }),
     ]));
     expect(result).toEqual({ ok: false, code: 'conflicting_duplicate', resource: 'fills' });
   });
@@ -128,12 +132,12 @@ describe('Coinbase account evidence adapter', () => {
     expect(cycle).toEqual({ ok: false, code: 'pagination_cycle', resource: 'accounts' });
     const proof = await fetchCoinbaseAccountEvidence(client([
       success({ accounts: [], has_next: false }),
-      success({ fills: [], has_next: false, proof_token_required: true }),
+      success({ fills: [], proof_token_required: true }),
     ]));
     expect(proof).toEqual({ ok: false, code: 'proof_token_required', resource: 'fills' });
     const malformedProof = await fetchCoinbaseAccountEvidence(client([
       success({ accounts: [], has_next: false }),
-      success({ fills: [], has_next: false, proof_token_required: 'yes' }),
+      success({ fills: [], proof_token_required: 'yes' }),
     ]));
     expect(malformedProof).toEqual({ ok: false, code: 'invalid_response', resource: 'fills' });
   });
@@ -155,6 +159,55 @@ describe('Coinbase account evidence adapter', () => {
     } as unknown as Pick<CoinbaseReadHttpClient, 'getJson'>;
     expect(await fetchCoinbaseAccountEvidence(throwing)).toEqual({
       ok: false, code: 'network', resource: 'accounts',
+    });
+  });
+
+  it('bounds the complete cursor walk with one elapsed-time budget', async () => {
+    const http = {
+      getJson: vi.fn(async <T>(_url: string, init?: RequestInit): Promise<HttpResult<T>> =>
+        await new Promise((resolve) => {
+          init?.signal?.addEventListener('abort', () => resolve({
+            ok: false, status: 0, reason: 'canceled', retried: 0,
+          } as HttpResult<T>), { once: true });
+        })),
+    };
+
+    await expect(fetchCoinbaseAccountEvidence(
+      http as unknown as Pick<CoinbaseReadHttpClient, 'getJson'>,
+      undefined,
+      { maxElapsedMs: 1 },
+    ))
+      .resolves.toEqual({
+        ok: false, code: 'elapsed_budget_exhausted', resource: 'accounts',
+      });
+  });
+
+  it('can acquire transaction and fee evidence under the same deadline', async () => {
+    const http = client([
+      success({ accounts: [account()], has_next: false }),
+      success({ fills: [] }),
+      success({ pagination: {}, data: [{
+        id: 'transaction-1', type: 'reward', status: 'completed',
+        amount: { amount: '0.000000000000000001', currency: 'BTC' },
+        native_amount: { amount: '0.000000000000000002', currency: 'USD' },
+        created_at: '2026-08-10T12:00:00Z', updated_at: '2026-08-10T12:00:01Z',
+        resource_path: '/v2/accounts/example/transactions/transaction-1',
+      }] }),
+      success({ fee_tier: {
+        pricing_tier: 'Advanced 1', maker_fee_rate: '0.004',
+        taker_fee_rate: '0.006', usd_from: '0', usd_to: null,
+      } }),
+    ]);
+
+    const result = await fetchCoinbaseAccountEvidence(http, undefined, {
+      includeTransactions: true,
+      includeFeeTier: true,
+    });
+
+    expect(result.ok && result.value).toMatchObject({
+      transactionPageCount: 1,
+      transactions: [{ transactionId: 'transaction-1', type: 'reward' }],
+      feeTier: { makerFeeRate: '0.004', takerFeeRate: '0.006' },
     });
   });
 });

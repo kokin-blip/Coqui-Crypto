@@ -68,7 +68,7 @@ message types rather than preserve these channels verbatim.
 | 9612 | `HARVEST_VIEW` | `portfolio` | Adapt | Estimate-only view with tax assumptions and price provenance. |
 | 9613 | `TAX_EXPORT` | `portfolio` | Defer P5 | Service creates bounded export data; desktop owns the save dialog. |
 | 9614 | `COINBASE_STATUS` | `accounts` | Adapt | Implemented as profile-scoped connected/disconnected/attention/unavailable state derived from secret presence and non-secret identity hashes; no credential or provider error object is returned. |
-| 9615 | `COINBASE_CONNECT` | `accounts` | Adapt | Implemented with canonical ES256 validation and an authenticated probe requiring View while rejecting Trade, Transfer, and Receive permissions before publication. |
+| 9615 | `COINBASE_CONNECT` | `accounts` | Adapt | Implemented with canonical ES256/EdDSA validation and an authenticated probe requiring View while rejecting Trade and Transfer before publication. |
 | 9618 | `COINBASE_CONNECT_JSON` | `accounts` | Adapt | Implemented as bounded local key-file parsing followed by the same view-only connection path; credentials remain only in the scoped secret store. |
 | 9621 | `COINBASE_CONNECT_FILE` | `accounts` | Defer P5 | Desktop selects a file; service receives validated credential bytes only. |
 | 9622 | `COINBASE_SYNC` | `accounts` | Adapt | Implemented by `CoinbaseAccountSyncService` as complete cursor-paginated account/fill evidence with exact normalized values, stable failures, atomic append-only persistence, and no tax-lot, disposal, or execution mutation. |

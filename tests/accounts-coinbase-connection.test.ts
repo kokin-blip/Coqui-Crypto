@@ -351,7 +351,7 @@ describe('Coinbase connection service', () => {
 });
 
 describe('Coinbase view-only verifier adapter', () => {
-  it('requires the official four permission flags, forwards cancellation, and destroys the client', async () => {
+  it('requires the current three permission flags, forwards cancellation, and destroys the client', async () => {
     const calls: Array<{ url: string; signal: AbortSignal | null }> = [];
     const controller = new AbortController();
     const responses: HttpResult<unknown>[] = [
@@ -359,7 +359,7 @@ describe('Coinbase view-only verifier adapter', () => {
         ok: true,
         status: 200,
         data: {
-          can_view: true, can_trade: false, can_transfer: false, can_receive: false,
+          can_view: true, can_trade: false, can_transfer: false,
           portfolio_uuid: PORTFOLIO_B,
         },
       },
@@ -389,7 +389,7 @@ describe('Coinbase view-only verifier adapter', () => {
         ok: true,
         status: 200,
         data: (url.includes('key_permissions')
-          ? { can_view: true, can_trade: false, can_transfer: false, can_receive: false }
+          ? { can_view: true, can_trade: false, can_transfer: false }
           : { accounts: [] }) as T,
       }),
       destroy: vi.fn(),

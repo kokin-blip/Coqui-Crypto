@@ -4,6 +4,39 @@ import { epochMillisecondsSchema } from '../messages.js';
 
 const emptyPayloadSchema = z.strictObject({}).readonly();
 const profileIdSchema = z.string().min(1).max(64);
+const coinbaseConnectionSchema = z.strictObject({
+  asOfMs: epochMillisecondsSchema,
+  profileId: profileIdSchema,
+  provider: z.literal('coinbase'),
+  state: z.enum(['connected', 'disconnected', 'attention_required', 'unavailable']),
+  reasonCode: z.enum([
+    'credential_missing', 'credential_invalid', 'manifest_identity_missing',
+    'identity_mismatch', 'portfolio_identity_missing', 'secret_store_unavailable',
+  ]).nullable(),
+  permissionMode: z.enum(['view_only', 'unknown']),
+  portfolioIdentityVerified: z.boolean(),
+  readOnly: z.literal(true),
+  executionAuthority: z.literal(false),
+  transferAuthority: z.literal(false),
+  receiveAuthority: z.literal(false),
+}).readonly();
+
+const coinbaseSyncSchema = z.strictObject({
+  profileId: profileIdSchema,
+  requestedAtMs: epochMillisecondsSchema,
+  receivedAtMs: epochMillisecondsSchema,
+  datasetHash: z.string().regex(/^[0-9a-f]{64}$/u),
+  accountCount: z.number().int().nonnegative().max(10_000),
+  fillCount: z.number().int().nonnegative().max(100_000),
+  transactionCount: z.number().int().nonnegative().max(100_000),
+  feeTierCaptured: z.boolean(),
+  discrepancyCount: z.number().int().nonnegative().max(10_000),
+  evidenceCount: z.number().int().positive().max(120_001),
+  created: z.boolean(),
+  portfolioMutated: z.literal(false),
+  syntheticLotsCreated: z.literal(false),
+  syntheticFillsCreated: z.literal(false),
+}).readonly();
 const profileSchema = z
   .strictObject({
     id: profileIdSchema,
@@ -97,6 +130,33 @@ const displayPatchSchema = z.strictObject({
 const workspacePatchSchema = z.strictObject(workspacePreferenceFields).partial();
 
 export const accountsChannelSchemas = {
+  'accounts.coinbase.status': {
+    request: emptyPayloadSchema,
+    response: coinbaseConnectionSchema,
+  },
+  'accounts.coinbase.connect': {
+    request: z.strictObject({
+      commandId: z.string().uuid(),
+      keyName: z.string().min(1).max(512),
+      privateKey: z.string().min(1).max(65_536),
+    }).readonly(),
+    response: coinbaseConnectionSchema,
+  },
+  'accounts.coinbase.connect-json': {
+    request: z.strictObject({
+      commandId: z.string().uuid(),
+      contents: z.string().min(1).max(65_536),
+    }).readonly(),
+    response: coinbaseConnectionSchema,
+  },
+  'accounts.coinbase.disconnect': {
+    request: z.strictObject({ commandId: z.string().uuid() }).readonly(),
+    response: coinbaseConnectionSchema,
+  },
+  'accounts.coinbase.sync': {
+    request: z.strictObject({ commandId: z.string().uuid() }).readonly(),
+    response: coinbaseSyncSchema,
+  },
   'accounts.profiles': {
     request: emptyPayloadSchema,
     response: z

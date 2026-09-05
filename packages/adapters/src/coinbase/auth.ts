@@ -2,6 +2,7 @@ import {
   createPrivateKey,
   createSign,
   randomBytes,
+  sign,
   type KeyObject,
 } from 'node:crypto';
 
@@ -40,12 +41,12 @@ export type CoinbaseCredentialValidation =
   | {
       ok: true;
       credentials: CoinbaseCredentials;
-      algorithm: 'ES256';
-      keyFormat: 'ecdsa-sec1-pem' | 'ecdsa-pkcs8-pem';
+      algorithm: CoinbaseKeyAlgorithm;
+      keyFormat: CoinbaseKeyFormat;
     }
   | {
       ok: false;
-      code: 'invalid_key_name' | 'invalid_private_key' | 'unsupported_algorithm';
+      code: 'invalid_key_name' | 'invalid_private_key';
       error: string;
     };
 
@@ -223,24 +224,10 @@ export function validateCoinbaseCredentials(
   }
   try {
     const parsed = parseCoinbasePrivateKey(credentials.privateKey);
-    if (parsed.algorithm !== 'ES256') {
-      return {
-        ok: false,
-        code: 'unsupported_algorithm',
-        error: 'Coinbase App requires an ECDSA P-256 key; create a View-only ECDSA key.',
-      };
-    }
-    if (parsed.format !== 'ecdsa-sec1-pem' && parsed.format !== 'ecdsa-pkcs8-pem') {
-      return {
-        ok: false,
-        code: 'invalid_private_key',
-        error: 'Coinbase ECDSA private key format is invalid.',
-      };
-    }
     return {
       ok: true,
       credentials: { keyName, privateKey: parsed.canonical },
-      algorithm: 'ES256',
+      algorithm: parsed.algorithm,
       keyFormat: parsed.format,
     };
   } catch (error) {
@@ -298,14 +285,11 @@ function signJwt(
   nowMs: number,
   nonce: string,
 ): string {
-  if (parsed.algorithm !== 'ES256') {
-    throw new TypeError('Coinbase App JWT signing requires an ECDSA P-256 key');
-  }
   if (!Number.isSafeInteger(nowMs) || nowMs < 0) {
     throw new RangeError('Coinbase JWT time must be a non-negative epoch millisecond');
   }
   const nowSeconds = Math.floor(nowMs / 1_000);
-  const header = { alg: 'ES256', typ: 'JWT', kid: keyName, nonce };
+  const header = { alg: parsed.algorithm, typ: 'JWT', kid: keyName, nonce };
   const payload = {
     sub: keyName,
     iss: 'cdp',
@@ -314,10 +298,12 @@ function signJwt(
     uri: `${method} ${COINBASE_API_HOST}${path}`,
   };
   const signingInput = `${encodeJson(header)}.${encodeJson(payload)}`;
-  const signature = createSign('SHA256')
-    .update(signingInput)
-    .sign({ key: parsed.key, dsaEncoding: 'ieee-p1363' })
-    .toString('base64url');
+  const signature = parsed.algorithm === 'ES256'
+    ? createSign('SHA256')
+      .update(signingInput)
+      .sign({ key: parsed.key, dsaEncoding: 'ieee-p1363' })
+      .toString('base64url')
+    : sign(null, Buffer.from(signingInput), parsed.key).toString('base64url');
   return `${signingInput}.${signature}`;
 }
 
@@ -344,9 +330,6 @@ export function createCoinbaseReadHttpClient(
   options: CoinbaseReadHttpClientOptions = {},
 ): CoinbaseReadHttpClient {
   const parsed = parseCoinbasePrivateKey(credentials.privateKey);
-  if (parsed.algorithm !== 'ES256') {
-    throw new TypeError('Coinbase App requires an ECDSA P-256 key');
-  }
   const { nowMs = Date.now, nonce = () => randomBytes(16).toString('hex'), ...httpOptions } = options;
   const client = createHttpClient({
     ...httpOptions,
@@ -374,7 +357,7 @@ export function createCoinbaseReadHttpClient(
       );
       const headers = new Headers(init.headers);
       headers.set('authorization', `Bearer ${jwt}`);
-      return { ...init, method: 'GET', headers };
+      return { ...init, method: 'GET', headers, redirect: 'error' };
     },
   });
   return { getJson: client.getJson, destroy: client.destroy };

@@ -59,7 +59,6 @@ export type CoinbaseConnectionIssueCode =
   | 'profile_not_found'
   | 'invalid_key_name'
   | 'invalid_private_key'
-  | 'unsupported_algorithm'
   | 'invalid_coinbase_key_file'
   | 'coinbase_verification_timeout'
   | 'coinbase_verification_network'

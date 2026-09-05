@@ -1,5 +1,10 @@
 # Coinbase App authentication contract — 2026-08-01
 
+> Superseded 2026-09-04 for key-format admission: the official Advanced Trade Python SDK now
+> supports Ed25519/EdDSA as well as ECDSA/ES256. Coqui supports both while retaining the same
+> GET-only request binding and view-only permission probe. The product guide's ECDSA-only wording
+> remains an upstream documentation conflict and requires a live view-only exit check.
+
 Phase 2 rechecked the predecessor's Advanced Trade authentication and permission
 probe against current Coinbase documentation.
 

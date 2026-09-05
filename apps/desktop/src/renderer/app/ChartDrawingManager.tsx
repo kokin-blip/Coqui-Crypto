@@ -29,7 +29,7 @@ function DrawingEditor({ drawing, onSave, onDelete }: {
           setPoints((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, value: event.target.value } : item))} /></label>
       </fieldset>)}
       {!valid && <span className="drawing-validation" role="alert">Use non-negative exact values and UTC millisecond timestamps.</span>}
-      <div><button type="submit" disabled={!valid}>Save drawing</button><button type="button" className="danger-quiet" onClick={() => onDelete(drawing.id)}><Trash2 size={12} /> Delete</button></div>
+      <div><button type="submit" className="button-secondary" disabled={!valid}>Save drawing</button><button type="button" className="button-danger" onClick={() => onDelete(drawing.id)}><Trash2 size={12} /> Delete</button></div>
     </form>
   </details></li>;
 }

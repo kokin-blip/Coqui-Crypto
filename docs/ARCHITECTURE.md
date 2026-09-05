@@ -257,10 +257,10 @@ cancelled result. Only allowlisted reason codes and bounded evidence counts cros
 The service itself writes no profile, portfolio, scheduler, or manifest state and does not invoke the
 dashboard; P5 can invalidate and query the dashboard independently after command completion.
 Coinbase connection is a separate profile-scoped service transaction. Credential bytes are
-canonicalized as ECDSA P-256/ES256, then a GET-only authenticated adapter proves account readability
-and requires `can_view=true` with `can_trade=false`, `can_transfer=false`, and
-`can_receive=false`. The last flag is intentional: Coinbase now documents Receive as a separate API
-key permission, so it is not accepted as view-only. A verified portfolio UUID and key name are stored
+canonicalized as ECDSA P-256/ES256 or Ed25519/EdDSA, then a GET-only authenticated adapter proves
+account readability and requires `can_view=true` with `can_trade=false` and
+`can_transfer=false`. The current key-permissions response does not expose Receive authority, so
+Coqui neither requires nor infers it. A verified portfolio UUID and key name are stored
 only as SHA-256 duplicate-detection identities in the global manifest; the key and private key remain
 in the scoped OS secret store. The service rejects another profile using either identity.
 Credential publication precedes a revision-checked manifest replacement and is rolled back on

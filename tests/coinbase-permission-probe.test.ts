@@ -35,7 +35,6 @@ describe('probeCoinbaseViewOnlyPermissions', () => {
           can_view: true,
           can_trade: false,
           can_transfer: false,
-          can_receive: false,
           portfolio_uuid: ' portfolio-one ',
         },
       },
@@ -60,10 +59,9 @@ describe('probeCoinbaseViewOnlyPermissions', () => {
   });
 
   it.each([
-    { can_view: true, can_trade: true, can_transfer: false, can_receive: false },
-    { can_view: true, can_trade: false, can_transfer: true, can_receive: false },
-    { can_view: true, can_trade: false, can_transfer: false, can_receive: true },
-    { can_view: true, can_trade: true, can_transfer: true, can_receive: true },
+    { can_view: true, can_trade: true, can_transfer: false },
+    { can_view: true, can_trade: false, can_transfer: true },
+    { can_view: true, can_trade: true, can_transfer: true },
   ])('rejects transaction-capable keys before reading accounts', async (permissions) => {
     const fake = clientWith([{ ok: true, status: 200, data: permissions }]);
 
@@ -77,7 +75,7 @@ describe('probeCoinbaseViewOnlyPermissions', () => {
     const fake = clientWith([{
       ok: true,
       status: 200,
-      data: { can_view: true, can_trade: false, can_receive: false },
+      data: { can_view: true, can_trade: false },
     }]);
 
     const result = await probeCoinbaseViewOnlyPermissions(fake.client);
@@ -90,7 +88,7 @@ describe('probeCoinbaseViewOnlyPermissions', () => {
     const fake = clientWith([{
       ok: true,
       status: 200,
-      data: { can_view: false, can_trade: false, can_transfer: false, can_receive: false },
+      data: { can_view: false, can_trade: false, can_transfer: false },
     }]);
     await expect(probeCoinbaseViewOnlyPermissions(fake.client)).resolves.toMatchObject({
       ok: false,
@@ -125,7 +123,7 @@ describe('probeCoinbaseViewOnlyPermissions', () => {
       {
         ok: true,
         status: 200,
-        data: { can_view: true, can_trade: false, can_transfer: false, can_receive: false },
+        data: { can_view: true, can_trade: false, can_transfer: false },
       },
       { ok: true, status: 200, data: { unexpected: [] } },
     ]);
@@ -152,7 +150,7 @@ describe('probeCoinbaseViewOnlyPermissions', () => {
       {
         ok: true,
         status: 200,
-        data: { can_view: true, can_trade: false, can_transfer: false, can_receive: false },
+        data: { can_view: true, can_trade: false, can_transfer: false },
       },
       { ok: false, status: 200, reason: 'parse', retried: 0 },
     ]);

@@ -63,7 +63,7 @@ export function WorkspaceSettings({
       </div>
       <fieldset className="settings-toggle-grid"><legend>Advanced Overview panels</legend>{Object.entries({ strategyDetail: 'Strategy detail', strategyComparison: 'Strategy comparison', recentActivity: 'Recent activity', proposalPreview: 'Proposal preview', healthStrip: 'Health strip', negativeFindings: 'Negative findings' } as const).map(([key, label]) => <label key={key}><input type="checkbox" checked={preferences.advancedOverviewPanels[key as keyof Workspace['advancedOverviewPanels']]} disabled={action.disabled} onChange={() => save(customPanelPatch(preferences.advancedOverviewPanels, key as keyof Workspace['advancedOverviewPanels']))} /> {label}</label>)}</fieldset>
       <div className="settings-toggle-grid"><label><input type="checkbox" checked={preferences.overviewBenchmarkVisible} disabled={action.disabled} onChange={() => save({ overviewBenchmarkVisible: !preferences.overviewBenchmarkVisible })} /> Show Overview benchmark</label><label><input type="checkbox" checked={preferences.marketVolumeVisible} disabled={action.disabled} onChange={() => save({ marketVolumeVisible: !preferences.marketVolumeVisible })} /> Show market volume</label></div>
-      <button type="button" className="secondary-action" disabled={action.disabled} onClick={() => save(presetPatch('research_grid'))}>Restore Research Grid</button>
+      <button type="button" className="button-secondary" disabled={action.disabled} onClick={() => save(presetPatch('research_grid'))}>Restore Research Grid</button>
       <span className="sr-only" aria-live="polite">{action.liveMessage}</span>
     </div>
   );

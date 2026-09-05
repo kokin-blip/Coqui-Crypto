@@ -42,10 +42,9 @@ describe('channel registry', () => {
 
   it('matches the boundaries that actually have tested services today', () => {
     expect([...CHANNEL_NAMES].sort()).toEqual([
-      'accounts.profile.switch',
-      'accounts.profiles',
-      'accounts.settings',
-      'accounts.settings.set',
+      'accounts.coinbase.connect', 'accounts.coinbase.connect-json', 'accounts.coinbase.disconnect', 'accounts.coinbase.status', 'accounts.coinbase.sync',
+      'accounts.profile.switch', 'accounts.profiles',
+      'accounts.settings', 'accounts.settings.set',
       'accounts.workspace',
       'accounts.workspace.set',
       'activity.feed',
@@ -120,6 +119,8 @@ describe('channel registry', () => {
     // list: `docs/UI-UX.md` §3.1's no-optimistic-success rule is enforceable
     // only if the transport knows which channels are commands.
     expect(CHANNEL_KINDS.write).toEqual([
+      'accounts.coinbase.connect', 'accounts.coinbase.connect-json', 'accounts.coinbase.disconnect',
+      'accounts.coinbase.sync',
       'accounts.profile.switch',
       'accounts.settings.set',
       'accounts.workspace.set',

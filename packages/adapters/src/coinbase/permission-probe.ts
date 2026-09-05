@@ -123,8 +123,7 @@ export async function probeCoinbaseViewOnlyPermissions(
   if (
     typeof data['can_view'] !== 'boolean' ||
     typeof data['can_trade'] !== 'boolean' ||
-    typeof data['can_transfer'] !== 'boolean' ||
-    typeof data['can_receive'] !== 'boolean'
+    typeof data['can_transfer'] !== 'boolean'
   ) {
     return {
       ok: false,
@@ -143,13 +142,12 @@ export async function probeCoinbaseViewOnlyPermissions(
   }
   if (
     data['can_trade'] === true ||
-    data['can_transfer'] === true ||
-    data['can_receive'] === true
+    data['can_transfer'] === true
   ) {
     return {
       ok: false,
       code: 'excess_permissions',
-      error: 'Coqui accepts only keys without Trade, Transfer, or Receive permission.',
+      error: 'Coqui accepts only keys without Trade or Transfer permission.',
       diagnostics: diagnostics(permissions.status, null, null),
     };
   }

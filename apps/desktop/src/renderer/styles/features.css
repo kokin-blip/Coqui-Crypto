@@ -53,7 +53,13 @@
 
 .button-primary,
 .button-secondary,
-.button-quiet {
+.button-quiet,
+.button-danger,
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   min-height: 32px;
   padding: 6px 12px;
   color: var(--coqui-text);
@@ -66,7 +72,7 @@
 }
 
 .button-primary {
-  color: #fff;
+  color: var(--coqui-accent-text);
   background: var(--coqui-accent);
   border: 1px solid var(--coqui-accent-strong);
 }
@@ -77,19 +83,61 @@
   border: 1px solid var(--coqui-border);
 }
 
+.button-danger {
+  color: var(--coqui-negative);
+  background: var(--coqui-negative-soft);
+  border: 1px solid color-mix(in srgb, var(--coqui-negative) 45%, var(--coqui-border));
+}
+
+.icon-button {
+  width: 32px;
+  padding: 0;
+  color: var(--coqui-text-muted);
+  background: var(--coqui-surface-2);
+  border: 1px solid var(--coqui-border);
+}
+
+.button-primary:hover { background: var(--coqui-accent-strong); }
+.button-secondary:hover,
+.button-quiet:hover,
+.icon-button:hover { color: var(--coqui-text); background: var(--coqui-surface-3); border-color: var(--coqui-border-strong); }
+.button-danger:hover { border-color: var(--coqui-negative); }
+
 .button-quiet {
   background: transparent;
 }
 
 .button-primary:active,
-.button-secondary:active {
+.button-secondary:active,
+.button-danger:active,
+.icon-button:active {
   transform: translateY(1px);
 }
 
 .button-primary:disabled,
-.button-secondary:disabled {
+.button-secondary:disabled,
+.button-quiet:disabled,
+.button-danger:disabled,
+.icon-button:disabled {
   cursor: not-allowed;
   opacity: 0.55;
+}
+
+.field-control {
+  width: 100%;
+  min-height: var(--density-control-height);
+  padding: 6px 10px;
+  color: var(--coqui-text);
+  background: var(--coqui-surface-1);
+  border: 1px solid var(--coqui-border);
+  border-radius: var(--coqui-radius-sm);
+}
+
+.field-control:hover { border-color: var(--coqui-border-strong); }
+.field-control:focus-visible { border-color: var(--coqui-focus); }
+
+input[type='checkbox'] {
+  accent-color: var(--coqui-accent);
 }
 
 .paper-control-panel {
@@ -231,7 +279,7 @@
   content: counter(gate);
   counter-increment: gate;
   color: var(--coqui-accent-strong);
-  font-weight: 750;
+  font-weight: 700;
 }
 
 .gate-chain span,

@@ -62,7 +62,7 @@ importers:
       '@coqui/ui-kit':
         specifier: workspace:*
         version: link:../../packages/ui-kit
-      '@fontsource-variable/manrope':
+      '@fontsource-variable/ibm-plex-sans':
         specifier: 5.3.0
         version: 5.3.0
       '@ionic/react':
@@ -560,8 +560,8 @@ packages:
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
 
-  '@fontsource-variable/manrope@5.3.0':
-    resolution: {integrity: sha512-6D5dgokHsWDDMtmXHznKa0hK229NN+1a4BLPmUCLqcO1Pw5EEhWY5RFt0AcXnVRAljFFPfRtLkJePQj6LSsV6g==}
+  '@fontsource-variable/ibm-plex-sans@5.3.0':
+    resolution: {integrity: sha512-agG8tXFEo0hD9+J7npa4vbbWult52eMLVaQ6WQRlhs/iCAojrMAoejru85W9HTVXHfyUj96KM7gp/KGAS87XaQ==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -3951,7 +3951,7 @@ snapshots:
 
   '@floating-ui/utils@0.2.12': {}
 
-  '@fontsource-variable/manrope@5.3.0': {}
+  '@fontsource-variable/ibm-plex-sans@5.3.0': {}
 
   '@humanfs/core@0.19.2':
     dependencies:

@@ -6,6 +6,7 @@ import {
   type CoinbaseAccountEvidence,
   type CoinbaseBalanceDiscrepancy,
   type CoinbaseFillEvidence,
+  type CoinbaseTransactionEvidence,
 } from '../packages/core/src/index.js';
 import {
   listCoinbaseBalanceDiscrepancies,
@@ -25,6 +26,16 @@ const fills: readonly CoinbaseFillEvidence[] = [{
   price: decimal('50000'), size: decimal('0.1'), commission: decimal('1'),
   sizeInQuote: false, tradeAtMs: 80, sequenceAtMs: 81,
 }];
+const transactions: readonly CoinbaseTransactionEvidence[] = [{
+  transactionId: 'transaction-1', accountUuid: accounts[0]!.accountUuid,
+  type: 'advanced_trade_fill', status: 'completed', amount: decimal('-0.1'),
+  amountCurrency: 'BTC', nativeAmount: decimal('-5000'), nativeCurrency: 'USD',
+  createdAtMs: 80, updatedAtMs: 81, resourcePath: '/v2/transactions/transaction-1',
+}];
+const feeTier = {
+  pricingTier: 'Advanced 1', makerFeeRate: decimal('0.004'),
+  takerFeeRate: decimal('0.006'), usdFrom: decimal('0'), usdTo: decimal('10000'),
+} as const;
 const discrepancies: readonly CoinbaseBalanceDiscrepancy[] = [{
   currency: 'BTC', kind: 'provider_exceeds_local', providerQuantity: decimal('1.3'),
   localQuantity: decimal('1'), deltaQuantity: decimal('0.3'),
@@ -34,8 +45,9 @@ function input() {
   return {
     profileId: 'main', requestedAtMs: 100, receivedAtMs: 110,
     accountPageCount: 1, fillPageCount: 1,
-    datasetHash: coinbaseEvidenceDatasetHash(accounts, fills),
-    accounts, fills, discrepancies,
+    transactionPageCount: 1,
+    datasetHash: coinbaseEvidenceDatasetHash(accounts, fills, transactions, feeTier),
+    accounts, fills, transactions, feeTier, discrepancies,
   };
 }
 
@@ -52,9 +64,13 @@ describe('Coinbase evidence repository', () => {
       .toEqual({ count: 1 });
     expect(database.prepare('SELECT COUNT(*) AS count FROM coinbase_fill_evidence_v2').get())
       .toEqual({ count: 1 });
+    expect(database.prepare('SELECT COUNT(*) AS count FROM coinbase_transaction_evidence_v1').get())
+      .toEqual({ count: 1 });
+    expect(database.prepare('SELECT COUNT(*) AS count FROM coinbase_fee_tier_evidence_v1').get())
+      .toEqual({ count: 1 });
     expect(database.prepare('SELECT COUNT(*) AS count FROM coinbase_balance_discrepancies_v2').get())
       .toEqual({ count: 1 });
-    expect(readProfileDeletionImpact('main', database).importEvidenceRecords).toBe(4);
+    expect(readProfileDeletionImpact('main', database).importEvidenceRecords).toBe(6);
     expect(Object.isFrozen(first.summary)).toBe(true);
     database.close();
   });
@@ -84,7 +100,8 @@ describe('Coinbase evidence repository', () => {
       ...input(),
       accounts: [{ ...accounts[0]!, totalQuantity: decimal('99') }],
       datasetHash: coinbaseEvidenceDatasetHash(
-        [{ ...accounts[0]!, totalQuantity: decimal('99') }], fills,
+        [{ ...accounts[0]!, totalQuantity: decimal('99') }], fills, transactions,
+        feeTier,
       ),
     }, database)).toThrow('total mismatch');
     expect(database.prepare('SELECT COUNT(*) AS count FROM coinbase_sync_runs_v2').get())
@@ -110,6 +127,10 @@ describe('Coinbase evidence repository', () => {
     expect(() => database.prepare('DELETE FROM coinbase_account_evidence_v2 WHERE run_id = ?')
       .run(saved.summary.id)).toThrow('immutable');
     expect(() => database.prepare('DELETE FROM coinbase_fill_evidence_v2 WHERE run_id = ?')
+      .run(saved.summary.id)).toThrow('immutable');
+    expect(() => database.prepare('DELETE FROM coinbase_transaction_evidence_v1 WHERE run_id = ?')
+      .run(saved.summary.id)).toThrow('immutable');
+    expect(() => database.prepare('DELETE FROM coinbase_fee_tier_evidence_v1 WHERE run_id = ?')
       .run(saved.summary.id)).toThrow('immutable');
     expect(() => database.prepare('DELETE FROM coinbase_balance_discrepancies_v2 WHERE run_id = ?')
       .run(saved.summary.id)).toThrow('immutable');

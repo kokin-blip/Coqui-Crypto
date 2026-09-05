@@ -23,6 +23,8 @@ export interface CoinbaseAccountEvidence {
 }
 
 export interface CoinbaseFillEvidence {
+  /** Coinbase's newer ledger-entry identity; null for historical/older responses. */
+  readonly entryId?: string | null;
   readonly tradeId: string;
   readonly orderId: string;
   readonly productId: string;
@@ -30,9 +32,35 @@ export interface CoinbaseFillEvidence {
   readonly price: DecimalString;
   readonly size: AssetQuantity;
   readonly commission: DecimalString;
+  /** Exact component amounts from `commission_detail_total`, when supplied. */
+  readonly commissionDetail?: Readonly<Record<string, DecimalString>> | null;
   readonly sizeInQuote: boolean;
   readonly tradeAtMs: number;
   readonly sequenceAtMs: number;
+}
+
+export interface CoinbaseTransactionEvidence {
+  readonly transactionId: string;
+  readonly accountUuid: string;
+  readonly type: string;
+  readonly status: string;
+  /** Signed provider amount; direction is retained exactly as reported. */
+  readonly amount: DecimalString;
+  readonly amountCurrency: string;
+  readonly nativeAmount: DecimalString;
+  readonly nativeCurrency: string;
+  readonly createdAtMs: number;
+  /** Null when Coinbase omits the field from List/Show responses. */
+  readonly updatedAtMs: number | null;
+  readonly resourcePath: string;
+}
+
+export interface CoinbaseFeeTierEvidence {
+  readonly pricingTier: string;
+  readonly makerFeeRate: DecimalString;
+  readonly takerFeeRate: DecimalString;
+  readonly usdFrom: DecimalString;
+  readonly usdTo: DecimalString | null;
 }
 
 export interface CoinbaseLocalBalance {
@@ -155,6 +183,7 @@ function canonicalAccounts(accounts: readonly CoinbaseAccountEvidence[]) {
 function canonicalFills(fills: readonly CoinbaseFillEvidence[]) {
   return [...fills]
     .map((fill) => ({
+      entryId: fill.entryId ?? null,
       tradeId: fill.tradeId,
       orderId: fill.orderId,
       productId: fill.productId,
@@ -162,6 +191,10 @@ function canonicalFills(fills: readonly CoinbaseFillEvidence[]) {
       price: fill.price,
       size: fill.size,
       commission: fill.commission,
+      commissionDetail: fill.commissionDetail === undefined || fill.commissionDetail === null
+        ? null
+        : Object.fromEntries(Object.entries(fill.commissionDetail).sort(([left], [right]) =>
+            left.localeCompare(right))),
       sizeInQuote: fill.sizeInQuote,
       tradeAtMs: fill.tradeAtMs,
       sequenceAtMs: fill.sequenceAtMs,
@@ -172,14 +205,28 @@ function canonicalFills(fills: readonly CoinbaseFillEvidence[]) {
       left.tradeId.localeCompare(right.tradeId));
 }
 
+function canonicalTransactions(transactions: readonly CoinbaseTransactionEvidence[]) {
+  return [...transactions]
+    .map((transaction) => ({ ...transaction }))
+    .sort((left, right) =>
+      (left.updatedAtMs ?? left.createdAtMs) - (right.updatedAtMs ?? right.createdAtMs) ||
+      left.createdAtMs - right.createdAtMs ||
+      left.accountUuid.localeCompare(right.accountUuid) ||
+      left.transactionId.localeCompare(right.transactionId));
+}
+
 /** Hash only normalized provider facts; pagination and local receipt timing remain separate evidence. */
 export function coinbaseEvidenceDatasetHash(
   accounts: readonly CoinbaseAccountEvidence[],
   fills: readonly CoinbaseFillEvidence[],
+  transactions: readonly CoinbaseTransactionEvidence[] = [],
+  feeTier: CoinbaseFeeTierEvidence | null = null,
 ): string {
   return sha256Hex(JSON.stringify({
-    schemaVersion: 1,
+    schemaVersion: 2,
     accounts: canonicalAccounts(accounts),
     fills: canonicalFills(fills),
+    transactions: canonicalTransactions(transactions),
+    feeTier,
   }));
 }

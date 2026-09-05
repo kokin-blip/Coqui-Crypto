@@ -1,4 +1,4 @@
-@import '@fontsource-variable/manrope';
+@import '@fontsource-variable/ibm-plex-sans/wght.css';
 @import '@coqui/ui-kit/theme.css';
 @import 'tailwindcss';
 
@@ -10,7 +10,7 @@
  * changing from 9 to 10 does not reflow the row (docs/UI-UX.md §1).
  */
 @theme {
-  --font-sans: 'Manrope Variable', Manrope, system-ui, sans-serif;
+  --font-sans: 'IBM Plex Sans Variable', 'IBM Plex Sans', system-ui, sans-serif;
   --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
 
   /* Motion tokens. Three durations, not a scale — UI-UX §3. */
@@ -44,6 +44,16 @@ body {
   font-size: var(--density-font-size);
   font-variant-numeric: tabular-nums;
   line-height: var(--density-line-height);
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  color: var(--coqui-selection-text);
+  background: var(--coqui-selection);
+}
+
+html {
+  scrollbar-color: var(--coqui-border-strong) var(--coqui-canvas-raised);
 }
 
 button,

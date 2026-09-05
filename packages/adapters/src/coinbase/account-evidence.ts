@@ -4,11 +4,15 @@ import {
   nonNegativeDecimal,
   type CoinbaseAccountEvidence,
   type CoinbaseFillEvidence,
+  type CoinbaseFeeTierEvidence,
+  type CoinbaseTransactionEvidence,
   type DecimalString,
 } from '@coqui/core';
 
 import type { HttpFailure } from '../http/index.js';
 import { COINBASE_API_HOST, type CoinbaseReadHttpClient } from './auth.js';
+import { fetchCoinbaseTransactionEvidence } from './transaction-evidence.js';
+import { fetchCoinbaseFeeTierEvidence } from './fee-evidence.js';
 
 const BASE_URL = `https://${COINBASE_API_HOST}/api/v3/brokerage`;
 const MAX_ACCOUNT_ROWS = 10_000;
@@ -16,12 +20,14 @@ const MAX_FILL_ROWS = 100_000;
 const MAX_PAGES = 1_000;
 const ACCOUNT_PAGE_SIZE = 250;
 const FILL_PAGE_SIZE = 100;
+const DEFAULT_ACQUISITION_MAX_ELAPSED_MS = 300_000;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 const CURRENCY_PATTERN = /^[A-Z0-9][A-Z0-9._-]{0,31}$/u;
 const IDENTIFIER_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$/u;
 const PRODUCT_PATTERN = /^[A-Z0-9][A-Z0-9._-]{0,63}$/u;
 const CURSOR_PATTERN = /^[A-Za-z0-9._~+/=-]{1,4096}$/u;
 const RFC3339_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/u;
+const COMMISSION_COMPONENT_PATTERN = /^[a-z][a-z0-9_]{0,63}$/u;
 
 export type CoinbaseEvidenceFailureCode =
   | 'cancelled'
@@ -42,9 +48,21 @@ export type CoinbaseEvidenceFailureCode =
 export interface CoinbaseEvidenceAcquisition {
   readonly accounts: readonly CoinbaseAccountEvidence[];
   readonly fills: readonly CoinbaseFillEvidence[];
+  readonly transactions: readonly CoinbaseTransactionEvidence[];
+  readonly feeTier: CoinbaseFeeTierEvidence | null;
   readonly accountPageCount: number;
   readonly fillPageCount: number;
+  readonly transactionPageCount: number;
   readonly datasetHash: string;
+}
+
+export interface CoinbaseEvidenceAcquisitionOptions {
+  /** Wall-clock budget shared by the complete accounts-and-fills cursor walk. */
+  readonly maxElapsedMs?: number;
+  /** Enable the separate V2 transaction-evidence walk. Production sync enables this. */
+  readonly includeTransactions?: boolean;
+  /** Capture exact maker/taker tier strings without changing Coqui's cost policy. */
+  readonly includeFeeTier?: boolean;
 }
 
 export type CoinbaseEvidenceAcquisitionResult =
@@ -52,7 +70,7 @@ export type CoinbaseEvidenceAcquisitionResult =
   | {
       readonly ok: false;
       readonly code: CoinbaseEvidenceFailureCode;
-      readonly resource: 'accounts' | 'fills';
+      readonly resource: 'accounts' | 'fills' | 'transactions' | 'fee_tier';
     };
 
 interface Page<T> {
@@ -147,6 +165,9 @@ function parseFill(value: unknown): CoinbaseFillEvidence | null {
   const data = record(value);
   if (data === null || data['trade_type'] !== 'FILL') return null;
   const tradeId = requiredString(data['trade_id'], IDENTIFIER_PATTERN);
+  const entryId = data['entry_id'] === undefined || data['entry_id'] === null || data['entry_id'] === ''
+    ? null
+    : requiredString(data['entry_id'], IDENTIFIER_PATTERN);
   const orderId = requiredString(data['order_id'], IDENTIFIER_PATTERN);
   const productId = requiredString(data['product_id'], PRODUCT_PATTERN);
   const price = exactNonNegative(data['price'], true);
@@ -154,14 +175,29 @@ function parseFill(value: unknown): CoinbaseFillEvidence | null {
   const commission = exactNonNegative(data['commission']);
   const tradeAtMs = timestamp(data['trade_time']);
   const sequenceAtMs = timestamp(data['sequence_timestamp']);
+  const commissionDetailRaw = data['commission_detail_total'];
+  let commissionDetail: Readonly<Record<string, DecimalString>> | null = null;
+  if (commissionDetailRaw !== undefined && commissionDetailRaw !== null) {
+    const detail = record(commissionDetailRaw);
+    if (detail === null) return null;
+    const parsedDetail: Record<string, DecimalString> = {};
+    for (const [key, value] of Object.entries(detail)) {
+      if (!COMMISSION_COMPONENT_PATTERN.test(key)) continue;
+      const amount = exactNonNegative(value);
+      if (amount === null) return null;
+      parsedDetail[key] = amount;
+    }
+    commissionDetail = Object.freeze(parsedDetail);
+  }
   if (
-    tradeId === null || orderId === null || productId === null || price === null ||
+    entryId === undefined || tradeId === null || orderId === null || productId === null || price === null ||
     size === null || commission === null || tradeAtMs === undefined || tradeAtMs === null ||
     sequenceAtMs === undefined || sequenceAtMs === null ||
     (data['side'] !== 'BUY' && data['side'] !== 'SELL') ||
     typeof data['size_in_quote'] !== 'boolean'
   ) return null;
   return Object.freeze({
+    entryId,
     tradeId,
     orderId,
     productId,
@@ -169,6 +205,7 @@ function parseFill(value: unknown): CoinbaseFillEvidence | null {
     price,
     size,
     commission,
+    commissionDetail,
     sizeInQuote: data['size_in_quote'],
     tradeAtMs,
     sequenceAtMs,
@@ -180,24 +217,43 @@ function cursor(value: unknown): string | null | undefined {
   return typeof value === 'string' && CURSOR_PATTERN.test(value) ? value : undefined;
 }
 
-function parsePage<T>(
+function parseRows<T>(
   value: unknown,
   key: 'accounts' | 'fills',
   parseRow: (row: unknown) => T | null,
-): Page<T> | null {
+): readonly T[] | null {
   const data = record(value);
-  if (data === null || !Array.isArray(data[key]) || typeof data['has_next'] !== 'boolean') {
-    return null;
-  }
-  const nextCursor = cursor(data['cursor']);
-  if (nextCursor === undefined || (data['has_next'] && nextCursor === null)) return null;
+  if (data === null || !Array.isArray(data[key])) return null;
   const rows: T[] = [];
   for (const valueRow of data[key]) {
     const row = parseRow(valueRow);
     if (row === null) return null;
     rows.push(row);
   }
+  return rows;
+}
+
+function parseAccountPage<T>(
+  value: unknown,
+  parseRow: (row: unknown) => T | null,
+): Page<T> | null {
+  const data = record(value);
+  const rows = parseRows(value, 'accounts', parseRow);
+  if (data === null || rows === null || typeof data['has_next'] !== 'boolean') return null;
+  const nextCursor = cursor(data['cursor']);
+  if (nextCursor === undefined || (data['has_next'] && nextCursor === null)) return null;
   return { rows, hasNext: data['has_next'], cursor: nextCursor };
+}
+
+function parseFillPage<T>(
+  value: unknown,
+  parseRow: (row: unknown) => T | null,
+): Page<T> | null {
+  const rows = parseRows(value, 'fills', parseRow);
+  if (rows === null) return null;
+  const nextCursor = cursor(record(value)?.['cursor']);
+  if (nextCursor === undefined) return null;
+  return { rows, hasNext: nextCursor !== null, cursor: nextCursor };
 }
 
 function classifyHttpFailure(failure: HttpFailure): CoinbaseEvidenceFailureCode {
@@ -257,7 +313,9 @@ async function fetchPages<T extends CoinbaseAccountEvidence | CoinbaseFillEviden
       }
       if (raw['proof_token_required']) return { ok: false, code: 'proof_token_required' };
     }
-    const page = parsePage(result.data, resource, parseRow);
+    const page = resource === 'accounts'
+      ? parseAccountPage(result.data, parseRow)
+      : parseFillPage(result.data, parseRow);
     if (page === null) return { ok: false, code: 'invalid_response' };
     pageCount += 1;
     for (const row of page.rows) {
@@ -286,21 +344,60 @@ async function fetchPages<T extends CoinbaseAccountEvidence | CoinbaseFillEviden
 export async function fetchCoinbaseAccountEvidence(
   http: Pick<CoinbaseReadHttpClient, 'getJson'>,
   signal?: AbortSignal,
+  options: CoinbaseEvidenceAcquisitionOptions = {},
 ): Promise<CoinbaseEvidenceAcquisitionResult> {
-  const accounts = await fetchPages(
-    http, 'accounts', parseAccount, (row) => row.accountUuid, MAX_ACCOUNT_ROWS, signal,
-  );
-  if (!accounts.ok) return Object.freeze({ ...accounts, resource: 'accounts' });
-  const fills = await fetchPages(
-    http, 'fills', parseFill, (row) => row.tradeId, MAX_FILL_ROWS, signal,
-  );
-  if (!fills.ok) return Object.freeze({ ...fills, resource: 'fills' });
-  const value = Object.freeze({
-    accounts: accounts.rows,
-    fills: fills.rows,
-    accountPageCount: accounts.pageCount,
-    fillPageCount: fills.pageCount,
-    datasetHash: coinbaseEvidenceDatasetHash(accounts.rows, fills.rows),
+  const maxElapsedMs = options.maxElapsedMs ?? DEFAULT_ACQUISITION_MAX_ELAPSED_MS;
+  if (!Number.isSafeInteger(maxElapsedMs) || maxElapsedMs <= 0) {
+    throw new RangeError('Coinbase acquisition maxElapsedMs must be a positive safe integer');
+  }
+  const deadline = new AbortController();
+  const timer = setTimeout(() => deadline.abort(), maxElapsedMs);
+  const acquisitionSignal = signal === undefined
+    ? deadline.signal
+    : AbortSignal.any([signal, deadline.signal]);
+  const failure = <T extends { ok: false; code: CoinbaseEvidenceFailureCode }>(
+    result: T,
+    resource: 'accounts' | 'fills' | 'transactions' | 'fee_tier',
+  ): CoinbaseEvidenceAcquisitionResult => Object.freeze({
+    ...result,
+    code: deadline.signal.aborted && !signal?.aborted
+      ? 'elapsed_budget_exhausted' as const
+      : result.code,
+    resource,
   });
-  return Object.freeze({ ok: true, value });
+  try {
+    const accounts = await fetchPages(
+      http, 'accounts', parseAccount, (row) => row.accountUuid,
+      MAX_ACCOUNT_ROWS, acquisitionSignal,
+    );
+    if (!accounts.ok) return failure(accounts, 'accounts');
+    const fills = await fetchPages(
+      http, 'fills', parseFill, (row) => row.entryId ?? row.tradeId,
+      MAX_FILL_ROWS, acquisitionSignal,
+    );
+    if (!fills.ok) return failure(fills, 'fills');
+    const transactions = options.includeTransactions === true
+      ? await fetchCoinbaseTransactionEvidence(http, accounts.rows, acquisitionSignal)
+      : { ok: true as const, rows: Object.freeze([]), pageCount: 0 };
+    if (!transactions.ok) return failure(transactions, 'transactions');
+    const feeTier = options.includeFeeTier === true
+      ? await fetchCoinbaseFeeTierEvidence(http, acquisitionSignal)
+      : { ok: true as const, value: null };
+    if (!feeTier.ok) return failure(feeTier, 'fee_tier');
+    const value = Object.freeze({
+      accounts: accounts.rows,
+      fills: fills.rows,
+      transactions: transactions.rows,
+      feeTier: feeTier.value,
+      accountPageCount: accounts.pageCount,
+      fillPageCount: fills.pageCount,
+      transactionPageCount: transactions.pageCount,
+      datasetHash: coinbaseEvidenceDatasetHash(
+        accounts.rows, fills.rows, transactions.rows, feeTier.value,
+      ),
+    });
+    return Object.freeze({ ok: true, value });
+  } finally {
+    clearTimeout(timer);
+  }
 }

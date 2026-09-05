@@ -2,6 +2,7 @@ import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { formatQuantity, formatUsd } from '@coqui/ui-kit';
 
 import { DeferredPanel } from './DeferredPanel.js';
+import { SurfaceState } from './SurfaceState.js';
 import { useChannel } from '../query/use-channel.js';
 
 type TaxView = ChannelResponse<'portfolio.tax'>;
@@ -28,11 +29,9 @@ function Money({ value, signed = false }: { readonly value: string; readonly sig
 export function Tax({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const tax = useChannel(client, 'portfolio.tax', {});
 
-  if (tax.kind === 'loading') return <p aria-live="polite">Loading tax ledger…</p>;
+  if (tax.kind === 'loading') return <SurfaceState kind="loading" title="Loading tax ledger" />;
   if (tax.kind !== 'ready') {
-    return (
-      <p role="alert">Could not load tax: {tax.issues.map((issue) => issue.code).join(', ')}</p>
-    );
+    return <SurfaceState kind="error" title="Could not load tax evidence" detail={tax.issues.map((issue) => issue.code).join(', ')} />;
   }
 
   const view: TaxView = tax.value;
@@ -63,7 +62,7 @@ export function Tax({ client }: { readonly client: CoquiClient }): React.JSX.Ele
       </dl>
 
       {view.disposals.length === 0 ? (
-        <p>No disposals recorded yet.</p>
+        <SurfaceState kind="empty" title="No disposals recorded" detail="Coqui does not infer disposals without immutable lot evidence." compact />
       ) : (
         <table className="w-full text-left">
           <caption className="sr-only">Recorded disposals with cost basis and realised P&amp;L</caption>

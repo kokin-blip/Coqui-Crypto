@@ -260,7 +260,7 @@ serialization, and invalid-URL outcomes. The next slice is the Coinbase public
 REST adapter, followed by authentication and the permission probe. The public
 adapter is now ported with canonical product identities, decimal spot values,
 validated 300-candle pagination, explicit completed-bar provenance, and a
-canonical Coinbase asset catalog. ECDSA request-bound authentication and the
+canonical Coinbase asset catalog. ES256/EdDSA request-bound authentication and the
 fail-closed View-only permission probe are now also ported. The authenticated
 surface exposes GET only and rejects Trade or Transfer capability before account
 reads. OS-backed secret storage is now ported through pinned
@@ -906,20 +906,30 @@ holdout, IPC, `CoquiClient`, or P5 UI work.
 
 **Completed 2026-08-10 — profile-scoped Coinbase connection boundary:** `COINBASE_STATUS`,
 `COINBASE_CONNECT`, `COINBASE_CONNECT_JSON`, and `COINBASE_DISCONNECT` now share one secret-safe
-service. Credentials are validated and canonicalized as ES256 before an abortable GET-only probe
-proves account readability and requires View while rejecting Trade, Transfer, and Coinbase's newly
-separate Receive permission. Successful publication stores private material only in the scoped
+service. Credentials are validated and canonicalized as ES256 or EdDSA before an abortable GET-only
+probe proves account readability and requires View while rejecting Trade and Transfer. The current
+permissions response does not expose Receive, so no Receive authority is inferred. Successful
+publication stores private material only in the scoped
 secret store and writes only SHA-256 key/portfolio identities to the revision-checked global
 manifest; either duplicate identity blocks another profile. Connect and disconnect restore the prior
 secret after manifest conflict, surface explicit recovery-required state if restoration fails, and
 never delete portfolio evidence. Status derives disconnected, connected, attention-required, or
 unavailable state without network access, raw errors, credentials, or fingerprints. Current adapter
 source is now resolved directly by both typecheck and Vitest, closing a stale-build test gap. Tests
-cover the official four permission flags, retry-bound cancellation, malformed and secret-bearing
+cover the official three permission flags, retry-bound cancellation, malformed and secret-bearing
 input containment, duplicate identities, both rollback directions, derived mismatch states,
 idempotent disconnect, secrecy, and deep immutability. Coinbase account/fill ingestion and
 discrepancy evidence remain next; no IPC, execution, tax-lot promotion, P3/default, or final-holdout
 behavior was added.
+
+**Completed 2026-09-04 — Coinbase SDK compatibility remediation:** the authenticated boundary now
+accepts the current three-field permission response while continuing to reject Trade or Transfer,
+parses cursor-only fill pages, supports SDK-compatible ES256 and EdDSA signing, rejects redirects,
+shares one five-minute budget across a complete acquisition, and declines over-cap `Retry-After`
+delays instead of retrying early. Active-profile IPC now exposes status, connect, disconnect, and
+sync through strict contracts. Migration 57 preserves optional fill entry/commission details,
+signed V2 transaction evidence, and exact string fee-tier evidence; none of these facts mutate lots,
+submit orders, move funds, lower the conservative cost model, or add a Python runtime dependency.
 
 **Completed 2026-08-10 — Coinbase account/fill and discrepancy evidence:** `COINBASE_SYNC` and
 `COINBASE_IMPORT_DISCREPANCIES` now use a complete bounded cursor acquisition over Coinbase accounts
@@ -1166,7 +1176,7 @@ reduces the shared action machine where `settled` is the only path to
 `succeeded` — optimistic success stays unreachable by construction rather than
 by convention.
 
-**Exit:** a real view-only key imports a real portfolio. All four permission
+**Exit:** a real view-only key imports a real portfolio. All three exposed permission
 combinations tested — view-only accepted; trade, transfer, and both rejected with
 clear messages. **A secret-leak suite asserts no secret appears in any IPC
 response, log line, error message, database column, exported file, or crash

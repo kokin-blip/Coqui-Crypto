@@ -3,6 +3,7 @@ import { presentAction } from '@coqui/ui-kit';
 
 import { PaperProposalReview } from './PaperProposalReview.js';
 import { Performance } from './Performance.js';
+import { SurfaceState } from './SurfaceState.js';
 import type { AppRoute } from './routes.js';
 import { useChannel } from '../query/use-channel.js';
 import { useCommand } from '../query/use-command.js';
@@ -65,12 +66,12 @@ export function PaperTrading({
           <div><p className="eyebrow">Durable queue</p><h2 id="proposal-heading">Paper proposals</h2></div>
           <span className="muted">{rows.length} recorded</span>
         </div>
-        {proposals.kind === 'loading' && <p aria-live="polite">Loading proposals…</p>}
+        {proposals.kind === 'loading' && <SurfaceState kind="loading" title="Loading proposals" compact />}
         {proposals.kind !== 'loading' && proposals.kind !== 'ready' && (
-          <p role="alert">Could not load proposals: {proposals.issues.map((issue) => issue.code).join(', ')}</p>
+          <SurfaceState kind="error" title="Could not load proposals" detail={proposals.issues.map((issue) => issue.code).join(', ')} compact />
         )}
         {proposals.kind === 'ready' && rows.length === 0 && (
-          <p className="empty-state">No paper proposal has been prepared for this profile.</p>
+          <SurfaceState kind="empty" title="No paper proposal has been prepared for this profile." compact />
         )}
         {rows.length > 0 && (
           <ul className="proposal-list">

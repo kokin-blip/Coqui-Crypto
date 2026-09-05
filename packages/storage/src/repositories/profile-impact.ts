@@ -56,6 +56,8 @@ export function readProfileDeletionImpact(
         (SELECT COUNT(*) FROM coinbase_sync_runs_v2) +
         (SELECT COUNT(*) FROM coinbase_account_evidence_v2) +
         (SELECT COUNT(*) FROM coinbase_fill_evidence_v2) +
+        (SELECT COUNT(*) FROM coinbase_transaction_evidence_v1) +
+        (SELECT COUNT(*) FROM coinbase_fee_tier_evidence_v1) +
         (SELECT COUNT(*) FROM coinbase_balance_discrepancies_v2))
         AS import_evidence_records,
       ((SELECT COUNT(*) FROM wallet_execution_journal WHERE profile_id = ?) +

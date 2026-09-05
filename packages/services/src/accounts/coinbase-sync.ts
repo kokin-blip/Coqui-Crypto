@@ -51,6 +51,8 @@ export interface CoinbaseSyncView {
   readonly datasetHash: string;
   readonly accountCount: number;
   readonly fillCount: number;
+  readonly transactionCount: number;
+  readonly feeTierCaptured: boolean;
   readonly discrepancyCount: number;
   readonly evidenceCount: number;
   readonly created: boolean;
@@ -97,7 +99,10 @@ function defaultAcquirer(): CoinbaseEvidenceAcquirer {
     async acquire(credentials: CoinbaseCredentials, signal?: AbortSignal) {
       const client = createCoinbaseReadHttpClient(credentials);
       try {
-        return await fetchCoinbaseAccountEvidence(client, signal);
+        return await fetchCoinbaseAccountEvidence(client, signal, {
+          includeTransactions: true,
+          includeFeeTier: true,
+        });
       } finally {
         client.destroy();
       }
@@ -170,6 +175,9 @@ export class CoinbaseAccountSyncService {
         ? 'cancelled' : 'unexpected_failure' });
     }
     if (!acquired.ok) return freeze({ ok: false, code: acquisitionFailure(acquired) });
+    const transactions = acquired.value.transactions ?? [];
+    const transactionPageCount = acquired.value.transactionPageCount ?? 0;
+    const feeTier = acquired.value.feeTier ?? null;
     const receivedAtMs = safeNow(this.#clock);
     if (receivedAtMs === null || receivedAtMs < requested) {
       return freeze({ ok: false, code: 'clock_unavailable' });
@@ -184,16 +192,20 @@ export class CoinbaseAccountSyncService {
           receivedAtMs,
           accountPageCount: acquired.value.accountPageCount,
           fillPageCount: acquired.value.fillPageCount,
+          transactionPageCount,
           datasetHash: acquired.value.datasetHash,
           accounts: acquired.value.accounts,
           fills: acquired.value.fills,
+          transactions,
+          feeTier,
           discrepancies,
         }, this.#database);
         setSetting('coinbase.last_sync_at', String(receivedAtMs), this.#database);
         return { saved: result, discrepancyCount: discrepancies.length };
       });
       const evidenceCount = 1 + acquired.value.accounts.length +
-        acquired.value.fills.length + persisted.discrepancyCount;
+        acquired.value.fills.length + transactions.length +
+        persisted.discrepancyCount + (feeTier === null ? 0 : 1);
       return freeze({
         ok: true,
         value: {
@@ -203,6 +215,8 @@ export class CoinbaseAccountSyncService {
           datasetHash: acquired.value.datasetHash,
           accountCount: acquired.value.accounts.length,
           fillCount: acquired.value.fills.length,
+          transactionCount: transactions.length,
+          feeTierCaptured: feeTier !== null,
           discrepancyCount: persisted.discrepancyCount,
           evidenceCount,
           created: persisted.saved.created,

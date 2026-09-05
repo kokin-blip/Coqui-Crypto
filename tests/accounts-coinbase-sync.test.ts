@@ -59,7 +59,8 @@ function acquired(): CoinbaseEvidenceAcquisitionResult {
   return {
     ok: true,
     value: {
-      accounts, fills, accountPageCount: 1, fillPageCount: 1,
+      accounts, fills, transactions: [], feeTier: null,
+      accountPageCount: 1, fillPageCount: 1, transactionPageCount: 0,
       datasetHash: coinbaseEvidenceDatasetHash(accounts, fills),
     },
   };
@@ -111,7 +112,8 @@ describe('Coinbase account sync service', () => {
       value: {
         profileId: 'main', requestedAtMs: 100, receivedAtMs: 110,
         datasetHash: coinbaseEvidenceDatasetHash(accounts, fills),
-        accountCount: 1, fillCount: 1, discrepancyCount: 1, evidenceCount: 4,
+        accountCount: 1, fillCount: 1, transactionCount: 0,
+        feeTierCaptured: false, discrepancyCount: 1, evidenceCount: 4,
         created: true, portfolioMutated: false, syntheticLotsCreated: false,
         syntheticFillsCreated: false,
       },

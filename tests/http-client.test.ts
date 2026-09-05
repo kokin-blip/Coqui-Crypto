@@ -145,12 +145,9 @@ describe('createHttpClient', () => {
     expect(authorizations).toEqual(['Bearer attempt-1', 'Bearer attempt-2']);
   });
 
-  it('retries 429 and 5xx GET responses using capped Retry-After delays', async () => {
+  it('does not retry before an over-cap Retry-After delay', async () => {
     const sleep = vi.fn(async () => {});
-    const fetch = vi.fn()
-      .mockResolvedValueOnce(response(false, 429, {}, { 'retry-after': '3600' }))
-      .mockResolvedValueOnce(response(false, 500))
-      .mockResolvedValueOnce(response(true, 200, { recovered: true }));
+    const fetch = vi.fn(async () => response(false, 429, {}, { 'retry-after': '3600' }));
     const client = testClient({
       fetch,
       maxRetries: 2,
@@ -161,9 +158,20 @@ describe('createHttpClient', () => {
 
     const result = await client.getJson('https://api.example/data');
 
-    expect(result.ok).toBe(true);
-    expect(sleep).toHaveBeenNthCalledWith(1, 60_000, expect.any(AbortSignal));
-    expect(sleep).toHaveBeenNthCalledWith(2, 50, expect.any(AbortSignal));
+    expect(result).toMatchObject({ ok: false, reason: 'http', status: 429, retried: 0 });
+    expect(fetch).toHaveBeenCalledOnce();
+    expect(sleep).not.toHaveBeenCalled();
+  });
+
+  it('honors an in-policy Retry-After delay', async () => {
+    const sleep = vi.fn(async () => {});
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(response(false, 429, {}, { 'retry-after': '30' }))
+      .mockResolvedValueOnce(response(true, 200, { recovered: true }));
+    const client = testClient({ fetch, maxRetries: 1, maxRetryAfterMs: 60_000, sleep });
+
+    await expect(client.getJson('https://api.example/data')).resolves.toMatchObject({ ok: true });
+    expect(sleep).toHaveBeenCalledWith(30_000, expect.any(AbortSignal));
   });
 
   it('keeps generated exponential jitter within the deterministic retry bound', async () => {

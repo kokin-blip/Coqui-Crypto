@@ -2,6 +2,7 @@ import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { formatPercent, formatUsd } from '@coqui/ui-kit';
 
 import { DeferredPanel } from './DeferredPanel.js';
+import { SurfaceState } from './SurfaceState.js';
 import { useChannel } from '../query/use-channel.js';
 
 type AllocationView = ChannelResponse<'portfolio.allocation'>;
@@ -45,13 +46,9 @@ function Drift({ value }: { readonly value: number | null }): React.JSX.Element 
 export function Allocation({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const allocation = useChannel(client, 'portfolio.allocation', {});
 
-  if (allocation.kind === 'loading') return <p aria-live="polite">Loading allocation…</p>;
+  if (allocation.kind === 'loading') return <SurfaceState kind="loading" title="Loading allocation" />;
   if (allocation.kind !== 'ready') {
-    return (
-      <p role="alert">
-        Could not load allocation: {allocation.issues.map((issue) => issue.code).join(', ')}
-      </p>
-    );
+    return <SurfaceState kind="error" title="Could not load allocation" detail={allocation.issues.map((issue) => issue.code).join(', ')} />;
   }
 
   const view = allocation.value;
@@ -64,7 +61,7 @@ export function Allocation({ client }: { readonly client: CoquiClient }): React.
       </h2>
 
       {view.allocation.slices.length === 0 ? (
-        <p>Nothing to allocate yet.</p>
+        <SurfaceState kind="empty" title="Nothing to allocate yet" detail="Holdings appear here after verified portfolio evidence exists." compact />
       ) : (
         <table className="w-full text-left">
           <caption className="sr-only">Actual versus target weight and drift per asset</caption>

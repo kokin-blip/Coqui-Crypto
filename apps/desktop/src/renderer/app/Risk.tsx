@@ -1,6 +1,7 @@
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 
 import { useChannel } from '../query/use-channel.js';
+import { SurfaceState } from './SurfaceState.js';
 
 type RiskView = ChannelResponse<'risk.dashboard'>;
 type Rung = RiskView['ladder'][number];
@@ -43,14 +44,10 @@ function Rung({ rung }: { readonly rung: Rung }): React.JSX.Element {
 export function Risk({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const risk = useChannel(client, 'risk.dashboard', {});
 
-  if (risk.kind === 'loading') return <p aria-live="polite">Loading risk controls…</p>;
+  if (risk.kind === 'loading') return <SurfaceState kind="loading" title="Loading risk controls" />;
 
   if (risk.kind !== 'ready') {
-    return (
-      <p role="alert">
-        Could not load risk controls: {risk.issues.map((issue) => issue.code).join(', ')}
-      </p>
-    );
+    return <SurfaceState kind="error" title="Could not load risk controls" detail={risk.issues.map((issue) => issue.code).join(', ')} />;
   }
 
   const view = risk.value;

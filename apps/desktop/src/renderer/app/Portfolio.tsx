@@ -6,6 +6,7 @@ import { PaperComparison } from './PaperComparison.js';
 import { AllocationRing } from './AllocationRing.js';
 import { ChartViewControl } from './ChartViewControl.js';
 import { Reconciliation } from './Reconciliation.js';
+import { SurfaceState } from './SurfaceState.js';
 import { useChannel } from '../query/use-channel.js';
 import { useCommand } from '../query/use-command.js';
 import { useWorkspace } from './WorkspaceContext.js';
@@ -155,15 +156,10 @@ export function Portfolio({ client }: { readonly client: CoquiClient }): React.J
   const workspaceCommand = useCommand(client, 'accounts.workspace.set', WORKSPACE_INVALIDATIONS);
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
 
-  if (portfolio.kind === 'loading') return <p aria-live="polite">Loading portfolio…</p>;
+  if (portfolio.kind === 'loading') return <SurfaceState kind="loading" title="Loading portfolio" />;
 
   if (portfolio.kind !== 'ready') {
-    return (
-      <p role="alert">
-        Could not load the portfolio:{' '}
-        {portfolio.issues.map((issue) => issue.code).join(', ')}
-      </p>
-    );
+    return <SurfaceState kind="error" title="Could not load the portfolio" detail={portfolio.issues.map((issue) => issue.code).join(', ')} />;
   }
 
   const view = portfolio.value;

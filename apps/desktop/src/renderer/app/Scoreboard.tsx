@@ -2,6 +2,7 @@ import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { formatPercent, riskBadge, validationBadge } from '@coqui/ui-kit';
 
 import { NegativeFindings } from './NegativeFindings.js';
+import { SurfaceState } from './SurfaceState.js';
 import { TrackTable } from './TrackTable.js';
 import { useChannel, type ChannelState } from '../query/use-channel.js';
 
@@ -104,7 +105,7 @@ export function Scoreboard({
 }): React.JSX.Element {
   const gate: ChannelState<GateView> = useChannel(client, 'risk.evidence-gate', {});
 
-  if (gate.kind === 'loading') return <p aria-live="polite">Loading evidence…</p>;
+  if (gate.kind === 'loading') return <SurfaceState kind="loading" title="Loading evidence gate" />;
 
   if (gate.kind !== 'ready') {
     // Failure, blocked and unknown stay distinct: collapsing them would tell a
@@ -115,11 +116,7 @@ export function Scoreboard({
         : gate.kind === 'unknown'
           ? 'Outcome unconfirmed — do not retry'
           : 'Could not load the evidence gate';
-    return (
-      <p role="alert">
-        {heading}: {gate.issues.map((issue) => issue.code).join(', ')}
-      </p>
-    );
+    return <SurfaceState kind={gate.kind === 'blocked' ? 'blocked' : 'error'} title={heading} detail={gate.issues.map((issue) => issue.code).join(', ')} />;
   }
 
   const view = gate.value;

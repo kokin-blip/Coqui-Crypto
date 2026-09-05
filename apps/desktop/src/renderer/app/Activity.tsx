@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 
 import { useChannel } from '../query/use-channel.js';
+import { SurfaceState } from './SurfaceState.js';
 
 type FeedEvent = ChannelResponse<'activity.feed'>['events'][number];
 type EventFilter = 'all' | FeedEvent['status'];
@@ -30,10 +31,10 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
   }, [cursor, page]);
 
   if (feed.kind === 'loading' && events.length === 0) {
-    return <p aria-live="polite">Loading operational activity…</p>;
+    return <SurfaceState kind="loading" title="Loading operational activity" />;
   }
   if (feed.kind !== 'loading' && feed.kind !== 'ready' && events.length === 0) {
-    return <p role="alert">Activity unavailable: {feed.issues.map((issue) => issue.code).join(', ')}</p>;
+    return <SurfaceState kind="error" title="Operational activity unavailable" detail={feed.issues.map((issue) => issue.code).join(', ')} />;
   }
 
   const nextCursor = feed.kind === 'ready' ? feed.value.nextCursor : null;

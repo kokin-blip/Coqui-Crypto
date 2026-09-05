@@ -1,6 +1,7 @@
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 
 import { useChannel } from '../query/use-channel.js';
+import { SurfaceState } from './SurfaceState.js';
 
 type AlertsView = ChannelResponse<'alerts.view'>;
 type AlertEvent = AlertsView['alerts'][number];
@@ -58,12 +59,10 @@ function Target({ target }: { readonly target: PriceTarget }): React.JSX.Element
 export function Alerts({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const alerts = useChannel(client, 'alerts.view', {});
 
-  if (alerts.kind === 'loading') return <p aria-live="polite">Loading alerts…</p>;
+  if (alerts.kind === 'loading') return <SurfaceState kind="loading" title="Loading alerts" compact />;
 
   if (alerts.kind !== 'ready') {
-    return (
-      <p role="alert">Could not load alerts: {alerts.issues.map((issue) => issue.code).join(', ')}</p>
-    );
+    return <SurfaceState kind="error" title="Could not load alerts" detail={alerts.issues.map((issue) => issue.code).join(', ')} compact />;
   }
 
   const view = alerts.value;
@@ -85,7 +84,7 @@ export function Alerts({ client }: { readonly client: CoquiClient }): React.JSX.
       </h2>
 
       {view.alerts.length === 0 ? (
-        <p className="opacity-70">Nothing has fired yet.</p>
+        <SurfaceState kind="empty" title="Nothing has fired yet" detail="Recorded alerts will appear here without changing portfolio state." compact />
       ) : (
         <ul>
           {view.alerts.map((event) => (

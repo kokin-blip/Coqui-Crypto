@@ -78,8 +78,8 @@ status, bounded evidence count, and an allowlisted reason code. Dashboard retrie
 separate query, and this accounts slice adds no scheduler, IPC, execution, or tax-lot authority.
 Coinbase connection replaces the predecessor's raw authentication messages and database credential
 markers with one profile-scoped, secret-safe service. Direct credentials and bounded key-file JSON
-both pass canonical ES256 validation and the same authenticated view-only probe. In addition to
-Trade and Transfer, Coqui rejects Coinbase's separately documented Receive permission. Only hashed
+both pass canonical ES256/EdDSA validation and the same authenticated view-only probe. Coqui rejects
+Trade and Transfer; the current permissions response does not expose Receive authority. Only hashed
 key/portfolio identities enter the manifest, where they prevent duplicate assignment across
 profiles; private material remains in the OS secret store. Revision conflict restores the prior
 scoped secret, and a failed restore becomes explicit recovery-required state. Disconnect clears only
@@ -219,10 +219,10 @@ collide. Daily pagination otherwise retains the predecessor behavior, with
 malformed pages rejected atomically and completed-bar status made explicit.
 
 The predecessor Coinbase signer accepts Ed25519 and ECDSA keys and signs a
-throwaway validation string after parsing. Current Coinbase App documentation
-requires ECDSA P-256 / ES256 and explicitly rejects Ed25519 for this product.
-Phase 2 therefore detects the algorithm from key metadata without a validation
-signature and rejects Ed25519 locally with a secret-safe error. The authenticated
+throwaway validation string after parsing. The current Python SDK supports both EdDSA and ES256,
+while the Coinbase App guide still describes ECDSA-only behavior. Phase 2 therefore detects the
+algorithm from key metadata without a validation signature and supports both behind the same
+view-only permission probe. The authenticated
 client is GET-only, binds a fresh JWT to every network attempt, and refuses any
 destination outside the exact HTTPS Coinbase App host. The permission probe also
 fails closed on missing boolean flags rather than treating an omitted Trade or

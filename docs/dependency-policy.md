@@ -1,6 +1,9 @@
 # Dependency policy
 
 - Runtime dependencies are added only when a phase requires them.
+- The desktop self-hosts `@fontsource-variable/ibm-plex-sans` 5.3.0 under
+  OFL-1.1. Renderer fonts remain local assets; no CDN or runtime font request is
+  permitted.
 - Lockfile changes are reviewed with their release notes and audit output.
 - GitHub Actions are pinned to immutable commit SHAs.
 - Native dependencies must be exercised in both Node and packaged Electron CI.
