@@ -31,7 +31,12 @@ import type { PaperMarketData } from './oms.js';
  * it never ran is not. `docs/PLAN.md` P6 puts it as "never elapsed empty days".
  */
 
-const STRATEGY_VERSION = 'trendvol-legacy-unvalidated';
+/**
+ * This loop currently rebalances a saved allocation policy. It does not invoke
+ * the Momentum + VolTarget implementation, so its durable identity must not
+ * claim that it does.
+ */
+export const PAPER_ALLOCATION_REBALANCER_VERSION = 'allocation-policy-rebalancer-v1';
 
 export type PaperRunStandDown =
   | 'kill_switch_engaged'
@@ -45,6 +50,7 @@ export type PaperRunStandDown =
 export interface PaperRunSummary {
   readonly profileId: string;
   readonly runId: string;
+  readonly strategyVersion: string;
   readonly scheduledForMs: number;
   readonly decidedAtMs: number;
   /** Null when the run traded; otherwise why it did not. */
@@ -128,7 +134,7 @@ export function runPaperDecision(
         id: runId,
         profileId,
         scheduledFor: scheduledForMs,
-        strategyVersion: STRATEGY_VERSION,
+        strategyVersion: PAPER_ALLOCATION_REBALANCER_VERSION,
         snapshotHash: sha256Hex(`${runId}:${standDown ?? 'traded'}:${filled}`),
         snapshotJson: JSON.stringify({ standDown, filled, refused, preDecisionBalances }),
         status: 'completed',
@@ -146,6 +152,7 @@ export function runPaperDecision(
     return {
       profileId,
       runId,
+      strategyVersion: PAPER_ALLOCATION_REBALANCER_VERSION,
       scheduledForMs,
       decidedAtMs,
       standDown,
@@ -171,6 +178,7 @@ export function runPaperDecision(
     return {
       profileId,
       runId,
+      strategyVersion: PAPER_ALLOCATION_REBALANCER_VERSION,
       scheduledForMs,
       decidedAtMs: existing.createdAt,
       standDown: snapshot.standDown,

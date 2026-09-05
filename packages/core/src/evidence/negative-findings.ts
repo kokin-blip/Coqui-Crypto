@@ -150,6 +150,16 @@ export const NEGATIVE_FINDINGS: readonly NegativeFinding[] = Object.freeze([
       'but its confidence lower bounds were negative, PBO was 28.6% against a 5% ceiling, ' +
       'and drawdown 35.84% against a 35% limit.',
   }),
+  Object.freeze({
+    id: 'paper-strategy-implementation-mismatch',
+    title: 'Legacy paper strategy identity mismatch',
+    outcome: 'not-adopted',
+    source: 'coqui-study',
+    reference: 'docs/studies/paper-strategy-implementation-mismatch-2026-09-05.md',
+    summary:
+      'The scheduled paper loop was labeled TrendVol but only rebalanced a saved allocation ' +
+      'policy; its observations remain operational evidence and are ineligible as TrendVol evidence.',
+  }),
 ] satisfies NegativeFinding[]);
 
 /**

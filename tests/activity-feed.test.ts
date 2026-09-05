@@ -9,7 +9,7 @@ describe('bounded activity feed', () => {
       INSERT INTO wallet_decision_runs
       (id, profile_id, scheduled_for, strategy_version, snapshot_hash, snapshot_json, status, created_at, updated_at, error)
       VALUES (?, ?, ?, ?, ?, '{}', ?, ?, ?, NULL)
-    `).run('decision-1', 'main', 100, 'trendvol-unvalidated', 'a'.repeat(64), 'completed', 100, 100);
+    `).run('decision-1', 'main', 100, 'trendvol-legacy-unvalidated', 'a'.repeat(64), 'completed', 100, 100);
     database.prepare(`
       INSERT INTO runtime_incidents
       (id, profile_id, run_id, kind, severity, source, detail_json, occurred_at, resolved_at, resolution)
@@ -29,6 +29,9 @@ describe('bounded activity feed', () => {
 
     const second = listActivityFeed('main', 1, first.nextCursor, database);
     expect(second.events).toEqual([expect.objectContaining({ id: 'decision:decision-1' })]);
+    expect(second.events[0]?.detail).toContain(
+      'legacy allocation rebalancer (historically mislabeled as TrendVol)',
+    );
     expect(second.events.some((event) => event.id.includes('other'))).toBe(false);
     database.close();
   });

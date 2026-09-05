@@ -1,7 +1,7 @@
 # Study — forward paper run against live Coinbase bars
 
 **Registered:** 2026-08-22
-**Status:** COLLECTOR IMPLEMENTED; AWAITING FIRST REAL UTC OBSERVATION
+**Status:** RETIRED FOR STRATEGY EVIDENCE — IMPLEMENTATION IDENTITY MISMATCH
 **Owner decision it implements:** "Both — simulated in CI, then a real run"
 
 ## Why this exists separately from the CI harness
@@ -21,6 +21,13 @@ be chosen after seeing the result. That is the same discipline invariant 7
 applies to parameter searches, applied to an operational claim.
 
 ## Precondition and selected campaign
+
+> **2026-09-05 correction:** inspection established that the scheduled loop
+> labeled `trendvol-legacy-unvalidated` did not execute Momentum + VolTarget. It
+> executed saved-allocation rebalancing. Existing observations remain useful
+> for scheduler and recovery evidence, but this campaign is ineligible as
+> TrendVol evidence and is retired through an append-only failure event. See
+> `paper-strategy-implementation-mismatch-2026-09-05.md`.
 
 The profitability gate weighs estimated cost against a **registered** per-trade
 gross-edge lower bound. No completed study in this repository has validated one for the shipped

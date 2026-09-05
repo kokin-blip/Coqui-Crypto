@@ -1,6 +1,10 @@
 import type { ForwardEdgeStudyPlan } from '@coqui/core';
 
-/** Locked prospectively: observations before the first eligible UTC day never count. */
+/**
+ * Historical locked plan. The runtime now refuses to append observations when
+ * the executable strategy identity differs; preserve this object so prior
+ * evidence remains verifiable.
+ */
 export const SHIPPED_FORWARD_EDGE_PLAN: ForwardEdgeStudyPlan = Object.freeze({
   formatVersion: 1,
   strategyId: 'trendvol-legacy-unvalidated',

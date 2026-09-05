@@ -162,6 +162,7 @@ describe('every run is recorded, including one that trades nothing', () => {
 
     const summary = runPaperDecision(deps(db, new FixedClock(T0 + DAY)), T0 + DAY);
     expect(summary.standDown).toBe('kill_switch_engaged');
+    expect(summary.strategyVersion).toBe('allocation-policy-rebalancer-v1');
     expect(summary.filledCount).toBe(0);
 
     // The engine ran and correctly declined, so the day is observed. A day it

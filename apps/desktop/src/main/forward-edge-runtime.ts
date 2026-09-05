@@ -30,6 +30,41 @@ import {
 import { capturePaperPerformanceEvidence } from './paper-performance-evidence.js';
 
 const DAY_MS = 86_400_000;
+const STRATEGY_MISMATCH_REASON = 'strategy_implementation_mismatch';
+
+/**
+ * Preserve the immutable campaign while marking it ineligible for strategy
+ * evidence. Repeated startup/capture attempts are idempotent through the
+ * campaign-event identity.
+ */
+export function retireIncompatiblePaperCampaign(input: {
+  readonly profileId: string;
+  readonly strategyVersion: string;
+  readonly expectedStrategyId: string;
+  readonly runId: string;
+  readonly at: number;
+  readonly database: Db;
+}): PaperCampaignStatus | null {
+  const campaign = latestPaperCampaign(input.profileId, input.database);
+  if (campaign === null || campaign.state === 'failed' ||
+      input.strategyVersion === input.expectedStrategyId) return campaign;
+  const dayUtc = Math.floor(input.at / DAY_MS) * DAY_MS;
+  appendPaperCampaignEvent({
+    campaignId: campaign.id,
+    dayUtc,
+    runId: `${input.runId}:strategy-implementation-mismatch`,
+    status: 'failed',
+    at: input.at,
+    detail: {
+      reason: STRATEGY_MISMATCH_REASON,
+      expectedStrategyId: input.expectedStrategyId,
+      observedStrategyVersion: input.strategyVersion,
+      observationsPreserved: true,
+      eligibleForStrategyEvidence: false,
+    },
+  }, input.database);
+  return latestPaperCampaign(input.profileId, input.database);
+}
 
 function latestClose(market: PaperMarketData, productId: string, dayUtc: number): string | null {
   const until = dayUtc + DAY_MS;
@@ -201,6 +236,17 @@ export async function captureScheduledForwardEvidence(input: {
   readonly priceSource: Parameters<typeof capturePaperPerformanceEvidence>[0]['priceSource'];
   readonly market: PaperMarketData;
 }): Promise<void> {
+  if (input.summary.strategyVersion !== input.plan.strategyId) {
+    retireIncompatiblePaperCampaign({
+      profileId: input.profileId,
+      strategyVersion: input.summary.strategyVersion,
+      expectedStrategyId: input.plan.strategyId,
+      runId: input.summary.runId,
+      at: input.summary.decidedAtMs,
+      database: input.database,
+    });
+    return;
+  }
   const valuation = await capturePaperPerformanceEvidence({
     profileId: input.profileId,
     runId: input.summary.runId,

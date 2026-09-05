@@ -1,6 +1,12 @@
 # Forward Edge Confirmatory Study — Immutable Pre-registration
 
-Status: **registered; collecting prospectively; execution estimate remains zero**.
+Status: **retired; implementation identity mismatch; execution estimate remains zero**.
+
+> **2026-09-05 correction:** the scheduled implementation associated with this
+> plan did not invoke Momentum + VolTarget. It was a saved-allocation
+> rebalancer. Prior records remain immutable operational evidence but cannot be
+> used as TrendVol strategy evidence. A replacement study must be registered
+> prospectively against the corrected implementation.
 
 The canonical plan is compiled into the application and hashed before it is inserted into migration 49 storage. Its checkpoint revision is `cd5fb48`, its conservative Coinbase venue-cost profile hash is `de6f0bba3537f25c0c63e7ad81bc567a271f6feb0ac43ce9821506ecfcbf65ce`, and its registered search upper bound is 215 trials.
 

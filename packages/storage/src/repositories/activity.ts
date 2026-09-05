@@ -6,6 +6,14 @@ interface FillRow { id: string; filled_at: number; quantity_text: string; notion
 interface AlertRow { id: string; occurred_at: number; kind: string; severity: string; reason_code: string; evidence_hash: string }
 interface IncidentRow { id: string; occurred_at: number; kind: string; severity: string; source: string; resolved_at: number | null }
 
+const HISTORICALLY_MISLABELED_STRATEGY = 'trendvol-legacy-unvalidated';
+
+function decisionStrategyLabel(strategyVersion: string): string {
+  return strategyVersion === HISTORICALLY_MISLABELED_STRATEGY
+    ? 'legacy allocation rebalancer (historically mislabeled as TrendVol)'
+    : strategyVersion;
+}
+
 export interface ActivityFeedEvent {
   readonly id: string;
   readonly kind: 'decision' | 'paper' | 'fill' | 'alert' | 'reconciliation' | 'failure';
@@ -68,7 +76,7 @@ export function listActivityFeed(
       id: `decision:${String(row.id)}`, kind: 'decision',
       status: row.status === 'completed' ? 'succeeded' : row.status === 'failed' ? 'failed' : 'pending',
       title: `Scheduled decision ${String(row.status)}`,
-      detail: `Strategy ${String(row.strategy_version)} evaluated its registered decision snapshot.`,
+      detail: `Strategy ${decisionStrategyLabel(String(row.strategy_version))} evaluated its registered decision snapshot.`,
       occurredAt: Number(row.scheduled_for), provenance: String(row.snapshot_hash),
     })),
     ...paperRows.map((row): ActivityFeedEvent => ({
