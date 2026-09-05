@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  strategyDecisionId,
   instrumentKey,
   FixedClock,
   type AllocationPolicy,
@@ -22,6 +23,8 @@ import {
   activateWalletSafetyStop,
   bootstrapPaperBalances,
   countCompletedDecisionRuns,
+  getStrategyDecision,
+  listDecisionEvidenceEvents,
   listWalletRunAudits,
   openDatabase,
   setPaperExecutionPolicy,
@@ -181,6 +184,16 @@ describe('every run is recorded, including one that trades nothing', () => {
     );
     expect(summary.standDown).toBe('no_policy');
     expect(countCompletedDecisionRuns(PROFILE, 0, db)).toBe(1);
+    const decisionId = strategyDecisionId(PROFILE, T0 + DAY);
+    expect(getStrategyDecision(decisionId, db)?.decision).toMatchObject({
+      decisionId,
+      profileId: PROFILE,
+      strategy: { version: 'allocation-policy-rebalancer-v1' },
+      market: { freshness: 'unavailable' },
+      portfolio: { source: 'unavailable' },
+    });
+    expect(listDecisionEvidenceEvents(decisionId, PROFILE, db).map((event) => event.kind))
+      .toEqual(['strategy_evaluated', 'stand_down']);
     db.close();
   });
 
@@ -196,6 +209,9 @@ describe('every run is recorded, including one that trades nothing', () => {
     const gateAudit = listWalletRunAudits(PROFILE, 50, db).find((a) => a.kind === 'execution');
     expect(gateAudit?.status).toBe('blocked');
     expect(JSON.parse(gateAudit!.detailJson)).toMatchObject({ reasonCode: 'all_intents_filtered' });
+    const decisionId = strategyDecisionId(PROFILE, T0 + DAY);
+    expect(listDecisionEvidenceEvents(decisionId, PROFILE, db).map((event) => event.kind))
+      .toEqual(['strategy_evaluated', 'execution_planned', 'execution_refused']);
     db.close();
   });
 
@@ -216,6 +232,18 @@ describe('a trading run', () => {
 
     expect(summary.standDown).toBeNull();
     expect(summary.filledCount).toBeGreaterThan(0);
+
+    const decisionId = strategyDecisionId(PROFILE, T0 + DAY);
+    const stored = getStrategyDecision(decisionId, db);
+    expect(stored?.decision).toMatchObject({
+      portfolio: { source: 'profile_holdings', version: 'legacy-profile-holdings-v1' },
+      targets: [
+        { assetId: BTC_KEY, weight: 0.5 },
+        { assetId: ETH_KEY, weight: 0.5 },
+      ],
+    });
+    expect(listDecisionEvidenceEvents(decisionId, PROFILE, db).map((event) => event.kind))
+      .toEqual(['strategy_evaluated', 'execution_planned', 'execution_filled']);
 
     const orders = listWalletRunAudits(PROFILE, 50, db).find((a) => a.kind === 'execution');
     expect(orders?.status).toBe('succeeded');

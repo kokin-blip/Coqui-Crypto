@@ -1,15 +1,26 @@
 import {
+  canonicalJson,
+  instrumentKey,
   planAutoRebalance,
   sha256Hex,
+  strategyDecisionId,
   type AllocationPolicy,
+  type CanonicalJsonValue,
   type Clock,
+  type DecisionEvidenceEventV1,
   type Holding,
+  type StrategyDecisionV1,
 } from '@coqui/core';
 import {
+  appendDecisionEvidenceEvent,
   appendWalletRunAudit,
+  getStrategyDecision,
   getWalletDecisionRun,
+  inTransaction,
+  linkWalletDecisionRun,
   listPaperBalances,
   recoverInterruptedPaperOrders,
+  saveStrategyDecision,
   saveWalletDecisionRun,
   type Db,
 } from '@coqui/storage';
@@ -85,6 +96,10 @@ function runIdFor(profileId: string, scheduledForMs: number): string {
   return sha256Hex(`paper:${profileId}:${scheduledForMs}`);
 }
 
+function hashCanonical(value: unknown): string {
+  return sha256Hex(canonicalJson(value as CanonicalJsonValue));
+}
+
 function journal(
   database: Db,
   profileId: string,
@@ -122,29 +137,82 @@ export function runPaperDecision(
   const { database, profileId } = dependencies;
   const decidedAtMs = dependencies.clock.nowMs();
   const runId = runIdFor(profileId, scheduledForMs);
+  const decisionId = strategyDecisionId(profileId, scheduledForMs);
+  let decisionCreatedAtMs = decidedAtMs;
+  let storedDecisionHash: string | null = null;
+  let planned: { readonly proposalId: string; readonly planHash: string } | null = null;
   let preDecisionBalances: PaperRunSummary['preDecisionBalances'] = listPaperBalances(
     profileId,
     database,
   ).map(({ assetId, quantity }) => Object.freeze({ assetId, quantity }));
 
+  const terminalEvent = (
+    standDown: PaperRunStandDown | null,
+    filled: number,
+    refused: number,
+  ): DecisionEvidenceEventV1 => {
+    const common = {
+      schemaVersion: 1 as const,
+      decisionId,
+      profileId,
+      sequence: planned === null ? 1 : 2,
+      atMs: decisionCreatedAtMs,
+    };
+    if (standDown === 'no_intents') {
+      return {
+        ...common,
+        kind: 'no_trade',
+        detail: {
+          reasonCode: 'no_intents',
+          estimatedTradeUsd: null,
+          minimumUsefulTradeUsd: null,
+        },
+      };
+    }
+    if (standDown === null) {
+      if (planned === null) throw new Error('Filled execution is missing its durable plan.');
+      return {
+        ...common,
+        kind: 'execution_filled',
+        detail: { proposalId: planned.proposalId, filledCount: filled, refusedCount: refused },
+      };
+    }
+    if (['gates_refused', 'execution_failed', 'execution_unknown'].includes(standDown)) {
+      return {
+        ...common,
+        kind: 'execution_refused',
+        detail: { proposalId: planned?.proposalId ?? null, reasonCode: standDown, refusedCount: refused },
+      };
+    }
+    return { ...common, kind: 'stand_down', detail: { reasonCode: standDown } };
+  };
+
   const finish = (standDown: PaperRunStandDown | null, filled = 0, refused = 0): PaperRunSummary => {
-    // The decision run is written whatever happened. A stand-down is a decision.
-    saveWalletDecisionRun(
-      {
+    if (storedDecisionHash === null) throw new Error('Paper outcome has no durable strategy decision.');
+    // Evidence, compatibility summary and identity link advance atomically.
+    inTransaction(database, () => {
+      appendDecisionEvidenceEvent(terminalEvent(standDown, filled, refused), database);
+      saveWalletDecisionRun({
         id: runId,
         profileId,
         scheduledFor: scheduledForMs,
         strategyVersion: PAPER_ALLOCATION_REBALANCER_VERSION,
-        snapshotHash: sha256Hex(`${runId}:${standDown ?? 'traded'}:${filled}`),
-        snapshotJson: JSON.stringify({ standDown, filled, refused, preDecisionBalances }),
+        snapshotHash: storedDecisionHash!,
+        snapshotJson: canonicalJson({
+          decisionId,
+          filled,
+          preDecisionBalances,
+          refused,
+          standDown,
+        }),
         status: 'completed',
-        createdAt: decidedAtMs,
-        updatedAt: decidedAtMs,
+        createdAt: decisionCreatedAtMs,
+        updatedAt: decisionCreatedAtMs,
         error: null,
-      },
-      database,
-    );
-    journal(database, profileId, runId, decidedAtMs, 'paper_run', 'completed', {
+      }, database);
+      linkWalletDecisionRun(runId, decisionId, database);
+    });
+    journal(database, profileId, runId, decisionCreatedAtMs, 'paper_run', 'completed', {
       standDown,
       filled,
       refused,
@@ -154,7 +222,7 @@ export function runPaperDecision(
       runId,
       strategyVersion: PAPER_ALLOCATION_REBALANCER_VERSION,
       scheduledForMs,
-      decidedAtMs,
+      decidedAtMs: decisionCreatedAtMs,
       standDown,
       filledCount: filled,
       refusedCount: refused,
@@ -188,6 +256,71 @@ export function runPaperDecision(
     };
   }
 
+  const persistDecision = (
+    policy: AllocationPolicy | null,
+    holdings: readonly Holding[] | null,
+  ): void => {
+    const existingDecision = getStrategyDecision(decisionId, database);
+    const createdAtMs = existingDecision?.decision.createdAtMs ?? decidedAtMs;
+    decisionCreatedAtMs = createdAtMs;
+    const targetRows = (policy?.targets ?? [])
+      .map((target) => ({ assetId: instrumentKey(target.instrument), weight: target.weight }))
+      .sort((left, right) => left.assetId < right.assetId ? -1 : left.assetId > right.assetId ? 1 : 0);
+    const targetExposure = targetRows.reduce((sum, target) => sum + target.weight, 0);
+    const holdingRows = holdings?.map((holding) => ({
+      assetId: instrumentKey(holding.asset.instrument),
+      priceUsd: holding.priceUsd,
+      quantity: holding.quantity,
+      valueUsd: holding.valueUsd,
+    })).sort((left, right) => left.assetId < right.assetId ? -1 : left.assetId > right.assetId ? 1 : 0) ?? null;
+    const portfolioHash = holdingRows === null ? null : hashCanonical(holdingRows);
+    const configHash = hashCanonical(policy === null ? null : {
+      rebalanceBandPct: policy.rebalanceBandPct,
+      targets: targetRows,
+    });
+    const decision: StrategyDecisionV1 = {
+      schemaVersion: 1,
+      decisionId,
+      profileId,
+      runId,
+      scheduledForMs,
+      strategy: {
+        id: 'allocation-policy-rebalancer',
+        version: PAPER_ALLOCATION_REBALANCER_VERSION,
+        configHash,
+      },
+      market: {
+        snapshotHash: null,
+        asOfMs: null,
+        expectedAsOfMs: null,
+        freshness: 'unavailable',
+      },
+      portfolio: {
+        snapshotHash: portfolioHash,
+        version: holdingRows === null ? null : 'legacy-profile-holdings-v1',
+        source: holdingRows === null ? 'unavailable' : 'profile_holdings',
+      },
+      targets: targetRows,
+      cashWeight: policy === null ? null : Math.max(0, 1 - targetExposure),
+      exposure: policy === null ? null : Math.min(1, targetExposure),
+      historyStatus: 'unavailable',
+      createdAtMs,
+    };
+    inTransaction(database, () => {
+      const stored = saveStrategyDecision(decision, database);
+      storedDecisionHash = stored.contentHash;
+      appendDecisionEvidenceEvent({
+        schemaVersion: 1,
+        decisionId,
+        profileId,
+        sequence: 0,
+        kind: 'strategy_evaluated',
+        atMs: createdAtMs,
+        detail: { decisionHash: stored.contentHash },
+      }, database);
+    });
+  };
+
   const killSwitch = resolveKillSwitch(profileId, database);
   if (killSwitch.engaged) {
     // Invariant 5: the kill switch halts paper too. Recorded as a completed
@@ -195,15 +328,41 @@ export function runPaperDecision(
     journal(database, profileId, runId, decidedAtMs, 'kill_switch', 'halted', {
       reason: killSwitch.reason,
     });
+    persistDecision(null, null);
     return finish('kill_switch_engaged');
   }
 
   const policy = dependencies.policy();
-  if (policy === null) return finish('no_policy');
+  if (policy === null) {
+    persistDecision(null, null);
+    return finish('no_policy');
+  }
 
   const holdings = dependencies.holdings();
+  persistDecision(policy, holdings);
   const intents = planAutoRebalance(holdings, policy, decidedAtMs);
   if (intents.length === 0) return finish('no_intents');
+
+  planned = {
+    proposalId: sha256Hex(`paper-proposal:${runId}:1`),
+    planHash: hashCanonical(intents.map((intent) => ({
+      amountUsd: intent.amountUsd,
+      assetId: instrumentKey(intent.asset.instrument),
+      origin: intent.origin,
+      reason: intent.reason,
+      side: intent.side,
+      urgency: intent.urgency,
+    }))),
+  };
+  appendDecisionEvidenceEvent({
+    schemaVersion: 1,
+    decisionId,
+    profileId,
+    sequence: 1,
+    kind: 'execution_planned',
+    atMs: decisionCreatedAtMs,
+    detail: { planId: planned.proposalId, planHash: planned.planHash, intentCount: intents.length },
+  }, database);
 
   const execution = new PaperExecutionService({
     database,
@@ -223,7 +382,7 @@ export function runPaperDecision(
         }),
   });
   const outcome = execution.prepare({
-    proposalId: sha256Hex(`paper-proposal:${runId}:1`),
+    proposalId: planned.proposalId,
     runId,
     revision: 1,
     intents,

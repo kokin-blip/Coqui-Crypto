@@ -391,8 +391,19 @@ cannot be produced until that separate audit is complete.
 
 ## 6. Data flow: paper execution
 
+The scheduled path is temporarily and explicitly versioned as
+`allocation-policy-rebalancer-v1`; it is not TrendVol until the Phase 1 cutover.
+Migration 58 adds a slot-stable immutable `StrategyDecisionV1`, an append-only
+typed evidence stream, and an immutable link to the compatibility
+`wallet_decision_runs` summary. The decision and initial evaluation evidence
+must persist before the executor is constructed. Until the decision-grade
+dataset and paper-book phases land, the record truthfully marks market
+freshness unavailable and identifies the planning portfolio as legacy profile
+holdings rather than claiming paper-ledger provenance.
+
 ```
 strategy targets
+  → immutable strategy decision + evaluation evidence
   → planAutoRebalance (drift → intents)
   → applyAutoTradeGuardrails    (size, position, at-risk, turnover, count caps)
   → applyProfitabilityGate      (expected edge ≥ 2× estimated cost + tax)
