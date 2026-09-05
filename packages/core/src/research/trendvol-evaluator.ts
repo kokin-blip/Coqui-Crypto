@@ -13,8 +13,7 @@ import type {
 } from '../backtest/types.js';
 import { DEFAULT_TRADE_COST_CONFIG } from '../costs/index.js';
 import type { DecisionMarketDataset } from '../market/index.js';
-import { momentumTargetsAt } from '../strategies/momentum.js';
-import { volTargetExposureAt } from '../strategies/vol-target.js';
+import { trendVolTargetsAt } from '../strategies/trend-vol.js';
 import type { InstrumentKey } from '../types/index.js';
 
 const START_VALUE = 10_000;
@@ -162,15 +161,14 @@ export function evaluateTrendVolResearch(
         tradeCosts,
       );
       passiveCosts = addBacktestCost(passiveCosts, passive);
-      const momentum = momentumTargetsAt(targetList, series, index, options.momentum);
-      const momentumWeights = momentum.stats.length > 0
-        ? new Map(momentum.targets.map((target) => [target.assetId, target.weight]))
-        : keptBase;
-      const volatility = volTargetExposureAt(mixIndex, index, options.volTarget);
-      const scale = Math.max(0, options.exposureScale?.[index] ?? 1);
-      const exposure = Math.min(1, volatility.exposure * scale);
-      const weights = new Map<InstrumentKey, number>();
-      for (const [assetId, weight] of momentumWeights) weights.set(assetId, weight * exposure);
+      const decision = trendVolTargetsAt(targetList, series, mixIndex, index, {
+        ...(options.momentum === undefined ? {} : { momentum: options.momentum }),
+        ...(options.volTarget === undefined ? {} : { volTarget: options.volTarget }),
+        exposureScale: options.exposureScale?.[index] ?? 1,
+      });
+      const weights = new Map<InstrumentKey, number>(
+        decision.targets.map((target) => [target.assetId, target.weight]),
+      );
       trendvol = rebalanceBacktestBook(
         trendvol.cash,
         trendvol.units,

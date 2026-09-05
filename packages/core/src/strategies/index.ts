@@ -17,3 +17,4 @@ export {
 export * from './signal-tilt.js';
 export * from './rotation.js';
 export * from './buy-candidates.js';
+export * from './trend-vol.js';

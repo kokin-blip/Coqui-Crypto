@@ -32,6 +32,7 @@ import {
 } from '../strategies/index.js';
 import { momentumTargetsAt } from '../strategies/momentum.js';
 import { volTargetExposureAt } from '../strategies/vol-target.js';
+import { composeTrendVolTargets } from '../strategies/trend-vol.js';
 import {
   DEFAULT_TRADE_COST_CONFIG,
   estimateTradeCost,
@@ -328,8 +329,18 @@ export function backtestStrategies(
       // Trend+Vol combo: momentum decides WHAT to hold, the vol-target exposure
       // decides HOW MUCH is invested. Momentum weights already sum ≤ 1 (its own
       // defensive cash), so scaling by exposure only ever gets more defensive.
-      const trendvolWeights = new Map<InstrumentKey, number>();
-      for (const [id, w] of momentumWeights) trendvolWeights.set(id, w * scaledExposure);
+      const trendvolDecision = composeTrendVolTargets(
+        baseTargetList,
+        mom,
+        vt,
+        scale,
+        i,
+        opts.momentum,
+        opts.volTarget,
+      );
+      const trendvolWeights = new Map<InstrumentKey, number>(
+        trendvolDecision.targets.map((target) => [target.assetId, target.weight]),
+      );
       trendvol = rebalanceBacktestBook(
         trendvol.cash,
         trendvol.units,
