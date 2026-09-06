@@ -102,7 +102,7 @@ describe('accounts profile service', () => {
     const dbPath = join(target.directory, `wallet-${ID_A}.db`);
     expect(existsSync(dbPath)).toBe(true);
     const database = openDatabase(dbPath);
-    expect(database.prepare('PRAGMA user_version').get()).toEqual({ user_version: 58 });
+    expect(database.prepare('PRAGMA user_version').get()).toEqual({ user_version: 61 });
     database.close();
     expect(service.active()).toEqual({
       ok: true,

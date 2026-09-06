@@ -6,13 +6,58 @@ export type PaperExecutionPolicyMode = 'off' | 'review_required' | 'unattended';
 export type PaperExecutionProposalStatus =
   | 'pending_review' | 'approved' | 'rejected' | 'executing'
   | 'blocked' | 'failed' | 'succeeded' | 'unknown';
-export type PaperExecutionOutcomeStatus = 'pending' | 'blocked' | 'failed' | 'succeeded' | 'unknown';
+export type PaperExecutionOutcomeStatus =
+  | 'pending' | 'submitted' | 'blocked' | 'failed' | 'succeeded' | 'unknown';
 
 export interface PaperExecutionAttemptOutcome {
   readonly status: PaperExecutionOutcomeStatus;
   readonly reasonCode: string | null;
   readonly filledCount: number;
   readonly refusedCount: number;
+}
+
+export interface PaperProposalPendingContext {
+  readonly decisionId: string;
+  readonly requiredExecutionBarStartMs: number;
+  readonly costModelHash: string;
+}
+
+export function savePaperProposalPendingContext(
+  proposalId: string,
+  context: PaperProposalPendingContext,
+  database: Db,
+): void {
+  database.prepare(`
+    INSERT INTO paper_proposal_pending_context_v1
+      (proposal_id, decision_id, required_bar_start, cost_model_hash)
+    VALUES (?, ?, ?, ?)
+    ON CONFLICT(proposal_id) DO NOTHING
+  `).run(
+    proposalId, context.decisionId, context.requiredExecutionBarStartMs, context.costModelHash,
+  );
+  const stored = getPaperProposalPendingContext(proposalId, database);
+  if (stored === null || JSON.stringify(stored) !== JSON.stringify(context)) {
+    throw new Error('Paper proposal pending context cannot change.');
+  }
+}
+
+export function getPaperProposalPendingContext(
+  proposalId: string,
+  database: Db,
+): PaperProposalPendingContext | null {
+  const row = database.prepare(`
+    SELECT decision_id, required_bar_start, cost_model_hash
+    FROM paper_proposal_pending_context_v1 WHERE proposal_id = ?
+  `).get(proposalId) as {
+    decision_id: string;
+    required_bar_start: number;
+    cost_model_hash: string;
+  } | undefined;
+  return row === undefined ? null : Object.freeze({
+    decisionId: row.decision_id,
+    requiredExecutionBarStartMs: row.required_bar_start,
+    costModelHash: row.cost_model_hash,
+  });
 }
 
 export interface PaperExecutionPolicyRecord {

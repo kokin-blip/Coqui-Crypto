@@ -14,6 +14,7 @@ import {
 } from '@coqui/storage';
 
 import { forwardPaperEvidence, type ForwardEvidenceView } from './forward-evidence.js';
+import type { PaperRunStandDown } from './run-loop.js';
 
 /**
  * What the strategy would be worth, beside what you actually hold.
@@ -31,7 +32,7 @@ import { forwardPaperEvidence, type ForwardEvidenceView } from './forward-eviden
 
 const CASH = 'USD' as const;
 
-export type PaperStandDown = 'kill_switch_engaged' | 'no_policy' | 'no_intents' | 'gates_refused';
+export type PaperStandDown = PaperRunStandDown;
 
 export interface PaperPosition {
   readonly instrument: InstrumentIdentity;
@@ -45,6 +46,7 @@ export interface PaperLastRun {
   readonly decidedAtMs: number;
   readonly standDown: PaperStandDown | null;
   readonly filled: number;
+  readonly submitted: number;
   readonly refused: number;
 }
 
@@ -76,16 +78,19 @@ function parseInstrument(assetId: string): InstrumentIdentity | null {
   return { venue, productId, productType };
 }
 
-function parseLastRun(snapshotJson: string): Pick<PaperLastRun, 'standDown' | 'filled' | 'refused'> {
+function parseLastRun(
+  snapshotJson: string,
+): Pick<PaperLastRun, 'standDown' | 'filled' | 'submitted' | 'refused'> {
   try {
     const parsed = JSON.parse(snapshotJson) as Record<string, unknown>;
     return {
       standDown: (parsed['standDown'] as PaperStandDown | null) ?? null,
       filled: typeof parsed['filled'] === 'number' ? parsed['filled'] : 0,
+      submitted: typeof parsed['submitted'] === 'number' ? parsed['submitted'] : 0,
       refused: typeof parsed['refused'] === 'number' ? parsed['refused'] : 0,
     };
   } catch {
-    return { standDown: null, filled: 0, refused: 0 };
+    return { standDown: null, filled: 0, submitted: 0, refused: 0 };
   }
 }
 

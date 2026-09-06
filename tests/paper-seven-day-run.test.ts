@@ -21,7 +21,6 @@ import {
   type PaperRunLoopDependencies,
 } from '../packages/services/src/index.js';
 import {
-  bootstrapPaperBalances,
   countObservedDecisionDays,
   countPaperFills,
   listPaperBalances,
@@ -30,6 +29,7 @@ import {
   setPaperExecutionPolicy,
   type Db,
 } from '../packages/storage/src/index.js';
+import { paperPreparation, seedPaperOrigin } from './support.js';
 
 /**
  * The P6 exit criterion: seven unattended days, driven by a simulated clock.
@@ -50,10 +50,6 @@ const DAY = 86_400_000;
 const T0 = Date.UTC(2026, 5, 1);
 const DAYS = 7;
 const PROFILE = 'main';
-const PREPARATION = {
-  ok: true as const, datasetHash: 'd'.repeat(64), latestCompletedStartMs: T0,
-  expectedCompletedStartMs: T0, ruleSnapshotHash: 'e'.repeat(64),
-};
 
 const BTC: InstrumentIdentity = { venue: 'coinbase', productId: 'BTC-USD', productType: 'spot' };
 const BTC_KEY = instrumentKey(BTC);
@@ -166,17 +162,9 @@ class StepClock implements Clock {
 
 function seeded(): Db {
   const db = openDatabase(':memory:');
-  bootstrapPaperBalances(
-    PROFILE,
-    [
-      { assetId: 'USD', quantity: '50000' },
-      { assetId: BTC_KEY, quantity: '1' },
-      { assetId: ETH_KEY, quantity: '400' },
-    ],
-    'seed',
-    T0 - DAY,
-    db,
-  );
+  seedPaperOrigin(db, PROFILE, [
+    holding(BTC_REF, '3500.00', '15.9'), holding(ETH_REF, '6500.00', '29.5'),
+  ], T0 - DAY);
   setPaperExecutionPolicy({
     commandId: '00000000-0000-4000-8000-000000000002', profileId: PROFILE,
     mode: 'unattended', confirmedAt: T0, explicitUnattendedConfirmation: true,
@@ -200,7 +188,7 @@ function runWeek(db: Db, clock: StepClock): void {
     market: MARKET,
     holdings: () => [holding(BTC_REF, '100.00', '1'), holding(ETH_REF, '9000.00', '400')],
     policy: () => POLICY,
-    preparation: () => PREPARATION,
+    preparation: () => paperPreparation([BTC, ETH], clock.nowMs()),
     // Supplied by the harness, not by the app. The composition root defaults to
     // zero because no study has registered an estimate for the shipped
     // strategy; a run that never fills could not exercise fills or
@@ -300,9 +288,9 @@ describe('a restart mid-week loses nothing', () => {
       clock,
       profileId: PROFILE,
       market: MARKET,
-      holdings: () => [holding(BTC_REF, '100.00', '1'), holding(ETH_REF, '9000.00', '400')],
+      holdings: () => [holding(BTC_REF, '3500.00', '15.9'), holding(ETH_REF, '6500.00', '29.5')],
       policy: () => POLICY,
-      preparation: () => PREPARATION,
+      preparation: () => paperPreparation([BTC, ETH], clock.nowMs()),
       historicalGrossEdgeLowerBoundPct: 15,
       evidenceVerified: () => true,
     };

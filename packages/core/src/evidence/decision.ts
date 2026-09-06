@@ -37,6 +37,16 @@ export interface StrategyDecisionV1 {
   readonly cashWeight: number | null;
   readonly exposure: number | null;
   readonly historyStatus: DecisionHistoryStatus;
+  readonly facts: {
+    readonly momentum: readonly {
+      readonly assetId: string;
+      readonly returnPct: number;
+      readonly volatilityPct: number;
+      readonly riskAdjustedMomentum: number;
+    }[];
+    readonly realizedVolPct: number | null;
+    readonly belowTrend: boolean | null;
+  } | null;
   readonly createdAtMs: number;
 }
 

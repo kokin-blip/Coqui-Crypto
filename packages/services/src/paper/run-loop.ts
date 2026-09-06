@@ -1,33 +1,58 @@
 import {
   canonicalJson,
+  DEFAULT_MOMENTUM_CONFIG,
+  DEFAULT_VOL_TARGET_CONFIG,
   instrumentKey,
   planAutoRebalance,
   sha256Hex,
   strategyDecisionId,
+  trendVolTargets,
   type AllocationPolicy,
-  type CanonicalJsonValue,
-  type Clock,
   type DecisionEvidenceEventV1,
   type Holding,
-  type StrategyDecisionV1,
 } from '@coqui/core';
 import {
   appendDecisionEvidenceEvent,
-  appendWalletRunAudit,
-  getStrategyDecision,
   getWalletDecisionRun,
   inTransaction,
+  getPaperBookOrigin,
+  initializePaperBook,
   linkWalletDecisionRun,
+  listDecisionEvidenceEvents,
   listPaperBalances,
+  listSubmittedPaperExecutions,
   recoverInterruptedPaperOrders,
-  saveStrategyDecision,
+  savePaperCampaignPlanV2,
   saveWalletDecisionRun,
-  type Db,
 } from '@coqui/storage';
 
 import { PaperExecutionService } from './execution-service.js';
+import { recordPaperDecision, type PaperStrategyIdentity } from './decision-recorder.js';
+import { paperCostModelHash } from './venue.js';
 import { resolveKillSwitch } from './kill-switch.js';
-import type { PaperMarketData } from './oms.js';
+import {
+  hashCanonical,
+  journal,
+  normalizedMix,
+  openingSnapshot,
+  paperHoldings,
+  PAPER_ALLOCATION_REBALANCER_VERSION,
+  PAPER_TRENDVOL_VERSION,
+  runIdFor,
+  type PaperDecisionPreparation,
+  type PaperRunLoopDependencies,
+  type PaperRunStandDown,
+  type PaperRunSummary,
+} from './runtime-model.js';
+
+export {
+  PAPER_ALLOCATION_REBALANCER_VERSION,
+  PAPER_TRENDVOL_VERSION,
+  type PaperDecisionPreparation,
+  type PaperRunLoopDependencies,
+  type PaperRunStandDown,
+  type PaperRunSummary,
+} from './runtime-model.js';
 
 /**
  * The paper decision loop, as a scheduler task.
@@ -47,110 +72,6 @@ import type { PaperMarketData } from './oms.js';
  * the Momentum + VolTarget implementation, so its durable identity must not
  * claim that it does.
  */
-export const PAPER_ALLOCATION_REBALANCER_VERSION = 'allocation-policy-rebalancer-v1';
-
-export type PaperRunStandDown =
-  | 'kill_switch_engaged'
-  | 'no_policy'
-  | 'no_intents'
-  | 'gates_refused'
-  | 'pending_review'
-  | 'execution_failed'
-  | 'execution_unknown'
-  | 'market_fetch_failed'
-  | 'invalid_market_data'
-  | 'market_alignment_failed'
-  | 'insufficient_history'
-  | 'stale_market_data'
-  | 'stale_product_rules';
-
-export type PaperDecisionPreparation =
-  | {
-      readonly ok: true;
-      readonly datasetHash: string;
-      readonly latestCompletedStartMs: number;
-      readonly expectedCompletedStartMs: number;
-      readonly ruleSnapshotHash: string;
-    }
-  | {
-      readonly ok: false;
-      readonly code: Exclude<PaperRunStandDown,
-        | 'kill_switch_engaged' | 'no_policy' | 'no_intents' | 'gates_refused'
-        | 'pending_review' | 'execution_failed' | 'execution_unknown'>;
-      readonly datasetHash?: string;
-      readonly latestCompletedStartMs?: number;
-      readonly expectedCompletedStartMs?: number;
-      readonly ruleSnapshotHash?: string;
-      readonly rulesFresh?: boolean;
-    };
-
-export interface PaperRunSummary {
-  readonly profileId: string;
-  readonly runId: string;
-  readonly strategyVersion: string;
-  readonly scheduledForMs: number;
-  readonly decidedAtMs: number;
-  /** Null when the run traded; otherwise why it did not. */
-  readonly standDown: PaperRunStandDown | null;
-  readonly filledCount: number;
-  readonly refusedCount: number;
-  /** Exact paper balances before this decision; persisted with the run for replay-safe evidence. */
-  readonly preDecisionBalances: readonly { readonly assetId: string; readonly quantity: string }[];
-}
-
-export interface PaperRunLoopDependencies {
-  readonly database: Db;
-  readonly clock: Clock;
-  readonly profileId: string;
-  readonly market: PaperMarketData;
-  /**
-   * Injected rather than imported so the loop holds no cross-service import and
-   * stays unit-testable without a portfolio or a price source.
-   */
-  readonly holdings: () => readonly Holding[];
-  readonly policy: () => AllocationPolicy | null;
-  /** Result of this tick's all-or-nothing decision-data and rule refresh. */
-  readonly preparation: () => PaperDecisionPreparation;
-  readonly historicalGrossEdgeLowerBoundPct: number;
-  /** A verified immutable research snapshot, checked again at submission. */
-  readonly evidenceVerified?: () => boolean;
-  /** Append the post-decision daily valuation; missing days are never backfilled. */
-  readonly captureEvidence?: (summary: PaperRunSummary) => Promise<void>;
-  readonly onUnexpectedError?: (context: string, error: unknown) => void;
-}
-
-/** Deterministic per profile and slot, so a replayed tick is the same run. */
-function runIdFor(profileId: string, scheduledForMs: number): string {
-  return sha256Hex(`paper:${profileId}:${scheduledForMs}`);
-}
-
-function hashCanonical(value: unknown): string {
-  return sha256Hex(canonicalJson(value as CanonicalJsonValue));
-}
-
-function journal(
-  database: Db,
-  profileId: string,
-  runId: string,
-  at: number,
-  kind: string,
-  status: string,
-  detail: Record<string, unknown>,
-): void {
-  appendWalletRunAudit(
-    {
-      id: sha256Hex(`${runId}:${kind}:${at}`),
-      profileId,
-      runId,
-      at,
-      kind,
-      status,
-      detailJson: JSON.stringify({ paperOnly: true, ...detail }),
-    },
-    database,
-  );
-}
-
 /**
  * Run one paper decision.
  *
@@ -167,8 +88,11 @@ export function runPaperDecision(
   const runId = runIdFor(profileId, scheduledForMs);
   const decisionId = strategyDecisionId(profileId, scheduledForMs);
   let decisionCreatedAtMs = decidedAtMs;
+  let runtimeStrategyVersion = PAPER_ALLOCATION_REBALANCER_VERSION;
   let storedDecisionHash: string | null = null;
+  let strategyConfigHash: string | null = null;
   let planned: { readonly proposalId: string; readonly planHash: string } | null = null;
+  let submission: { readonly proposalHash: string; readonly orderIds: readonly string[] } | null = null;
   let preDecisionBalances: PaperRunSummary['preDecisionBalances'] = listPaperBalances(
     profileId,
     database,
@@ -197,6 +121,17 @@ export function runPaperDecision(
         },
       };
     }
+    if (standDown === 'pending_settlement' && planned !== null && submission !== null) {
+      return {
+        ...common,
+        kind: 'execution_submitted',
+        detail: {
+          proposalId: planned.proposalId,
+          proposalHash: submission.proposalHash,
+          orderIds: submission.orderIds,
+        },
+      };
+    }
     if (standDown === null) {
       if (planned === null) throw new Error('Filled execution is missing its durable plan.');
       return {
@@ -215,7 +150,12 @@ export function runPaperDecision(
     return { ...common, kind: 'stand_down', detail: { reasonCode: standDown } };
   };
 
-  const finish = (standDown: PaperRunStandDown | null, filled = 0, refused = 0): PaperRunSummary => {
+  const finish = (
+    standDown: PaperRunStandDown | null,
+    filled = 0,
+    refused = 0,
+    submitted = 0,
+  ): PaperRunSummary => {
     if (storedDecisionHash === null) throw new Error('Paper outcome has no durable strategy decision.');
     // Evidence, compatibility summary and identity link advance atomically.
     inTransaction(database, () => {
@@ -224,11 +164,12 @@ export function runPaperDecision(
         id: runId,
         profileId,
         scheduledFor: scheduledForMs,
-        strategyVersion: PAPER_ALLOCATION_REBALANCER_VERSION,
+        strategyVersion: runtimeStrategyVersion,
         snapshotHash: storedDecisionHash!,
         snapshotJson: canonicalJson({
           decisionId,
           filled,
+          submitted,
           preDecisionBalances,
           refused,
           standDown,
@@ -248,25 +189,114 @@ export function runPaperDecision(
     return {
       profileId,
       runId,
-      strategyVersion: PAPER_ALLOCATION_REBALANCER_VERSION,
+      strategyVersion: runtimeStrategyVersion,
       scheduledForMs,
       decidedAtMs: decisionCreatedAtMs,
       standDown,
       filledCount: filled,
+      submittedCount: submitted,
       refusedCount: refused,
       preDecisionBalances,
     };
   };
 
-  // A slot decided once stays decided. The scheduler can fire the same slot
-  // again after a lease expiry or a restart, and re-running would place a
-  // second set of orders against a market that has since moved — and the
-  // append-only journal would rightly refuse to rewrite its own record.
+  const persistDecision = (
+    policy: AllocationPolicy | null,
+    holdings: readonly Holding[] | null,
+    preparation: PaperDecisionPreparation | null = null,
+    strategy: PaperStrategyIdentity = {
+      id: 'allocation-policy-rebalancer',
+      version: PAPER_ALLOCATION_REBALANCER_VERSION,
+      historyStatus: 'unavailable',
+      facts: null,
+      portfolioSource: 'profile_holdings',
+    },
+  ): void => {
+    const recorded = recordPaperDecision({
+      database, profileId, runId, decisionId, scheduledForMs, decidedAtMs,
+      policy, holdings, preparation, strategy,
+    });
+    decisionCreatedAtMs = recorded.createdAtMs;
+    storedDecisionHash = recorded.contentHash;
+    strategyConfigHash = recorded.configHash;
+  };
+
+  let executionHoldings: readonly Holding[] = [];
+  const execution = new PaperExecutionService({
+    database,
+    profileId,
+    nowMs: () => dependencies.clock.nowMs(),
+    market: dependencies.market,
+    state: () => ({
+      holdings: executionHoldings,
+      killSwitchEngaged: resolveKillSwitch(profileId, database).engaged,
+      evidenceVerified: dependencies.evidenceVerified?.() ?? false,
+      historicalGrossEdgeLowerBoundPct: dependencies.historicalGrossEdgeLowerBoundPct,
+    }),
+    ...(dependencies.onUnexpectedError === undefined
+      ? {}
+      : { onUnexpectedError: dependencies.onUnexpectedError }),
+  });
+
+  const preparation = dependencies.preparation();
+  if (preparation.ok) {
+    const settlement = execution.settlePending();
+    const settledByDecision = new Map<string, typeof settlement.outcomes[number][]>();
+    for (const outcome of settlement.outcomes) {
+      const grouped = settledByDecision.get(outcome.decisionId) ?? [];
+      grouped.push(outcome);
+      settledByDecision.set(outcome.decisionId, grouped);
+    }
+    for (const [settledDecisionId, outcomes] of settledByDecision) {
+      const sequence = listDecisionEvidenceEvents(
+        settledDecisionId,
+        profileId,
+        database,
+      ).length;
+      const submitted = listDecisionEvidenceEvents(settledDecisionId, profileId, database)
+        .find((event) => event.kind === 'execution_submitted');
+      const filled = outcomes.filter((outcome) => outcome.disposition === 'filled');
+      if (filled.length > 0 && submitted?.kind === 'execution_submitted') {
+        appendDecisionEvidenceEvent({
+          schemaVersion: 1,
+          decisionId: settledDecisionId,
+          profileId,
+          sequence,
+          kind: 'execution_filled',
+          atMs: Math.max(...filled.map((outcome) => outcome.atMs)),
+          detail: {
+            proposalId: submitted.detail.proposalId,
+            filledCount: filled.length,
+            refusedCount: outcomes.length - filled.length,
+          },
+        }, database);
+      }
+      let nextSequence = sequence + (filled.length > 0 ? 1 : 0);
+      for (const outcome of outcomes.filter((item) => item.disposition === 'expired')) {
+        appendDecisionEvidenceEvent({
+          schemaVersion: 1,
+          decisionId: settledDecisionId,
+          profileId,
+          sequence: nextSequence,
+          kind: 'recovery',
+          atMs: outcome.atMs,
+          detail: { orderId: outcome.orderId, disposition: 'expired' },
+        }, database);
+        nextSequence += 1;
+      }
+    }
+    preDecisionBalances = listPaperBalances(profileId, database)
+      .map(({ assetId, quantity }) => Object.freeze({ assetId, quantity }));
+  }
+
+  // A decided slot stays decided, but refresh-time settlement still runs first
+  // so a restart on the same scheduler slot can reconcile its durable order.
   const existing = getWalletDecisionRun(runId, database);
   if (existing !== null && existing.status === 'completed') {
     const snapshot = JSON.parse(existing.snapshotJson) as {
       standDown: PaperRunStandDown | null;
       filled: number;
+      submitted?: number;
       refused: number;
       preDecisionBalances?: readonly { readonly assetId: string; readonly quantity: string }[];
     };
@@ -274,93 +304,16 @@ export function runPaperDecision(
     return {
       profileId,
       runId,
-      strategyVersion: PAPER_ALLOCATION_REBALANCER_VERSION,
+      strategyVersion: existing.strategyVersion,
       scheduledForMs,
       decidedAtMs: existing.createdAt,
       standDown: snapshot.standDown,
       filledCount: snapshot.filled,
+      submittedCount: snapshot.submitted ?? 0,
       refusedCount: snapshot.refused,
       preDecisionBalances,
     };
   }
-
-  const persistDecision = (
-    policy: AllocationPolicy | null,
-    holdings: readonly Holding[] | null,
-    preparation: PaperDecisionPreparation | null = null,
-  ): void => {
-    const existingDecision = getStrategyDecision(decisionId, database);
-    const createdAtMs = existingDecision?.decision.createdAtMs ?? decidedAtMs;
-    decisionCreatedAtMs = createdAtMs;
-    const targetRows = (policy?.targets ?? [])
-      .map((target) => ({ assetId: instrumentKey(target.instrument), weight: target.weight }))
-      .sort((left, right) => left.assetId < right.assetId ? -1 : left.assetId > right.assetId ? 1 : 0);
-    const targetExposure = targetRows.reduce((sum, target) => sum + target.weight, 0);
-    const holdingRows = holdings?.map((holding) => ({
-      assetId: instrumentKey(holding.asset.instrument),
-      priceUsd: holding.priceUsd,
-      quantity: holding.quantity,
-      valueUsd: holding.valueUsd,
-    })).sort((left, right) => left.assetId < right.assetId ? -1 : left.assetId > right.assetId ? 1 : 0) ?? null;
-    const portfolioHash = holdingRows === null ? null : hashCanonical(holdingRows);
-    const configHash = hashCanonical(policy === null ? null : {
-      rebalanceBandPct: policy.rebalanceBandPct,
-      targets: targetRows,
-    });
-    const preparationFailure = preparation !== null && !preparation.ok
-      ? preparation.code
-      : null;
-    const decision: StrategyDecisionV1 = {
-      schemaVersion: 1,
-      decisionId,
-      profileId,
-      runId,
-      scheduledForMs,
-      strategy: {
-        id: 'allocation-policy-rebalancer',
-        version: PAPER_ALLOCATION_REBALANCER_VERSION,
-        configHash,
-      },
-      market: {
-        snapshotHash: preparation?.datasetHash ?? null,
-        asOfMs: preparation?.latestCompletedStartMs ?? null,
-        expectedAsOfMs: preparation?.expectedCompletedStartMs ?? null,
-        freshness: preparationFailure === 'stale_market_data'
-          ? 'stale'
-          : preparation?.datasetHash !== undefined ? 'fresh' : 'unavailable',
-        refreshResult: preparation === null
-          ? 'not_requested'
-          : preparation.ok ? 'succeeded' : preparation.code,
-        ruleSnapshotHash: preparation?.ruleSnapshotHash ?? null,
-        rulesFresh: preparation === null
-          ? false
-          : preparation.ok ? true : preparation.rulesFresh ?? false,
-      },
-      portfolio: {
-        snapshotHash: portfolioHash,
-        version: holdingRows === null ? null : 'legacy-profile-holdings-v1',
-        source: holdingRows === null ? 'unavailable' : 'profile_holdings',
-      },
-      targets: targetRows,
-      cashWeight: policy === null ? null : Math.max(0, 1 - targetExposure),
-      exposure: policy === null ? null : Math.min(1, targetExposure),
-      historyStatus: 'unavailable',
-      createdAtMs,
-    };
-    inTransaction(database, () => {
-      const stored = saveStrategyDecision(decision, database);
-      storedDecisionHash = stored.contentHash;
-      appendDecisionEvidenceEvent({
-        schemaVersion: 1,
-        decisionId,
-        profileId,
-        sequence: 0,
-        kind: 'strategy_evaluated',
-        atMs: createdAtMs,
-        detail: { decisionHash: stored.contentHash },
-      }, database);
-    });
-  };
 
   const killSwitch = resolveKillSwitch(profileId, database);
   if (killSwitch.engaged) {
@@ -369,25 +322,101 @@ export function runPaperDecision(
     journal(database, profileId, runId, decidedAtMs, 'kill_switch', 'halted', {
       reason: killSwitch.reason,
     });
-    persistDecision(null, null);
+    persistDecision(null, null, preparation);
     return finish('kill_switch_engaged');
   }
 
   const policy = dependencies.policy();
   if (policy === null) {
-    persistDecision(null, null);
+    persistDecision(null, null, preparation);
     return finish('no_policy');
   }
 
-  const preparation = dependencies.preparation();
   if (!preparation.ok) {
     persistDecision(policy, null, preparation);
     return finish(preparation.code);
   }
 
-  const holdings = dependencies.holdings();
-  persistDecision(policy, holdings, preparation);
-  const intents = planAutoRebalance(holdings, policy, decidedAtMs);
+  if (getPaperBookOrigin(profileId, database) === null) {
+    const source = openingSnapshot(profileId, dependencies.holdings(), decidedAtMs);
+    if (typeof source === 'string') {
+      persistDecision(policy, null, preparation);
+      return finish(source);
+    }
+    try {
+      initializePaperBook(source, database);
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('explicit reset')) {
+        persistDecision(policy, null, preparation);
+        return finish('paper_book_requires_reset');
+      }
+      throw error;
+    }
+  }
+
+  let holdings: readonly Holding[];
+  try {
+    holdings = paperHoldings(profileId, policy, preparation, database);
+  } catch (error) {
+    if (error instanceof Error && error.message === 'paper_book_incomplete') {
+      persistDecision(policy, null, preparation);
+      return finish('paper_book_incomplete');
+    }
+    throw error;
+  }
+  executionHoldings = holdings;
+  const baseTargets = policy.targets.map((target) => ({
+    assetId: instrumentKey(target.instrument), weight: target.weight,
+  }));
+  const trend = trendVolTargets(
+    baseTargets,
+    preparation.dataset.closesById,
+    normalizedMix(policy, preparation.dataset),
+  );
+  const instrumentById = new Map(policy.targets.map((target) =>
+    [instrumentKey(target.instrument), target.instrument]));
+  const targetPolicy: AllocationPolicy = {
+    rebalanceBandPct: policy.rebalanceBandPct,
+    targets: trend.targets.map((target) => ({
+      instrument: instrumentById.get(target.assetId)!, weight: target.weight,
+    })),
+  };
+  persistDecision(targetPolicy, holdings, preparation, {
+    id: 'trendvol',
+    version: PAPER_TRENDVOL_VERSION,
+    historyStatus: trend.historyStatus,
+    facts: {
+      momentum: trend.momentum.stats,
+      realizedVolPct: trend.volatility.realizedVolPct,
+      belowTrend: trend.volatility.belowTrend,
+    },
+    portfolioSource: 'paper_ledger',
+    configMaterial: {
+      basePolicy: policy,
+      momentum: DEFAULT_MOMENTUM_CONFIG,
+      volTarget: DEFAULT_VOL_TARGET_CONFIG,
+    },
+  });
+  runtimeStrategyVersion = PAPER_TRENDVOL_VERSION;
+  const codeHash = sha256Hex('trendvol-paper-v1:shared-core-targets:pending-next-open');
+  const costModelHash = paperCostModelHash();
+  savePaperCampaignPlanV2({
+    schemaVersion: 2,
+    id: sha256Hex(`paper-campaign-v2:${profileId}:${PAPER_TRENDVOL_VERSION}:${strategyConfigHash}`),
+    profileId,
+    strategyId: 'trendvol',
+    strategyVersion: PAPER_TRENDVOL_VERSION,
+    configHash: strategyConfigHash!,
+    codeHash,
+    evidenceSchemaVersion: 1,
+    costModelHash,
+    prospectiveStartMs: scheduledForMs,
+    createdAtMs: decisionCreatedAtMs,
+  }, database);
+  const intents = planAutoRebalance(holdings, targetPolicy, decidedAtMs)
+    .sort((left, right) => left.side !== right.side
+      ? left.side === 'sell' ? -1 : 1
+      : instrumentKey(left.asset.instrument) < instrumentKey(right.asset.instrument) ? -1 : 1);
   if (intents.length === 0) return finish('no_intents');
 
   planned = {
@@ -411,28 +440,16 @@ export function runPaperDecision(
     detail: { planId: planned.proposalId, planHash: planned.planHash, intentCount: intents.length },
   }, database);
 
-  const execution = new PaperExecutionService({
-    database,
-    profileId,
-    nowMs: () => dependencies.clock.nowMs(),
-    market: dependencies.market,
-    state: () => ({
-      holdings: dependencies.holdings(),
-      killSwitchEngaged: resolveKillSwitch(profileId, database).engaged,
-      evidenceVerified: dependencies.evidenceVerified?.() ?? false,
-      historicalGrossEdgeLowerBoundPct: dependencies.historicalGrossEdgeLowerBoundPct,
-    }),
-    ...(dependencies.onUnexpectedError === undefined
-      ? {}
-      : {
-          onUnexpectedError: dependencies.onUnexpectedError,
-        }),
-  });
   const outcome = execution.prepare({
     proposalId: planned.proposalId,
     runId,
     revision: 1,
     intents,
+    pending: {
+      decisionId,
+      requiredExecutionBarStartMs: preparation.latestCompletedStartMs + 86_400_000,
+      costModelHash,
+    },
   });
 
   journal(database, profileId, runId, decidedAtMs, 'execution', outcome.status, {
@@ -444,6 +461,15 @@ export function runPaperDecision(
   });
 
   if (outcome.status === 'pending') return finish('pending_review');
+  if (outcome.status === 'submitted') {
+    submission = {
+      proposalHash: outcome.proposalHash,
+      orderIds: listSubmittedPaperExecutions(profileId, database)
+        .filter((item) => item.decisionId === decisionId)
+        .map((item) => item.orderId),
+    };
+    return finish('pending_settlement', 0, outcome.refusedCount, submission.orderIds.length);
+  }
   if (outcome.status === 'unknown') return finish('execution_unknown', 0, outcome.refusedCount);
   if (outcome.status === 'failed') return finish('execution_failed', 0, outcome.refusedCount);
   if (outcome.status === 'blocked') {

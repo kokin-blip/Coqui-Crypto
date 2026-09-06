@@ -178,6 +178,37 @@ export function latestProductRuleSnapshot(
   });
 }
 
+export function getProductRuleSnapshot(id: string, database: Db): ProductRuleSnapshot | null {
+  const row = database.prepare(
+    'SELECT * FROM paper_product_rule_snapshots_v3 WHERE id = ?',
+  ).get(id) as unknown as ProductRuleRow | undefined;
+  if (row === undefined) return null;
+  return Object.freeze({
+    id: row.id,
+    instrument: {
+      venue: 'coinbase' as const,
+      productId: row.product_id,
+      productType: row.product_type,
+    },
+    status: row.status,
+    tradingDisabled: row.trading_disabled === 1,
+    cancelOnly: row.cancel_only === 1,
+    limitOnly: row.limit_only === 1,
+    postOnly: row.post_only === 1,
+    viewOnly: row.view_only === 1,
+    baseIncrement: row.base_increment_text,
+    quoteIncrement: row.quote_increment_text,
+    priceIncrement: row.price_increment_text,
+    baseMinSize: row.base_min_size_text,
+    baseMaxSize: row.base_max_size_text,
+    quoteMinSize: row.quote_min_size_text,
+    quoteMaxSize: row.quote_max_size_text,
+    source: row.source,
+    retrievedAt: row.retrieved_at,
+    responseHash: row.response_hash,
+  });
+}
+
 export function getPaperOrder(id: string, database: Db): PaperOrder | null {
   const row = database.prepare('SELECT * FROM paper_orders_v3 WHERE id = ?').get(id);
   return row ? orderFromRow(row as unknown as OrderRow) : null;
@@ -467,6 +498,15 @@ export function recoverInterruptedPaperOrders(
     let blocked = 0;
     for (const row of rows) {
       const order = orderFromRow(row);
+      const recognizedPending = database.prepare(`
+        SELECT 1 AS present FROM paper_pending_executions_v1
+        WHERE order_id = ? AND profile_id = ? AND status = 'submitted'
+      `).get(order.id, profileId) as { present: number } | undefined;
+      if (order.state === 'submitted' && recognizedPending !== undefined) {
+        // A next-open simulator order is intentionally durable across restarts.
+        // It is neither an ambiguous external submission nor safe to cancel.
+        continue;
+      }
       const fills = database.prepare(
         'SELECT quantity_text FROM paper_fills_v3 WHERE order_id = ? ORDER BY id',
       ).all(order.id) as unknown as Array<{ quantity_text: string }>;

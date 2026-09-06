@@ -9,18 +9,31 @@ import {
   type PaperOrderState,
   type ProductRuleSnapshot,
 } from '@coqui/core';
+import { Decimal } from 'decimal.js';
 import {
   appendPaperOrderEvent,
   commitPaperFill,
+  getPaperPendingExecution,
+  getPaperOrder,
+  getProductRuleSnapshot,
   inTransaction,
+  listSubmittedPaperExecutions,
   listPaperBalances,
+  savePaperPendingExecution,
+  settlePaperPendingExecution,
   saveProductRuleSnapshot,
   savePaperOrder,
   type Db,
 } from '@coqui/storage';
 
 import { isApproved, type ApprovedExecution } from './execution-gate.js';
-import { isFilled, simulateFill, type VenueOutcome } from './venue.js';
+import {
+  isFilled,
+  paperCostModelHash,
+  selectExecutionBar,
+  simulateFill,
+  type VenueOutcome,
+} from './venue.js';
 
 /**
  * The paper order-management system.
@@ -70,6 +83,31 @@ export interface OmsRunResult {
   readonly refusedCount: number;
 }
 
+export interface PaperPendingPlacementContext {
+  readonly decisionId: string;
+  readonly requiredExecutionBarStartMs: number;
+  readonly costModelHash: string;
+}
+
+export interface PaperPendingSubmitResult {
+  readonly submittedCount: number;
+  readonly refusedCount: number;
+  readonly orderIds: readonly string[];
+}
+
+export interface PaperPendingSettlementResult {
+  readonly filledCount: number;
+  readonly expiredCount: number;
+  readonly pendingCount: number;
+  readonly decisionIds: readonly string[];
+  readonly outcomes: readonly {
+    readonly decisionId: string;
+    readonly orderId: string;
+    readonly disposition: 'filled' | 'expired';
+    readonly atMs: number;
+  }[];
+}
+
 export interface PaperMarketData {
   /** Every known bar for an instrument, ascending. The venue picks the fill bar. */
   bars(instrumentKey: string): readonly MarketBar[];
@@ -104,6 +142,19 @@ function availableCashUsd(profileId: string, database: Db): string {
   return balances.find((balance) => balance.assetId === OPENING_CASH_ASSET)?.quantity ?? '0';
 }
 
+function availableForIntentUsd(
+  profileId: string,
+  side: 'buy' | 'sell',
+  instrument: ProductRuleSnapshot['instrument'],
+  priceUsd: string,
+  database: Db,
+): string {
+  if (side === 'buy') return availableCashUsd(profileId, database);
+  const quantity = listPaperBalances(profileId, database)
+    .find((balance) => balance.assetId === instrumentKey(instrument))?.quantity ?? '0';
+  return new Decimal(quantity).mul(priceUsd).toFixed();
+}
+
 /**
  * Checks `assertLedger` does not perform.
  *
@@ -116,10 +167,8 @@ function fillIsSelfConsistent(outcome: Extract<VenueOutcome, { filled: true }>):
   const expected = Number(outcome.quantity) * Number(outcome.executionPrice);
   const actual = Number(outcome.notional);
   if (!Number.isFinite(expected) || !Number.isFinite(actual)) return false;
-  // Normalisation floors to the venue's increment, so the notional is at or
-  // below price × quantity; it must never exceed it.
   const tolerance = Math.max(1e-6, Math.abs(expected) * 1e-9);
-  return actual <= expected + tolerance;
+  return Math.abs(actual - expected) <= tolerance;
 }
 
 export class PaperOmsService {
@@ -159,6 +208,176 @@ export class PaperOmsService {
     };
   }
 
+  /** Persist approved orders for an exact future bar without pricing or filling them. */
+  submitPending(
+    approval: ApprovedExecution,
+    context: PaperPendingPlacementContext,
+  ): PaperPendingSubmitResult {
+    const orderIds: string[] = [];
+    let refusedCount = 0;
+    for (const intent of approval.intents) {
+      const key = instrumentKey(intent.asset.instrument);
+      const rules = this.#market.rules(key);
+      if (rules === null || instrumentKey(rules.instrument) !== key) {
+        refusedCount += 1;
+        continue;
+      }
+      const orderId = orderIdFor(approval, intent.asset.instrument.productId, intent.side);
+      try {
+        inTransaction(this.#database, () => {
+          const pendingId = sha256Hex(`pending:${orderId}`);
+          const prior = getPaperPendingExecution(pendingId, this.#database);
+          if (prior !== null) {
+            if (prior.profileId !== approval.profileId || prior.decisionId !== context.decisionId ||
+                prior.requiredExecutionBarStartMs !== context.requiredExecutionBarStartMs ||
+                prior.costModelHash !== context.costModelHash) {
+              throw new Error('Pending execution retry changed immutable context.');
+            }
+            if (prior.status !== 'submitted') {
+              throw new Error('Pending execution retry is already terminal.');
+            }
+            return;
+          }
+          saveProductRuleSnapshot(rules, this.#database);
+          const order: PaperOrder = {
+            id: orderId, profileId: approval.profileId, runId: approval.runId,
+            instrument: intent.asset.instrument, side: intent.side,
+            requestedQuantity: '0' as PaperOrder['requestedQuantity'],
+            requestedNotional: String(intent.amountUsd) as PaperOrder['requestedNotional'],
+            state: 'proposed', productRuleSnapshotId: rules.id,
+            decisionSnapshotHash: context.decisionId, reason: null,
+            createdAt: this.#clock.nowMs(), updatedAt: this.#clock.nowMs(),
+          };
+          savePaperOrder(order, this.#database);
+          this.#event(order, 'proposed', 0, order.createdAt, { gatesPassed: approval.gatesPassed });
+          let sequence = 1;
+          for (const state of ['risk_approved', 'submission_pending', 'submitted'] as const) {
+            this.#advance(order, state, sequence++, order.createdAt, null);
+          }
+          savePaperPendingExecution({
+            schemaVersion: 1,
+            id: pendingId,
+            profileId: approval.profileId,
+            decisionId: context.decisionId,
+            orderId,
+            instrument: intent.asset.instrument,
+            symbol: intent.asset.symbol,
+            side: intent.side,
+            requestedUsd: String(intent.amountUsd),
+            requiredExecutionBarStartMs: context.requiredExecutionBarStartMs,
+            productRuleSnapshotId: rules.id,
+            costModelHash: context.costModelHash,
+            status: 'submitted',
+            submittedAtMs: order.createdAt,
+            settledAtMs: null,
+          }, this.#database);
+        });
+        orderIds.push(orderId);
+      } catch (error) {
+        this.#onUnexpectedError(intent.asset.instrument.productId, error);
+        refusedCount += 1;
+      }
+    }
+    return Object.freeze({ submittedCount: orderIds.length, refusedCount, orderIds });
+  }
+
+  /** Settle only the recorded execution interval; never substitute a later bar. */
+  settlePending(profileId: string): PaperPendingSettlementResult {
+    let filledCount = 0;
+    let expiredCount = 0;
+    let pendingCount = 0;
+    const decisionIds = new Set<string>();
+    const outcomes: Array<{
+      decisionId: string;
+      orderId: string;
+      disposition: 'filled' | 'expired';
+      atMs: number;
+    }> = [];
+    const pending = [...listSubmittedPaperExecutions(profileId, this.#database)].sort((left, right) =>
+      left.side !== right.side ? left.side === 'sell' ? -1 : 1 : left.id < right.id ? -1 : 1);
+    inTransaction(this.#database, () => { for (const item of pending) {
+      const bars = this.#market.bars(instrumentKey(item.instrument));
+      const exact = bars.find((bar) => bar.startTimeMs === item.requiredExecutionBarStartMs);
+      if (exact === undefined) {
+        if (bars.some((bar) => bar.isComplete && bar.startTimeMs > item.requiredExecutionBarStartMs)) {
+          const order = getPaperOrder(item.orderId, this.#database);
+          if (order === null) throw new Error('Pending execution order is missing.');
+          const atMs = this.#clock.nowMs();
+          this.#advance(order, 'expired', 4, atMs, 'required_execution_bar_missing');
+          settlePaperPendingExecution(item.id, 'expired', atMs, this.#database);
+          expiredCount += 1;
+          decisionIds.add(item.decisionId);
+          outcomes.push({ decisionId: item.decisionId, orderId: item.orderId,
+            disposition: 'expired', atMs });
+        } else pendingCount += 1;
+        continue;
+      }
+      if (!exact.isComplete) { pendingCount += 1; continue; }
+      const rules = getProductRuleSnapshot(item.productRuleSnapshotId, this.#database);
+      if (rules === null || item.costModelHash !== paperCostModelHash()) {
+        const order = getPaperOrder(item.orderId, this.#database);
+        if (order === null) throw new Error('Pending execution order is missing.');
+        const atMs = this.#clock.nowMs();
+        this.#advance(order, 'expired', 4, atMs, 'bound_snapshot_unavailable');
+        settlePaperPendingExecution(item.id, 'expired', atMs, this.#database);
+        expiredCount += 1;
+        decisionIds.add(item.decisionId);
+        outcomes.push({ decisionId: item.decisionId, orderId: item.orderId,
+          disposition: 'expired', atMs });
+        continue;
+      }
+      const outcome = simulateFill({
+        instrument: item.instrument, symbol: item.symbol, side: item.side,
+        requestedUsd: item.requestedUsd,
+        availableCashUsd: availableForIntentUsd(
+          profileId,
+          item.side,
+          item.instrument,
+          String(exact.open),
+          this.#database,
+        ),
+        rules, bars: [exact], decidedAtMs: item.requiredExecutionBarStartMs,
+      });
+      const order = getPaperOrder(item.orderId, this.#database);
+      if (order === null) throw new Error('Pending execution order is missing.');
+      if (!isFilled(outcome) || !fillIsSelfConsistent(outcome)) {
+        const atMs = this.#clock.nowMs();
+        const reason = isFilled(outcome) ? 'inconsistent_fill' : outcome.code;
+        this.#advance(order, 'expired', 4, atMs, reason);
+        settlePaperPendingExecution(item.id, 'expired', atMs, this.#database);
+        expiredCount += 1;
+        decisionIds.add(item.decisionId);
+        outcomes.push({ decisionId: item.decisionId, orderId: item.orderId,
+          disposition: 'expired', atMs });
+        continue;
+      }
+      const fill: PaperFill = {
+        id: sha256Hex(`${item.orderId}:${exact.startTimeMs}`), orderId: item.orderId,
+        profileId, quantity: outcome.quantity as PaperFill['quantity'],
+        executionPrice: outcome.executionPrice as PaperFill['executionPrice'],
+        notional: outcome.notional as PaperFill['notional'], venueFee: outcome.venueFee as PaperFill['venueFee'],
+        spreadCost: outcome.spreadCost as PaperFill['spreadCost'],
+        slippageCost: outcome.slippageCost as PaperFill['slippageCost'],
+        impactCost: outcome.impactCost as PaperFill['impactCost'], filledAt: outcome.filledAtMs,
+        marketSnapshotHash: sha256Hex(`${instrumentKey(item.instrument)}:${exact.startTimeMs}:${exact.open}`),
+      };
+      commitPaperFill(fill, order.runId, paperFillLedgerEntries({
+        instrument: item.instrument, side: item.side, quantity: outcome.quantity,
+        executionPrice: outcome.executionPrice, venueFee: outcome.venueFee,
+      }), this.#database);
+      this.#advance(order, 'filled', 4, outcome.filledAtMs, null);
+      settlePaperPendingExecution(item.id, 'filled', outcome.filledAtMs, this.#database);
+      filledCount += 1;
+      decisionIds.add(item.decisionId);
+      outcomes.push({ decisionId: item.decisionId, orderId: item.orderId,
+        disposition: 'filled', atMs: outcome.filledAtMs });
+    }});
+    return Object.freeze({
+      filledCount, expiredCount, pendingCount, decisionIds: Object.freeze([...decisionIds]),
+      outcomes: Object.freeze(outcomes),
+    });
+  }
+
   #executeOne(
     approval: ApprovedExecution,
     intent: ApprovedExecution['intents'][number],
@@ -193,12 +412,18 @@ export class PaperOmsService {
       };
     }
 
-    const outcome = simulateFill({
+      const outcome = simulateFill({
       instrument,
       symbol: intent.asset.symbol,
       side: intent.side,
       requestedUsd: String(intent.amountUsd),
-      availableCashUsd: availableCashUsd(approval.profileId, this.#database),
+      availableCashUsd: availableForIntentUsd(
+        approval.profileId,
+        intent.side,
+        instrument,
+        String(selectExecutionBar(bars, approval.approvedAtMs)?.open ?? 0),
+        this.#database,
+      ),
       rules,
       bars,
       decidedAtMs: approval.approvedAtMs,

@@ -68,6 +68,22 @@ function assertDecision(decision: StrategyDecisionV1): void {
     total += target.weight;
   }
   if (total > 1 + 1e-12) throw new TypeError('Strategy decision targets cannot exceed 100%.');
+  if (decision.facts !== null) {
+    if ((decision.facts.realizedVolPct !== null &&
+        (!Number.isFinite(decision.facts.realizedVolPct) || decision.facts.realizedVolPct < 0)) ||
+        (decision.facts.belowTrend !== null && typeof decision.facts.belowTrend !== 'boolean')) {
+      throw new TypeError('Invalid strategy decision facts.');
+    }
+    const factAssets = new Set<string>();
+    for (const fact of decision.facts.momentum) {
+      if (!fact.assetId || factAssets.has(fact.assetId) ||
+          ![fact.returnPct, fact.volatilityPct, fact.riskAdjustedMomentum].every(Number.isFinite) ||
+          fact.volatilityPct < 0) {
+        throw new TypeError('Invalid strategy decision momentum facts.');
+      }
+      factAssets.add(fact.assetId);
+    }
+  }
 }
 
 function eventReason(event: DecisionEvidenceEventV1): string | null {

@@ -10,7 +10,9 @@ const proposalStatusSchema = z.enum([
   'pending_review', 'approved', 'rejected', 'executing',
   'blocked', 'failed', 'succeeded', 'unknown',
 ]);
-const outcomeStatusSchema = z.enum(['pending', 'blocked', 'failed', 'succeeded', 'unknown']);
+const outcomeStatusSchema = z.enum([
+  'pending', 'submitted', 'blocked', 'failed', 'succeeded', 'unknown',
+]);
 
 const policySchema = z.strictObject({
   profileId: z.string().min(1).max(64),

@@ -10,9 +10,11 @@ import {
   getPaperExecutionAttemptOutcome,
   getPaperExecutionPolicy,
   getPaperExecutionProposal,
+  getPaperProposalPendingContext,
   recordPaperExecutionAttempt,
   recordPaperExecutionReview,
   savePaperExecutionProposal,
+  savePaperProposalPendingContext,
   updatePaperExecutionProposalStatus,
   type Db,
   type PaperExecutionOutcomeStatus,
@@ -20,7 +22,11 @@ import {
 } from '@coqui/storage';
 
 import { isApproved, runExecutionGates, type ExecutionRefusalCode } from './execution-gate.js';
-import { PaperOmsService, type PaperMarketData } from './oms.js';
+import {
+  PaperOmsService,
+  type PaperMarketData,
+  type PaperPendingSettlementResult,
+} from './oms.js';
 
 export interface PaperExecutionState {
   readonly holdings: readonly Holding[];
@@ -36,6 +42,11 @@ export interface ProposedPaperAction {
   readonly runId: string;
   readonly revision: number;
   readonly intents: readonly ExecutionIntent[];
+  readonly pending?: {
+    readonly decisionId: string;
+    readonly requiredExecutionBarStartMs: number;
+    readonly costModelHash: string;
+  };
 }
 
 export interface PaperExecutionResult {
@@ -104,6 +115,17 @@ export class PaperExecutionService {
     this.#onUnexpectedError = dependencies.onUnexpectedError ?? (() => {});
   }
 
+  /** Reconcile durable simulator submissions through the same sole OMS boundary. */
+  settlePending(): PaperPendingSettlementResult {
+    return new PaperOmsService({
+      database: this.#database,
+      clock: { nowMs: this.#nowMs },
+      market: this.#market,
+      onUnexpectedError: (productId, error) =>
+        this.#onUnexpectedError(`paper_settlement:${productId}`, error),
+    }).settlePending(this.#profileId);
+  }
+
   prepare(action: ProposedPaperAction): PaperExecutionResult {
     const at = this.#nowMs();
     const intentsJson = serializedIntents(action.intents);
@@ -142,6 +164,9 @@ export class PaperExecutionService {
       createdAt: at,
       updatedAt: at,
     }, this.#database);
+    if (action.pending !== undefined) {
+      savePaperProposalPendingContext(proposal.id, action.pending, this.#database);
+    }
     appendPaperExecutionEvent(proposal.id, this.#profileId, 'prepared', at, {
       proposalHash: hash,
       policy: policy.mode,
@@ -271,6 +296,28 @@ export class PaperExecutionService {
       market: this.#market,
       onUnexpectedError: (productId, error) => this.#onUnexpectedError(`oms:${productId}`, error),
     });
+    const pending = getPaperProposalPendingContext(proposal.id, this.#database);
+    if (pending !== null) {
+      const submitted = oms.submitPending(gates, pending);
+      const status: PaperExecutionOutcomeStatus = submitted.submittedCount > 0
+        ? 'submitted'
+        : 'blocked';
+      const completedAt = this.#nowMs();
+      recordPaperExecutionAttempt({
+        id: sha256Hex(`paper-attempt:${commandId}`), commandId, proposal, status,
+        reasonCode: submitted.submittedCount > 0 ? null : 'venue_refused',
+        filledCount: 0, refusedCount: submitted.refusedCount,
+        checkSnapshotHash, checkSnapshotJson, startedAt: at, completedAt,
+      }, this.#database);
+      updatePaperExecutionProposalStatus(
+        proposal.id, submitted.submittedCount > 0 ? 'executing' : 'blocked', completedAt, this.#database,
+      );
+      appendPaperExecutionEvent(proposal.id, this.#profileId,
+        submitted.submittedCount > 0 ? 'submission_started' : 'blocked', completedAt,
+        { submittedCount: submitted.submittedCount, orderIds: submitted.orderIds }, this.#database);
+      return result(proposal, status, submitted.submittedCount > 0 ? null : 'venue_refused',
+        0, submitted.refusedCount);
+    }
     const settled = oms.execute(gates);
     const hasUnknown = settled.orders.some((order) => order.finalState === 'unknown');
     const status: PaperExecutionOutcomeStatus = hasUnknown

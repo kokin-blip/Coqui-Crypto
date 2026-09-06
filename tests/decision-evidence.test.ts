@@ -54,6 +54,7 @@ function decision(
     cashWeight: 0.1,
     exposure: 0.9,
     historyStatus: 'complete',
+    facts: { momentum: [], realizedVolPct: 20, belowTrend: false },
     createdAtMs: scheduledForMs,
   };
 }

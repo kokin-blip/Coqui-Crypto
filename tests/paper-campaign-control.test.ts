@@ -75,6 +75,7 @@ describe('paper campaign safety-stop control', () => {
         decidedAtMs: start,
         standDown: 'no_intents',
         filledCount: 0,
+        submittedCount: 0,
         refusedCount: 0,
         preDecisionBalances: [],
       },

@@ -1,13 +1,17 @@
 import {
+  canonicalJson,
   estimateTradeCost,
   normalizePaperOrder,
   paperExecutionPrice,
+  sha256Hex,
   DEFAULT_TRADE_COST_CONFIG,
+  type CanonicalJsonValue,
   type InstrumentIdentity,
   type MarketBar,
   type ProductRuleSnapshot,
   type TradeCostConfig,
 } from '@coqui/core';
+import { Decimal } from 'decimal.js';
 
 /**
  * The simulated venue.
@@ -62,6 +66,12 @@ export interface SimulatedFill {
 }
 
 export type VenueOutcome = SimulatedFill | VenueRefusal;
+
+export function paperCostModelHash(
+  config: TradeCostConfig = DEFAULT_TRADE_COST_CONFIG,
+): string {
+  return sha256Hex(canonicalJson(config as unknown as CanonicalJsonValue));
+}
 
 export function isFilled(outcome: VenueOutcome): outcome is SimulatedFill {
   return outcome.filled;
@@ -142,15 +152,27 @@ export function simulateFill(input: SimulateFillInput): VenueOutcome {
   if (!Number.isFinite(reference) || reference <= 0) return refuse('non_positive_price');
   const referencePrice = String(reference);
 
+  const costConfig = input.costConfig ?? DEFAULT_TRADE_COST_CONFIG;
+  const available = new Decimal(input.availableCashUsd);
+  const normalizationCapacity = input.side === 'buy' && available.isPositive()
+    ? available.div(new Decimal(1).add(new Decimal(estimateTradeCost(
+      {
+        asset: { instrument: input.instrument, symbol: input.symbol },
+        side: input.side,
+        amountUsd: available.toNumber(),
+      },
+      costConfig,
+    ).totalCostPct).div(100))).toFixed()
+    : input.availableCashUsd;
+
   const normalized = normalizePaperOrder(
     input.requestedUsd,
     referencePrice,
     input.rules,
-    input.availableCashUsd,
+    normalizationCapacity,
   );
   if (!normalized.accepted) return refuse('rules_reject', normalized.reason);
 
-  const costConfig = input.costConfig ?? DEFAULT_TRADE_COST_CONFIG;
   const costs = estimateTradeCost(
     {
       asset: { instrument: input.instrument, symbol: input.symbol },
@@ -179,6 +201,7 @@ export function simulateFill(input: SimulateFillInput): VenueOutcome {
     // executable at any size, which is a refusal rather than a clamped fill.
     return refuse('non_positive_price');
   }
+  const executedNotional = new Decimal(normalized.quantity).mul(executionPrice).toFixed();
 
   return {
     filled: true,
@@ -187,7 +210,7 @@ export function simulateFill(input: SimulateFillInput): VenueOutcome {
     quantity: normalized.quantity,
     referencePrice,
     executionPrice,
-    notional: normalized.notionalUsd,
+    notional: executedNotional,
     venueFee: costs.feeUsd.toFixed(8),
     spreadCost,
     slippageCost,

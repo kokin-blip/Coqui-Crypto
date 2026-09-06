@@ -23,9 +23,13 @@ about the behavior or edge of TrendVol.
   `strategy_implementation_mismatch`.
 - No new forward observation is recorded under the incompatible plan.
 - Historical rows are not rewritten or deleted.
-- A future TrendVol campaign must begin prospectively after the scheduled path
-  invokes the shared Momentum + VolTarget implementation and binds its exact
-  configuration and code identity.
+- The replacement `trendvol-paper-v1-unvalidated` path now invokes the shared
+  Momentum + VolTarget implementation and binds its configuration, code,
+  dataset, rule, portfolio, and cost identities.
+- Its v2 campaign begins prospectively at the first complete post-cutover
+  decision. No historical allocation-rebalancer observation is eligible for it.
+- Orders submitted from completed bar N remain pending until the exact N+1 bar
+  is complete, then settle at that recorded open; a missing exact bar expires.
 
 This finding does not adopt a strategy, validate profitability, or enable live
 execution.

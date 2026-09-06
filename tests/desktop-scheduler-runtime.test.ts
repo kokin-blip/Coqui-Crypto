@@ -17,7 +17,6 @@ import {
 } from '../packages/core/src/index.js';
 import type { PaperRunLoopDependencies } from '../packages/services/src/index.js';
 import {
-  bootstrapPaperBalances,
   countCompletedDecisionRuns,
   getPaperOrder,
   openDatabase,
@@ -25,19 +24,16 @@ import {
   saveProductRuleSnapshot,
   type Db,
 } from '../packages/storage/src/index.js';
+import { paperPreparation, seedPaperOrigin } from './support.js';
 
 const DAY = 86_400_000;
 const T0 = Date.UTC(2026, 0, 8);
 const PROFILE = 'main';
-const PREPARATION = {
-  ok: true as const, datasetHash: 'd'.repeat(64), latestCompletedStartMs: T0,
-  expectedCompletedStartMs: T0, ruleSnapshotHash: 'e'.repeat(64),
-};
 
 const BTC: InstrumentIdentity = { venue: 'coinbase', productId: 'BTC-USD', productType: 'spot' };
 const BTC_KEY = instrumentKey(BTC);
 const ETH: InstrumentIdentity = { venue: 'coinbase', productId: 'ETH-USD', productType: 'spot' };
-const ETH_KEY = instrumentKey(ETH);
+const PREPARATION = paperPreparation([BTC, ETH], T0);
 
 const BTC_REF: AssetRef = {
   instrument: BTC,
@@ -123,16 +119,9 @@ class StepClock implements Clock {
 
 function seeded(): Db {
   const db = openDatabase(':memory:');
-  bootstrapPaperBalances(
-    PROFILE,
-    [
-      { assetId: 'USD', quantity: '10000' },
-      { assetId: ETH_KEY, quantity: '9' },
-    ],
-    'seed',
-    T0,
-    db,
-  );
+  seedPaperOrigin(db, PROFILE, [
+    holding(BTC_REF, '100.00', '1'), holding(ETH_REF, '900.00', '9'),
+  ], T0);
   return db;
 }
 
@@ -195,10 +184,9 @@ describe('the scheduler finally has a wake-up', () => {
     clock.advance(DAY);
     await runtime.tick();
 
-    // Preparation happens first. The authoritative execution service then
-    // reads holdings for proposal sizing and again for the mandatory fresh
-    // submission checks; the stored preflight never substitutes for that read.
-    expect(order).toEqual(['prepare', 'decide', 'decide']);
+    // Preparation happens first. Once a paper origin exists, planning reads
+    // the simulated ledger rather than repeatedly consulting real holdings.
+    expect(order).toEqual(['prepare']);
     runtime.dispose();
     db.close();
   });

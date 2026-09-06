@@ -20,24 +20,21 @@ import {
 } from '../packages/services/src/index.js';
 import {
   activateWalletSafetyStop,
-  bootstrapPaperBalances,
   openDatabase,
   setPaperExecutionPolicy,
   type Db,
 } from '../packages/storage/src/index.js';
+import { paperPreparation, seedPaperOrigin } from './support.js';
 
 const DAY = 86_400_000;
 const T0 = Date.UTC(2026, 0, 1);
 const PROFILE = 'main';
-const PREPARATION = {
-  ok: true as const, datasetHash: 'd'.repeat(64), latestCompletedStartMs: T0,
-  expectedCompletedStartMs: T0, ruleSnapshotHash: 'e'.repeat(64),
-};
 
 const BTC: InstrumentIdentity = { venue: 'coinbase', productId: 'BTC-USD', productType: 'spot' };
 const BTC_KEY = instrumentKey(BTC);
 const ETH: InstrumentIdentity = { venue: 'coinbase', productId: 'ETH-USD', productType: 'spot' };
 const ETH_KEY = instrumentKey(ETH);
+const PREPARATION = paperPreparation([BTC, ETH], T0);
 
 const BTC_REF: AssetRef = {
   instrument: BTC,
@@ -126,16 +123,9 @@ function priceSource(prices: Record<string, string>): PriceSource {
 
 function seeded(): Db {
   const db = openDatabase(':memory:');
-  bootstrapPaperBalances(
-    PROFILE,
-    [
-      { assetId: 'USD', quantity: '10000' },
-      { assetId: ETH_KEY, quantity: '9' },
-    ],
-    'seed',
-    T0,
-    db,
-  );
+  seedPaperOrigin(db, PROFILE, [
+    holding(BTC_REF, '100.00', '1'), holding(ETH_REF, '900.00', '9'),
+  ], T0);
   setPaperExecutionPolicy({
     commandId: '00000000-0000-4000-8000-000000000004', profileId: PROFILE,
     mode: 'unattended', confirmedAt: T0, explicitUnattendedConfirmation: true,
@@ -162,7 +152,9 @@ describe('the paper figure is a simulation, and says so', () => {
   it('carries a literal simulation marker no surface can drop', async () => {
     const db = seeded();
     const view = await paperPortfolioView(
-      { database: db, clock: new FixedClock(T0 + DAY), priceSource: priceSource({ [ETH_KEY]: '100' }) },
+      { database: db, clock: new FixedClock(T0 + DAY), priceSource: priceSource({
+        [BTC_KEY]: '100', [ETH_KEY]: '100',
+      }) },
       PROFILE,
     );
     // A boolean could be flipped by a caller; a literal type cannot be anything
@@ -174,11 +166,13 @@ describe('the paper figure is a simulation, and says so', () => {
   it('values cash plus priced positions', async () => {
     const db = seeded();
     const view = await paperPortfolioView(
-      { database: db, clock: new FixedClock(T0 + DAY), priceSource: priceSource({ [ETH_KEY]: '100' }) },
+      { database: db, clock: new FixedClock(T0 + DAY), priceSource: priceSource({
+        [BTC_KEY]: '100', [ETH_KEY]: '100',
+      }) },
       PROFILE,
     );
-    // 10,000 cash + 9 ETH at 100.
-    expect(view.totalValueUsd).toBe('10900.00');
+    // The immutable origin copied 1 BTC and 9 ETH with unknown cash recorded as zero.
+    expect(view.totalValueUsd).toBe('1000.00');
     expect(view.unpricedCount).toBe(0);
     db.close();
   });
@@ -189,25 +183,27 @@ describe('an unpriced simulated position withholds the total', () => {
     const db = seeded();
     const view = await paperPortfolioView(
       // ETH deliberately unpriced.
-      { database: db, clock: new FixedClock(T0 + DAY), priceSource: priceSource({}) },
+      { database: db, clock: new FixedClock(T0 + DAY), priceSource: priceSource({ [BTC_KEY]: '100' }) },
       PROFILE,
     );
     // Omitting the position would quietly understate the simulation and flatter
     // whichever side of the comparison is missing a price.
     expect(view.totalValueUsd).toBeNull();
     expect(view.unpricedCount).toBe(1);
-    expect(view.positions[0]?.valueUsd).toBeNull();
+    expect(view.positions.find((position) => instrumentKey(position.instrument) === ETH_KEY)?.valueUsd)
+      .toBeNull();
     db.close();
   });
 
   it('still reports the position and its quantity', async () => {
     const db = seeded();
     const view = await paperPortfolioView(
-      { database: db, clock: new FixedClock(T0 + DAY), priceSource: priceSource({}) },
+      { database: db, clock: new FixedClock(T0 + DAY), priceSource: priceSource({ [BTC_KEY]: '100' }) },
       PROFILE,
     );
-    expect(view.positions).toHaveLength(1);
-    expect(view.positions[0]?.quantity).toBe('9');
+    expect(view.positions).toHaveLength(2);
+    expect(view.positions.find((position) => instrumentKey(position.instrument) === ETH_KEY)?.quantity)
+      .toBe('9');
     db.close();
   });
 });
@@ -221,8 +217,8 @@ describe('the latest run is explained, including a stand-down', () => {
       PROFILE,
     );
     expect(view.lastRun?.scheduledForMs).toBe(T0 + DAY);
-    expect(view.lastRun?.standDown).toBeNull();
-    expect(view.lastRun?.filled).toBeGreaterThan(0);
+    expect(view.lastRun?.standDown).toBe('pending_settlement');
+    expect(view.lastRun?.filled).toBe(0);
     db.close();
   });
 

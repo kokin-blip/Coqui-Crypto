@@ -17,26 +17,24 @@ import {
   type PaperMarketData,
   type PaperRunLoopDependencies,
 } from '../packages/services/src/index.js';
+import { PaperOmsService } from '../packages/services/src/paper/oms.js';
 import {
-  bootstrapPaperBalances,
   listRuntimeIncidents,
   openDatabase,
   setPaperExecutionPolicy,
   type Db,
 } from '../packages/storage/src/index.js';
+import { paperPreparation, seedPaperOrigin } from './support.js';
 
 const DAY = 86_400_000;
 const T0 = Date.UTC(2026, 0, 1);
 const PROFILE = 'main';
-const PREPARATION = {
-  ok: true as const, datasetHash: 'd'.repeat(64), latestCompletedStartMs: T0,
-  expectedCompletedStartMs: T0, ruleSnapshotHash: 'e'.repeat(64),
-};
 
 const BTC: InstrumentIdentity = { venue: 'coinbase', productId: 'BTC-USD', productType: 'spot' };
 const BTC_KEY = instrumentKey(BTC);
 const ETH: InstrumentIdentity = { venue: 'coinbase', productId: 'ETH-USD', productType: 'spot' };
 const ETH_KEY = instrumentKey(ETH);
+const PREPARATION = paperPreparation([BTC, ETH], T0);
 
 const BTC_REF: AssetRef = {
   instrument: BTC,
@@ -94,6 +92,16 @@ function bars(count = 30, shift = 0): MarketBar[] {
   }));
 }
 
+function marketData(shift = 0, count = 30): PaperMarketData {
+  return {
+    bars: (key) => bars(count, shift).map((bar) => ({ ...bar, assetId: key as never })),
+    rules: (key) => {
+      const instrument = key === ETH_KEY ? ETH : BTC;
+      return { ...RULES, id: key === ETH_KEY ? 'c'.repeat(64) : RULES.id, instrument };
+    },
+  };
+}
+
 function holding(asset: AssetRef, valueUsd: string, quantity: string): Holding {
   return {
     asset,
@@ -108,16 +116,9 @@ function holding(asset: AssetRef, valueUsd: string, quantity: string): Holding {
 
 function seeded(): Db {
   const db = openDatabase(':memory:');
-  bootstrapPaperBalances(
-    PROFILE,
-    [
-      { assetId: 'USD', quantity: '10000' },
-      { assetId: ETH_KEY, quantity: '9' },
-    ],
-    'seed',
-    T0,
-    db,
-  );
+  seedPaperOrigin(db, PROFILE, [
+    holding(BTC_REF, '100.00', '1'), holding(ETH_REF, '900.00', '9'),
+  ], T0);
   setPaperExecutionPolicy({
     commandId: '00000000-0000-4000-8000-000000000003', profileId: PROFILE,
     mode: 'unattended', confirmedAt: T0, explicitUnattendedConfirmation: true,
@@ -138,12 +139,17 @@ function runOnce(db: Db, market: PaperMarketData): void {
     evidenceVerified: () => true,
   };
   runPaperDecision(deps, T0 + DAY);
+  new PaperOmsService({
+    database: db,
+    clock: new FixedClock(T0 + 2 * DAY),
+    market,
+  }).settlePending(PROFILE);
 }
 
 describe('a venue that matches the engine reconciles clean', () => {
   it('reports alignment when nothing moved underneath', () => {
     const db = seeded();
-    const market: PaperMarketData = { bars: () => bars(), rules: () => RULES };
+    const market = marketData();
     runOnce(db, market);
 
     const report = reconcilePaperFills(
@@ -163,7 +169,7 @@ describe('a venue that matches the engine reconciles clean', () => {
 
   it('raises no incident when everything agrees', () => {
     const db = seeded();
-    const market: PaperMarketData = { bars: () => bars(), rules: () => RULES };
+    const market = marketData();
     runOnce(db, market);
     reconcilePaperFills({ database: db, clock: new FixedClock(T0 + 2 * DAY), market }, PROFILE, 0);
 
@@ -175,12 +181,12 @@ describe('a venue that matches the engine reconciles clean', () => {
 describe('a moved bar is reported, not absorbed', () => {
   it('detects and records a material price divergence', () => {
     const db = seeded();
-    const original: PaperMarketData = { bars: () => bars(), rules: () => RULES };
+    const original = marketData();
     runOnce(db, original);
 
     // The bars are restated after the fill — a revised feed, or a provider
     // correcting itself. The harness must notice rather than quietly agree.
-    const restated: PaperMarketData = { bars: () => bars(30, 20), rules: () => RULES };
+    const restated = marketData(20);
     const report = reconcilePaperFills(
       { database: db, clock: new FixedClock(T0 + 2 * DAY), market: restated },
       PROFILE,
@@ -199,9 +205,9 @@ describe('a moved bar is reported, not absorbed', () => {
 
   it('escalates a large divergence to blocking severity', () => {
     const db = seeded();
-    runOnce(db, { bars: () => bars(), rules: () => RULES });
+    runOnce(db, marketData());
 
-    const wildlyRestated: PaperMarketData = { bars: () => bars(30, 500), rules: () => RULES };
+    const wildlyRestated = marketData(500);
     reconcilePaperFills(
       { database: db, clock: new FixedClock(T0 + 2 * DAY), market: wildlyRestated },
       PROFILE,
@@ -216,9 +222,9 @@ describe('a moved bar is reported, not absorbed', () => {
 
   it('reports the signed mean so a systematic bias is visible', () => {
     const db = seeded();
-    runOnce(db, { bars: () => bars(), rules: () => RULES });
+    runOnce(db, marketData());
     const report = reconcilePaperFills(
-      { database: db, clock: new FixedClock(T0 + 2 * DAY), market: { bars: () => bars(30, 20), rules: () => RULES } },
+      { database: db, clock: new FixedClock(T0 + 2 * DAY), market: marketData(20) },
       PROFILE,
       0,
     );
@@ -233,7 +239,7 @@ describe('a moved bar is reported, not absorbed', () => {
 describe('missing evidence is unverifiable, never aligned', () => {
   it('refuses to claim agreement when the bar is gone', () => {
     const db = seeded();
-    runOnce(db, { bars: () => bars(), rules: () => RULES });
+    runOnce(db, marketData());
 
     const forgotten: PaperMarketData = { bars: () => [], rules: () => RULES };
     const report = reconcilePaperFills(
@@ -254,7 +260,7 @@ describe('missing evidence is unverifiable, never aligned', () => {
   it('returns an empty report rather than failing when nothing has filled', () => {
     const db = seeded();
     const report = reconcilePaperFills(
-      { database: db, clock: new FixedClock(T0), market: { bars: () => bars(), rules: () => RULES } },
+      { database: db, clock: new FixedClock(T0), market: marketData() },
       PROFILE,
       0,
     );
@@ -265,8 +271,8 @@ describe('missing evidence is unverifiable, never aligned', () => {
 
   it('is idempotent — re-running does not multiply incidents', () => {
     const db = seeded();
-    runOnce(db, { bars: () => bars(), rules: () => RULES });
-    const restated: PaperMarketData = { bars: () => bars(30, 20), rules: () => RULES };
+    runOnce(db, marketData());
+    const restated = marketData(20);
     const deps = { database: db, clock: new FixedClock(T0 + 2 * DAY), market: restated };
 
     reconcilePaperFills(deps, PROFILE, 0);

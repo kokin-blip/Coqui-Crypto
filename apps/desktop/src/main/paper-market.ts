@@ -202,6 +202,7 @@ export function createPaperMarketFeed(
             .at(-1)!.startTimeMs;
           latestPreparation = {
             ok: true,
+            dataset: dataset.dataset,
             datasetHash: dataset.dataset.report.datasetHash,
             latestCompletedStartMs,
             expectedCompletedStartMs: latestExpectedCoinbaseCompleteStart(nowMs),

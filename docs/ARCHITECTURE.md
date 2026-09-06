@@ -391,9 +391,11 @@ cannot be produced until that separate audit is complete.
 
 ## 6. Data flow: paper execution
 
-The scheduled path is temporarily and explicitly versioned as
-`allocation-policy-rebalancer-v1`; it is not TrendVol until the Phase 1 cutover.
-Migration 58 adds a slot-stable immutable `StrategyDecisionV1`, an append-only
+The scheduled path is explicitly versioned as
+`trendvol-paper-v1-unvalidated`. It uses the shared Momentum + VolTarget target
+composition with the saved allocation policy as its base universe and weights;
+this operational cutover is not research validation. Migration 58 adds a
+slot-stable immutable `StrategyDecisionV1`, an append-only
 typed evidence stream, and an immutable link to the compatibility
 `wallet_decision_runs` summary. The decision and initial evaluation evidence
 must persist before the executor is constructed. The scheduled refresh now
@@ -402,12 +404,14 @@ from the active TrendVol configuration (121 completed daily bars for current
 defaults). A failed asset fetch, invalid/gapped alignment, stale latest bar,
 insufficient history, or missing current product rules becomes typed decision
 evidence before holdings are read; cached bars are not an execution fallback.
-Until the paper-book phase lands, the record still identifies the planning
-portfolio as legacy profile holdings rather than claiming paper-ledger
-provenance.
+Migrations 59–61 add the immutable one-time opening snapshot, pending exact-bar
+execution records, and a prospective v2 campaign plan. Unknown opening cash is
+zero, an incomplete opening portfolio is never partially seeded, and all later
+planning reads the paper ledger rather than current real holdings.
 
 ```
-strategy targets
+completed bar N + saved base allocation
+  → shared TrendVol targets (explicitly unvalidated)
   → immutable strategy decision + evaluation evidence
   → planAutoRebalance (drift → intents)
   → applyAutoTradeGuardrails    (size, position, at-risk, turnover, count caps)
@@ -415,7 +419,9 @@ strategy targets
   → resolveRiskControlState     (normal / caution / defense / hard_stop
                                  → exposure ×1 / ×0.5 / ×0.25 / ×0)
   → canExecute(mode, killed)    → paper only, never live
-  → paper order state machine   (submitted → acknowledged → filled)
+  → pending paper order for the exact N+1 interval
+  → refresh/restart reconciliation (incomplete stays pending; missing exact bar expires)
+  → deterministic settlement at recorded N+1 open
   → durable orders + fills
   → append-only execution journal
   → forward-paper evidence counters (observed days, decisions, fills)

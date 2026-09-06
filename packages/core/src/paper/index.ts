@@ -9,6 +9,8 @@ import {
   type UsdAmount,
 } from '../types/index.js';
 
+export * from './evidence.js';
+
 /** Shared OMS states. Ambiguous submission outcomes must enter `unknown`. */
 export type PaperOrderState =
   | 'proposed'
@@ -108,7 +110,7 @@ const TRANSITIONS: Record<PaperOrderState, readonly PaperOrderState[]> = {
   risk_approved: ['submission_pending', 'cancelled', 'expired'],
   risk_rejected: [],
   submission_pending: ['submitted', 'unknown', 'cancelled'],
-  submitted: ['acknowledged', 'open', 'partially_filled', 'filled', 'unknown'],
+  submitted: ['acknowledged', 'open', 'partially_filled', 'filled', 'expired', 'unknown'],
   acknowledged: ['open', 'partially_filled', 'filled', 'cancel_pending', 'cancelled', 'unknown'],
   open: ['partially_filled', 'filled', 'cancel_pending', 'cancelled', 'expired', 'unknown'],
   partially_filled: [
