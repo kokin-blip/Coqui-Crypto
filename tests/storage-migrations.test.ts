@@ -41,7 +41,7 @@ function tableNames(database: Db): Set<string> {
 describe('ported predecessor migration manifest', () => {
   it('preserves predecessor versions 1-28 and appends Coqui-native migrations', () => {
     expect(migrations.map((migration) => migration.version)).toEqual(
-      Array.from({ length: 64 }, (_, index) => index + 1),
+      Array.from({ length: 65 }, (_, index) => index + 1),
     );
     expect(migrations.map((migration) => migration.name)).toEqual([
       'initial_schema',
@@ -108,13 +108,14 @@ describe('ported predecessor migration manifest', () => {
       'profile_connections_v1',
       'connection_account_snapshots_v1',
       'unified_portfolio_snapshots_v1',
+      'venue_neutral_execution_plans_v1',
     ]);
   });
 
   it('creates the current schema while retaining only intended legacy tables', () => {
     const database = openDatabase(':memory:');
     const tables = tableNames(database);
-    expect(userVersion(database)).toBe(64);
+    expect(userVersion(database)).toBe(65);
     for (const expected of [
       'app_settings',
       'tax_lots',
@@ -200,6 +201,8 @@ describe('ported predecessor migration manifest', () => {
       'profile_connections_v1',
       'connection_account_snapshots_v1',
       'unified_portfolio_snapshots_v1',
+      'execution_plans_v1',
+      'execution_routes_v1',
     ]) expect(tables.has(expected), `${expected} should exist`).toBe(true);
     for (const retired of ['tokens', 'trades', 'signals', 'sim_accounts', 'wallet_hits']) {
       expect(tables.has(retired), `${retired} should be retired`).toBe(false);
@@ -223,7 +226,7 @@ describe('ported predecessor migration manifest', () => {
       database.prepare('INSERT INTO migration_sentinel VALUES (?, ?)')
         .run(9_007_199_254_740_993n, '1234567890.123456789');
 
-      expect(runMigrations(database)).toBe(64);
+      expect(runMigrations(database)).toBe(65);
       const statement = database.prepare('SELECT id, amount_text FROM migration_sentinel');
       statement.setReadBigInts(true);
       expect(statement.get()).toEqual({
@@ -243,7 +246,7 @@ describe('forward migration safety', () => {
     old.close();
 
     const migrated = openDatabase(fixture.path, { now: () => 123 });
-    expect(userVersion(migrated)).toBe(64);
+    expect(userVersion(migrated)).toBe(65);
     expect(migrated.prepare("SELECT value FROM app_settings WHERE key = 'preserved'").get())
       .toEqual({ value: 'yes' });
     migrated.close();
@@ -260,7 +263,7 @@ describe('forward migration safety', () => {
   it('rolls back schema changes and version advancement when a migration fails', () => {
     const database = openDatabase(':memory:');
     const failing: Migration = {
-      version: 65,
+      version: 66,
       name: 'failure_fixture',
       up(db) {
         db.exec('CREATE TABLE should_rollback (id INTEGER);');
@@ -270,7 +273,7 @@ describe('forward migration safety', () => {
 
     expect(() => runMigrations(database, [...migrations, failing]))
       .toThrow('injected migration failure');
-    expect(userVersion(database)).toBe(64);
+    expect(userVersion(database)).toBe(65);
     expect(tableNames(database).has('should_rollback')).toBe(false);
     database.close();
   });
@@ -279,7 +282,7 @@ describe('forward migration safety', () => {
     const database = openDatabase(':memory:');
     expect(() => runMigrations(database, [migrations[1]!, migrations[0]!]))
       .toThrow('contiguous and ordered');
-    database.exec('PRAGMA user_version = 65');
+    database.exec('PRAGMA user_version = 66');
     expect(() => runMigrations(database)).toThrow('newer than this application');
     database.close();
   });

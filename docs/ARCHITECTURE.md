@@ -452,6 +452,25 @@ future routing and tax logic retain venue attribution. Profile duplication keeps
 non-secret Advisor configuration but excludes encrypted Advisor history,
 provider connections, account evidence, unified evidence, and all credentials.
 
+### 6.2 Venue-neutral planning and paper routing
+
+Migration 65 adds immutable `ExecutionPlanV1` and `ExecutionRouteV1` evidence.
+Plans contain asset-level deltas and bind the decision, market, portfolio,
+strategy, risk, permissions, rules, connection set, and cost model by hash. They
+do not select venues. The deterministic router considers supported assets,
+available asset and cash value, fees, spread, liquidity, minimum order size,
+paper permission, connection health, and pending orders. It consumes capacity
+as routes are assigned so multiple buys cannot independently spend the same
+cash.
+
+Coinbase and Robinhood Crypto implement the same paper venue contract.
+Robinhood is a deterministic simulator with no credential or network input.
+Immediately before simulated placement, the host recomputes the selected
+route's assumption hash; a mismatch returns `assumption_changed` and requires a
+new plan instead of submitting stale work. Idempotency binds profile, decision,
+plan, route scope, and connection. This layer adds no live venue authority and
+does not change the compile-time live-execution prohibition.
+
 Three properties the order layer must have from the start, because retrofitting
 them after a live path exists is far harder:
 

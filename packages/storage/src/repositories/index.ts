@@ -11,6 +11,7 @@ export * from './display-universe.js';
 export * from './display-market.js';
 export * from './decision-evidence.js';
 export * from './evidence.js';
+export * from './execution-routing.js';
 export * from './forward-edge.js';
 export * from './market-data.js';
 export * from './operational-metrics.js';

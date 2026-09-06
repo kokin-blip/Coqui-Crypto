@@ -1,5 +1,5 @@
 /** Research venues may supply bars; only Coinbase has application integrations. */
-export type Venue = 'coinbase' | 'binance' | 'kraken';
+export type Venue = 'coinbase' | 'binance' | 'kraken' | 'robinhood_crypto';
 export type ProductType = 'spot';
 
 declare const instrumentKeyBrand: unique symbol;

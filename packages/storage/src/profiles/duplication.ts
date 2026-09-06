@@ -171,6 +171,12 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
           DROP TRIGGER unified_portfolio_snapshots_v1_no_delete;
           DROP TRIGGER unified_portfolio_snapshot_connections_v1_no_update;
           DROP TRIGGER unified_portfolio_snapshot_connections_v1_no_delete;
+          DROP TRIGGER execution_plans_v1_no_update;
+          DROP TRIGGER execution_plans_v1_no_delete;
+          DROP TRIGGER execution_routes_v1_no_update;
+          DROP TRIGGER execution_routes_v1_no_delete;
+          DROP TRIGGER execution_plan_evidence_links_v1_no_update;
+          DROP TRIGGER execution_plan_evidence_links_v1_no_delete;
         `);
         for (const tableName of tableNames as string[]) {
           const table = quoteIdentifier(tableName);
@@ -255,7 +261,18 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
                 WHERE profile_id = ?)) AS count
         `, input.targetProfileId.toLowerCase(), input.targetProfileId.toLowerCase(),
         input.targetProfileId.toLowerCase(), input.targetProfileId.toLowerCase());
+        const routingRows = countQuery(target, `
+          SELECT
+            (SELECT COUNT(*) FROM execution_plans_v1 WHERE profile_id = ?) +
+            (SELECT COUNT(*) FROM execution_routes_v1 WHERE profile_id = ?) +
+            (SELECT COUNT(*) FROM execution_plan_evidence_links_v1
+              WHERE plan_id IN (SELECT id FROM execution_plans_v1 WHERE profile_id = ?)) AS count
+        `, input.targetProfileId.toLowerCase(), input.targetProfileId.toLowerCase(),
+        input.targetProfileId.toLowerCase());
         target.exec(`
+          DELETE FROM execution_plan_evidence_links_v1;
+          DELETE FROM execution_routes_v1;
+          DELETE FROM execution_plans_v1;
           DELETE FROM unified_portfolio_snapshot_connections_v1;
           DELETE FROM unified_portfolio_snapshots_v1;
           DELETE FROM connection_account_snapshots_v1;
@@ -282,6 +299,20 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
           CREATE TRIGGER unified_portfolio_snapshot_connections_v1_no_delete
             BEFORE DELETE ON unified_portfolio_snapshot_connections_v1
             BEGIN SELECT RAISE(ABORT, 'unified portfolio links are immutable'); END;
+          CREATE TRIGGER execution_plans_v1_no_update BEFORE UPDATE ON execution_plans_v1
+            BEGIN SELECT RAISE(ABORT, 'execution plans are immutable'); END;
+          CREATE TRIGGER execution_plans_v1_no_delete BEFORE DELETE ON execution_plans_v1
+            BEGIN SELECT RAISE(ABORT, 'execution plans are immutable'); END;
+          CREATE TRIGGER execution_routes_v1_no_update BEFORE UPDATE ON execution_routes_v1
+            BEGIN SELECT RAISE(ABORT, 'execution routes are immutable'); END;
+          CREATE TRIGGER execution_routes_v1_no_delete BEFORE DELETE ON execution_routes_v1
+            BEGIN SELECT RAISE(ABORT, 'execution routes are immutable'); END;
+          CREATE TRIGGER execution_plan_evidence_links_v1_no_update
+            BEFORE UPDATE ON execution_plan_evidence_links_v1
+            BEGIN SELECT RAISE(ABORT, 'execution evidence links are immutable'); END;
+          CREATE TRIGGER execution_plan_evidence_links_v1_no_delete
+            BEFORE DELETE ON execution_plan_evidence_links_v1
+            BEGIN SELECT RAISE(ABORT, 'execution evidence links are immutable'); END;
         `);
         const credentialMetadataKeys = [
           'credentials.coinbase.v2',
@@ -299,7 +330,8 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
         ).run(...credentialMetadataKeys);
         const excludedTransientRowCount = pendingImportRows + scheduleRows +
           privateAdvisorRows + connectionRows;
-        if (!Number.isSafeInteger(excludedTransientRowCount)) {
+        const excludedTransientRowCountWithRouting = excludedTransientRowCount + routingRows;
+        if (!Number.isSafeInteger(excludedTransientRowCountWithRouting)) {
           throw new RangeError('Duplication exclusion count overflow.');
         }
         target.exec('COMMIT');
@@ -332,7 +364,7 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
             databaseSha256: databaseHash(targetPath),
             profileScopedTableCount: tableNames.length,
             rewrittenRowCount,
-            excludedTransientRowCount,
+            excludedTransientRowCount: excludedTransientRowCountWithRouting,
             clearedCredentialMetadataCount,
             integrityVerified: true,
           }),
