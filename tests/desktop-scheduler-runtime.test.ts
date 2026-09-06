@@ -29,6 +29,10 @@ import {
 const DAY = 86_400_000;
 const T0 = Date.UTC(2026, 0, 8);
 const PROFILE = 'main';
+const PREPARATION = {
+  ok: true as const, datasetHash: 'd'.repeat(64), latestCompletedStartMs: T0,
+  expectedCompletedStartMs: T0, ruleSnapshotHash: 'e'.repeat(64),
+};
 
 const BTC: InstrumentIdentity = { venue: 'coinbase', productId: 'BTC-USD', productType: 'spot' };
 const BTC_KEY = instrumentKey(BTC);
@@ -74,13 +78,13 @@ const POLICY: AllocationPolicy = {
   rebalanceBandPct: 1,
 };
 
-function bars(): MarketBar[] {
-  return Array.from({ length: 30 }, (_, index) => ({
+function bars(count = 30): MarketBar[] {
+  return Array.from({ length: count }, (_, index) => ({
     assetId: BTC_KEY,
     source: 'coinbase' as const,
     interval: '1d' as const,
-    startTimeMs: T0 - (30 - index) * DAY,
-    endTimeMs: T0 - (29 - index) * DAY,
+    startTimeMs: T0 - (count - index) * DAY,
+    endTimeMs: T0 - (count - index - 1) * DAY,
     open: 100 + index,
     high: 130 + index,
     low: 80 + index,
@@ -140,6 +144,7 @@ function paperDeps(db: Db, clock: Clock = new FixedClock(T0)): PaperRunLoopDepen
     market: { bars: () => bars(), rules: () => RULES },
     holdings: () => [holding(BTC_REF, '100.00', '1'), holding(ETH_REF, '900.00', '9')],
     policy: () => POLICY,
+    preparation: () => PREPARATION,
     historicalGrossEdgeLowerBoundPct: 12,
   };
 }
@@ -266,6 +271,38 @@ describe('the scheduler finally has a wake-up', () => {
 });
 
 describe('the market feed reads locally and fetches beforehand', () => {
+  it('publishes a complete decision-grade preparation only after data and rules pass', async () => {
+    const db = seeded();
+    const feed = createPaperMarketFeed({
+      database: db,
+      http: {
+        getJson: async () => ({
+          ok: true,
+          status: 200,
+          data: [{
+            id: 'BTC-USD', quote_currency: 'USD', status: 'online',
+            base_increment: '0.00000001', quote_increment: '0.01',
+            min_market_funds: '1', trading_disabled: false, cancel_only: false,
+            limit_only: false, post_only: false,
+          }],
+        }),
+      } as never,
+      instruments: () => [BTC],
+      bars: async () => ({ ok: true, bars: bars(121) }),
+    });
+
+    const result = await feed.refresh(T0 + 10 * 60_000);
+    expect(result).toEqual(expect.objectContaining({
+      ok: true,
+      datasetHash: expect.stringMatching(/^[0-9a-f]{64}$/u),
+      latestCompletedStartMs: T0 - DAY,
+      expectedCompletedStartMs: T0 - DAY,
+      ruleSnapshotHash: expect.stringMatching(/^[0-9a-f]{64}$/u),
+    }));
+    expect(feed.preparation()).toEqual(result);
+    db.close();
+  });
+
   it('serves persisted bars synchronously after a refresh', async () => {
     const db = seeded();
     saveProductRuleSnapshot(RULES, db);
@@ -276,7 +313,7 @@ describe('the market feed reads locally and fetches beforehand', () => {
       bars: async () => ({ ok: true, bars: bars() }),
     });
 
-    await feed.refresh(T0);
+    await feed.refresh(T0 + 10 * 60_000);
 
     // Synchronous by design: the OMS reads bars while deciding.
     expect(feed.view.bars(BTC_KEY).length).toBe(30);
@@ -293,7 +330,7 @@ describe('the market feed reads locally and fetches beforehand', () => {
       bars: async () => ({ ok: true, bars: bars() }),
     });
 
-    await feed.refresh(T0);
+    await feed.refresh(T0 + 10 * 60_000);
 
     // Invariant 4: an absent rule is a refusal to trade, never a default one.
     expect(feed.view.rules(BTC_KEY)).toBeNull();
@@ -312,7 +349,7 @@ describe('the market feed reads locally and fetches beforehand', () => {
       bars: async () => ({ ok: true, bars: partial }),
     });
 
-    await feed.refresh(T0);
+    await feed.refresh(T0 + 10 * 60_000);
 
     // Invariant 6: the cheapest way to guarantee a signal never sees a partial
     // bar is never to store one.
@@ -320,7 +357,7 @@ describe('the market feed reads locally and fetches beforehand', () => {
     db.close();
   });
 
-  it('leaves the engine on the bars it has when a fetch fails', async () => {
+  it('returns a typed stand-down when a fetch fails', async () => {
     const db = seeded();
     const failures: string[] = [];
     const feed = createPaperMarketFeed({
@@ -331,8 +368,12 @@ describe('the market feed reads locally and fetches beforehand', () => {
       onUnexpectedError: (context) => failures.push(context),
     });
 
-    await expect(feed.refresh(T0)).resolves.toBeUndefined();
-    expect(failures).toContain('paper_market_bars');
+    await expect(feed.refresh(T0)).resolves.toEqual(expect.objectContaining({
+      ok: false,
+      code: 'market_fetch_failed',
+      rulesFresh: false,
+    }));
+    expect(failures).toEqual([]);
     db.close();
   });
 });

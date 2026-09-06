@@ -283,18 +283,16 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
         async prepare(nowMs) {
           await paperMarket.refresh(nowMs);
           paperHoldings = (await portfolio.portfolioView()).holdings;
-          // After the refresh, so an alert raised by this tick's data is
-          // delivered by this tick rather than waiting for the next one.
+          // Deliver alerts raised by this refresh in the same tick.
           notifications?.deliver(nowMs);
         },
         paper: {
           database,
           clock,
           profileId: options.profileId,
-          market: paperMarket.view,
+          market: paperMarket.view, preparation: paperMarket.preparation,
           holdings: () => paperHoldings,
-          // Empty targets mean no policy: `planAutoRebalance` against nothing
-          // would propose selling the whole portfolio.
+          // Empty targets mean no policy; rebalancing against nothing would sell everything.
           policy: () => {
             const policy = getAllocationPolicy(database);
             return policy.targets.length === 0 ? null : policy;

@@ -34,6 +34,13 @@ import {
 const DAY = 86_400_000;
 const T0 = Date.UTC(2026, 0, 1);
 const PROFILE = 'main';
+const PREPARATION = {
+  ok: true as const,
+  datasetHash: 'd'.repeat(64),
+  latestCompletedStartMs: T0,
+  expectedCompletedStartMs: T0,
+  ruleSnapshotHash: 'e'.repeat(64),
+};
 
 const BTC: InstrumentIdentity = { venue: 'coinbase', productId: 'BTC-USD', productType: 'spot' };
 const BTC_KEY = instrumentKey(BTC);
@@ -126,6 +133,7 @@ function deps(db: Db, clock: FixedClock, overrides: Partial<PaperRunLoopDependen
     market: MARKET,
     holdings,
     policy: () => POLICY,
+    preparation: () => PREPARATION,
     historicalGrossEdgeLowerBoundPct: 12,
     evidenceVerified: () => true,
     ...overrides,
@@ -212,6 +220,27 @@ describe('every run is recorded, including one that trades nothing', () => {
     const decisionId = strategyDecisionId(PROFILE, T0 + DAY);
     expect(listDecisionEvidenceEvents(decisionId, PROFILE, db).map((event) => event.kind))
       .toEqual(['strategy_evaluated', 'execution_planned', 'execution_refused']);
+    db.close();
+  });
+
+  it('persists a typed stale-data decision before reading holdings or planning', () => {
+    const db = seeded();
+    const summary = runPaperDecision(deps(db, new FixedClock(T0 + DAY), {
+      preparation: () => ({ ok: false, code: 'stale_market_data' }),
+      holdings: () => { throw new Error('holdings must not be read'); },
+    }), T0 + DAY);
+
+    expect(summary.standDown).toBe('stale_market_data');
+    const decisionId = strategyDecisionId(PROFILE, T0 + DAY);
+    expect(getStrategyDecision(decisionId, db)?.decision.market).toMatchObject({
+      freshness: 'stale',
+      refreshResult: 'stale_market_data',
+      rulesFresh: false,
+    });
+    expect(listDecisionEvidenceEvents(decisionId, PROFILE, db).map((event) => event.kind))
+      .toEqual(['strategy_evaluated', 'stand_down']);
+    expect(listWalletRunAudits(PROFILE, 50, db).filter((audit) => audit.kind === 'execution'))
+      .toEqual([]);
     db.close();
   });
 

@@ -29,6 +29,10 @@ import {
 const DAY = 86_400_000;
 const T0 = Date.UTC(2026, 0, 1);
 const PROFILE = 'main';
+const PREPARATION = {
+  ok: true as const, datasetHash: 'd'.repeat(64), latestCompletedStartMs: T0,
+  expectedCompletedStartMs: T0, ruleSnapshotHash: 'e'.repeat(64),
+};
 
 const BTC: InstrumentIdentity = { venue: 'coinbase', productId: 'BTC-USD', productType: 'spot' };
 const BTC_KEY = instrumentKey(BTC);
@@ -147,6 +151,7 @@ function runOnce(db: Db): void {
     market: { bars: () => bars(), rules: () => RULES } satisfies PaperMarketData,
     holdings: () => [holding(BTC_REF, '100.00', '1'), holding(ETH_REF, '900.00', '9')],
     policy: () => POLICY,
+    preparation: () => PREPARATION,
     historicalGrossEdgeLowerBoundPct: 12,
     evidenceVerified: () => true,
   };

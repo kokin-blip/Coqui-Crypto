@@ -24,6 +24,8 @@ function validTime(value: number | null): boolean {
 }
 
 function assertDecision(decision: StrategyDecisionV1): void {
+  const completeMarket = decision.market.snapshotHash !== null &&
+    decision.market.asOfMs !== null && decision.market.expectedAsOfMs !== null;
   if (decision.schemaVersion !== 1 || decision.profileId.length === 0 ||
       decision.profileId.length > 64 || !ID.test(decision.runId) ||
       !ID.test(decision.strategy.id) || !ID.test(decision.strategy.version) ||
@@ -32,11 +34,18 @@ function assertDecision(decision: StrategyDecisionV1): void {
       !Number.isSafeInteger(decision.createdAtMs) || decision.createdAtMs < 0 ||
       !validTime(decision.market.asOfMs) || !validTime(decision.market.expectedAsOfMs) ||
       (decision.market.snapshotHash !== null && !SHA256.test(decision.market.snapshotHash)) ||
+      !REASON.test(decision.market.refreshResult) ||
+      (decision.market.ruleSnapshotHash !== null && !SHA256.test(decision.market.ruleSnapshotHash)) ||
+      typeof decision.market.rulesFresh !== 'boolean' ||
       (decision.portfolio.snapshotHash !== null && !SHA256.test(decision.portfolio.snapshotHash)) ||
       (decision.portfolio.version !== null && !ID.test(decision.portfolio.version)) ||
       !['profile_holdings', 'paper_ledger', 'unavailable'].includes(decision.portfolio.source) ||
       !['fresh', 'stale', 'unavailable'].includes(decision.market.freshness) ||
       !['complete', 'partial', 'insufficient', 'unavailable'].includes(decision.historyStatus) ||
+      (decision.market.snapshotHash !== null && !completeMarket) ||
+      (decision.market.rulesFresh && decision.market.ruleSnapshotHash === null) ||
+      (decision.market.refreshResult === 'succeeded' &&
+        (!completeMarket || !decision.market.rulesFresh || decision.market.freshness !== 'fresh')) ||
       decision.decisionId !== strategyDecisionId(decision.profileId, decision.scheduledForMs)) {
     throw new TypeError('Invalid strategy decision identity or provenance.');
   }

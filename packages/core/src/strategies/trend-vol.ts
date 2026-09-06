@@ -44,6 +44,22 @@ type VolatilityRead = {
   readonly belowTrend: boolean;
 };
 
+/** Completed closes required for every configured TrendVol read to be observable. */
+export function trendVolMinimumHistory(
+  momentum: MomentumConfig = DEFAULT_MOMENTUM_CONFIG,
+  volatility: VolTargetConfig = DEFAULT_VOL_TARGET_CONFIG,
+): number {
+  const momentumLookback = Math.max(
+    momentum.lookbackDays,
+    ...(momentum.lookbackDaysEnsemble ?? []),
+  ) + 1;
+  return Math.max(
+    momentumLookback,
+    volatility.volLookbackDays + 1,
+    volatility.trendGateDays,
+  );
+}
+
 function normalizedBaseTargets(
   targets: readonly TrendVolTarget[],
 ): TrendVolTarget[] {
@@ -63,16 +79,8 @@ function historyStatus(
   momentum: MomentumConfig,
   volatility: VolTargetConfig,
 ): TrendVolTargetResult['historyStatus'] {
-  const momentumLookback = Math.max(
-    momentum.lookbackDays,
-    ...(momentum.lookbackDaysEnsemble ?? []),
-  ) + 1;
-  const volatilityLookback = Math.max(
-    volatility.volLookbackDays + 1,
-    volatility.trendGateDays,
-  );
   const allMomentumAvailable = baseCount > 0 && momentumCount === baseCount;
-  if (allMomentumAvailable && observedDays >= Math.max(momentumLookback, volatilityLookback)) {
+  if (allMomentumAvailable && observedDays >= trendVolMinimumHistory(momentum, volatility)) {
     return 'complete';
   }
   return momentumCount === 0 || observedDays === 0 ? 'insufficient' : 'partial';

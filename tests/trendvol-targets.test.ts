@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   instrumentKey,
+  trendVolMinimumHistory,
   trendVolTargets,
   trendVolTargetsAt,
   type InstrumentIdentity,
@@ -46,6 +47,11 @@ function mixIndex(series: ReadonlyMap<InstrumentKey, readonly number[]>): number
 }
 
 describe('shared TrendVol target composition', () => {
+  it('derives the required history from the active configuration', () => {
+    expect(trendVolMinimumHistory()).toBe(121);
+    expect(trendVolMinimumHistory(MOMENTUM, VOL_TARGET)).toBe(11);
+  });
+
   it('keeps indexed and current evaluation identical at the same endpoint', () => {
     const series = new Map<InstrumentKey, readonly number[]>([
       [BTC, closes(100, 40, 0.01)],

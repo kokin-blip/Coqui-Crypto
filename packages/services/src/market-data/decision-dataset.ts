@@ -80,6 +80,8 @@ export type DecisionDatasetSyncResult =
         reason: HttpFailure['reason'] | 'exception';
       }>;
       readonly alignmentReport?: AlignmentReport;
+      /** Validated candidate retained for provenance even when freshness/history rejects it. */
+      readonly dataset?: DecisionMarketDataset;
     };
 
 function validateOptions(options: DecisionDatasetSyncOptions): void {
@@ -165,7 +167,7 @@ function coreBar(row: MarketBarRecord): MarketBar {
   };
 }
 
-function latestExpectedCompleteStart(nowMs: number): number {
+export function latestExpectedCoinbaseCompleteStart(nowMs: number): number {
   return Math.floor((nowMs - COINBASE_COMPLETION_DELAY_MS) / DAY_MS) * DAY_MS - DAY_MS;
 }
 
@@ -329,6 +331,7 @@ export async function syncCoinbaseDecisionDataset(
       ok: false, code: 'alignment_failed',
       message: 'Completed Coinbase bars could not form a gap-free decision dataset.',
       alignmentReport: dataset.report,
+      dataset,
     };
   }
   const minimum = options.minAlignedDays ?? 1;
@@ -344,9 +347,10 @@ export async function syncCoinbaseDecisionDataset(
       ok: false, code: 'insufficient_history',
       message: `Only ${dataset.dayKeys.length} aligned days are available; ${minimum} are required.`,
       alignmentReport: dataset.report,
+      dataset,
     };
   }
-  const expectedLatest = latestExpectedCompleteStart(options.nowMs);
+  const expectedLatest = latestExpectedCoinbaseCompleteStart(options.nowMs);
   if (dataset.assets.some((assetId) => dataset.barsById[assetId]?.at(-1)?.startTimeMs !== expectedLatest)) {
     logger.warn('market_dataset.stale_data', {
       expectedLatestStartMs: expectedLatest,
@@ -362,6 +366,7 @@ export async function syncCoinbaseDecisionDataset(
       ok: false, code: 'stale_data',
       message: 'The latest expected completed Coinbase UTC bar is unavailable.',
       alignmentReport: dataset.report,
+      dataset,
     };
   }
   const provenance: DecisionDatasetProvenance = {

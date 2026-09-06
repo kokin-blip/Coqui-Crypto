@@ -56,7 +56,33 @@ export type PaperRunStandDown =
   | 'gates_refused'
   | 'pending_review'
   | 'execution_failed'
-  | 'execution_unknown';
+  | 'execution_unknown'
+  | 'market_fetch_failed'
+  | 'invalid_market_data'
+  | 'market_alignment_failed'
+  | 'insufficient_history'
+  | 'stale_market_data'
+  | 'stale_product_rules';
+
+export type PaperDecisionPreparation =
+  | {
+      readonly ok: true;
+      readonly datasetHash: string;
+      readonly latestCompletedStartMs: number;
+      readonly expectedCompletedStartMs: number;
+      readonly ruleSnapshotHash: string;
+    }
+  | {
+      readonly ok: false;
+      readonly code: Exclude<PaperRunStandDown,
+        | 'kill_switch_engaged' | 'no_policy' | 'no_intents' | 'gates_refused'
+        | 'pending_review' | 'execution_failed' | 'execution_unknown'>;
+      readonly datasetHash?: string;
+      readonly latestCompletedStartMs?: number;
+      readonly expectedCompletedStartMs?: number;
+      readonly ruleSnapshotHash?: string;
+      readonly rulesFresh?: boolean;
+    };
 
 export interface PaperRunSummary {
   readonly profileId: string;
@@ -83,6 +109,8 @@ export interface PaperRunLoopDependencies {
    */
   readonly holdings: () => readonly Holding[];
   readonly policy: () => AllocationPolicy | null;
+  /** Result of this tick's all-or-nothing decision-data and rule refresh. */
+  readonly preparation: () => PaperDecisionPreparation;
   readonly historicalGrossEdgeLowerBoundPct: number;
   /** A verified immutable research snapshot, checked again at submission. */
   readonly evidenceVerified?: () => boolean;
@@ -259,6 +287,7 @@ export function runPaperDecision(
   const persistDecision = (
     policy: AllocationPolicy | null,
     holdings: readonly Holding[] | null,
+    preparation: PaperDecisionPreparation | null = null,
   ): void => {
     const existingDecision = getStrategyDecision(decisionId, database);
     const createdAtMs = existingDecision?.decision.createdAtMs ?? decidedAtMs;
@@ -278,6 +307,9 @@ export function runPaperDecision(
       rebalanceBandPct: policy.rebalanceBandPct,
       targets: targetRows,
     });
+    const preparationFailure = preparation !== null && !preparation.ok
+      ? preparation.code
+      : null;
     const decision: StrategyDecisionV1 = {
       schemaVersion: 1,
       decisionId,
@@ -290,10 +322,19 @@ export function runPaperDecision(
         configHash,
       },
       market: {
-        snapshotHash: null,
-        asOfMs: null,
-        expectedAsOfMs: null,
-        freshness: 'unavailable',
+        snapshotHash: preparation?.datasetHash ?? null,
+        asOfMs: preparation?.latestCompletedStartMs ?? null,
+        expectedAsOfMs: preparation?.expectedCompletedStartMs ?? null,
+        freshness: preparationFailure === 'stale_market_data'
+          ? 'stale'
+          : preparation?.datasetHash !== undefined ? 'fresh' : 'unavailable',
+        refreshResult: preparation === null
+          ? 'not_requested'
+          : preparation.ok ? 'succeeded' : preparation.code,
+        ruleSnapshotHash: preparation?.ruleSnapshotHash ?? null,
+        rulesFresh: preparation === null
+          ? false
+          : preparation.ok ? true : preparation.rulesFresh ?? false,
       },
       portfolio: {
         snapshotHash: portfolioHash,
@@ -338,8 +379,14 @@ export function runPaperDecision(
     return finish('no_policy');
   }
 
+  const preparation = dependencies.preparation();
+  if (!preparation.ok) {
+    persistDecision(policy, null, preparation);
+    return finish(preparation.code);
+  }
+
   const holdings = dependencies.holdings();
-  persistDecision(policy, holdings);
+  persistDecision(policy, holdings, preparation);
   const intents = planAutoRebalance(holdings, policy, decidedAtMs);
   if (intents.length === 0) return finish('no_intents');
 

@@ -396,10 +396,15 @@ The scheduled path is temporarily and explicitly versioned as
 Migration 58 adds a slot-stable immutable `StrategyDecisionV1`, an append-only
 typed evidence stream, and an immutable link to the compatibility
 `wallet_decision_runs` summary. The decision and initial evaluation evidence
-must persist before the executor is constructed. Until the decision-grade
-dataset and paper-book phases land, the record truthfully marks market
-freshness unavailable and identifies the planning portfolio as legacy profile
-holdings rather than claiming paper-ledger provenance.
+must persist before the executor is constructed. The scheduled refresh now
+reuses `syncCoinbaseDecisionDataset` and requires at least the history derived
+from the active TrendVol configuration (121 completed daily bars for current
+defaults). A failed asset fetch, invalid/gapped alignment, stale latest bar,
+insufficient history, or missing current product rules becomes typed decision
+evidence before holdings are read; cached bars are not an execution fallback.
+Until the paper-book phase lands, the record still identifies the planning
+portfolio as legacy profile holdings rather than claiming paper-ledger
+provenance.
 
 ```
 strategy targets

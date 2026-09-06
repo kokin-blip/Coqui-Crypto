@@ -24,6 +24,9 @@ export interface StrategyDecisionV1 {
     readonly asOfMs: number | null;
     readonly expectedAsOfMs: number | null;
     readonly freshness: DecisionMarketFreshness;
+    readonly refreshResult: string;
+    readonly ruleSnapshotHash: string | null;
+    readonly rulesFresh: boolean;
   };
   readonly portfolio: {
     readonly snapshotHash: string | null;

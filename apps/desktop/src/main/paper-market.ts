@@ -1,11 +1,23 @@
 import { fetchCoinbaseProductRules, type HttpClient } from '@coqui/adapters';
-import { instrumentKey, type InstrumentIdentity, type MarketBar } from '@coqui/core';
-import type { PaperMarketData } from '@coqui/services';
+import {
+  canonicalJson,
+  instrumentKey,
+  sha256Hex,
+  trendVolMinimumHistory,
+  type CanonicalJsonValue,
+  type InstrumentIdentity,
+  type MarketBar,
+} from '@coqui/core';
+import {
+  latestExpectedCoinbaseCompleteStart,
+  syncCoinbaseDecisionDataset,
+  type PaperDecisionPreparation,
+  type PaperMarketData,
+} from '@coqui/services';
 import {
   latestProductRuleSnapshot,
   listMarketBars,
   saveProductRuleSnapshot,
-  upsertMarketBars,
   type Db,
 } from '@coqui/storage';
 
@@ -44,14 +56,17 @@ export interface PaperMarketFeedDependencies {
 
 export interface PaperMarketFeed {
   readonly view: PaperMarketData;
-  /** Fetch and persist bars and venue rules. Never throws. */
-  refresh(nowMs: number): Promise<void>;
+  /** Last completed all-or-nothing refresh result consumed by the decision loop. */
+  preparation(): PaperDecisionPreparation;
+  /** Fetch and persist bars and venue rules. Returns a typed stand-down on failure. */
+  refresh(nowMs: number): Promise<PaperDecisionPreparation>;
 }
 
 export function createPaperMarketFeed(
   dependencies: PaperMarketFeedDependencies,
 ): PaperMarketFeed {
   const report = dependencies.onUnexpectedError ?? (() => {});
+  let latestPreparation: PaperDecisionPreparation = { ok: false, code: 'market_fetch_failed' };
 
   const instrumentFor = (key: string): InstrumentIdentity | null => {
     const [venue, productType, productId] = key.split('|');
@@ -64,7 +79,9 @@ export function createPaperMarketFeed(
     bars(key) {
       const instrument = instrumentFor(key);
       if (instrument === null) return [];
-      return listMarketBars(instrument, dependencies.database).map((record) => ({
+      return listMarketBars(instrument, dependencies.database)
+        .filter((record) => record.isComplete)
+        .map((record) => ({
         assetId: instrumentKey(record.instrument),
         source: record.source,
         interval: record.interval,
@@ -78,7 +95,7 @@ export function createPaperMarketFeed(
         isComplete: record.isComplete,
         retrievedAtMs: record.retrievedAtMs,
         quality: record.quality,
-      }));
+        }));
     },
     rules(key) {
       const instrument = instrumentFor(key);
@@ -88,9 +105,13 @@ export function createPaperMarketFeed(
     },
   };
 
-  async function refreshRules(nowMs: number, wanted: ReadonlySet<string>): Promise<void> {
+  async function refreshRules(
+    nowMs: number,
+    instruments: readonly InstrumentIdentity[],
+  ): Promise<string | null> {
     const result = await fetchCoinbaseProductRules(dependencies.http, { nowMs });
-    if (!result.ok) return;
+    if (!result.ok) return null;
+    const wanted = new Set(instruments.map((instrument) => instrument.productId));
     for (const rule of result.rules) {
       // Only the products the engine may trade. The venue lists hundreds; the
       // rest are rows nothing would ever read.
@@ -99,62 +120,99 @@ export function createPaperMarketFeed(
       // no-op rather than a duplicate.
       saveProductRuleSnapshot(rule, dependencies.database);
     }
-  }
-
-  async function refreshBars(nowMs: number, instruments: readonly InstrumentIdentity[]): Promise<void> {
-    for (const instrument of instruments) {
-      const result = await dependencies.bars(instrument, LOOKBACK_DAYS, nowMs);
-      if (!result.ok) continue;
-      // Incomplete bars are dropped rather than stored. Invariant 6: a signal
-      // may only observe completed bars, and the cheapest way to guarantee that
-      // is never to persist a partial one.
-      const rows = result.bars
-        .filter((bar) => bar.isComplete)
-        .map((bar) => ({
-          source: bar.source,
-          instrument,
-          providerAssetId: instrument.productId,
-          interval: bar.interval,
-          startTimeMs: bar.startTimeMs,
-          endTimeMs: bar.endTimeMs,
-          open: String(bar.open),
-          high: String(bar.high),
-          low: String(bar.low),
-          close: String(bar.close),
-          volume: bar.volume === null ? null : String(bar.volume),
-          isComplete: true,
-          quality: bar.quality ?? ('reported_ohlc' as const),
-          retrievedAtMs: bar.retrievedAtMs,
-        }));
-      if (rows.length > 0) upsertMarketBars(rows, dependencies.database);
-    }
+    const snapshots = instruments
+      .map((instrument) => latestProductRuleSnapshot(instrument.productId, dependencies.database))
+      .sort((left, right) => {
+        const leftId = left?.instrument.productId ?? '';
+        const rightId = right?.instrument.productId ?? '';
+        return leftId < rightId ? -1 : leftId > rightId ? 1 : 0;
+      });
+    if (snapshots.some((snapshot) => snapshot === null || snapshot.retrievedAt !== nowMs)) return null;
+    return sha256Hex(canonicalJson(snapshots.map((snapshot) => ({
+      id: snapshot!.id,
+      productId: snapshot!.instrument.productId,
+      retrievedAt: snapshot!.retrievedAt,
+    })) as unknown as CanonicalJsonValue));
   }
 
   return {
     view,
+    preparation: () => latestPreparation,
     async refresh(nowMs) {
       let instruments: readonly InstrumentIdentity[];
       try {
         instruments = dependencies.instruments();
       } catch (error) {
         report('paper_market_instruments', error);
-        return;
+        latestPreparation = { ok: false, code: 'market_fetch_failed' };
+        return latestPreparation;
       }
-      if (instruments.length === 0) return;
+      if (instruments.length === 0) return latestPreparation;
 
-      const wanted = new Set(instruments.map((instrument) => instrument.productId));
-      // A failing refresh leaves the engine on the bars it already has; it must
-      // never take down the tick that follows it.
       try {
-        await refreshRules(nowMs, wanted);
+        const [rulesHash, dataset] = await Promise.all([
+          refreshRules(nowMs, instruments),
+          syncCoinbaseDecisionDataset({
+            database: dependencies.database,
+            instruments,
+            maxDays: LOOKBACK_DAYS,
+            minAlignedDays: trendVolMinimumHistory(),
+            nowMs,
+            fetchDailyBars: async (instrument) => {
+              const result = await dependencies.bars(instrument, LOOKBACK_DAYS, nowMs);
+              return result.ok
+                ? { ok: true, status: 200, data: [...result.bars] }
+                : { ok: false, status: 0, reason: 'network', retried: 0 };
+            },
+          }),
+        ]);
+        if (!dataset.ok) {
+          const code: Extract<PaperDecisionPreparation, { ok: false }>['code'] = ({
+            fetch_failed: 'market_fetch_failed',
+            invalid_provider_data: 'invalid_market_data',
+            alignment_failed: 'market_alignment_failed',
+            insufficient_history: 'insufficient_history',
+            stale_data: 'stale_market_data',
+          } as const)[dataset.code];
+          const candidate = dataset.dataset;
+          const latestCompletedStartMs = candidate?.barsById[candidate.assets[0]!]?.at(-1)
+            ?.startTimeMs;
+          latestPreparation = {
+            ok: false,
+            code,
+            ...(candidate === undefined ? {} : { datasetHash: candidate.report.datasetHash }),
+            ...(latestCompletedStartMs === undefined ? {} : { latestCompletedStartMs }),
+            expectedCompletedStartMs: latestExpectedCoinbaseCompleteStart(nowMs),
+            ...(rulesHash === null ? {} : { ruleSnapshotHash: rulesHash }),
+            rulesFresh: rulesHash !== null,
+          };
+        } else if (rulesHash === null) {
+          const latestCompletedStartMs = dataset.dataset.barsById[dataset.dataset.assets[0]!]!
+            .at(-1)!.startTimeMs;
+          latestPreparation = {
+            ok: false,
+            code: 'stale_product_rules',
+            datasetHash: dataset.dataset.report.datasetHash,
+            latestCompletedStartMs,
+            expectedCompletedStartMs: latestExpectedCoinbaseCompleteStart(nowMs),
+            rulesFresh: false,
+          };
+        } else {
+          const latestCompletedStartMs = dataset.dataset.barsById[dataset.dataset.assets[0]!]!
+            .at(-1)!.startTimeMs;
+          latestPreparation = {
+            ok: true,
+            datasetHash: dataset.dataset.report.datasetHash,
+            latestCompletedStartMs,
+            expectedCompletedStartMs: latestExpectedCoinbaseCompleteStart(nowMs),
+            ruleSnapshotHash: rulesHash,
+          };
+        }
       } catch (error) {
-        report('paper_market_rules', error);
+        report('paper_market_refresh', error);
+        latestPreparation = { ok: false, code: 'market_fetch_failed' };
       }
-      try {
-        await refreshBars(nowMs, instruments);
-      } catch (error) {
-        report('paper_market_bars', error);
-      }
+      return latestPreparation;
     },
   };
 }

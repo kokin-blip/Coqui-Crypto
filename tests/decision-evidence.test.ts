@@ -38,6 +38,9 @@ function decision(
       asOfMs: scheduledForMs - 86_400_000,
       expectedAsOfMs: scheduledForMs - 86_400_000,
       freshness: 'fresh',
+      refreshResult: 'succeeded',
+      ruleSnapshotHash: sha256Hex('rules'),
+      rulesFresh: true,
     },
     portfolio: {
       snapshotHash: sha256Hex('portfolio'),
