@@ -39,6 +39,7 @@ import { migrations62 } from './v62.js';
 import { migrations63 } from './v63.js';
 import { migrations64 } from './v64.js';
 import { migrations65 } from './v65.js';
+import { migrations66 } from './v66.js';
 
 export type { Migration, MigrationDatabase } from './types.js';
 
@@ -85,4 +86,5 @@ export const migrations = [
   ...migrations63,
   ...migrations64,
   ...migrations65,
+  ...migrations66,
 ] as const;

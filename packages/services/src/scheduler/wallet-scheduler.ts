@@ -1,4 +1,5 @@
 import { createSemaphore, type Clock, type Semaphore } from '@coqui/core';
+import { clearInterval, setInterval } from 'node:timers';
 import { NOOP_METRICS, type OperationalMetrics } from '@coqui/observability';
 import {
   acquireWalletScheduleLease,
@@ -7,7 +8,9 @@ import {
   getWalletSchedule,
   listDueWalletSchedules,
   listWalletSchedules,
-  releaseWalletScheduleLease,
+  releaseWalletScheduleLeaseFenced,
+  renewWalletScheduleLease,
+  recordSchedulerLeaseEvent,
   type Db,
   type StoredWalletScheduleLease,
 } from '@coqui/storage';
@@ -30,12 +33,14 @@ export interface SchedulerTaskContext {
   readonly scheduledForMs: number;
   readonly startedAtMs: number;
   readonly signal: AbortSignal;
+  readonly missedSlotCount: number;
 }
 
 export interface WalletSchedulerTask {
   readonly profileId: string;
   readonly cadenceMs: number;
   readonly utcOffsetMs?: number;
+  readonly catchUpPolicy?: 'recompute_current' | 'expire_stale';
   execute(context: SchedulerTaskContext): Promise<SchedulerTaskOutcome>;
 }
 
@@ -45,7 +50,8 @@ export type SchedulerRunOutcome =
   | 'failed'
   | 'canceled'
   | 'lease_unavailable'
-  | 'lease_lost';
+  | 'lease_lost'
+  | 'expired';
 
 export interface SchedulerRunResult {
   readonly profileId: string;
@@ -98,6 +104,7 @@ interface ValidatedTask {
   readonly profileId: string;
   readonly cadenceMs: number;
   readonly utcOffsetMs: number;
+  readonly catchUpPolicy: 'recompute_current' | 'expire_stale';
   execute(context: SchedulerTaskContext): Promise<SchedulerTaskOutcome>;
 }
 
@@ -132,6 +139,7 @@ function validateTasks(tasks: readonly WalletSchedulerTask[]): readonly Validate
       profileId: task.profileId,
       cadenceMs: task.cadenceMs,
       utcOffsetMs: offset,
+      catchUpPolicy: task.catchUpPolicy ?? 'expire_stale',
       execute: task.execute.bind(task),
     });
   }));
@@ -350,14 +358,52 @@ export class WalletSchedulerService {
 
     let outcome: SchedulerRunOutcome = 'failed';
     let reasonCode: string | null = 'task_failed';
+    let leaseLost = false;
+    let cancellationObserved = false;
+    const runAbort = new AbortController();
+    const stop = () => runAbort.abort('scheduler_stopped');
+    this.#shutdown.signal.addEventListener('abort', stop, { once: true });
+    const renew = setInterval(() => {
+      if (runAbort.signal.aborted) return;
+      try {
+        const now = safeTime(this.#clock.nowMs(), 'Scheduler clock');
+        if (!renewWalletScheduleLease(
+          task.profileId, this.#ownerId, lease.leaseGeneration, now, this.#leaseMs, this.#database,
+        )) {
+          const current = getWalletSchedule(task.profileId, this.#database);
+          cancellationObserved = current?.ownerId === this.#ownerId &&
+            current.leaseGeneration === lease.leaseGeneration && current.cancellationRequested;
+          leaseLost = !cancellationObserved;
+          runAbort.abort(cancellationObserved ? 'scheduler_cancelled' : 'lease_lost');
+        }
+      } catch {
+        leaseLost = true;
+        runAbort.abort('lease_lost');
+      }
+    }, Math.max(10, Math.floor(this.#leaseMs / 3)));
+    renew.unref?.();
+    const missedSlotCount = Math.floor((startedAtMs - lease.nextRunAt) / lease.cadenceMs);
+    const scheduledForMs = lease.nextRunAt + Math.max(0, missedSlotCount) * lease.cadenceMs;
     try {
-      const returned = taskOutcome(await task.execute(Object.freeze({
-        profileId: task.profileId,
-        scheduledForMs: lease.nextRunAt,
-        startedAtMs,
-        signal: this.#shutdown.signal,
-      })));
-      if (this.#shutdown.signal.aborted) {
+      const returned = task.catchUpPolicy === 'expire_stale' && missedSlotCount > 0
+        ? null
+        : taskOutcome(await task.execute(Object.freeze({
+            profileId: task.profileId,
+            scheduledForMs,
+            startedAtMs,
+            signal: runAbort.signal,
+            missedSlotCount: Math.max(0, missedSlotCount),
+          })));
+      if (task.catchUpPolicy === 'expire_stale' && missedSlotCount > 0) {
+        outcome = 'expired';
+        reasonCode = 'stale_slot_expired';
+      } else if (cancellationObserved) {
+        outcome = 'canceled';
+        reasonCode = 'scheduler_cancelled';
+      } else if (leaseLost) {
+        outcome = 'lease_lost';
+        reasonCode = 'lease_lost';
+      } else if (this.#shutdown.signal.aborted) {
         outcome = 'canceled';
         reasonCode = 'scheduler_stopped';
       } else if (returned === null) {
@@ -367,10 +413,26 @@ export class WalletSchedulerService {
         reasonCode = returned.reasonCode ?? null;
       }
     } catch {
-      if (this.#shutdown.signal.aborted) {
+      if (cancellationObserved) {
+        outcome = 'canceled';
+        reasonCode = 'scheduler_cancelled';
+      } else if (leaseLost) {
+        outcome = 'lease_lost';
+        reasonCode = 'lease_lost';
+      } else if (this.#shutdown.signal.aborted) {
         outcome = 'canceled';
         reasonCode = 'scheduler_stopped';
       }
+    } finally {
+      clearInterval(renew);
+      this.#shutdown.signal.removeEventListener('abort', stop);
+    }
+
+    const currentLease = getWalletSchedule(task.profileId, this.#database);
+    if (currentLease?.ownerId === this.#ownerId &&
+        currentLease.leaseGeneration === lease.leaseGeneration && currentLease.cancellationRequested) {
+      outcome = 'canceled';
+      reasonCode = 'scheduler_cancelled';
     }
 
     const completedAtMs = safeTime(this.#clock.nowMs(), 'Scheduler clock');
@@ -381,9 +443,10 @@ export class WalletSchedulerService {
         lease.cadenceMs,
         lease.utcOffsetMs,
       );
-    const released = releaseWalletScheduleLease(
+    const released = releaseWalletScheduleLeaseFenced(
       task.profileId,
       this.#ownerId,
+      lease.leaseGeneration,
       nextRunAt,
       outcome === 'failed' ? 'error' : outcome === 'canceled' ? 'stopped' : 'idle',
       reasonCode,
@@ -393,10 +456,13 @@ export class WalletSchedulerService {
     if (!released) {
       outcome = 'lease_lost';
       reasonCode = 'lease_lost';
+      recordSchedulerLeaseEvent(
+        task.profileId, this.#ownerId, lease.leaseGeneration, 'lost', completedAtMs, this.#database,
+      );
     }
     return this.#record(frozenRun({
       profileId: task.profileId,
-      scheduledForMs: lease.nextRunAt,
+      scheduledForMs,
       startedAtMs,
       completedAtMs,
       outcome,

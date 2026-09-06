@@ -161,7 +161,7 @@ export interface CoquiRuntime {
  * whichever service happened to need it first.
  */
 export function createRuntime(options: RuntimeOptions): CoquiRuntime {
-  const clock = new SystemClock(options.readSystemTime ?? (() => Date.now())), database = openDatabase(options.databasePath), forwardPlanHash = registerForwardEdgeStudy(SHIPPED_FORWARD_EDGE_PLAN, database);
+  const clock = new SystemClock(options.readSystemTime ?? (() => Date.now())), database = openDatabase(options.databasePath), forwardPlanHash = registerForwardEdgeStudy(SHIPPED_FORWARD_EDGE_PLAN, database), hostId = `desktop-${randomUUID()}`;
 
   // Every background failure in the application goes through here: a structured
   // log line always, and an incident row when the fault is durable. Before this,
@@ -269,7 +269,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       evidenceVerified: evidence.track().conversationEligible,
       historicalGrossEdgeLowerBoundPct: paperGrossEdgeLowerBoundPct(options.profileId, database),
     }),
-    onUnexpectedError: report,
+    onUnexpectedError: report, executionOwnerId: hostId,
   });
   let scheduler: SchedulerRuntime | null = null, disposed = false;
   const startScheduler = (): void => {
@@ -278,8 +278,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     scheduler = startSchedulerRuntime({
         database,
         clock,
-        profileId: options.profileId,
-        onUnexpectedError: report,
+        profileId: options.profileId, hostId, onUnexpectedError: report,
         async prepare(nowMs) {
           await paperMarket.refresh(nowMs);
           paperHoldings = (await portfolio.portfolioView()).holdings;
@@ -298,7 +297,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
             return policy.targets.length === 0 ? null : policy;
           },
           historicalGrossEdgeLowerBoundPct: paperGrossEdgeLowerBoundPct(options.profileId, database),
-          evidenceVerified: () => evidence.track().conversationEligible,
+          evidenceVerified: () => evidence.track().conversationEligible, executionOwnerId: hostId,
           captureEvidence: async (summary) => {
             await captureScheduledForwardEvidence({
               profileId: options.profileId,

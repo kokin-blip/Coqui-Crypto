@@ -267,7 +267,7 @@ export function executionDeltasFromIntents(intents: readonly ExecutionIntent[]):
 export interface PaperVenuePlacement {
   readonly accepted: boolean;
   readonly providerOrderId: string | null;
-  readonly reasonCode: 'accepted' | 'assumption_changed' | 'venue_refused';
+  readonly reasonCode: 'accepted' | 'assumption_changed' | 'execution_lease_invalid' | 'venue_refused';
   readonly idempotencyKey: string;
 }
 

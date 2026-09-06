@@ -7,6 +7,7 @@ import {
 } from '@coqui/core';
 import {
   appendPaperExecutionEvent,
+  acquireExecutionLease,
   getPaperExecutionAttemptOutcome,
   getPaperExecutionPolicy,
   getPaperExecutionProposal,
@@ -16,6 +17,7 @@ import {
   savePaperExecutionProposal,
   savePaperProposalPendingContext,
   updatePaperExecutionProposalStatus,
+  validateExecutionLease,
   type Db,
   type PaperExecutionOutcomeStatus,
   type PaperExecutionProposalRecord,
@@ -66,6 +68,8 @@ export interface PaperExecutionDependencies {
   /** Read at preflight and again at submission; callers cannot pass a stale snapshot. */
   readonly state: () => PaperExecutionState;
   readonly onUnexpectedError?: (context: string, error: unknown) => void;
+  readonly executionOwnerId?: string;
+  readonly executionLeaseMs?: number;
 }
 
 function serializedIntents(intents: readonly ExecutionIntent[]): string {
@@ -105,6 +109,8 @@ export class PaperExecutionService {
   readonly #market: PaperMarketData;
   readonly #state: () => PaperExecutionState;
   readonly #onUnexpectedError: (context: string, error: unknown) => void;
+  readonly #executionOwnerId: string;
+  readonly #executionLeaseMs: number;
 
   constructor(dependencies: PaperExecutionDependencies) {
     this.#database = dependencies.database;
@@ -113,6 +119,8 @@ export class PaperExecutionService {
     this.#market = dependencies.market;
     this.#state = dependencies.state;
     this.#onUnexpectedError = dependencies.onUnexpectedError ?? (() => {});
+    this.#executionOwnerId = dependencies.executionOwnerId ?? 'paper-execution-local';
+    this.#executionLeaseMs = dependencies.executionLeaseMs ?? 5 * 60 * 1_000;
   }
 
   /** Reconcile durable simulator submissions through the same sole OMS boundary. */
@@ -242,7 +250,8 @@ export class PaperExecutionService {
     const policy = getPaperExecutionPolicy(this.#profileId, this.#database);
     const snapshot = this.#state();
     const intents = JSON.parse(proposal.intentsJson) as readonly ExecutionIntent[];
-    let refusal: ExecutionRefusalCode | 'paper_execution_off' | 'evidence_not_verified' | null = null;
+    let refusal: ExecutionRefusalCode | 'paper_execution_off' | 'evidence_not_verified' |
+      'execution_lease_unavailable' | null = null;
     if (policy.mode === 'off') refusal = 'paper_execution_off';
     else if (!snapshot.evidenceVerified) refusal = 'evidence_not_verified';
     const gates = refusal === null
@@ -260,6 +269,12 @@ export class PaperExecutionService {
         })
       : null;
     if (gates !== null && !isApproved(gates)) refusal = gates.code;
+    const authority = refusal === null && gates !== null && isApproved(gates)
+      ? acquireExecutionLease(
+          this.#profileId, this.#executionOwnerId, at, this.#executionLeaseMs, this.#database,
+        )
+      : null;
+    if (refusal === null && authority === null) refusal = 'execution_lease_unavailable';
     const checkSnapshotJson = JSON.stringify({
       paperOnly: true,
       proposalHash: proposal.proposalHash,
@@ -297,6 +312,20 @@ export class PaperExecutionService {
       onUnexpectedError: (productId, error) => this.#onUnexpectedError(`oms:${productId}`, error),
     });
     const pending = getPaperProposalPendingContext(proposal.id, this.#database);
+    if (authority === null || !validateExecutionLease(
+      this.#profileId, this.#executionOwnerId, authority.fencingToken,
+      this.#nowMs(), this.#database,
+    )) {
+      const completedAt = this.#nowMs();
+      recordPaperExecutionAttempt({
+        id: sha256Hex(`paper-attempt:${commandId}`), commandId, proposal,
+        status: 'blocked', reasonCode: 'execution_lease_unavailable',
+        filledCount: 0, refusedCount: intents.length,
+        checkSnapshotHash, checkSnapshotJson, startedAt: at, completedAt,
+      }, this.#database);
+      updatePaperExecutionProposalStatus(proposal.id, 'blocked', completedAt, this.#database);
+      return result(proposal, 'blocked', 'execution_lease_unavailable', 0, intents.length);
+    }
     if (pending !== null) {
       const submitted = oms.submitPending(gates, pending);
       const status: PaperExecutionOutcomeStatus = submitted.submittedCount > 0

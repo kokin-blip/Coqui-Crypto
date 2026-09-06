@@ -471,6 +471,29 @@ new plan instead of submitting stale work. Idempotency binds profile, decision,
 plan, route scope, and connection. This layer adds no live venue authority and
 does not change the compile-time live-execution prohibition.
 
+### 6.3 Host lifecycle and execution authority
+
+Migration 66 separates renewable scheduler ownership from venue-submission
+authority. Scheduler leases carry a monotonically increasing generation,
+periodic renewal time, durable cancellation state, and append-only acquired,
+renewed, cancelled, released, or lost events. Active work receives an abort
+signal when cancellation is requested or renewal loses ownership. TrendVol uses
+`recompute_current`: after multiple missed daily windows it evaluates only the
+latest eligible slot from current complete data. Event/arbitrage-style tasks use
+`expire_stale` and do not replay obsolete slots.
+
+Execution uses a second lease with a monotonically increasing fencing token.
+`PaperExecutionService` and the venue-neutral routing service validate current
+ownership immediately before simulated placement; a second local host receives
+`execution_lease_unavailable`, and a token remains invalid after takeover even
+if the former owner returns. Host identity is unique per desktop runtime.
+
+The transport-neutral `HostLifecycle` defines `start`, `recover`, `tick`,
+`stop`, and `status`. `DesktopHost` is the only implementation in this phase;
+Electron supplies timer and recovery hooks but is not imported by the service
+layer. The authority model remains local-SQLite and paper-only. It is not a
+distributed lease and does not authorize active-active or remote SQLite use.
+
 Three properties the order layer must have from the start, because retrofitting
 them after a live path exists is far harder:
 

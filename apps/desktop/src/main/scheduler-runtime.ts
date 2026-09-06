@@ -3,10 +3,12 @@ import { clearInterval, setInterval } from 'node:timers';
 import type { Clock } from '@coqui/core';
 import {
   createPaperRunLoopTask,
+  DesktopHost,
   recoverPaperOrdersAtStartup,
   WalletSchedulerService,
   type PaperRunLoopDependencies,
   type WalletSchedulerTask,
+  type HostLifecycle,
 } from '@coqui/services';
 import type { Db } from '@coqui/storage';
 
@@ -40,6 +42,7 @@ export interface SchedulerRuntimeOptions {
   readonly database: Db;
   readonly clock: Clock;
   readonly profileId: string;
+  readonly hostId?: string;
   readonly paper: PaperRunLoopDependencies;
   /**
    * Runs before every tick. The decision itself is synchronous by design, so
@@ -51,47 +54,20 @@ export interface SchedulerRuntimeOptions {
   readonly onUnexpectedError?: (context: string, error: unknown) => void;
 }
 
-export interface SchedulerRuntime {
-  /** Drive one tick immediately. Exposed so a test never waits on a timer. */
-  tick(): Promise<void>;
+export interface SchedulerRuntime extends HostLifecycle {
   dispose(): void;
 }
 
 export function startSchedulerRuntime(options: SchedulerRuntimeOptions): SchedulerRuntime {
   const report = options.onUnexpectedError ?? (() => {});
-
-  // Before the first tick: orders left non-terminal by a crash are classified,
-  // and anything ambiguous becomes `unknown` rather than a guess (invariant 15).
-  try {
-    recoverPaperOrdersAtStartup({
-      database: options.database,
-      clock: options.clock,
-      profileId: options.profileId,
-    });
-  } catch (error) {
-    report('paper_recovery', error);
-  }
-
-  const scheduler = new WalletSchedulerService({
-    database: options.database,
-    clock: options.clock,
-    ownerId: 'desktop-main',
-  });
+  const hostId = options.hostId ?? 'desktop-main-test';
 
   const paperTask = createPaperRunLoopTask(options.paper);
   // The scheduler holds no task registry — tasks are passed by value to
   // ensureSchedules and to every tick, so the list is built once here.
   const tasks: readonly WalletSchedulerTask[] = [paperTask as WalletSchedulerTask];
 
-  try {
-    scheduler.ensureSchedules(tasks);
-  } catch (error) {
-    // Cadence policy is immutable once written. A second launch with a
-    // different cadence throws, and that is a configuration error worth
-    // reporting rather than silently re-scheduling.
-    report('scheduler_ensure', error);
-  }
-
+  let scheduler: WalletSchedulerService | null = null;
   let running = false;
   const tick = async (): Promise<void> => {
     // Ticks never overlap. The scheduler bounds concurrency across profiles,
@@ -108,7 +84,7 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
           report('scheduler_prepare', error);
         }
       }
-      await scheduler.tick(tasks);
+      await scheduler?.tick(tasks);
     } catch (error) {
       report('scheduler_tick', error);
     } finally {
@@ -116,17 +92,45 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
     }
   };
 
-  const timer = setInterval(() => {
-    void tick();
-  }, options.pollMs ?? DEFAULT_POLL_MS);
-  // Never hold the process open on the scheduler's account.
-  timer.unref?.();
-
-  return {
-    tick,
-    dispose() {
-      clearInterval(timer);
-      scheduler.dispose();
+  let timer: ReturnType<typeof setInterval> | null = null;
+  const host = new DesktopHost({
+    hostId,
+    recover() {
+      try {
+        recoverPaperOrdersAtStartup({
+          database: options.database, clock: options.clock, profileId: options.profileId,
+        });
+      } catch (error) {
+        report('paper_recovery', error);
+      }
     },
+    start() {
+      scheduler = new WalletSchedulerService({
+        database: options.database, clock: options.clock, ownerId: hostId,
+      });
+      try {
+        scheduler.ensureSchedules(tasks);
+      } catch (error) {
+        report('scheduler_ensure', error);
+      }
+      timer = setInterval(() => { void host.tick(); }, options.pollMs ?? DEFAULT_POLL_MS);
+      timer.unref?.();
+    },
+    tick,
+    stop() {
+      if (timer !== null) clearInterval(timer);
+      timer = null;
+      scheduler?.dispose();
+      scheduler = null;
+    },
+  });
+  host.start();
+  return {
+    start: () => host.start(),
+    recover: () => host.recover(),
+    tick: () => host.tick(),
+    stop: () => host.stop(),
+    status: () => host.status(),
+    dispose: () => host.stop(),
   };
 }

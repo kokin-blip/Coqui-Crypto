@@ -12,6 +12,7 @@ import {
   listExecutionRoutes,
   linkExecutionPlanEvidence,
   saveExecutionPlan,
+  validateExecutionLease,
   type Db,
 } from '@coqui/storage';
 
@@ -20,17 +21,26 @@ export interface VenueNeutralRoutingDependencies {
   readonly adapters: readonly PaperVenueAdapter[];
   /** Rebuilds the exact capability/balance/rule/health assumption immediately before placement. */
   readonly currentAssumptionHash: (route: ExecutionRouteV1) => string | null;
+  readonly ownerId: string;
+  readonly fencingToken: () => number | null;
+  readonly nowMs: () => number;
 }
 
 export class VenueNeutralPaperRoutingService {
   readonly #database: Db;
   readonly #adapters: ReadonlyMap<string, PaperVenueAdapter>;
   readonly #currentAssumptionHash: (route: ExecutionRouteV1) => string | null;
+  readonly #ownerId: string;
+  readonly #fencingToken: () => number | null;
+  readonly #nowMs: () => number;
 
   constructor(dependencies: VenueNeutralRoutingDependencies) {
     this.#database = dependencies.database;
     this.#adapters = new Map(dependencies.adapters.map((adapter) => [adapter.provider, adapter]));
     this.#currentAssumptionHash = dependencies.currentAssumptionHash;
+    this.#ownerId = dependencies.ownerId;
+    this.#fencingToken = dependencies.fencingToken;
+    this.#nowMs = dependencies.nowMs;
   }
 
   plan(
@@ -57,6 +67,15 @@ export class VenueNeutralPaperRoutingService {
     if (latest === null || latest !== route.assumptionHash) {
       return Object.freeze({
         accepted: false, providerOrderId: null, reasonCode: 'assumption_changed',
+        idempotencyKey: route.idempotencyKey,
+      });
+    }
+    const token = this.#fencingToken();
+    if (token === null || !validateExecutionLease(
+      profileId, this.#ownerId, token, this.#nowMs(), this.#database,
+    )) {
+      return Object.freeze({
+        accepted: false, providerOrderId: null, reasonCode: 'execution_lease_invalid',
         idempotencyKey: route.idempotencyKey,
       });
     }

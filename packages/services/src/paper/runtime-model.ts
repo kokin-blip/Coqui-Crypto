@@ -90,6 +90,7 @@ export interface PaperRunLoopDependencies {
   readonly preparation: () => PaperDecisionPreparation;
   readonly historicalGrossEdgeLowerBoundPct: number;
   readonly evidenceVerified?: () => boolean;
+  readonly executionOwnerId?: string;
   readonly captureEvidence?: (summary: PaperRunSummary) => Promise<void>;
   readonly onUnexpectedError?: (context: string, error: unknown) => void;
 }

@@ -1,4 +1,4 @@
-import { nonNegativeDecimal } from '@coqui/core';
+import { nonNegativeDecimal, sha256Hex } from '@coqui/core';
 
 import { inTransaction, type Db } from '../sqlite/index.js';
 
@@ -13,6 +13,9 @@ export interface StoredWalletScheduleLease {
   readonly cadenceMs: number;
   readonly utcOffsetMs: number;
   readonly enabled: boolean;
+  readonly leaseGeneration: number;
+  readonly renewedAt: number | null;
+  readonly cancellationRequested: boolean;
 }
 
 interface WalletScheduleRow {
@@ -26,6 +29,9 @@ interface WalletScheduleRow {
   cadence_ms: number;
   utc_offset_ms: number;
   enabled: number;
+  lease_generation: number;
+  renewed_at: number | null;
+  cancellation_requested: number;
 }
 
 function scheduleFromRow(row: WalletScheduleRow): StoredWalletScheduleLease {
@@ -40,6 +46,9 @@ function scheduleFromRow(row: WalletScheduleRow): StoredWalletScheduleLease {
     cadenceMs: row.cadence_ms,
     utcOffsetMs: row.utc_offset_ms,
     enabled: row.enabled === 1,
+    leaseGeneration: row.lease_generation,
+    renewedAt: row.renewed_at,
+    cancellationRequested: row.cancellation_requested === 1,
   };
 }
 
@@ -141,10 +150,98 @@ export function acquireWalletScheduleLease(
     ) return null;
     database.prepare(`
       UPDATE wallet_schedule_lease
-      SET owner_id = ?, leased_until = ?, state = 'running', error = NULL
+      SET owner_id = ?, leased_until = ?, state = 'running', error = NULL,
+          lease_generation = lease_generation + 1, renewed_at = ?, cancellation_requested = 0
       WHERE profile_id = ?
-    `).run(ownerId, now + leaseMs, profileId);
-    return getWalletSchedule(profileId, database);
+    `).run(ownerId, now + leaseMs, now, profileId);
+    const acquired = getWalletSchedule(profileId, database)!;
+    recordSchedulerLeaseEvent(profileId, ownerId, acquired.leaseGeneration, 'acquired', now, database);
+    return acquired;
+  });
+}
+
+export type SchedulerLeaseEventKind = 'acquired' | 'renewed' | 'released' | 'lost' | 'cancelled';
+
+export function recordSchedulerLeaseEvent(
+  profileId: string,
+  ownerId: string,
+  generation: number,
+  kind: SchedulerLeaseEventKind,
+  at: number,
+  database: Db,
+): void {
+  if (!PROFILE_ID.test(profileId) || !ownerId.trim() || !Number.isSafeInteger(generation) ||
+      generation <= 0 || !validTime(at)) throw new TypeError('Invalid scheduler lease event.');
+  const id = sha256Hex(`scheduler-lease:${profileId}:${ownerId}:${generation}:${kind}:${at}`);
+  database.prepare(`INSERT INTO scheduler_lease_events_v1
+    (id, profile_id, owner_id, lease_generation, kind, at, detail_json)
+    VALUES (?, ?, ?, ?, ?, ?, '{}') ON CONFLICT(id) DO NOTHING`)
+    .run(id, profileId, ownerId, generation, kind, at);
+}
+
+export function renewWalletScheduleLease(
+  profileId: string,
+  ownerId: string,
+  generation: number,
+  now: number,
+  leaseMs: number,
+  database: Db,
+): boolean {
+  if (!validTime(now) || !Number.isSafeInteger(leaseMs) || leaseMs <= 0) {
+    throw new TypeError('Invalid scheduler lease renewal.');
+  }
+  return inTransaction(database, () => {
+    const result = database.prepare(`UPDATE wallet_schedule_lease
+      SET leased_until = ?, renewed_at = ?
+      WHERE profile_id = ? AND owner_id = ? AND lease_generation = ?
+        AND leased_until > ? AND cancellation_requested = 0`)
+      .run(now + leaseMs, now, profileId, ownerId, generation, now);
+    if (Number(result.changes) !== 1) return false;
+    recordSchedulerLeaseEvent(profileId, ownerId, generation, 'renewed', now, database);
+    return true;
+  });
+}
+
+export function requestWalletScheduleCancellation(
+  profileId: string,
+  now: number,
+  database: Db,
+): boolean {
+  if (!PROFILE_ID.test(profileId) || !validTime(now)) throw new TypeError('Invalid cancellation request.');
+  return inTransaction(database, () => {
+    const current = getWalletSchedule(profileId, database);
+    if (current?.ownerId === null || current === null || current.cancellationRequested) return false;
+    database.prepare(`UPDATE wallet_schedule_lease SET cancellation_requested = 1
+      WHERE profile_id = ? AND owner_id = ? AND lease_generation = ?`)
+      .run(profileId, current.ownerId, current.leaseGeneration);
+    recordSchedulerLeaseEvent(
+      profileId, current.ownerId, current.leaseGeneration, 'cancelled', now, database,
+    );
+    return true;
+  });
+}
+
+export function releaseWalletScheduleLeaseFenced(
+  profileId: string,
+  ownerId: string,
+  generation: number,
+  nextRunAt: number,
+  state: StoredWalletScheduleLease['state'],
+  error: string | null,
+  now: number,
+  database: Db,
+): boolean {
+  return inTransaction(database, () => {
+    const result = database.prepare(`
+      UPDATE wallet_schedule_lease
+      SET owner_id = NULL, leased_until = NULL, next_run_at = ?, last_run_at = ?,
+          state = ?, error = ?, renewed_at = NULL, cancellation_requested = 0
+      WHERE profile_id = ? AND owner_id = ? AND lease_generation = ?
+        AND leased_until > ?
+    `).run(nextRunAt, now, state, error, profileId, ownerId, generation, now);
+    if (Number(result.changes) !== 1) return false;
+    recordSchedulerLeaseEvent(profileId, ownerId, generation, 'released', now, database);
+    return true;
   });
 }
 
@@ -163,7 +260,7 @@ export function releaseWalletScheduleLease(
   const result = database.prepare(`
     UPDATE wallet_schedule_lease
     SET owner_id = NULL, leased_until = NULL, next_run_at = ?, last_run_at = ?,
-        state = ?, error = ?
+        state = ?, error = ?, renewed_at = NULL, cancellation_requested = 0
     WHERE profile_id = ? AND owner_id = ?
   `).run(nextRunAt, now, state, error, profileId, ownerId);
   return Number(result.changes) === 1;
@@ -190,12 +287,25 @@ export function listDueWalletSchedules(
 /** Finalize only expired running leases; repeated startup recovery is idempotent. */
 export function finalizeExpiredWalletScheduleLeases(now: number, database: Db): number {
   if (!validTime(now)) throw new TypeError('Lease finalization requires a safe time.');
-  const result = database.prepare(`
-    UPDATE wallet_schedule_lease
-    SET owner_id = NULL, leased_until = NULL, state = 'error', error = 'lease_expired'
-    WHERE state = 'running' AND leased_until IS NOT NULL AND leased_until <= ?
-  `).run(now);
-  return Number(result.changes);
+  return inTransaction(database, () => {
+    const expired = database.prepare(`SELECT profile_id, owner_id, lease_generation
+      FROM wallet_schedule_lease WHERE state = 'running' AND owner_id IS NOT NULL
+        AND leased_until IS NOT NULL AND leased_until <= ?`).all(now) as Array<{
+          profile_id: string; owner_id: string; lease_generation: number;
+        }>;
+    for (const row of expired) {
+      recordSchedulerLeaseEvent(
+        row.profile_id, row.owner_id, row.lease_generation, 'lost', now, database,
+      );
+    }
+    const result = database.prepare(`
+      UPDATE wallet_schedule_lease
+      SET owner_id = NULL, leased_until = NULL, state = 'error', error = 'lease_expired',
+          renewed_at = NULL, cancellation_requested = 0
+      WHERE state = 'running' AND leased_until IS NOT NULL AND leased_until <= ?
+    `).run(now);
+    return Number(result.changes);
+  });
 }
 
 export interface StoredWalletRiskState {

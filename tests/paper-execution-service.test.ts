@@ -65,13 +65,14 @@ function action() {
   return { proposalId: 'proposal-1', runId: 'run-1', revision: 1, intents: [INTENT] } as const;
 }
 
-function service(database: Db, state: PaperExecutionState) {
+function service(database: Db, state: PaperExecutionState, executionOwnerId?: string) {
   return new PaperExecutionService({
     database,
     profileId: PROFILE,
     nowMs: () => AT,
     market: { bars: () => [bar(0, 100, 110), bar(1, 111, 120)], rules: () => RULES },
     state: () => state,
+    ...(executionOwnerId === undefined ? {} : { executionOwnerId }),
   });
 }
 
@@ -111,6 +112,21 @@ describe('authoritative paper execution service', () => {
     expect(duplicate).toEqual(first);
     expect(database.prepare('SELECT COUNT(*) AS n FROM paper_fills_v3').get()).toEqual({ n: 1 });
     database.close();
+  });
+
+  it('prevents two local hosts from reaching placement for the same run', () => {
+    const database = seeded();
+    setPaperExecutionPolicy({
+      commandId: crypto.randomUUID(), profileId: PROFILE, mode: 'unattended',
+      confirmedAt: AT, explicitUnattendedConfirmation: true,
+    }, database);
+    const first = service(database, readyState(), 'desktop-a').prepare(action());
+    const second = service(database, readyState(), 'desktop-b').prepare({
+      ...action(), proposalId: 'proposal-2', revision: 2,
+    });
+    expect(first.status).toBe('succeeded');
+    expect(second).toMatchObject({ status: 'blocked', reasonCode: 'execution_lease_unavailable' });
+    expect(database.prepare('SELECT COUNT(*) AS n FROM paper_fills_v3').get()).toEqual({ n: 1 });
   });
 
   it('refuses stale review hashes and a kill switch engaged after preflight', () => {

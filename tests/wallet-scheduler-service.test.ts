@@ -15,6 +15,7 @@ import {
   acquireWalletScheduleLease,
   getWalletSchedule,
   openDatabase,
+  requestWalletScheduleCancellation,
 } from '../packages/storage/src/index.js';
 
 const DAY_MS = 86_400_000;
@@ -276,6 +277,68 @@ describe('durable wallet scheduler service', () => {
     expect(scheduler.status()).toEqual({ active: 0, pending: 0, disposed: true });
     await expect(scheduler.tick(tasks)).rejects.toThrow('disposed');
     database.close();
+  });
+
+  it('renews active leases and turns durable cancellation into an abort signal', async () => {
+    const database = openDatabase(':memory:');
+    const clock = new FixedClock(0);
+    const scheduler = new WalletSchedulerService({
+      database, clock, ownerId: 'desktop-a', leaseMs: 60,
+    });
+    let started = false;
+    const task = completedTask('family-a', async ({ signal }) => new Promise((resolve) => {
+      started = true;
+      signal.addEventListener('abort', () => resolve({ status: 'completed' }), { once: true });
+    }));
+    scheduler.ensureSchedules([task]);
+    clock.set(DAY_MS);
+    const running = scheduler.tick([task]);
+    await vi.waitFor(() => expect(started).toBe(true));
+    clock.advanceBy(20);
+    await vi.waitFor(() => expect(database.prepare(`SELECT COUNT(*) AS count
+      FROM scheduler_lease_events_v1 WHERE kind = 'renewed'`).get()).toEqual({ count: 1 }));
+    expect(requestWalletScheduleCancellation('family-a', clock.nowMs(), database)).toBe(true);
+    const result = await running;
+    expect(result.results[0]).toMatchObject({
+      outcome: 'canceled', reasonCode: 'scheduler_cancelled',
+    });
+    expect(getWalletSchedule('family-a', database)).toMatchObject({
+      nextRunAt: DAY_MS, state: 'stopped', cancellationRequested: false,
+    });
+  });
+
+  it('recomputes the latest TrendVol slot while expiring stale event-style work', async () => {
+    const database = openDatabase(':memory:');
+    const clock = new FixedClock(0);
+    const scheduler = new WalletSchedulerService({ database, clock, ownerId: 'desktop-a' });
+    const observed: Array<{ profileId: string; scheduledForMs: number; missedSlotCount: number }> = [];
+    const trend = {
+      ...completedTask('family-a', async (context) => {
+        observed.push(context);
+        return { status: 'completed' };
+      }),
+      catchUpPolicy: 'recompute_current' as const,
+    };
+    const event = {
+      ...completedTask('family-b', async (context) => {
+        observed.push(context);
+        return { status: 'completed' };
+      }),
+      catchUpPolicy: 'expire_stale' as const,
+    };
+    scheduler.ensureSchedules([trend, event]);
+    clock.set(3 * DAY_MS + 1);
+    const result = await scheduler.tick([trend, event]);
+    expect(observed).toEqual([{
+      profileId: 'family-a', scheduledForMs: 3 * DAY_MS,
+      startedAtMs: 3 * DAY_MS + 1, missedSlotCount: 2,
+      signal: expect.any(AbortSignal),
+    }]);
+    expect(result.results.map(({ profileId, outcome, reasonCode }) => ({ profileId, outcome, reasonCode })))
+      .toEqual([
+        { profileId: 'family-a', outcome: 'completed', reasonCode: null },
+        { profileId: 'family-b', outcome: 'expired', reasonCode: 'stale_slot_expired' },
+      ]);
   });
 
   it('validates the complete task set before mutation and never reads keychain-like extras', async () => {

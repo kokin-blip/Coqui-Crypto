@@ -227,6 +227,9 @@ export function runPaperDecision(
     profileId,
     nowMs: () => dependencies.clock.nowMs(),
     market: dependencies.market,
+    ...(dependencies.executionOwnerId === undefined
+      ? {}
+      : { executionOwnerId: dependencies.executionOwnerId }),
     state: () => ({
       holdings: executionHoldings,
       killSwitchEngaged: resolveKillSwitch(profileId, database).engaged,
@@ -503,6 +506,7 @@ export interface PaperSchedulerTask {
   readonly profileId: string;
   readonly cadenceMs: number;
   readonly utcOffsetMs?: number;
+  readonly catchUpPolicy: 'recompute_current';
   execute(context: {
     readonly scheduledForMs: number;
   }): Promise<{ readonly status: 'completed' | 'degraded'; readonly reasonCode?: string }>;
@@ -525,6 +529,7 @@ export function createPaperRunLoopTask(
     profileId: dependencies.profileId,
     cadenceMs,
     utcOffsetMs,
+    catchUpPolicy: 'recompute_current',
     async execute(context) {
       try {
         const summary = runPaperDecision(dependencies, context.scheduledForMs);

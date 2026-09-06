@@ -17,6 +17,7 @@ import {
 import { VenueNeutralPaperRoutingService } from '../packages/services/src/index.js';
 import {
   appendDecisionEvidenceEvent,
+  acquireExecutionLease,
   getExecutionPlan,
   listExecutionRoutes,
   openDatabase,
@@ -92,10 +93,13 @@ describe('venue-neutral execution routing', () => {
       detail: { planId: plan.id, planHash: plan.contentHash, intentCount: 2 },
     }, database);
     let changed = false;
+    let now = AT;
+    const lease = acquireExecutionLease(PROFILE, 'desktop-a', AT, 1_000, database)!;
     const service = new VenueNeutralPaperRoutingService({
       database,
       adapters: [createCoinbasePaperVenueAdapter(), createRobinhoodPaperVenueAdapter()],
       currentAssumptionHash: (route) => changed ? sha256Hex('changed') : route.assumptionHash,
+      ownerId: 'desktop-a', fencingToken: () => lease.fencingToken, nowMs: () => now,
     });
     const eventId = sha256Hex(`${value.decisionId}:1:execution_planned`);
     const first = service.plan(plan, candidates, eventId);
@@ -115,6 +119,21 @@ describe('venue-neutral execution routing', () => {
     changed = true;
     expect(service.place(PROFILE, plan.id, route.id)).toMatchObject({
       accepted: false, reasonCode: 'assumption_changed', providerOrderId: null,
+    });
+    changed = false;
+    expect(acquireExecutionLease(PROFILE, 'desktop-b', AT + 1, 1_000, database)).toBeNull();
+    now = AT + 1_001;
+    const takeover = acquireExecutionLease(PROFILE, 'desktop-b', now, 1_000, database)!;
+    expect(service.place(PROFILE, plan.id, route.id)).toMatchObject({
+      accepted: false, reasonCode: 'execution_lease_invalid', providerOrderId: null,
+    });
+    const secondHost = new VenueNeutralPaperRoutingService({
+      database, adapters: [createRobinhoodPaperVenueAdapter()],
+      currentAssumptionHash: (item) => item.assumptionHash,
+      ownerId: 'desktop-b', fencingToken: () => takeover.fencingToken, nowMs: () => now,
+    });
+    expect(secondHost.place(PROFILE, plan.id, route.id)).toMatchObject({
+      accepted: true, reasonCode: 'accepted',
     });
   });
 
@@ -148,6 +167,7 @@ describe('venue-neutral execution routing', () => {
     const service = new VenueNeutralPaperRoutingService({
       database, adapters: [createCoinbasePaperVenueAdapter()],
       currentAssumptionHash: (route) => route.assumptionHash,
+      ownerId: 'desktop-a', fencingToken: () => null, nowMs: () => AT,
     });
     const result = service.plan(plan, eligible);
     expect(result.routes).toHaveLength(1);
