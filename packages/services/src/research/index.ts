@@ -4,3 +4,7 @@ export * from './pre-registration.js';
 export * from './predecessor-audit.js';
 export * from './read-models.js';
 export * from './scoreboard.js';
+export * from './worker-protocol.js';
+export * from './worker-pool.js';
+export * from './evolution.js';
+export * from './triggers.js';

@@ -3,3 +3,4 @@ export * from './cscv.js';
 export * from './holdout-evidence.js';
 export * from './nested-study.js';
 export * from './forward-edge.js';
+export * from './evolution.js';

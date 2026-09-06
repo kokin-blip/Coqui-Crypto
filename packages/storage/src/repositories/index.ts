@@ -26,6 +26,7 @@ export * from './portfolio-evidence.js';
 export * from './profile-impact.js';
 export * from './reconciliation.js';
 export * from './research.js';
+export * from './research-evolution.js';
 export * from './research-evidence.js';
 export * from './research-study-runs.js';
 export * from './settings.js';

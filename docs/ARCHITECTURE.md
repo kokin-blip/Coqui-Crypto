@@ -494,6 +494,28 @@ Electron supplies timer and recovery hooks but is not imported by the service
 layer. The authority model remains local-SQLite and paper-only. It is not a
 distributed lease and does not authorize active-active or remote SQLite use.
 
+### 6.4 Research workers and evolution authority
+
+Migration 67 connects the existing durable `research_jobs` queue to a bounded
+`worker_threads` pool. The versioned worker envelope contains only a research
+definition and immutable snapshot, is limited to one MiB, and binds protocol,
+snapshot, envelope, and result hashes. The default pool has two workers and a
+64 MiB old-generation limit per worker. Cancellation, timeout, process failure,
+restart recovery, and stale completion all terminate as sanitized durable
+attempt outcomes. Workers import quantitative core code only; they receive no
+profile repositories, credentials, connections, OMS, routing, or execution
+handles.
+
+Candidate governance remains in the host process. A pure policy evaluates hard
+OOS, walk-forward, stress, drawdown, turnover, significance, stability, and
+trial-budget blockers. Passing evidence may be recorded only as
+`promotion_eligible`; it does not alter the active champion. Activation and
+rollback require an explicit human approval reference and append immutable
+lineage with a monotonically increasing generation. Scheduled and event
+research triggers enforce debounce, cooldown, maximum duration, and trial
+budget before they may start a job. Research activity never changes execution
+authority or paper targets.
+
 Three properties the order layer must have from the start, because retrofitting
 them after a live path exists is far harder:
 
