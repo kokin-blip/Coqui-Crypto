@@ -1,6 +1,6 @@
-import { createMemorySecretStore, type HttpClient, type SecretStore } from '@coqui/adapters';
+import { createHttpAdvisorProviders, createMemorySecretStore, type HttpClient, type SecretStore } from '@coqui/adapters';
 import { sha256Hex, type Clock } from '@coqui/core';
-import { AdvisorAnalystService } from '@coqui/services';
+import { AdvisorAnalystService, AdvisorDecisionEvidenceService } from '@coqui/services';
 import { readChartWorkspaceCommand, saveChartWorkspaceCommand, type Db } from '@coqui/storage';
 
 import type { ChannelHandlers } from './dispatch.js';
@@ -9,7 +9,9 @@ interface Command { readonly commandId: string }
 export function createAdvisorHandlers(input: { readonly profileId: string; readonly database: Db;
   readonly clock: Clock; readonly http: HttpClient; readonly secrets?: SecretStore;
   readonly saveHistory?: (data: string) => Promise<'saved' | 'cancelled'> }): ChannelHandlers {
-  const service = new AdvisorAnalystService({ ...input, secrets: input.secrets ?? createMemorySecretStore() });
+  const secrets = input.secrets ?? createMemorySecretStore(), providers = createHttpAdvisorProviders(input.http);
+  const service = new AdvisorAnalystService({ ...input, providers, secrets });
+  const decisions = new AdvisorDecisionEvidenceService({ ...input, providers, secrets });
   const command = async <T>(payload: Command, action: unknown, run: () => Promise<T> | T) => {
     const requestHash = sha256Hex(`${input.profileId}:advisor:${JSON.stringify(action)}`), prior = readChartWorkspaceCommand(payload.commandId, input.database);
     if (prior !== null) return prior.profileId === input.profileId && prior.requestHash === requestHash
@@ -44,5 +46,11 @@ export function createAdvisorHandlers(input: { readonly profileId: string; reado
         return { outcome };
       } catch (error) { service.auditExport('failed'); throw error; }
     }),
+    'advisor.decision.explain': (payload: Command & { readonly decisionId: string;
+      readonly provider: 'gemini' | 'openai' | 'anthropic' | null }) =>
+      command(payload, payload, () => decisions.explain(payload.decisionId, payload.provider)),
+    'advisor.navigation': (payload: Command & { readonly target: 'activity' | 'paper' | 'research' |
+      'risk' | 'market' | 'advisor'; readonly decisionId: string | null }) =>
+      command(payload, payload, () => decisions.navigate(payload.target, payload.decisionId)),
   } as ChannelHandlers;
 }

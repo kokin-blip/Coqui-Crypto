@@ -2,6 +2,7 @@ export * from './alerts.js';
 export * from './account-preferences.js';
 export * from './advisor.js';
 export * from './advisor-history.js';
+export * from './advisor-evidence.js';
 export * from './canonical-assets.js';
 export * from './chart-workspace.js';
 export * from './chart-extensions.js';

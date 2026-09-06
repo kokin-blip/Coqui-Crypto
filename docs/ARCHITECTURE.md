@@ -516,6 +516,28 @@ research triggers enforce debounce, cooldown, maximum duration, and trial
 budget before they may start a job. Research activity never changes execution
 authority or paper targets.
 
+### 6.5 Advisor decision evidence and provider isolation
+
+Migration 68 adds immutable, profile-scoped Advisor evidence packs and
+append-only navigation audits. “Ask Coqui why” accepts a `decisionId`, never a
+renderer-assembled fact collection. The service verifies the stored strategy
+decision and its ordered evidence events, projects an explicit allowlist,
+records the source decision and evidence hashes, and marks unavailable, stale,
+future-dated, or fresh data without rewriting prior packs.
+
+Provider-specific OpenAI, Gemini, and Anthropic request construction and response
+parsing live in adapters behind `AdvisorProvider`. Services supply only the
+bounded evidence JSON and a rephrase-only instruction. OpenAI requests disable
+remote response storage and expose no tools. Missing credentials, transport
+failure, and malformed provider output fall back to the deterministic local
+reason-code explanation; they cannot interrupt the scheduler or alter trading
+state. Encrypted history remains opt-in and profile-scoped.
+
+Advisor navigation is limited by contracts and service validation to Activity,
+Paper, Research, Risk, Market, and Advisor destinations. Each service-level
+accepted or rejected request is audited. The Advisor has no execution, configuration,
+routing, credential mutation through navigation, or promotion capability.
+
 Three properties the order layer must have from the start, because retrofitting
 them after a live path exists is far harder:
 

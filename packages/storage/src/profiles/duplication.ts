@@ -164,6 +164,10 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
         target.exec(`
           DROP TRIGGER advisor_audit_events_v1_no_update;
           DROP TRIGGER advisor_audit_events_v1_no_delete;
+          DROP TRIGGER advisor_decision_evidence_packs_v1_no_update;
+          DROP TRIGGER advisor_decision_evidence_packs_v1_no_delete;
+          DROP TRIGGER advisor_navigation_audit_events_v1_no_update;
+          DROP TRIGGER advisor_navigation_audit_events_v1_no_delete;
           DROP TRIGGER profile_connections_v1_identity_immutable;
           DROP TRIGGER connection_account_snapshots_v1_no_update;
           DROP TRIGGER connection_account_snapshots_v1_no_delete;
@@ -236,9 +240,16 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
             (SELECT COUNT(*) FROM advisor_conversations_v1 WHERE profile_id = ?) +
             (SELECT COUNT(*) FROM advisor_messages_v1 WHERE conversation_id IN
               (SELECT id FROM advisor_conversations_v1 WHERE profile_id = ?)) +
-            (SELECT COUNT(*) FROM advisor_audit_events_v1 WHERE profile_id = ?) AS count
+            (SELECT COUNT(*) FROM advisor_audit_events_v1 WHERE profile_id = ?) +
+            (SELECT COUNT(*) FROM advisor_decision_evidence_packs_v1 WHERE profile_id = ?) +
+            (SELECT COUNT(*) FROM advisor_navigation_audit_events_v1 WHERE profile_id = ?) AS count
         `, input.targetProfileId.toLowerCase(), input.targetProfileId.toLowerCase(),
+        input.targetProfileId.toLowerCase(), input.targetProfileId.toLowerCase(),
         input.targetProfileId.toLowerCase());
+        target.prepare('DELETE FROM advisor_decision_evidence_packs_v1 WHERE profile_id = ?')
+          .run(input.targetProfileId.toLowerCase());
+        target.prepare('DELETE FROM advisor_navigation_audit_events_v1 WHERE profile_id = ?')
+          .run(input.targetProfileId.toLowerCase());
         target.prepare(`DELETE FROM advisor_messages_v1 WHERE conversation_id IN
           (SELECT id FROM advisor_conversations_v1 WHERE profile_id = ?)`)
           .run(input.targetProfileId.toLowerCase());
@@ -253,6 +264,18 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
           CREATE TRIGGER advisor_audit_events_v1_no_delete
             BEFORE DELETE ON advisor_audit_events_v1
             BEGIN SELECT RAISE(ABORT, 'advisor audit events are immutable'); END;
+          CREATE TRIGGER advisor_decision_evidence_packs_v1_no_update
+            BEFORE UPDATE ON advisor_decision_evidence_packs_v1
+            BEGIN SELECT RAISE(ABORT, 'advisor evidence packs are immutable'); END;
+          CREATE TRIGGER advisor_decision_evidence_packs_v1_no_delete
+            BEFORE DELETE ON advisor_decision_evidence_packs_v1
+            BEGIN SELECT RAISE(ABORT, 'advisor evidence packs are immutable'); END;
+          CREATE TRIGGER advisor_navigation_audit_events_v1_no_update
+            BEFORE UPDATE ON advisor_navigation_audit_events_v1
+            BEGIN SELECT RAISE(ABORT, 'advisor navigation audit is append-only'); END;
+          CREATE TRIGGER advisor_navigation_audit_events_v1_no_delete
+            BEFORE DELETE ON advisor_navigation_audit_events_v1
+            BEGIN SELECT RAISE(ABORT, 'advisor navigation audit is append-only'); END;
         `);
 
         const connectionRows = countQuery(target, `

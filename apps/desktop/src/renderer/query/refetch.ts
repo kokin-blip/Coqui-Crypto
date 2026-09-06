@@ -42,6 +42,8 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'advisor.chat.history': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
   'advisor.chat.history.delete': { refetchIntervalMs: false, staleTimeMs: 0 },
   'advisor.chat.history.export': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'advisor.decision.explain': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
+  'advisor.navigation': { refetchIntervalMs: false, staleTimeMs: 0 },
   'chart-extensions.catalog': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
   'chart-extensions.signer.trust': { refetchIntervalMs: false, staleTimeMs: 0 },
   'chart-extensions.signer.remove': { refetchIntervalMs: false, staleTimeMs: 0 },

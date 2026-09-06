@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { createMemorySecretStore, type HttpClient } from '../packages/adapters/src/index.js';
+import { createHttpAdvisorProviders, createMemorySecretStore, type HttpClient } from '../packages/adapters/src/index.js';
 import { FixedClock } from '../packages/core/src/index.js';
 import { AdvisorAnalystService } from '../packages/services/src/index.js';
 import { openDatabase } from '../packages/storage/src/index.js';
@@ -27,7 +27,7 @@ describe('provider-neutral advisor analyst', () => {
   it('stores provider credentials only in the secret adapter', async () => {
     const database = openDatabase(':memory:'), secrets = createMemorySecretStore();
     const service = new AdvisorAnalystService({ profileId: 'main', database,
-      clock: new FixedClock(T0), http: fakeHttp([]), secrets });
+      clock: new FixedClock(T0), providers: createHttpAdvisorProviders(fakeHttp([])), secrets });
     await service.connectProvider('anthropic', 'credential-value-that-must-not-enter-sqlite');
     expect((await service.providers()).providers.find((item) => item.provider === 'anthropic')?.credentialState).toBe('connected');
     const databaseText = JSON.stringify(database.prepare("SELECT name FROM sqlite_master WHERE type = 'table'").all());
@@ -40,7 +40,7 @@ describe('provider-neutral advisor analyst', () => {
   it('generates deterministic facts without a provider or network call', async () => {
     const database = openDatabase(':memory:'), captured: Array<{ url: string; body: unknown; headers: HeadersInit | undefined }> = [];
     const service = new AdvisorAnalystService({ profileId: 'main', database,
-      clock: new FixedClock(T0), http: fakeHttp(captured), secrets: createMemorySecretStore() });
+      clock: new FixedClock(T0), providers: createHttpAdvisorProviders(fakeHttp(captured)), secrets: createMemorySecretStore() });
     const prepared = context(service), answer = await service.generate(prepared.contextHash, null);
     expect(answer).toMatchObject({ provider: 'local', advisoryOnly: true, executionAuthority: false });
     expect(answer.text).toContain('Period change: +20.00%');
@@ -51,7 +51,7 @@ describe('provider-neutral advisor analyst', () => {
   it('sends only explicitly selected, bounded context to the selected provider', async () => {
     const database = openDatabase(':memory:'), captured: Array<{ url: string; body: unknown; headers: HeadersInit | undefined }> = [];
     const service = new AdvisorAnalystService({ profileId: 'main', database,
-      clock: new FixedClock(T0), http: fakeHttp(captured),
+      clock: new FixedClock(T0), providers: createHttpAdvisorProviders(fakeHttp(captured)),
       secrets: createMemorySecretStore({ 'openai-api-key': 'secret-test-key-that-never-leaves-header' }) });
     const prepared = context(service), answer = await service.generate(prepared.contextHash, 'openai');
     expect(answer.provider).toBe('openai');
@@ -65,7 +65,7 @@ describe('provider-neutral advisor analyst', () => {
   it('encrypts opted-in history and never stores plaintext messages', async () => {
     const database = openDatabase(':memory:'), captured: Array<{ url: string; body: unknown; headers: HeadersInit | undefined }> = [];
     const service = new AdvisorAnalystService({ profileId: 'main', database,
-      clock: new FixedClock(T0), http: fakeHttp(captured),
+      clock: new FixedClock(T0), providers: createHttpAdvisorProviders(fakeHttp(captured)),
       secrets: createMemorySecretStore({ 'openai-api-key': 'secret-test-key-that-never-leaves-header' }) });
     const prepared = context(service);
     const sent = await service.send({ contextHash: prepared.contextHash, provider: 'openai',
@@ -79,7 +79,7 @@ describe('provider-neutral advisor analyst', () => {
 
   it('keeps session history out of SQLite by default', async () => {
     const database = openDatabase(':memory:'), service = new AdvisorAnalystService({ profileId: 'main',
-      database, clock: new FixedClock(T0), http: fakeHttp([]),
+      database, clock: new FixedClock(T0), providers: createHttpAdvisorProviders(fakeHttp([])),
       secrets: createMemorySecretStore({ 'openai-api-key': 'secret-test-key-that-never-leaves-header' }) });
     const prepared = context(service);
     await service.send({ contextHash: prepared.contextHash, provider: 'openai', mode: 'analysis',
@@ -90,21 +90,21 @@ describe('provider-neutral advisor analyst', () => {
 
   it('rejects oversized prepared context before it can reach a provider', () => {
     const database = openDatabase(':memory:'), service = new AdvisorAnalystService({ profileId: 'main',
-      database, clock: new FixedClock(T0), http: fakeHttp([]), secrets: createMemorySecretStore() });
+      database, clock: new FixedClock(T0), providers: createHttpAdvisorProviders(fakeHttp([])), secrets: createMemorySecretStore() });
     expect(() => service.prepare({ productId: 'BTC-USD', bars: [],
       evidence: Array.from({ length: 700 }, (_, index) => ({ label: `Evidence ${index}`, value: 'x'.repeat(100), tone: 'neutral' as const })),
       portfolio: [], scope: { chartData: false, visibleEvidence: true, sanitizedPortfolio: false } })).toThrow('context_too_large');
     database.close();
   });
 
-  it('rejects malformed provider output and records only a sanitized failure audit', async () => {
+  it('falls back from malformed provider output and records only a sanitized failure audit', async () => {
     const database = openDatabase(':memory:'), http = fakeHttp([]);
     http.postJson = async <T>() => ({ ok: true, status: 200, data: { output_text: '   ' } as T });
     const service = new AdvisorAnalystService({ profileId: 'main', database,
-      clock: new FixedClock(T0), http,
+      clock: new FixedClock(T0), providers: createHttpAdvisorProviders(http),
       secrets: createMemorySecretStore({ 'openai-api-key': 'secret-test-key-that-never-leaves-header' }) });
     const prepared = context(service);
-    await expect(service.generate(prepared.contextHash, 'openai')).rejects.toThrow('provider_response_invalid');
+    await expect(service.generate(prepared.contextHash, 'openai')).resolves.toMatchObject({ provider: 'local' });
     const events = database.prepare('SELECT provider, operation, outcome, context_hash FROM advisor_audit_events_v1').all();
     expect(events).toEqual([{ provider: 'openai', operation: 'facts', outcome: 'failed', context_hash: prepared.contextHash }]);
     expect(JSON.stringify(events)).not.toContain('secret-test-key');
