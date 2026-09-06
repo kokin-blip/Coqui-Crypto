@@ -433,6 +433,25 @@ what the paper engine actually filled against what the backtest assumed, and
 reports the divergence. It is the only mechanism that can detect a dishonest
 backtest without spending money.
 
+### 6.1 Profile connections and unified portfolio evidence
+
+Migrations 62–64 add profile-owned provider connections, immutable connection
+account snapshots, and immutable unified portfolio snapshots. A profile may own
+multiple Coinbase connections with separate capabilities, health, permissions,
+rules, pending orders, and credential references. Credential references are
+versioned by profile, connection, provider, and credential type; legacy keychain
+accounts move only during an explicit first-access migration using
+write–verify–remove ordering.
+
+Provider reads cross a neutral account-snapshot port. The Coinbase adapter emits
+exact quantities and explicit valuation completeness; an unavailable price or
+rule snapshot remains visible and prevents a complete unified snapshot. The
+unifier aggregates by asset exposure while preserving every connection and
+instrument contribution. Strategy code may consume aggregate exposure, while
+future routing and tax logic retain venue attribution. Profile duplication keeps
+non-secret Advisor configuration but excludes encrypted Advisor history,
+provider connections, account evidence, unified evidence, and all credentials.
+
 Three properties the order layer must have from the start, because retrofitting
 them after a live path exists is far harder:
 

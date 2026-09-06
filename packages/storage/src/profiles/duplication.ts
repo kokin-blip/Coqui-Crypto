@@ -161,6 +161,17 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
           throw new TypeError('Invalid profile-scoped table identity.');
         }
         let rewrittenRowCount = 0;
+        target.exec(`
+          DROP TRIGGER advisor_audit_events_v1_no_update;
+          DROP TRIGGER advisor_audit_events_v1_no_delete;
+          DROP TRIGGER profile_connections_v1_identity_immutable;
+          DROP TRIGGER connection_account_snapshots_v1_no_update;
+          DROP TRIGGER connection_account_snapshots_v1_no_delete;
+          DROP TRIGGER unified_portfolio_snapshots_v1_no_update;
+          DROP TRIGGER unified_portfolio_snapshots_v1_no_delete;
+          DROP TRIGGER unified_portfolio_snapshot_connections_v1_no_update;
+          DROP TRIGGER unified_portfolio_snapshot_connections_v1_no_delete;
+        `);
         for (const tableName of tableNames as string[]) {
           const table = quoteIdentifier(tableName);
           const identities = target.prepare(
@@ -210,6 +221,68 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
         `).run(input.targetProfileId.toLowerCase());
         target.prepare('DELETE FROM wallet_schedule_lease WHERE profile_id = ?')
           .run(input.targetProfileId.toLowerCase());
+        const privateAdvisorRows = countQuery(target, `
+          SELECT
+            (SELECT COUNT(*) FROM advisor_conversations_v1 WHERE profile_id = ?) +
+            (SELECT COUNT(*) FROM advisor_messages_v1 WHERE conversation_id IN
+              (SELECT id FROM advisor_conversations_v1 WHERE profile_id = ?)) +
+            (SELECT COUNT(*) FROM advisor_audit_events_v1 WHERE profile_id = ?) AS count
+        `, input.targetProfileId.toLowerCase(), input.targetProfileId.toLowerCase(),
+        input.targetProfileId.toLowerCase());
+        target.prepare(`DELETE FROM advisor_messages_v1 WHERE conversation_id IN
+          (SELECT id FROM advisor_conversations_v1 WHERE profile_id = ?)`)
+          .run(input.targetProfileId.toLowerCase());
+        target.prepare('DELETE FROM advisor_conversations_v1 WHERE profile_id = ?')
+          .run(input.targetProfileId.toLowerCase());
+        target.prepare('DELETE FROM advisor_audit_events_v1 WHERE profile_id = ?')
+          .run(input.targetProfileId.toLowerCase());
+        target.exec(`
+          CREATE TRIGGER advisor_audit_events_v1_no_update
+            BEFORE UPDATE ON advisor_audit_events_v1
+            BEGIN SELECT RAISE(ABORT, 'advisor audit events are immutable'); END;
+          CREATE TRIGGER advisor_audit_events_v1_no_delete
+            BEFORE DELETE ON advisor_audit_events_v1
+            BEGIN SELECT RAISE(ABORT, 'advisor audit events are immutable'); END;
+        `);
+
+        const connectionRows = countQuery(target, `
+          SELECT
+            (SELECT COUNT(*) FROM profile_connections_v1 WHERE profile_id = ?) +
+            (SELECT COUNT(*) FROM connection_account_snapshots_v1 WHERE profile_id = ?) +
+            (SELECT COUNT(*) FROM unified_portfolio_snapshots_v1 WHERE profile_id = ?) +
+            (SELECT COUNT(*) FROM unified_portfolio_snapshot_connections_v1
+              WHERE unified_snapshot_id IN (SELECT id FROM unified_portfolio_snapshots_v1
+                WHERE profile_id = ?)) AS count
+        `, input.targetProfileId.toLowerCase(), input.targetProfileId.toLowerCase(),
+        input.targetProfileId.toLowerCase(), input.targetProfileId.toLowerCase());
+        target.exec(`
+          DELETE FROM unified_portfolio_snapshot_connections_v1;
+          DELETE FROM unified_portfolio_snapshots_v1;
+          DELETE FROM connection_account_snapshots_v1;
+          DELETE FROM profile_connections_v1;
+          CREATE TRIGGER profile_connections_v1_identity_immutable
+            BEFORE UPDATE OF id, profile_id, provider, external_identity_hash, created_at
+            ON profile_connections_v1
+            BEGIN SELECT RAISE(ABORT, 'connection identity is immutable'); END;
+          CREATE TRIGGER connection_account_snapshots_v1_no_update
+            BEFORE UPDATE ON connection_account_snapshots_v1
+            BEGIN SELECT RAISE(ABORT, 'connection snapshots are immutable'); END;
+          CREATE TRIGGER connection_account_snapshots_v1_no_delete
+            BEFORE DELETE ON connection_account_snapshots_v1
+            BEGIN SELECT RAISE(ABORT, 'connection snapshots are immutable'); END;
+          CREATE TRIGGER unified_portfolio_snapshots_v1_no_delete
+            BEFORE DELETE ON unified_portfolio_snapshots_v1
+            BEGIN SELECT RAISE(ABORT, 'unified portfolio snapshots are immutable'); END;
+          CREATE TRIGGER unified_portfolio_snapshots_v1_no_update
+            BEFORE UPDATE ON unified_portfolio_snapshots_v1
+            BEGIN SELECT RAISE(ABORT, 'unified portfolio snapshots are immutable'); END;
+          CREATE TRIGGER unified_portfolio_snapshot_connections_v1_no_update
+            BEFORE UPDATE ON unified_portfolio_snapshot_connections_v1
+            BEGIN SELECT RAISE(ABORT, 'unified portfolio links are immutable'); END;
+          CREATE TRIGGER unified_portfolio_snapshot_connections_v1_no_delete
+            BEFORE DELETE ON unified_portfolio_snapshot_connections_v1
+            BEGIN SELECT RAISE(ABORT, 'unified portfolio links are immutable'); END;
+        `);
         const credentialMetadataKeys = [
           'credentials.coinbase.v2',
           'credentials.coinbase.v3.status',
@@ -224,7 +297,8 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
         target.prepare(
           `DELETE FROM app_settings WHERE key IN (${credentialMetadataKeys.map(() => '?').join(', ')})`,
         ).run(...credentialMetadataKeys);
-        const excludedTransientRowCount = pendingImportRows + scheduleRows;
+        const excludedTransientRowCount = pendingImportRows + scheduleRows +
+          privateAdvisorRows + connectionRows;
         if (!Number.isSafeInteger(excludedTransientRowCount)) {
           throw new RangeError('Duplication exclusion count overflow.');
         }

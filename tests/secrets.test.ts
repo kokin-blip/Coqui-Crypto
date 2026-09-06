@@ -7,6 +7,9 @@ import {
   MAIN_WALLET_ID,
   MAX_SECRET_BYTES,
   parseStoredCoinbaseCredentials,
+  migrateLegacyConnectionSecret,
+  readConnectionSecret,
+  removeConnectionSecret,
   readStoredCoinbaseCredentials,
   SECRET_STORE_SERVICE,
   secretAccountForScope,
@@ -45,6 +48,42 @@ describe('secret account compatibility', () => {
     expect(secretAccountForScope('family-a', 'gemini-api-key')).toBe(
       'gemini-api-key:family-a',
     );
+  });
+});
+
+describe('connection-scoped secrets', () => {
+  const first = {
+    profileId: 'profile-a', connectionId: 'connection-a', provider: 'coinbase',
+    credentialType: 'api_credentials',
+  } as const;
+
+  it('migrates on explicit first access using write, verify, remove ordering', async () => {
+    const events: string[] = [];
+    const values = new Map([['coinbase-credentials:profile-a', 'legacy-secret']]);
+    const store = createCachedSecretStore({
+      async get(account) { events.push(`get:${account}`); return values.get(account) ?? null; },
+      async set(account, value) { events.push(`set:${account}`); values.set(account, value); },
+      async delete(account) { events.push(`delete:${account}`); values.delete(account); },
+    });
+    await expect(migrateLegacyConnectionSecret(store, first)).resolves.toEqual({
+      ok: true, value: 'legacy-secret',
+    });
+    const setIndex = events.findIndex((event) => event.startsWith('set:'));
+    const deleteIndex = events.findIndex((event) => event === 'delete:coinbase-credentials:profile-a');
+    expect(setIndex).toBeGreaterThan(-1);
+    expect(deleteIndex).toBeGreaterThan(setIndex);
+    expect(values.has('coinbase-credentials:profile-a')).toBe(false);
+    expect(await readConnectionSecret(store, first)).toEqual({ ok: true, value: 'legacy-secret' });
+  });
+
+  it('deletes only the requested connection credential', async () => {
+    const store = createMemorySecretStore();
+    const second = { ...first, connectionId: 'connection-b' };
+    await store.write('coinbase-credentials', 'one', 'v2.profile-a.connection-a.coinbase.api_credentials');
+    await store.write('coinbase-credentials', 'two', 'v2.profile-a.connection-b.coinbase.api_credentials');
+    await removeConnectionSecret(store, first);
+    expect(await readConnectionSecret(store, first)).toEqual({ ok: true, value: null });
+    expect(await readConnectionSecret(store, second)).toEqual({ ok: true, value: 'two' });
   });
 });
 

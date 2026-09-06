@@ -62,6 +62,17 @@ function createSource(root: string, profileId = 'main'): string {
     INSERT INTO advisor_profile_configs_v1 (profile_id, model_policy_id, updated_at)
     VALUES (?, 'advisor_balanced_v1', 10)
   `).run(profileId);
+  database.prepare(`INSERT INTO advisor_conversations_v1
+    (id, profile_id, title, retention, created_at_ms, updated_at_ms)
+    VALUES ('advisor-conversation', ?, 'Private', 'encrypted', 10, 10)`).run(profileId);
+  database.prepare(`INSERT INTO advisor_messages_v1
+    (id, conversation_id, sequence, role, provider, model_policy, context_hash,
+     nonce_base64, ciphertext_base64, auth_tag_base64, created_at_ms)
+    VALUES ('advisor-message', 'advisor-conversation', 0, 'user', NULL, NULL, ?,
+      'nonce', 'ciphertext', 'tag', 10)`).run('a'.repeat(64));
+  database.prepare(`INSERT INTO advisor_audit_events_v1
+    (profile_id, provider, operation, outcome, context_hash, occurred_at_ms)
+    VALUES (?, 'local', 'chat', 'succeeded', ?, 10)`).run(profileId, 'b'.repeat(64));
   database.prepare(`
     INSERT INTO wallet_risk_profiles (profile_id, version, profile_json, updated_at)
     VALUES (?, 1, '{}', 10)
@@ -100,6 +111,22 @@ function createSource(root: string, profileId = 'main'): string {
   database.prepare(`INSERT INTO account_preferences_v1 (
     profile_id, theme, density, motion, language, updated_at_ms
   ) VALUES (?, 'dark', 'compact', 'none', 'es', 5)`).run(profileId);
+  database.prepare(`INSERT INTO profile_connections_v1
+    (id, profile_id, provider, label, external_identity_hash, capabilities_json,
+     status, created_at, updated_at)
+    VALUES ('connection-source', ?, 'coinbase', 'Coinbase', ?, '["account_read"]',
+      'active', 5, 5)`).run(profileId, '1'.repeat(64));
+  database.prepare(`INSERT INTO connection_account_snapshots_v1
+    (id, profile_id, connection_id, provider, as_of, complete, health,
+     content_json, content_hash, created_at)
+    VALUES (?, ?, 'connection-source', 'coinbase', 5, 1, 'healthy', '{}', ?, 5)`)
+    .run('2'.repeat(64), profileId, '3'.repeat(64));
+  database.prepare(`INSERT INTO unified_portfolio_snapshots_v1
+    (id, profile_id, as_of, complete, content_json, content_hash, created_at)
+    VALUES (?, ?, 5, 1, '{}', ?, 5)`).run('4'.repeat(64), profileId, '5'.repeat(64));
+  database.prepare(`INSERT INTO unified_portfolio_snapshot_connections_v1
+    (unified_snapshot_id, connection_snapshot_id) VALUES (?, ?)`)
+    .run('4'.repeat(64), '2'.repeat(64));
   database.prepare('INSERT INTO app_settings (key, value) VALUES (?, ?)')
     .run('display-density', 'compact');
   for (const key of [
@@ -129,10 +156,10 @@ describe('profile database duplication storage', { timeout: 20_000 }, () => {
     expect(result).toEqual({
       ok: true,
       evidence: expect.objectContaining({
-        schemaVersion: 61,
-        profileScopedTableCount: 59,
-        rewrittenRowCount: 7,
-        excludedTransientRowCount: 3,
+        schemaVersion: 64,
+        profileScopedTableCount: 62,
+        rewrittenRowCount: 12,
+        excludedTransientRowCount: 10,
         clearedCredentialMetadataCount: 4,
         integrityVerified: true,
       }),
@@ -162,6 +189,20 @@ describe('profile database duplication storage', { timeout: 20_000 }, () => {
     expect(target.prepare('SELECT COUNT(*) AS count FROM coinbase_import_jobs').get())
       .toEqual({ count: 0 });
     expect(target.prepare('SELECT COUNT(*) AS count FROM coinbase_import_stage_lots').get())
+      .toEqual({ count: 0 });
+    expect(target.prepare('SELECT COUNT(*) AS count FROM advisor_conversations_v1').get())
+      .toEqual({ count: 0 });
+    expect(target.prepare('SELECT COUNT(*) AS count FROM advisor_messages_v1').get())
+      .toEqual({ count: 0 });
+    expect(target.prepare('SELECT COUNT(*) AS count FROM advisor_audit_events_v1').get())
+      .toEqual({ count: 0 });
+    expect(target.prepare('SELECT model_policy_id FROM advisor_profile_configs_v1').get())
+      .toEqual({ model_policy_id: 'advisor_balanced_v1' });
+    expect(target.prepare('SELECT COUNT(*) AS count FROM profile_connections_v1').get())
+      .toEqual({ count: 0 });
+    expect(target.prepare('SELECT COUNT(*) AS count FROM connection_account_snapshots_v1').get())
+      .toEqual({ count: 0 });
+    expect(target.prepare('SELECT COUNT(*) AS count FROM unified_portfolio_snapshots_v1').get())
       .toEqual({ count: 0 });
     expect(target.prepare('SELECT origin_profile_id FROM coinbase_sync_runs_v2').get())
       .toEqual({ origin_profile_id: 'main' });
@@ -275,10 +316,10 @@ describe('accounts profile duplication service', { timeout: 20_000 }, () => {
           lastOpenedAtMs: 50,
           order: 1,
         },
-        schemaVersion: 61,
-        profileScopedTableCount: 59,
-        rewrittenRowCount: 7,
-        excludedTransientRowCount: 3,
+        schemaVersion: 64,
+        profileScopedTableCount: 62,
+        rewrittenRowCount: 12,
+        excludedTransientRowCount: 10,
         clearedCredentialMetadataCount: 4,
         credentialsCopied: false,
         providerFingerprintsCopied: false,

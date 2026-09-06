@@ -1,4 +1,5 @@
 import type { CoinbaseCredentials } from '../coinbase/auth.js';
+import type { SecretRef } from '@coqui/core';
 
 export const SECRET_STORE_SERVICE = 'kokincrypto';
 export const MAIN_WALLET_ID = 'main';
@@ -41,6 +42,80 @@ export interface SecretStore {
     walletId?: string | null,
   ): Promise<SecretMutationResult>;
   remove(key: SecretKey, walletId?: string | null): Promise<SecretMutationResult>;
+}
+
+function secretScope(ref: SecretRef): string {
+  const connection = ref.connectionId ?? 'default';
+  for (const value of [ref.profileId, connection, ref.provider, ref.credentialType]) {
+    if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/u.test(value)) {
+      throw new TypeError('Invalid connection secret reference.');
+    }
+  }
+  return `v2.${ref.profileId}.${connection}.${ref.provider}.${ref.credentialType}`;
+}
+
+function secretKey(ref: SecretRef): SecretKey {
+  if (ref.provider === 'coinbase' && ref.credentialType === 'api_credentials') {
+    return 'coinbase-credentials';
+  }
+  throw new TypeError('Unsupported connection credential type.');
+}
+
+export async function readConnectionSecret(store: SecretStore, ref: SecretRef): Promise<SecretReadResult> {
+  try {
+    return await store.read(secretKey(ref), secretScope(ref));
+  } catch {
+    return invalidValue();
+  }
+}
+
+export async function writeConnectionSecret(
+  store: SecretStore,
+  ref: SecretRef,
+  value: string,
+): Promise<SecretMutationResult> {
+  try {
+    return await store.write(secretKey(ref), value, secretScope(ref));
+  } catch {
+    return invalidValue();
+  }
+}
+
+export async function removeConnectionSecret(
+  store: SecretStore,
+  ref: SecretRef,
+): Promise<SecretMutationResult> {
+  try {
+    return await store.remove(secretKey(ref), secretScope(ref));
+  } catch {
+    return invalidValue();
+  }
+}
+
+/** Explicit first-access migration. A verified v2 write always precedes legacy removal. */
+export async function migrateLegacyConnectionSecret(
+  store: SecretStore,
+  ref: SecretRef,
+): Promise<SecretReadResult> {
+  const current = await readConnectionSecret(store, ref);
+  if (!current.ok || current.value !== null) return current;
+  let key: SecretKey;
+  try {
+    key = secretKey(ref);
+  } catch {
+    return invalidValue();
+  }
+  const legacy = await store.read(key, ref.profileId);
+  if (!legacy.ok || legacy.value === null) return legacy;
+  const written = await writeConnectionSecret(store, ref, legacy.value);
+  if (!written.ok) return written;
+  const verified = await readConnectionSecret(store, ref);
+  if (!verified.ok || verified.value !== legacy.value) {
+    return verified.ok ? unavailable() : verified;
+  }
+  const removed = await store.remove(key, ref.profileId);
+  if (!removed.ok) return removed;
+  return verified;
 }
 
 export type SecretPresenceResult =
