@@ -7,7 +7,8 @@ import { formatUsd, freshnessBadge, provenanceBadge } from '@coqui/ui-kit';
 import { ChartRangeControl, rangeLookbackDays } from './ChartRangeControl.js';
 import { ChartViewControl } from './ChartViewControl.js';
 import { MarketHistoryChart } from './MarketHistoryChart.js';
-import { useChannel } from '../query/use-channel.js';
+import { eventMatchesProduct, MarketEventsPanel } from './MarketEventsPanel.js';
+import { useChannel, type ChannelState } from '../query/use-channel.js';
 import { useWorkspace } from './WorkspaceContext.js';
 import { AdvancedMarkets } from './AdvancedMarkets.js';
 
@@ -28,10 +29,11 @@ function QuoteValue({ value }: { readonly value: string | null }): React.JSX.Ele
   return <>{value === null ? '—' : (formatUsd(value)?.text ?? value)}</>;
 }
 
-function MarketDetail({ client, productId, quote }: {
+function MarketDetail({ client, productId, quote, eventTimeline }: {
   readonly client: CoquiClient;
   readonly productId: string;
   readonly quote: LiveQuote | undefined;
+  readonly eventTimeline: ChannelState<ChannelResponse<'market-events.timeline'>>;
 }): React.JSX.Element {
   const workspace = useWorkspace();
   const range = workspace.preferences?.chartRanges.markets ?? '1y';
@@ -45,7 +47,13 @@ function MarketDetail({ client, productId, quote }: {
   const decisionMarkers = useMemo(() => activity.kind !== 'ready' ? [] : activity.value.events
     .filter((event) => event.decisionId !== null && event.kind === 'decision')
     .filter((event, index, events) => events.findIndex((candidate) => candidate.decisionId === event.decisionId) === index)
-    .map((event) => ({ decisionId: event.decisionId!, atMs: event.occurredAt, status: event.status })), [activity]);
+    .map((event) => ({ id: event.decisionId!, atMs: event.occurredAt,
+      label: `Decision ${event.decisionId!.slice(0, 8)}`, tone: event.status === 'succeeded' ? 'positive' as const :
+        event.status === 'blocked' || event.status === 'failed' ? 'negative' as const : event.status === 'pending' ? 'warning' as const : 'neutral' as const })), [activity]);
+  const eventMarkers = useMemo(() => eventTimeline.kind !== 'ready' ? [] : eventTimeline.value.events
+    .filter((event) => eventMatchesProduct(event, productId)).map((event) => ({ id: event.id,
+      atMs: event.firstSeenAtMs, label: `Event ${event.id.slice(0, 8)}`, tone: event.classification?.sentiment === 'positive' ? 'positive' as const :
+        event.classification?.sentiment === 'negative' ? 'negative' as const : 'neutral' as const })), [eventTimeline, productId]);
   return (
     <section className="market-detail" aria-labelledby="market-detail-heading">
       <div className="market-detail-heading">
@@ -69,7 +77,7 @@ function MarketDetail({ client, productId, quote }: {
         <details className="indicator-controls"><summary>Indicators</summary><div>{Object.entries({ sma20: 'SMA 20', sma50: 'SMA 50', ema20: 'EMA 20', bollinger20: 'Bollinger 20/2', rsi14: 'RSI 14', macd: 'MACD 12/26/9' } as const).map(([key, label]) => <label key={key}><input type="checkbox" checked={indicators?.[key as keyof typeof indicators] ?? false} onChange={() => { if (indicators !== undefined) void workspace.update({ marketIndicators: { ...indicators, [key]: !indicators[key as keyof typeof indicators] } }); }} /> {label}</label>)}</div></details>
         <span className="data-boundary"><ShieldCheck size={14} aria-hidden="true" /> Coinbase REST · complete bars only</span>
         {candles.kind === 'loading' && <div className="chart-skeleton" aria-label="Loading completed daily prices" />}
-        {candles.kind === 'ready' && candles.value.bars.length > 0 && <MarketHistoryChart client={client} bars={candles.value.bars} mode={chartMode} productId={productId} decisionMarkers={decisionMarkers} {...(workspace.preferences === null ? {} : { volumeVisible: workspace.preferences.marketVolumeVisible, indicators: workspace.preferences.marketIndicators })} />}
+        {candles.kind === 'ready' && candles.value.bars.length > 0 && <MarketHistoryChart client={client} bars={candles.value.bars} mode={chartMode} productId={productId} decisionMarkers={[...decisionMarkers, ...eventMarkers]} {...(workspace.preferences === null ? {} : { volumeVisible: workspace.preferences.marketVolumeVisible, indicators: workspace.preferences.marketIndicators })} />}
         {candles.kind === 'ready' && candles.value.bars.length === 0 && <div className="chart-empty-canvas"><strong>No completed bars in this range</strong><span>Choose a longer range. Coqui never substitutes another venue or an incomplete candle.</span></div>}
         {candles.kind !== 'loading' && candles.kind !== 'ready' && <p role="alert" className="empty-copy">Completed daily history unavailable. No alternative source was substituted.</p>}
       </div>
@@ -103,6 +111,7 @@ export function Markets({ client }: { readonly client: CoquiClient }): React.JSX
   if (workspace.preferences?.workspaceMode !== 'simple') return <AdvancedMarkets client={client} />;
   const live = useChannel(client, 'market-data.live', {});
   const [selected, setSelected] = useState<string | null>(null);
+  const eventTimeline = useChannel(client, 'market-events.timeline', { asOfMs: null, limit: 50 });
   const products = useMemo(() => live.kind === 'ready' ? live.value.subscribedProducts : [], [live]);
 
   useEffect(() => {
@@ -132,9 +141,10 @@ export function Markets({ client }: { readonly client: CoquiClient }): React.JSX
             })}</ul>
           )}
         </aside>
-        {selected === null ? <section className="market-detail market-empty"><h2>Select a tracked market</h2><p>Completed Coinbase history and live display quotes will appear here without changing any decision dataset.</p></section> : <MarketDetail client={client} productId={selected} quote={quote} />}
+        {selected === null ? <section className="market-detail market-empty"><h2>Select a tracked market</h2><p>Completed Coinbase history and live display quotes will appear here without changing any decision dataset.</p></section> : <MarketDetail client={client} productId={selected} quote={quote} eventTimeline={eventTimeline} />}
       </div>
       <ReferenceContext client={client} />
+      {selected !== null && <MarketEventsPanel productId={selected} events={eventTimeline.kind === 'ready' ? eventTimeline.value.events : []} state={eventTimeline.kind === 'ready' ? 'ready' : eventTimeline.kind === 'loading' ? 'loading' : 'unavailable'} />}
     </div>
   );
 }

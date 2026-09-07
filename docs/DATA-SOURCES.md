@@ -234,3 +234,16 @@ The first Coinbase study acquisition is recorded in
 `docs/studies/coinbase-study-acquisition-2026-08-09.md`. Raw responses and
 Parquet files remain local under ignored `data/`; their hashes and coverage are
 the citable record committed to documentation.
+
+## Local market-event fixtures
+
+Phase 8 deliberately adds no event-provider connection. Operators may import a
+validated local JSON array with `pnpm events:import-local`; each record carries a
+source identity, source event ID, publication time, first-seen time, and local
+file provenance. Duplicate source identities are idempotent only when their
+canonical contents match. A changed duplicate is rejected rather than revised.
+
+Event replay is governed by `firstSeenAt`: an event is absent before that time,
+and a classification is absent before its own `classifiedAt`. Events are context
+for charts, Advisor evidence, and bounded research-trigger requests only. They
+cannot change operational targets or execution.

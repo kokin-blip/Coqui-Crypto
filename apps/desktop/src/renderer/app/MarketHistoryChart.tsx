@@ -19,10 +19,11 @@ import { createChartLifecycle } from './chart-lifecycle.js';
 import { ChartFrame } from './ChartFrame.js';
 
 type MarketBar = ChannelResponse<'market-data.candles'>['bars'][number];
-export interface DecisionChartMarker {
-  readonly decisionId: string;
+export interface EvidenceChartMarker {
+  readonly id: string;
+  readonly label: string;
   readonly atMs: number;
-  readonly status: 'info' | 'pending' | 'succeeded' | 'blocked' | 'failed' | 'unknown';
+  readonly tone: 'neutral' | 'positive' | 'negative' | 'warning';
 }
 
 export function MarketHistoryChart({ bars, mode, productId, volumeVisible = true, indicators, client,
@@ -36,7 +37,7 @@ export function MarketHistoryChart({ bars, mode, productId, volumeVisible = true
     readonly bollinger20: boolean; readonly rsi14: boolean; readonly macd: boolean;
   };
   readonly client?: CoquiClient;
-  readonly decisionMarkers?: readonly DecisionChartMarker[];
+  readonly decisionMarkers?: readonly EvidenceChartMarker[];
 }): React.JSX.Element {
   const container = useRef<HTMLDivElement>(null);
   const chartApi = useRef<IChartApi | null>(null);
@@ -108,13 +109,12 @@ export function MarketHistoryChart({ bars, mode, productId, volumeVisible = true
       addLine(values.map(({ day, signal }) => ({ day, value: signal })), '#f2b84b', 'Signal', pane);
     }
     if (decisionMarkers.length > 0) {
-      const colors = { info: CHART_COLORS.supportingText, pending: '#f2b84b',
-        succeeded: CHART_COLORS.primary, blocked: CHART_COLORS.negative,
-        failed: CHART_COLORS.negative, unknown: '#8b7cff' } as const;
+      const colors = { neutral: CHART_COLORS.supportingText, positive: CHART_COLORS.primary,
+        negative: CHART_COLORS.negative, warning: '#f2b84b' } as const;
       createSeriesMarkers(price, decisionMarkers.map((marker): SeriesMarker<Time> => ({
         time: new Date(marker.atMs).toISOString().slice(0, 10) as Time,
-        position: 'aboveBar', shape: marker.status === 'succeeded' ? 'arrowUp' : 'circle',
-        color: colors[marker.status], text: `Decision ${marker.decisionId.slice(0, 8)}`,
+        position: 'aboveBar', shape: marker.tone === 'positive' ? 'arrowUp' : marker.tone === 'negative' ? 'arrowDown' : 'circle',
+        color: colors[marker.tone], text: marker.label,
       })));
     }
     chart.subscribeCrosshairMove((parameter) => {

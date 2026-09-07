@@ -589,6 +589,26 @@
 .reference-grid small,
 .reference-name { color: var(--coqui-text-subtle); }
 
+.market-event-timeline {
+  min-width: 0;
+  padding: 18px 22px;
+  background: var(--coqui-surface-1);
+  border: 1px solid var(--coqui-border);
+  border-radius: var(--coqui-radius-md);
+}
+.advanced-markets-workstation > .market-event-timeline { border-width: 1px 0 0; border-radius: 0; }
+.market-event-timeline .panel-heading { align-items: flex-start; }
+.market-event-timeline .panel-heading h2 { margin: 0; font-size: 16px; }
+.market-event-timeline .panel-heading p { max-width: 65ch; margin: 4px 0 0; color: var(--coqui-text-subtle); font-size: 11px; }
+.market-event-timeline ol { max-height: 280px; padding: 0; margin: 16px 0 0; overflow-y: auto; list-style: none; border-block: 1px solid var(--coqui-border); }
+.market-event-timeline li { display: grid; grid-template-columns: minmax(180px, 1fr) minmax(180px, auto) auto; align-items: center; gap: 10px 18px; min-width: 0; padding: 11px 2px; }
+.market-event-timeline li + li { border-top: 1px solid var(--coqui-border); }
+.market-event-timeline li > div { display: grid; min-width: 0; gap: 3px; }
+.market-event-timeline strong { overflow-wrap: anywhere; }
+.market-event-timeline li span, .market-event-timeline time, .market-event-timeline small { color: var(--coqui-text-subtle); font-size: 10px; }
+.market-event-timeline time { display: inline-flex; align-items: center; gap: 5px; font-variant-numeric: tabular-nums; }
+.market-event-timeline small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
 /* Advanced Markets — dense analysis workspace, never an execution surface. */
 .advanced-markets-workstation {
   display: grid;
@@ -891,6 +911,8 @@
   .extension-manager { width: 100%; max-height: calc(100vh - 16px); }
   .extension-key-form, .extension-list li, .extension-signer-list li { align-items: stretch; flex-direction: column; }
   .advisor-provider-row, .advisor-fact-actions, .advisor-connect { align-items: stretch; flex-direction: column; }
+  .market-event-timeline .panel-heading { align-items: stretch; flex-direction: column; }
+  .market-event-timeline li { grid-template-columns: 1fr; }
 }
 
 @media (forced-colors: active) {

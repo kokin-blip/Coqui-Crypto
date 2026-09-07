@@ -6,6 +6,7 @@ import { chartExtensionChannelSchemas } from './schemas/chart-extensions.js';
 import { accountsChannelSchemas } from './schemas/accounts.js';
 import { advisorAnalystChannelSchemas } from './schemas/advisor-analyst.js';
 import { marketDataChannelSchemas } from './schemas/market-data.js';
+import { marketEventChannelSchemas } from './schemas/market-events.js';
 import { operationsChannelSchemas } from './schemas/operations.js';
 import { paperExecutionChannelSchemas } from './schemas/paper-execution.js';
 import { paperPerformanceChannelSchemas } from './schemas/paper-performance.js';
@@ -35,6 +36,7 @@ export const CHANNEL_SCHEMAS = {
   ...accountsChannelSchemas,
   ...advisorAnalystChannelSchemas,
   ...marketDataChannelSchemas,
+  ...marketEventChannelSchemas,
   ...operationsChannelSchemas,
   ...paperExecutionChannelSchemas,
   ...paperPerformanceChannelSchemas,
@@ -102,6 +104,7 @@ const WRITE_CHANNELS = [
   'chart-extensions.set',
   'chart-extensions.signer.remove',
   'chart-extensions.signer.trust',
+  'market-events.ingest-local',
   'paper.campaign.kill-switch',
   'paper.execution.policy.set',
   'paper.execution.prepare',

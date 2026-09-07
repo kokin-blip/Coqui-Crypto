@@ -16,6 +16,7 @@ import type {
   WorkstationChartStyle, WorkstationExtensionMarker, WorkstationIndicators, WorkstationInterval, WorkstationLayout,
 } from './chart-workstation-types.js';
 import { MarketFactsPanel } from './MarketFactsPanel.js';
+import { eventMatchesProduct, MarketEventsPanel } from './MarketEventsPanel.js';
 import { MarketWorkspaceToolbar } from './MarketWorkspaceToolbar.js';
 import { TradingWorkstationChart } from './TradingWorkstationChart.js';
 import { useChartExtensionSeries } from './use-chart-extension-series.js';
@@ -152,6 +153,7 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
   const chartWorkspace = useChannel(client, 'app.chart.workspace', { productId: selected, interval: defaultInterval });
   const extensionCatalog = useChannel(client, 'chart-extensions.catalog', {});
   const activity = useChannel(client, 'activity.feed', { limit: 100, cursor: null });
+  const eventTimeline = useChannel(client, 'market-events.timeline', { asOfMs: null, limit: 50 });
   const chartCommand = useCommand(client, 'app.chart.workspace.set', CHART_INVALIDATIONS);
   const stored = chartWorkspace.kind === 'ready' ? chartWorkspace.value : { layouts: [], watchlists: [], drawings: [] };
   const defaultWatchlist = stored.watchlists.find((item) => item.isDefault);
@@ -179,6 +181,12 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
       .map((event) => ({ extensionId: `decision:${event.decisionId!}`, timeMs: event.occurredAt,
         label: `Decision ${event.decisionId!.slice(0, 8)}`, tone: event.status === 'succeeded' ? 'positive' :
           event.status === 'blocked' || event.status === 'failed' ? 'negative' : event.status === 'pending' ? 'warning' : 'neutral' })), [activity]);
+  const eventMarkers = (productId: string): readonly WorkstationExtensionMarker[] => eventTimeline.kind !== 'ready' ? [] :
+    eventTimeline.value.events.filter((event) => eventMatchesProduct(event, productId)).map((event) => ({
+      extensionId: `event:${event.id}`, timeMs: event.firstSeenAtMs, label: `Event ${event.id.slice(0, 8)}`,
+      tone: event.classification?.sentiment === 'positive' ? 'positive' :
+        event.classification?.sentiment === 'negative' ? 'negative' : 'neutral',
+    }));
   const completed = useChannel(client, 'market-data.display-bars', {
     productId: selected, interval: defaultInterval,
     startTimeMs: historyAnchor - rangeMs(defaultInterval), endTimeMs: historyAnchor,
@@ -273,7 +281,7 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
             style={tile.chartStyle} activeTool={activeTool} height={chartHeight(layout, index)} indicators={tile.indicators}
             scaleMode={tile.scaleMode} volumeVisible={workspace.preferences?.marketVolumeVisible ?? true}
             liveVisible={workspace.preferences?.marketLiveCandle ?? false} extensionIds={enabledExtensionIds}
-            decisionMarkers={decisionMarkers}
+            decisionMarkers={[...decisionMarkers, ...eventMarkers(tile.productId)]}
             linkController={linkController} onDrawing={(drawing) => void chartCommand.run({ commandId: crypto.randomUUID(), action: { kind: 'save_drawing', drawing: { ...drawing, productId: tile.productId, interval: tile.interval, layoutId: activeLayoutId } } })}
             onDeleteDrawing={(drawingId) => void chartCommand.run({ commandId: crypto.randomUUID(), action: { kind: 'delete_drawing', drawingId } })} />
         </article>;
@@ -288,6 +296,7 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
       <MarketFactsPanel productId={selected} bars={factsBars} freshness={productSearch.kind === 'ready' ? new Date(productSearch.value.asOfMs).toISOString() : 'Unavailable'} onOpenAnalyst={() => setAnalystOpen(true)} />
     </div>
     <footer className="market-workstation-footer"><span>Coinbase display data · informational only</span><label><input type="checkbox" checked={workspace.preferences?.marketLiveCandle ?? false} onChange={(event) => void workspace.update({ marketLiveCandle: event.target.checked })} /> Show provisional candle</label><span>UTC</span></footer>
+    <MarketEventsPanel productId={selected} events={eventTimeline.kind === 'ready' ? eventTimeline.value.events : []} state={eventTimeline.kind === 'ready' ? 'ready' : eventTimeline.kind === 'loading' ? 'loading' : 'unavailable'} />
     {analystOpen && <AdvisorSheet client={client} productId={selected} bars={factsBars} onClose={() => setAnalystOpen(false)} />}
     {extensionsOpen && <ChartExtensionManager client={client} onClose={() => setExtensionsOpen(false)} />}
   </div>;

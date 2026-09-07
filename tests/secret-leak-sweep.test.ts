@@ -44,6 +44,7 @@ afterEach(() => {
 const LOCAL_CHANNELS: readonly ChannelName[] = [
   'activity.feed',
   'operations.floor',
+  'market-events.timeline',
   'research.runs',
   'research.lineage',
   'research.edge-study',
@@ -75,6 +76,7 @@ const PAYLOADS: Partial<Record<ChannelName, unknown>> = {
   'app.incidents': { limit: 50 },
   'paper.execution.proposals': { limit: 50 },
   'paper.performance-day': { dayUtc: 1_799_971_200_000 },
+  'market-events.timeline': { asOfMs: null, limit: 50 },
 };
 
 /** Every value in every column of every table, as one string. */
@@ -202,6 +204,7 @@ describe('the sweep covers the whole registry', () => {
     // instead, which runs them against a live main process.
     expect(unexercised.every((channel) =>
       channel.startsWith('market-data.')
+      || channel === 'market-events.ingest-local'
       || channel === 'portfolio.view'
       || channel === 'portfolio.allocation'
       || channel === 'paper.portfolio'

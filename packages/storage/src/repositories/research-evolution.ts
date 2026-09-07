@@ -218,6 +218,13 @@ export function getResearchTrigger(id: string, database: Db): ResearchTriggerRec
     pendingSince: row['pending_since'] === null ? null : Number(row['pending_since']), updatedAt: Number(row['updated_at']) };
 }
 
+export function listResearchEventTriggers(database: Db, limit = 100): readonly ResearchTriggerRecord[] {
+  if (!Number.isSafeInteger(limit) || limit < 1 || limit > 100) throw new TypeError('Invalid trigger limit.');
+  const rows = database.prepare(`SELECT id FROM research_triggers_v1 WHERE kind='event'
+    ORDER BY id LIMIT ?`).all(limit) as unknown as Array<{ id: string }>;
+  return Object.freeze(rows.map((row) => getResearchTrigger(row.id, database)!));
+}
+
 export function appendResearchTriggerEvent(triggerId: string, kind: 'scheduled' | 'debounced' | 'started' | 'blocked', reasonCode: string, at: number, detailJson: string, database: Db): void {
   validJson(detailJson, 'Trigger detail');
   database.prepare(`INSERT INTO research_trigger_events_v1

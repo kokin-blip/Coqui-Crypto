@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { createMemorySecretStore, type AdvisorProvider, type AdvisorProviderName } from '../packages/adapters/src/index.js';
 import { FixedClock, sha256Hex, strategyDecisionId,
   type DecisionEvidenceEventV1, type StrategyDecisionV1 } from '../packages/core/src/index.js';
-import { AdvisorDecisionEvidenceService } from '../packages/services/src/index.js';
+import { AdvisorDecisionEvidenceService, MarketEventService } from '../packages/services/src/index.js';
 import { appendDecisionEvidenceEvent, openDatabase, saveStrategyDecision } from '../packages/storage/src/index.js';
 
 const T0 = 1_800_000_000_000;
@@ -36,6 +36,11 @@ function seed(database: ReturnType<typeof openDatabase>): StrategyDecisionV1 {
 describe('Advisor decision evidence', () => {
   it('builds an immutable allowlisted pack and explains every recorded reason offline', async () => {
     const database = openDatabase(':memory:'), value = seed(database), clock = new FixedClock(T0);
+    new MarketEventService({ profileId: value.profileId, database, clock: new FixedClock(T0 + 100) })
+      .ingestLocal('fixture', 'events.json', [
+        { sourceEventId: 'available', title: 'Protocol upgrade', publishedAtMs: T0 - 20, firstSeenAtMs: T0 - 10 },
+        { sourceEventId: 'later', title: 'Exchange outage', publishedAtMs: T0, firstSeenAtMs: T0 + 10 },
+      ]);
     const service = new AdvisorDecisionEvidenceService({ profileId: value.profileId, database, clock,
       secrets: createMemorySecretStore(), providers: providers(async () => 'unused') });
     const answer = await service.explain(value.decisionId, null);
@@ -44,6 +49,8 @@ describe('Advisor decision evidence', () => {
     expect(answer.text).toContain('registered profitability evidence');
     const row = database.prepare('SELECT evidence_json FROM advisor_decision_evidence_packs_v1').get() as { evidence_json: string };
     expect(row.evidence_json).toContain('profitability_gate_failed');
+    expect(row.evidence_json).toContain('Protocol upgrade');
+    expect(row.evidence_json).not.toContain('Exchange outage');
     expect(row.evidence_json).not.toMatch(/apiKey|credential|ciphertext|question/iu);
     expect(() => database.prepare('UPDATE advisor_decision_evidence_packs_v1 SET freshness=?').run('stale')).toThrow('immutable');
     database.close();

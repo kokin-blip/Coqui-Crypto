@@ -1,7 +1,7 @@
 import type { AdvisorProvider, AdvisorProviderName, SecretKey, SecretStore } from '@coqui/adapters';
 import { canonicalJson, sha256Hex, type CanonicalJsonValue, type Clock, type DecisionEvidenceEventV1 } from '@coqui/core';
 import { appendAdvisorAuditEvent, appendAdvisorNavigationAudit, getStrategyDecision, listDecisionEvidenceEvents,
-  saveAdvisorEvidencePack, type AdvisorNavigationTarget, type Db,
+  listMarketEventsAsOf, saveAdvisorEvidencePack, type AdvisorNavigationTarget, type Db,
   type StoredAdvisorEvidencePack } from '@coqui/storage';
 
 const KEYS: Readonly<Record<AdvisorProviderName, SecretKey>> = {
@@ -82,6 +82,7 @@ export class AdvisorDecisionEvidenceService {
       decision.market.freshness !== 'fresh' || !decision.market.rulesFresh || now < dataAsOf ||
         now - dataAsOf > (this.input.maxAgeMs ?? 2 * DAY_MS)
         ? 'stale' : 'fresh';
+    const marketEvents = listMarketEventsAsOf(this.input.profileId, dataAsOf, 20, this.input.database);
     const evidence = { schemaVersion: 1, decisionId, profileId: this.input.profileId,
       strategy: { id: decision.strategy.id, version: decision.strategy.version,
         configHash: decision.strategy.configHash }, market: { snapshotHash: decision.market.snapshotHash,
@@ -90,7 +91,14 @@ export class AdvisorDecisionEvidenceService {
         ruleSnapshotHash: decision.market.ruleSnapshotHash }, portfolio: decision.portfolio,
       targets: decision.targets, cashWeight: decision.cashWeight, exposure: decision.exposure,
       historyStatus: decision.historyStatus, facts: decision.facts,
-      events: events.map(eventFact), evidenceCompleteness: 'allowlisted' };
+      events: events.map(eventFact), marketEvents: marketEvents.map((item) => ({ id: item.event.id,
+        title: item.event.title, assetSymbols: item.event.assetSymbols, publishedAtMs: item.event.publishedAtMs,
+        firstSeenAtMs: item.event.firstSeenAtMs, contentHash: item.contentHash,
+        provenanceHash: item.provenanceHash, classification: item.classification === null ? null : {
+          label: item.classification.label, sentiment: item.classification.sentiment,
+          importance: item.classification.importance, classifiedAtMs: item.classification.classifiedAtMs,
+          classificationHash: item.classificationHash,
+        } })), evidenceCompleteness: 'allowlisted' };
     const evidenceJson = canonicalJson(evidence as unknown as CanonicalJsonValue), evidenceHash = sha256Hex(evidenceJson);
     const latestEventSequence = events.at(-1)?.sequence ?? -1;
     const id = sha256Hex(`advisor-decision-evidence-v1:${this.input.profileId}:${decisionId}:${latestEventSequence}:${evidenceHash}:${freshness}:${now}`);

@@ -5,6 +5,7 @@ export * from './advisor/index.js';
 export * from './chart-extensions/index.js';
 export * from './alerts/index.js';
 export * from './market-data/index.js';
+export * from './market-events/index.js';
 export * from './paper/index.js';
 export * from './portfolio/index.js';
 export * from './research/index.js';

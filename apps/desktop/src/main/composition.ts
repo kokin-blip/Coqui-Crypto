@@ -67,7 +67,7 @@ import { createChartExtensionHandlers, createChartSnapshotHandlers, createChartW
 import { createAccountPreferenceHandlers } from './account-preference-handlers.js';
 import { CoinbaseMarketStreamService } from './coinbase-market-stream.js';
 import { createCoinbaseSyncHandlers, lastCoinbaseSyncAtMs } from './coinbase-handlers.js';
-import { createMarketHandlers } from './market-handlers.js';
+import { createMarketHandlers } from './market-handlers.js'; import { createMarketEventHandlers } from './market-event-handlers.js';
 import { SHIPPED_FORWARD_EDGE_PLAN } from './forward-edge-plan.js';
 import { captureScheduledForwardEvidence } from './forward-edge-runtime.js';
 import { createAlertNotificationPump } from './notifications.js';
@@ -326,7 +326,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     ...createChartExtensionHandlers({ profileId: options.profileId, database, clock, ...(options.pickChartExtension === undefined ? {} : { pickPackage: options.pickChartExtension }) }),
     ...createChartSnapshotHandlers({ profileId: options.profileId, database, clock, ...(options.saveChartSnapshot === undefined ? {} : { save: options.saveChartSnapshot }) }),
     ...createChartWorkspaceHandlers({ profileId: options.profileId, database, clock }),
-    ...createPaperCampaignHandlers(options.profileId, clock, database),
+    ...createPaperCampaignHandlers(options.profileId, clock, database), ...createMarketEventHandlers({ profileId: options.profileId, database, clock }),
     'activity.feed': (payload: { readonly limit: number; readonly cursor: string | null }) => ({
       ok: true,
       value: {

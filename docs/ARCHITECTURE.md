@@ -647,6 +647,24 @@ references. Chart decision markers and the Activity “Ask Coqui why” action
 reuse this same decision identity. The explanation command uses the allowlisted
 Phase 6 evidence pack and has no execution or configuration authority.
 
+### 9.2 Immutable market-event context
+
+Migration 69 adds `market_events_v1` and
+`market_event_classifications_v1`. Both are append-only and content-hashed;
+event identity is profile, source, and source-event scoped. `publishedAt`
+records when the source says an event occurred, while `firstSeenAt` records when
+Coqui could first have known it. Temporal reads filter both events and later
+classifications by the requested as-of time, preventing hindsight during replay.
+
+`MarketEventService` accepts bounded local JSON fixtures only. Its deterministic
+classifier is non-predictive; an optional classifier adapter receives an
+allowlisted fact document and must return exactly label, sentiment, and
+importance. New events may request existing debounced research triggers, but
+the returned event contract fixes `targetInfluence` and `executionAuthority` to
+the literal value `false`. No event type is imported by strategy, planning, OMS,
+or venue code. Advisor packs include only events available at the decision's
+market timestamp, and chart markers use `firstSeenAt`, never `publishedAt`.
+
 ## 10. Security boundaries
 
 ```

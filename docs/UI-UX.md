@@ -255,6 +255,15 @@ hash, and an evidence-bound local “Ask Coqui why” action. The operations flo
 uses six fixed persisted read models. A subsystem with no row says
 “unavailable”; it does not receive a synthetic status or character activity.
 
+Phase 8 adds a bounded market-event timeline to both market workspaces. Rows
+show the event title, classification availability, first-known time, and a short
+local provenance hash. Empty, loading, and unavailable states remain distinct.
+The boundary copy states that event context cannot influence targets; chart
+markers are positioned at the first-known time so the visual cannot imply that
+Coqui possessed news at its earlier publication time. Advisor decision packs
+receive the same temporally filtered event identities from main-process storage,
+never renderer-assembled facts.
+
 ## 7. Phase 5 verification
 
 Phase 5 is not complete until:
