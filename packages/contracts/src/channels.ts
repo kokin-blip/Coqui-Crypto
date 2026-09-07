@@ -6,6 +6,7 @@ import { chartExtensionChannelSchemas } from './schemas/chart-extensions.js';
 import { accountsChannelSchemas } from './schemas/accounts.js';
 import { advisorAnalystChannelSchemas } from './schemas/advisor-analyst.js';
 import { marketDataChannelSchemas } from './schemas/market-data.js';
+import { operationsChannelSchemas } from './schemas/operations.js';
 import { paperExecutionChannelSchemas } from './schemas/paper-execution.js';
 import { paperPerformanceChannelSchemas } from './schemas/paper-performance.js';
 import { portfolioChannelSchemas } from './schemas/portfolio.js';
@@ -34,6 +35,7 @@ export const CHANNEL_SCHEMAS = {
   ...accountsChannelSchemas,
   ...advisorAnalystChannelSchemas,
   ...marketDataChannelSchemas,
+  ...operationsChannelSchemas,
   ...paperExecutionChannelSchemas,
   ...paperPerformanceChannelSchemas,
   ...portfolioChannelSchemas,

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Sparkles } from 'lucide-react';
 
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 
@@ -6,6 +7,7 @@ import { useChannel } from '../query/use-channel.js';
 import { SurfaceState } from './SurfaceState.js';
 
 type FeedEvent = ChannelResponse<'activity.feed'>['events'][number];
+type DecisionExplanation = ChannelResponse<'advisor.decision.explain'>;
 type EventFilter = 'all' | FeedEvent['status'];
 const FILTERS: readonly EventFilter[] = ['all', 'info', 'pending', 'blocked', 'failed', 'succeeded', 'unknown'];
 
@@ -17,6 +19,9 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
   const [cursor, setCursor] = useState<string | null>(null);
   const [events, setEvents] = useState<readonly FeedEvent[]>([]);
   const [filter, setFilter] = useState<EventFilter>('all');
+  const [explanations, setExplanations] = useState<Readonly<Record<string, DecisionExplanation>>>({});
+  const [explanationFailure, setExplanationFailure] = useState<string | null>(null);
+  const [explaining, setExplaining] = useState<string | null>(null);
   const payload = useMemo(() => ({ limit: 40, cursor }), [cursor]);
   const feed = useChannel(client, 'activity.feed', payload);
   const page = feed.kind === 'ready' ? feed.value : null;
@@ -39,6 +44,15 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
 
   const nextCursor = feed.kind === 'ready' ? feed.value.nextCursor : null;
   const visibleEvents = filter === 'all' ? events : events.filter((event) => event.status === filter);
+  const explain = async (decisionId: string): Promise<void> => {
+    setExplaining(decisionId); setExplanationFailure(null);
+    const result = await client.query('advisor.decision.explain', {
+      commandId: crypto.randomUUID(), decisionId, provider: null,
+    });
+    if (result.status === 'ok') setExplanations((current) => ({ ...current, [decisionId]: result.value }));
+    else setExplanationFailure(result.issues[0]?.code ?? 'decision_explanation_failed');
+    setExplaining(null);
+  };
   return (
     <section className="panel" aria-labelledby="activity-feed-heading">
       <div className="panel-heading">
@@ -79,11 +93,24 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
                   <time dateTime={new Date(event.occurredAt).toISOString()}>{eventTime(event.occurredAt)}</time>
                   {event.provenance === null ? '' : ` · evidence ${event.provenance.slice(0, 12)}…`}
                 </small>
+                {event.reasonCode !== null && <span className="activity-reason">{event.reasonCode.replaceAll('_', ' ')}</span>}
+                {event.decisionId !== null && <div className="activity-decision-actions">
+                  <button type="button" aria-expanded={explanations[event.decisionId] !== undefined}
+                    disabled={explaining === event.decisionId}
+                    onClick={() => void explain(event.decisionId!)}><Sparkles size={14} aria-hidden="true" />
+                    {explaining === event.decisionId ? 'Reading evidence…' : 'Ask Coqui why'}</button>
+                  <code title={event.decisionId}>decision {event.decisionId.slice(0, 10)}…</code>
+                </div>}
+                {event.decisionId !== null && explanations[event.decisionId] !== undefined &&
+                  <article className="activity-explanation" aria-live="polite"><strong>Evidence-bound explanation</strong>
+                    <p>{explanations[event.decisionId]!.text}</p><small>{explanations[event.decisionId]!.freshness} · local deterministic · no execution authority</small></article>}
               </div>
             </li>
           ))}
         </ol>
       )}
+      {explanationFailure !== null && <p className="activity-explanation-failure" role="alert">
+        Explanation unavailable: {explanationFailure.replaceAll('_', ' ')}.</p>}
       {nextCursor !== null && (
         <button className="button-secondary" onClick={() => setCursor(nextCursor)} disabled={feed.kind === 'loading'}>
           Load older activity

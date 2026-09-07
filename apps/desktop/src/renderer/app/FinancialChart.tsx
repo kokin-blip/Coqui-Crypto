@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 
 import {
-  ColorType,
   AreaSeries,
   BaselineSeries,
   LineSeries,
-  createChart,
+  type IChartApi,
   type ISeriesApi,
   type LineData,
   type Time,
@@ -13,6 +12,7 @@ import {
 import { CHART_COLORS } from '@coqui/ui-kit';
 import type { CoquiClient } from '@coqui/contracts';
 import { ChartFrame } from './ChartFrame.js';
+import { createChartLifecycle, syncSeriesData, type SeriesCursor } from './chart-lifecycle.js';
 
 export interface FinancialChartSeries {
   readonly id: string;
@@ -36,28 +36,14 @@ export function FinancialChart({
 }): React.JSX.Element {
   const container = useRef<HTMLDivElement>(null);
   const apis = useRef(new Map<string, ISeriesApi<'Line'>>());
-  const priorLengths = useRef(new Map<string, number>());
-  const chartApi = useRef<ReturnType<typeof createChart> | null>(null);
+  const seriesCursors = useRef(new Map<string, SeriesCursor>());
+  const chartApi = useRef<IChartApi | null>(null);
   const [cursorLabel, setCursorLabel] = useState<string | null>(null);
 
   useEffect(() => {
     if (container.current === null) return;
-    const chart = createChart(container.current, {
-      height: 300,
-      layout: {
-        background: { type: ColorType.Solid, color: 'transparent' },
-        textColor: CHART_COLORS.supportingText,
-        attributionLogo: false,
-      },
-      grid: {
-        vertLines: { color: CHART_COLORS.grid },
-        horzLines: { color: CHART_COLORS.grid },
-      },
-      timeScale: { borderColor: CHART_COLORS.border },
-      rightPriceScale: { borderColor: CHART_COLORS.border },
-      handleScroll: true,
-      handleScale: true,
-    });
+    const lifecycle = createChartLifecycle(container.current, { height: 300 });
+    const chart = lifecycle.chart;
     chartApi.current = chart;
     for (const definition of series) {
       const shared = { lineWidth: 2 as const, title: definition.label, priceLineVisible: false, lastValueVisible: true };
@@ -78,15 +64,10 @@ export function FinancialChart({
       });
       setCursorLabel(`${String(parameter.time)}${values.length === 0 ? '' : ` · ${values.join(' · ')}`}`);
     });
-    const observer = new ResizeObserver(([entry]) => {
-      if (entry !== undefined) chart.applyOptions({ width: Math.floor(entry.contentRect.width) });
-    });
-    observer.observe(container.current);
     return () => {
-      observer.disconnect();
       apis.current.clear();
-      priorLengths.current.clear();
-      chart.remove();
+      seriesCursors.current.clear();
+      lifecycle.destroy();
       chartApi.current = null;
     };
     // Series identities are fixed by each chart surface; values update below.
@@ -100,10 +81,8 @@ export function FinancialChart({
         time: point.day as Time,
         value: point.value,
       }));
-      const prior = priorLengths.current.get(definition.id) ?? 0;
-      if (data.length === prior + 1 && prior > 0) api.update(data.at(-1)!);
-      else api.setData(data);
-      priorLengths.current.set(definition.id, data.length);
+      seriesCursors.current.set(definition.id,
+        syncSeriesData(api, data, seriesCursors.current.get(definition.id)));
     }
   }, [series]);
 

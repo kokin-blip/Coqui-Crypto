@@ -119,6 +119,41 @@ export interface ResearchChampionRecord {
   readonly fencingGeneration: number; readonly activatedAt: number;
 }
 
+export interface ResearchLineageView {
+  readonly candidateId: string;
+  readonly family: string;
+  readonly strategyVersion: string;
+  readonly parentId: string | null;
+  readonly state: ResearchCandidateRecord['state'];
+  readonly evidenceHash: string;
+  readonly createdAtMs: number;
+  readonly active: boolean;
+  readonly activationId: string | null;
+  readonly activatedAtMs: number | null;
+}
+
+/** Bounded, integrity-checked lineage; metric bodies and approval references stay local. */
+export function listResearchLineage(limit: number, database: Db): readonly ResearchLineageView[] {
+  if (!Number.isSafeInteger(limit) || limit < 1 || limit > 100) throw new TypeError('Invalid lineage limit.');
+  const rows = database.prepare(`SELECT candidate.id, champion.candidate_id AS active_id,
+      champion.activation_id, champion.activated_at
+    FROM research_candidates_v1 candidate
+    LEFT JOIN research_champions_v1 champion ON champion.family=candidate.family
+    ORDER BY candidate.created_at DESC, candidate.id DESC LIMIT ?`).all(limit) as unknown as Array<{
+      id: string; active_id: string | null; activation_id: string | null; activated_at: number | null;
+    }>;
+  return Object.freeze(rows.map((row) => {
+    const candidate = getResearchCandidate(row.id, database);
+    if (candidate === null) throw new Error('Research lineage candidate disappeared.');
+    return Object.freeze({ candidateId: candidate.id, family: candidate.family,
+      strategyVersion: candidate.strategyVersion, parentId: candidate.parentId,
+      state: candidate.state, evidenceHash: candidate.evidenceHash, createdAtMs: candidate.createdAt,
+      active: row.active_id === candidate.id,
+      activationId: row.active_id === candidate.id ? row.activation_id : null,
+      activatedAtMs: row.active_id === candidate.id ? row.activated_at : null });
+  }));
+}
+
 export function getResearchChampion(family: string, database: Db): ResearchChampionRecord | null {
   const row = database.prepare('SELECT * FROM research_champions_v1 WHERE family=?').get(family) as Record<string, unknown> | undefined;
   return row === undefined ? null : { family: String(row['family']), candidateId: String(row['candidate_id']),

@@ -13,6 +13,7 @@ const RENDERER = [
   'apps/desktop/src/renderer/app/use-comparison-series.ts',
   'apps/desktop/src/renderer/app/ChartDrawingManager.tsx',
   'apps/desktop/src/renderer/app/use-dialog-focus.ts',
+  'apps/desktop/src/renderer/app/chart-lifecycle.ts',
 ];
 
 describe('chart, extension, and advisor authority boundaries', () => {
@@ -40,5 +41,21 @@ describe('chart, extension, and advisor authority boundaries', () => {
     const combined = RENDERER.map(source).join('\n');
     expect(combined).not.toMatch(/tradingview\.com|tv\.js|Pine Script|Advanced Charts|TradingView\.widget/iu);
     expect(combined).toContain('lightweight-charts');
+  });
+
+  it('gives one shared lifecycle ownership of chart creation and reduced motion', () => {
+    const lifecycle = source('apps/desktop/src/renderer/app/chart-lifecycle.ts');
+    expect(lifecycle).toContain('createChart(container');
+    expect(lifecycle).toContain('prefers-reduced-motion: reduce');
+    expect(lifecycle).toContain('ResizeObserver');
+    expect(lifecycle).toContain('syncSeriesData');
+    for (const path of ['apps/desktop/src/renderer/app/FinancialChart.tsx',
+      'apps/desktop/src/renderer/app/MarketHistoryChart.tsx',
+      'apps/desktop/src/renderer/app/TradingWorkstationChart.tsx']) {
+      const chart = source(path);
+      expect(chart).toContain('createChartLifecycle');
+      expect(chart).not.toMatch(/\bcreateChart\s*\(/u);
+      expect(chart).not.toContain('new ResizeObserver');
+    }
   });
 });

@@ -13,7 +13,7 @@ import { ChartDrawingManager } from './ChartDrawingManager.js';
 import { MarketChartTileHeader } from './MarketChartTileHeader.js';
 import type {
   ChartDrawing, ChartTileConfiguration, DrawingTool, WorkstationBar,
-  WorkstationChartStyle, WorkstationIndicators, WorkstationInterval, WorkstationLayout,
+  WorkstationChartStyle, WorkstationExtensionMarker, WorkstationIndicators, WorkstationInterval, WorkstationLayout,
 } from './chart-workstation-types.js';
 import { MarketFactsPanel } from './MarketFactsPanel.js';
 import { MarketWorkspaceToolbar } from './MarketWorkspaceToolbar.js';
@@ -80,13 +80,14 @@ function chartHeight(layout: WorkstationLayout, index: number): number {
 
 function ChartTile({ client, tile, tileId, layoutId, style, activeTool, height,
   indicators, scaleMode, volumeVisible, liveVisible, extensionIds, linkController,
-  onDrawing, onDeleteDrawing }: {
+  decisionMarkers, onDrawing, onDeleteDrawing }: {
   readonly client: CoquiClient; readonly tile: ChartTileConfiguration; readonly tileId: string;
   readonly layoutId: string | null; readonly style: WorkstationChartStyle;
   readonly activeTool: DrawingTool; readonly height: number; readonly indicators: WorkstationIndicators;
   readonly scaleMode: 'linear' | 'percentage' | 'indexed' | 'logarithmic';
   readonly volumeVisible: boolean; readonly liveVisible: boolean; readonly extensionIds: readonly string[];
   readonly linkController: ChartLinkController; readonly onDrawing: (drawing: ChartDrawing) => void;
+  readonly decisionMarkers: readonly WorkstationExtensionMarker[];
   readonly onDeleteDrawing: (id: string) => void;
 }): React.JSX.Element {
   const [anchor] = useState(() => Date.now());
@@ -120,7 +121,7 @@ function ChartTile({ client, tile, tileId, layoutId, style, activeTool, height,
     <TradingWorkstationChart client={client} bars={bars} productId={tile.productId}
       style={style} scaleMode={scaleMode} volumeVisible={volumeVisible} indicators={indicators}
       comparisons={comparisons.series}
-      extensionSeries={extensionState.series} extensionMarkers={extensionState.markers} activeTool={activeTool} drawings={drawings}
+      extensionSeries={extensionState.series} extensionMarkers={[...extensionState.markers, ...decisionMarkers]} activeTool={activeTool} drawings={drawings}
       onDrawing={onDrawing} height={height} syncId={tileId} linkGroup={tile.linkGroup}
       linkController={linkController} />
     <ChartDrawingManager drawings={drawings} onSave={onDrawing} onDelete={onDeleteDrawing} />
@@ -150,6 +151,7 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
   const defaultInterval = workspace.preferences?.marketInterval ?? '1d';
   const chartWorkspace = useChannel(client, 'app.chart.workspace', { productId: selected, interval: defaultInterval });
   const extensionCatalog = useChannel(client, 'chart-extensions.catalog', {});
+  const activity = useChannel(client, 'activity.feed', { limit: 100, cursor: null });
   const chartCommand = useCommand(client, 'app.chart.workspace.set', CHART_INVALIDATIONS);
   const stored = chartWorkspace.kind === 'ready' ? chartWorkspace.value : { layouts: [], watchlists: [], drawings: [] };
   const defaultWatchlist = stored.watchlists.find((item) => item.isDefault);
@@ -171,6 +173,12 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
   const indicators = primaryTile.indicators;
   const enabledExtensionIds = extensionCatalog.kind === 'ready'
     ? extensionCatalog.value.extensions.filter((item) => item.enabled).map((item) => item.id) : [];
+  const decisionMarkers = useMemo<readonly WorkstationExtensionMarker[]>(() => activity.kind !== 'ready' ? [] :
+    activity.value.events.filter((event) => event.decisionId !== null && event.kind === 'decision')
+      .filter((event, index, events) => events.findIndex((candidate) => candidate.decisionId === event.decisionId) === index)
+      .map((event) => ({ extensionId: `decision:${event.decisionId!}`, timeMs: event.occurredAt,
+        label: `Decision ${event.decisionId!.slice(0, 8)}`, tone: event.status === 'succeeded' ? 'positive' :
+          event.status === 'blocked' || event.status === 'failed' ? 'negative' : event.status === 'pending' ? 'warning' : 'neutral' })), [activity]);
   const completed = useChannel(client, 'market-data.display-bars', {
     productId: selected, interval: defaultInterval,
     startTimeMs: historyAnchor - rangeMs(defaultInterval), endTimeMs: historyAnchor,
@@ -265,6 +273,7 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
             style={tile.chartStyle} activeTool={activeTool} height={chartHeight(layout, index)} indicators={tile.indicators}
             scaleMode={tile.scaleMode} volumeVisible={workspace.preferences?.marketVolumeVisible ?? true}
             liveVisible={workspace.preferences?.marketLiveCandle ?? false} extensionIds={enabledExtensionIds}
+            decisionMarkers={decisionMarkers}
             linkController={linkController} onDrawing={(drawing) => void chartCommand.run({ commandId: crypto.randomUUID(), action: { kind: 'save_drawing', drawing: { ...drawing, productId: tile.productId, interval: tile.interval, layoutId: activeLayoutId } } })}
             onDeleteDrawing={(drawingId) => void chartCommand.run({ commandId: crypto.randomUUID(), action: { kind: 'delete_drawing', drawingId } })} />
         </article>;

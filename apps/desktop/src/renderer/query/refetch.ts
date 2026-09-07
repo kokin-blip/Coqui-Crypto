@@ -55,6 +55,7 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'paper.campaign': { refetchIntervalMs: 60_000, staleTimeMs: 30_000 },
   'paper.campaign.kill-switch': { refetchIntervalMs: false, staleTimeMs: Infinity },
   'activity.feed': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
+  'operations.floor': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
   // Profile metadata changes only through explicit account commands.
   'accounts.profiles': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
   'accounts.profile.switch': { refetchIntervalMs: false, staleTimeMs: 0 },
@@ -85,6 +86,7 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'market-data.live-candles': { refetchIntervalMs: SECOND, staleTimeMs: SECOND },
   // Research runs are immutable once written.
   'research.runs': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
+  'research.lineage': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
   'research.edge-study': { refetchIntervalMs: 5 * MINUTE, staleTimeMs: 2 * MINUTE },
   'research.performance': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
   'research.jobs': { refetchIntervalMs: 30 * SECOND, staleTimeMs: 10 * SECOND },

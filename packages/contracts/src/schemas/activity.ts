@@ -4,12 +4,15 @@ import { epochMillisecondsSchema } from '../messages.js';
 
 const activityEventSchema = z.strictObject({
   id: z.string().min(1).max(260),
-  kind: z.enum(['decision', 'paper', 'fill', 'alert', 'reconciliation', 'failure']),
+  kind: z.enum(['decision', 'market', 'risk', 'research', 'routing', 'paper', 'fill', 'alert', 'reconciliation', 'failure', 'host']),
   status: z.enum(['info', 'pending', 'succeeded', 'blocked', 'failed', 'unknown']),
   title: z.string().min(1).max(120),
   detail: z.string().min(1).max(500),
   occurredAt: epochMillisecondsSchema,
   provenance: z.string().min(1).max(128).nullable(),
+  decisionId: z.string().length(64).nullable(),
+  evidenceId: z.string().min(1).max(128).nullable(),
+  reasonCode: z.string().regex(/^[a-z][a-z0-9_]{0,79}$/u).nullable(),
 }).readonly();
 
 export const activityChannelSchemas = {

@@ -247,6 +247,14 @@ Before feature screens, `packages/ui-kit` provides:
 Feature code composes these primitives. It does not invent colors, easing,
 durations, focus rings, loading treatments, or financial-number formatting.
 
+Phase 7 implements the chart ownership requirement through the shared renderer
+`chart-lifecycle.ts` boundary while retaining `packages/ui-kit` as the owner of
+semantic canvas colors. Activity is now the decision timeline: no-trade and
+stand-down steps expose their stable reason code, decision identity, evidence
+hash, and an evidence-bound local “Ask Coqui why” action. The operations floor
+uses six fixed persisted read models. A subsystem with no row says
+“unavailable”; it does not receive a synthetic status or character activity.
+
 ## 7. Phase 5 verification
 
 Phase 5 is not complete until:

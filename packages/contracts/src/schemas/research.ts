@@ -105,6 +105,25 @@ const negativeFindingSchema = z
   .readonly();
 
 export const researchChannelSchemas = {
+  'research.lineage': {
+    request: z.strictObject({ limit: z.number().int().min(1).max(100) }).readonly(),
+    response: z.strictObject({
+      asOfMs: epochMillisecondsSchema,
+      scope: z.literal('global'),
+      candidates: z.array(z.strictObject({
+        candidateId: sha256HexSchema,
+        family: z.string().min(1).max(120),
+        strategyVersion: z.string().min(1).max(120),
+        parentId: sha256HexSchema.nullable(),
+        state: z.enum(['promotion_eligible', 'rejected']),
+        evidenceHash: sha256HexSchema,
+        createdAtMs: epochMillisecondsSchema,
+        active: z.boolean(),
+        activationId: sha256HexSchema.nullable(),
+        activatedAtMs: epochMillisecondsSchema.nullable(),
+      }).readonly()).max(100).readonly(),
+    }).readonly(),
+  },
   'research.edge-study': {
     request: emptyPayloadSchema,
     response: z.strictObject({

@@ -17,6 +17,7 @@ export * from './execution-authority.js';
 export * from './forward-edge.js';
 export * from './market-data.js';
 export * from './operational-metrics.js';
+export * from './operations-floor.js';
 export * from './paper.js';
 export * from './paper-runtime.js';
 export * from './paper-execution.js';

@@ -41,6 +41,11 @@ function MarketDetail({ client, productId, quote }: {
     instrument: { venue: 'coinbase', productId, productType: 'spot' },
     lookbackDays: rangeLookbackDays(range),
   });
+  const activity = useChannel(client, 'activity.feed', { limit: 100, cursor: null });
+  const decisionMarkers = useMemo(() => activity.kind !== 'ready' ? [] : activity.value.events
+    .filter((event) => event.decisionId !== null && event.kind === 'decision')
+    .filter((event, index, events) => events.findIndex((candidate) => candidate.decisionId === event.decisionId) === index)
+    .map((event) => ({ decisionId: event.decisionId!, atMs: event.occurredAt, status: event.status })), [activity]);
   return (
     <section className="market-detail" aria-labelledby="market-detail-heading">
       <div className="market-detail-heading">
@@ -64,7 +69,7 @@ function MarketDetail({ client, productId, quote }: {
         <details className="indicator-controls"><summary>Indicators</summary><div>{Object.entries({ sma20: 'SMA 20', sma50: 'SMA 50', ema20: 'EMA 20', bollinger20: 'Bollinger 20/2', rsi14: 'RSI 14', macd: 'MACD 12/26/9' } as const).map(([key, label]) => <label key={key}><input type="checkbox" checked={indicators?.[key as keyof typeof indicators] ?? false} onChange={() => { if (indicators !== undefined) void workspace.update({ marketIndicators: { ...indicators, [key]: !indicators[key as keyof typeof indicators] } }); }} /> {label}</label>)}</div></details>
         <span className="data-boundary"><ShieldCheck size={14} aria-hidden="true" /> Coinbase REST · complete bars only</span>
         {candles.kind === 'loading' && <div className="chart-skeleton" aria-label="Loading completed daily prices" />}
-        {candles.kind === 'ready' && candles.value.bars.length > 0 && <MarketHistoryChart client={client} bars={candles.value.bars} mode={chartMode} productId={productId} {...(workspace.preferences === null ? {} : { volumeVisible: workspace.preferences.marketVolumeVisible, indicators: workspace.preferences.marketIndicators })} />}
+        {candles.kind === 'ready' && candles.value.bars.length > 0 && <MarketHistoryChart client={client} bars={candles.value.bars} mode={chartMode} productId={productId} decisionMarkers={decisionMarkers} {...(workspace.preferences === null ? {} : { volumeVisible: workspace.preferences.marketVolumeVisible, indicators: workspace.preferences.marketIndicators })} />}
         {candles.kind === 'ready' && candles.value.bars.length === 0 && <div className="chart-empty-canvas"><strong>No completed bars in this range</strong><span>Choose a longer range. Coqui never substitutes another venue or an incomplete candle.</span></div>}
         {candles.kind !== 'loading' && candles.kind !== 'ready' && <p role="alert" className="empty-copy">Completed daily history unavailable. No alternative source was substituted.</p>}
       </div>

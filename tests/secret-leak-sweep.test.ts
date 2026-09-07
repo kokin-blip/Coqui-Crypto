@@ -43,7 +43,9 @@ afterEach(() => {
 /** Channels that answer from local state. The rest would reach the network. */
 const LOCAL_CHANNELS: readonly ChannelName[] = [
   'activity.feed',
+  'operations.floor',
   'research.runs',
+  'research.lineage',
   'research.edge-study',
   'research.jobs',
   'research.job',
@@ -69,6 +71,7 @@ const PAYLOADS: Partial<Record<ChannelName, unknown>> = {
   'activity.feed': { limit: 40, cursor: null },
   'research.jobs': { limit: 10 },
   'research.job': { id: 'a'.repeat(64) },
+  'research.lineage': { limit: 50 },
   'app.incidents': { limit: 50 },
   'paper.execution.proposals': { limit: 50 },
   'paper.performance-day': { dayUtc: 1_799_971_200_000 },

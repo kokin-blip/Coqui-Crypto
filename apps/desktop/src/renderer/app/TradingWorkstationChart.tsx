@@ -3,13 +3,14 @@ import { useEffect, useRef, useState } from 'react';
 import type { CoquiClient } from '@coqui/contracts';
 import { CHART_COLORS } from '@coqui/ui-kit';
 import {
-  AreaSeries, BaselineSeries, CandlestickSeries, ColorType, HistogramSeries,
-  LineSeries, PriceScaleMode, createChart, createSeriesMarkers,
-  type CandlestickData, type HistogramData, type ISeriesApi, type LineData, type SeriesMarker, type Time,
+  AreaSeries, BaselineSeries, CandlestickSeries, HistogramSeries,
+  LineSeries, PriceScaleMode, createSeriesMarkers,
+  type CandlestickData, type HistogramData, type IChartApi, type ISeriesApi, type LineData, type SeriesMarker, type Time,
 } from 'lightweight-charts';
 
 import { ChartFrame } from './ChartFrame.js';
 import { ChartDrawingLayer, type DrawingShape } from './ChartDrawingLayer.js';
+import { bindChartLink, createChartLifecycle } from './chart-lifecycle.js';
 import type { ChartLinkController } from './chart-link-controller.js';
 import { bollinger, ema, macd, rsi, sma } from './chart-indicators.js';
 import type {
@@ -54,7 +55,7 @@ export function TradingWorkstationChart({ bars, productId, style, scaleMode,
   readonly linkController: ChartLinkController;
 }): React.JSX.Element {
   const container = useRef<HTMLDivElement>(null);
-  const chartApi = useRef<ReturnType<typeof createChart> | null>(null);
+  const chartApi = useRef<IChartApi | null>(null);
   const priceApi = useRef<PriceSeries | null>(null);
   const pendingPoint = useRef<{ timeMs: number; value: string } | null>(null);
   const suppressSync = useRef(false);
@@ -63,15 +64,9 @@ export function TradingWorkstationChart({ bars, productId, style, scaleMode,
 
   useEffect(() => {
     if (container.current === null) return;
-    const chart = createChart(container.current, {
-      height,
-      layout: { background: { type: ColorType.Solid, color: 'transparent' },
-        textColor: CHART_COLORS.supportingText, attributionLogo: false },
-      grid: { vertLines: { color: CHART_COLORS.grid }, horzLines: { color: CHART_COLORS.grid } },
-      timeScale: { borderColor: CHART_COLORS.border, timeVisible: bars[0]?.interval !== '1d', secondsVisible: false },
-      rightPriceScale: { borderColor: CHART_COLORS.border, mode: SCALE_MODE[scaleMode] },
-      crosshair: { vertLine: { color: CHART_COLORS.supportingText }, horzLine: { color: CHART_COLORS.supportingText } },
-    });
+    const lifecycle = createChartLifecycle(container.current, { height,
+      timeVisible: bars[0]?.interval !== '1d', priceScaleMode: SCALE_MODE[scaleMode] });
+    const chart = lifecycle.chart;
     chartApi.current = chart;
     const price: PriceSeries = style === 'candles'
       ? chart.addSeries(CandlestickSeries, { upColor: CHART_COLORS.primary,
@@ -167,49 +162,50 @@ export function TradingWorkstationChart({ bars, productId, style, scaleMode,
       }
       setDrawingShapes(next);
     };
+    const publishLink = bindChartLink(lifecycle, {
+      controller: linkController, group: linkGroup, sourceId: syncId,
+      receive: (event) => {
+        suppressSync.current = true;
+        if (event.kind === 'range') {
+          if (event.range !== null) chart.timeScale().setVisibleRange({
+            from: Math.floor(event.range.fromTimeMs / 1_000) as Time,
+            to: Math.floor(event.range.toTimeMs / 1_000) as Time,
+          });
+        } else if (event.timeMs === null) chart.clearCrosshairPosition();
+        else {
+          const nearest = bars.reduce<WorkstationBar | null>((best, bar) =>
+            best === null || Math.abs(bar.startTimeMs - event.timeMs!) < Math.abs(best.startTimeMs - event.timeMs!) ? bar : best, null);
+          if (nearest !== null) chart.setCrosshairPosition(Number(nearest.close), timeOf(nearest), price);
+        }
+        queueMicrotask(() => { suppressSync.current = false; });
+      },
+    });
     chart.subscribeCrosshairMove((parameter) => {
       if (parameter.time === undefined) {
         setCursorLabel(null);
-        if (!suppressSync.current && linkGroup !== null) linkController.publish(linkGroup, { kind: 'crosshair', sourceId: syncId, timeMs: null });
+        if (!suppressSync.current) publishLink({ kind: 'crosshair', timeMs: null });
         return;
       }
       const match = bars.find((bar) => Number(timeOf(bar)) === Number(parameter.time));
       setCursorLabel(match === undefined ? String(parameter.time) :
         `${new Date(match.startTimeMs).toISOString()} · O ${match.open} H ${match.high} L ${match.low} C ${match.close}${match.isComplete ? '' : ' · LIVE'}`);
-      if (!suppressSync.current && linkGroup !== null) linkController.publish(linkGroup, { kind: 'crosshair', sourceId: syncId, timeMs: Number(parameter.time) * 1_000 });
+      if (!suppressSync.current) publishLink({ kind: 'crosshair', timeMs: Number(parameter.time) * 1_000 });
     });
     chart.timeScale().fitContent();
     updateDrawingShapes();
     chart.timeScale().subscribeVisibleLogicalRangeChange(updateDrawingShapes);
     const publishRange = (range: { readonly from: Time; readonly to: Time } | null): void => {
       if (suppressSync.current || linkGroup === null) return;
-      linkController.publish(linkGroup, { kind: 'range', sourceId: syncId, range: range === null ? null : {
+      publishLink({ kind: 'range', range: range === null ? null : {
         fromTimeMs: Number(range.from) * 1_000,
         toTimeMs: Number(range.to) * 1_000,
       } });
     };
     chart.timeScale().subscribeVisibleTimeRangeChange(publishRange);
-    const unsubscribeLink = linkGroup === null ? () => undefined : linkController.subscribe(linkGroup, (event) => {
-      if (event.sourceId === syncId) return;
-      suppressSync.current = true;
-      if (event.kind === 'range') {
-        if (event.range !== null) chart.timeScale().setVisibleRange({
-          from: Math.floor(event.range.fromTimeMs / 1_000) as Time,
-          to: Math.floor(event.range.toTimeMs / 1_000) as Time,
-        });
-      } else if (event.timeMs === null) chart.clearCrosshairPosition();
-      else {
-        const nearest = bars.reduce<WorkstationBar | null>((best, bar) =>
-          best === null || Math.abs(bar.startTimeMs - event.timeMs!) < Math.abs(best.startTimeMs - event.timeMs!) ? bar : best, null);
-        if (nearest !== null) chart.setCrosshairPosition(Number(nearest.close), timeOf(nearest), price);
-      }
-      queueMicrotask(() => { suppressSync.current = false; });
-    });
-    const observer = new ResizeObserver(([entry]) => {
-      if (entry !== undefined) { chart.applyOptions({ width: Math.floor(entry.contentRect.width) }); updateDrawingShapes(); }
-    });
-    observer.observe(container.current);
-    return () => { unsubscribeLink(); observer.disconnect(); chart.timeScale().unsubscribeVisibleLogicalRangeChange(updateDrawingShapes); chart.timeScale().unsubscribeVisibleTimeRangeChange(publishRange); chart.remove(); chartApi.current = null; priceApi.current = null; };
+    lifecycle.onResize(updateDrawingShapes);
+    lifecycle.registerCleanup(() => chart.timeScale().unsubscribeVisibleLogicalRangeChange(updateDrawingShapes));
+    lifecycle.registerCleanup(() => chart.timeScale().unsubscribeVisibleTimeRangeChange(publishRange));
+    return () => { lifecycle.destroy(); chartApi.current = null; priceApi.current = null; };
   }, [bars, comparisons, drawings, extensionMarkers, extensionSeries, height, indicators, linkController, linkGroup, scaleMode, style, syncId, volumeVisible]);
 
   const capturePoint = (event: React.PointerEvent<HTMLDivElement>): void => {

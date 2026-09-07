@@ -5,6 +5,7 @@ import { Activity } from './Activity.js';
 import { Allocation } from './Allocation.js';
 import { Markets } from './Markets.js';
 import { Overview } from './Overview.js';
+import { OperationsFloor } from './OperationsFloor.js';
 import { PaperTrading } from './PaperTrading.js';
 import { Portfolio } from './Portfolio.js';
 import { Reconciliation } from './Reconciliation.js';
@@ -54,7 +55,7 @@ function ScreenBody({
     case 'paper/performance': return <PaperTrading client={client} route={route} />;
     case 'strategies': return <Scoreboard client={client} />;
     case 'research': return <Research client={client} />;
-    case 'activity': return <div className="screen-stack"><Activity client={client} /><Alerts client={client} /></div>;
+    case 'activity': return <div className="screen-stack"><OperationsFloor client={client} /><Activity client={client} /><Alerts client={client} /></div>;
     case 'risk': return <Risk client={client} />;
     case 'settings': return <Settings client={client} />;
   }

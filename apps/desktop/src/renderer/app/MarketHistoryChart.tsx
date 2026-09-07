@@ -4,21 +4,29 @@ import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { CHART_COLORS } from '@coqui/ui-kit';
 import {
   CandlestickSeries,
-  ColorType,
   HistogramSeries,
   LineSeries,
-  createChart,
+  createSeriesMarkers,
   type CandlestickData,
   type HistogramData,
+  type IChartApi,
   type LineData,
+  type SeriesMarker,
   type Time,
 } from 'lightweight-charts';
 import { bollinger, ema, macd, rsi, sma } from './chart-indicators.js';
+import { createChartLifecycle } from './chart-lifecycle.js';
 import { ChartFrame } from './ChartFrame.js';
 
 type MarketBar = ChannelResponse<'market-data.candles'>['bars'][number];
+export interface DecisionChartMarker {
+  readonly decisionId: string;
+  readonly atMs: number;
+  readonly status: 'info' | 'pending' | 'succeeded' | 'blocked' | 'failed' | 'unknown';
+}
 
-export function MarketHistoryChart({ bars, mode, productId, volumeVisible = true, indicators, client }: {
+export function MarketHistoryChart({ bars, mode, productId, volumeVisible = true, indicators, client,
+  decisionMarkers = [] }: {
   readonly bars: readonly MarketBar[];
   readonly mode: 'candles' | 'line';
   readonly productId: string;
@@ -28,27 +36,16 @@ export function MarketHistoryChart({ bars, mode, productId, volumeVisible = true
     readonly bollinger20: boolean; readonly rsi14: boolean; readonly macd: boolean;
   };
   readonly client?: CoquiClient;
+  readonly decisionMarkers?: readonly DecisionChartMarker[];
 }): React.JSX.Element {
   const container = useRef<HTMLDivElement>(null);
-  const chartApi = useRef<ReturnType<typeof createChart> | null>(null);
+  const chartApi = useRef<IChartApi | null>(null);
   const [cursorLabel, setCursorLabel] = useState<string | null>(null);
 
   useEffect(() => {
     if (container.current === null) return;
-    const chart = createChart(container.current, {
-      height: 390,
-      layout: {
-        background: { type: ColorType.Solid, color: 'transparent' },
-        textColor: CHART_COLORS.supportingText,
-        attributionLogo: false,
-      },
-      grid: {
-        vertLines: { color: CHART_COLORS.grid },
-        horzLines: { color: CHART_COLORS.grid },
-      },
-      timeScale: { borderColor: CHART_COLORS.border },
-      rightPriceScale: { borderColor: CHART_COLORS.border },
-    });
+    const lifecycle = createChartLifecycle(container.current, { height: 390 });
+    const chart = lifecycle.chart;
     chartApi.current = chart;
     const price = mode === 'candles'
       ? chart.addSeries(CandlestickSeries, {
@@ -110,18 +107,24 @@ export function MarketHistoryChart({ bars, mode, productId, volumeVisible = true
       addLine(values, CHART_COLORS.primary, 'MACD', pane);
       addLine(values.map(({ day, signal }) => ({ day, value: signal })), '#f2b84b', 'Signal', pane);
     }
+    if (decisionMarkers.length > 0) {
+      const colors = { info: CHART_COLORS.supportingText, pending: '#f2b84b',
+        succeeded: CHART_COLORS.primary, blocked: CHART_COLORS.negative,
+        failed: CHART_COLORS.negative, unknown: '#8b7cff' } as const;
+      createSeriesMarkers(price, decisionMarkers.map((marker): SeriesMarker<Time> => ({
+        time: new Date(marker.atMs).toISOString().slice(0, 10) as Time,
+        position: 'aboveBar', shape: marker.status === 'succeeded' ? 'arrowUp' : 'circle',
+        color: colors[marker.status], text: `Decision ${marker.decisionId.slice(0, 8)}`,
+      })));
+    }
     chart.subscribeCrosshairMove((parameter) => {
       if (parameter.time === undefined) { setCursorLabel(null); return; }
       const bar = bars.find((item) => new Date(item.startTimeMs).toISOString().slice(0, 10) === String(parameter.time));
       setCursorLabel(bar === undefined ? String(parameter.time) : `${String(parameter.time)} · O ${bar.open} H ${bar.high} L ${bar.low} C ${bar.close}`);
     });
     chart.timeScale().fitContent();
-    const observer = new ResizeObserver(([entry]) => {
-      if (entry !== undefined) chart.applyOptions({ width: Math.floor(entry.contentRect.width) });
-    });
-    observer.observe(container.current);
-    return () => { observer.disconnect(); chart.remove(); chartApi.current = null; };
-  }, [bars, indicators, mode, volumeVisible]);
+    return () => { lifecycle.destroy(); chartApi.current = null; };
+  }, [bars, decisionMarkers, indicators, mode, volumeVisible]);
 
   const summary = `${bars.length} completed Coinbase daily ${mode === 'candles' ? 'candles' : 'closing prices'} for ${productId}, with recorded volume where available.`;
   const observations = bars.map((bar) => ({ day: new Date(bar.startTimeMs).toISOString().slice(0, 10), label: `${new Date(bar.startTimeMs).toISOString().slice(0, 10)}: close ${bar.close}` }));

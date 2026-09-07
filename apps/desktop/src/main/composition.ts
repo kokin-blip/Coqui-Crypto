@@ -55,7 +55,7 @@ import {
   listPaperPerformanceDayFacts,
   openDatabase,
   readForwardEdgeStudyStatus,
-  readProfitabilityEstimateEvidence,
+  readProfitabilityEstimateEvidence, readOperationsFloor, listResearchLineage,
   registerForwardEdgeStudy,
   setPaperExecutionPolicy,
   type Db,
@@ -334,6 +334,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
         asOfMs: clock.nowMs(),
       },
     }),
+    'operations.floor': () => ({ ok: true, value: { asOfMs: clock.nowMs(), subsystems: readOperationsFloor(options.profileId, database) } }),
     'paper.performance': () => {
       const valuations = listPaperDailyValuationEvidence(options.profileId, database);
       const fills = listPaperFillPerformanceFacts(options.profileId, database);
@@ -543,7 +544,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       ),
     }),
     ...createAccountPreferenceHandlers(options.profileId, settings),
-    'research.scoreboard': () => scoreboard.latest(),
+    'research.scoreboard': () => scoreboard.latest(), 'research.lineage': (payload: { readonly limit: number }) => ({ ok: true, value: { asOfMs: clock.nowMs(), scope: 'global', candidates: listResearchLineage(payload.limit, database) } }),
     // Static, frozen core data — there is no service to fail, so this cannot
     // return anything but ok.
     'research.negative-findings': () => ({

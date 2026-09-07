@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { evaluatePromotionEligibility, type EvolutionMetricsV1, type EvolutionPolicyV1 } from '../packages/core/src/index.js';
 import { EvolutionCoordinator, ResearchTriggerCoordinator } from '../packages/services/src/index.js';
-import { getResearchTrigger, openDatabase } from '../packages/storage/src/index.js';
+import { getResearchTrigger, listResearchLineage, openDatabase } from '../packages/storage/src/index.js';
 
 const metrics: EvolutionMetricsV1 = { oosReturnPct: 8, walkForwardPassRate: 0.8,
   stressReturnPct: 1, maxDrawdownPct: 12, turnoverPct: 30,
@@ -42,6 +42,13 @@ describe('host-owned research evolution', () => {
     expect(rolledBack).toMatchObject({ candidateId: first.id, fencingGeneration: 3 });
     expect((database.prepare('SELECT action FROM research_activation_history_v1 ORDER BY at').all() as { action: string }[])
       .map((row) => row.action)).toEqual(['activate', 'activate', 'rollback']);
+    expect(listResearchLineage(10, database)).toEqual([
+      expect.objectContaining({ candidateId: second.id, parentId: first.id, active: false }),
+      expect.objectContaining({ candidateId: rejected.id, parentId: first.id, active: false }),
+      expect.objectContaining({ candidateId: first.id, parentId: null, active: true,
+        activationId: rolledBack.activationId, activatedAtMs: 7 }),
+    ]);
+    expect(() => listResearchLineage(101, database)).toThrow('Invalid lineage limit');
     database.close();
   });
 });

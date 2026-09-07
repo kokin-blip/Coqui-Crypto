@@ -621,6 +621,32 @@ Rules beyond those in `CLAUDE.md` §4:
 Stack: React 19 · TypeScript 6 · Vite 8 · Tailwind 4 · TanStack Query ·
 lightweight-charts · Zod.
 
+### 9.1 Decision timeline and chart lifecycle
+
+The renderer's specialized financial, completed-market, and workstation chart
+compositions all construct their canvas through `chart-lifecycle.ts`. That
+single owner applies semantic chart colors, resize observation, teardown,
+reduced-motion kinetic-scroll behavior, linked range/crosshair delivery, and
+the append-or-replace rule for incremental series updates. Specialized series,
+indicators, drawings, and extensions remain feature-owned.
+
+`activity.feed` projects append-only `decision_evidence_events_v1` rows directly.
+Each projected step carries the same decision ID, evidence-event ID, reason code,
+timestamp, and content hash used by paper execution and Advisor evidence packs.
+Linked legacy wallet summaries are excluded to prevent a decision appearing
+twice; unlinked predecessor summaries retain their corrected legacy label.
+
+`operations.floor` is a fixed six-item, read-only projection for host, market,
+risk, research, routing, and paper execution. Each available state identifies
+one persisted row and an evidence time. Missing rows are returned as
+`unavailable`; the renderer never infers health from animation, network presence,
+or placeholder data. Research is explicitly labelled global until jobs gain a
+profile identity. `research.lineage` adds a bounded, integrity-checked global
+champion/challenger projection without exposing metrics bodies or approval
+references. Chart decision markers and the Activity “Ask Coqui why” action
+reuse this same decision identity. The explanation command uses the allowlisted
+Phase 6 evidence pack and has no execution or configuration authority.
+
 ## 10. Security boundaries
 
 ```
