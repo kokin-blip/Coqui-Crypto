@@ -1,6 +1,6 @@
 import { Decimal } from 'decimal.js';
 
-import { decimal } from '../types/money.js';
+import { decimal, isDecimalString } from '../types/money.js';
 
 const DAY_MS = 86_400_000;
 const YEAR_DAYS = new Decimal(365);
@@ -112,6 +112,7 @@ export interface PaperPerformanceResult {
   readonly metrics: PaperPerformanceMetrics;
   readonly exclusions: {
     readonly incompleteValuationDays: number;
+    readonly invalidEvidenceRows: number;
     readonly missingCalendarDays: number;
     readonly unattributedOpeningBalanceExcluded: boolean;
   };
@@ -120,6 +121,19 @@ export interface PaperPerformanceResult {
 function text(value: Decimal, places = 8): string {
   const fixed = value.toDecimalPlaces(places, Decimal.ROUND_HALF_UP).toFixed();
   return decimal(fixed).toString();
+}
+
+function isFiniteDecimal(value: string): boolean {
+  return isDecimalString(value) && new Decimal(value).isFinite();
+}
+
+function isValidValuation(point: PaperPerformancePointInput): boolean {
+  return point.equityUsd !== null
+    && isFiniteDecimal(point.equityUsd)
+    && new Decimal(point.equityUsd).gte(0)
+    && (point.benchmarkUsd === null
+      || (isFiniteDecimal(point.benchmarkUsd) && new Decimal(point.benchmarkUsd).gte(0)))
+    && isFiniteDecimal(point.cashFlowUsd ?? '0');
 }
 
 function percent(value: Decimal): string {
@@ -251,7 +265,8 @@ export function calculatePaperPerformance(
   },
 ): PaperPerformanceResult {
   const ordered = [...input.valuations].sort((left, right) => left.dayUtc - right.dayUtc);
-  const complete = ordered.filter((point) => point.equityUsd !== null && point.unpricedCount === 0);
+  const eligible = ordered.filter((point) => point.equityUsd !== null && point.unpricedCount === 0);
+  const complete = eligible.filter(isValidValuation);
   const points: PaperPerformancePoint[] = [];
   const returns: Decimal[] = [];
   let peak: Decimal | null = null;
@@ -271,7 +286,7 @@ export function calculatePaperPerformance(
       benchmarkUsd: point.benchmarkUsd === null ? null : text(new Decimal(point.benchmarkUsd)),
       pnlUsd: pnl === null ? null : text(pnl),
       returnPct: dailyReturn === null ? null : percent(dailyReturn),
-      drawdownPct: percent(equity.div(peak).minus(1)),
+      drawdownPct: peak.isZero() ? '0' : percent(equity.div(peak).minus(1)),
       evidenceHash: point.evidenceHash,
     }));
   }
@@ -340,7 +355,8 @@ export function calculatePaperPerformance(
       annualizationDays: 365,
     }),
     exclusions: Object.freeze({
-      incompleteValuationDays: ordered.length - complete.length,
+      incompleteValuationDays: ordered.length - eligible.length,
+      invalidEvidenceRows: eligible.length - complete.length,
       missingCalendarDays: Math.max(0, calendarSpan - ordered.length),
       unattributedOpeningBalanceExcluded: input.unattributedOpeningBalance ?? false,
     }),

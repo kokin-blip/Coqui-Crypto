@@ -43,6 +43,40 @@ export const CONTENT_SECURITY_POLICY = [
 ].join('; ');
 
 /**
+ * Development needs Vite's inline React-refresh preamble, injected styles and
+ * one same-origin HMR WebSocket. Only an explicit loopback renderer receives
+ * those exceptions; packaged and unexpected remote origins keep the strict
+ * production policy above.
+ */
+export function rendererContentSecurityPolicy(rendererOrigin: string): string {
+  let url: URL;
+  try {
+    url = new URL(rendererOrigin);
+  } catch {
+    return CONTENT_SECURITY_POLICY;
+  }
+  if (url.protocol !== 'http:' || (url.hostname !== '127.0.0.1' && url.hostname !== 'localhost')) {
+    return CONTENT_SECURITY_POLICY;
+  }
+  return [
+    "default-src 'none'",
+    "script-src 'self' 'unsafe-inline'",
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data:",
+    "font-src 'self'",
+    `connect-src 'self' ws://${url.host}`,
+    "media-src 'none'",
+    "object-src 'none'",
+    "frame-src 'none'",
+    "worker-src 'self' blob:",
+    "manifest-src 'none'",
+    "base-uri 'none'",
+    "form-action 'none'",
+    "frame-ancestors 'none'",
+  ].join('; ');
+}
+
+/**
  * Web preferences for every window. Exported as a value so a test can assert
  * each flag rather than trusting that the call site passed the right object.
  */
@@ -181,6 +215,7 @@ export function applyWindowHardening(
   contents: HardenableWebContents,
   rendererOrigin: string,
   shell: ExternalOpener,
+  contentSecurityPolicy = CONTENT_SECURITY_POLICY,
 ): number {
   contents.setWindowOpenHandler(({ url }) => {
     if (isAllowedExternalUrl(url)) void shell.openExternal(url);
@@ -206,7 +241,7 @@ export function applyWindowHardening(
     callback({
       responseHeaders: {
         ...details.responseHeaders,
-        'Content-Security-Policy': [CONTENT_SECURITY_POLICY],
+        'Content-Security-Policy': [contentSecurityPolicy],
       },
     });
   });

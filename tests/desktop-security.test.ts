@@ -6,6 +6,7 @@ import {
   isAllowedNavigation,
   isPermissionGranted,
   CONTENT_SECURITY_POLICY,
+  rendererContentSecurityPolicy,
   EXTERNAL_HOST_ALLOWLIST,
   WEB_PREFERENCES,
   type HardenableWebContents,
@@ -48,6 +49,16 @@ describe('content security policy presence', () => {
     expect(directives.get('frame-ancestors')).toBe("'none'");
     expect(directives.get('base-uri')).toBe("'none'");
     expect(directives.get('form-action')).toBe("'none'");
+  });
+
+  it('allows only loopback HMR necessities in development', () => {
+    const policy = rendererContentSecurityPolicy(APP_ORIGIN);
+    expect(policy).toContain("script-src 'self' 'unsafe-inline'");
+    expect(policy).toContain("style-src 'self' 'unsafe-inline'");
+    expect(policy).toContain("connect-src 'self' ws://localhost:5173");
+    expect(policy).not.toContain("'unsafe-eval'");
+    expect(rendererContentSecurityPolicy('https://example.com')).toBe(CONTENT_SECURITY_POLICY);
+    expect(rendererContentSecurityPolicy('file:///Applications/Coqui.app/index.html')).toBe(CONTENT_SECURITY_POLICY);
   });
 
   it('permits no inline or remote script', () => {
@@ -127,7 +138,7 @@ describe('permissions', () => {
 });
 
 describe('applyWindowHardening wiring', () => {
-  function harness() {
+  function harness(policy?: string) {
     const listeners = new Map<string, (event: { preventDefault(): void }, url: string) => void>();
     const openExternal = vi.fn(async () => {});
     let windowOpenHandler: ((details: { url: string }) => { action: 'deny' }) | null = null;
@@ -171,7 +182,7 @@ describe('applyWindowHardening wiring', () => {
       },
     } as unknown as HardenableWebContents;
 
-    const installed = applyWindowHardening(contents, APP_ORIGIN, { openExternal });
+    const installed = applyWindowHardening(contents, APP_ORIGIN, { openExternal }, policy);
     return {
       installed,
       listeners,
@@ -260,6 +271,16 @@ describe('applyWindowHardening wiring', () => {
         'content-type': ['text/html'],
         'Content-Security-Policy': [CONTENT_SECURITY_POLICY],
       },
+    });
+  });
+
+  it('stamps the explicitly selected development policy', () => {
+    const policy = rendererContentSecurityPolicy(APP_ORIGIN);
+    const h = harness(policy);
+    const callback = vi.fn();
+    h.headersListener?.({ responseHeaders: {} }, callback);
+    expect(callback).toHaveBeenCalledWith({
+      responseHeaders: { 'Content-Security-Policy': [policy] },
     });
   });
 });

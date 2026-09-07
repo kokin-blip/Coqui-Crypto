@@ -5,6 +5,7 @@ import {
   calculateStartingPortfolioHoldBenchmark,
   deriveFifoPaperLots,
 } from '../packages/core/src/index.js';
+import { openDatabase, savePaperDailyValuationEvidence } from '../packages/storage/src/index.js';
 
 const DAY = 86_400_000;
 const T0 = Date.UTC(2026, 0, 1);
@@ -22,6 +23,16 @@ function point(day: number, equityUsd: string | null, extra: Record<string, unkn
 }
 
 describe('exact paper performance metrics', () => {
+  it('rejects new non-finite monetary evidence at the storage boundary', () => {
+    const database = openDatabase(':memory:');
+    expect(() => savePaperDailyValuationEvidence({
+      id: 'valuation-invalid', profileId: 'profile-a', dayUtc: T0, capturedAt: T0,
+      cashUsd: '0', equityUsd: 'NaN', benchmarkUsd: null, unpricedCount: 0,
+      positionsJson: '[]', provenanceJson: '{}', evidenceHash: HASH,
+    }, database)).toThrow('Expected a non-negative decimal string');
+    database.close();
+  });
+
   it('handles flat and short histories without invented ratios', () => {
     const one = calculatePaperPerformance({ valuations: [point(0, '1000')] });
     expect(one.metrics).toMatchObject({
@@ -43,6 +54,14 @@ describe('exact paper performance metrics', () => {
     expect(flat.metrics.timeBelowHighPct).toBe('0');
   });
 
+  it('treats a zero-value opening book as flat rather than producing NaN drawdown', () => {
+    const result = calculatePaperPerformance({
+      valuations: [point(0, '0'), point(1, '0'), point(2, '10')],
+    });
+    expect(result.points.map((entry) => entry.drawdownPct)).toEqual(['0', '0', '0']);
+    expect(result.metrics.annualizedReturnPct).toBeNull();
+  });
+
   it('does not fabricate missing or incomplete days and exposes both exclusions', () => {
     const result = calculatePaperPerformance({
       valuations: [point(0, '1000'), point(2, null), point(4, '1100')],
@@ -51,9 +70,26 @@ describe('exact paper performance metrics', () => {
     expect(result.points.map((entry) => entry.dayUtc)).toEqual([T0, T0 + 4 * DAY]);
     expect(result.exclusions).toEqual({
       incompleteValuationDays: 1,
+      invalidEvidenceRows: 0,
       missingCalendarDays: 2,
       unattributedOpeningBalanceExcluded: true,
     });
+  });
+
+  it('excludes legacy non-finite monetary evidence instead of failing the view', () => {
+    const result = calculatePaperPerformance({
+      valuations: [
+        point(0, '1000'),
+        point(1, 'NaN'),
+        point(2, 'Infinity', { benchmarkUsd: '-Infinity' }),
+        point(3, '1030', { cashFlowUsd: 'not-a-number' }),
+        point(4, '1040'),
+      ],
+    });
+
+    expect(result.points.map((entry) => entry.dayUtc)).toEqual([T0, T0 + 4 * DAY]);
+    expect(result.exclusions.invalidEvidenceRows).toBe(3);
+    expect(result.metrics.annualizedReturnPct).not.toBe('NaN');
   });
 
   it('removes external cash flow from return and P&L', () => {

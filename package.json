@@ -14,6 +14,7 @@
     "lint": "eslint .",
     "test": "vitest run --maxWorkers=1",
     "build": "tsc -b",
+    "app:dev": "pnpm --filter @coqui/desktop dev:electron",
     "smoke": "pnpm --filter @coqui/desktop smoke",
     "perf": "pnpm --filter @coqui/desktop perf",
     "dataset:coinbase": "pnpm build && node scripts/build-market-dataset.mjs",

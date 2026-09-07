@@ -338,22 +338,17 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       const valuations = listPaperDailyValuationEvidence(options.profileId, database);
       const fills = listPaperFillPerformanceFacts(options.profileId, database);
       const fifo = deriveFifoPaperLots(fills);
+      const performance = calculatePaperPerformance({
+        valuations: valuations.map((item) => ({ dayUtc: item.dayUtc, equityUsd: item.equityUsd,
+          benchmarkUsd: item.benchmarkUsd, evidenceHash: item.evidenceHash,
+          unpricedCount: item.unpricedCount })), closedLots: fifo.closedLots, costs: fills,
+        unattributedOpeningBalance: fifo.unattributedOpeningBalanceExcluded,
+      });
       return {
         ok: true,
         value: {
-          ...calculatePaperPerformance({
-            valuations: valuations.map((item) => ({
-              dayUtc: item.dayUtc,
-              equityUsd: item.equityUsd,
-              benchmarkUsd: item.benchmarkUsd,
-              evidenceHash: item.evidenceHash,
-              unpricedCount: item.unpricedCount,
-            })),
-            closedLots: fifo.closedLots,
-            costs: fills,
-            unattributedOpeningBalance: fifo.unattributedOpeningBalanceExcluded,
-          }),
-          benchmarkStatus: valuations.some((item) => item.benchmarkUsd !== null)
+          ...performance,
+          benchmarkStatus: performance.points.some((item) => item.benchmarkUsd !== null)
             ? 'available' as const
             : 'unavailable_starting_evidence' as const,
         },

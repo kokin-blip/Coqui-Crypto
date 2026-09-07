@@ -10,6 +10,7 @@ import { createRuntimeProfileController, type RuntimeProfileController } from '.
 import {
   applyWindowHardening,
   CONTENT_SECURITY_POLICY,
+  rendererContentSecurityPolicy,
   WEB_PREFERENCES,
   type HardenableWebContents,
 } from './security.js';
@@ -55,6 +56,7 @@ function createWindow(): BrowserWindow {
     window.webContents as unknown as HardenableWebContents,
     entry.origin,
     shell,
+    rendererContentSecurityPolicy(entry.origin),
   );
 
   // Held back until the first paint so the user never sees an empty frame.

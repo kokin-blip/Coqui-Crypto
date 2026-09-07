@@ -22,7 +22,16 @@ const PERFORMANCE_VIEWS = [
   { value: 'distribution', label: 'Distribution' },
 ] as const;
 
-function EmptyPerformance(): React.JSX.Element {
+function InvalidEvidenceWarning({ count }: { readonly count: number }): React.JSX.Element | null {
+  if (count === 0) return null;
+  return (
+    <p className="metric-note exclusions-note" role="status">
+      {count} malformed legacy evidence row{count === 1 ? ' was' : 's were'} excluded. Valid observations remain available.
+    </p>
+  );
+}
+
+function EmptyPerformance({ invalidEvidenceRows }: { readonly invalidEvidenceRows: number }): React.JSX.Element {
   return (
     <div className="screen-stack performance-screen performance-empty-workspace">
       <section className="panel chart-panel" aria-labelledby="performance-empty-heading">
@@ -34,6 +43,7 @@ function EmptyPerformance(): React.JSX.Element {
           <strong>No verified daily paper history yet</strong>
           <span>Coqui records a valuation only after a scheduled decision. Missing days are never fabricated or backfilled.</span>
         </div>
+        <InvalidEvidenceWarning count={invalidEvidenceRows} />
       </section>
       <section className="panel" aria-labelledby="performance-empty-metrics">
         <div className="panel-heading"><div><p className="eyebrow">Verified observations only</p><h2 id="performance-empty-metrics">Risk and return metrics</h2></div></div>
@@ -83,7 +93,7 @@ export function Performance({ client }: { readonly client: CoquiClient }): React
     return <SurfaceState kind="error" title="Could not load performance evidence" detail={performance.issues.map((issue) => issue.code).join(', ')} />;
   }
   const view = performance.value;
-  if (view.points.length === 0) return <EmptyPerformance />;
+  if (view.points.length === 0) return <EmptyPerformance invalidEvidenceRows={view.exclusions.invalidEvidenceRows} />;
 
   const drawdownSeries = [{
     id: 'drawdown', label: 'Drawdown', color: CHART_COLORS.negative,
@@ -190,6 +200,7 @@ export function Performance({ client }: { readonly client: CoquiClient }): React
         Excluded: {view.exclusions.incompleteValuationDays} incomplete valuation day(s), {view.exclusions.missingCalendarDays} missing day(s)
         {view.exclusions.unattributedOpeningBalanceExcluded ? ', and sells against unattributed opening balances' : ''}.
       </p>
+      <InvalidEvidenceWarning count={view.exclusions.invalidEvidenceRows} />
       {selectedDay !== null && <PerformanceDayDrawer client={client} dayUtc={selectedDay} onClose={() => setSelectedDay(null)} />}
     </div>
   );

@@ -71,6 +71,7 @@ export const paperPerformanceChannelSchemas = {
       metrics: metricsSchema,
       exclusions: z.strictObject({
         incompleteValuationDays: z.number().int().nonnegative(),
+        invalidEvidenceRows: z.number().int().nonnegative(),
         missingCalendarDays: z.number().int().nonnegative(),
         unattributedOpeningBalanceExcluded: z.boolean(),
       }).readonly(),

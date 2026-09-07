@@ -11,6 +11,7 @@
     "icons": "node scripts/build-icons.mjs",
     "build": "tsc -b && node scripts/build-preload.mjs && vite build",
     "dev": "vite",
+    "dev:electron": "node scripts/dev-electron.mjs",
     "start": "pnpm build && electron .",
     "smoke": "pnpm build && electron scripts/smoke.mjs",
     "perf": "pnpm build && electron scripts/perf.mjs",
