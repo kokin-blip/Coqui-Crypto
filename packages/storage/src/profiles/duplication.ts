@@ -185,6 +185,10 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
           DROP TRIGGER scheduler_lease_events_v1_no_delete;
           DROP TRIGGER execution_lease_events_v1_no_update;
           DROP TRIGGER execution_lease_events_v1_no_delete;
+          DROP TRIGGER host_reconciliation_evidence_v1_no_update;
+          DROP TRIGGER host_reconciliation_evidence_v1_no_delete;
+          DROP TRIGGER host_takeover_history_v1_no_update;
+          DROP TRIGGER host_takeover_history_v1_no_delete;
         `);
         for (const tableName of tableNames as string[]) {
           const table = quoteIdentifier(tableName);
@@ -303,7 +307,15 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
             (SELECT COUNT(*) FROM execution_lease_events_v1 WHERE profile_id = ?) AS count
         `, input.targetProfileId.toLowerCase(), input.targetProfileId.toLowerCase(),
         input.targetProfileId.toLowerCase());
+        const hostAuthorityRows = countQuery(target, `SELECT
+          (SELECT COUNT(*) FROM authoritative_hosts_v1 WHERE profile_id=?) +
+          (SELECT COUNT(*) FROM host_reconciliation_evidence_v1 WHERE profile_id=?) +
+          (SELECT COUNT(*) FROM host_takeover_history_v1 WHERE profile_id=?) AS count`,
+        input.targetProfileId.toLowerCase(),input.targetProfileId.toLowerCase(),input.targetProfileId.toLowerCase());
         target.exec(`
+          DELETE FROM host_takeover_history_v1;
+          DELETE FROM authoritative_hosts_v1;
+          DELETE FROM host_reconciliation_evidence_v1;
           DELETE FROM scheduler_lease_events_v1;
           DELETE FROM execution_lease_events_v1;
           DELETE FROM execution_leases_v1;
@@ -358,6 +370,14 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
             BEGIN SELECT RAISE(ABORT, 'execution lease events are append-only'); END;
           CREATE TRIGGER execution_lease_events_v1_no_delete BEFORE DELETE ON execution_lease_events_v1
             BEGIN SELECT RAISE(ABORT, 'execution lease events are append-only'); END;
+          CREATE TRIGGER host_reconciliation_evidence_v1_no_update BEFORE UPDATE ON host_reconciliation_evidence_v1
+            BEGIN SELECT RAISE(ABORT,'host reconciliation evidence is immutable'); END;
+          CREATE TRIGGER host_reconciliation_evidence_v1_no_delete BEFORE DELETE ON host_reconciliation_evidence_v1
+            BEGIN SELECT RAISE(ABORT,'host reconciliation evidence is immutable'); END;
+          CREATE TRIGGER host_takeover_history_v1_no_update BEFORE UPDATE ON host_takeover_history_v1
+            BEGIN SELECT RAISE(ABORT,'host takeover history is immutable'); END;
+          CREATE TRIGGER host_takeover_history_v1_no_delete BEFORE DELETE ON host_takeover_history_v1
+            BEGIN SELECT RAISE(ABORT,'host takeover history is immutable'); END;
         `);
         const credentialMetadataKeys = [
           'credentials.coinbase.v2',
@@ -375,7 +395,7 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
         ).run(...credentialMetadataKeys);
         const excludedTransientRowCount = pendingImportRows + scheduleRows +
           privateAdvisorRows + connectionRows;
-        const excludedTransientRowCountWithRouting = excludedTransientRowCount + routingRows + authorityRows;
+        const excludedTransientRowCountWithRouting = excludedTransientRowCount + routingRows + authorityRows + hostAuthorityRows;
         if (!Number.isSafeInteger(excludedTransientRowCountWithRouting)) {
           throw new RangeError('Duplication exclusion count overflow.');
         }

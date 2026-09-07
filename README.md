@@ -33,6 +33,20 @@ pnpm build
 pnpm --filter @coqui/desktop start
 ```
 
+An explicitly assigned profile can instead run under the local paper-only
+headless host. Authority-changing commands require `--confirm`; takeover always
+records reconciliation and advances fencing first.
+
+```sh
+pnpm headless -- status --database=data/coqui.sqlite --profile=main
+pnpm headless -- assign --database=data/coqui.sqlite --profile=main --host=headless-local --confirm
+pnpm headless -- start --database=data/coqui.sqlite --profile=main --host=headless-local
+```
+
+The headless CLI opens no network listener and has no remote credential or live
+execution mode. Use `relinquish --confirm` before returning placement authority
+to the desktop runtime.
+
 The root typecheck works in a pristine clone before build output exists.
 
 ## Verification

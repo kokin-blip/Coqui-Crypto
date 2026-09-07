@@ -39,7 +39,7 @@ import {
   StatusRailService,
 } from '@coqui/services';
 import {
-  getAllocationPolicy,
+  getAllocationPolicy, isAuthoritativeHost,
   getLatestPaperExecutionReview,
   getPaperDailyValuationEvidence,
   getPaperExecutionPolicy,
@@ -106,8 +106,7 @@ function paperProposalView(
 }
 
 export interface RuntimeOptions extends Partial<Pick<Parameters<typeof createAdvisorHandlers>[0], 'secrets' | 'saveHistory'>> {
-  readonly databasePath: string;
-  readonly profileId: string;
+  readonly databasePath: string; readonly profileId: string; readonly hostId?: string;
   /** Supplied by the composition root so `core` never reads the host clock. */
   readonly readSystemTime?: () => number;
   /** Reported rather than thrown, so one bad tick cannot take down the app. */
@@ -137,7 +136,6 @@ export interface RuntimeOptions extends Partial<Pick<Parameters<typeof createAdv
   readonly notifier?: Parameters<typeof createAlertNotificationPump>[0]['notifier'];
   readonly saveChartSnapshot?: (filenameStem: string, png: Uint8Array) => Promise<'saved' | 'cancelled'>; readonly pickChartExtension?: () => Promise<string | null>;
 }
-
 export interface CoquiRuntime {
   readonly handlers: ChannelHandlers;
   /** Every background failure lands here first (`diagnostics.ts`). */
@@ -161,7 +159,7 @@ export interface CoquiRuntime {
  * whichever service happened to need it first.
  */
 export function createRuntime(options: RuntimeOptions): CoquiRuntime {
-  const clock = new SystemClock(options.readSystemTime ?? (() => Date.now())), database = openDatabase(options.databasePath), forwardPlanHash = registerForwardEdgeStudy(SHIPPED_FORWARD_EDGE_PLAN, database), hostId = `desktop-${randomUUID()}`;
+  const clock = new SystemClock(options.readSystemTime ?? (() => Date.now())), database = openDatabase(options.databasePath), forwardPlanHash = registerForwardEdgeStudy(SHIPPED_FORWARD_EDGE_PLAN, database), hostId = options.hostId ?? `desktop-${randomUUID()}`;
 
   // Every background failure in the application goes through here: a structured
   // log line always, and an incident row when the fault is durable. Before this,
@@ -274,6 +272,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   let scheduler: SchedulerRuntime | null = null, disposed = false;
   const startScheduler = (): void => {
     if (disposed || scheduler !== null) return;
+    if (!isAuthoritativeHost(options.profileId, hostId, database)) return;
     liveMarket.start(trackedAssets().map((asset) => asset.instrument.productId));
     scheduler = startSchedulerRuntime({
         database,

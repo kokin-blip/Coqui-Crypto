@@ -124,6 +124,21 @@ importers:
         specifier: 8.2.2
         version: 8.2.2(@types/node@25.9.3)(esbuild@0.28.2)(jiti@2.7.0)
 
+  apps/headless:
+    dependencies:
+      '@coqui/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@coqui/desktop':
+        specifier: workspace:*
+        version: link:../desktop
+      '@coqui/services':
+        specifier: workspace:*
+        version: link:../../packages/services
+      '@coqui/storage':
+        specifier: workspace:*
+        version: link:../../packages/storage
+
   packages/adapters:
     dependencies:
       '@coqui/core':

@@ -1,6 +1,7 @@
 import { sha256Hex } from '@coqui/core';
 
 import { inTransaction, type Db } from '../sqlite/index.js';
+import { isAuthoritativeHost } from './host-authority.js';
 
 const PROFILE_ID = /^[a-z0-9][a-z0-9._:-]{0,63}$/u;
 
@@ -51,6 +52,7 @@ export function acquireExecutionLease(
 ): ExecutionLease | null {
   if (!PROFILE_ID.test(profileId) || !ownerId.trim() || !validTime(nowMs) ||
       !Number.isSafeInteger(leaseMs) || leaseMs <= 0) throw new TypeError('Invalid execution lease request.');
+  if (!isAuthoritativeHost(profileId, ownerId, database)) return null;
   return inTransaction(database, () => {
     const current = read(profileId, database);
     if (current?.ownerId === ownerId && current.leasedUntilMs !== null && current.leasedUntilMs > nowMs) {
@@ -83,7 +85,11 @@ export function renewExecutionLease(
   leaseMs: number,
   database: Db,
 ): boolean {
+  if (!isAuthoritativeHost(profileId, ownerId, database)) return false;
   return inTransaction(database, () => {
+    const prior = read(profileId, database);
+    if (prior?.ownerId !== ownerId || prior.fencingToken !== fencingToken ||
+        prior.leasedUntilMs === null || prior.leasedUntilMs <= nowMs) return false;
     const result = database.prepare(`UPDATE execution_leases_v1 SET leased_until = ?, updated_at = ?
       WHERE profile_id = ? AND owner_id = ? AND fencing_token = ? AND leased_until > ?`)
       .run(nowMs + leaseMs, nowMs, profileId, ownerId, fencingToken, nowMs);
@@ -101,7 +107,7 @@ export function validateExecutionLease(
   database: Db,
 ): boolean {
   const current = read(profileId, database);
-  return current?.ownerId === ownerId && current.fencingToken === fencingToken &&
+  return isAuthoritativeHost(profileId, ownerId, database) && current?.ownerId === ownerId && current.fencingToken === fencingToken &&
     current.leasedUntilMs !== null && current.leasedUntilMs > nowMs;
 }
 

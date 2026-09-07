@@ -6,6 +6,7 @@
   "private": true,
   "type": "module",
   "main": "dist/main/index.js",
+  "exports": { ".": { "types": "./dist/main/composition.d.ts", "default": "./dist/main/composition.js" } },
   "scripts": {
     "icons": "node scripts/build-icons.mjs",
     "build": "tsc -b && node scripts/build-preload.mjs && vite build",

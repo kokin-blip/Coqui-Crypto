@@ -1,0 +1,15 @@
+{
+  "name": "@coqui/headless",
+  "version": "0.1.0-beta.1",
+  "description": "Local paper-only Coqui host CLI.",
+  "private": true,
+  "type": "module",
+  "bin": { "coqui-headless": "dist/index.js" },
+  "scripts": { "build": "tsc -b", "start": "pnpm build && node dist/index.js" },
+  "dependencies": {
+    "@coqui/core": "workspace:*",
+    "@coqui/desktop": "workspace:*",
+    "@coqui/services": "workspace:*",
+    "@coqui/storage": "workspace:*"
+  }
+}

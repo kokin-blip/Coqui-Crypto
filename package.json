@@ -29,6 +29,7 @@
     "research:register-plan": "pnpm build && node scripts/register-research-plan.mjs",
     "research:run-plan": "pnpm build && node scripts/run-registered-study.mjs",
     "events:import-local": "pnpm build && node scripts/import-market-events.mjs",
+    "headless": "pnpm --filter @coqui/headless start",
     "providers:smoke": "node --env-file=.env scripts/provider-smoke.mjs",
     "coinbase:verify-view-only": "pnpm build && node scripts/verify-coinbase-view-only.mjs",
     "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm build",

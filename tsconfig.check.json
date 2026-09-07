@@ -28,6 +28,9 @@
       ],
       "@coqui/ui-kit": [
         "./packages/ui-kit/src/index.ts"
+      ],
+      "@coqui/desktop": [
+        "./apps/desktop/src/main/composition.ts"
       ]
     },
     "types": [

@@ -91,6 +91,7 @@ Coqui-Crypto/
 │           ├── query/           # TanStack Query hooks + IPC transport
 │           ├── features/        # one folder per screen
 │           └── components/      # presentational, <300 lines each
+├── apps/headless/                # local paper host CLI; no network listener
 │
 ├── research/python/coqui_research/   # sweeps, DSP audits, HAR vol, overfit audits
 ├── docs/                        # ARCHITECTURE · MIGRATION · PLAN · adr/ · studies/ · audit/
@@ -110,6 +111,7 @@ Coqui-Crypto/
 | `packages/observability` | Logging and metrics, secret redaction by construction | — |
 | `packages/ui-kit` | Design tokens, primitives, chart wrappers | Fetch data or know about services |
 | `apps/desktop` | Electron shell: composition root, window/security config, preload, React app | Contain business logic |
+| `apps/headless` | Local CLI over the shared runtime composition and host lifecycle | Listen on a network socket, enroll credentials, or enable live execution |
 | `research/python` | Statistical work with no TS equivalent | Be required for the app to run. Absent Python ⇒ research degrades, app works |
 | `docs/studies/` | Pre-registered studies **including negative results** | — |
 | `fixtures/` | Golden regression data pinning numerical behaviour | — |
@@ -537,6 +539,25 @@ Advisor navigation is limited by contracts and service validation to Activity,
 Paper, Research, Risk, Market, and Advisor destinations. Each service-level
 accepted or rejected request is audited. The Advisor has no execution, configuration,
 routing, credential mutation through navigation, or promotion capability.
+
+### 6.6 Local authoritative host
+
+Migration 70 adds the current authoritative-host assignment, immutable takeover
+history, and content-hashed reconciliation evidence. Each profile may have one
+active local `desktop` or `headless` owner. A takeover must first reconcile
+paper orders against the generation it observed, then advances both the host
+generation and execution fencing token. The prior host records lease loss and
+cannot acquire, renew, or validate execution authority after that point.
+Relinquishment is explicit and similarly advances the fence.
+
+`apps/headless` is a paper-only local CLI with `start`, `tick`, `recover`,
+`status`, `stop`, `assign`, `relinquish`, and confirmed `takeover` commands. It
+composes the same runtime and transport-neutral lifecycle as Electron; desktop
+remains available for control and monitoring but does not start its scheduler
+while another host owns the profile. The CLI opens the profile SQLite file
+directly. It exposes no HTTP/WebSocket listener, remote enrollment, cloud
+broker, active-active SQLite mode, or live venue path. Profile duplication does
+not copy authority, reconciliation, or takeover records.
 
 Three properties the order layer must have from the start, because retrofitting
 them after a live path exists is far harder:
