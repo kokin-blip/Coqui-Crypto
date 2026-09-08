@@ -1,9 +1,11 @@
 import { Decimal } from 'decimal.js';
+import type { RobinhoodCryptoAccountEvidence } from '@coqui/adapters';
 
 import {
   assetExposureKey,
   buildUnifiedPortfolioSnapshotV2,
   connectionAccountSnapshotV2Hash,
+  connectionV2Hash,
   instrumentKey,
   profileConnectionV2,
   providerAccountRefV1,
@@ -129,6 +131,81 @@ export async function persistCoinbasePortfolioSnapshotV2(
     .filter((candidate) => candidate.status !== 'disconnected')
     .map((candidate) => candidate.id === connection.id ? snapshot
       : getLatestConnectionAccountSnapshotV2(input.profileId, candidate.id, database) ?? unavailableSnapshot(candidate, input.receivedAtMs));
+  const unified = buildUnifiedPortfolioSnapshotV2(input.profileId, sources, input.receivedAtMs);
+  saveUnifiedPortfolioSnapshotV2(unified, database);
+  return Object.freeze({ connection, snapshot, unified });
+}
+
+export interface PersistRobinhoodSnapshotV2Input {
+  readonly profileId: string;
+  readonly credentialFingerprint: string;
+  readonly requestedAtMs: number;
+  readonly receivedAtMs: number;
+  readonly evidence: RobinhoodCryptoAccountEvidence;
+}
+
+/** Persist read-only Robinhood evidence; this service has no live order interface. */
+export async function persistRobinhoodPortfolioSnapshotV2(
+  input: PersistRobinhoodSnapshotV2Input,
+  database: Db,
+  priceSource: PriceSource,
+): Promise<{ readonly connection: ProfileConnectionV2; readonly snapshot: ConnectionAccountSnapshotV2; readonly unified: UnifiedPortfolioSnapshotV2 }> {
+  const candidate = profileConnectionV2(input.profileId, 'robinhood_crypto', input.credentialFingerprint, input.receivedAtMs);
+  const connection = getProfileConnectionV2(input.profileId, candidate.id, database) ?? candidate;
+  saveProfileConnectionV2(connection, database);
+  const refs = new Map(input.evidence.accounts.map((account) => {
+    const ref = providerAccountRefV1(connection, account.accountNumber, input.receivedAtMs);
+    saveProviderAccountRef(ref, database);
+    return [account.accountNumber, ref] as const;
+  }));
+  const holdings = input.evidence.holdings.filter((holding) => new Decimal(holding.totalQuantity).gt(0));
+  const instruments = holdings.map((holding) => ({ venue: 'robinhood_crypto' as const,
+    productId: `${holding.assetCode}-USD`, productType: 'spot' as const }));
+  let observations: ReadonlyMap<string, SpotPriceObservation> = new Map();
+  let complete = true;
+  try { observations = instruments.length === 0 ? new Map() : await priceSource.spot(instruments); }
+  catch { complete = false; }
+  const balances: ConnectionAccountBalanceV2[] = [];
+  for (const account of input.evidence.accounts) {
+    if (new Decimal(account.buyingPower).gt(0)) balances.push(Object.freeze({
+      accountRefId: refs.get(account.accountNumber)!.id, exposureKey: assetExposureKey(account.buyingPowerCurrency),
+      instrument: null, availableQuantity: account.buyingPower, heldQuantity: '0', totalQuantity: account.buyingPower,
+      priceUsd: account.buyingPowerCurrency === 'USD' ? '1' : null,
+      valueUsd: account.buyingPowerCurrency === 'USD' ? account.buyingPower : null,
+    }));
+  }
+  for (const holding of holdings) {
+    const instrument = { venue: 'robinhood_crypto' as const, productId: `${holding.assetCode}-USD`, productType: 'spot' as const };
+    const priceUsd = validPrice(observations.get(instrumentKey(instrument)));
+    if (priceUsd === null) complete = false;
+    balances.push(Object.freeze({ accountRefId: refs.get(holding.accountNumber)!.id,
+      exposureKey: assetExposureKey(holding.assetCode), instrument, availableQuantity: holding.availableQuantity,
+      heldQuantity: new Decimal(holding.totalQuantity).minus(holding.availableQuantity).toString(),
+      totalQuantity: holding.totalQuantity, priceUsd,
+      valueUsd: priceUsd === null ? null : new Decimal(holding.totalQuantity).mul(priceUsd).toString() }));
+  }
+  balances.sort((a, b) => a.exposureKey.localeCompare(b.exposureKey) || a.accountRefId.localeCompare(b.accountRefId));
+  const cashUsd = balances.filter((balance) => balance.exposureKey === 'USD')
+    .reduce((sum, balance) => sum.plus(balance.totalQuantity), new Decimal(0)).toString();
+  const material = {
+    schemaVersion: 2 as const, profileId: input.profileId, connectionId: connection.id,
+    provider: 'robinhood_crypto' as const, asOfMs: input.receivedAtMs, balances: Object.freeze(balances),
+    cashUsd, buyingPowerUsd: cashUsd,
+    pendingOrderIds: Object.freeze(input.evidence.openOrders.map((order) => order.id).sort()),
+    permissions: Object.freeze({ accountRead: true, marketRead: true, orderRead: true, trade: false as const }),
+    rulesHash: connectionV2Hash(input.evidence.tradingPairs),
+    feeEvidenceHash: connectionV2Hash(input.evidence.accounts.map((account) => account.feeRatio)),
+    health: complete ? 'healthy' as const : 'degraded' as const,
+    failureReason: complete ? null : 'valuation_incomplete', complete,
+    provenance: Object.freeze({ source: 'robinhood_crypto' as const,
+      requestedAtMs: input.requestedAtMs, receivedAtMs: input.receivedAtMs }),
+  };
+  const contentHash = connectionAccountSnapshotV2Hash({ ...material, id: '', contentHash: '' });
+  const snapshot = Object.freeze({ ...material, id: sha256Hex(`connection-account-snapshot-v2:${contentHash}`), contentHash });
+  saveConnectionAccountSnapshotV2(snapshot, database);
+  const sources = listProfileConnectionsV2(input.profileId, database).filter((item) => item.status !== 'disconnected')
+    .map((item) => item.id === connection.id ? snapshot
+      : getLatestConnectionAccountSnapshotV2(input.profileId, item.id, database) ?? unavailableSnapshot(item, input.receivedAtMs));
   const unified = buildUnifiedPortfolioSnapshotV2(input.profileId, sources, input.receivedAtMs);
   saveUnifiedPortfolioSnapshotV2(unified, database);
   return Object.freeze({ connection, snapshot, unified });

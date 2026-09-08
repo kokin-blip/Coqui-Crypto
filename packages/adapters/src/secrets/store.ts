@@ -1,5 +1,5 @@
 import type { CoinbaseCredentials } from '../coinbase/auth.js';
-import type { SecretRef } from '@coqui/core';
+import type { SecretRef, SecretRefV2 } from '@coqui/core';
 
 export const SECRET_STORE_SERVICE = 'kokincrypto';
 export const MAIN_WALLET_ID = 'main';
@@ -12,7 +12,8 @@ export type SecretKey =
   | 'anthropic-api-key'
   | 'advisor-history-key'
   | 'coingecko-api-key'
-  | 'coinmarketcap-api-key';
+  | 'coinmarketcap-api-key'
+  | 'robinhood-crypto-credentials';
 
 export type SecretStoreErrorCode =
   | 'unavailable'
@@ -44,7 +45,9 @@ export interface SecretStore {
   remove(key: SecretKey, walletId?: string | null): Promise<SecretMutationResult>;
 }
 
-function secretScope(ref: SecretRef): string {
+type ConnectionSecretRef = SecretRef | SecretRefV2;
+
+function secretScope(ref: ConnectionSecretRef): string {
   const connection = ref.connectionId ?? 'default';
   for (const value of [ref.profileId, connection, ref.provider, ref.credentialType]) {
     if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/u.test(value)) {
@@ -54,14 +57,17 @@ function secretScope(ref: SecretRef): string {
   return `v2.${ref.profileId}.${connection}.${ref.provider}.${ref.credentialType}`;
 }
 
-function secretKey(ref: SecretRef): SecretKey {
+function secretKey(ref: ConnectionSecretRef): SecretKey {
   if (ref.provider === 'coinbase' && ref.credentialType === 'api_credentials') {
     return 'coinbase-credentials';
+  }
+  if (ref.provider === 'robinhood_crypto' && ref.credentialType === 'api_credentials') {
+    return 'robinhood-crypto-credentials';
   }
   throw new TypeError('Unsupported connection credential type.');
 }
 
-export async function readConnectionSecret(store: SecretStore, ref: SecretRef): Promise<SecretReadResult> {
+export async function readConnectionSecret(store: SecretStore, ref: ConnectionSecretRef): Promise<SecretReadResult> {
   try {
     return await store.read(secretKey(ref), secretScope(ref));
   } catch {
@@ -71,7 +77,7 @@ export async function readConnectionSecret(store: SecretStore, ref: SecretRef): 
 
 export async function writeConnectionSecret(
   store: SecretStore,
-  ref: SecretRef,
+  ref: ConnectionSecretRef,
   value: string,
 ): Promise<SecretMutationResult> {
   try {
@@ -83,7 +89,7 @@ export async function writeConnectionSecret(
 
 export async function removeConnectionSecret(
   store: SecretStore,
-  ref: SecretRef,
+  ref: ConnectionSecretRef,
 ): Promise<SecretMutationResult> {
   try {
     return await store.remove(secretKey(ref), secretScope(ref));
@@ -95,7 +101,7 @@ export async function removeConnectionSecret(
 /** Explicit first-access migration. A verified v2 write always precedes legacy removal. */
 export async function migrateLegacyConnectionSecret(
   store: SecretStore,
-  ref: SecretRef,
+  ref: ConnectionSecretRef,
 ): Promise<SecretReadResult> {
   const current = await readConnectionSecret(store, ref);
   if (!current.ok || current.value !== null) return current;

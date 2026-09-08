@@ -1,11 +1,16 @@
 import {
   migrateLegacyConnectionSecret,
   parseCoinbaseKeyFileJson,
+  parseRobinhoodCryptoCredentialsJson,
+  parseStoredRobinhoodCryptoCredentials,
   parseStoredCoinbaseCredentials,
   removeConnectionSecret,
   serializeCoinbaseCredentials,
+  serializeRobinhoodCryptoCredentials,
   validateCoinbaseCredentials,
   writeConnectionSecret,
+  createRobinhoodCryptoReadClient,
+  type RobinhoodCryptoReadClient,
   type SecretStore,
 } from '@coqui/adapters';
 import { profileConnectionV2, sha256Hex, type Clock, type PriceSource, type ProfileConnectionV2 } from '@coqui/core';
@@ -13,6 +18,7 @@ import {
   createCoinbaseViewOnlyVerifier,
   createDefaultCoinbaseEvidenceAcquirer,
   persistCoinbasePortfolioSnapshotV2,
+  persistRobinhoodPortfolioSnapshotV2,
   type CoinbaseEvidenceAcquirer,
   type CoinbaseCredentialVerifier,
 } from '@coqui/services';
@@ -34,9 +40,8 @@ export interface ConnectionFileSelection {
 }
 
 function secretRef(connection: ProfileConnectionV2) {
-  if (connection.provider !== 'coinbase') throw new TypeError('Unsupported connection secret provider.');
   return { profileId: connection.profileId, connectionId: connection.id,
-    provider: 'coinbase' as const, credentialType: 'api_credentials' as const };
+    provider: connection.provider, credentialType: 'api_credentials' as const, schemaVersion: 2 as const };
 }
 
 function view(connection: ProfileConnectionV2, database: Db) {
@@ -64,9 +69,11 @@ export function createConnectionHandlers(input: {
   readonly pickConnectionFile?: (provider: 'coinbase' | 'robinhood_crypto') => Promise<ConnectionFileSelection | null>;
   readonly coinbaseAcquirer?: CoinbaseEvidenceAcquirer;
   readonly coinbaseVerifier?: CoinbaseCredentialVerifier;
+  readonly robinhoodClientFactory?: (credentials: Parameters<typeof createRobinhoodCryptoReadClient>[0]) => RobinhoodCryptoReadClient;
 }): ChannelHandlers {
   const outcomes = new Map<string, Awaited<ReturnType<NonNullable<ChannelHandlers[keyof ChannelHandlers]>>>>();
   const acquirer = input.coinbaseAcquirer ?? createDefaultCoinbaseEvidenceAcquirer();
+  const robinhoodClientFactory = input.robinhoodClientFactory ?? ((credentials) => createRobinhoodCryptoReadClient(credentials));
 
   async function ensureLegacyCoinbase(): Promise<void> {
     if (input.secrets === undefined) return;
@@ -81,10 +88,22 @@ export function createConnectionHandlers(input: {
   }
 
   async function sync(connection: ProfileConnectionV2) {
-    if (connection.provider !== 'coinbase') return { ok: false as const, issues: [{ path: [], code: 'provider_not_available' }] };
     if (input.secrets === undefined) return { ok: false as const, issues: [{ path: [], code: 'secret_store_unavailable' }] };
     const stored = await migrateLegacyConnectionSecret(input.secrets, secretRef(connection));
     if (!stored.ok || stored.value === null) return { ok: false as const, issues: [{ path: [], code: 'credentials_unavailable' }] };
+    if (connection.provider === 'robinhood_crypto') {
+      const credentials = parseStoredRobinhoodCryptoCredentials(stored.value);
+      if (credentials === null) return { ok: false as const, issues: [{ path: [], code: 'credentials_invalid' }] };
+      const requestedAtMs = input.clock.nowMs(), client = robinhoodClientFactory(credentials);
+      try {
+        const acquired = await client.acquire();
+        if (!acquired.ok) return { ok: false as const, issues: [{ path: [], code: `robinhood_${acquired.code}` }] };
+        await persistRobinhoodPortfolioSnapshotV2({ profileId: input.profileId,
+          credentialFingerprint: connection.credentialFingerprint, requestedAtMs,
+          receivedAtMs: input.clock.nowMs(), evidence: acquired.value }, input.database, input.priceSource);
+        return { ok: true as const, value: view(getProfileConnectionV2(input.profileId, connection.id, input.database)!, input.database) };
+      } finally { client.destroy(); }
+    }
     const credentials = parseStoredCoinbaseCredentials(stored.value);
     if (credentials === null || !validateCoinbaseCredentials(credentials).ok) {
       return { ok: false as const, issues: [{ path: [], code: 'credentials_invalid' }] };
@@ -121,10 +140,26 @@ export function createConnectionHandlers(input: {
         : { ok: true, value: view(connection, input.database) };
     },
     'connections.connect-file': async (payload: { readonly commandId: string; readonly provider: 'coinbase' | 'robinhood_crypto'; readonly label?: string }) => once(payload.commandId, async () => {
-      if (payload.provider !== 'coinbase') return { ok: false, issues: [{ path: ['provider'], code: 'provider_not_available' }] };
       if (input.secrets === undefined || input.pickConnectionFile === undefined) return { ok: false, issues: [{ path: [], code: 'connection_file_unavailable' }] };
       const selected = await input.pickConnectionFile(payload.provider);
       if (selected === null) return { ok: false, issues: [{ path: [], code: 'cancelled' }] };
+      if (payload.provider === 'robinhood_crypto') {
+        const parsed = parseRobinhoodCryptoCredentialsJson(selected.contents);
+        if (!parsed.ok) return { ok: false, issues: [{ path: [], code: `robinhood_${parsed.code}` }] };
+        const atMs = input.clock.nowMs();
+        const connection = profileConnectionV2(input.profileId, payload.provider, sha256Hex(parsed.credentials.apiKey), atMs, payload.label);
+        const written = await writeConnectionSecret(input.secrets, secretRef(connection), serializeRobinhoodCryptoCredentials(parsed.credentials));
+        if (!written.ok) return { ok: false, issues: [{ path: [], code: 'secret_store_unavailable' }] };
+        try { saveProfileConnectionV2(connection, input.database); } catch {
+          await removeConnectionSecret(input.secrets, secretRef(connection));
+          return { ok: false, issues: [{ path: [], code: 'connection_storage_rejected' }] };
+        }
+        const synced = await sync(connection);
+        if (synced.ok) return synced;
+        await removeConnectionSecret(input.secrets, secretRef(connection));
+        saveProfileConnectionV2({ ...connection, status: 'attention_required', updatedAtMs: input.clock.nowMs() }, input.database);
+        return synced;
+      }
       const parsed = parseCoinbaseKeyFileJson(selected.contents);
       if (!parsed.ok) return { ok: false, issues: [{ path: [], code: 'invalid_coinbase_key_file' }] };
       const verified = await (input.coinbaseVerifier ?? createCoinbaseViewOnlyVerifier()).verify(parsed.credentials);
@@ -150,7 +185,6 @@ export function createConnectionHandlers(input: {
     'connections.disconnect': async (payload: { readonly commandId: string; readonly connectionId: string }) => once(payload.commandId, async () => {
       const connection = getProfileConnectionV2(input.profileId, payload.connectionId, input.database);
       if (connection === null) return { ok: false, issues: [{ path: ['connectionId'], code: 'connection_not_found' }] };
-      if (connection.provider !== 'coinbase') return { ok: false, issues: [{ path: ['connectionId'], code: 'provider_not_available' }] };
       if (input.secrets === undefined) return { ok: false, issues: [{ path: [], code: 'secret_store_unavailable' }] };
       const removed = await removeConnectionSecret(input.secrets, secretRef(connection));
       if (!removed.ok) return { ok: false, issues: [{ path: [], code: 'secret_store_unavailable' }] };

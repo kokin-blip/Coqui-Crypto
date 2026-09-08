@@ -466,6 +466,14 @@ quantities. Legacy singular Coinbase credentials migrate lazily on first
 provider-neutral access using write–verify–remove ordering; the old channels
 remain available for one compatibility cycle.
 
+Robinhood Crypto uses the official Crypto Trading API v2 through a read-only
+adapter. It exposes bounded account, holding, order-status, trading-pair,
+best-price, and estimated-price reads only. Ed25519 credentials are selected in
+Electron main and stored under the profile/connection-scoped keychain identity;
+raw account numbers become a hash plus masked suffix before persistence. The
+provider always reports live execution authority as false, and no Robinhood
+order-placement method is composed or exposed over IPC.
+
 ### 6.2 Venue-neutral planning and paper routing
 
 Migration 65 adds immutable `ExecutionPlanV1` and `ExecutionRouteV1` evidence.

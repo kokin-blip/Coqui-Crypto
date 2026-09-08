@@ -11,4 +11,5 @@ export * from './http/index.js';
 export * from './market-data/index.js';
 export * from './paper/index.js';
 export * from './reference/index.js';
+export * from './robinhood/index.js';
 export * from './secrets/index.js';

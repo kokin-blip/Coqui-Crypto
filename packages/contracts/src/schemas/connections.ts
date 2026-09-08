@@ -22,7 +22,7 @@ const connection = z.strictObject({
 
 const contribution = z.strictObject({
   connectionId: sha256HexSchema, accountRefId: sha256HexSchema, provider,
-  instrument: z.strictObject({ venue: z.enum(['coinbase', 'robinhood']), productId: z.string().min(1).max(64), productType: z.literal('spot') }).readonly().nullable(),
+  instrument: z.strictObject({ venue: z.enum(['coinbase', 'robinhood_crypto']), productId: z.string().min(1).max(64), productType: z.literal('spot') }).readonly().nullable(),
   quantity: decimalStringSchema, valueUsd: decimalStringSchema.nullable(),
 }).readonly();
 

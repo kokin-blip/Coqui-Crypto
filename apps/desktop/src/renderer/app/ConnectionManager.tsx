@@ -53,11 +53,12 @@ export function ConnectionManager({ client }: { readonly client: CoquiClient }):
       </header>
       <div className="coinbase-safety-strip"><ShieldCheck aria-hidden="true" size={18} /><span><strong>Credentials stay in the OS keychain</strong><small>Credential files are selected and read by the desktop host. Keys never enter the renderer, database, logs, or Advisor.</small></span></div>
       <div className="coinbase-key-actions">
-        <label>Provider<select value={provider} onChange={(event) => setProvider(event.target.value as typeof provider)}><option value="coinbase">Coinbase</option><option value="robinhood_crypto" disabled>Robinhood Crypto — next phase</option></select></label>
+        <label>Provider<select value={provider} onChange={(event) => setProvider(event.target.value as typeof provider)}><option value="coinbase">Coinbase</option><option value="robinhood_crypto">Robinhood Crypto</option></select></label>
         <button type="button" className="button-primary" disabled={connect.state.kind === 'pending'} onClick={() => void connect.run({ commandId: crypto.randomUUID(), provider })}>
           <Plus aria-hidden="true" size={15} />{connect.state.kind === 'pending' ? 'Verifying…' : 'Add connection'}
         </button>
       </div>
+      {provider === 'robinhood_crypto' && <p className="settings-help">Select a JSON file containing <code>apiKey</code> and <code>privateKeyBase64</code> from Robinhood Crypto API settings. Coqui verifies account access and never enables live orders.</p>}
       {connect.state.kind === 'failed' && <SurfaceState kind="error" title="Connection was not added" detail={connect.state.codes.join(', ')} compact />}
       {connect.state.kind === 'succeeded' && <SurfaceState kind="success" title="Connection added" detail="The account was verified, synced, and added to the current portfolio." compact />}
       {connections.kind === 'loading' && <SurfaceState kind="loading" title="Loading connections" compact />}
