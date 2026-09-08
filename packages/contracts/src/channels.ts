@@ -112,6 +112,7 @@ const WRITE_CHANNELS = [
   'chart-extensions.signer.trust',
   'market-events.ingest-local',
   'paper.campaign.kill-switch',
+  'paper.campaign.connections.start',
   'paper.execution.policy.set',
   'paper.execution.prepare',
   'paper.execution.review',

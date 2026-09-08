@@ -67,6 +67,15 @@ const campaignSchema = z.strictObject({
   state: z.enum(['registered', 'running', 'completed', 'failed']),
 }).readonly().nullable();
 
+const connectionCampaignSchema = z.strictObject({
+  campaignId: sha256HexSchema, sourceUnifiedSnapshotId: sha256HexSchema,
+  startedAtMs: epochMillisecondsSchema, connectionCount: z.number().int().positive(),
+  connections: z.array(z.strictObject({ connectionId: sha256HexSchema,
+    provider: z.enum(['coinbase', 'robinhood_crypto']), cashUsd: decimalStringSchema,
+    balanceCount: z.number().int().nonnegative(), sourceConnectionSnapshotId: sha256HexSchema,
+  }).readonly()).max(100).readonly(),
+}).readonly().nullable();
+
 export const paperExecutionChannelSchemas = {
   'paper.campaign': {
     request: emptyPayloadSchema,
@@ -79,6 +88,11 @@ export const paperExecutionChannelSchemas = {
       explicitConfirmation: z.literal(true),
     }).readonly(),
     response: campaignSchema,
+  },
+  'paper.campaign.connections': { request: emptyPayloadSchema, response: connectionCampaignSchema },
+  'paper.campaign.connections.start': {
+    request: z.strictObject({ commandId: commandIdSchema, explicitConfirmation: z.literal(true) }).readonly(),
+    response: connectionCampaignSchema.unwrap(),
   },
   'paper.execution.policy': {
     request: emptyPayloadSchema,

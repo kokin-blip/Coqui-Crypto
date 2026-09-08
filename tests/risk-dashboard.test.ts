@@ -135,6 +135,7 @@ describe('the gate cannot be edited from the UI', () => {
       'chart-extensions.signer.trust',
       'market-events.ingest-local',
       'paper.campaign.kill-switch',
+      'paper.campaign.connections.start',
       'paper.execution.policy.set',
       'paper.execution.prepare',
       'paper.execution.review',

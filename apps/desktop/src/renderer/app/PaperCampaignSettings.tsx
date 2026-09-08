@@ -6,14 +6,17 @@ import { presentAction } from '@coqui/ui-kit';
 import { useChannel } from '../query/use-channel.js';
 import { useCommand } from '../query/use-command.js';
 
-const INVALIDATIONS = ['paper.campaign', 'app.status-rail', 'activity.feed'] as const;
+const INVALIDATIONS = ['paper.campaign', 'paper.campaign.connections', 'app.status-rail', 'activity.feed'] as const;
 
 export function PaperCampaignSettings({ client }: {
   readonly client: CoquiClient;
 }): React.JSX.Element {
   const campaign = useChannel(client, 'paper.campaign', {});
   const command = useCommand(client, 'paper.campaign.kill-switch', INVALIDATIONS);
+  const connectionCampaign = useChannel(client, 'paper.campaign.connections', {});
+  const startConnections = useCommand(client, 'paper.campaign.connections.start', INVALIDATIONS);
   const [confirmed, setConfirmed] = useState(false);
+  const [connectionConfirmed, setConnectionConfirmed] = useState(false);
   const action = presentAction(command.state, {
     idle: 'Record safety exercise', pending: 'Recording…',
   }, 'consequential');
@@ -68,6 +71,20 @@ export function PaperCampaignSettings({ client }: {
         </button>
       )}
       <span aria-live="polite">{action.liveMessage}</span>
+      <div className="settings-divider" />
+      <div><p className="eyebrow">Connection-isolated simulator</p><h3>Multi-connection paper campaign</h3>
+        <p className="muted">{connectionCampaign.kind === 'ready' && connectionCampaign.value !== null
+          ? `${connectionCampaign.value.connectionCount} connection books · started ${new Date(connectionCampaign.value.startedAtMs).toLocaleString()}`
+          : 'Starts prospectively from a complete, fully priced connected portfolio. Existing paper books are never reseeded.'}</p></div>
+      {connectionCampaign.kind === 'ready' && connectionCampaign.value === null && <>
+        <label className="confirmation-check"><input type="checkbox" checked={connectionConfirmed}
+          onChange={(event) => setConnectionConfirmed(event.target.checked)} /> I understand this creates new immutable simulated books and does not modify any real account.</label>
+        <button type="button" className="button-primary" disabled={!connectionConfirmed || startConnections.state.kind === 'pending'}
+          onClick={() => void startConnections.run({ commandId: crypto.randomUUID(), explicitConfirmation: true })}>
+          {startConnections.state.kind === 'pending' ? 'Starting…' : 'Start multi-connection paper campaign'}
+        </button>
+      </>}
+      {startConnections.state.kind === 'failed' && <p role="alert" className="action-error">{startConnections.state.codes.join(', ')}</p>}
     </section>
   );
 }

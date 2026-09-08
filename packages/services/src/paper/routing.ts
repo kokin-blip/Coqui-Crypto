@@ -9,6 +9,8 @@ import {
 } from '@coqui/core';
 import {
   getExecutionPlan,
+  latestMultiConnectionPaperCampaign,
+  linkPaperConnectionRoute,
   listExecutionRoutes,
   linkExecutionPlanEvidence,
   saveExecutionPlan,
@@ -50,6 +52,16 @@ export class VenueNeutralPaperRoutingService {
   ): ExecutionRoutingResultV1 {
     const routing = routeExecutionPlan(plan, candidates);
     saveExecutionPlan(plan, routing.routes, this.#database);
+    const campaign = latestMultiConnectionPaperCampaign(plan.profileId, this.#database);
+    if (campaign !== null) {
+      for (const route of routing.routes) {
+        const book = campaign.books.find((candidate) => candidate.connectionId === route.connectionId);
+        if (book !== undefined) linkPaperConnectionRoute({
+          profileId: plan.profileId, routeId: route.id, campaignId: campaign.campaign.id,
+          bookSnapshotId: book.id, connectionId: route.connectionId, createdAtMs: route.createdAtMs,
+        }, this.#database);
+      }
+    }
     if (executionPlannedEventId !== undefined) {
       linkExecutionPlanEvidence(plan.id, executionPlannedEventId, this.#database);
     }

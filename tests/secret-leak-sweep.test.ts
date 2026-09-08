@@ -63,6 +63,7 @@ const LOCAL_CHANNELS: readonly ChannelName[] = [
   'alerts.view',
   'app.incidents',
   'paper.execution.policy',
+  'paper.campaign.connections',
   'paper.execution.proposals',
   'paper.performance',
   'paper.performance-day',
@@ -211,6 +212,7 @@ describe('the sweep covers the whole registry', () => {
       || channel === 'paper.execution.proposal'
       || channel === 'paper.campaign'
       || channel === 'paper.campaign.kill-switch'
+      || channel === 'paper.campaign.connections.start'
       || channel === 'paper.execution.policy.set'
       || channel === 'paper.execution.prepare'
       || channel === 'paper.execution.review'

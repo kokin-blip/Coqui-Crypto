@@ -6,5 +6,6 @@ export type { PaperMarketData } from './oms.js';
 export * from './paper-portfolio.js';
 export * from './reconciliation.js';
 export * from './routing.js';
+export * from './connection-campaign.js';
 export * from './run-loop.js';
 export * from './venue.js';

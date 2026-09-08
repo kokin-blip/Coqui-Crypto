@@ -4,6 +4,7 @@ import { isAbsolute, relative, resolve } from 'node:path';
 import { DatabaseSync, type SQLInputValue } from 'node:sqlite';
 
 import { backupDatabase } from '../sqlite/index.js';
+import { connectionCampaignRowCount, hostAuthorityRowCount } from './duplication-transient-counts.js';
 
 export interface DuplicateProfileDatabaseInput {
   readonly sourceProfileId: string;
@@ -181,6 +182,9 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
           DROP TRIGGER unified_portfolio_snapshot_sources_v2_no_delete;
           DROP TRIGGER portfolio_valuation_observations_v1_no_update;
           DROP TRIGGER portfolio_valuation_observations_v1_no_delete;
+          DROP TRIGGER multi_connection_paper_campaigns_v1_no_update; DROP TRIGGER multi_connection_paper_campaigns_v1_no_delete;
+          DROP TRIGGER paper_connection_book_snapshots_v1_no_update; DROP TRIGGER paper_connection_book_snapshots_v1_no_delete;
+          DROP TRIGGER paper_connection_route_links_v1_no_update; DROP TRIGGER paper_connection_route_links_v1_no_delete;
           DROP TRIGGER execution_plans_v1_no_update;
           DROP TRIGGER execution_plans_v1_no_delete;
           DROP TRIGGER execution_routes_v1_no_update;
@@ -321,11 +325,9 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
             (SELECT COUNT(*) FROM execution_lease_events_v1 WHERE profile_id = ?) AS count
         `, input.targetProfileId.toLowerCase(), input.targetProfileId.toLowerCase(),
         input.targetProfileId.toLowerCase());
-        const hostAuthorityRows = countQuery(target, `SELECT
-          (SELECT COUNT(*) FROM authoritative_hosts_v1 WHERE profile_id=?) +
-          (SELECT COUNT(*) FROM host_reconciliation_evidence_v1 WHERE profile_id=?) +
-          (SELECT COUNT(*) FROM host_takeover_history_v1 WHERE profile_id=?) AS count`,
-        input.targetProfileId.toLowerCase(),input.targetProfileId.toLowerCase(),input.targetProfileId.toLowerCase());
+        const targetProfileId = input.targetProfileId.toLowerCase();
+        const connectionCampaignRows = connectionCampaignRowCount(target, targetProfileId);
+        const hostAuthorityRows = hostAuthorityRowCount(target, targetProfileId);
         target.exec(`
           DELETE FROM host_takeover_history_v1;
           DELETE FROM authoritative_hosts_v1;
@@ -334,8 +336,11 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
           DELETE FROM execution_lease_events_v1;
           DELETE FROM execution_leases_v1;
           DELETE FROM execution_plan_evidence_links_v1;
+          DELETE FROM paper_connection_route_links_v1;
           DELETE FROM execution_routes_v1;
           DELETE FROM execution_plans_v1;
+          DELETE FROM paper_connection_book_snapshots_v1;
+          DELETE FROM multi_connection_paper_campaigns_v1;
           DELETE FROM portfolio_valuation_observations_v1;
           DELETE FROM unified_portfolio_snapshot_sources_v2;
           DELETE FROM unified_portfolio_snapshots_v2;
@@ -396,6 +401,12 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
             BEGIN SELECT RAISE(ABORT, 'portfolio valuation observations are immutable'); END;
           CREATE TRIGGER portfolio_valuation_observations_v1_no_delete BEFORE DELETE ON portfolio_valuation_observations_v1
             BEGIN SELECT RAISE(ABORT, 'portfolio valuation observations are immutable'); END;
+          CREATE TRIGGER multi_connection_paper_campaigns_v1_no_update BEFORE UPDATE ON multi_connection_paper_campaigns_v1 BEGIN SELECT RAISE(ABORT,'multi-connection paper campaigns are immutable'); END;
+          CREATE TRIGGER multi_connection_paper_campaigns_v1_no_delete BEFORE DELETE ON multi_connection_paper_campaigns_v1 BEGIN SELECT RAISE(ABORT,'multi-connection paper campaigns are immutable'); END;
+          CREATE TRIGGER paper_connection_book_snapshots_v1_no_update BEFORE UPDATE ON paper_connection_book_snapshots_v1 BEGIN SELECT RAISE(ABORT,'paper connection books are immutable'); END;
+          CREATE TRIGGER paper_connection_book_snapshots_v1_no_delete BEFORE DELETE ON paper_connection_book_snapshots_v1 BEGIN SELECT RAISE(ABORT,'paper connection books are immutable'); END;
+          CREATE TRIGGER paper_connection_route_links_v1_no_update BEFORE UPDATE ON paper_connection_route_links_v1 BEGIN SELECT RAISE(ABORT,'paper connection route links are immutable'); END;
+          CREATE TRIGGER paper_connection_route_links_v1_no_delete BEFORE DELETE ON paper_connection_route_links_v1 BEGIN SELECT RAISE(ABORT,'paper connection route links are immutable'); END;
           CREATE TRIGGER execution_plans_v1_no_update BEFORE UPDATE ON execution_plans_v1
             BEGIN SELECT RAISE(ABORT, 'execution plans are immutable'); END;
           CREATE TRIGGER execution_plans_v1_no_delete BEFORE DELETE ON execution_plans_v1
@@ -439,7 +450,8 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
         ).run(...credentialMetadataKeys);
         const excludedTransientRowCount = pendingImportRows + scheduleRows +
           privateAdvisorRows + connectionRows;
-        const excludedTransientRowCountWithRouting = excludedTransientRowCount + routingRows + authorityRows + hostAuthorityRows;
+        const excludedTransientRowCountWithRouting = excludedTransientRowCount + routingRows +
+          connectionCampaignRows + authorityRows + hostAuthorityRows;
         if (!Number.isSafeInteger(excludedTransientRowCountWithRouting)) throw new RangeError('Duplication exclusion count overflow.');
         target.exec('COMMIT');
 
@@ -478,11 +490,7 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
         };
       } catch (error) {
         if (target?.isTransaction) {
-          try {
-            target.exec('ROLLBACK');
-          } catch {
-            // The temporary clone is discarded below.
-          }
+          try { target.exec('ROLLBACK'); } catch { /* The temporary clone is discarded below. */ }
         }
         const identityFailure = stage === 'identity' && error instanceof RangeError;
         return {
@@ -492,12 +500,8 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
               : 'verification_failed',
         };
       } finally {
-        try {
-          target?.close();
-        } catch { /* The temporary clone is discarded below. */ }
-        try {
-          source?.close();
-        } catch { /* Read-only source cleanup is best effort. */ }
+        try { target?.close(); } catch { /* The temporary clone is discarded below. */ }
+        try { source?.close(); } catch { /* Read-only source cleanup is best effort. */ }
         try {
           if (existsSync(temporaryPath)) rmSync(temporaryPath, { force: true });
         } catch { /* Cleanup is restricted to the validated temporary child. */ }

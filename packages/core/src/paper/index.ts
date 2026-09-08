@@ -10,6 +10,7 @@ import {
 } from '../types/index.js';
 
 export * from './evidence.js';
+export * from './connection-book.js';
 
 /** Shared OMS states. Ambiguous submission outcomes must enter `unknown`. */
 export type PaperOrderState =

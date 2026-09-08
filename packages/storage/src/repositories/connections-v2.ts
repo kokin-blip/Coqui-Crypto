@@ -133,6 +133,12 @@ export function getLatestConnectionAccountSnapshotV2(profileId: string, connecti
   return row === undefined ? null : snapshotFromJson(row.content_json);
 }
 
+export function getConnectionAccountSnapshotV2(profileId: string, id: string, database: Db): ConnectionAccountSnapshotV2 | null {
+  const row = database.prepare(`SELECT content_json FROM connection_account_snapshots_v2
+    WHERE profile_id = ? AND id = ?`).get(profileId, id) as { content_json: string } | undefined;
+  return row === undefined ? null : snapshotFromJson(row.content_json);
+}
+
 export function saveUnifiedPortfolioSnapshotV2(value: UnifiedPortfolioSnapshotV2, database: Db): void {
   if (unifiedPortfolioSnapshotV2Hash(value) !== value.contentHash ||
       value.id !== sha256Hex(`unified-portfolio-snapshot-v2:${value.contentHash}`)) throw new TypeError('Invalid unified snapshot v2.');

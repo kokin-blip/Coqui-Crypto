@@ -62,6 +62,8 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'chart-extensions.evaluate': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
   'paper.campaign': { refetchIntervalMs: 60_000, staleTimeMs: 30_000 },
   'paper.campaign.kill-switch': { refetchIntervalMs: false, staleTimeMs: Infinity },
+  'paper.campaign.connections': { refetchIntervalMs: false, staleTimeMs: 30_000 },
+  'paper.campaign.connections.start': { refetchIntervalMs: false, staleTimeMs: 0 },
   'activity.feed': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
   'operations.floor': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
   // Profile metadata changes only through explicit account commands.
