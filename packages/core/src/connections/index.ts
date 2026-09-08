@@ -3,6 +3,8 @@ import { sha256Hex } from '../crypto/sha256.js';
 import type { InstrumentIdentity } from '../types/index.js';
 import { Decimal } from 'decimal.js';
 
+export * from './v2.js';
+
 export type ConnectionProvider = 'coinbase';
 export type ConnectionCapability = 'account_read' | 'market_read' | 'paper_route';
 export type ConnectionStatus = 'active' | 'attention_required' | 'disconnected';

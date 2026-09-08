@@ -3,6 +3,7 @@ export * from './comparison.js';
 export * from './coinbase-connection.js';
 export * from './coinbase-sync.js';
 export * from './connection-snapshots.js';
+export * from './connection-snapshots-v2.js';
 export * from './deletion.js';
 export * from './deletion-preview.js';
 export * from './dashboard.js';

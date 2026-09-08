@@ -64,6 +64,7 @@ describe('channel registry', () => {
       'chart-extensions.set',
       'chart-extensions.signer.remove',
       'chart-extensions.signer.trust',
+      'connections.connect-file', 'connections.disconnect', 'connections.list', 'connections.rename', 'connections.status', 'connections.sync',
       'market-data.candles',
       'market-data.display-bars',
       'market-data.fear-greed',
@@ -88,6 +89,8 @@ describe('channel registry', () => {
       'paper.performance-day',
       'paper.portfolio',
       'portfolio.allocation',
+      'portfolio.current',
+      'portfolio.history',
       'portfolio.reconciliation',
       'portfolio.reconciliation.resolve',
       'portfolio.tax',
@@ -124,6 +127,10 @@ describe('channel registry', () => {
       'accounts.profile.switch',
       'accounts.settings.set',
       'accounts.workspace.set',
+      'connections.connect-file',
+      'connections.rename',
+      'connections.disconnect',
+      'connections.sync',
       'app.chart.snapshot.save',
       'app.chart.workspace.set',
       'advisor.chat.history.delete', 'advisor.chat.history.export',
@@ -457,17 +464,9 @@ describe('scoreboard contract', () => {
       completedAtMs: 1_723_000_000_000,
       adopted: false,
       tracks: [
-        {
-          trackId: 'hold',
-          afterCostReturnPct: 11.2,
-          maxDrawdownPct: -44.1,
-          sortino: 0.38,
-          sharpe: 0.3,
-          dsr: null,
-          trialCount: null,
-          excessReturnVsHoldPct: null,
-          excessReturnVsPassivePct: null,
-        },
+        { trackId: 'hold', afterCostReturnPct: 11.2, maxDrawdownPct: -44.1,
+          sortino: 0.38, sharpe: 0.3, dsr: null, trialCount: null,
+          excessReturnVsHoldPct: null, excessReturnVsPassivePct: null },
       ],
       sampleDays: 32,
       datasetHash: 'b'.repeat(64),
@@ -477,8 +476,7 @@ describe('scoreboard contract', () => {
     };
     expect(schema.safeParse(base).success).toBe(true);
 
-    // Literal false: P3's replacement run was negative, so the wire type will
-    // not carry a claim that the defaults are validated.
+    // The negative P3 replacement run cannot claim the defaults are validated.
     expect(schema.safeParse({ ...base, parametersValidated: true }).success).toBe(false);
   });
 

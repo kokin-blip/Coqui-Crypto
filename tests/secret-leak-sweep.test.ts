@@ -224,6 +224,9 @@ describe('the sweep covers the whole registry', () => {
       || channel === 'app.chart.workspace.set'
       || channel.startsWith('chart-extensions.')
       || channel.startsWith('advisor.')
+      || channel.startsWith('connections.')
+      || channel === 'portfolio.current'
+      || channel === 'portfolio.history'
       || channel === 'portfolio.reconciliation.resolve',
     )).toBe(true);
   });

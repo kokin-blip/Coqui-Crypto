@@ -4,6 +4,7 @@ import { activityChannelSchemas } from './schemas/activity.js';
 import { appChannelSchemas } from './schemas/app.js';
 import { chartExtensionChannelSchemas } from './schemas/chart-extensions.js';
 import { accountsChannelSchemas } from './schemas/accounts.js';
+import { connectionChannelSchemas } from './schemas/connections.js';
 import { advisorAnalystChannelSchemas } from './schemas/advisor-analyst.js';
 import { marketDataChannelSchemas } from './schemas/market-data.js';
 import { marketEventChannelSchemas } from './schemas/market-events.js';
@@ -34,6 +35,7 @@ export const CHANNEL_SCHEMAS = {
   ...appChannelSchemas,
   ...chartExtensionChannelSchemas,
   ...accountsChannelSchemas,
+  ...connectionChannelSchemas,
   ...advisorAnalystChannelSchemas,
   ...marketDataChannelSchemas,
   ...marketEventChannelSchemas,
@@ -88,6 +90,10 @@ const WRITE_CHANNELS = [
   'accounts.profile.switch',
   'accounts.settings.set',
   'accounts.workspace.set',
+  'connections.connect-file',
+  'connections.rename',
+  'connections.disconnect',
+  'connections.sync',
   'app.chart.snapshot.save',
   'app.chart.workspace.set',
   'advisor.chat.history.delete',

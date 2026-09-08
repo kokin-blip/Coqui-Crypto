@@ -7,7 +7,11 @@ import {
 } from '../packages/adapters/src/index.js';
 import {
   buildUnifiedPortfolioSnapshot,
+  buildUnifiedPortfolioSnapshotV2,
+  connectionAccountSnapshotV2Hash,
   decimal,
+  profileConnectionV2,
+  providerAccountRefV1,
   sha256Hex,
 } from '../packages/core/src/index.js';
 import {
@@ -17,11 +21,18 @@ import {
 } from '../packages/services/src/index.js';
 import {
   getConnectionAccountSnapshot,
+  getLatestUnifiedPortfolioSnapshotV2,
   getProfileConnection,
   getUnifiedPortfolioSnapshot,
   ensureLegacyCoinbaseConnection,
   legacyCoinbaseConnection,
   listProfileConnections,
+  listPortfolioValuationObservations,
+  listProfileConnectionsV2,
+  saveConnectionAccountSnapshotV2,
+  saveProfileConnectionV2,
+  saveProviderAccountRef,
+  saveUnifiedPortfolioSnapshotV2,
   openDatabase,
   saveConnectionAccountSnapshot,
   saveProfileConnection,
@@ -38,6 +49,40 @@ function account(currency: string, quantity: string) {
 }
 
 describe('profile connections and unified portfolio evidence', () => {
+  it('persists versioned connection and authoritative portfolio evidence without tax lots', () => {
+    const database = openDatabase(':memory:');
+    const connection = profileConnectionV2('profile-a', 'coinbase', sha256Hex('credential'), 10);
+    saveProfileConnectionV2(connection, database);
+    const accountRef = providerAccountRefV1(connection, 'provider-account-1234', 10);
+    saveProviderAccountRef(accountRef, database);
+    const material = {
+      schemaVersion: 2 as const, profileId: 'profile-a', connectionId: connection.id,
+      provider: 'coinbase' as const, asOfMs: 20,
+      balances: [{ accountRefId: accountRef.id, exposureKey: 'BTC' as never,
+        instrument: { venue: 'coinbase' as const, productId: 'BTC-USD', productType: 'spot' as const },
+        availableQuantity: '1', heldQuantity: '0', totalQuantity: '1', priceUsd: '50000', valueUsd: '50000' }],
+      cashUsd: '0', buyingPowerUsd: '0', pendingOrderIds: [],
+      permissions: { accountRead: true, marketRead: true, orderRead: true, trade: false as const },
+      rulesHash: null, feeEvidenceHash: null, health: 'healthy' as const,
+      failureReason: null, complete: true,
+      provenance: { source: 'coinbase' as const, requestedAtMs: 19, receivedAtMs: 20 },
+    };
+    const hash = connectionAccountSnapshotV2Hash({ ...material, id: '', contentHash: '' });
+    const snapshot = { ...material, id: sha256Hex(`connection-account-snapshot-v2:${hash}`), contentHash: hash };
+    saveConnectionAccountSnapshotV2(snapshot, database);
+    const unified = buildUnifiedPortfolioSnapshotV2('profile-a', [snapshot], 20);
+    saveUnifiedPortfolioSnapshotV2(unified, database);
+
+    expect(listProfileConnectionsV2('profile-a', database)).toEqual([connection]);
+    expect(getLatestUnifiedPortfolioSnapshotV2('profile-a', true, database)).toMatchObject({
+      totalValueUsd: '50000', exposures: [{ exposureKey: 'BTC', quantity: '1' }],
+    });
+    expect(listPortfolioValuationObservations('profile-a', database)).toEqual([{
+      observedAtMs: 20, totalValueUsd: '50000', unifiedSnapshotId: unified.id,
+    }]);
+    expect(() => database.prepare('DELETE FROM unified_portfolio_snapshots_v2').run()).toThrow();
+  });
+
   it('supports repeated Coinbase identities and enforces profile-scoped reads', () => {
     const database = openDatabase(':memory:');
     const first = legacyCoinbaseConnection('profile-a', sha256Hex('key-a'), 10);

@@ -1,12 +1,5 @@
 import { createHash } from 'node:crypto';
-import {
-  existsSync,
-  readFileSync,
-  realpathSync,
-  renameSync,
-  rmSync,
-  statSync,
-} from 'node:fs';
+import { existsSync, readFileSync, realpathSync, renameSync, rmSync, statSync } from 'node:fs';
 import { isAbsolute, relative, resolve } from 'node:path';
 import { DatabaseSync, type SQLInputValue } from 'node:sqlite';
 
@@ -175,6 +168,19 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
           DROP TRIGGER unified_portfolio_snapshots_v1_no_delete;
           DROP TRIGGER unified_portfolio_snapshot_connections_v1_no_update;
           DROP TRIGGER unified_portfolio_snapshot_connections_v1_no_delete;
+          DROP TRIGGER profile_connections_v2_identity_immutable;
+          DROP TRIGGER provider_account_refs_v1_no_update;
+          DROP TRIGGER provider_account_refs_v1_no_delete;
+          DROP TRIGGER profile_connection_migration_links_v1_no_update;
+          DROP TRIGGER profile_connection_migration_links_v1_no_delete;
+          DROP TRIGGER connection_account_snapshots_v2_no_update;
+          DROP TRIGGER connection_account_snapshots_v2_no_delete;
+          DROP TRIGGER unified_portfolio_snapshots_v2_no_update;
+          DROP TRIGGER unified_portfolio_snapshots_v2_no_delete;
+          DROP TRIGGER unified_portfolio_snapshot_sources_v2_no_update;
+          DROP TRIGGER unified_portfolio_snapshot_sources_v2_no_delete;
+          DROP TRIGGER portfolio_valuation_observations_v1_no_update;
+          DROP TRIGGER portfolio_valuation_observations_v1_no_delete;
           DROP TRIGGER execution_plans_v1_no_update;
           DROP TRIGGER execution_plans_v1_no_delete;
           DROP TRIGGER execution_routes_v1_no_update;
@@ -289,9 +295,17 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
             (SELECT COUNT(*) FROM unified_portfolio_snapshots_v1 WHERE profile_id = ?) +
             (SELECT COUNT(*) FROM unified_portfolio_snapshot_connections_v1
               WHERE unified_snapshot_id IN (SELECT id FROM unified_portfolio_snapshots_v1
-                WHERE profile_id = ?)) AS count
+                WHERE profile_id = ?)) +
+            (SELECT COUNT(*) FROM profile_connections_v2 WHERE profile_id = ?) +
+            (SELECT COUNT(*) FROM provider_account_refs_v1 WHERE profile_id = ?) +
+            (SELECT COUNT(*) FROM connection_account_snapshots_v2 WHERE profile_id = ?) +
+            (SELECT COUNT(*) FROM unified_portfolio_snapshots_v2 WHERE profile_id = ?) +
+            (SELECT COUNT(*) FROM portfolio_valuation_observations_v1 WHERE profile_id = ?) AS count
         `, input.targetProfileId.toLowerCase(), input.targetProfileId.toLowerCase(),
-        input.targetProfileId.toLowerCase(), input.targetProfileId.toLowerCase());
+        input.targetProfileId.toLowerCase(), input.targetProfileId.toLowerCase(),
+        input.targetProfileId.toLowerCase(), input.targetProfileId.toLowerCase(),
+        input.targetProfileId.toLowerCase(), input.targetProfileId.toLowerCase(),
+        input.targetProfileId.toLowerCase());
         const routingRows = countQuery(target, `
           SELECT
             (SELECT COUNT(*) FROM execution_plans_v1 WHERE profile_id = ?) +
@@ -322,6 +336,13 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
           DELETE FROM execution_plan_evidence_links_v1;
           DELETE FROM execution_routes_v1;
           DELETE FROM execution_plans_v1;
+          DELETE FROM portfolio_valuation_observations_v1;
+          DELETE FROM unified_portfolio_snapshot_sources_v2;
+          DELETE FROM unified_portfolio_snapshots_v2;
+          DELETE FROM connection_account_snapshots_v2;
+          DELETE FROM provider_account_refs_v1;
+          DELETE FROM profile_connection_migration_links_v1;
+          DELETE FROM profile_connections_v2;
           DELETE FROM unified_portfolio_snapshot_connections_v1;
           DELETE FROM unified_portfolio_snapshots_v1;
           DELETE FROM connection_account_snapshots_v1;
@@ -348,6 +369,33 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
           CREATE TRIGGER unified_portfolio_snapshot_connections_v1_no_delete
             BEFORE DELETE ON unified_portfolio_snapshot_connections_v1
             BEGIN SELECT RAISE(ABORT, 'unified portfolio links are immutable'); END;
+          CREATE TRIGGER profile_connections_v2_identity_immutable
+            BEFORE UPDATE OF id, profile_id, provider, credential_fingerprint, created_at ON profile_connections_v2
+            BEGIN SELECT RAISE(ABORT, 'connection v2 identity is immutable'); END;
+          CREATE TRIGGER provider_account_refs_v1_no_update BEFORE UPDATE ON provider_account_refs_v1
+            BEGIN SELECT RAISE(ABORT, 'provider account references are immutable'); END;
+          CREATE TRIGGER provider_account_refs_v1_no_delete BEFORE DELETE ON provider_account_refs_v1
+            BEGIN SELECT RAISE(ABORT, 'provider account references are immutable'); END;
+          CREATE TRIGGER profile_connection_migration_links_v1_no_update BEFORE UPDATE ON profile_connection_migration_links_v1
+            BEGIN SELECT RAISE(ABORT, 'connection migration links are immutable'); END;
+          CREATE TRIGGER profile_connection_migration_links_v1_no_delete BEFORE DELETE ON profile_connection_migration_links_v1
+            BEGIN SELECT RAISE(ABORT, 'connection migration links are immutable'); END;
+          CREATE TRIGGER connection_account_snapshots_v2_no_update BEFORE UPDATE ON connection_account_snapshots_v2
+            BEGIN SELECT RAISE(ABORT, 'connection snapshots v2 are immutable'); END;
+          CREATE TRIGGER connection_account_snapshots_v2_no_delete BEFORE DELETE ON connection_account_snapshots_v2
+            BEGIN SELECT RAISE(ABORT, 'connection snapshots v2 are immutable'); END;
+          CREATE TRIGGER unified_portfolio_snapshots_v2_no_update BEFORE UPDATE ON unified_portfolio_snapshots_v2
+            BEGIN SELECT RAISE(ABORT, 'unified portfolio snapshots v2 are immutable'); END;
+          CREATE TRIGGER unified_portfolio_snapshots_v2_no_delete BEFORE DELETE ON unified_portfolio_snapshots_v2
+            BEGIN SELECT RAISE(ABORT, 'unified portfolio snapshots v2 are immutable'); END;
+          CREATE TRIGGER unified_portfolio_snapshot_sources_v2_no_update BEFORE UPDATE ON unified_portfolio_snapshot_sources_v2
+            BEGIN SELECT RAISE(ABORT, 'unified portfolio source links v2 are immutable'); END;
+          CREATE TRIGGER unified_portfolio_snapshot_sources_v2_no_delete BEFORE DELETE ON unified_portfolio_snapshot_sources_v2
+            BEGIN SELECT RAISE(ABORT, 'unified portfolio source links v2 are immutable'); END;
+          CREATE TRIGGER portfolio_valuation_observations_v1_no_update BEFORE UPDATE ON portfolio_valuation_observations_v1
+            BEGIN SELECT RAISE(ABORT, 'portfolio valuation observations are immutable'); END;
+          CREATE TRIGGER portfolio_valuation_observations_v1_no_delete BEFORE DELETE ON portfolio_valuation_observations_v1
+            BEGIN SELECT RAISE(ABORT, 'portfolio valuation observations are immutable'); END;
           CREATE TRIGGER execution_plans_v1_no_update BEFORE UPDATE ON execution_plans_v1
             BEGIN SELECT RAISE(ABORT, 'execution plans are immutable'); END;
           CREATE TRIGGER execution_plans_v1_no_delete BEFORE DELETE ON execution_plans_v1
@@ -379,12 +427,8 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
           CREATE TRIGGER host_takeover_history_v1_no_delete BEFORE DELETE ON host_takeover_history_v1
             BEGIN SELECT RAISE(ABORT,'host takeover history is immutable'); END;
         `);
-        const credentialMetadataKeys = [
-          'credentials.coinbase.v2',
-          'credentials.coinbase.v3.status',
-          'credentials.gemini.v2',
-          'coinbase.last_sync_at',
-        ] as const;
+        const credentialMetadataKeys = ['credentials.coinbase.v2', 'credentials.coinbase.v3.status',
+          'credentials.gemini.v2', 'coinbase.last_sync_at'] as const;
         const clearedCredentialMetadataCount = countQuery(
           target,
           `SELECT COUNT(*) AS count FROM app_settings WHERE key IN (${credentialMetadataKeys.map(() => '?').join(', ')})`,
@@ -396,9 +440,7 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
         const excludedTransientRowCount = pendingImportRows + scheduleRows +
           privateAdvisorRows + connectionRows;
         const excludedTransientRowCountWithRouting = excludedTransientRowCount + routingRows + authorityRows + hostAuthorityRows;
-        if (!Number.isSafeInteger(excludedTransientRowCountWithRouting)) {
-          throw new RangeError('Duplication exclusion count overflow.');
-        }
+        if (!Number.isSafeInteger(excludedTransientRowCountWithRouting)) throw new RangeError('Duplication exclusion count overflow.');
         target.exec('COMMIT');
 
         stage = 'verification';
@@ -452,19 +494,13 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
       } finally {
         try {
           target?.close();
-        } catch {
-          // The temporary clone is discarded below.
-        }
+        } catch { /* The temporary clone is discarded below. */ }
         try {
           source?.close();
-        } catch {
-          // Read-only source cleanup is best effort.
-        }
+        } catch { /* Read-only source cleanup is best effort. */ }
         try {
           if (existsSync(temporaryPath)) rmSync(temporaryPath, { force: true });
-        } catch {
-          // Cleanup is restricted to the validated temporary child.
-        }
+        } catch { /* Cleanup is restricted to the validated temporary child. */ }
       }
     },
 
@@ -473,8 +509,7 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
         targetDbFilename !== `wallet-${targetProfileId.toLowerCase()}.db`) return { ok: false };
       try {
         const root = realpathSync(profilesDirectory);
-        const paths = ['', '-wal', '-shm'].map((suffix) => resolve(root, `${targetDbFilename}${suffix}`));
-        if (paths.some((path) => !inside(root, path))) return { ok: false };
+        const paths = ['', '-wal', '-shm'].map((suffix) => resolve(root, `${targetDbFilename}${suffix}`)); if (paths.some((path) => !inside(root, path))) return { ok: false };
         for (const path of paths) rmSync(path, { force: true });
         return { ok: paths.every((path) => !existsSync(path)) };
       } catch {

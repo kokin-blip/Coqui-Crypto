@@ -11,6 +11,7 @@ import {
 import {
   coinbaseEvidenceDatasetHash,
   decimal,
+  instrumentKey,
   type AssetRef,
   type CoinbaseAccountEvidence,
   type CoinbaseFillEvidence,
@@ -24,6 +25,7 @@ import {
 } from '../packages/services/src/index.js';
 import {
   getSetting,
+  getLatestUnifiedPortfolioSnapshotV2,
   insertDisposals,
   insertTaxLots,
   listCoinbaseBalanceDiscrepancies,
@@ -103,6 +105,27 @@ function rawLedger(database: ReturnType<typeof openDatabase>) {
 }
 
 describe('Coinbase account sync service', () => {
+  it('creates an authoritative connected portfolio snapshot without changing tax lots', async () => {
+    const target = await fixture();
+    const service = new CoinbaseAccountSyncService({
+      database: target.database, clock: { nowMs: () => 110 }, secretStore: target.secretStore,
+      acquirer: target.acquirer,
+      priceSource: { name: 'fixture', async spot(instruments) {
+        return new Map(instruments.map((instrument) => [instrumentKey(instrument), {
+          priceUsd: decimal('50000'), source: 'fixture', quality: 'venue_reported_last' as const,
+          observedAtMs: 109,
+        }]));
+      } },
+    });
+    expect((await service.sync('main', 100)).ok).toBe(true);
+    expect(getLatestUnifiedPortfolioSnapshotV2('main', true, target.database)).toMatchObject({
+      totalValueUsd: '65000', complete: true,
+      exposures: [{ exposureKey: 'BTC', quantity: '1.3', valueUsd: '65000' }],
+    });
+    expect(rawLedger(target.database).lots).toHaveLength(1);
+    target.database.close();
+  });
+
   it('persists immutable facts/discrepancies while leaving tax lots and disposals byte-for-byte unchanged', async () => {
     const target = await fixture();
     const before = rawLedger(target.database);

@@ -1,5 +1,5 @@
 import type { SecretStore } from '@coqui/adapters';
-import type { Clock } from '@coqui/core';
+import type { Clock, PriceSource } from '@coqui/core';
 import {
   CoinbaseAccountSyncService,
   type CoinbaseEvidenceAcquirer,
@@ -22,6 +22,7 @@ export function createCoinbaseSyncHandlers(input: {
   readonly clock: Clock;
   readonly secrets?: SecretStore;
   readonly acquirer?: CoinbaseEvidenceAcquirer;
+  readonly priceSource?: PriceSource;
 }): ChannelHandlers {
   const service = input.secrets === undefined
     ? null
@@ -30,6 +31,7 @@ export function createCoinbaseSyncHandlers(input: {
         clock: input.clock,
         secretStore: input.secrets,
         ...(input.acquirer === undefined ? {} : { acquirer: input.acquirer }),
+        ...(input.priceSource === undefined ? {} : { priceSource: input.priceSource }),
       });
   const outcomes = new Map<string, Awaited<ReturnType<CoinbaseAccountSyncService['sync']>>>();
   return {

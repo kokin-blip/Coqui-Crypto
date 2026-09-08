@@ -23,6 +23,8 @@ export async function seedCoinbaseSmokeProfile(directory) {
 /** Offline fixtures only. Never read an owner's credential or reach Coinbase. */
 export function coinbaseSmokeFixture() {
   const control = { rejectKey: true, failSync: true, verifications: 0, acquisitions: 0 };
+  const pair = generateKeyPairSync('ec', { namedCurve: 'P-256' });
+  const contents = JSON.stringify({ name: 'organizations/smoke/apiKeys/view-only', privateKey: pair.privateKey.export({ type: 'pkcs8', format: 'pem' }) });
   return {
     control,
     coinbaseVerifier: { verify: async () => {
@@ -34,6 +36,7 @@ export function coinbaseSmokeFixture() {
     } },
     runtime: {
       secrets: createMemorySecretStore(),
+      pickConnectionFile: async () => ({ contents }),
       coinbaseAcquirer: { acquire: async () => {
         control.acquisitions += 1;
         await delay(80);
@@ -65,37 +68,22 @@ export async function checkCoinbaseSettings(window, fixture, check) {
     button.click(); ${twice ? 'button.click();' : ''}
   })()`);
   await evaluate('window.location.hash = "/settings"');
-  await waitFor('Boolean(document.querySelector(".coinbase-key-control"))');
-  check('Coinbase disconnected Settings renders', true);
-  const pair = generateKeyPairSync('ec', { namedCurve: 'P-256' });
-  const contents = JSON.stringify({ name: 'organizations/smoke/apiKeys/view-only', privateKey: pair.privateKey.export({ type: 'pkcs8', format: 'pem' }) });
-  const selectFile = async () => {
-    await evaluate(`(() => {
-      const input = document.querySelector('.coinbase-settings input[type=file]');
-      const transfer = new DataTransfer();
-      transfer.items.add(new File([${JSON.stringify(contents)}], 'smoke-key.json', {type:'application/json'}));
-      input.files = transfer.files;
-      input.dispatchEvent(new Event('change', {bubbles:true}));
-    })()`);
-    await waitFor('document.querySelector(".coinbase-filename")?.textContent === "smoke-key.json"');
-  };
-  await selectFile();
-  check('Coinbase selection renders filename without credential contents', await evaluate('!document.body.innerText.includes("PRIVATE KEY") && !document.body.innerText.includes("organizations/smoke")'));
-  await click('Verify and connect', true);
-  await waitFor('document.body.innerText.includes("This key can trade or transfer")');
+  await waitFor('document.body.innerText.includes("Exchange connections")');
+  check('Provider-neutral Settings renders', true);
+  check('Credential contents stay outside renderer', await evaluate('!document.body.innerText.includes("PRIVATE KEY") && !document.body.innerText.includes("organizations/smoke")'));
+  await click('Add connection', true);
+  await waitFor('document.body.innerText.includes("coinbase_excess_permissions")');
   check('Coinbase excessive permissions rejected and duplicate activation suppressed', fixture.control.verifications === 1);
   fixture.control.rejectKey = false;
-  await selectFile();
-  await click('Verify and connect', true);
-  await waitFor('Boolean(document.querySelector(".connection-connected"))');
-  check('Coinbase replacement file connects through renderer IPC', fixture.control.verifications === 2);
-  await click('Sync immutable evidence', true);
-  await waitFor('document.body.innerText.includes("Coinbase is temporarily unavailable")');
-  check('Coinbase sync failure renders and duplicate activation suppressed', fixture.control.acquisitions === 1);
   fixture.control.failSync = false;
-  await click('Sync immutable evidence', true);
-  await waitFor('Boolean(document.querySelector(".coinbase-sync-result"))');
-  check('Coinbase sync success confirms immutable evidence', fixture.control.acquisitions === 2 && await evaluate('document.body.innerText.includes("Portfolio history, tax lots, and execution state were not changed.")'));
+  await click('Add connection', true);
+  await waitFor('document.body.innerText.includes("Portfolio updated") || document.body.innerText.includes("Connection added")');
+  check('Coinbase file connects and creates current portfolio evidence', fixture.control.verifications === 2 && fixture.control.acquisitions === 1);
+  const current = JSON.parse(await evaluate('window.coqui.query("portfolio.current", {}).then(JSON.stringify)'));
+  check('portfolio.current is backed by connected accounts', current.status === 'ok' && current.value?.source === 'connected_accounts');
+  await click('Sync now', true);
+  for (let attempt = 0; attempt < 100 && fixture.control.acquisitions < 2; attempt += 1) await delay(50);
+  check('Coinbase sync command is idempotently activated', fixture.control.acquisitions === 2);
   const switchProfile = async (id) => {
     await evaluate(`(() => {
       const select = document.querySelector('select[aria-label="Active profile"]');
@@ -104,22 +92,15 @@ export async function checkCoinbaseSettings(window, fixture, check) {
     })()`);
   };
   await switchProfile('00000000-0000-4000-8000-000000000001');
-  await waitFor('Boolean(document.querySelector(".connection-disconnected"))');
-  check('Coinbase profile switch clears prior evidence and success feedback', await evaluate('!document.querySelector(".coinbase-sync-result") && !document.body.innerText.includes("Coinbase connected")'));
+  await waitFor('document.body.innerText.includes("No exchange connections yet")');
+  check('Coinbase profile switch clears prior connection evidence', true);
   await switchProfile('main');
-  await waitFor('Boolean(document.querySelector(".connection-connected"))');
+  await waitFor('document.body.innerText.includes("Sync now")');
   check('Coinbase original profile retains isolated connection', true);
   await click('Disconnect');
-  await waitFor('Boolean(document.querySelector(".coinbase-disconnect-dialog[open]"))');
-  await click('Cancel');
-  await waitFor('!document.querySelector(".coinbase-disconnect-dialog[open]")');
-  await waitFor('document.activeElement?.classList.contains("button-disconnect")');
-  check('Coinbase disconnect cancellation restores focus', await evaluate('document.activeElement?.classList.contains("button-disconnect")'));
-  await click('Disconnect');
-  await click('Remove credential');
-  await waitFor('Boolean(document.querySelector(".connection-disconnected"))');
-  check('Coinbase confirmed disconnect clears stale sync and connection feedback', await evaluate('!document.querySelector(".coinbase-sync-result") && !document.body.innerText.includes("Coinbase connected")'));
+  await waitFor('window.coqui.query("connections.list", {}).then(result => result.status === "ok" && result.value.connections[0]?.status === "disconnected")');
+  check('Coinbase disconnect is connection scoped', true);
   const settings = await evaluate('window.coqui.query("accounts.settings", {}).then(JSON.stringify)');
-  const status = await evaluate('window.coqui.query("accounts.coinbase.status", {}).then(JSON.stringify)');
+  const status = await evaluate('window.coqui.query("connections.list", {}).then(JSON.stringify)');
   check('Coinbase credential absent from preferences and command readback', !`${settings}${status}`.includes('PRIVATE KEY') && !`${settings}${status}`.includes('organizations/smoke'));
 }

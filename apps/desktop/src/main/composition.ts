@@ -23,6 +23,7 @@ import {
 import {
   AccountSettingsService,
   type CoinbaseEvidenceAcquirer,
+  type CoinbaseCredentialVerifier,
   AlertsService,
   PortfolioReadModelService,
   PortfolioTaxService,
@@ -67,6 +68,7 @@ import { createChartExtensionHandlers, createChartSnapshotHandlers, createChartW
 import { createAccountPreferenceHandlers } from './account-preference-handlers.js';
 import { CoinbaseMarketStreamService } from './coinbase-market-stream.js';
 import { createCoinbaseSyncHandlers, lastCoinbaseSyncAtMs } from './coinbase-handlers.js';
+import { createConnectionHandlers, type ConnectionFileSelection } from './connection-handlers.js';
 import { createMarketHandlers } from './market-handlers.js'; import { createMarketEventHandlers } from './market-event-handlers.js';
 import { SHIPPED_FORWARD_EDGE_PLAN } from './forward-edge-plan.js';
 import { captureScheduledForwardEvidence } from './forward-edge-runtime.js';
@@ -76,7 +78,6 @@ import { createPaperCampaignHandlers } from './paper-campaign-handlers.js';
 import { createCandleSource, createDisplayDataService, createReferenceSources } from './reference-sources.js';
 import { startSchedulerRuntime, type SchedulerRuntime } from './scheduler-runtime.js';
 import type { ChannelHandlers } from './dispatch.js';
-
 /** Only an integrity-verified passing forward result can supply execution edge. */
 function paperGrossEdgeLowerBoundPct(profileId: string, database: Db): number {
   return readProfitabilityEstimateEvidence(profileId, database)?.grossEdgeLowerBoundPct ?? 0;
@@ -127,7 +128,7 @@ export interface RuntimeOptions extends Partial<Pick<Parameters<typeof createAdv
    */
   readonly coinGeckoApiKey?: string | null;
   /** Testable authenticated acquisition boundary; production uses the hardened Coinbase adapter. */
-  readonly coinbaseAcquirer?: CoinbaseEvidenceAcquirer;
+  readonly coinbaseAcquirer?: CoinbaseEvidenceAcquirer; readonly coinbaseVerifier?: CoinbaseCredentialVerifier; readonly pickConnectionFile?: (provider: 'coinbase' | 'robinhood_crypto') => Promise<ConnectionFileSelection | null>;
   /**
    * Delivers OS notifications. Injected because `electron.Notification` is
    * unavailable under vitest, and because whether to notify must be decidable
@@ -161,7 +162,6 @@ export interface CoquiRuntime {
 export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   const clock = new SystemClock(options.readSystemTime ?? (() => Date.now())), database = openDatabase(options.databasePath), forwardPlanHash = registerForwardEdgeStudy(SHIPPED_FORWARD_EDGE_PLAN, database), hostId = options.hostId ?? `desktop-${randomUUID()}`;
 
-  // Every background failure in the application goes through here: a structured
   // log line always, and an incident row when the fault is durable. Before this,
   // `createStructuredLogger` had no production caller and nothing but the
   // reconciliation harness ever wrote an incident.
@@ -315,10 +315,13 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   };
   if (options.disableScheduler !== true) startScheduler();
   const handlers: ChannelHandlers = {
-    ...createCoinbaseSyncHandlers({ profileId: options.profileId, database, clock,
+    ...createCoinbaseSyncHandlers({ profileId: options.profileId, database, clock, priceSource,
       ...(options.secrets === undefined ? {} : { secrets: options.secrets }),
       ...(options.coinbaseAcquirer === undefined ? {} : { acquirer: options.coinbaseAcquirer }),
     }),
+    ...createConnectionHandlers({ profileId: options.profileId, database, clock, priceSource, ...(options.secrets === undefined ? {} : { secrets: options.secrets }),
+      ...(options.pickConnectionFile === undefined ? {} : { pickConnectionFile: options.pickConnectionFile }), ...(options.coinbaseAcquirer === undefined ? {} : { coinbaseAcquirer: options.coinbaseAcquirer }),
+      ...(options.coinbaseVerifier === undefined ? {} : { coinbaseVerifier: options.coinbaseVerifier }) }),
     ...createAdvisorHandlers({ profileId: options.profileId, database, clock, http,
       ...(options.secrets === undefined ? {} : { secrets: options.secrets }),
       ...(options.saveHistory === undefined ? {} : { saveHistory: options.saveHistory }) }),

@@ -454,6 +454,18 @@ future routing and tax logic retain venue attribution. Profile duplication keeps
 non-secret Advisor configuration but excludes encrypted Advisor history,
 provider connections, account evidence, unified evidence, and all credentials.
 
+Migrations 71–72 supersede those v1 records without rewriting them. A v2
+connection carries a provider-neutral credential fingerprint and may represent
+Coinbase or Robinhood Crypto; hashed provider-account references retain only a
+masked display suffix. Successful Coinbase acquisition now also writes an
+immutable v2 account snapshot, regenerates a v2 unified snapshot, and records a
+prospective valuation observation when every nonzero balance is priced. The
+`portfolio.current` read model is sourced only from connected-account snapshots.
+Tax lots remain separate accounting evidence and are never added to connected
+quantities. Legacy singular Coinbase credentials migrate lazily on first
+provider-neutral access using write–verify–remove ordering; the old channels
+remain available for one compatibility cycle.
+
 ### 6.2 Venue-neutral planning and paper routing
 
 Migration 65 adds immutable `ExecutionPlanV1` and `ExecutionRouteV1` evidence.

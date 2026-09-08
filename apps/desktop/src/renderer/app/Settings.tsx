@@ -1,6 +1,6 @@
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 
-import { CoinbaseConnectionSettings } from './CoinbaseConnectionSettings.js';
+import { ConnectionManager } from './ConnectionManager.js';
 import { DisplaySettings } from './DisplaySettings.js';
 import { ExecutionPolicySettings } from './ExecutionPolicySettings.js';
 import { PaperCampaignSettings } from './PaperCampaignSettings.js';
@@ -51,7 +51,7 @@ export function Settings({ client }: { readonly client: CoquiClient }): React.JS
       <ExecutionPolicySettings client={client} />
       <PaperCampaignSettings client={client} />
 
-      <CoinbaseConnectionSettings key={view.profileId} client={client} />
+      <ConnectionManager key={view.profileId} client={client} />
     </section>
   );
 }

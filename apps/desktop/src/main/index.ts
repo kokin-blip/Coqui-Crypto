@@ -119,6 +119,16 @@ async function start(): Promise<void> {
       notifier: osNotifier,
       coinGeckoApiKey: await coinGeckoApiKey(secrets),
       secrets,
+      async pickConnectionFile(provider) {
+        const result = await dialog.showOpenDialog({
+          title: provider === 'coinbase' ? 'Connect Coinbase' : 'Connect Robinhood Crypto',
+          properties: ['openFile'], filters: [{ name: 'Connection credentials', extensions: ['json'] }],
+        });
+        if (result.canceled || result.filePaths[0] === undefined) return null;
+        const metadata = await stat(result.filePaths[0]);
+        if (!metadata.isFile() || metadata.size < 2 || metadata.size > 65_536) throw new TypeError('invalid_connection_file');
+        return { contents: await readFile(result.filePaths[0], 'utf8') };
+      },
       async saveHistory(data) {
         const result = await dialog.showSaveDialog({ title: 'Export advisor conversation',
           defaultPath: 'coqui-advisor-history.json', filters: [{ name: 'JSON', extensions: ['json'] }] });

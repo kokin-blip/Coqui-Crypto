@@ -10,7 +10,9 @@ import {
 import {
   coinbaseLocalBalancesFromLots,
   reconcileCoinbaseBalances,
+  sha256Hex,
   type Clock,
+  type PriceSource,
 } from '@coqui/core';
 import {
   inTransaction,
@@ -25,6 +27,7 @@ import type {
   ProfileRefreshExecutorRequest,
   ProfileRefreshExecutorResult,
 } from './refresh.js';
+import { persistCoinbasePortfolioSnapshotV2 } from './connection-snapshots-v2.js';
 
 const PROFILE_ID = /^(?:main|[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$/iu;
 
@@ -77,6 +80,7 @@ export interface CoinbaseAccountSyncDependencies {
   readonly clock: Clock;
   readonly secretStore: SecretStore;
   readonly acquirer?: CoinbaseEvidenceAcquirer;
+  readonly priceSource?: PriceSource;
 }
 
 function freeze<T>(value: T): T {
@@ -94,7 +98,7 @@ function safeNow(clock: Clock): number | null {
   }
 }
 
-function defaultAcquirer(): CoinbaseEvidenceAcquirer {
+export function createDefaultCoinbaseEvidenceAcquirer(): CoinbaseEvidenceAcquirer {
   return Object.freeze({
     async acquire(credentials: CoinbaseCredentials, signal?: AbortSignal) {
       const client = createCoinbaseReadHttpClient(credentials);
@@ -132,12 +136,14 @@ export class CoinbaseAccountSyncService {
   readonly #clock: Clock;
   readonly #secretStore: SecretStore;
   readonly #acquirer: CoinbaseEvidenceAcquirer;
+  readonly #priceSource: PriceSource | undefined;
 
   constructor(dependencies: CoinbaseAccountSyncDependencies) {
     this.#database = dependencies.database;
     this.#clock = dependencies.clock;
     this.#secretStore = dependencies.secretStore;
-    this.#acquirer = dependencies.acquirer ?? defaultAcquirer();
+    this.#acquirer = dependencies.acquirer ?? createDefaultCoinbaseEvidenceAcquirer();
+    this.#priceSource = dependencies.priceSource;
   }
 
   async sync(
@@ -183,6 +189,12 @@ export class CoinbaseAccountSyncService {
       return freeze({ ok: false, code: 'clock_unavailable' });
     }
     try {
+      if (this.#priceSource !== undefined) {
+        await persistCoinbasePortfolioSnapshotV2({
+          profileId, credentialFingerprint: sha256Hex(credentials.keyName), requestedAtMs: requested,
+          receivedAtMs, accounts: acquired.value.accounts, feeTier,
+        }, this.#database, this.#priceSource);
+      }
       const persisted = inTransaction(this.#database, () => {
         const localBalances = coinbaseLocalBalancesFromLots(listTaxLots(this.#database, true));
         const discrepancies = reconcileCoinbaseBalances(acquired.value.accounts, localBalances);

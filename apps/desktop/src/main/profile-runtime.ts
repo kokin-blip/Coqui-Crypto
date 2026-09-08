@@ -59,6 +59,7 @@ export function createRuntimeProfileController(
   const createCandidate = (profileId: string, databaseFilename: string): CoquiRuntime =>
     createRuntime({
       ...options.runtime,
+      ...(options.coinbaseVerifier === undefined ? {} : { coinbaseVerifier: options.coinbaseVerifier }),
       databasePath: join(options.dataDirectory, databaseFilename),
       profileId,
       disableScheduler: true,
@@ -126,6 +127,7 @@ export function createRuntimeProfileController(
   if (initial === undefined) throw new Error('Active profile is absent from manifest.');
   current = createRuntime({
     ...options.runtime,
+    ...(options.coinbaseVerifier === undefined ? {} : { coinbaseVerifier: options.coinbaseVerifier }),
     databasePath: join(options.dataDirectory, initial.dbFilename),
     profileId: initial.id,
     ...(options.disableScheduler === undefined
