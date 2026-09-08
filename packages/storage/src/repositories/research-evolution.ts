@@ -95,9 +95,16 @@ export function saveResearchCandidate(candidate: ResearchCandidateRecord, databa
   if (sha256Hex(candidate.metricsJson) !== candidate.metricsHash) throw new Error('Candidate metrics hash mismatch.');
   database.prepare(`INSERT INTO research_candidates_v1
     (id,family,strategy_version,parent_id,evidence_id,evidence_hash,metrics_json,metrics_hash,state,reason_codes_json,created_at)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?)`).run(candidate.id, candidate.family, candidate.strategyVersion,
+    VALUES (?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO NOTHING`).run(candidate.id, candidate.family, candidate.strategyVersion,
       candidate.parentId, candidate.evidenceId, candidate.evidenceHash, candidate.metricsJson,
       candidate.metricsHash, candidate.state, candidate.reasonCodesJson, candidate.createdAt);
+  const stored=getResearchCandidate(candidate.id,database);
+  if(stored===null||canonicalCandidate(stored)!==canonicalCandidate(candidate)) throw new Error('Research candidate identity conflict.');
+}
+
+function canonicalCandidate(value:ResearchCandidateRecord):string {
+  return JSON.stringify([value.id,value.family,value.strategyVersion,value.parentId,value.evidenceId,
+    value.evidenceHash,value.metricsJson,value.metricsHash,value.state,value.reasonCodesJson,value.createdAt]);
 }
 
 export function getResearchCandidate(id: string, database: Db): ResearchCandidateRecord | null {

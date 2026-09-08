@@ -21,8 +21,8 @@ export const marketEventChannelSchemas = {
     response: z.strictObject({ results: z.array(z.strictObject({ eventId: sha256HexSchema,
       inserted: z.boolean(), contentHash: sha256HexSchema, classificationId: sha256HexSchema,
       triggerDecisions: z.array(z.strictObject({ triggerId: safeId, start: z.boolean(),
-        reasonCode: z.enum(['started','debouncing','cooldown','trial_budget_exhausted']),
-        deadlineAt: epochMillisecondsSchema.nullable() }).readonly()).max(100).readonly(),
+        reasonCode: z.enum(['started','debouncing','cooldown','trial_budget_exhausted','definition_unavailable']),
+        deadlineAt: epochMillisecondsSchema.nullable(), jobId: sha256HexSchema.nullable() }).readonly()).max(100).readonly(),
       targetInfluence: z.literal(false), executionAuthority: z.literal(false) }).readonly()).max(100).readonly() }).readonly(),
   },
   'market-events.timeline': {

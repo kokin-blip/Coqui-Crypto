@@ -6,12 +6,11 @@ import { DatabaseSync, type SQLInputValue } from 'node:sqlite';
 import { backupDatabase } from '../sqlite/index.js';
 import { connectionCampaignRowCount, hostAuthorityRowCount } from './duplication-transient-counts.js';
 import { dropDecisionDuplicationTriggers, restoreDecisionDuplicationTriggers } from './duplication-decision-triggers.js';
+import { dropResearchDuplicationTriggers, restoreResearchDuplicationTriggers } from './duplication-research-triggers.js';
 
 export interface DuplicateProfileDatabaseInput {
-  readonly sourceProfileId: string;
-  readonly sourceDbFilename: string;
-  readonly targetProfileId: string;
-  readonly targetDbFilename: string;
+  readonly sourceProfileId: string; readonly sourceDbFilename: string;
+  readonly targetProfileId: string; readonly targetDbFilename: string;
 }
 
 export interface ProfileDatabaseDuplicationEvidence {
@@ -37,8 +36,7 @@ export type ProfileDatabaseDuplicationResult =
   | { readonly ok: false; readonly code: ProfileDatabaseDuplicationErrorCode };
 
 export interface ProfileDatabaseDuplicator {
-  duplicate(input: DuplicateProfileDatabaseInput): Promise<ProfileDatabaseDuplicationResult>;
-  discard(targetProfileId: string, targetDbFilename: string): Promise<{ readonly ok: boolean }>;
+  duplicate(input: DuplicateProfileDatabaseInput): Promise<ProfileDatabaseDuplicationResult>; discard(targetProfileId: string, targetDbFilename: string): Promise<{ readonly ok: boolean }>;
 }
 
 const UUID_V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
@@ -199,6 +197,7 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
           DROP TRIGGER host_takeover_history_v1_no_update;
           DROP TRIGGER host_takeover_history_v1_no_delete;
         `);
+        dropResearchDuplicationTriggers(target);
         for (const tableName of tableNames as string[]) {
           const table = quoteIdentifier(tableName);
           const identities = target.prepare(
@@ -437,6 +436,7 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
           CREATE TRIGGER host_takeover_history_v1_no_delete BEFORE DELETE ON host_takeover_history_v1
             BEGIN SELECT RAISE(ABORT,'host takeover history is immutable'); END;
         `);
+        restoreResearchDuplicationTriggers(target);
         restoreDecisionDuplicationTriggers(target);
         const credentialMetadataKeys = ['credentials.coinbase.v2', 'credentials.coinbase.v3.status',
           'credentials.gemini.v2', 'coinbase.last_sync_at'] as const;

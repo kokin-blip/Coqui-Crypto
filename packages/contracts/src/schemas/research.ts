@@ -105,6 +105,27 @@ const negativeFindingSchema = z
   .readonly();
 
 export const researchChannelSchemas = {
+  'research.trigger-status': {
+    request: z.strictObject({ triggerId: z.string().regex(/^[a-z0-9][a-z0-9._:-]{0,127}$/u) }).readonly(),
+    response: z.strictObject({ triggerId: z.string().min(1).max(128), family:z.string().min(1).max(120),
+      kind:z.enum(['scheduled','event']),registered:z.boolean(),trialsUsed:z.number().int().nonnegative(),
+      trialBudget:z.number().int().positive(),lastTriggeredAtMs:epochMillisecondsSchema.nullable(),
+      pendingSinceMs:epochMillisecondsSchema.nullable(),updatedAtMs:epochMillisecondsSchema }).readonly(),
+  },
+  'research.candidate.review': {
+    request:z.strictObject({commandId:z.string().uuid(),candidateId:sha256HexSchema,
+      action:z.enum(['reviewed','approved','rejected']),note:z.string().trim().min(3).max(1000),
+      actor:z.string().trim().min(1).max(120)}).readonly(),
+    response:z.strictObject({eventId:sha256HexSchema,action:z.enum(['reviewed','approved','rejected']),
+      atMs:epochMillisecondsSchema,championCandidateId:sha256HexSchema.nullable(),
+      fencingGeneration:z.number().int().positive().nullable()}).readonly(),
+  },
+  'research.candidate.rollback': {
+    request:z.strictObject({commandId:z.string().uuid(),candidateId:sha256HexSchema,
+      note:z.string().trim().min(3).max(1000),actor:z.string().trim().min(1).max(120)}).readonly(),
+    response:z.strictObject({eventId:sha256HexSchema,action:z.literal('rollback'),atMs:epochMillisecondsSchema,
+      championCandidateId:sha256HexSchema,fencingGeneration:z.number().int().positive()}).readonly(),
+  },
   'research.lineage': {
     request: z.strictObject({ limit: z.number().int().min(1).max(100) }).readonly(),
     response: z.strictObject({

@@ -119,6 +119,8 @@ const WRITE_CHANNELS = [
   'paper.execution.prepare',
   'paper.execution.review',
   'portfolio.reconciliation.resolve',
+  'research.candidate.review',
+  'research.candidate.rollback',
 ] as const satisfies readonly ChannelName[];
 
 export const CHANNEL_KINDS = {

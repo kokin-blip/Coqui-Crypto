@@ -266,17 +266,19 @@ export function recoverInterruptedResearchJobs(
     UPDATE research_jobs
     SET status = 'queued', started_at = NULL, progress_json = ?, error = NULL
     WHERE status = 'running' AND snapshot_json IS NOT NULL
+      AND (deadline_at IS NULL OR deadline_at > ?)
   `).run(JSON.stringify({
     completed: 0,
     total: 1,
     percent: 0,
     phase: 'queued',
     message: 'Recovered after app restart.',
-  }));
+  }), now);
   const failed = database.prepare(`
-    UPDATE research_jobs
-    SET status = 'failed', completed_at = ?, error = ?
-    WHERE status = 'running' AND snapshot_json IS NULL
-  `).run(now, 'The app closed before the research snapshot was prepared.');
+    UPDATE research_jobs SET status = 'failed', completed_at = ?,
+      error = CASE WHEN snapshot_json IS NULL THEN ? ELSE 'deadline_exceeded' END,
+      error_code = CASE WHEN snapshot_json IS NULL THEN 'interrupted' ELSE 'deadline_exceeded' END
+    WHERE status = 'running' AND (snapshot_json IS NULL OR deadline_at <= ?)
+  `).run(now, 'The app closed before the research snapshot was prepared.', now);
   return { requeued: Number(requeued.changes), failed: Number(failed.changes) };
 }

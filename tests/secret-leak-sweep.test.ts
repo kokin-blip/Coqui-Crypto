@@ -232,7 +232,10 @@ describe('the sweep covers the whole registry', () => {
       || channel === 'portfolio.current'
       || channel === 'portfolio.history'
       || channel === 'portfolio.reconciliation.resolve'
-      || channel === 'decision.detail',
+      || channel === 'decision.detail'
+      || channel === 'research.trigger-status'
+      || channel === 'research.candidate.review'
+      || channel === 'research.candidate.rollback',
     )).toBe(true);
   });
 });

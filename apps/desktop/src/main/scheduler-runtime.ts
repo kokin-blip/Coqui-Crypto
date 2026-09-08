@@ -52,6 +52,7 @@ export interface SchedulerRuntimeOptions {
   readonly prepare?: (nowMs: number) => Promise<void>;
   readonly pollMs?: number;
   readonly onUnexpectedError?: (context: string, error: unknown) => void;
+  readonly research?: { recover():unknown; tick():Promise<void> };
 }
 
 export interface SchedulerRuntime extends HostLifecycle {
@@ -85,6 +86,7 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
         }
       }
       await scheduler?.tick(tasks);
+      if (options.research !== undefined) await options.research.tick();
     } catch (error) {
       report('scheduler_tick', error);
     } finally {
@@ -103,6 +105,7 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
       } catch (error) {
         report('paper_recovery', error);
       }
+      try { options.research?.recover(); } catch (error) { report('research_recovery',error); }
     },
     start() {
       scheduler = new WalletSchedulerService({

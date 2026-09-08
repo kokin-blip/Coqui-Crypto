@@ -2,7 +2,7 @@ import { appendResearchTriggerEvent, getResearchTrigger, saveResearchTrigger,
   type Db, type ResearchTriggerRecord } from '@coqui/storage';
 
 export interface ResearchTriggerDecision {
-  readonly start: boolean; readonly reasonCode: 'started' | 'debouncing' | 'cooldown' | 'trial_budget_exhausted';
+  readonly start: boolean; readonly reasonCode: 'started' | 'debouncing' | 'cooldown' | 'trial_budget_exhausted' | 'definition_unavailable';
   readonly deadlineAt: number | null;
 }
 export class ResearchTriggerCoordinator {

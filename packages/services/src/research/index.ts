@@ -8,3 +8,4 @@ export * from './worker-protocol.js';
 export * from './worker-pool.js';
 export * from './evolution.js';
 export * from './triggers.js';
+export * from './host-coordinator.js';

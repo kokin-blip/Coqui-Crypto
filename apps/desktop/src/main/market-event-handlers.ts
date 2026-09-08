@@ -8,8 +8,10 @@ export function createMarketEventHandlers(input: {
   readonly profileId: string;
   readonly database: Db;
   readonly clock: Clock;
+  readonly requestResearch?: ConstructorParameters<typeof MarketEventService>[0]['requestResearch'];
 }): ChannelHandlers {
-  const service = new MarketEventService(input);
+  const service = new MarketEventService({profileId:input.profileId,database:input.database,clock:input.clock,
+    ...(input.requestResearch===undefined?{}:{requestResearch:input.requestResearch})});
   return {
     'market-events.ingest-local': (payload: {
       readonly commandId: string;
@@ -20,8 +22,8 @@ export function createMarketEventHandlers(input: {
     }) => {
       try {
         return { ok: true, value: { results: service.ingestLocal(payload.sourceId, payload.reference, payload.events)
-          .map((result) => ({ ...result, triggerDecisions: result.triggerDecisions.map(({ triggerId, decision }) =>
-            ({ triggerId, ...decision })) })) } };
+          .map((result) => ({ ...result, triggerDecisions: result.triggerDecisions.map(({ triggerId, decision, jobId }) =>
+            ({ triggerId, jobId, ...decision })) })) } };
       } catch {
         return { ok: false, issues: [{ path: ['events'], code: 'market_event_ingestion_failed' }] };
       }

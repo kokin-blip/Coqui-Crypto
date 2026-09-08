@@ -18,7 +18,6 @@ import {
   deriveFifoPaperLots,
   sha256Hex,
   type Clock,
-  type ExecutionIntent,
 } from '@coqui/core';
 import {
   AccountSettingsService,
@@ -34,6 +33,8 @@ import {
   type PricedHolding,
   ResearchReadModelService,
   ResearchScoreboardService,
+  ResearchHostCoordinator,
+  type RegisteredResearchDefinitionV1,
   RiskDashboardService,
   RiskEvidenceTrackerService,
   resolveKillSwitch,
@@ -41,7 +42,6 @@ import {
 } from '@coqui/services';
 import {
   getAllocationPolicy, isAuthoritativeHost,
-  getLatestPaperExecutionReview,
   getPaperDailyValuationEvidence,
   getPaperExecutionPolicy,
   getPaperExecutionProposal,
@@ -71,39 +71,18 @@ import { CoinbaseMarketStreamService } from './coinbase-market-stream.js';
 import { createCoinbaseSyncHandlers, lastCoinbaseSyncAtMs } from './coinbase-handlers.js';
 import { createConnectionHandlers, type ConnectionFileSelection } from './connection-handlers.js';
 import { createMarketHandlers } from './market-handlers.js'; import { createMarketEventHandlers } from './market-event-handlers.js';
+import { createResearchOrchestrationHandlers } from './research-handlers.js';
 import { SHIPPED_FORWARD_EDGE_PLAN } from './forward-edge-plan.js';
 import { captureScheduledForwardEvidence } from './forward-edge-runtime.js';
 import { createAlertNotificationPump } from './notifications.js';
 import { createPaperMarketFeed } from './paper-market.js';
 import { createPaperCampaignHandlers } from './paper-campaign-handlers.js';
+import { paperProposalView } from './paper-proposal-view.js';
 import { createCandleSource, createDisplayDataService, createReferenceSources } from './reference-sources.js';
 import { startSchedulerRuntime, type SchedulerRuntime } from './scheduler-runtime.js';
 import type { ChannelHandlers } from './dispatch.js';
 function paperGrossEdgeLowerBoundPct(profileId: string, database: Db): number {
   return readProfitabilityEstimateEvidence(profileId, database)?.grossEdgeLowerBoundPct ?? 0;
-}
-
-function paperProposalView(
-  proposal: ReturnType<typeof getPaperExecutionProposal> & {},
-  database: Db,
-) {
-  const intents = JSON.parse(proposal.intentsJson) as readonly ExecutionIntent[];
-  return {
-    id: proposal.id,
-    runId: proposal.runId,
-    revision: proposal.revision,
-    proposalHash: proposal.proposalHash,
-    status: proposal.status,
-    createdAt: proposal.createdAt,
-    updatedAt: proposal.updatedAt,
-    actions: intents.map((intent) => ({
-      productId: intent.asset.instrument.productId,
-      side: intent.side,
-      amountUsd: String(intent.amountUsd),
-      origin: 'rebalance' as const,
-    })),
-    review: getLatestPaperExecutionReview(proposal.id, database),
-  };
 }
 
 export interface RuntimeOptions extends Partial<Pick<Parameters<typeof createAdvisorHandlers>[0], 'secrets' | 'saveHistory'>> {
@@ -136,6 +115,8 @@ export interface RuntimeOptions extends Partial<Pick<Parameters<typeof createAdv
    */
   readonly notifier?: Parameters<typeof createAlertNotificationPump>[0]['notifier'];
   readonly saveChartSnapshot?: (filenameStem: string, png: Uint8Array) => Promise<'saved' | 'cancelled'>; readonly pickChartExtension?: () => Promise<string | null>;
+  /** Only explicitly registered, immutable research definitions may enter the worker host. */
+  readonly researchRegistrations?: readonly RegisteredResearchDefinitionV1[];
 }
 export interface CoquiRuntime {
   readonly handlers: ChannelHandlers;
@@ -223,7 +204,9 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   // savePolicy/clearPolicy, and there are no write channels before P6.
   const tax = new PortfolioTaxService({ database, clock }), reconciliation = new ReconciliationLedgerService({ database, clock }), settings = new AccountSettingsService({ database, clock });
 
-  const research = new ResearchReadModelService({ database }), scoreboard = new ResearchScoreboardService({ database });
+  const research = new ResearchReadModelService({ database,profileId:options.profileId }), scoreboard = new ResearchScoreboardService({ database });
+  const researchHost = new ResearchHostCoordinator({ profileId: options.profileId, database, clock,
+    ...(options.researchRegistrations===undefined?{}:{registrations:options.researchRegistrations}) });
   const evidence = new RiskEvidenceTrackerService({ database, clock });
   const alerts = new AlertsService({
     database,
@@ -275,7 +258,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     scheduler = startSchedulerRuntime({
         database,
         clock,
-        profileId: options.profileId, hostId, onUnexpectedError: report,
+        profileId: options.profileId, hostId, onUnexpectedError: report, research: researchHost,
         async prepare(nowMs) {
           await paperMarket.refresh(nowMs);
           paperHoldings = (await portfolio.portfolioView()).holdings;
@@ -326,7 +309,11 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     ...createChartExtensionHandlers({ profileId: options.profileId, database, clock, ...(options.pickChartExtension === undefined ? {} : { pickPackage: options.pickChartExtension }) }),
     ...createChartSnapshotHandlers({ profileId: options.profileId, database, clock, ...(options.saveChartSnapshot === undefined ? {} : { save: options.saveChartSnapshot }) }),
     ...createChartWorkspaceHandlers({ profileId: options.profileId, database, clock }),
-    ...createPaperCampaignHandlers(options.profileId, clock, database), ...createMarketEventHandlers({ profileId: options.profileId, database, clock }), ...createDecisionHandlers(options.profileId, clock, database),
+    ...createPaperCampaignHandlers(options.profileId, clock, database),
+    ...createMarketEventHandlers({ profileId: options.profileId, database, clock,
+      requestResearch: (triggerId,at) => researchHost.request(triggerId,at) }),
+    ...createResearchOrchestrationHandlers({coordinator:researchHost,clock}),
+    ...createDecisionHandlers(options.profileId, clock, database),
     'activity.feed': (payload: { readonly limit: number; readonly cursor: string | null }) => ({
       ok: true,
       value: {

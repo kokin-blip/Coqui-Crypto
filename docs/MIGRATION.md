@@ -406,6 +406,13 @@ item instead.
 
 ## 8. Order
 
+Migration 75 completes the host side of the research-worker migration. Trigger
+starts are now bound to immutable, explicitly registered definitions and
+profile-scoped durable jobs; worker results link to candidates, but activation
+still requires a separate human note and host-owned approval event. Profile
+duplication rewrites these non-secret evidence links without granting the copy
+credentials or execution authority.
+
 Each step leaves the repo working.
 
 ```

@@ -1,6 +1,33 @@
 import type { CoquiClient } from '@coqui/contracts';
+import { useState } from 'react';
 
 import { useChannel } from '../query/use-channel.js';
+import { useCommand } from '../query/use-command.js';
+
+const INVALIDATIONS=['research.lineage','research.jobs'] as const;
+
+function CandidateReviewControls({client,candidate}:{readonly client:CoquiClient;readonly candidate:{
+  readonly candidateId:string;readonly state:'promotion_eligible'|'rejected';readonly active:boolean}}):React.JSX.Element {
+  const [note,setNote]=useState('');
+  const review=useCommand(client,'research.candidate.review',INVALIDATIONS);
+  const rollback=useCommand(client,'research.candidate.rollback',INVALIDATIONS);
+  const busy=review.state.kind==='pending'||rollback.state.kind==='pending', ready=note.trim().length>=3;
+  const act=(action:'reviewed'|'approved'|'rejected')=>void review.run({commandId:crypto.randomUUID(),
+    candidateId:candidate.candidateId,action,note:note.trim(),actor:'local-user'});
+  return <div className="candidate-review-controls">
+    <label><span>Human audit note</span><input value={note} maxLength={1000}
+      onChange={(event)=>setNote(event.target.value)} placeholder="Record the evidence behind this decision" /></label>
+    <div className="candidate-review-actions">
+      <button type="button" disabled={busy||!ready} onClick={()=>act('reviewed')}>Review</button>
+      {candidate.state==='promotion_eligible'&&!candidate.active&&<button type="button" disabled={busy||!ready} onClick={()=>act('approved')}>Approve</button>}
+      {!candidate.active&&<button type="button" disabled={busy||!ready} onClick={()=>act('rejected')}>Reject</button>}
+      {!candidate.active&&<button type="button" disabled={busy||!ready} onClick={()=>void rollback.run({commandId:crypto.randomUUID(),
+        candidateId:candidate.candidateId,note:note.trim(),actor:'local-user'})}>Roll back to</button>}
+    </div>
+    {(review.state.kind==='failed'||review.state.kind==='blocked'||rollback.state.kind==='failed'||rollback.state.kind==='blocked')&&
+      <small role="alert">The candidate action was refused. Check eligibility and prior activation history.</small>}
+  </div>;
+}
 
 export function ResearchRuns({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const runs = useChannel(client, 'research.runs', {});
@@ -42,6 +69,7 @@ export function ResearchRuns({ client }: { readonly client: CoquiClient }): Reac
           <div><strong>{candidate.strategyVersion}</strong><span>{candidate.active ? 'active champion' : candidate.state.replaceAll('_', ' ')}</span></div>
           <p>{candidate.parentId === null ? 'Root candidate' : `Child of ${candidate.parentId.slice(0, 10)}…`}</p>
           <small>evidence {candidate.evidenceHash.slice(0, 12)}… · {new Date(candidate.createdAtMs).toISOString()}</small>
+          <CandidateReviewControls client={client} candidate={candidate} />
         </li>)}
       </ol>}
       {lineage.kind !== 'loading' && lineage.kind !== 'ready' &&

@@ -101,6 +101,9 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   // Research runs are immutable once written.
   'research.runs': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
   'research.lineage': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
+  'research.trigger-status': { refetchIntervalMs: 30 * SECOND, staleTimeMs: 10 * SECOND },
+  'research.candidate.review': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
+  'research.candidate.rollback': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
   'research.edge-study': { refetchIntervalMs: 5 * MINUTE, staleTimeMs: 2 * MINUTE },
   'research.performance': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
   'research.jobs': { refetchIntervalMs: 30 * SECOND, staleTimeMs: 10 * SECOND },

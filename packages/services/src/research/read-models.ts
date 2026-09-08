@@ -1,6 +1,8 @@
 import {
   getResearchJob,
   listResearchJobs,
+  listResearchJobsForProfile,
+  researchJobBelongsToProfile,
   verifiedResearchStudyRuns,
   type Db,
   type StoredResearchJob,
@@ -163,6 +165,7 @@ function runView(run: StoredResearchStudyRun): ResearchRunView {
 
 export interface ResearchReadModelDependencies {
   readonly database: Db;
+  readonly profileId?: string;
 }
 
 /**
@@ -177,9 +180,11 @@ export interface ResearchReadModelDependencies {
  */
 export class ResearchReadModelService {
   readonly #database: Db;
+  readonly #profileId:string|undefined;
 
   constructor(dependencies: ResearchReadModelDependencies) {
     this.#database = dependencies.database;
+    this.#profileId=dependencies.profileId;
   }
 
   /**
@@ -230,7 +235,8 @@ export class ResearchReadModelService {
     }
     let stored: readonly StoredResearchJob[];
     try {
-      stored = listResearchJobs(this.#database, limit);
+      stored = this.#profileId===undefined?listResearchJobs(this.#database,limit):
+        listResearchJobsForProfile(this.#profileId,limit,this.#database).map((id)=>getResearchJob(id,this.#database)!);
     } catch {
       return issue(['jobs'], 'storage_rejected');
     }
@@ -245,7 +251,8 @@ export class ResearchReadModelService {
 
     let stored: StoredResearchJob | null;
     try {
-      stored = getResearchJob(id, this.#database);
+      stored = this.#profileId!==undefined&&!researchJobBelongsToProfile(this.#profileId,id,this.#database)?null:
+        getResearchJob(id, this.#database);
     } catch {
       return issue(['job'], 'storage_rejected');
     }

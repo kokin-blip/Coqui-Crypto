@@ -20,7 +20,7 @@ export interface MarketEventIngestResult {
   readonly inserted: boolean;
   readonly contentHash: string;
   readonly classificationId: string;
-  readonly triggerDecisions: readonly { readonly triggerId: string; readonly decision: ResearchTriggerDecision }[];
+  readonly triggerDecisions: readonly { readonly triggerId: string; readonly decision: ResearchTriggerDecision; readonly jobId: string|null }[];
   readonly targetInfluence: false;
   readonly executionAuthority: false;
 }
@@ -46,7 +46,8 @@ function llmResult(value: unknown): Pick<MarketEventClassificationV1, 'label'|'s
 
 export class MarketEventService {
   readonly #triggers: ResearchTriggerCoordinator;
-  constructor(private readonly input: { readonly profileId: string; readonly database: Db; readonly clock: Clock }) {
+  constructor(private readonly input: { readonly profileId: string; readonly database: Db; readonly clock: Clock;
+    readonly requestResearch?: (triggerId:string,at:number)=>{readonly decision:ResearchTriggerDecision;readonly jobId:string|null} }) {
     this.#triggers = new ResearchTriggerCoordinator(input.database);
   }
 
@@ -67,9 +68,11 @@ export class MarketEventService {
         const classificationId = saveMarketEventClassification(classified, this.input.database);
         return { saved, classificationId };
       });
-      const triggerDecisions = output.saved.inserted ? listResearchEventTriggers(this.input.database).map((trigger) => ({
-        triggerId: trigger.id, decision: this.#triggers.request(trigger.id, 1, event.firstSeenAtMs),
-      })) : [];
+      const triggerDecisions = output.saved.inserted ? listResearchEventTriggers(this.input.database).map((trigger) => {
+        const result=this.input.requestResearch?.(trigger.id,event.firstSeenAtMs)??
+          {decision:this.#triggers.request(trigger.id,1,event.firstSeenAtMs),jobId:null};
+        return {triggerId:trigger.id,...result};
+      }) : [];
       return Object.freeze({ eventId: event.id, inserted: output.saved.inserted,
         contentHash: output.saved.stored.contentHash, classificationId: output.classificationId,
         triggerDecisions, targetInfluence: false as const, executionAuthority: false as const });

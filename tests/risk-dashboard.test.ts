@@ -140,6 +140,8 @@ describe('the gate cannot be edited from the UI', () => {
       'paper.execution.prepare',
       'paper.execution.review',
       'portfolio.reconciliation.resolve',
+      'research.candidate.review',
+      'research.candidate.rollback',
     ]);
     expect(CHANNEL_NAMES.filter((channel) => channel.startsWith('risk.'))).toEqual([
       'risk.dashboard',

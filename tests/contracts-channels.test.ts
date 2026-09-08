@@ -95,14 +95,13 @@ describe('channel registry', () => {
       'portfolio.reconciliation.resolve',
       'portfolio.tax',
       'portfolio.view',
-      'research.edge-study',
+      'research.candidate.review', 'research.candidate.rollback', 'research.edge-study',
       'research.job',
       'research.jobs', 'research.lineage',
       'research.negative-findings',
       'research.performance',
       'research.runs',
-      'research.scoreboard',
-      'risk.dashboard',
+      'research.scoreboard', 'research.trigger-status', 'risk.dashboard',
       'risk.evidence-gate',
     ]);
   });
@@ -117,10 +116,6 @@ describe('channel registry', () => {
   it('classifies every channel, and names the one write', () => {
     expect([...CHANNEL_KINDS.read, ...CHANNEL_KINDS.write].sort())
       .toEqual([...CHANNEL_NAMES].sort());
-    // The distinction was kept explicit while `write` was empty so the first
-    // write would not have to retrofit it. A read must never drift into this
-    // list: `docs/UI-UX.md` §3.1's no-optimistic-success rule is enforceable
-    // only if the transport knows which channels are commands.
     expect(CHANNEL_KINDS.write).toEqual([
       'accounts.coinbase.connect', 'accounts.coinbase.connect-json', 'accounts.coinbase.disconnect',
       'accounts.coinbase.sync',
@@ -148,6 +143,7 @@ describe('channel registry', () => {
       'paper.execution.prepare',
       'paper.execution.review',
       'portfolio.reconciliation.resolve',
+      'research.candidate.review', 'research.candidate.rollback',
     ]);
     expect(CHANNEL_KINDS.read).not.toContain('portfolio.reconciliation.resolve');
   });
@@ -255,8 +251,6 @@ describe('risk evidence gate contract', () => {
       assessmentHash: 'a'.repeat(64),
     };
     expect(schema.safeParse(base).success).toBe(true);
-    // Reaching the gate makes live considerable, never enabled. A main process
-    // that tried to send true fails validation rather than lighting a control.
     expect(schema.safeParse({ ...base, liveExecutionPermitted: true }).success).toBe(false);
   });
 

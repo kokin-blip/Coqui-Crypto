@@ -349,6 +349,10 @@
 .lineage-list li p,
 .lineage-list li small { color: var(--coqui-text-muted); font-size: 10px; overflow-wrap: anywhere; }
 .lineage-list li p { margin: 10px 0 4px; }
+.lineage-list li > .candidate-review-controls { display: grid; align-items: stretch; justify-content: stretch; gap: var(--coqui-space-2); margin-top: var(--coqui-space-3); padding-top: var(--coqui-space-3); border-top: 1px solid var(--coqui-border); }
+.candidate-review-controls label { display: grid; gap: 4px; color: var(--coqui-text-muted); font-size: 10px; }
+.candidate-review-controls input { width: 100%; }
+.lineage-list li > .candidate-review-controls > .candidate-review-actions { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: var(--coqui-space-2); }
 .indicator-controls { margin: 8px 0 10px; }
 .indicator-controls summary { color: var(--coqui-text-muted); cursor: pointer; }
 .indicator-controls > div { display: flex; flex-wrap: wrap; gap: 8px 16px; padding: 10px 0; }

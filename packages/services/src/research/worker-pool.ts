@@ -59,14 +59,16 @@ export class ResearchWorkerPool {
       const envelope = createResearchWorkerEnvelope(jobId, definition, snapshot);
       const envelopeJson = researchWorkerEnvelopeJson(envelope), envelopeHash = sha256Hex(envelopeJson);
       const startedAt = this.#clock.nowMs();
+      const timeoutMs=job.deadlineAt===null||job.deadlineAt===undefined?this.#timeoutMs:
+        Math.max(0,Math.min(this.#timeoutMs,job.deadlineAt-startedAt));
       const attempt = startResearchWorkerAttempt(jobId, envelopeJson, envelopeHash, startedAt, this.#database);
       updateJob(job, { status: 'running', startedAt, completedAt: null, resultJson: null,
         resultHash: null, error: null, errorCode: null, attemptCount: attempt.attemptNumber,
-        deadlineAt: startedAt + this.#timeoutMs,
+        deadlineAt: startedAt + timeoutMs,
         progressJson: '{"phase":"running","percent":0}' }, this.#database);
       appendResearchJobEvent(jobId, 'worker_started', JSON.stringify({ attemptId: attempt.id }), startedAt, this.#database);
       try {
-        const result = await this.#execute(envelope, envelopeHash, signal);
+        const result = await this.#execute(envelope, envelopeHash, timeoutMs, signal);
         const resultJson = canonicalJson(result as unknown as CanonicalJsonValue), resultHash = sha256Hex(resultJson);
         if (!finishResearchWorkerAttempt(attempt.id, 'completed', this.#clock.nowMs(), resultJson, resultHash, null, this.#database)) {
           throw new ResearchWorkerFailure('stale_result');
@@ -100,7 +102,7 @@ export class ResearchWorkerPool {
     });
   }
 
-  #execute(envelope: ReturnType<typeof createResearchWorkerEnvelope>, envelopeHash: string,
+  #execute(envelope: ReturnType<typeof createResearchWorkerEnvelope>, envelopeHash: string, timeoutMs:number,
     signal?: AbortSignal): Promise<ResearchWorkerResultV1> {
     return new Promise((resolve, reject) => {
       const worker = new Worker(workerUrl(), { workerData: envelope,
@@ -109,7 +111,7 @@ export class ResearchWorkerPool {
       const done = (action: () => void) => { if (settled) return; settled = true; clearTimeout(timer);
         signal?.removeEventListener('abort', cancel); void worker.terminate(); action(); };
       const cancel = () => done(() => reject(new ResearchWorkerFailure('cancelled')));
-      const timer = setTimeout(() => done(() => reject(new ResearchWorkerFailure('timed_out'))), this.#timeoutMs);
+      const timer = setTimeout(() => done(() => reject(new ResearchWorkerFailure('timed_out'))), timeoutMs);
       timer.unref?.();
       if (signal?.aborted) cancel(); else signal?.addEventListener('abort', cancel, { once: true });
       worker.once('message', (message: unknown) => done(() => {

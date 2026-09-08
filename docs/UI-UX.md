@@ -260,6 +260,12 @@ markers are labeled as global, and Activity's evidence inspector shows the
 recorded market interval, exposure/cash result, asset scopes, evidence sequence,
 selected routes, and hashes without constructing a UI-only narrative.
 
+Research lineage actions are confirmed main-process commands. Review, approval,
+rejection, and rollback require a human-entered audit note; the renderer never
+optimistically changes champion state. A refused activation stays visible as a
+refusal, while the append-only v75 review and activation evidence remains the
+authoritative history.
+
 Phase 8 adds a bounded market-event timeline to both market workspaces. Rows
 show the event title, classification availability, first-known time, and a short
 local provenance hash. Empty, loading, and unavailable states remain distinct.

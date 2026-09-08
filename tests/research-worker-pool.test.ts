@@ -78,6 +78,18 @@ describe('bounded research worker pool', () => {
     database.close();
   });
 
+  it('does not requeue an interrupted job after its registered deadline', () => {
+    const database = openDatabase(':memory:'), clock = new FixedClock(50);
+    prepare('expired', database);
+    saveResearchJob({ ...getResearchJob('expired', database)!, status: 'running', startedAt: 30,
+      deadlineAt: 40 }, database);
+    expect(new ResearchWorkerPool({ database, clock }).recover()).toEqual({ attemptsFailed: 0,
+      jobsRequeued: 0, jobsFailed: 1 });
+    expect(getResearchJob('expired', database)).toMatchObject({ status: 'failed',
+      errorCode: 'deadline_exceeded' });
+    database.close();
+  });
+
   it('rejects an older attempt after a replacement starts', () => {
     const database = openDatabase(':memory:'); prepare('stale', database);
     const envelope = createResearchWorkerEnvelope('stale', definition, snapshot);

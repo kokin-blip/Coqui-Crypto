@@ -527,8 +527,10 @@ distributed lease and does not authorize active-active or remote SQLite use.
 
 ### 6.4 Research workers and evolution authority
 
-Migration 67 connects the existing durable `research_jobs` queue to a bounded
-`worker_threads` pool. The versioned worker envelope contains only a research
+Migration 67 defines the bounded `worker_threads` pool and its evidence. Migration
+75 connects explicitly registered scheduled and event triggers to profile-scoped
+durable jobs, drains those jobs from the desktop/headless shared host lifecycle,
+and links results to candidates. The versioned worker envelope contains only a research
 definition and immutable snapshot, is limited to one MiB, and binds protocol,
 snapshot, envelope, and result hashes. The default pool has two workers and a
 64 MiB old-generation limit per worker. Cancellation, timeout, process failure,
@@ -541,11 +543,13 @@ Candidate governance remains in the host process. A pure policy evaluates hard
 OOS, walk-forward, stress, drawdown, turnover, significance, stability, and
 trial-budget blockers. Passing evidence may be recorded only as
 `promotion_eligible`; it does not alter the active champion. Activation and
-rollback require an explicit human approval reference and append immutable
-lineage with a monotonically increasing generation. Scheduled and event
+rollback require an explicit human audit note and append both a profile-scoped
+review event and immutable lineage with a monotonically increasing generation. Scheduled and event
 research triggers enforce debounce, cooldown, maximum duration, and trial
-budget before they may start a job. Research activity never changes execution
-authority or paper targets.
+budget before they may start a job. An unregistered definition cannot create a
+job, interrupted work is requeued only while its recorded deadline remains
+valid, and a worker can never activate its own result. Research activity never
+changes execution authority or paper targets.
 
 ### 6.5 Advisor decision evidence and provider isolation
 
@@ -722,8 +726,10 @@ classifications by the requested as-of time, preventing hindsight during replay.
 `MarketEventService` accepts bounded local JSON fixtures only. Its deterministic
 classifier is non-predictive; an optional classifier adapter receives an
 allowlisted fact document and must return exactly label, sentiment, and
-importance. New events may request existing debounced research triggers, but
-the returned event contract fixes `targetInfluence` and `executionAuthority` to
+importance. New events may request existing debounced research triggers. A
+durable job is created only when the host has an explicit immutable definition
+registered for that trigger; otherwise the typed result is
+`definition_unavailable`. The returned event contract fixes `targetInfluence` and `executionAuthority` to
 the literal value `false`. No event type is imported by strategy, planning, OMS,
 or venue code. Advisor packs include only events available at the decision's
 market timestamp, and chart markers use `firstSeenAt`, never `publishedAt`.
