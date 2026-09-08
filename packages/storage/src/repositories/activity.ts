@@ -1,7 +1,8 @@
 import type { Db } from '../sqlite/index.js';
+import { listExtendedActivityEvents } from './activity-extended.js';
 
 interface DecisionRow { id: string; scheduled_for: number; status: string; strategy_version: string; snapshot_hash: string }
-interface EvidenceRow { id: string; decision_id: string; at: number; kind: string; reason_code: string | null; payload_hash: string }
+interface EvidenceRow { id: string; decision_id: string; at: number; kind: string; reason_code: string | null; payload_hash: string; asset_scopes: string }
 interface PaperRow { id: string; at: number; kind: string; proposal_id: string; decision_id: string | null }
 interface FillRow { id: string; filled_at: number; quantity_text: string; notional_text: string; venue_fee_text: string; market_snapshot_hash: string; product_id: string; side: string; decision_id: string | null }
 interface AlertRow { id: string; occurred_at: number; kind: string; severity: string; reason_code: string; evidence_hash: string }
@@ -26,6 +27,7 @@ export interface ActivityFeedEvent {
   readonly decisionId: string | null;
   readonly evidenceId: string | null;
   readonly reasonCode: string | null;
+  readonly assetScopes: readonly string[];
 }
 
 function cursorFor(event: ActivityFeedEvent): string {
@@ -57,9 +59,12 @@ export function listActivityFeed(
     ORDER BY wallet.scheduled_for DESC, wallet.id DESC LIMIT ?
   `).all(profileId, perSource) as unknown as DecisionRow[];
   const evidenceRows = database.prepare(`
-    SELECT id, decision_id, at, kind, reason_code, payload_hash
-    FROM decision_evidence_events_v1 WHERE profile_id = ?
-    ORDER BY at DESC, id DESC LIMIT ?
+    SELECT event.id,event.decision_id,event.at,event.kind,event.reason_code,event.payload_hash,
+      GROUP_CONCAT(link.asset_scope) AS asset_scopes
+    FROM decision_evidence_events_v1 event
+    JOIN decision_evidence_asset_links_v1 link ON link.event_id=event.id
+    WHERE event.profile_id = ? GROUP BY event.id
+    ORDER BY event.at DESC,event.id DESC LIMIT ?
   `).all(profileId, perSource) as unknown as EvidenceRow[];
   const paperRows = database.prepare(`
     SELECT event.id, event.at, event.kind, event.proposal_id, context.decision_id
@@ -86,6 +91,7 @@ export function listActivityFeed(
   `).all(profileId, perSource) as unknown as IncidentRow[];
 
   const events: ActivityFeedEvent[] = [
+    ...listExtendedActivityEvents(profileId, perSource, database),
     ...evidenceRows.map((row): ActivityFeedEvent => {
       const kind = row.kind === 'risk_evaluated' ? 'risk' as const :
         row.kind === 'execution_planned' ? 'routing' as const :
@@ -107,7 +113,8 @@ export function listActivityFeed(
         detail: row.reason_code === null ? `${row.kind.replaceAll('_', ' ')} is part of the immutable decision trace.` :
           `Reason ${row.reason_code.replaceAll('_', ' ')}.`, occurredAt: Number(row.at),
         provenance: row.payload_hash, decisionId: row.decision_id,
-        evidenceId: row.id, reasonCode: row.reason_code };
+        evidenceId: row.id, reasonCode: row.reason_code,
+        assetScopes: Object.freeze(row.asset_scopes.split(',').sort()) };
     }),
     ...decisionRows.map((row): ActivityFeedEvent => ({
       id: `decision:${String(row.id)}`, kind: 'decision',
@@ -116,6 +123,7 @@ export function listActivityFeed(
       detail: `Strategy ${decisionStrategyLabel(String(row.strategy_version))} evaluated its registered decision snapshot.`,
       occurredAt: Number(row.scheduled_for), provenance: String(row.snapshot_hash),
       decisionId: null, evidenceId: null, reasonCode: null,
+      assetScopes: Object.freeze(['GLOBAL']),
     })),
     ...paperRows.map((row): ActivityFeedEvent => ({
       id: `paper:${String(row.id)}`, kind: 'paper',
@@ -125,6 +133,7 @@ export function listActivityFeed(
       detail: `Proposal ${String(row.proposal_id).slice(0, 12)} recorded an immutable execution event.`,
       occurredAt: Number(row.at), provenance: String(row.proposal_id),
       decisionId: row.decision_id, evidenceId: null, reasonCode: null,
+      assetScopes: Object.freeze(['GLOBAL']),
     })),
     ...fillRows.map((row): ActivityFeedEvent => ({
       id: `fill:${String(row.id)}`, kind: 'fill', status: 'succeeded',
@@ -132,6 +141,7 @@ export function listActivityFeed(
       detail: `${String(row.quantity_text)} units · ${String(row.notional_text)} USD notional · ${String(row.venue_fee_text)} USD fee.`,
       occurredAt: Number(row.filled_at), provenance: String(row.market_snapshot_hash),
       decisionId: row.decision_id, evidenceId: null, reasonCode: null,
+      assetScopes: Object.freeze([String(row.product_id).split('-')[0]!.toUpperCase()]),
     })),
     ...alertRows.map((row): ActivityFeedEvent => ({
       id: `alert:${String(row.id)}`, kind: 'alert',
@@ -140,6 +150,7 @@ export function listActivityFeed(
       detail: `Reason ${String(row.reason_code).replaceAll('_', ' ')}.`,
       occurredAt: Number(row.occurred_at), provenance: String(row.evidence_hash),
       decisionId: null, evidenceId: row.id, reasonCode: row.reason_code,
+      assetScopes: Object.freeze(['GLOBAL']),
     })),
     ...incidentRows.map((row): ActivityFeedEvent => ({
       id: `incident:${String(row.id)}`,
@@ -149,6 +160,7 @@ export function listActivityFeed(
       detail: `Source ${String(row.source)} · severity ${String(row.severity)}.`,
       occurredAt: Number(row.occurred_at), provenance: null,
       decisionId: null, evidenceId: row.id, reasonCode: null,
+      assetScopes: Object.freeze(['GLOBAL']),
     })),
   ];
   const ordered = events.filter((event) => beforeCursor(event, cursor))

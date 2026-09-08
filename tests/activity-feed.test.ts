@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { sha256Hex, strategyDecisionId, type StrategyDecisionV1 } from '../packages/core/src/index.js';
 import { appendDecisionEvidenceEvent, listActivityFeed, openDatabase,
+  getDecisionDetail, listDecisionTimeline,
   readOperationsFloor, saveStrategyDecision } from '../packages/storage/src/index.js';
 
 function decision(profileId: string, at: number): StrategyDecisionV1 {
@@ -63,6 +64,49 @@ describe('bounded activity feed', () => {
       decisionId: value.decisionId, reasonCode: 'no_rebalance_needed' });
     expect(feed.events[0]?.evidenceId).toHaveLength(64);
     expect(feed.events.every((event) => event.provenance?.length === 64)).toBe(true);
+    database.close();
+  });
+
+  it('links decisions to affected assets and filters unrelated chart markers', () => {
+    const database = openDatabase(':memory:');
+    const value = { ...decision('main', 700),
+      targets: [{ assetId: 'coinbase|spot|BTC-USD', weight: 0.6 }],
+      cashWeight: 0.4, exposure: 0.6,
+      facts: { momentum: [{ assetId: 'coinbase|spot|ETH-USD', returnPct: 4,
+        volatilityPct: 20, riskAdjustedMomentum: 0.2 }], realizedVolPct: 12, belowTrend: false } };
+    const stored = saveStrategyDecision(value, database);
+    appendDecisionEvidenceEvent({ schemaVersion: 1, decisionId: value.decisionId,
+      profileId: 'main', sequence: 0, kind: 'strategy_evaluated', atMs: 700,
+      detail: { decisionHash: stored.contentHash } }, database);
+    expect(listDecisionTimeline({ profileId: 'main', assetScope: 'BTC', asOfMs: null,
+      limit: 10 }, database)).toEqual([expect.objectContaining({ decisionId: value.decisionId,
+      assetScopes: ['BTC', 'ETH'], globalScope: false })]);
+    expect(listDecisionTimeline({ profileId: 'main', assetScope: 'SOL', asOfMs: null,
+      limit: 10 }, database)).toEqual([]);
+    expect(listDecisionTimeline({ profileId: 'main', assetScope: null, asOfMs: 699,
+      limit: 10 }, database)).toEqual([]);
+    expect(getDecisionDetail('main', value.decisionId, database)).toMatchObject({
+      decisionHash: stored.contentHash, assetScopes: ['BTC', 'ETH'],
+      events: [{ event: { kind: 'strategy_evaluated' } }],
+    });
+    expect(getDecisionDetail('other', value.decisionId, database)).toBeNull();
+    expect(() => database.prepare('DELETE FROM decision_asset_links_v1').run()).toThrow();
+    expect(() => database.prepare('DELETE FROM decision_evidence_asset_links_v1').run()).toThrow();
+    database.close();
+  });
+
+  it('includes host lease activity without exposing stored detail JSON', () => {
+    const database = openDatabase(':memory:');
+    const id = sha256Hex('scheduler-lease-event');
+    database.prepare(`INSERT INTO scheduler_lease_events_v1
+      (id,profile_id,owner_id,lease_generation,kind,at,detail_json)
+      VALUES(?,?,?,?,?,?,?)`).run(id, 'main', 'desktop-a', 1, 'lost', 900,
+      '{"private":"never projected"}');
+    const feed = listActivityFeed('main', 10, null, database);
+    expect(feed.events).toEqual([expect.objectContaining({ id: `scheduler:${id}`,
+      kind: 'host', status: 'blocked', assetScopes: ['GLOBAL'] })]);
+    expect(JSON.stringify(feed)).not.toContain('never projected');
+    expect(listActivityFeed('other', 10, null, database).events).toEqual([]);
     database.close();
   });
 

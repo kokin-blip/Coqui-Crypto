@@ -8,7 +8,7 @@ import {
   type StrategyDecisionV1,
 } from '@coqui/core';
 
-import type { Db } from '../sqlite/index.js';
+import { inTransaction, type Db } from '../sqlite/index.js';
 
 const SHA256 = /^[0-9a-f]{64}$/u;
 const ID = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/u;
@@ -18,6 +18,38 @@ const EVENT_KINDS = new Set([
   'stand_down', 'execution_submitted', 'execution_filled',
   'execution_refused', 'recovery',
 ]);
+
+function exposureScope(assetId: string): string | null {
+  const identity = assetId.includes('|') ? assetId.split('|').at(-1)! :
+    assetId.includes(':') ? assetId.split(':').at(-1)! : assetId;
+  const canonical = identity.toUpperCase().replace(/-(?:USD|USDC|USDT)$/u, '');
+  return /^[A-Z0-9][A-Z0-9._-]{0,31}$/u.test(canonical) ? canonical : null;
+}
+
+function decisionScopes(decision: StrategyDecisionV1): readonly {
+  readonly assetScope: string; readonly source: 'target' | 'momentum' | 'global';
+}[] {
+  const scopes = new Map<string, 'target' | 'momentum'>();
+  for (const target of decision.targets) {
+    const scope = exposureScope(target.assetId);
+    if (scope !== null) scopes.set(scope, 'target');
+  }
+  for (const fact of decision.facts?.momentum ?? []) {
+    const scope = exposureScope(fact.assetId);
+    if (scope !== null && !scopes.has(scope)) scopes.set(scope, 'momentum');
+  }
+  return scopes.size === 0 ? [{ assetScope: 'GLOBAL', source: 'global' }] :
+    [...scopes].sort(([left], [right]) => left.localeCompare(right))
+      .map(([assetScope, source]) => ({ assetScope, source }));
+}
+
+function linkDecisionScopes(decision: StrategyDecisionV1, database: Db): void {
+  const insert = database.prepare(`INSERT OR IGNORE INTO decision_asset_links_v1
+    (decision_id,profile_id,asset_scope,source) VALUES(?,?,?,?)`);
+  for (const scope of decisionScopes(decision)) {
+    insert.run(decision.decisionId, decision.profileId, scope.assetScope, scope.source);
+  }
+}
 
 function validTime(value: number | null): boolean {
   return value === null || (Number.isSafeInteger(value) && value >= 0);
@@ -179,24 +211,19 @@ export function saveStrategyDecision(
     if (existing.content_json !== contentJson || existing.content_hash !== contentHash) {
       throw new Error('Strategy decision identity cannot change content.');
     }
+    linkDecisionScopes(decision, database);
     return { decision, contentHash };
   }
-  database.prepare(`
-    INSERT INTO strategy_decisions_v1
-      (decision_id, profile_id, run_id, scheduled_for, strategy_id,
-       strategy_version, content_json, content_hash, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(
-    decision.decisionId,
-    decision.profileId,
-    decision.runId,
-    decision.scheduledForMs,
-    decision.strategy.id,
-    decision.strategy.version,
-    contentJson,
-    contentHash,
-    decision.createdAtMs,
-  );
+  inTransaction(database, () => {
+    database.prepare(`
+      INSERT INTO strategy_decisions_v1
+        (decision_id, profile_id, run_id, scheduled_for, strategy_id,
+         strategy_version, content_json, content_hash, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(decision.decisionId, decision.profileId, decision.runId, decision.scheduledForMs,
+      decision.strategy.id, decision.strategy.version, contentJson, contentHash, decision.createdAtMs);
+    linkDecisionScopes(decision, database);
+  });
   return { decision, contentHash };
 }
 
@@ -245,22 +272,19 @@ export function appendDecisionEvidenceEvent(
   if (event.sequence !== expectedSequence) {
     throw new Error('Decision evidence events must append in contiguous sequence order.');
   }
-  database.prepare(`
-    INSERT INTO decision_evidence_events_v1
-      (id, decision_id, profile_id, sequence, kind, reason_code, at,
-       payload_json, payload_hash)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(
-    id,
-    event.decisionId,
-    event.profileId,
-    event.sequence,
-    event.kind,
-    eventReason(event),
-    event.atMs,
-    payloadJson,
-    payloadHash,
-  );
+  inTransaction(database, () => {
+    database.prepare(`
+      INSERT INTO decision_evidence_events_v1
+        (id, decision_id, profile_id, sequence, kind, reason_code, at,
+         payload_json, payload_hash)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(id, event.decisionId, event.profileId, event.sequence, event.kind,
+      eventReason(event), event.atMs, payloadJson, payloadHash);
+    database.prepare(`INSERT INTO decision_evidence_asset_links_v1
+      (event_id,decision_id,profile_id,asset_scope)
+      SELECT ?,decision_id,profile_id,asset_scope FROM decision_asset_links_v1
+      WHERE decision_id=? AND profile_id=?`).run(id, event.decisionId, event.profileId);
+  });
   return true;
 }
 

@@ -156,8 +156,8 @@ describe('profile database duplication storage', { timeout: 20_000 }, () => {
     expect(result).toEqual({
       ok: true,
       evidence: expect.objectContaining({
-        schemaVersion: 73,
-        profileScopedTableCount: 80,
+        schemaVersion: 74,
+        profileScopedTableCount: 82,
         rewrittenRowCount: 12,
         excludedTransientRowCount: 10,
         clearedCredentialMetadataCount: 4,
@@ -316,8 +316,8 @@ describe('accounts profile duplication service', { timeout: 20_000 }, () => {
           lastOpenedAtMs: 50,
           order: 1,
         },
-        schemaVersion: 73,
-        profileScopedTableCount: 80,
+        schemaVersion: 74,
+        profileScopedTableCount: 82,
         rewrittenRowCount: 12,
         excludedTransientRowCount: 10,
         clearedCredentialMetadataCount: 4,

@@ -13,6 +13,7 @@ const activityEventSchema = z.strictObject({
   decisionId: z.string().length(64).nullable(),
   evidenceId: z.string().min(1).max(128).nullable(),
   reasonCode: z.string().regex(/^[a-z][a-z0-9_]{0,79}$/u).nullable(),
+  assetScopes: z.array(z.string().regex(/^(?:GLOBAL|[A-Z0-9][A-Z0-9._-]{0,31})$/u)).max(100).readonly(),
 }).readonly();
 
 export const activityChannelSchemas = {

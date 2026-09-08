@@ -686,6 +686,19 @@ timestamp, and content hash used by paper execution and Advisor evidence packs.
 Linked legacy wallet summaries are excluded to prevent a decision appearing
 twice; unlinked predecessor summaries retain their corrected legacy label.
 
+Migration 74 adds immutable decision-to-asset and evidence-to-asset links.
+New decisions derive these links from recorded targets and momentum facts; an
+empty universe is stored as explicit `GLOBAL` scope. `decision.timeline` applies
+profile, asset, and historical as-of filters in SQLite, while `decision.detail`
+returns the stored decision, ordered evidence steps, selected paper routes, and
+their hashes. Both Markets workspaces use this timeline, so an asset-scoped
+marker cannot appear on an unrelated chart. Historical rows upgraded from an
+older schema remain explicitly global rather than receiving inferred assets.
+
+Activity additionally normalizes scheduler and execution leases, host ownership
+changes, market events, and Advisor navigation from their append-only sources.
+Only allowlisted fields are projected; raw detail JSON is never renderer-bound.
+
 `operations.floor` is a fixed six-item, read-only projection for host, market,
 risk, research, routing, and paper execution. Each available state identifies
 one persisted row and an evidence time. Missing rows are returned as

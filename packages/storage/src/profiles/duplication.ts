@@ -5,6 +5,7 @@ import { DatabaseSync, type SQLInputValue } from 'node:sqlite';
 
 import { backupDatabase } from '../sqlite/index.js';
 import { connectionCampaignRowCount, hostAuthorityRowCount } from './duplication-transient-counts.js';
+import { dropDecisionDuplicationTriggers, restoreDecisionDuplicationTriggers } from './duplication-decision-triggers.js';
 
 export interface DuplicateProfileDatabaseInput {
   readonly sourceProfileId: string;
@@ -93,7 +94,6 @@ function countQuery(database: DatabaseSync, sql: string, ...parameters: SQLInput
   return count;
 }
 
-/** Clone a SQLite profile snapshot and rewrite every explicit profile identity transactionally. */
 export function createFileProfileDatabaseDuplicator(profilesDirectory: string): ProfileDatabaseDuplicator {
   if (!profilesDirectory) throw new TypeError('A profile database root is required.');
 
@@ -128,9 +128,7 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
         return { ok: false, code: 'destination_conflict' };
       }
 
-      let stage: 'destination' | 'identity' | 'verification' = 'destination';
-      let source: DatabaseSync | null = null;
-      let target: DatabaseSync | null = null;
+      let stage: 'destination' | 'identity' | 'verification' = 'destination', source: DatabaseSync | null = null, target: DatabaseSync | null = null;
       try {
         source = new DatabaseSync(sourcePath, { readOnly: true, allowExtension: false });
         backupDatabase(source, temporaryPath);
@@ -155,6 +153,7 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
           throw new TypeError('Invalid profile-scoped table identity.');
         }
         let rewrittenRowCount = 0;
+        dropDecisionDuplicationTriggers(target);
         target.exec(`
           DROP TRIGGER advisor_audit_events_v1_no_update;
           DROP TRIGGER advisor_audit_events_v1_no_delete;
@@ -438,6 +437,7 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
           CREATE TRIGGER host_takeover_history_v1_no_delete BEFORE DELETE ON host_takeover_history_v1
             BEGIN SELECT RAISE(ABORT,'host takeover history is immutable'); END;
         `);
+        restoreDecisionDuplicationTriggers(target);
         const credentialMetadataKeys = ['credentials.coinbase.v2', 'credentials.coinbase.v3.status',
           'credentials.gemini.v2', 'coinbase.last_sync_at'] as const;
         const clearedCredentialMetadataCount = countQuery(

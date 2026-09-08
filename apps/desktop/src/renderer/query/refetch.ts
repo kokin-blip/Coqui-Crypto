@@ -25,6 +25,8 @@ export interface ChannelPolicy {
 }
 
 export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
+  'decision.timeline': { refetchIntervalMs: 30_000, staleTimeMs: 15_000 },
+  'decision.detail': { refetchIntervalMs: false, staleTimeMs: Infinity },
   'accounts.coinbase.status': { refetchIntervalMs: false, staleTimeMs: 30 * SECOND },
   'accounts.coinbase.connect': { refetchIntervalMs: false, staleTimeMs: 0 },
   'accounts.coinbase.connect-json': { refetchIntervalMs: false, staleTimeMs: 0 },

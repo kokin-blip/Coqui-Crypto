@@ -251,6 +251,7 @@ async function run() {
   for (const [channel, payload, describe] of [
     ['accounts.profiles', '{}', (v) => `profiles=${v?.profiles?.length}`],
     ['activity.feed', '{ limit: 20, cursor: null }', (v) => `events=${v?.events?.length}`],
+    ['decision.timeline', '{ assetScope: null, asOfMs: null, limit: 20 }', (v) => `items=${v?.items?.length}`],
     ['portfolio.allocation', '{}', (v) => `estimateOnly=${v?.plan?.estimateOnly}`],
     ['portfolio.tax', '{}', (v) => `disposals=${v?.disposals?.length}`],
     ['accounts.settings', '{}', (v) => `density=${v?.preferences?.density}`],

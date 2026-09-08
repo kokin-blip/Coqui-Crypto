@@ -43,6 +43,7 @@ afterEach(() => {
 /** Channels that answer from local state. The rest would reach the network. */
 const LOCAL_CHANNELS: readonly ChannelName[] = [
   'activity.feed',
+  'decision.timeline',
   'operations.floor',
   'market-events.timeline',
   'research.runs',
@@ -78,6 +79,7 @@ const PAYLOADS: Partial<Record<ChannelName, unknown>> = {
   'paper.execution.proposals': { limit: 50 },
   'paper.performance-day': { dayUtc: 1_799_971_200_000 },
   'market-events.timeline': { asOfMs: null, limit: 50 },
+  'decision.timeline': { assetScope: null, asOfMs: null, limit: 50 },
 };
 
 /** Every value in every column of every table, as one string. */
@@ -229,7 +231,8 @@ describe('the sweep covers the whole registry', () => {
       || channel.startsWith('connections.')
       || channel === 'portfolio.current'
       || channel === 'portfolio.history'
-      || channel === 'portfolio.reconciliation.resolve',
+      || channel === 'portfolio.reconciliation.resolve'
+      || channel === 'decision.detail',
     )).toBe(true);
   });
 });

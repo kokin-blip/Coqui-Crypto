@@ -255,6 +255,11 @@ hash, and an evidence-bound local “Ask Coqui why” action. The operations flo
 uses six fixed persisted read models. A subsystem with no row says
 “unavailable”; it does not receive a synthetic status or character activity.
 
+Decision markers are asset-scoped through immutable v74 evidence links. Global
+markers are labeled as global, and Activity's evidence inspector shows the
+recorded market interval, exposure/cash result, asset scopes, evidence sequence,
+selected routes, and hashes without constructing a UI-only narrative.
+
 Phase 8 adds a bounded market-event timeline to both market workspaces. Rows
 show the event title, classification availability, first-known time, and a short
 local provenance hash. Empty, loading, and unavailable states remain distinct.

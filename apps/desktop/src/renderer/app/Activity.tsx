@@ -8,6 +8,7 @@ import { SurfaceState } from './SurfaceState.js';
 
 type FeedEvent = ChannelResponse<'activity.feed'>['events'][number];
 type DecisionExplanation = ChannelResponse<'advisor.decision.explain'>;
+type DecisionDetail = ChannelResponse<'decision.detail'>;
 type EventFilter = 'all' | FeedEvent['status'];
 const FILTERS: readonly EventFilter[] = ['all', 'info', 'pending', 'blocked', 'failed', 'succeeded', 'unknown'];
 
@@ -22,6 +23,8 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
   const [explanations, setExplanations] = useState<Readonly<Record<string, DecisionExplanation>>>({});
   const [explanationFailure, setExplanationFailure] = useState<string | null>(null);
   const [explaining, setExplaining] = useState<string | null>(null);
+  const [detail, setDetail] = useState<DecisionDetail | null>(null);
+  const [detailLoading, setDetailLoading] = useState<string | null>(null);
   const payload = useMemo(() => ({ limit: 40, cursor }), [cursor]);
   const feed = useChannel(client, 'activity.feed', payload);
   const page = feed.kind === 'ready' ? feed.value : null;
@@ -52,6 +55,13 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
     if (result.status === 'ok') setExplanations((current) => ({ ...current, [decisionId]: result.value }));
     else setExplanationFailure(result.issues[0]?.code ?? 'decision_explanation_failed');
     setExplaining(null);
+  };
+  const inspect = async (decisionId: string): Promise<void> => {
+    setDetailLoading(decisionId); setExplanationFailure(null);
+    const result = await client.query('decision.detail', { decisionId });
+    if (result.status === 'ok') setDetail(result.value);
+    else setExplanationFailure(result.issues[0]?.code ?? 'decision_detail_failed');
+    setDetailLoading(null);
   };
   return (
     <section className="panel" aria-labelledby="activity-feed-heading">
@@ -99,6 +109,11 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
                     disabled={explaining === event.decisionId}
                     onClick={() => void explain(event.decisionId!)}><Sparkles size={14} aria-hidden="true" />
                     {explaining === event.decisionId ? 'Reading evidence…' : 'Ask Coqui why'}</button>
+                  <button type="button" aria-expanded={detail?.decision.decisionId === event.decisionId}
+                    disabled={detailLoading === event.decisionId}
+                    onClick={() => void inspect(event.decisionId!)}>
+                    {detailLoading === event.decisionId ? 'Opening…' : 'Inspect evidence'}
+                  </button>
                   <code title={event.decisionId}>decision {event.decisionId.slice(0, 10)}…</code>
                 </div>}
                 {event.decisionId !== null && explanations[event.decisionId] !== undefined &&
@@ -109,6 +124,31 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
           ))}
         </ol>
       )}
+      {detail !== null && <aside className="activity-explanation" aria-labelledby="decision-detail-heading">
+        <div className="panel-heading"><div><p className="eyebrow">Historical as-of evidence</p>
+          <h3 id="decision-detail-heading">Decision detail</h3></div>
+          <button type="button" className="button-secondary" onClick={() => setDetail(null)}>Close</button></div>
+        <dl className="evidence-grid">
+          <div><dt>Strategy</dt><dd>{detail.decision.strategy.version}</dd></div>
+          <div><dt>Completed market interval</dt><dd>{detail.decision.market.asOfMs === null
+            ? 'Unavailable' : eventTime(detail.decision.market.asOfMs)}</dd></div>
+          <div><dt>History</dt><dd>{detail.decision.historyStatus}</dd></div>
+          <div><dt>Exposure / cash</dt><dd>{detail.decision.exposure ?? 'Unavailable'} / {detail.decision.cashWeight ?? 'Unavailable'}</dd></div>
+          <div><dt>Assets</dt><dd>{detail.assetScopes.join(', ')}</dd></div>
+          <div><dt>Evidence / routes</dt><dd>{detail.events.length} / {detail.routes.length}</dd></div>
+        </dl>
+        {detail.routes.length > 0 && <p className="metric-note">Routes: {detail.routes.map((route) =>
+          `${route.side} ${route.exposureKey} via ${route.provider} (${route.amountUsd} USD)`).join(' · ')}</p>}
+        <p className="metric-note">Decision {detail.decision.decisionId} · hash {detail.decisionHash}</p>
+        <ol className="activity-feed">{detail.events.map((item) => <li key={item.eventId}>
+          <span className="event-marker status-info" aria-hidden="true" /><div>
+            <strong>{item.event.kind.replaceAll('_', ' ')}</strong>
+            <p>{item.event.kind === 'no_trade' || item.event.kind === 'stand_down' ||
+              item.event.kind === 'execution_refused' ? item.event.detail.reasonCode.replaceAll('_', ' ') :
+              'Recorded immutable evidence.'}</p>
+            <small>{eventTime(item.event.atMs)} · {item.payloadHash.slice(0, 12)}…</small>
+          </div></li>)}</ol>
+      </aside>}
       {explanationFailure !== null && <p className="activity-explanation-failure" role="alert">
         Explanation unavailable: {explanationFailure.replaceAll('_', ' ')}.</p>}
       {nextCursor !== null && (

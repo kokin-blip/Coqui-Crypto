@@ -65,7 +65,7 @@ describe('channel registry', () => {
       'chart-extensions.signer.remove',
       'chart-extensions.signer.trust',
       'connections.connect-file', 'connections.disconnect', 'connections.list', 'connections.rename', 'connections.status', 'connections.sync',
-      'market-data.candles',
+      'decision.detail', 'decision.timeline', 'market-data.candles',
       'market-data.display-bars',
       'market-data.fear-greed',
       'market-data.live',

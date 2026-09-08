@@ -7,6 +7,7 @@ import {
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 
 import { AdvisorSheet } from './AdvisorSheet.js';
+import { decisionTimelineMarkers } from './decision-timeline-markers.js';
 import { ChartExtensionManager } from './ChartExtensionManager.js';
 import { ChartLinkController } from './chart-link-controller.js';
 import { ChartDrawingManager } from './ChartDrawingManager.js';
@@ -25,8 +26,7 @@ import { useChannel } from '../query/use-channel.js';
 import { useCommand } from '../query/use-command.js';
 import { useWorkspace } from './WorkspaceContext.js';
 
-type Product = ChannelResponse<'market-data.products'>['products'][number];
-const INTERVALS: readonly WorkstationInterval[] = ['1m', '5m', '15m', '1h', '6h', '1d'];
+type Product = ChannelResponse<'market-data.products'>['products'][number]; const INTERVALS: readonly WorkstationInterval[] = ['1m', '5m', '15m', '1h', '6h', '1d'];
 const EMPTY_INDICATORS: WorkstationIndicators = Object.freeze({
   sma20: false, sma50: false, ema20: false, bollinger20: false, rsi14: false, macd: false,
 });
@@ -36,8 +36,7 @@ const TOOL_ICONS: ReadonlyArray<readonly [DrawingTool, React.ComponentType<{ siz
   ['ray', TrendingUp, 'Ray'], ['rectangle', RectangleHorizontal, 'Range'],
   ['fibonacci', Waves, 'Fibonacci'], ['text', TextCursorInput, 'Text'],
   ['measure', SlidersHorizontal, 'Measure'],
-];
-const CHART_INVALIDATIONS = ['app.chart.workspace'] as const;
+]; const CHART_INVALIDATIONS = ['app.chart.workspace'] as const;
 
 function rangeMs(interval: WorkstationInterval): number {
   return { '1m': 86_400_000, '5m': 7 * 86_400_000, '15m': 30 * 86_400_000,
@@ -153,7 +152,7 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
   const defaultInterval = workspace.preferences?.marketInterval ?? '1d';
   const chartWorkspace = useChannel(client, 'app.chart.workspace', { productId: selected, interval: defaultInterval });
   const extensionCatalog = useChannel(client, 'chart-extensions.catalog', {});
-  const activity = useChannel(client, 'activity.feed', { limit: 100, cursor: null });
+  const timeline = useChannel(client, 'decision.timeline', { assetScope: null, asOfMs: null, limit: 100 });
   const eventTimeline = useChannel(client, 'market-events.timeline', { asOfMs: null, limit: 50 });
   const chartCommand = useCommand(client, 'app.chart.workspace.set', CHART_INVALIDATIONS);
   const stored = chartWorkspace.kind === 'ready' ? chartWorkspace.value : { layouts: [], watchlists: [], drawings: [] };
@@ -180,12 +179,13 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
   const indicators = primaryTile.indicators;
   const enabledExtensionIds = extensionCatalog.kind === 'ready'
     ? extensionCatalog.value.extensions.filter((item) => item.enabled).map((item) => item.id) : [];
-  const decisionMarkers = useMemo<readonly WorkstationExtensionMarker[]>(() => activity.kind !== 'ready' ? [] :
-    activity.value.events.filter((event) => event.decisionId !== null && event.kind === 'decision')
-      .filter((event, index, events) => events.findIndex((candidate) => candidate.decisionId === event.decisionId) === index)
-      .map((event) => ({ extensionId: `decision:${event.decisionId!}`, timeMs: event.occurredAt,
-        label: `Decision ${event.decisionId!.slice(0, 8)}`, tone: event.status === 'succeeded' ? 'positive' :
-          event.status === 'blocked' || event.status === 'failed' ? 'negative' : event.status === 'pending' ? 'warning' : 'neutral' })), [activity]);
+  const decisionMarkers = (productId: string): readonly WorkstationExtensionMarker[] => {
+    if (timeline.kind !== 'ready') return [];
+    return decisionTimelineMarkers(timeline.value.items, productId).map((event) => ({
+      extensionId: `decision:${event.decisionId}`, timeMs: event.timeMs,
+      label: event.label, tone: event.tone,
+    }));
+  };
   const eventMarkers = (productId: string): readonly WorkstationExtensionMarker[] => eventTimeline.kind !== 'ready' ? [] :
     eventTimeline.value.events.filter((event) => eventMatchesProduct(event, productId)).map((event) => ({
       extensionId: `event:${event.id}`, timeMs: event.firstSeenAtMs, label: `Event ${event.id.slice(0, 8)}`,
@@ -293,7 +293,7 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
             style={tile.chartStyle} activeTool={activeTool} height={chartHeight(layout, index)} indicators={tile.indicators}
             scaleMode={tile.scaleMode} volumeVisible={workspace.preferences?.marketVolumeVisible ?? true}
             liveVisible={workspace.preferences?.marketLiveCandle ?? false} extensionIds={enabledExtensionIds}
-            decisionMarkers={[...decisionMarkers, ...eventMarkers(tile.productId)]}
+            decisionMarkers={[...decisionMarkers(tile.productId), ...eventMarkers(tile.productId)]}
             linkController={linkController} onDrawing={(drawing) => void chartCommand.run({ commandId: crypto.randomUUID(), action: { kind: 'save_drawing', drawing: { ...drawing, productId: tile.productId, interval: tile.interval, layoutId: activeLayoutId } } })}
             onDeleteDrawing={(drawingId) => void chartCommand.run({ commandId: crypto.randomUUID(), action: { kind: 'delete_drawing', drawingId } })} />
         </article>;

@@ -11,6 +11,7 @@ import { eventMatchesProduct, MarketEventsPanel } from './MarketEventsPanel.js';
 import { useChannel, type ChannelState } from '../query/use-channel.js';
 import { useWorkspace } from './WorkspaceContext.js';
 import { AdvancedMarkets } from './AdvancedMarkets.js';
+import { decisionTimelineMarkers } from './decision-timeline-markers.js';
 
 type LiveView = ChannelResponse<'market-data.live'>;
 type LiveQuote = LiveView['quotes'][number];
@@ -43,13 +44,13 @@ function MarketDetail({ client, productId, quote, eventTimeline }: {
     instrument: { venue: 'coinbase', productId, productType: 'spot' },
     lookbackDays: rangeLookbackDays(range),
   });
-  const activity = useChannel(client, 'activity.feed', { limit: 100, cursor: null });
-  const decisionMarkers = useMemo(() => activity.kind !== 'ready' ? [] : activity.value.events
-    .filter((event) => event.decisionId !== null && event.kind === 'decision')
-    .filter((event, index, events) => events.findIndex((candidate) => candidate.decisionId === event.decisionId) === index)
-    .map((event) => ({ id: event.decisionId!, atMs: event.occurredAt,
-      label: `Decision ${event.decisionId!.slice(0, 8)}`, tone: event.status === 'succeeded' ? 'positive' as const :
-        event.status === 'blocked' || event.status === 'failed' ? 'negative' as const : event.status === 'pending' ? 'warning' as const : 'neutral' as const })), [activity]);
+  const timeline = useChannel(client, 'decision.timeline', {
+    assetScope: productId.split('-')[0] ?? null, asOfMs: null, limit: 100,
+  });
+  const decisionMarkers = useMemo(() => decisionTimelineMarkers(
+    timeline.kind === 'ready' ? timeline.value.items : [], productId,
+  ).map((event) => ({ id: event.decisionId, atMs: event.timeMs,
+    label: event.label, tone: event.tone })), [timeline, productId]);
   const eventMarkers = useMemo(() => eventTimeline.kind !== 'ready' ? [] : eventTimeline.value.events
     .filter((event) => eventMatchesProduct(event, productId)).map((event) => ({ id: event.id,
       atMs: event.firstSeenAtMs, label: `Event ${event.id.slice(0, 8)}`, tone: event.classification?.sentiment === 'positive' ? 'positive' as const :

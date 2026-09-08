@@ -63,6 +63,7 @@ import {
 } from '@coqui/storage';
 
 import { createDiagnostics } from './diagnostics.js';
+import { createDecisionHandlers } from './decision-handlers.js';
 import { createAdvisorHandlers } from './advisor-handlers.js';
 import { createChartExtensionHandlers, createChartSnapshotHandlers, createChartWorkspaceHandlers } from './chart-handler-factories.js';
 import { createAccountPreferenceHandlers } from './account-preference-handlers.js';
@@ -78,7 +79,6 @@ import { createPaperCampaignHandlers } from './paper-campaign-handlers.js';
 import { createCandleSource, createDisplayDataService, createReferenceSources } from './reference-sources.js';
 import { startSchedulerRuntime, type SchedulerRuntime } from './scheduler-runtime.js';
 import type { ChannelHandlers } from './dispatch.js';
-/** Only an integrity-verified passing forward result can supply execution edge. */
 function paperGrossEdgeLowerBoundPct(profileId: string, database: Db): number {
   return readProfitabilityEstimateEvidence(profileId, database)?.grossEdgeLowerBoundPct ?? 0;
 }
@@ -174,8 +174,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       : { secrets: [options.coinGeckoApiKey] }),
   });
   const report = (context: string, error: unknown): void => {
-    diagnostics.report(context, error);
-    options.onUnexpectedError?.(context, error);
+    diagnostics.report(context, error); options.onUnexpectedError?.(context, error);
   };
 
   // One client over one shared registry. `createHttpClient` derives the hostname
@@ -185,7 +184,6 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   const rateLimiters = createRateLimiterRegistry();
   const http: HttpClient = createHttpClient({ rateLimiters });
 
-  // The authenticated tier when a key is connected, the public tier otherwise.
   // Both share the rate-limiter registry: the Demo tier has a *higher* budget,
   // not an unlimited one, and two registries could disagree about the same host.
   const coinGeckoHttp: HttpClient =
@@ -328,7 +326,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     ...createChartExtensionHandlers({ profileId: options.profileId, database, clock, ...(options.pickChartExtension === undefined ? {} : { pickPackage: options.pickChartExtension }) }),
     ...createChartSnapshotHandlers({ profileId: options.profileId, database, clock, ...(options.saveChartSnapshot === undefined ? {} : { save: options.saveChartSnapshot }) }),
     ...createChartWorkspaceHandlers({ profileId: options.profileId, database, clock }),
-    ...createPaperCampaignHandlers(options.profileId, clock, database), ...createMarketEventHandlers({ profileId: options.profileId, database, clock }),
+    ...createPaperCampaignHandlers(options.profileId, clock, database), ...createMarketEventHandlers({ profileId: options.profileId, database, clock }), ...createDecisionHandlers(options.profileId, clock, database),
     'activity.feed': (payload: { readonly limit: number; readonly cursor: string | null }) => ({
       ok: true,
       value: {

@@ -14,6 +14,7 @@ import { paperPerformanceChannelSchemas } from './schemas/paper-performance.js';
 import { portfolioChannelSchemas } from './schemas/portfolio.js';
 import { researchChannelSchemas } from './schemas/research.js';
 import { riskChannelSchemas } from './schemas/risk.js';
+import { decisionChannelSchemas } from './schemas/decisions.js';
 import type { ContractSchema, DeepReadonly } from './messages.js';
 
 /**
@@ -45,6 +46,7 @@ export const CHANNEL_SCHEMAS = {
   ...portfolioChannelSchemas,
   ...researchChannelSchemas,
   ...riskChannelSchemas,
+  ...decisionChannelSchemas,
 } as const;
 
 export type ChannelSchemas = typeof CHANNEL_SCHEMAS;
