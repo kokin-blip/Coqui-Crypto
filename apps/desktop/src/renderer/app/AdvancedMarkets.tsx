@@ -132,6 +132,7 @@ function ChartTile({ client, tile, tileId, layoutId, style, activeTool, height,
 export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const workspace = useWorkspace();
   const profiles = useChannel(client, 'accounts.profiles', {});
+  const portfolio = useChannel(client, 'portfolio.current', {});
   const [query, setQuery] = useState('');
   const deferredQuery = useDeferredValue(query);
   const productSearch = useChannel(client, 'market-data.products', { query: deferredQuery, limit: 100 });
@@ -157,11 +158,15 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
   const chartCommand = useCommand(client, 'app.chart.workspace.set', CHART_INVALIDATIONS);
   const stored = chartWorkspace.kind === 'ready' ? chartWorkspace.value : { layouts: [], watchlists: [], drawings: [] };
   const defaultWatchlist = stored.watchlists.find((item) => item.isDefault);
-  const effectiveWatchlistId = activeWatchlistId === undefined ? defaultWatchlist?.id ?? null : activeWatchlistId;
+  const portfolioProductIds = portfolio.kind === 'ready' && portfolio.value !== null ? portfolio.value.exposures
+    .filter((item) => item.exposureKey !== 'USD' && Number(item.quantity) > 0)
+    .sort((a, b) => Number(b.valueUsd ?? 0) - Number(a.valueUsd ?? 0)).map((item) => `${item.exposureKey}-USD`) : [];
+  const portfolioWatchlist = activeWatchlistId === undefined && portfolioProductIds.length > 0;
+  const effectiveWatchlistId = activeWatchlistId === undefined ? portfolioWatchlist ? null : defaultWatchlist?.id ?? null : activeWatchlistId;
   const activeWatchlist = stored.watchlists.find((item) => item.id === effectiveWatchlistId);
-  const watchlistProducts = new Set(activeWatchlist?.productIds ?? []);
+  const watchlistProducts = new Set(portfolioWatchlist ? portfolioProductIds : activeWatchlist?.productIds ?? []);
   const visibleProducts = [...searchCatalog
-    .filter((item) => activeWatchlist === undefined || watchlistProducts.has(item.instrument.productId))]
+    .filter((item) => portfolioWatchlist ? watchlistProducts.has(item.instrument.productId) : activeWatchlist === undefined || watchlistProducts.has(item.instrument.productId))]
     .sort((left, right) => (sortAscending ? 1 : -1) * left.symbol.localeCompare(right.symbol));
   const preferredLayout = workspace.preferences?.marketLayout ?? 'single';
   const layout = stored.layouts.find((item) => item.id === activeLayoutId)?.layout ?? preferredLayout;
@@ -197,6 +202,13 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
   useEffect(() => {
     setRecentProducts([]);
   }, [activeProfileId]);
+
+  useEffect(() => {
+    const first = portfolioProductIds[0];
+    if (first !== undefined && selected === 'BTC-USD' && !portfolioProductIds.includes(selected)) {
+      setSelected(first); setDraftTiles(null);
+    }
+  }, [portfolioProductIds, selected]);
 
   const updateTile = (index: number, patch: Partial<ChartTileConfiguration>): void => {
     const source = tiles[index];
@@ -287,7 +299,7 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
         </article>;
       })}</section>
       <aside className="advanced-watchlist">
-        <header><strong>Watchlist</strong><label className="watchlist-picker"><span className="sr-only">Saved watchlist</span><select value={effectiveWatchlistId ?? ''} onChange={(event) => setActiveWatchlistId(event.target.value === '' ? null : event.target.value)}><option value="">All products</option>{stored.watchlists.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><button type="button" className="icon-button" aria-label="Save current watchlist" disabled={visibleProducts.length === 0} onClick={saveWatchlist}><Save size={14} /></button></header>
+        <header><strong>Watchlist</strong><label className="watchlist-picker"><span className="sr-only">Saved watchlist</span><select value={portfolioWatchlist ? '__portfolio__' : effectiveWatchlistId ?? ''} onChange={(event) => setActiveWatchlistId(event.target.value === '__portfolio__' ? undefined : event.target.value === '' ? null : event.target.value)}>{portfolioProductIds.length > 0 && <option value="__portfolio__">Portfolio</option>}<option value="">All products</option>{stored.watchlists.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><button type="button" className="icon-button" aria-label="Save current watchlist" disabled={visibleProducts.length === 0 || portfolioWatchlist} onClick={saveWatchlist}><Save size={14} /></button></header>
         <label><Search size={15} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search Coinbase USD" /></label>
         <div className="recent-products" aria-label="Recent products">{recentProducts.map((productId) => <button key={productId} type="button" onClick={() => chooseProduct(productId)}>{productId.replace('-USD', '')}</button>)}</div>
         <div className="watchlist-columns"><button type="button" aria-label={`Sort symbols ${sortAscending ? 'descending' : 'ascending'}`} onClick={() => setSortAscending((value) => !value)}>Symbol <ArrowDownAZ className={sortAscending ? '' : 'sort-descending'} size={11} /></button><span>Venue</span></div>

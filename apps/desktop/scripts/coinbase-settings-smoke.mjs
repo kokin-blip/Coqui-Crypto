@@ -2,7 +2,7 @@ import { generateKeyPairSync } from 'node:crypto';
 import { setTimeout as delay } from 'node:timers/promises';
 import { join } from 'node:path';
 import { createMemorySecretStore } from '@coqui/adapters';
-import { coinbaseEvidenceDatasetHash, FixedClock } from '@coqui/core';
+import { coinbaseEvidenceDatasetHash, decimal, FixedClock } from '@coqui/core';
 import { AccountsProfileService } from '@coqui/services';
 import { createFileProfileManifestStore, openDatabase } from '@coqui/storage';
 
@@ -43,9 +43,14 @@ export function coinbaseSmokeFixture() {
         return control.failSync ? { ok: false, code: 'network' } : {
           ok: true,
           value: {
-            accounts: [], fills: [], transactions: [], feeTier: null,
+            accounts: [{ accountUuid: '33333333-3333-4333-8333-333333333333', currency: 'USD',
+              availableQuantity: decimal('250'), holdQuantity: decimal('0'), totalQuantity: decimal('250'),
+              active: true, ready: true, defaultAccount: true, providerUpdatedAtMs: Date.now() }],
+            fills: [], transactions: [], feeTier: null,
             accountPageCount: 1, fillPageCount: 1, transactionPageCount: 0,
-            datasetHash: coinbaseEvidenceDatasetHash([], []),
+            datasetHash: coinbaseEvidenceDatasetHash([{ accountUuid: '33333333-3333-4333-8333-333333333333', currency: 'USD',
+              availableQuantity: decimal('250'), holdQuantity: decimal('0'), totalQuantity: decimal('250'),
+              active: true, ready: true, defaultAccount: true, providerUpdatedAtMs: null }], []),
           },
         };
       } },
@@ -81,6 +86,11 @@ export async function checkCoinbaseSettings(window, fixture, check) {
   check('Coinbase file connects and creates current portfolio evidence', fixture.control.verifications === 2 && fixture.control.acquisitions === 1);
   const current = JSON.parse(await evaluate('window.coqui.query("portfolio.current", {}).then(JSON.stringify)'));
   check('portfolio.current is backed by connected accounts', current.status === 'ok' && current.value?.source === 'connected_accounts');
+  await evaluate('window.location.hash = "/overview"');
+  await waitFor('document.body.innerText.includes("Connected portfolio") && document.body.innerText.includes("$250.00")');
+  check('Overview renders connected balances without tax lots', true);
+  await evaluate('window.location.hash = "/settings"');
+  await waitFor('document.body.innerText.includes("Exchange connections")');
   await click('Sync now', true);
   for (let attempt = 0; attempt < 100 && fixture.control.acquisitions < 2; attempt += 1) await delay(50);
   check('Coinbase sync command is idempotently activated', fixture.control.acquisitions === 2);

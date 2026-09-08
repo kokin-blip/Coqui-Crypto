@@ -474,6 +474,15 @@ raw account numbers become a hash plus masked suffix before persistence. The
 provider always reports live execution authority as false, and no Robinhood
 order-placement method is composed or exposed over IPC.
 
+Overview consumes `portfolio.current`: its headline and allocation are connected
+account quantities only, while imported tax lots are explicitly presented under
+Portfolio Accounting. Overview renders current allocation beside normalized
+completed Coinbase daily performance for the largest held crypto exposures.
+Markets computes a read-only Portfolio watchlist from nonzero connected crypto
+exposures and retains custom watchlists independently. Provider valuation quotes
+remain display evidence; Coinbase completed bars remain the only operational
+history source.
+
 ### 6.2 Venue-neutral planning and paper routing
 
 Migration 65 adds immutable `ExecutionPlanV1` and `ExecutionRouteV1` evidence.

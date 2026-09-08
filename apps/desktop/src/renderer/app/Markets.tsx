@@ -110,9 +110,16 @@ export function Markets({ client }: { readonly client: CoquiClient }): React.JSX
   const workspace = useWorkspace();
   if (workspace.preferences?.workspaceMode !== 'simple') return <AdvancedMarkets client={client} />;
   const live = useChannel(client, 'market-data.live', {});
+  const portfolio = useChannel(client, 'portfolio.current', {});
   const [selected, setSelected] = useState<string | null>(null);
   const eventTimeline = useChannel(client, 'market-events.timeline', { asOfMs: null, limit: 50 });
-  const products = useMemo(() => live.kind === 'ready' ? live.value.subscribedProducts : [], [live]);
+  const products = useMemo(() => {
+    const held = portfolio.kind === 'ready' && portfolio.value !== null ? portfolio.value.exposures
+      .filter((item) => item.exposureKey !== 'USD' && Number(item.quantity) > 0)
+      .sort((a, b) => Number(b.valueUsd ?? 0) - Number(a.valueUsd ?? 0))
+      .map((item) => `${item.exposureKey}-USD`) : [];
+    return held.length > 0 ? held : live.kind === 'ready' ? live.value.subscribedProducts : [];
+  }, [live, portfolio]);
 
   useEffect(() => {
     if (selected === null && products[0] !== undefined) setSelected(products[0]);
@@ -134,7 +141,7 @@ export function Markets({ client }: { readonly client: CoquiClient }): React.JSX
       <div className="market-layout">
         <aside className="market-watchlist" aria-labelledby="watchlist-heading">
           <div className="watchlist-heading"><div><p className="section-label">Profile universe</p><h2 id="watchlist-heading">Watchlist</h2></div><span>{products.length}</span></div>
-          {products.length === 0 ? <p className="empty-copy">No Coinbase USD products are tracked for this profile.</p> : (
+          {products.length === 0 ? <p className="empty-copy">No connected crypto holdings are available for this profile.</p> : (
             <ul>{products.map((product) => {
               const item = live.kind === 'ready' ? live.value.quotes.find((candidate) => candidate.instrument.productId === product) : undefined;
               return <li key={product}><button type="button" aria-pressed={selected === product} onClick={() => setSelected(product)}><span><strong>{product.replace('-USD', '')}</strong><small>{product}</small></span><span className="watch-price"><QuoteValue value={item?.priceUsd ?? null} /></span></button></li>;

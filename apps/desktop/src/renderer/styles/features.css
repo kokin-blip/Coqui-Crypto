@@ -366,6 +366,21 @@ input[type='checkbox'] {
   min-height: 220px;
 }
 
+.overview-portfolio-grid {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.72fr) minmax(0, 1.28fr);
+  gap: var(--density-section-gap);
+}
+
+.overview-portfolio-grid > .panel { min-width: 0; }
+.overview-allocation .allocation-ring { grid-template-columns: minmax(180px, 0.9fr) minmax(150px, 0.7fr); }
+.held-performance-stack { display: grid; gap: var(--coqui-space-2); }
+.chart-footnote { margin: 0; color: var(--coqui-text-muted); font-size: 12px; }
+
+@media (max-width: 980px) {
+  .overview-portfolio-grid { grid-template-columns: 1fr; }
+}
+
 .overview-two-column {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

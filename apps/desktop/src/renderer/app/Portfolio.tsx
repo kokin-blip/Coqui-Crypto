@@ -125,7 +125,7 @@ function Header({ view }: { readonly view: PortfolioView }): React.JSX.Element {
   return (
     <div className="space-y-1">
       <p className="text-base">
-        <span className="font-semibold">ACTUAL PORTFOLIO VALUE</span>{' '}
+        <span className="font-semibold">IMPORTED ACCOUNTING VALUE</span>{' '}
         <Money value={view.valuation.totalValueUsd} />
         <span className="ml-4 opacity-70">
           priced {view.pricing.pricedCount} of {view.pricing.requestedCount}
@@ -173,11 +173,11 @@ export function Portfolio({ client }: { readonly client: CoquiClient }): React.J
   return (
     <section aria-labelledby="portfolio-heading" className="space-y-4">
       <h2 id="portfolio-heading" className="font-semibold">
-        Portfolio
+        Portfolio accounting
       </h2>
 
       <div className="surface-toolbar">
-        <span>Portfolio view</span>
+        <span>Imported tax-lot view</span>
         <ChartViewControl ariaLabel="Portfolio view" disabled={workspaceCommand.state.kind === 'pending'} value={portfolioChart} options={PORTFOLIO_VIEWS} onChange={(value) => void workspaceCommand.run({ commandId: crypto.randomUUID(), patch: { portfolioChart: value } })} />
       </div>
 
@@ -192,7 +192,7 @@ export function Portfolio({ client }: { readonly client: CoquiClient }): React.J
       </div>
 
       {view.holdings.length === 0 ? (
-        <p>No holdings yet — import a Coinbase report or add a tax lot to begin.</p>
+        <p>No accounting holdings yet — import transaction evidence or add a tax lot. Connected balances appear on Overview and are never added to this quantity.</p>
       ) : (
         <>
         {portfolioChart === 'allocation' && <section className="panel portfolio-allocation-view" aria-label="Portfolio allocation"><AllocationRing data={allocation} selectedId={selected?.asset.symbol ?? null} onSelect={setSelectedSymbol} /></section>}
