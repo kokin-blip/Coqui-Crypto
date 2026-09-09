@@ -10,6 +10,7 @@ import { SurfaceState } from './SurfaceState.js';
 import { useChannel } from '../query/use-channel.js';
 import { useCommand } from '../query/use-command.js';
 import { useWorkspace } from './WorkspaceContext.js';
+import { routeHash } from './routes.js';
 
 type PortfolioView = ChannelResponse<'portfolio.view'>;
 type Holding = PortfolioView['holdings'][number];
@@ -192,7 +193,7 @@ export function Portfolio({ client }: { readonly client: CoquiClient }): React.J
       </div>
 
       {view.holdings.length === 0 ? (
-        <p>No accounting holdings yet — import transaction evidence or add a tax lot. Connected balances appear on Overview and are never added to this quantity.</p>
+        <SurfaceState kind="empty" title="No accounting holdings" detail="Connected balances remain authoritative on Overview and are never added to imported tax-lot quantities." action={{ label: 'View connected portfolio', href: routeHash('overview') }} />
       ) : (
         <>
         {portfolioChart === 'allocation' && <section className="panel portfolio-allocation-view" aria-label="Portfolio allocation"><AllocationRing data={allocation} selectedId={selected?.asset.symbol ?? null} onSelect={setSelectedSymbol} /></section>}

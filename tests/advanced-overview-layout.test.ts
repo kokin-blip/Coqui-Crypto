@@ -6,7 +6,7 @@ const overview = readFileSync(resolve('apps/desktop/src/renderer/app/Overview.ts
 const chartFrame = readFileSync(resolve('apps/desktop/src/renderer/app/ChartFrame.tsx'), 'utf8');
 
 describe('advanced overview composition', () => {
-  it('keeps the required research-grid block order without changing Simple mode', () => {
+  it('keeps portfolio health ahead of strategy detail in both workspace modes', () => {
     const simpleStart = overview.indexOf("workspace.mode === 'simple'");
     const advancedStart = overview.indexOf('research-grid-primary');
     const primary = overview.indexOf('{chartPanel}<EvidenceStack');
@@ -15,11 +15,11 @@ describe('advanced overview composition', () => {
     const negative = overview.lastIndexOf('{panels.negativeFindings &&');
 
     expect(simpleStart).toBeGreaterThan(-1);
-    expect(overview.slice(simpleStart, advancedStart)).toContain('{decision}{health}{chartPanel}');
+    expect(overview.slice(simpleStart, advancedStart)).toContain('{health}{chartPanel}{decision}');
+    expect(health).toBeLessThan(primary);
     expect(primary).toBeGreaterThan(advancedStart);
     expect(secondary).toBeGreaterThan(primary);
-    expect(health).toBeGreaterThan(secondary);
-    expect(negative).toBeGreaterThan(health);
+    expect(negative).toBeGreaterThan(secondary);
   });
 
   it('keeps chart inspection keyboard accessible and exposes fullscreen and snapshot controls', () => {

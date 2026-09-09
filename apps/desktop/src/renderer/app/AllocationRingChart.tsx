@@ -3,6 +3,8 @@ import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { formatUsd } from '@coqui/ui-kit';
 
 import { allocationPercentages, type AllocationDatum, type WeightedAllocationDatum } from './allocation-data.js';
+import { routeHash } from './routes.js';
+import { SurfaceState } from './SurfaceState.js';
 
 export type { AllocationDatum } from './allocation-data.js';
 
@@ -18,7 +20,7 @@ export default function AllocationRingChart({
   readonly selectedId?: string | null;
 }): React.JSX.Element {
   const weighted = [...allocationPercentages(data)];
-  if (weighted.length === 0) return <p className="empty-copy">Allocation is unavailable until priced holdings exist.</p>;
+  if (weighted.length === 0) return <SurfaceState kind="empty" title="No priced connected holdings" detail="Sync Coinbase or Robinhood to build the active profile allocation." action={{ label: 'Open connections', href: routeHash('settings') }} compact />;
   const summary = weighted.map((entry) => `${entry.label} ${entry.percent.toFixed(1)}%`).join(', ');
 
   return (

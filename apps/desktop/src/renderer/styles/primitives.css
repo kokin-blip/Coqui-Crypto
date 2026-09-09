@@ -132,6 +132,13 @@
 .surface-state > span { display: grid; gap: 3px; }
 .surface-state strong { color: var(--coqui-text); font-weight: 600; }
 .surface-state small { color: var(--coqui-text-muted); }
+.surface-state-action {
+  width: fit-content;
+  margin-top: var(--coqui-space-2);
+  color: var(--coqui-accent);
+  font-weight: 650;
+  text-underline-offset: 3px;
+}
 .surface-state-error { color: var(--coqui-negative); border-color: color-mix(in srgb, var(--coqui-negative) 45%, var(--coqui-border)); }
 .surface-state-blocked { color: var(--coqui-warning); border-color: color-mix(in srgb, var(--coqui-warning) 45%, var(--coqui-border)); }
 .surface-state-success { color: var(--coqui-positive); border-color: color-mix(in srgb, var(--coqui-positive) 45%, var(--coqui-border)); }

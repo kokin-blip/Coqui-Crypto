@@ -5,6 +5,8 @@ import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { CHART_COLORS } from '@coqui/ui-kit';
 
 import { FinancialChart } from './FinancialChart.js';
+import { routeHash } from './routes.js';
+import { SurfaceState } from './SurfaceState.js';
 
 type Exposure = NonNullable<ChannelResponse<'portfolio.current'>>['exposures'][number];
 const COLORS = [CHART_COLORS.primary, CHART_COLORS.benchmark, '#f2b84b', '#57c7e3', '#ff8f70', '#b8d86b', '#d58cff', '#71a7ff'];
@@ -34,11 +36,11 @@ export function HeldCoinPerformance({ client, exposures }: {
     const outcome = queries[index]?.data;
     return outcome !== undefined && (outcome.status !== 'ok' || outcome.value.bars.length === 0);
   });
-  if (held.length === 0) return <div className="chart-empty-canvas"><strong>No connected crypto holdings</strong><span>Sync a connection to derive this chart from the active profile.</span></div>;
+  if (held.length === 0) return <SurfaceState kind="empty" title="No connected crypto holdings" detail="Sync a connection to derive performance from the active profile." action={{ label: 'Open connections', href: routeHash('settings') }} compact />;
   return <div className="held-performance-stack">
     {series.length > 0 ? <FinancialChart client={client} filenameStem="coqui-held-coin-performance"
       series={series} style="line" summary="Completed Coinbase daily performance normalized to 100 for the five largest priced connected crypto exposures." />
-      : <div className="chart-empty-canvas"><strong>Held-coin history unavailable</strong><span>Coqui found connected holdings, but no completed Coinbase daily series was available.</span></div>}
+      : <SurfaceState kind="empty" title="Held-coin history unavailable" detail="Refresh Markets after completed Coinbase daily bars become available." action={{ label: 'Open Markets', href: routeHash('markets') }} compact />}
     <p className="chart-footnote">Completed Coinbase daily bars · normalized to 100 · display only</p>
     {unavailable.length > 0 && <p className="chart-footnote">Unavailable: {unavailable.map((item) => item.exposureKey).join(', ')}</p>}
   </div>;

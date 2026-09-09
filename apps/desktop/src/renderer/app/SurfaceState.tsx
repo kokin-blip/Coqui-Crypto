@@ -16,11 +16,13 @@ export function SurfaceState({
   title,
   detail,
   compact = false,
+  action,
 }: {
   readonly kind: SurfaceStateKind;
   readonly title: string;
   readonly detail?: string;
   readonly compact?: boolean;
+  readonly action?: { readonly label: string; readonly href: string };
 }): React.JSX.Element {
   const Icon = ICONS[kind];
   const role = kind === 'error' || kind === 'blocked' ? 'alert' : 'status';
@@ -31,7 +33,7 @@ export function SurfaceState({
       aria-live={kind === 'loading' ? 'polite' : undefined}
     >
       <Icon aria-hidden="true" size={17} className={kind === 'loading' ? 'surface-state-spinner' : undefined} />
-      <span><strong>{title}</strong>{detail !== undefined && <small>{detail}</small>}</span>
+      <span><strong>{title}</strong>{detail !== undefined && <small>{detail}</small>}{action !== undefined && <a className="surface-state-action" href={action.href}>{action.label}</a>}</span>
     </div>
   );
 }
