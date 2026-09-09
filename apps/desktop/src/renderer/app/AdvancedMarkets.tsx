@@ -17,7 +17,8 @@ import type {
   WorkstationChartStyle, WorkstationExtensionMarker, WorkstationIndicators, WorkstationInterval, WorkstationLayout,
 } from './chart-workstation-types.js';
 import { MarketFactsPanel } from './MarketFactsPanel.js';
-import { eventMatchesProduct, MarketEventsPanel } from './MarketEventsPanel.js';
+import { eventMatchesProduct, MarketEventsDisclosure } from './MarketEventsPanel.js';
+import { MarketFeedStatus } from './MarketFeedStatus.js';
 import { MarketWorkspaceToolbar } from './MarketWorkspaceToolbar.js';
 import { TradingWorkstationChart } from './TradingWorkstationChart.js';
 import { useChartExtensionSeries } from './use-chart-extension-series.js';
@@ -133,8 +134,7 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
   const workspace = useWorkspace();
   const profiles = useChannel(client, 'accounts.profiles', {});
   const portfolio = useChannel(client, 'portfolio.current', {});
-  const [query, setQuery] = useState('');
-  const deferredQuery = useDeferredValue(query);
+  const [query, setQuery] = useState(''); const deferredQuery = useDeferredValue(query);
   const productSearch = useChannel(client, 'market-data.products', { query: deferredQuery, limit: 100 });
   const allProducts = useChannel(client, 'market-data.products', { query: '', limit: 100 });
   const searchCatalog = productSearch.kind === 'ready' ? productSearch.value.products : [];
@@ -268,6 +268,7 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
   return <div className="advanced-markets-workstation">
     <header className="market-command-bar">
       <div className="market-symbol"><CircleDot size={15} /><div><strong>{selected}</strong><span>Coinbase spot · {defaultInterval}</span></div></div>
+      <MarketFeedStatus client={client} productId={selected} interval={defaultInterval} />
       <div className="market-timeframes" aria-label="Chart interval">{INTERVALS.map((item) => <button key={item} type="button" aria-pressed={item === defaultInterval} onClick={() => changeInterval(item)}>{item}</button>)}</div>
       <MarketWorkspaceToolbar style={style} scaleMode={primaryTile.scaleMode}
         indicators={indicators} volumeVisible={workspace.preferences?.marketVolumeVisible ?? true}
@@ -308,7 +309,7 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
       <MarketFactsPanel productId={selected} bars={factsBars} freshness={productSearch.kind === 'ready' ? new Date(productSearch.value.asOfMs).toISOString() : 'Unavailable'} onOpenAnalyst={() => setAnalystOpen(true)} />
     </div>
     <footer className="market-workstation-footer"><span>Coinbase display data · informational only</span><label><input type="checkbox" checked={workspace.preferences?.marketLiveCandle ?? false} onChange={(event) => void workspace.update({ marketLiveCandle: event.target.checked })} /> Show provisional candle</label><span>UTC</span></footer>
-    <MarketEventsPanel client={client} productId={selected} events={eventTimeline.kind === 'ready' ? eventTimeline.value.events : []} state={eventTimeline.kind === 'ready' ? 'ready' : eventTimeline.kind === 'loading' ? 'loading' : 'unavailable'} />
+    <MarketEventsDisclosure client={client} productId={selected} events={eventTimeline.kind === 'ready' ? eventTimeline.value.events : []} state={eventTimeline.kind === 'ready' ? 'ready' : eventTimeline.kind === 'loading' ? 'loading' : 'unavailable'} />
     {analystOpen && <AdvisorSheet client={client} productId={selected} bars={factsBars} onClose={() => setAnalystOpen(false)} />}
     {extensionsOpen && <ChartExtensionManager client={client} onClose={() => setExtensionsOpen(false)} />}
   </div>;

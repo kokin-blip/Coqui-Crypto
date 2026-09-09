@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { sha256Hex, strategyDecisionId, type StrategyDecisionV1 } from '../packages/core/src/index.js';
-import { appendDecisionEvidenceEvent, listActivityFeed, openDatabase,
+import { appendAdvisorNavigationAudit, appendDecisionEvidenceEvent, listActivityFeed, openDatabase,
   getDecisionDetail, listDecisionTimeline,
   readOperationsFloor, saveStrategyDecision } from '../packages/storage/src/index.js';
 
@@ -117,12 +117,29 @@ describe('bounded activity feed', () => {
       profileId: 'main', sequence: 0, kind: 'risk_evaluated', atMs: 801,
       detail: { approved: false, reasonCodes: ['profitability_gate_failed'], assessmentHash: sha256Hex('risk') } }, database);
     const floor = readOperationsFloor('main', database);
-    expect(floor.map((item) => item.subsystem)).toEqual(['host', 'market', 'risk', 'research', 'routing', 'execution']);
+    expect(floor.map((item) => item.subsystem)).toEqual([
+      'host', 'market', 'risk', 'research', 'execution', 'advisor',
+    ]);
     expect(floor.find((item) => item.subsystem === 'market')).toMatchObject({ state: 'nominal', decisionId: value.decisionId });
     expect(floor.find((item) => item.subsystem === 'risk')).toMatchObject({ state: 'attention', decisionId: value.decisionId });
     expect(floor.filter((item) => item.state === 'unavailable').map((item) => item.subsystem))
-      .toEqual(['host', 'research', 'routing', 'execution']);
+      .toEqual(['host', 'research', 'execution', 'advisor']);
     expect(JSON.stringify(floor)).not.toMatch(/payload_json|request_json|error|secret/iu);
+    database.close();
+  });
+
+  it('projects the latest persisted Advisor audit without exposing its detail payload', () => {
+    const database = openDatabase(':memory:');
+    const auditId = appendAdvisorNavigationAudit({ profileId: 'main', decisionId: null,
+      target: 'activity', outcome: 'accepted', reasonCode: 'allowlisted_navigation', at: 901,
+      selection: { candidateId: null, productId: 'BTC-USD', eventId: null } }, database);
+    const floor = readOperationsFloor('main', database);
+    expect(floor.find((item) => item.subsystem === 'advisor')).toEqual({
+      subsystem: 'advisor', state: 'nominal', title: 'Evidence advisor',
+      detail: 'Latest navigation to activity was accepted.', evidenceAtMs: 901,
+      evidenceId: auditId, decisionId: null, scope: 'profile',
+    });
+    expect(JSON.stringify(floor)).not.toContain('BTC-USD');
     database.close();
   });
 });

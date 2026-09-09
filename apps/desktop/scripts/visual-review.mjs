@@ -30,7 +30,7 @@ const { createRuntimeProfileController } = await import(join(root, 'dist/main/pr
 const { createDispatcher } = await import(join(root, 'dist/main/dispatch.js'));
 const { applyWindowHardening, WEB_PREFERENCES } = await import(join(root, 'dist/main/security.js'));
 
-const captures = [
+const capturePlan = [
   { name: 'research-grid-dark', route: 'overview', mode: 'advanced', preset: 'research_grid', theme: 'dark', density: 'comfortable', zoom: 1 },
   { name: 'research-grid-light', route: 'overview', mode: 'advanced', preset: 'research_grid', theme: 'light', density: 'comfortable', zoom: 1 },
   { name: 'chart-focus-dark', route: 'overview', mode: 'advanced', preset: 'chart_focus', theme: 'dark', density: 'comfortable', zoom: 1 },
@@ -68,8 +68,16 @@ const captures = [
   { name: 'overview-200-percent', route: 'overview', mode: 'advanced', preset: 'research_grid', theme: 'dark', density: 'compact', zoom: 2 },
   { name: 'research-negative-evidence', route: 'research', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1, scrollTarget: '[data-finding-id="trendvol-replacement-v1"]' },
   { name: 'activity-empty-evidence', route: 'activity', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1 },
+  { name: 'operations-dark-1440x900', route: 'activity', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1, width: 1440, height: 900 },
+  { name: 'operations-light-1280x800', route: 'activity', mode: 'simple', theme: 'light', density: 'comfortable', zoom: 1, width: 1280, height: 800 },
+  { name: 'operations-compact', route: 'activity', mode: 'advanced', theme: 'dark', density: 'compact', zoom: 1, width: 1280, height: 800 },
+  { name: 'operations-high-contrast', route: 'activity', mode: 'advanced', theme: 'high-contrast', density: 'comfortable', zoom: 1, width: 1280, height: 800 },
+  { name: 'operations-reduced-motion', route: 'activity', mode: 'simple', theme: 'dark', density: 'comfortable', motion: 'reduced', zoom: 1, width: 1280, height: 800 },
+  { name: 'operations-200-percent', route: 'activity', mode: 'advanced', theme: 'dark', density: 'compact', zoom: 2, width: 1440, height: 900 },
   { name: 'performance-empty-evidence', route: 'paper/performance', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1 },
 ];
+const captureFilter = process.env['COQUI_VISUAL_FILTER'];
+const captures = captureFilter === undefined ? capturePlan : capturePlan.filter(({ name }) => name.startsWith(captureFilter));
 
 const dataDirectory = mkdtempSync(join(tmpdir(), 'coqui-visual-review-'));
 const secrets = createMemorySecretStore();
@@ -130,7 +138,7 @@ async function run() {
   applyWindowHardening(window.webContents, `file://${entry}`, shell);
 
   for (const [index, capture] of captures.entries()) {
-    window.setContentSize(capture.width ?? 1536, 1024);
+    window.setContentSize(capture.width ?? 1536, capture.height ?? 1024);
     const appearance = await dispatch('accounts.settings.set', {
       commandId: randomUUID(),
       patch: { theme: capture.theme.replace('-', '_'), density: capture.density, motion: capture.motion ?? 'none' },

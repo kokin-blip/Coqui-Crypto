@@ -3,7 +3,7 @@ import { getExecutionPlan, listExecutionRoutes } from './execution-routing.js';
 import { listResearchJobs } from './research.js';
 import type { Db } from '../sqlite/index.js';
 
-export type OperationsSubsystem = 'host' | 'market' | 'risk' | 'research' | 'routing' | 'execution';
+export type OperationsSubsystem = 'host' | 'market' | 'risk' | 'research' | 'execution' | 'advisor';
 export type OperationsState = 'nominal' | 'active' | 'attention' | 'unavailable';
 export interface OperationsFloorItem {
   readonly subsystem: OperationsSubsystem;
@@ -88,18 +88,18 @@ export function readOperationsFloor(profileId: string, database: Db): readonly O
   const routeRow = database.prepare(`SELECT id, plan_id, decision_id, provider, created_at
     FROM execution_routes_v1 WHERE profile_id=? ORDER BY created_at DESC, id DESC LIMIT 1`).get(profileId) as
     { id: string; plan_id: string; decision_id: string; provider: string; created_at: number } | undefined;
-  let routing = unavailable('routing', 'Route planner', 'No persisted execution route.');
+  let routing = unavailable('execution', 'Route and paper execution', 'No persisted execution route.');
   if (routeRow !== undefined) {
     try {
       const plan = getExecutionPlan(routeRow.plan_id, profileId, database);
       const verified = plan !== null && listExecutionRoutes(plan.id, profileId, database)
         .some((route) => route.id === routeRow.id);
-      routing = { subsystem: 'routing', state: verified ? 'nominal' : 'attention', title: 'Route planner',
+      routing = { subsystem: 'execution', state: verified ? 'nominal' : 'attention', title: 'Route and paper execution',
         detail: verified ? `Latest immutable route targets the ${routeRow.provider} paper venue.` :
           'Latest route failed integrity verification.', evidenceAtMs: routeRow.created_at,
         evidenceId: routeRow.id, decisionId: routeRow.decision_id, scope: 'profile' };
     } catch {
-      routing = { subsystem: 'routing', state: 'attention', title: 'Route planner',
+      routing = { subsystem: 'execution', state: 'attention', title: 'Route and paper execution',
         detail: 'Latest route failed integrity verification.', evidenceAtMs: routeRow.created_at,
         evidenceId: routeRow.id, decisionId: routeRow.decision_id, scope: 'profile' };
     }
@@ -110,16 +110,36 @@ export function readOperationsFloor(profileId: string, database: Db): readonly O
       ('execution_submitted','execution_filled','execution_refused','recovery')
     ORDER BY at DESC, id DESC LIMIT 1`).get(profileId) as
     { id: string; decision_id: string; kind: string; reason_code: string | null; at: number } | undefined;
-  const execution = executionRow === undefined ? unavailable('execution', 'Paper executor',
+  const execution = executionRow === undefined ? unavailable('execution', 'Route and paper execution',
     'No persisted execution outcome.') : {
     subsystem: 'execution' as const,
     state: executionRow.kind === 'execution_refused' ? 'attention' as const :
       executionRow.kind === 'execution_submitted' ? 'active' as const : 'nominal' as const,
-    title: 'Paper executor', detail: executionRow.reason_code === null
+    title: 'Route and paper execution', detail: executionRow.reason_code === null
       ? `Latest execution evidence: ${executionRow.kind.replaceAll('_', ' ')}.`
       : `Latest execution evidence: ${executionRow.reason_code.replaceAll('_', ' ')}.`,
     evidenceAtMs: executionRow.at, evidenceId: executionRow.id,
     decisionId: executionRow.decision_id, scope: 'profile' as const,
   };
-  return Object.freeze([host, market, risk, research, routing, execution]);
+  const courier = routing.evidenceAtMs !== null &&
+    (execution.evidenceAtMs === null || routing.evidenceAtMs > execution.evidenceAtMs) ? routing : execution;
+  const navigation = database.prepare(`SELECT id,outcome,target,at FROM advisor_navigation_audit_events_v1
+    WHERE profile_id=? ORDER BY at DESC,id DESC LIMIT 1`).get(profileId) as
+    { id: string; outcome: 'accepted' | 'rejected'; target: string; at: number } | undefined;
+  const generation = database.prepare(`SELECT sequence,provider,operation,outcome,occurred_at_ms FROM advisor_audit_events_v1
+    WHERE profile_id=? ORDER BY occurred_at_ms DESC,sequence DESC LIMIT 1`).get(profileId) as
+    { sequence: number; provider: string; operation: string;
+      outcome: 'succeeded' | 'failed' | 'cancelled'; occurred_at_ms: number } | undefined;
+  let advisor = unavailable('advisor', 'Evidence advisor', 'No persisted explanation or navigation event.');
+  if (generation !== undefined && (navigation === undefined || generation.occurred_at_ms > navigation.at)) {
+    advisor = { subsystem: 'advisor', state: generation.outcome === 'succeeded' ? 'nominal' : 'attention',
+      title: 'Evidence advisor', detail: `Latest ${generation.provider} ${generation.operation} request ${generation.outcome}.`,
+      evidenceAtMs: generation.occurred_at_ms, evidenceId: `advisor-audit:${generation.sequence}`,
+      decisionId: null, scope: 'profile' };
+  } else if (navigation !== undefined) {
+    advisor = { subsystem: 'advisor', state: navigation.outcome === 'accepted' ? 'nominal' : 'attention',
+      title: 'Evidence advisor', detail: `Latest navigation to ${navigation.target} was ${navigation.outcome}.`,
+      evidenceAtMs: navigation.at, evidenceId: navigation.id, decisionId: null, scope: 'profile' };
+  }
+  return Object.freeze([host, market, risk, research, courier, advisor]);
 }

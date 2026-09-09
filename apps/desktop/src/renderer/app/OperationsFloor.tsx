@@ -7,6 +7,15 @@ function evidenceTime(at: number | null): string {
   return at === null ? 'No persisted observation' : new Date(at).toISOString().replace('T', ' ').slice(0, 16) + 'Z';
 }
 
+const CHARACTERS = {
+  host: { name: 'Coqui', image: new URL('../operations/coqui.png', import.meta.url).href },
+  market: { name: 'Scout', image: new URL('../operations/scout.png', import.meta.url).href },
+  research: { name: 'Darwin', image: new URL('../operations/darwin.png', import.meta.url).href },
+  risk: { name: 'Guard', image: new URL('../operations/guard.png', import.meta.url).href },
+  execution: { name: 'Courier', image: new URL('../operations/courier.png', import.meta.url).href },
+  advisor: { name: 'Advisor', image: new URL('../operations/advisor.png', import.meta.url).href },
+} as const;
+
 export function OperationsFloor({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const floor = useChannel(client, 'operations.floor', {});
   return <section className="panel operations-floor" aria-labelledby="operations-floor-heading">
@@ -20,8 +29,10 @@ export function OperationsFloor({ client }: { readonly client: CoquiClient }): R
       title="Operations evidence unavailable" detail={floor.issues.map((issue) => issue.code).join(', ')} compact />}
     {floor.kind === 'ready' && <ul className="operations-floor-grid">
       {floor.value.subsystems.map((item) => <li key={item.subsystem} data-state={item.state}>
-        <header><span className="operations-state" aria-hidden="true" /><strong>{item.title}</strong>
+        <img src={CHARACTERS[item.subsystem].image} alt="" />
+        <header><span className="operations-state" aria-hidden="true" /><strong>{CHARACTERS[item.subsystem].name}</strong>
           <span>{item.state}</span></header>
+        <small>{item.title}</small>
         <p>{item.detail}</p>
         <footer><time dateTime={item.evidenceAtMs === null ? undefined : new Date(item.evidenceAtMs).toISOString()}>
           {evidenceTime(item.evidenceAtMs)}</time><span>{item.scope}</span></footer>

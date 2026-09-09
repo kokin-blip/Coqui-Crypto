@@ -444,6 +444,8 @@ input[type='checkbox'] {
   color: var(--coqui-text-muted);
 }
 
+.operations-floor { container-type: inline-size; }
+
 .operations-floor .panel-heading > time {
   color: var(--coqui-text-subtle);
   font-size: 11px;
@@ -453,23 +455,35 @@ input[type='checkbox'] {
 .operations-floor-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
   padding: 0;
   margin: var(--coqui-space-4) 0 0;
   overflow: hidden;
   list-style: none;
+  background: var(--coqui-border);
   border: 1px solid var(--coqui-border);
   border-radius: var(--coqui-radius-md);
 }
 
 .operations-floor-grid li {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  column-gap: var(--coqui-space-3);
   min-width: 0;
   padding: var(--coqui-space-4);
-  border-inline-end: 1px solid var(--coqui-border);
-  border-block-end: 1px solid var(--coqui-border);
+  background: var(--coqui-surface-1);
 }
+.operations-floor-grid li > img {
+  grid-row: 1 / 7;
+  align-self: start;
+  width: 72px;
+  height: 96px;
+  object-fit: contain;
+  object-position: center top;
+  filter: saturate(0.82);
+}
+.operations-floor-grid li > :not(img) { grid-column: 2; }
 
-.operations-floor-grid li:nth-child(3n) { border-inline-end: 0; }
-.operations-floor-grid li:nth-last-child(-n + 3) { border-block-end: 0; }
 .operations-floor-grid header { display: flex; align-items: center; gap: 8px; }
 .operations-floor-grid header strong { min-width: 0; overflow-wrap: anywhere; }
 .operations-floor-grid header > span:last-child {
@@ -548,11 +562,14 @@ input[type='checkbox'] {
     border-left: 0;
   }
 
+}
+
+@container (max-width: 880px) {
+  .operations-floor-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@container (max-width: 560px) {
   .operations-floor-grid { grid-template-columns: 1fr; }
-  .operations-floor-grid li,
-  .operations-floor-grid li:nth-child(3n),
-  .operations-floor-grid li:nth-last-child(-n + 3) { border-inline-end: 0; border-block-end: 1px solid var(--coqui-border); }
-  .operations-floor-grid li:last-child { border-block-end: 0; }
 }
 
 .settings-section .button-primary {

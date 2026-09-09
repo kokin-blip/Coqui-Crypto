@@ -8,7 +8,7 @@ import { ChartRangeControl, rangeLookbackDays } from './ChartRangeControl.js';
 import { AdvisorSheet } from './AdvisorSheet.js';
 import { ChartViewControl } from './ChartViewControl.js';
 import { MarketHistoryChart } from './MarketHistoryChart.js';
-import { eventMatchesProduct, MarketEventsPanel } from './MarketEventsPanel.js';
+import { eventMatchesProduct, MarketEventsDisclosure } from './MarketEventsPanel.js';
 import { useChannel, type ChannelState } from '../query/use-channel.js';
 import { useWorkspace } from './WorkspaceContext.js';
 import { AdvancedMarkets } from './AdvancedMarkets.js';
@@ -151,13 +151,13 @@ export function Markets({ client }: { readonly client: CoquiClient }): React.JSX
 
   return (
     <div className="market-workspace">
-      <section className="market-source-bar" aria-label="Live market data boundary">
-        <span className={`connection-state connection-${live.kind === 'ready' ? live.value.connection : 'offline'}`}><Radio size={15} aria-hidden="true" /> {live.kind === 'ready' ? sourceState(live.value.connection) : 'Unavailable'}</span>
-        <span><Activity size={15} aria-hidden="true" /> Coinbase public market feed</span>
-        <span><Clock3 size={15} aria-hidden="true" /> {live.kind === 'ready' && live.value.lastMessageAtMs !== null ? `last message ${new Date(live.value.lastMessageAtMs).toISOString().slice(11, 19)}Z` : 'awaiting first message'}</span>
-        <span className="market-boundary-copy">Display only · never used for research, risk, or execution</span>
-      </section>
       <div className="market-layout">
+        <section className="market-source-bar" aria-label="Live market data boundary">
+          <span className={`connection-state connection-${live.kind === 'ready' ? live.value.connection : 'offline'}`}><Radio size={15} aria-hidden="true" /> {live.kind === 'ready' ? sourceState(live.value.connection) : 'Unavailable'}</span>
+          <span><Activity size={15} aria-hidden="true" /> Coinbase public market feed</span>
+          <span><Clock3 size={15} aria-hidden="true" /> {live.kind === 'ready' && live.value.lastMessageAtMs !== null ? `last message ${new Date(live.value.lastMessageAtMs).toISOString().slice(11, 19)}Z` : 'awaiting first message'}</span>
+          <span className="market-boundary-copy">Display only · never used for research, risk, or execution</span>
+        </section>
         <aside className="market-watchlist" aria-labelledby="watchlist-heading">
           <div className="watchlist-heading"><div><p className="section-label">Profile universe</p><h2 id="watchlist-heading">Watchlist</h2></div><span>{products.length}</span></div>
           {products.length === 0 ? <p className="empty-copy">No connected crypto holdings are available for this profile.</p> : (
@@ -169,8 +169,11 @@ export function Markets({ client }: { readonly client: CoquiClient }): React.JSX
         </aside>
         {selected === null ? <section className="market-detail market-empty"><h2>Select a tracked market</h2><p>Completed Coinbase history and live display quotes will appear here without changing any decision dataset.</p></section> : <MarketDetail client={client} productId={selected} quote={quote} eventTimeline={eventTimeline} />}
       </div>
-      <ReferenceContext client={client} />
-      {selected !== null && <MarketEventsPanel client={client} productId={selected} events={eventTimeline.kind === 'ready' ? eventTimeline.value.events : []} state={eventTimeline.kind === 'ready' ? 'ready' : eventTimeline.kind === 'loading' ? 'loading' : 'unavailable'} />}
+      <details className="market-supporting-disclosure">
+        <summary>Reference and provenance</summary>
+        <ReferenceContext client={client} />
+      </details>
+      {selected !== null && <MarketEventsDisclosure client={client} productId={selected} events={eventTimeline.kind === 'ready' ? eventTimeline.value.events : []} state={eventTimeline.kind === 'ready' ? 'ready' : eventTimeline.kind === 'loading' ? 'loading' : 'unavailable'} />}
       {openAdvisorFor!==null&&<AdvisorSheet client={client} productId={openAdvisorFor} bars={[]}
         onClose={()=>setOpenAdvisorFor(null)} />}
     </div>

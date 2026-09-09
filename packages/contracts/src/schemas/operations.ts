@@ -3,7 +3,7 @@ import * as z from 'zod';
 import { epochMillisecondsSchema } from '../messages.js';
 import { sha256HexSchema } from './provenance.js';
 
-const subsystem = z.enum(['host', 'market', 'risk', 'research', 'routing', 'execution']);
+const subsystem = z.enum(['host', 'market', 'risk', 'research', 'execution', 'advisor']);
 
 export const operationsChannelSchemas = {
   'operations.floor': {

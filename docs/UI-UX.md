@@ -252,8 +252,13 @@ Phase 7 implements the chart ownership requirement through the shared renderer
 semantic canvas colors. Activity is now the decision timeline: no-trade and
 stand-down steps expose their stable reason code, decision identity, evidence
 hash, and an evidence-bound local “Ask Coqui why” action. The operations floor
-uses six fixed persisted read models. A subsystem with no row says
-“unavailable”; it does not receive a synthetic status or character activity.
+uses six fixed persisted read models. Phase 9 pairs them with static decorative
+characters: Coqui for host/evolution, Scout for market and event ingestion,
+Darwin for research, Guard for risk, Courier for routing and paper execution,
+and Advisor for explanations and allowlisted navigation. A subsystem with no
+row says “unavailable”; it does not receive a synthetic status, motion,
+progress, or character activity. Status text, timestamps, and evidence
+identities remain authoritative in every theme and motion mode.
 
 Decision markers are asset-scoped through immutable v74 evidence links. Global
 markers are labeled as global, and Activity's evidence inspector shows the
@@ -293,6 +298,13 @@ cards with venue, connection, notional, instrument, and assumption identity.
 Artifacts absent from storage—including Monte Carlo, parameter-stability, cost
 sensitivity, and stress series—render as “Unavailable—not recorded”; the UI does
 not synthesize substitute points.
+
+Phase 9 consolidates the Markets hierarchy around a 240px desktop watchlist, an
+integrated display-only source header, consistent 24px detail padding, a
+four-column quote strip that steps down to two and then one column, and a
+horizontal compact watchlist. Toolbars wrap rather than clip. Loading, stale,
+empty, and unavailable states retain explicit labels and stable chart space
+instead of substituting zeros.
 
 ## 7. Phase 5 verification
 

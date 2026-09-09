@@ -710,11 +710,16 @@ changes, market events, and Advisor navigation from their append-only sources.
 Only allowlisted fields are projected; raw detail JSON is never renderer-bound.
 
 `operations.floor` is a fixed six-item, read-only projection for host, market,
-risk, research, routing, and paper execution. Each available state identifies
-one persisted row and an evidence time. Missing rows are returned as
-`unavailable`; the renderer never infers health from animation, network presence,
-or placeholder data. Research is explicitly labelled global until jobs gain a
-profile identity. `research.lineage` adds a bounded, integrity-checked global
+risk, research, combined routing/paper execution, and Advisor. Each available
+state identifies one persisted row and an evidence time. The execution item
+selects the newest verified route or execution outcome; the Advisor item selects
+the newest navigation or generation audit without forwarding stored request or
+detail payloads. Missing rows are returned as `unavailable`; the renderer never
+infers health from illustration, animation, network presence, or placeholder
+data. The six static character assets are decorative renderer resources and
+have no service, credential, research, routing, or execution authority.
+Research is explicitly labelled global until jobs gain a profile identity.
+`research.lineage` adds a bounded, integrity-checked global
 champion/challenger projection without exposing metrics bodies or approval
 references. Chart decision markers and the Activity “Ask Coqui why” action
 reuse this same decision identity. The explanation command uses the allowlisted

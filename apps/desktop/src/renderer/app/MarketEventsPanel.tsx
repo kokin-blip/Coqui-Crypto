@@ -37,3 +37,10 @@ export function MarketEventsPanel({ client,events, state, productId }: {
     </li>)}</ol>}
   </section>;
 }
+
+export function MarketEventsDisclosure(props: Parameters<typeof MarketEventsPanel>[0]): React.JSX.Element {
+  return <details className="market-supporting-disclosure" open>
+    <summary>Known market events</summary>
+    <MarketEventsPanel {...props} />
+  </details>;
+}
