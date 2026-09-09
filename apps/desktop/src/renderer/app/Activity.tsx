@@ -151,8 +151,14 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
           <div><dt>Assets</dt><dd>{detail.assetScopes.join(', ')}</dd></div>
           <div><dt>Evidence / routes</dt><dd>{detail.events.length} / {detail.routes.length}</dd></div>
         </dl>
-        {detail.routes.length > 0 && <p className="metric-note">Routes: {detail.routes.map((route) =>
-          `${route.side} ${route.exposureKey} via ${route.provider} (${route.amountUsd} USD)`).join(' · ')}</p>}
+        {detail.routes.length===0?<p className="empty-state">No execution route was recorded for this decision.</p>:
+          <ol className="execution-route-grid">{detail.routes.map((route)=><li key={route.routeId}>
+            <header><strong>{route.side.toUpperCase()} {route.exposureKey}</strong><span>{route.provider.replace('_',' ')}</span></header>
+            <dl><div><dt>Paper notional</dt><dd>{route.amountUsd} USD</dd></div><div><dt>Instrument</dt><dd>{route.productId}</dd></div>
+              <div><dt>Connection</dt><dd title={route.connectionId}>{route.connectionId.slice(0,12)}…</dd></div>
+              <div><dt>Assumptions</dt><dd title={route.assumptionHash}>{route.assumptionHash.slice(0,12)}…</dd></div></dl>
+            <small>Fee, spread, liquidity, permission, and minimum evidence: unavailable in this bounded read model.</small>
+          </li>)}</ol>}
         <p className="metric-note">Decision {detail.decision.decisionId} · hash {detail.decisionHash}</p>
         <ol className="activity-feed">{detail.events.map((item) => <li key={item.eventId}>
           <span className="event-marker status-info" aria-hidden="true" /><div>

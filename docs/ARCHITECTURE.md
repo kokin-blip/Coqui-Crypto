@@ -720,6 +720,14 @@ references. Chart decision markers and the Activity “Ask Coqui why” action
 reuse this same decision identity. The explanation command uses the allowlisted
 Phase 6 evidence pack and has no execution or configuration authority.
 
+Visualization remains a renderer projection over these bounded contracts.
+Research charts accept only immutable recorded curves and scoreboard metrics;
+risk history uses decision-timeline events; market quality is computed from the
+returned completed-bar sequence; and route cards use decision-detail routes.
+Missing series are represented as unavailable rather than reconstructed. No
+visualization channel or component adds execution, configuration, or promotion
+authority.
+
 ### 9.2 Immutable market-event context
 
 Migration 69 adds `market_events_v1` and

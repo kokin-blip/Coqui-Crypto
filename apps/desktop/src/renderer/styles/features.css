@@ -178,6 +178,7 @@ input[type='checkbox'] {
 .proposal-actions li span {
   display: block;
 }
+.proposal-list .proposal-route-summary { max-width: 70ch; margin-top: 5px; color: var(--coqui-text); font-size: 11px; overflow-wrap: anywhere; }
 
 .status-text {
   font-size: 11px;

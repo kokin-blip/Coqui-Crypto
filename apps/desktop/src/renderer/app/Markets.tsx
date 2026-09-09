@@ -14,6 +14,7 @@ import { useWorkspace } from './WorkspaceContext.js';
 import { AdvancedMarkets } from './AdvancedMarkets.js';
 import { decisionTimelineMarkers } from './decision-timeline-markers.js';
 import { takeAdvisorSelection } from './advisor-navigation.js';
+import { completedBarQuality } from './evidence-visualization.js';
 
 type LiveView = ChannelResponse<'market-data.live'>;
 type LiveQuote = LiveView['quotes'][number];
@@ -57,6 +58,7 @@ function MarketDetail({ client, productId, quote, eventTimeline }: {
     .filter((event) => eventMatchesProduct(event, productId)).map((event) => ({ id: event.id,
       atMs: event.firstSeenAtMs, label: `Event ${event.id.slice(0, 8)}`, tone: event.classification?.sentiment === 'positive' ? 'positive' as const :
         event.classification?.sentiment === 'negative' ? 'negative' as const : 'neutral' as const })), [eventTimeline, productId]);
+  const quality=candles.kind==='ready'?completedBarQuality(candles.value.bars):null;
   return (
     <section className="market-detail" aria-labelledby="market-detail-heading">
       <div className="market-detail-heading">
@@ -84,6 +86,13 @@ function MarketDetail({ client, productId, quote, eventTimeline }: {
         {candles.kind === 'ready' && candles.value.bars.length === 0 && <div className="chart-empty-canvas"><strong>No completed bars in this range</strong><span>Choose a longer range. Coqui never substitutes another venue or an incomplete candle.</span></div>}
         {candles.kind !== 'loading' && candles.kind !== 'ready' && <p role="alert" className="empty-copy">Completed daily history unavailable. No alternative source was substituted.</p>}
       </div>
+      <section className="market-quality" aria-labelledby="market-quality-heading"><div className="panel-heading"><div><p className="section-label">Decision-data boundary</p><h3 id="market-quality-heading">Source quality</h3></div></div>
+        <dl><div><dt>Operational source</dt><dd>Coinbase completed daily bars</dd></div>
+          <div><dt>Completed bars</dt><dd>{quality?.count??'Unavailable'}</dd></div>
+          <div><dt>Detected gaps</dt><dd>{quality?.gaps??'Unavailable'}</dd></div>
+          <div><dt>Latest completion</dt><dd>{quality?.latest===null||quality===null?'Unavailable':new Date(quality.latest).toISOString()}</dd></div></dl>
+        <p>Live quotes and Robinhood prices remain display or valuation evidence only; they cannot replace this dataset.</p>
+      </section>
     </section>
   );
 }

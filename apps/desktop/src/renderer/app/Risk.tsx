@@ -4,6 +4,7 @@ import { useEffect,useState } from 'react';
 import { useChannel } from '../query/use-channel.js';
 import { SurfaceState } from './SurfaceState.js';
 import { takeAdvisorSelection } from './advisor-navigation.js';
+import { boundedRiskMeter } from './evidence-visualization.js';
 
 type RiskView = ChannelResponse<'risk.dashboard'>;
 type Rung = RiskView['ladder'][number];
@@ -45,6 +46,7 @@ function Rung({ rung }: { readonly rung: Rung }): React.JSX.Element {
 
 export function Risk({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const risk = useChannel(client, 'risk.dashboard', {});
+  const timeline=useChannel(client,'decision.timeline',{assetScope:null,asOfMs:null,limit:100});
   const [explanation,setExplanation]=useState<ChannelResponse<'advisor.decision.explain'>|null>(null);
   const [explanationFailure,setExplanationFailure]=useState<string|null>(null);
 
@@ -128,11 +130,31 @@ export function Risk({ client }: { readonly client: CoquiClient }): React.JSX.El
         </div>
       </dl>
 
+      <section className="risk-visuals" aria-labelledby="risk-visuals-heading"><div className="panel-heading"><div>
+        <p className="eyebrow">Current measured state</p><h3 id="risk-visuals-heading">Exposure, volatility, and drawdown</h3></div></div>
+        <div className="risk-meter-grid">
+          <label><span>Permitted exposure</span><strong>{percent(view.exposureScale*100)}</strong><progress max={100} value={view.exposureScale*100} /></label>
+          <label><span>Drawdown</span><strong>{percent(view.drawdownPct)}</strong><progress max={100} value={boundedRiskMeter(view.drawdownPct)??0} /></label>
+          <label><span>Realized volatility</span><strong>{percent(view.realizedVolatilityPct)}</strong>{boundedRiskMeter(view.realizedVolatilityPct)===null?<em>Unavailable</em>:<progress max={100} value={boundedRiskMeter(view.realizedVolatilityPct)!} />}</label>
+          <label><span>Forecast volatility</span><strong>{percent(view.forecastVolatilityPct)}</strong>{boundedRiskMeter(view.forecastVolatilityPct)===null?<em>Unavailable</em>:<progress max={100} value={boundedRiskMeter(view.forecastVolatilityPct)!} />}</label>
+        </div>
+      </section>
+
       <ul className="risk-ladder">
         {view.ladder.map((rung) => (
           <Rung key={rung.stage} rung={rung} />
         ))}
       </ul>
+
+      <section className="risk-decision-history" aria-labelledby="risk-history-heading"><div className="panel-heading"><div>
+        <p className="eyebrow">Immutable decision events</p><h3 id="risk-history-heading">Recent risk evaluations</h3></div></div>
+        {timeline.kind==='loading'&&<p aria-live="polite">Loading risk decisions…</p>}
+        {timeline.kind==='ready'&&timeline.value.items.filter((item)=>item.kind==='risk_evaluated').length===0&&<p className="empty-state">No historical risk evaluation is recorded.</p>}
+        {timeline.kind==='ready'&&<ol>{timeline.value.items.filter((item)=>item.kind==='risk_evaluated').slice(0,12).map((item)=><li key={item.eventId}>
+          <span className={`event-marker status-${item.status}`} aria-hidden="true"/><div><strong>{item.status}</strong>
+            <time dateTime={new Date(item.occurredAtMs).toISOString()}>{new Date(item.occurredAtMs).toISOString()}</time>
+            <small>decision {item.decisionId.slice(0,12)}… · evidence {item.payloadHash.slice(0,12)}…</small></div></li>)}</ol>}
+      </section>
 
       {view.warnings.length > 0 && (
         <ul className="opacity-70">

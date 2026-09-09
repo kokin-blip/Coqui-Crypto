@@ -283,6 +283,17 @@ screens consume the selected decision, candidate, event, or product once and foc
 the recorded evidence. Explanations and navigation never expose configuration,
 credentials, execution, routing, or promotion actions.
 
+Phase 8 adds four evidence-first visual layers without expanding authority.
+Research renders recorded equity curves, after-cost benchmark comparisons,
+worker state, and an explicit validation-availability map. Risk uses current
+derived measurements plus recent immutable risk-evaluation events. Markets
+shows completed-bar count, detected gaps, latest completion, and the operational
+versus display-only source boundary. Decision inspection renders persisted route
+cards with venue, connection, notional, instrument, and assumption identity.
+Artifacts absent from storage—including Monte Carlo, parameter-stability, cost
+sensitivity, and stress series—render as “Unavailable—not recorded”; the UI does
+not synthesize substitute points.
+
 ## 7. Phase 5 verification
 
 Phase 5 is not complete until:

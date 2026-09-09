@@ -357,3 +357,45 @@
 .indicator-controls summary { color: var(--coqui-text-muted); cursor: pointer; }
 .indicator-controls > div { display: flex; flex-wrap: wrap; gap: 8px 16px; padding: 10px 0; }
 .indicator-controls label { color: var(--coqui-text-muted); font-size: 12px; }
+
+.research-visual-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--coqui-space-4); }
+.research-metric-bars,.worker-progress-list { display: grid; gap: var(--coqui-space-3); padding: 0; margin: var(--coqui-space-4) 0 0; list-style: none; }
+.research-metric-bars li,.worker-progress-list li { display: grid; gap: 7px; }
+.research-metric-bars li > div,.worker-progress-list li > div { display: flex; justify-content: space-between; gap: 12px; }
+.research-metric-bars small,.worker-progress-list small { color: var(--coqui-text-muted); }
+.research-metric-track { display: block; height: 7px; overflow: hidden; background: var(--coqui-surface-3); border-radius: 999px; }
+.research-metric-track i { display: block; height: 100%; background: var(--coqui-positive); border-radius: inherit; }
+.research-metric-track i[data-negative='true'] { background: var(--coqui-negative); }
+.worker-progress-list progress,.risk-meter-grid progress { width: 100%; height: 7px; accent-color: var(--coqui-accent); }
+.worker-progress-list li[data-state='failed'] progress,.worker-progress-list li[data-state='cancelled'] progress { accent-color: var(--coqui-negative); }
+.research-availability { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1px; overflow: hidden; background: var(--coqui-border); border: 1px solid var(--coqui-border); border-radius: var(--coqui-radius-sm); }
+.research-availability > div { min-width: 0; padding: 10px 12px; background: var(--coqui-surface-2); }
+.research-availability dt { color: var(--coqui-text-subtle); font-size: 10px; text-transform: uppercase; letter-spacing: .05em; }
+.research-availability dd { margin: 5px 0 0; overflow-wrap: anywhere; }
+.risk-visuals,.risk-decision-history { padding-block: var(--coqui-space-4); border-block: 1px solid var(--coqui-border); }
+.risk-meter-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--coqui-space-4); }
+.risk-meter-grid label { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; }
+.risk-meter-grid label span,.risk-meter-grid label em { color: var(--coqui-text-muted); font-style: normal; }
+.risk-meter-grid progress,.risk-meter-grid label em { grid-column: 1/-1; }
+.risk-decision-history ol { display: grid; gap: var(--coqui-space-2); padding: 0; list-style: none; }
+.risk-decision-history li { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; }
+.risk-decision-history li div { display: grid; gap: 3px; }
+.risk-decision-history time,.risk-decision-history small { color: var(--coqui-text-muted); font-size: 10px; }
+.execution-route-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--coqui-space-3); padding: 0; list-style: none; }
+.execution-route-grid > li { min-width: 0; padding: var(--coqui-space-3); background: var(--coqui-surface-2); border: 1px solid var(--coqui-border); border-radius: var(--coqui-radius-sm); }
+.execution-route-grid header { display: flex; justify-content: space-between; gap: 10px; }
+.execution-route-grid header span,.execution-route-grid small { color: var(--coqui-text-muted); }
+.execution-route-grid dl { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+.execution-route-grid dt { color: var(--coqui-text-subtle); font-size: 9px; text-transform: uppercase; }
+.execution-route-grid dd { margin: 3px 0 0; overflow-wrap: anywhere; }
+.market-quality { padding-top: var(--coqui-space-4); margin-top: var(--coqui-space-4); border-top: 1px solid var(--coqui-border); }
+.market-quality dl { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 1px; background: var(--coqui-border); }
+.market-quality dl > div { min-width: 0; padding: 10px; background: var(--coqui-surface-2); }
+.market-quality dt { color: var(--coqui-text-subtle); font-size: 10px; }
+.market-quality dd { margin: 4px 0 0; overflow-wrap: anywhere; }
+.market-quality > p { color: var(--coqui-text-muted); font-size: 11px; }
+
+@media (max-width:900px) {
+  .research-visual-grid,.risk-meter-grid,.execution-route-grid { grid-template-columns:1fr; }
+  .market-quality dl { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}

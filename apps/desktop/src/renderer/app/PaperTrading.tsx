@@ -80,6 +80,8 @@ export function PaperTrading({
                 <div>
                   <strong>{proposal.actions.length} rebalance action{proposal.actions.length === 1 ? '' : 's'}</strong>
                   <span className="muted">revision {proposal.revision} · {proposal.proposalHash.slice(0, 12)}…</span>
+                  {proposal.actions.length>0&&<span className="proposal-route-summary">{proposal.actions.map((action)=>
+                    `${action.side.toUpperCase()} ${action.productId} · ${action.amountUsd} USD`).join('  |  ')}</span>}
                 </div>
                 <span className={`status-text status-${proposal.status}`}>{statusLabel(proposal.status)}</span>
                 {proposal.status === 'pending_review' && (
