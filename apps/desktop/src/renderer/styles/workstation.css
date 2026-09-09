@@ -1153,6 +1153,7 @@
 .coinbase-settings-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .coinbase-settings-heading h3 { margin: 4px 0 0; }
 .connection-badge { display: inline-flex; align-items: center; min-height: 26px; padding: 3px 8px; color: var(--coqui-text-muted); font-size: 11px; font-weight: 600; border: 1px solid var(--coqui-border); border-radius: var(--coqui-radius-sm); }
+.connection-card-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--coqui-space-3); }
 .connection-connected { color: var(--coqui-positive); background: var(--coqui-positive-soft); border-color: color-mix(in srgb, var(--coqui-positive) 42%, var(--coqui-border)); }
 .connection-attention_required { color: var(--coqui-warning); background: var(--coqui-warning-soft); border-color: color-mix(in srgb, var(--coqui-warning) 42%, var(--coqui-border)); }
 .connection-unavailable { color: var(--coqui-negative); background: var(--coqui-negative-soft); border-color: color-mix(in srgb, var(--coqui-negative) 42%, var(--coqui-border)); }

@@ -325,12 +325,41 @@ input[type='checkbox'] {
 }
 
 .settings-section select {
-  min-height: 34px;
+  min-height: 36px;
   padding: 4px 8px;
   color: var(--coqui-text);
   background: var(--coqui-surface-1);
   border: 1px solid var(--coqui-border);
   border-radius: var(--coqui-radius-sm);
+}
+
+.settings-layout {
+  display: grid;
+  grid-template-columns: minmax(190px, 220px) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--coqui-space-4);
+}
+
+.settings-category-tabs { display: grid; gap: 4px; position: sticky; top: var(--coqui-space-3); }
+.settings-category-tabs button { min-height: 40px; padding: 8px 12px; color: var(--coqui-text-muted); text-align: left; background: transparent; border: 1px solid transparent; border-radius: var(--coqui-radius-sm); }
+.settings-category-tabs button:hover { color: var(--coqui-text); background: var(--coqui-surface-2); }
+.settings-category-tabs button[aria-selected='true'] { color: var(--coqui-text); background: var(--coqui-surface-2); border-color: var(--coqui-border-strong); }
+.settings-category-panel { min-width: 0; }
+.settings-panel-stack { display: grid; gap: var(--coqui-space-4); }
+.settings-category-select { display: none; gap: 8px; font-weight: 650; }
+.settings-category-select select { min-height: 40px; color: var(--coqui-text); background: var(--coqui-surface-2); border: 1px solid var(--coqui-border); border-radius: var(--coqui-radius-sm); padding: 6px 10px; }
+.settings-details { color: var(--coqui-text-muted); }
+.settings-details summary { min-height: 36px; display: flex; align-items: center; cursor: pointer; color: var(--coqui-text); font-weight: 650; }
+.settings-details p { margin: 8px 0 0; }
+.settings-incident-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.settings-incident-list li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--coqui-border); }
+.settings-incident-list span:first-child { display: grid; gap: 4px; }
+.settings-incident-list small { color: var(--coqui-text-muted); }
+
+@container route (max-width: 700px) {
+  .settings-layout { display: block; }
+  .settings-category-tabs { display: none; }
+  .settings-category-select { display: grid; }
 }
 
 .confirmation-check {

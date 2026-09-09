@@ -14,19 +14,18 @@ function ConnectionRow({ client, connection }: { readonly client: CoquiClient; r
   const disconnect = useCommand(client, 'connections.disconnect', INVALIDATIONS);
   return (
     <article className="coinbase-connected-actions" aria-label={`${connection.label} connection`}>
-      <div className="coinbase-sync-copy">
-        <Database aria-hidden="true" size={18} />
-        <span><strong>{connection.label}</strong><small>{connection.provider === 'coinbase' ? 'Coinbase' : 'Robinhood Crypto'} · {connection.accountSuffixes.length > 0 ? connection.accountSuffixes.map((suffix) => `••••${suffix}`).join(', ') : 'account pending first sync'}</small></span>
+      <div className="connection-card-heading">
+        <div className="coinbase-sync-copy"><Database aria-hidden="true" size={18} /><span><strong>{connection.label}</strong><small>{connection.provider === 'coinbase' ? 'Coinbase' : 'Robinhood Crypto'} · Last sync {connection.lastSuccessfulSyncAtMs === null ? 'never' : new Date(connection.lastSuccessfulSyncAtMs).toLocaleString()}</small></span></div>
+        <span className={`connection-badge connection-${connection.status === 'active' ? 'connected' : connection.status}`}>{connection.status.replaceAll('_', ' ')}</span>
       </div>
-      <dl className="settings-readout coinbase-permissions">
-        <div><dt>Status</dt><dd>{connection.status.replaceAll('_', ' ')}</dd></div>
+      {connection.failureReason !== null && <SurfaceState kind="blocked" title="Connection needs attention" detail={connection.failureReason.replaceAll('_', ' ')} compact />}
+      <details className="settings-details"><summary>Connection details</summary><dl className="settings-readout coinbase-permissions">
         <div><dt>Health</dt><dd>{connection.health}</dd></div>
-        <div><dt>Last sync</dt><dd>{connection.lastSuccessfulSyncAtMs === null ? 'Never' : new Date(connection.lastSuccessfulSyncAtMs).toLocaleString()}</dd></div>
+        <div><dt>Accounts</dt><dd>{connection.accountSuffixes.length > 0 ? connection.accountSuffixes.map((suffix) => `••••${suffix}`).join(', ') : 'Pending first sync'}</dd></div>
         <div><dt>Valuation</dt><dd>{connection.valuationComplete ? 'Complete' : 'Incomplete'}</dd></div>
         <div><dt>Permissions</dt><dd>{connection.permissions?.accountRead ? 'Read only' : 'Unverified'}</dd></div>
         <div><dt>Live execution</dt><dd>Disabled</dd></div>
-      </dl>
-      {connection.failureReason !== null && <SurfaceState kind="blocked" title="Connection needs attention" detail={connection.failureReason.replaceAll('_', ' ')} compact />}
+      </dl></details>
       <div className="coinbase-action-row">
         <button type="button" className="button-primary" disabled={sync.state.kind === 'pending' || connection.status === 'disconnected'} onClick={() => void sync.run({ commandId: crypto.randomUUID(), connectionId: connection.id })}>
           <RefreshCw aria-hidden="true" size={15} />{sync.state.kind === 'pending' ? 'Syncing…' : 'Sync now'}
