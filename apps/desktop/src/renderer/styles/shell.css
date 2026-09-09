@@ -122,12 +122,18 @@
 
 .app-workspace {
   min-width: 0;
+  container-name: workspace;
+  container-type: inline-size;
 }
 
 .workspace-content-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   min-width: 0;
+}
+
+.workspace-content-grid.inspector-docked {
+  grid-template-columns: minmax(0, 1fr) auto;
 }
 
 .evidence-inspector {
@@ -183,13 +189,38 @@
 
 .evidence-inspector > header button {
   display: inline-grid;
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   place-items: center;
   color: var(--coqui-text-muted);
   background: var(--coqui-surface-2);
   border: 1px solid var(--coqui-border);
   border-radius: var(--coqui-radius-sm);
+}
+
+.evidence-inspector-backdrop {
+  position: fixed;
+  z-index: var(--coqui-z-modal-backdrop);
+  inset: 0;
+  display: grid;
+  justify-items: end;
+  background: var(--coqui-overlay);
+}
+
+.evidence-inspector-dialog {
+  z-index: var(--coqui-z-modal);
+  width: min(380px, calc(100vw - 64px));
+  min-width: 0;
+  height: 100%;
+  outline: none;
+}
+
+.evidence-inspector-dialog .evidence-inspector {
+  position: static;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  border-left: 1px solid var(--coqui-border-strong);
 }
 
 .inspector-actions {
@@ -512,9 +543,37 @@
   }
 }
 
-@media (max-width: 1180px) {
-  .evidence-inspector {
+@media (max-width: 920px) {
+  .shell-compact.workspace-advanced {
+    grid-template-columns: 68px minmax(0, 1fr);
+  }
+
+  .shell-compact.workspace-advanced .sidebar {
+    width: 68px;
+    padding-inline: 8px;
+  }
+
+  .shell-compact.workspace-advanced .brand-lockup {
+    justify-content: center;
+    padding-inline: 0;
+  }
+
+  .shell-compact.workspace-advanced .brand-lockup > span:last-child,
+  .shell-compact.workspace-advanced .sidebar-label,
+  .shell-compact.workspace-advanced .sidebar-safety {
     display: none;
+  }
+
+  .shell-compact.workspace-advanced .sidebar-link {
+    grid-template-columns: 1fr;
+    place-items: center;
+    padding: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .evidence-inspector-dialog {
+    width: calc(100vw - 68px);
   }
 }
 

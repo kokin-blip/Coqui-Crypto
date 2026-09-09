@@ -5,6 +5,7 @@ import { Activity, CircleDollarSign, Database, Radio, ShieldCheck, UserRound } f
 import { useChannel } from '../query/use-channel.js';
 import { ProfileSwitcher } from './ProfileSwitcher.js';
 import { CommandMenu } from './CommandMenu.js';
+import { statusSummary } from './workspace-layout.js';
 
 type RailView = ChannelResponse<'app.status-rail'>;
 
@@ -93,24 +94,25 @@ export function StatusRail({ client }: { readonly client: CoquiClient }): React.
   }
 
   const view = rail.value;
+  const summary = statusSummary(view);
 
   return (
     <header className="status-rail">
       <div className="status-primary">
         <div className="profile-status-module"><UserRound size={17} aria-hidden="true" /><ProfileSwitcher client={client} compact /><ExecutionPolicy client={client} /></div>
         <Freshness client={client} />
-        <span className={`rail-decision ${view.reconciliation.unresolvedCount === 0 && !view.reconciliation.neverRun ? 'rail-positive' : 'rail-warning'}`}><Database size={14} aria-hidden="true" /><span><small>Reconciliation</small><strong>{view.reconciliation.neverRun ? 'Not run' : view.reconciliation.unresolvedCount === 0 ? 'Settled' : `${view.reconciliation.unresolvedCount} unresolved`}</strong></span></span>
-        <StatusEmphasis stateKey={view.executionPermitted ? 'permitted' : 'blocked'}><span className={`rail-decision ${view.executionPermitted ? 'rail-positive' : 'rail-negative'}`}><ShieldCheck size={14} aria-hidden="true" /><span><small>Risk permission</small><strong>{view.executionPermitted ? 'Paper permitted' : 'Paper blocked'}</strong></span></span></StatusEmphasis>
-        <StrategyDecision client={client} />
+        <StatusEmphasis stateKey={`${summary.tone}:${summary.text}`}><span className={`rail-decision rail-${summary.tone}`}><ShieldCheck size={14} aria-hidden="true" /><span><small>Safety</small><strong>{summary.text}</strong></span></span></StatusEmphasis>
+        <details className="status-details">
+          <summary><Activity size={14} aria-hidden="true" /> System status</summary>
+          <div className="status-details-panel">
+            <StrategyDecision client={client} />
+            <span><Database size={13} aria-hidden="true" /> {reconciliationText(view.reconciliation)}</span>
+            <span><Activity size={13} aria-hidden="true" /> {view.activeJobCount} active / {view.scheduledJobCount} scheduled</span>
+            <span><CircleDollarSign size={13} aria-hidden="true" /> cost model {view.costModelBps} bps</span>
+            <span><ShieldCheck size={13} aria-hidden="true" /> risk stage {view.riskStage ?? 'unassessed'}</span>
+          </div>
+        </details>
         <CommandMenu />
-      </div>
-      <div className="status-secondary">
-        <span>Coinbase account {view.reconciliation.neverRun ? 'not synced' : 'read only'}</span>
-        <span className={view.killSwitchEngaged ? 'rail-negative' : ''}>KILL <strong>{view.killSwitchEngaged ? 'ENGAGED' : 'armed · off'}</strong>{view.killSwitchReason === null ? '' : ` · ${view.killSwitchReason.replaceAll('_', ' ')}`}</span>
-        <span><Activity size={12} aria-hidden="true" /> jobs {view.activeJobCount === 0 ? 'idle' : `${view.activeJobCount} running`}{view.scheduledJobCount > 0 ? ` / ${view.scheduledJobCount}` : ''}</span>
-        <span>{reconciliationText(view.reconciliation)}</span>
-        <span><CircleDollarSign size={12} aria-hidden="true" /> costs {view.costModelBps}bps</span>
-        <span>risk stage {view.riskStage?.replaceAll('_', ' ') ?? 'unknown'}</span>
       </div>
     </header>
   );

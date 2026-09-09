@@ -2,7 +2,27 @@
   width: min(1440px, 100%);
   padding: var(--coqui-space-5) clamp(20px, 3vw, 48px) var(--coqui-space-7);
   margin: 0 auto;
+  container-name: route;
+  container-type: inline-size;
   animation: route-enter var(--coqui-duration-route) var(--coqui-ease-standard) both;
+}
+
+@container route (max-width: 760px) {
+  .route-screen,
+  .screen-stack {
+    gap: var(--coqui-space-3);
+  }
+
+  .route-screen > section,
+  .route-screen > .screen-stack > section,
+  .panel {
+    padding: var(--coqui-space-4);
+  }
+
+  .screen-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }
 
 @keyframes route-enter {

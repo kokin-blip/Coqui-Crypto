@@ -23,7 +23,7 @@ describe('account settings service', () => {
       preferences: {
         theme: 'system', density: 'comfortable', motion: 'system', language: 'en',
         workspaceMode: 'advanced', overviewChart: 'equity', portfolioChart: 'holdings',
-        marketsChart: 'candles', performanceChart: 'equity', inspectorOpen: true,
+        marketsChart: 'candles', performanceChart: 'equity', inspectorOpen: false,
         inspectorWidthPx: 320,
         chartRanges: { overview: '1y', portfolio: '1y', markets: '1y', performance: '1y' },
         advancedOverviewPreset: 'research_grid',
@@ -52,7 +52,7 @@ describe('account settings service', () => {
         preferences: {
           theme: 'dark', density: 'comfortable', motion: 'none', language: 'en',
           workspaceMode: 'advanced', overviewChart: 'equity', portfolioChart: 'holdings',
-          marketsChart: 'candles', performanceChart: 'equity', inspectorOpen: true,
+          marketsChart: 'candles', performanceChart: 'equity', inspectorOpen: false,
           inspectorWidthPx: 320,
           chartRanges: { overview: '1y', portfolio: '1y', markets: '1y', performance: '1y' },
           advancedOverviewPreset: 'research_grid',

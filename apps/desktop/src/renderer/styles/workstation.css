@@ -54,7 +54,7 @@
 
 .status-primary {
   gap: 8px;
-  min-height: 62px;
+  min-height: 60px;
   padding: 8px 12px;
   background: var(--coqui-canvas-raised);
 }
@@ -62,8 +62,7 @@
 .workspace-advanced .status-primary > .profile-status-module,
 .workspace-advanced .status-primary > .rail-state,
 .workspace-advanced .status-primary > .rail-decision,
-.workspace-advanced .status-primary > .coqui-status-emphasis,
-.workspace-advanced .status-primary > .rail-strategy {
+.workspace-advanced .status-primary > .coqui-status-emphasis {
   min-height: 44px;
   padding: 6px 11px;
   background: var(--coqui-surface-1);
@@ -177,9 +176,56 @@
 .rail-negative,
 .rail-offline { color: var(--coqui-negative) !important; }
 
+.status-details {
+  position: relative;
+  margin-left: auto;
+}
+
+.status-details > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 7px 10px;
+  color: var(--coqui-text-muted);
+  cursor: pointer;
+  list-style: none;
+  background: var(--coqui-surface-1);
+  border: 1px solid var(--coqui-border);
+  border-radius: var(--coqui-radius-sm);
+}
+
+.status-details > summary::-webkit-details-marker { display: none; }
+.status-details > summary:hover { color: var(--coqui-text); border-color: var(--coqui-border-strong); }
+
+.status-details-panel {
+  position: absolute;
+  z-index: var(--coqui-z-popover);
+  top: calc(100% + 7px);
+  right: 0;
+  display: grid;
+  width: min(340px, calc(100vw - 32px));
+  gap: 10px;
+  padding: 14px;
+  color: var(--coqui-text-muted);
+  background: var(--coqui-canvas-raised);
+  border: 1px solid var(--coqui-border-strong);
+  border-radius: var(--coqui-radius-md);
+  box-shadow: var(--coqui-shadow);
+}
+
+.status-details-panel > span,
+.status-details-panel .rail-strategy {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  min-width: 0;
+  margin: 0;
+}
+
 .route-content {
   width: 100%;
-  padding: 8px 10px 32px;
+  padding: 24px clamp(20px, 2.5vw, 32px) 40px;
   animation: route-enter var(--coqui-duration-route) var(--coqui-ease-standard) both;
 }
 
@@ -1178,6 +1224,61 @@
   .coinbase-action-row { align-items: stretch; flex-direction: column; }
   .coinbase-action-row .button-primary { min-width: 0; }
   .coinbase-sync-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.shell-standard .status-primary,
+.shell-compact .status-primary {
+  flex-wrap: wrap;
+}
+
+.shell-compact .status-primary {
+  gap: 6px;
+  padding: 8px;
+}
+
+.shell-compact .profile-status-module {
+  flex: 1 1 180px;
+  min-width: 0;
+}
+
+.shell-compact .status-primary > .rail-state {
+  order: 3;
+  flex: 1 1 100%;
+  margin-left: 0;
+}
+
+.shell-compact .status-primary > .coqui-status-emphasis {
+  flex: 1 1 190px;
+}
+
+.shell-compact .status-details {
+  margin-left: 0;
+}
+
+.shell-compact .status-details > summary {
+  width: 36px;
+  padding-inline: 9px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.shell-compact .status-details-panel {
+  position: fixed;
+  top: 76px;
+  right: 12px;
+  left: 80px;
+  width: auto;
+}
+
+.shell-compact .route-content { padding: 16px 16px 32px; }
+
+@media (pointer: coarse) {
+  .sidebar-link,
+  .status-details > summary,
+  .command-menu-trigger,
+  .evidence-inspector button {
+    min-height: 44px;
+  }
 }
 
 @media (forced-colors: active) {

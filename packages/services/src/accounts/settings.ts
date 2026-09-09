@@ -87,7 +87,7 @@ export const DEFAULT_ACCOUNT_PRESENTATION_PREFERENCES: AccountPresentationPrefer
     portfolioChart: 'holdings',
     marketsChart: 'candles',
     performanceChart: 'equity',
-    inspectorOpen: true,
+    inspectorOpen: false,
     inspectorWidthPx: 320,
     chartRanges: Object.freeze({
       overview: '1y', portfolio: '1y', markets: '1y', performance: '1y',

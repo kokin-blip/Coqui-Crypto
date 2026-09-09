@@ -21,7 +21,7 @@ export function CommandMenu(): React.JSX.Element {
           <p><strong>Workspace mode</strong><span>Layout changes only. Data and route stay in place.</span></p>
           <WorkspaceModeControl />
           {workspace.mode === 'advanced' && <div className="command-menu-presets"><span>Overview layout</span><button type="button" onClick={() => void workspace.update(presetPatch('research_grid'))}>Research Grid</button><button type="button" onClick={() => void workspace.update(presetPatch('chart_focus'))}>Chart Focus</button><button type="button" onClick={() => void workspace.update(presetPatch('evidence_review'))}>Evidence Review</button></div>}
-          {workspace.mode === 'advanced' && <button className="command-menu-action" type="button" onClick={() => void workspace.update({ inspectorOpen: !(workspace.preferences?.inspectorOpen ?? true) })}>{workspace.preferences?.inspectorOpen ?? true ? 'Hide' : 'Show'} evidence inspector</button>}
+          {workspace.mode === 'advanced' && <button className="command-menu-action" type="button" onClick={workspace.toggleInspector}>{workspace.inspectorVisible ? 'Hide' : 'Show'} evidence inspector</button>}
           <a href={routeHash('settings')} onClick={() => setEvent(undefined)}><Settings2 size={15} aria-hidden="true" /> Display settings</a>
         </div>
       </IonicCommandPopover></Suspense>}

@@ -13,7 +13,8 @@ import { useWorkspace, WorkspaceProvider } from './WorkspaceContext.js';
 
 function WorkspaceApp({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const [route] = useRoute();
-  const { mode, preferences } = useWorkspace();
+  const workspace = useWorkspace();
+  const { mode, inspectorVisible, shellState } = workspace;
 
   useEffect(() => {
     window.requestAnimationFrame(() => {
@@ -21,17 +22,23 @@ function WorkspaceApp({ client }: { readonly client: CoquiClient }): React.JSX.E
     });
   }, [route]);
 
+  useEffect(() => {
+    if (shellState !== 'wide') workspace.closeInspector();
+  }, [route]);
+
   return (
-    <div className={`app-shell workspace-${mode}`}>
+    <div className={`app-shell workspace-${mode} shell-${shellState}`}>
       <PreferenceBoundary client={client} />
       {mode === 'advanced' ? <Sidebar route={route} /> : <SimpleNavigation route={route} />}
       <div className="app-workspace">
         <StatusRail client={client} />
-        <div className="workspace-content-grid">
+        <div className={`workspace-content-grid ${shellState === 'wide' && inspectorVisible ? 'inspector-docked' : ''}`}>
           <main id="main-content" className="route-content" key={route}>
             <RouteScreen client={client} route={route} />
           </main>
-          {mode === 'advanced' && route !== 'overview' && (preferences?.inspectorOpen ?? true) && <EvidenceInspector client={client} />}
+          {mode === 'advanced' && route !== 'overview' && inspectorVisible && (
+            <EvidenceInspector client={client} presentation={shellState === 'wide' ? 'docked' : 'drawer'} />
+          )}
         </div>
       </div>
     </div>

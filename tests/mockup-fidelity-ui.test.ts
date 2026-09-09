@@ -28,9 +28,9 @@ describe('mockup-fidelity advanced workspace', () => {
     expect(sidebar).toContain('<span><strong>coqui</strong></span>');
     expect(sidebar).not.toContain('research workstation</small>');
     expect(sidebar).not.toContain('sidebar-sub-list');
-    expect(readyRail.indexOf('<Freshness client={client} />')).toBeLessThan(readyRail.indexOf('Reconciliation'));
-    expect(readyRail.indexOf('Reconciliation')).toBeLessThan(readyRail.indexOf('Risk permission'));
-    for (const text of ['KILL', 'jobs', 'costs', 'risk stage']) expect(readyRail).toContain(text);
+    expect(readyRail.indexOf('<Freshness client={client} />')).toBeLessThan(readyRail.indexOf('Safety'));
+    expect(readyRail.indexOf('Safety')).toBeLessThan(readyRail.indexOf('System status'));
+    for (const text of ['reconciliationText', 'active /', 'cost model', 'risk stage']) expect(readyRail).toContain(text);
   });
 
   it('runs clipping detection before every visual-review capture', () => {
