@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { CHANNEL_SCHEMAS } from '../packages/contracts/src/index.js';
+
 import {
   instrumentKey,
   FixedClock,
@@ -219,6 +221,8 @@ describe('the latest run is explained, including a stand-down', () => {
     expect(view.lastRun?.scheduledForMs).toBe(T0 + DAY);
     expect(view.lastRun?.standDown).toBe('pending_settlement');
     expect(view.lastRun?.filled).toBe(0);
+    expect(view.lastRun?.submitted).toBeGreaterThan(0);
+    expect(CHANNEL_SCHEMAS['paper.portfolio'].response.safeParse(view).success).toBe(true);
     db.close();
   });
 

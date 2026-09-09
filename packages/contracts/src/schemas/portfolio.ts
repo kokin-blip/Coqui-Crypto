@@ -216,9 +216,14 @@ export const portfolioChannelSchemas = {
               .enum([
                 'kill_switch_engaged', 'no_policy', 'no_intents', 'gates_refused',
                 'pending_review', 'execution_failed', 'execution_unknown',
+                'market_fetch_failed', 'invalid_market_data', 'market_alignment_failed',
+                'insufficient_history', 'stale_market_data', 'stale_product_rules',
+                'paper_book_empty', 'paper_book_incomplete', 'paper_book_requires_reset',
+                'pending_settlement',
               ])
               .nullable(),
             filled: z.number().int().nonnegative(),
+            submitted: z.number().int().nonnegative(),
             refused: z.number().int().nonnegative(),
           })
           .readonly()

@@ -2,6 +2,7 @@ import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { formatUsd } from '@coqui/ui-kit';
 
 import { useChannel } from '../query/use-channel.js';
+import { SurfaceState } from './SurfaceState.js';
 
 type PaperView = ChannelResponse<'paper.portfolio'>;
 
@@ -27,6 +28,7 @@ const STAND_DOWN_COPY: Record<string, string> = {
   pending_review: 'a proposal is waiting for human review',
   execution_failed: 'the paper submission failed before a confirmed outcome',
   execution_unknown: 'the paper submission outcome is unknown and requires reconciliation',
+  pending_settlement: 'orders were submitted and are waiting for the exact next completed bar',
 };
 
 const REQUIREMENT_COPY: Record<string, string> = {
@@ -87,9 +89,17 @@ export function PaperComparison({
 }): React.JSX.Element | null {
   const paper = useChannel(client, 'paper.portfolio', {});
 
-  // A failure here must not disturb the real portfolio above it, so the
-  // comparison simply does not appear.
-  if (paper.kind !== 'ready') return null;
+  if (paper.kind === 'loading') return null;
+  if (paper.kind !== 'ready') {
+    return (
+      <SurfaceState
+        kind="error"
+        title="Paper comparison unavailable"
+        detail="The current simulation could not be verified. Refresh the view or open Paper for details."
+        compact
+      />
+    );
+  }
   const view = paper.value;
 
   // Nothing has run yet. Claiming a $0 simulation would be a claim.
@@ -129,7 +139,7 @@ export function PaperComparison({
         <p>
           last run {day(view.lastRun.scheduledForMs)}:{' '}
           {view.lastRun.standDown === null
-            ? `${view.lastRun.filled} filled, ${view.lastRun.refused} refused`
+            ? `${view.lastRun.submitted} submitted, ${view.lastRun.filled} filled, ${view.lastRun.refused} refused`
             : (STAND_DOWN_COPY[view.lastRun.standDown] ?? view.lastRun.standDown)}
           .
         </p>
