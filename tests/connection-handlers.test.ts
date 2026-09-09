@@ -2,8 +2,9 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { createConnectionHandlers } from '../apps/desktop/src/main/connection-handlers.js';
 import { createMemorySecretStore, type RobinhoodCryptoReadClient } from '../packages/adapters/src/index.js';
-import { FixedClock, instrumentKey } from '../packages/core/src/index.js';
-import { getLatestUnifiedPortfolioSnapshotV2, openDatabase } from '../packages/storage/src/index.js';
+import { FixedClock, instrumentKey, sha256Hex } from '../packages/core/src/index.js';
+import { getLatestUnifiedPortfolioSnapshotV2, legacyCoinbaseConnection, listProfileConnectionsV2,
+  openDatabase, saveProfileConnection } from '../packages/storage/src/index.js';
 
 const PRIVATE_KEY = 'xQnTJVeQLmw1/Mg2YimEViSpw/SdJcgNXZ5kQkAXNPU=';
 const API_KEY = 'rh-api-6148effc-c0b1-486c-8940-a1d099456be6';
@@ -29,6 +30,25 @@ function robinhoodClient(): RobinhoodCryptoReadClient {
 }
 
 describe('provider-neutral connection handlers', () => {
+  it('materializes v1 Coinbase connection rows into the v2 compatibility view', async () => {
+    const database = openDatabase(':memory:');
+    const legacy = { ...legacyCoinbaseConnection('main', sha256Hex('legacy-key'), 10),
+      label: 'Imported Coinbase', status: 'attention_required' as const, updatedAtMs: 12 };
+    saveProfileConnection(legacy, database);
+    const handlers = createConnectionHandlers({ profileId: 'main', database,
+      clock: new FixedClock(20), priceSource: { name: 'fixture', async spot() { return new Map(); } } });
+    const list = handlers['connections.list'] as unknown as () => Promise<{
+      ok: true; value: { connections: readonly { label: string; status: string }[] };
+    }>;
+    await expect(list()).resolves.toMatchObject({ ok: true, value: { connections: [{
+      label: 'Imported Coinbase', status: 'attention_required',
+    }] } });
+    expect(listProfileConnectionsV2('main', database)).toHaveLength(1);
+    expect(database.prepare('SELECT v1_connection_id FROM profile_connection_migration_links_v1').get())
+      .toEqual({ v1_connection_id: legacy.id });
+    database.close();
+  });
+
   it('imports Robinhood in main, verifies read-only access, and persists an attributed portfolio', async () => {
     const database = openDatabase(':memory:'), secrets = createMemorySecretStore();
     const handlers = createConnectionHandlers({ profileId: 'main', database,

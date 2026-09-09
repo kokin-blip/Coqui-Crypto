@@ -733,6 +733,25 @@ Missing series are represented as unavailable rather than reconstructed. No
 visualization channel or component adds execution, configuration, or promotion
 authority.
 
+### 9.3 Compatibility and removal window
+
+Schema 75 keeps v1 connection, portfolio, and paper-campaign evidence immutable
+and readable for one compatibility release. A provider-neutral connection list
+materializes every profile-owned v1 connection into a deterministic v2 identity
+and records the migration link; it does not rewrite the v1 row. On first secret
+access, a linked v1 connection-scoped keychain entry moves to its v2 identity by
+write, exact read-back verification, then removal. Singular predecessor keychain
+identities use the same ordering.
+
+The legacy `accounts.coinbase.*`, `portfolio.view`, and `paper.campaign` IPC
+channels delegate to the current services during this window. Dispatch emits a
+`deprecated_channel_used` diagnostic containing only the stable channel name;
+the callback cannot receive the request payload, and telemetry failure cannot
+change request behavior. New renderer code uses `connections.*`,
+`portfolio.current`, and the versioned decision/research channels. Removing the
+compatibility readers, channels, or old secret aliases requires a later explicit
+release and migration review.
+
 ### 9.2 Immutable market-event context
 
 Migration 69 adds `market_events_v1` and

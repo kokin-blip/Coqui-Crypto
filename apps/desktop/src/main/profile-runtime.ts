@@ -30,6 +30,7 @@ export interface RuntimeProfileControllerOptions {
 export interface RuntimeProfileController {
   handlers(): ChannelHandlers;
   report(context: string, error: unknown): void;
+  recordDeprecatedChannel(channel: string): void;
   activeProfile(): AccountProfileView;
   dispose(): void;
 }
@@ -214,6 +215,7 @@ export function createRuntimeProfileController(
   return {
     handlers: () => ({ ...current?.handlers, ...globalHandlers }),
     report: (context, error) => current?.report(context, error),
+    recordDeprecatedChannel: (channel) => current?.recordDeprecatedChannel(channel),
     activeProfile() {
       const active = profiles.active();
       if (!active.ok || active.value === null) throw new Error('Active profile unavailable.');

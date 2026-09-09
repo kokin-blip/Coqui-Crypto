@@ -63,6 +63,20 @@ describe('dispatcher channel gate', () => {
     });
     expect(await dispatch('research.runs', {})).toEqual({ status: 'ok', value: [RUN] });
   });
+
+  it('reports compatibility use by channel identity only and isolates telemetry failure', async () => {
+    const observed: string[] = [];
+    const legacy = createDispatcher({ handlers: handlers(),
+      onDeprecatedChannel(channel) { observed.push(channel); throw new Error('sink failed'); } });
+    await expect(legacy('accounts.coinbase.connect', {
+      commandId: '00000000-0000-4000-8000-000000000001',
+      keyName: 'organizations/example/apiKeys/key-id', privateKey: 'secret-canary',
+    })).resolves.toMatchObject({ status: 'failed' });
+    await legacy('research.runs', {});
+    await legacy('portfolio.view', {});
+    expect(observed).toEqual(['accounts.coinbase.connect', 'portfolio.view']);
+    expect(JSON.stringify(observed)).not.toContain('secret-canary');
+  });
 });
 
 describe('dispatcher outcome classification', () => {

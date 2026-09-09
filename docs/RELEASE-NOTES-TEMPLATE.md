@@ -1,11 +1,12 @@
 # Coqui — release
 
-Local-first crypto portfolio tracking, tax lots, allocation, and paper-trading
-research. No account, no server, no cloud database.
+Local-first connected portfolio tracking, separate tax-lot accounting,
+allocation, and paper-trading research. No account, no server, no cloud database.
 
 **This build cannot place a real order.** Not by configuration — the code path
 does not exist, and a Coinbase key carrying trade or transfer permission is
-rejected at connect time. Paper figures are a simulation and are labelled as one
+rejected at connect time. The Robinhood Crypto adapter is read-only and exports
+no real placement method. Paper figures are a simulation and are labelled as one
 wherever they appear.
 
 ## Downloads
@@ -50,4 +51,5 @@ expected warning apart from the one that means the download is broken.
 - The paper engine stands down by default: its profitability gate requires a
   registered per-trade net-edge estimate, and no study has registered one for
   the shipped strategy. The portfolio screen states this rather than hiding it.
-- Real Coinbase and CoinGecko access needs your own keys. Coqui ships none.
+- Real Coinbase, Robinhood Crypto, and CoinGecko access needs your own keys.
+  Coqui ships none; connection secrets remain in the OS credential store.

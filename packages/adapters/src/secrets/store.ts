@@ -98,6 +98,28 @@ export async function removeConnectionSecret(
   }
 }
 
+/** Move a connection-scoped secret to a replacement identity without exposing its value. */
+export async function migrateConnectionSecretAlias(
+  store: SecretStore,
+  source: ConnectionSecretRef,
+  target: ConnectionSecretRef,
+): Promise<SecretReadResult> {
+  if (source.profileId !== target.profileId || source.provider !== target.provider ||
+      source.credentialType !== target.credentialType || source.connectionId === target.connectionId) {
+    return invalidValue();
+  }
+  const current = await readConnectionSecret(store, target);
+  if (!current.ok || current.value !== null) return current;
+  const legacy = await readConnectionSecret(store, source);
+  if (!legacy.ok || legacy.value === null) return legacy;
+  const written = await writeConnectionSecret(store, target, legacy.value);
+  if (!written.ok) return written;
+  const verified = await readConnectionSecret(store, target);
+  if (!verified.ok || verified.value !== legacy.value) return verified.ok ? unavailable() : verified;
+  const removed = await removeConnectionSecret(store, source);
+  return removed.ok ? verified : removed;
+}
+
 /** Explicit first-access migration. A verified v2 write always precedes legacy removal. */
 export async function migrateLegacyConnectionSecret(
   store: SecretStore,

@@ -7,6 +7,7 @@ import {
   MAIN_WALLET_ID,
   MAX_SECRET_BYTES,
   parseStoredCoinbaseCredentials,
+  migrateConnectionSecretAlias,
   migrateLegacyConnectionSecret,
   readConnectionSecret,
   removeConnectionSecret,
@@ -14,6 +15,7 @@ import {
   SECRET_STORE_SERVICE,
   secretAccountForScope,
   serializeCoinbaseCredentials,
+  writeConnectionSecret,
   type SecretBackend,
 } from '../packages/adapters/src/index.js';
 
@@ -84,6 +86,28 @@ describe('connection-scoped secrets', () => {
     await removeConnectionSecret(store, first);
     expect(await readConnectionSecret(store, first)).toEqual({ ok: true, value: null });
     expect(await readConnectionSecret(store, second)).toEqual({ ok: true, value: 'two' });
+  });
+
+  it('moves a v1 connection identity to v2 using write, verify, remove ordering', async () => {
+    const events: string[] = [];
+    const values = new Map<string, string>();
+    const store = createCachedSecretStore({
+      async get(account) { events.push(`get:${account}`); return values.get(account) ?? null; },
+      async set(account, value) { events.push(`set:${account}`); values.set(account, value); },
+      async delete(account) { events.push(`delete:${account}`); values.delete(account); },
+    });
+    const replacement = { ...first, connectionId: 'connection-v2', schemaVersion: 2 as const };
+    await writeConnectionSecret(store, first, 'connection-scoped-secret');
+    events.length = 0;
+    await expect(migrateConnectionSecretAlias(store, first, replacement)).resolves.toEqual({
+      ok: true, value: 'connection-scoped-secret',
+    });
+    expect(events.findIndex((event) => event.includes('.connection-v2.') && event.startsWith('set:')))
+      .toBeLessThan(events.findIndex((event) => event.includes('.connection-a.') && event.startsWith('delete:')));
+    expect(await readConnectionSecret(store, first)).toEqual({ ok: true, value: null });
+    expect(await readConnectionSecret(store, replacement)).toEqual({
+      ok: true, value: 'connection-scoped-secret',
+    });
   });
 });
 

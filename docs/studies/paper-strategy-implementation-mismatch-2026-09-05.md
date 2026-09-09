@@ -33,3 +33,12 @@ about the behavior or edge of TrendVol.
 
 This finding does not adopt a strategy, validate profitability, or enable live
 execution.
+
+## Compatibility disposition
+
+Schema 75 retains the v1 paper-campaign reader for one compatibility release so
+the retired campaign remains inspectable. This is presentation compatibility,
+not evidence eligibility: no legacy allocation-rebalancer observation is counted
+for `trendvol-paper-v1-unvalidated`, and no row is reset, reseeded, deleted, or
+reinterpreted. Removal of the compatibility reader requires a separate release
+decision; preservation of the immutable evidence does not.

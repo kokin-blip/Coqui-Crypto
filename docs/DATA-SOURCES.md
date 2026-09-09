@@ -58,6 +58,34 @@ Sources: [Advanced Trade accounts](https://docs.cdp.coinbase.com/api-reference/a
 [fees](https://docs.cdp.coinbase.com/api-reference/advanced-trade-api/rest-api/fees/get-transaction-summary),
 and [V2 transactions](https://docs.cdp.coinbase.com/coinbase-business/track-apis/transactions).
 
+### Robinhood Crypto authenticated account evidence
+
+The Robinhood Crypto Trading API v2 adapter is read-only. It signs the exact
+method, request path, timestamp, API key, and request body with Ed25519 and uses
+bounded pagination, timeouts, cancellation, capped retry/backoff, strict response
+schemas, and sanitized errors for accounts, holdings, open orders, trading pairs,
+best prices, and estimated prices. The API key and base64 private key remain in
+the OS credential store. Coqui does not implement or export the provider's live
+order-placement operation.
+
+Robinhood balances, buying power, pending orders, permissions, rules, health,
+and completeness contribute to current unified portfolio evidence. Robinhood
+best/estimated prices may value the current display snapshot, but they are not
+completed-bar strategy history. Coinbase completed daily bars remain the only
+decision-eligible operational market dataset. Robinhood routing is paper-only
+through the deterministic simulated venue.
+
+Source: [Robinhood Crypto Trading API](https://docs.robinhood.com/crypto/trading/).
+
+### Local market-event fixtures
+
+Validated local JSON fixtures may add immutable event context with source ID,
+source event ID, publication time, first-seen time, classification availability,
+affected assets, provenance, and content hash. Replay uses `firstSeenAt` and
+`classifiedAt` so information is never shown before Coqui could have known it.
+Events may request a debounced research job, but cannot change strategy targets,
+risk, routes, or execution. No external event-provider connection exists.
+
 ### Binance public archive
 
 `data.binance.vision` is the preferred free bulk source for cross-venue research.

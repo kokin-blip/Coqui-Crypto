@@ -123,6 +123,7 @@ export interface CoquiRuntime {
   readonly handlers: ChannelHandlers;
   /** Every background failure lands here first (`diagnostics.ts`). */
   readonly report: (context: string, error: unknown) => void;
+  readonly recordDeprecatedChannel: (channel: string) => void;
   readonly database: Db;
   readonly clock: Clock;
   /** Null when the scheduler is disabled. Exposed so a test can drive a tick. */
@@ -559,6 +560,9 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   return {
     handlers,
     report,
+    recordDeprecatedChannel(channel) {
+      diagnostics.logger.warn('deprecated_channel_used', { operation: channel });
+    },
     database,
     clock,
     get scheduler() { return scheduler; },

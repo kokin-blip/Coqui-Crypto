@@ -1,4 +1,5 @@
 import {
+  migrateConnectionSecretAlias,
   migrateLegacyConnectionSecret,
   parseCoinbaseKeyFileJson,
   parseRobinhoodCryptoCredentialsJson,
@@ -25,8 +26,11 @@ import {
 import {
   getLatestConnectionAccountSnapshotV2,
   getLatestUnifiedPortfolioSnapshotV2,
+  getLegacyProfileConnectionId,
   getProfileConnectionV2,
+  linkProfileConnectionMigration,
   listPortfolioValuationObservations,
+  listProfileConnections,
   listProfileConnectionsV2,
   listProviderAccountRefs,
   saveProfileConnectionV2,
@@ -76,6 +80,16 @@ export function createConnectionHandlers(input: {
   const robinhoodClientFactory = input.robinhoodClientFactory ?? ((credentials) => createRobinhoodCryptoReadClient(credentials));
 
   async function ensureLegacyCoinbase(): Promise<void> {
+    for (const legacy of listProfileConnections(input.profileId, input.database)) {
+      const candidate = profileConnectionV2(input.profileId, 'coinbase', legacy.externalIdentityHash,
+        legacy.createdAtMs, legacy.label);
+      const connection = getProfileConnectionV2(input.profileId, candidate.id, input.database) ?? {
+        ...candidate, capabilities: legacy.capabilities, status: legacy.status,
+        updatedAtMs: legacy.updatedAtMs,
+      };
+      saveProfileConnectionV2(connection, input.database);
+      linkProfileConnectionMigration(legacy.id, connection.id, input.clock.nowMs(), input.database);
+    }
     if (input.secrets === undefined) return;
     const legacy = await input.secrets.read('coinbase-credentials', input.profileId);
     if (!legacy.ok || legacy.value === null) return;
@@ -89,7 +103,15 @@ export function createConnectionHandlers(input: {
 
   async function sync(connection: ProfileConnectionV2) {
     if (input.secrets === undefined) return { ok: false as const, issues: [{ path: [], code: 'secret_store_unavailable' }] };
-    const stored = await migrateLegacyConnectionSecret(input.secrets, secretRef(connection));
+    const legacyConnectionId = getLegacyProfileConnectionId(input.profileId, connection.id, input.database);
+    let stored = legacyConnectionId === null ? { ok: true as const, value: null }
+      : await migrateConnectionSecretAlias(input.secrets, {
+        profileId: input.profileId, connectionId: legacyConnectionId,
+        provider: 'coinbase', credentialType: 'api_credentials',
+      }, secretRef(connection));
+    if (stored.ok && stored.value === null) {
+      stored = await migrateLegacyConnectionSecret(input.secrets, secretRef(connection));
+    }
     if (!stored.ok || stored.value === null) return { ok: false as const, issues: [{ path: [], code: 'credentials_unavailable' }] };
     if (connection.provider === 'robinhood_crypto') {
       const credentials = parseStoredRobinhoodCryptoCredentials(stored.value);

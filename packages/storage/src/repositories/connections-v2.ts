@@ -74,6 +74,20 @@ export function linkProfileConnectionMigration(v1Id: string, v2Id: string, atMs:
     (v1_connection_id, v2_connection_id, created_at) VALUES (?, ?, ?)`).run(v1Id, v2Id, atMs);
 }
 
+export function getLegacyProfileConnectionId(
+  profileId: string,
+  v2Id: string,
+  database: Db,
+): string | null {
+  const row = database.prepare(`SELECT links.v1_connection_id AS id
+    FROM profile_connection_migration_links_v1 links
+    JOIN profile_connections_v1 legacy ON legacy.id = links.v1_connection_id
+    JOIN profile_connections_v2 current ON current.id = links.v2_connection_id
+    WHERE legacy.profile_id = ? AND current.profile_id = ? AND current.id = ?`)
+    .get(profileId, profileId, v2Id) as { id: string } | undefined;
+  return row?.id ?? null;
+}
+
 export function saveProviderAccountRef(value: ProviderAccountRefV1, database: Db): void {
   if (value.schemaVersion !== 1 || !SHA.test(value.id) || !SHA.test(value.providerIdentityHash) ||
       !value.maskedDisplaySuffix || value.maskedDisplaySuffix.length > 12 ||

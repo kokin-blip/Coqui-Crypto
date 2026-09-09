@@ -64,7 +64,14 @@ export interface DispatcherOptions {
    * dispatcher itself never puts a message on the wire.
    */
   readonly onUnexpectedError?: (channel: ChannelName, error: unknown) => void;
+  /** Receives only a stable channel identity; request values never enter deprecation telemetry. */
+  readonly onDeprecatedChannel?: (channel: ChannelName) => void;
 }
+
+const DEPRECATED_COMPATIBILITY_CHANNELS: ReadonlySet<ChannelName> = new Set([
+  'accounts.coinbase.status', 'accounts.coinbase.connect', 'accounts.coinbase.connect-json',
+  'accounts.coinbase.disconnect', 'accounts.coinbase.sync', 'portfolio.view', 'paper.campaign',
+]);
 
 /**
  * The single entry point from `ipcMain` into the application.
@@ -82,7 +89,7 @@ export interface DispatcherOptions {
  * exactly the leak invariant 3 forbids.
  */
 export function createDispatcher(options: DispatcherOptions) {
-  const { handlers, onUnexpectedError } = options;
+  const { handlers, onUnexpectedError, onDeprecatedChannel } = options;
 
   return async function dispatch(channel: unknown, payload: unknown): Promise<Outcome<unknown>> {
     if (!isChannelName(channel)) return transportFailure('unknown_channel');
@@ -90,6 +97,9 @@ export function createDispatcher(options: DispatcherOptions) {
     const schemas = CHANNEL_SCHEMAS[channel];
     const request = schemas.request.safeParse(payload);
     if (!request.success) return transportFailure('invalid_request_payload');
+    if (DEPRECATED_COMPATIBILITY_CHANNELS.has(channel)) {
+      try { onDeprecatedChannel?.(channel); } catch { /* Telemetry cannot change dispatch. */ }
+    }
 
     // The whole body stays inside the guard. Reading `.ok` on a handler that
     // returned nothing would otherwise throw past it, and a dispatcher that

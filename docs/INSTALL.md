@@ -11,13 +11,15 @@ covers would be a claim this project cannot back.
 
 ## Before you start: what this application will and will not do
 
-It reads your Coinbase portfolio, tracks tax lots, computes allocation, and runs
-a **paper-trading** research engine.
+It reads connected Coinbase and Robinhood Crypto portfolios, keeps imported tax
+lots as a separate accounting view, computes allocation, and runs a
+**paper-trading** research engine.
 
 **It cannot place a real order.** Not "will not by default" — the code path does
 not exist. A Coinbase API key that carries trade or transfer permission is
 *rejected at connect time*, because the application refuses to hold a key that
-could move money.
+could move money. The Robinhood adapter exports read methods only; it has no
+real order-placement method.
 
 The paper figures shown beside your real portfolio are a **simulation** and are
 labelled as one everywhere they appear.
@@ -91,9 +93,21 @@ than bypassed.
 | macOS | `~/Library/Application Support/Coqui/coqui.db` |
 | Windows | `%APPDATA%\Coqui\coqui.db` |
 
-One SQLite file. API keys are **not** in it — they go to the OS credential store
-(Keychain on macOS, Credential Manager on Windows), and never appear in the
-database, in a log, in an error message, or in an exported file.
+One SQLite file. API keys and private keys are **not** in it — they go to the OS
+credential store (Keychain on macOS, Credential Manager on Windows), and never
+appear in the database, in a log, in an error message, or in an exported file.
+
+Connections are added in **Settings → Connections**. Coinbase accepts its
+view-only credential file. Robinhood Crypto accepts a JSON file containing the
+API key and base64 private key created for its Crypto Trading API. The native
+file chooser reads either file in the main process; credential contents are
+never sent to the screen process. A successful connection performs an
+authenticated read-only check before balances become current portfolio data.
+
+Connected balances are the authoritative current portfolio. Imported tax lots
+remain available under Portfolio → Accounting for cost basis and reconciliation;
+they are not added to connected quantities. If a holding lacks a usable price or
+cost basis, Coqui labels it unavailable instead of inventing a value.
 
 To back up, quit Coqui and copy that file. To start over, quit and delete it.
 
@@ -106,9 +120,11 @@ To back up, quit Coqui and copy that file. To start over, quit and delete it.
 - **Windows**: Settings → Apps → Coqui → Uninstall, then delete
   `%APPDATA%\Coqui\`.
 
-Neither removes keys from the OS credential store. Disconnect any connected key
-inside the app first, or remove the `kokincrypto` entries from Keychain
-Access / Credential Manager by hand.
+Neither removes keys from the OS credential store. Disconnect every connection
+inside the app first, or remove the `kokincrypto` entries from Keychain Access /
+Credential Manager by hand. Disconnecting removes only that profile connection's
+current credential. Immutable historical account evidence remains in the local
+database for auditability.
 
 ---
 

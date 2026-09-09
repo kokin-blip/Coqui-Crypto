@@ -171,6 +171,7 @@ async function start(): Promise<void> {
     // a console nobody reads after the fact. It must never travel to the
     // renderer (invariant 3).
     onUnexpectedError: (channel, error) => runtime?.report(`channel:${channel}`, error),
+    onDeprecatedChannel: (channel) => runtime?.recordDeprecatedChannel(channel),
   });
 
   ipcMain.handle(QUERY_CHANNEL, async (_event, channel: unknown, payload: unknown) =>
