@@ -7,6 +7,11 @@ const contextBar = z.strictObject({ timeMs: z.number().int().nonnegative(), open
 const answer = z.strictObject({ text: z.string().min(1).max(20_000), provider: z.enum(['local', 'gemini', 'openai', 'anthropic']), model: z.string().max(120), mode: z.enum(['analysis', 'scenario_ideas']), contextHash: z.string().length(64), generatedAtMs: z.number().int().nonnegative(), dataTimestampMs: z.number().int().nonnegative(), scope, provenance: z.array(z.string().max(160)).max(20).readonly(), advisoryOnly: z.literal(true), executionAuthority: z.literal(false) }).readonly();
 const decisionId = z.string().regex(/^[a-f0-9]{64}$/u);
 const navigationTarget = z.enum(['activity', 'paper', 'research', 'risk', 'market', 'advisor']);
+const evidenceSubject=z.discriminatedUnion('kind',[
+  z.strictObject({kind:z.literal('research_candidate'),id:decisionId}).readonly(),
+  z.strictObject({kind:z.literal('research_trigger'),id:z.string().regex(/^[a-z0-9][a-z0-9._:-]{0,127}$/u)}).readonly(),
+  z.strictObject({kind:z.literal('market_event'),id:decisionId}).readonly(),
+]);
 
 export const advisorAnalystChannelSchemas = {
   'advisor.providers': {
@@ -58,10 +63,21 @@ export const advisorAnalystChannelSchemas = {
       provenance: z.array(z.string().max(160)).max(20).readonly(), advisoryOnly: z.literal(true),
       executionAuthority: z.literal(false) }).readonly(),
   },
+  'advisor.evidence.explain': {
+    request:z.strictObject({commandId:z.string().uuid(),subject:evidenceSubject,provider:provider.nullable()}).readonly(),
+    response:z.strictObject({subject:evidenceSubject,evidenceHash:decisionId,text:z.string().min(1).max(20_000),
+      provider:z.enum(['local','gemini','openai','anthropic']),model:z.string().max(120),
+      fallbackReason:z.literal('provider_failed').nullable(),generatedAtMs:z.number().int().nonnegative(),
+      provenance:z.array(z.string().max(160)).max(20).readonly(),advisoryOnly:z.literal(true),
+      executionAuthority:z.literal(false)}).readonly(),
+  },
   'advisor.navigation': {
     request: z.strictObject({ commandId: z.string().uuid(), target: navigationTarget,
-      decisionId: decisionId.nullable() }).readonly(),
+      decisionId: decisionId.nullable(),candidateId:decisionId.nullable().optional(),
+      productId:z.string().regex(/^[A-Z0-9][A-Z0-9._-]{0,63}$/u).nullable().optional(),
+      eventId:decisionId.nullable().optional() }).readonly(),
     response: z.strictObject({ target: navigationTarget, decisionId: decisionId.nullable(),
+      candidateId:decisionId.nullable(),productId:z.string().max(64).nullable(),eventId:decisionId.nullable(),
       auditId: decisionId, advisoryOnly: z.literal(true), executionAuthority: z.literal(false) }).readonly(),
   },
 } as const;

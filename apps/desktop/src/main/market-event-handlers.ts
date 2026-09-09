@@ -1,5 +1,5 @@
 import type { Clock } from '@coqui/core';
-import { MarketEventService } from '@coqui/services';
+import { MarketEventService,parseLocalMarketEventFixture } from '@coqui/services';
 import type { Db } from '@coqui/storage';
 
 import type { ChannelHandlers } from './dispatch.js';
@@ -9,10 +9,22 @@ export function createMarketEventHandlers(input: {
   readonly database: Db;
   readonly clock: Clock;
   readonly requestResearch?: ConstructorParameters<typeof MarketEventService>[0]['requestResearch'];
+  readonly pickEventFile?:()=>Promise<{readonly contents:string;readonly reference:string}|null>;
 }): ChannelHandlers {
   const service = new MarketEventService({profileId:input.profileId,database:input.database,clock:input.clock,
     ...(input.requestResearch===undefined?{}:{requestResearch:input.requestResearch})});
   return {
+    'market-events.ingest-file':async(payload:{readonly commandId:string;readonly sourceId:string;readonly confirmed:true})=>{
+      if(input.pickEventFile===undefined) return {ok:false,issues:[{path:[],code:'market_event_file_unavailable'}]};
+      try {
+        const selected=await input.pickEventFile();
+        if(selected===null) return {ok:true,value:{outcome:'cancelled' as const,results:[]}};
+        const results=service.ingestLocal(payload.sourceId,selected.reference,
+          parseLocalMarketEventFixture(selected.contents));
+        return {ok:true,value:{outcome:'imported' as const,results:results.map((result)=>({...result,
+          triggerDecisions:result.triggerDecisions.map(({triggerId,decision,jobId})=>({triggerId,jobId,...decision}))}))}};
+      } catch { return {ok:false,issues:[{path:[],code:'market_event_ingestion_failed'}]}; }
+    },
     'market-events.ingest-local': (payload: {
       readonly commandId: string;
       readonly sourceId: string;

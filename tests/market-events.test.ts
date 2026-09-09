@@ -5,7 +5,7 @@ import { createRuntime } from '../apps/desktop/src/main/composition.js';
 import { createDispatcher } from '../apps/desktop/src/main/dispatch.js';
 import { classifyMarketEvent, marketEventId, type Clock } from '../packages/core/src/index.js';
 import { MarketEventService, parseLocalMarketEventFixture, ResearchTriggerCoordinator } from '../packages/services/src/index.js';
-import { listMarketEventsAsOf, openDatabase } from '../packages/storage/src/index.js';
+import { getMarketEvent, listMarketEventsAsOf, openDatabase } from '../packages/storage/src/index.js';
 
 class MutableClock implements Clock {
   constructor(public now: number) {}
@@ -42,6 +42,19 @@ describe('immutable market-event dataset', () => {
     expect(listMarketEventsAsOf('main', 199, 20, database)).toEqual([]);
     expect(listMarketEventsAsOf('other', 300, 20, database)).toEqual([]);
     expect(listMarketEventsAsOf('main', 200, 20, database)[0]?.classification?.classifiedAtMs).toBe(200);
+    database.close();
+  });
+
+  it('retrieves an exact profile-scoped event outside the bounded timeline window', () => {
+    const database=openDatabase(':memory:'),clock=new MutableClock(1_000);
+    const service=new MarketEventService({profileId:'main',database,clock});
+    const fixtures=Array.from({length:201},(_,index)=>({...input(`event-${index}`,100+index),publishedAtMs:90+index}));
+    const oldest=service.ingestLocal('fixture','events.json',fixtures.slice(0,100))[0]!.eventId;
+    service.ingestLocal('fixture','events.json',fixtures.slice(100,200));
+    service.ingestLocal('fixture','events.json',fixtures.slice(200));
+    expect(listMarketEventsAsOf('main',1_000,200,database).some((item)=>item.event.id===oldest)).toBe(false);
+    expect(getMarketEvent('main',oldest,database)?.event.sourceEventId).toBe('event-0');
+    expect(getMarketEvent('other',oldest,database)).toBeNull();
     database.close();
   });
 
@@ -99,6 +112,17 @@ describe('immutable market-event dataset', () => {
     const timeline = await dispatch('market-events.timeline', { asOfMs: 200, limit: 20 });
     expect(timeline).toMatchObject({ status: 'ok', value: { targetInfluence: false,
       executionAuthority: false, events: [{ title: input('ipc').title }] } });
+    runtime.dispose();
+  });
+
+  it('selects and reads a local fixture in main before ingestion', async () => {
+    const runtime=createRuntime({databasePath:':memory:',profileId:'main',disableScheduler:true,
+      readSystemTime:()=>200,pickMarketEventFile:async()=>({reference:'chosen.json',contents:JSON.stringify([input('file')])})});
+    const outcome=await createDispatcher({handlers:runtime.handlers})('market-events.ingest-file',{
+      commandId:crypto.randomUUID(),sourceId:'fixture',confirmed:true});
+    expect(outcome).toMatchObject({status:'ok',value:{outcome:'imported',results:[{inserted:true,
+      targetInfluence:false,executionAuthority:false}]}});
+    expect(JSON.stringify(outcome)).not.toContain('contents');
     runtime.dispose();
   });
 

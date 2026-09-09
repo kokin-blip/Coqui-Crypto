@@ -557,3 +557,26 @@ input[type='checkbox'] {
 .settings-section .button-primary {
   justify-self: start;
 }
+
+.events-import { display: grid; gap: var(--coqui-space-4); }
+.events-import > p { max-width: 72ch; margin: 0; color: var(--coqui-text-muted); }
+.event-import-actions { display: flex; flex-wrap: wrap; align-items: end; gap: var(--coqui-space-3); }
+.event-import-actions label { display: grid; flex: 1 1 280px; gap: 5px; color: var(--coqui-text-muted); font-size: 11px; }
+.event-import-actions input { width: 100%; }
+.event-import-actions button { display: inline-flex; align-items: center; gap: 7px; }
+.event-trigger-result { display: grid; justify-items: start; gap: var(--coqui-space-2); margin-top: var(--coqui-space-3); padding: var(--coqui-space-3); background: var(--coqui-surface-2); border: 1px solid var(--coqui-border); border-radius: var(--coqui-radius-sm); }
+.event-trigger-result > span { color: var(--coqui-text-muted); font-size: 11px; }
+.event-workspace-list { display: grid; padding: 0; margin: var(--coqui-space-4) 0 0; list-style: none; border-top: 1px solid var(--coqui-border); }
+.event-workspace-list > li { display: grid; gap: var(--coqui-space-3); padding: var(--coqui-space-4) 0; border-bottom: 1px solid var(--coqui-border); scroll-margin-block: 120px; }
+.event-workspace-list > li[data-selected='true'],.lineage-list > li[data-selected='true'] { outline: 2px solid var(--coqui-advisory-border); outline-offset: 4px; }
+.event-workspace-list > li > div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--coqui-space-2); }
+.event-workspace-list > li > div span { color: var(--coqui-text-muted); }
+.event-workspace-list p { max-width: 78ch; margin: 0; }
+.event-workspace-list dl { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1px; margin: 0; overflow: hidden; background: var(--coqui-border); border: 1px solid var(--coqui-border); border-radius: var(--coqui-radius-sm); }
+.event-workspace-list dl > div { min-width: 0; padding: 10px; background: var(--coqui-surface-2); }
+.event-workspace-list dt { color: var(--coqui-text-subtle); font-size: 10px; text-transform: uppercase; letter-spacing: .06em; }
+.event-workspace-list dd { margin: 4px 0 0; overflow-wrap: anywhere; font-size: 12px; }
+
+@media (max-width: 720px) {
+  .event-workspace-list dl { grid-template-columns: 1fr; }
+}

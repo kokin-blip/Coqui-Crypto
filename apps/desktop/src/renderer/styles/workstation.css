@@ -604,6 +604,7 @@
 .market-event-timeline li { display: grid; grid-template-columns: minmax(180px, 1fr) minmax(180px, auto) auto; align-items: center; gap: 10px 18px; min-width: 0; padding: 11px 2px; }
 .market-event-timeline li + li { border-top: 1px solid var(--coqui-border); }
 .market-event-timeline li > div { display: grid; min-width: 0; gap: 3px; }
+.market-event-timeline li > .market-event-actions { display: flex; grid-column: 1 / -1; flex-wrap: wrap; align-items: start; gap: 8px; }
 .market-event-timeline strong { overflow-wrap: anywhere; }
 .market-event-timeline li span, .market-event-timeline time, .market-event-timeline small { color: var(--coqui-text-subtle); font-size: 10px; }
 .market-event-timeline time { display: inline-flex; align-items: center; gap: 5px; font-variant-numeric: tabular-nums; }
@@ -828,6 +829,9 @@
 .analyst-sheet header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
 .analyst-sheet h2 { margin: 5px 0 0; }
 .advisor-context-options { display: grid; gap: 8px; margin: 18px 0; }
+.advisor-destinations { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 12px; }
+.advisor-destinations span { flex: 1 0 100%; color: var(--coqui-text-subtle); font-size: 10px; text-transform: uppercase; letter-spacing: .08em; }
+.advisor-destinations button { min-height: 30px; padding: 5px 9px; color: var(--coqui-advisory-strong); cursor: pointer; background: var(--coqui-advisory-soft); border: 1px solid var(--coqui-advisory-border); border-radius: var(--coqui-radius-sm); }
 .analyst-sheet textarea { width: 100%; min-height: 120px; padding: 10px; color: var(--coqui-text); resize: vertical; background: var(--coqui-surface-1); border: 1px solid var(--coqui-advisory-border); border-radius: var(--coqui-radius-sm); }
 .analyst-sheet .button-primary { width: 100%; margin-top: 10px; }
 .analyst-sheet > small { display: block; margin-top: 10px; color: var(--coqui-text-subtle); text-align: center; }
@@ -852,6 +856,8 @@
 .advisor-answer footer { display: block; color: var(--coqui-text-subtle); border-top: 1px solid var(--coqui-advisory-border); border-bottom: 0; }
 .advisor-failure { color: var(--coqui-negative); }
 .advisor-question { margin-top: 12px; }
+.advisor-suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+.advisor-suggestions button { min-height: 28px; padding: 4px 8px; color: var(--coqui-text-muted); cursor: pointer; background: var(--coqui-surface-1); border: 1px solid var(--coqui-advisory-border); border-radius: 999px; font-size: 10px; }
 .advisor-retention { display: flex; align-items: center; gap: 6px; margin-top: 10px; color: var(--coqui-text-muted); font-size: 11px; }
 .analyst-sheet .advisor-send { display: flex; align-items: center; justify-content: center; gap: 7px; }
 .advisor-history { margin-top: 14px; border-top: 1px solid var(--coqui-advisory-border); }
@@ -862,6 +868,11 @@
 .advisor-history small { color: var(--coqui-text-subtle); }
 .advisor-history li div { display: flex; gap: 4px; }
 .advisor-history button { display: grid; place-items: center; width: 29px; height: 29px; color: var(--coqui-text-muted); background: var(--coqui-surface-1); border: 1px solid var(--coqui-advisory-border); border-radius: var(--coqui-radius-sm); }
+.context-explanation { display: grid; justify-items: start; gap: 7px; min-width: 0; }
+.context-explanation > button { display: inline-flex; align-items: center; gap: 6px; min-height: 30px; padding: 5px 9px; color: var(--coqui-advisory-strong); cursor: pointer; background: var(--coqui-advisory-soft); border: 1px solid var(--coqui-advisory-border); border-radius: var(--coqui-radius-sm); }
+.context-explanation article { max-width: 72ch; padding: 10px 12px; background: var(--coqui-advisory-surface); border: 1px solid var(--coqui-advisory-border); border-radius: var(--coqui-radius-sm); }
+.context-explanation article p { margin: 0 0 5px; line-height: 1.45; }
+.context-explanation small { color: var(--coqui-text-subtle); overflow-wrap: anywhere; }
 
 .extension-manager-backdrop { position: fixed; z-index: var(--coqui-z-modal-backdrop); inset: 0; display: grid; place-items: center; padding: 24px; background: var(--coqui-overlay); }
 .extension-manager { z-index: var(--coqui-z-modal); width: min(760px, 96vw); min-width: 0; max-height: min(900px, 92vh); overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; color: var(--coqui-text); background: var(--coqui-surface-1); border: 1px solid var(--coqui-border-strong); border-radius: var(--coqui-radius-md); box-shadow: var(--coqui-shadow); }

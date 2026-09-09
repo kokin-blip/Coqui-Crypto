@@ -1,6 +1,8 @@
 import { CalendarClock, ShieldCheck } from 'lucide-react';
 
-import type { ChannelResponse } from '@coqui/contracts';
+import type { ChannelResponse,CoquiClient } from '@coqui/contracts';
+import { EvidenceExplainButton } from './EvidenceExplainButton.js';
+import { applyAdvisorNavigation } from './advisor-navigation.js';
 
 type TimelineEvent = ChannelResponse<'market-events.timeline'>['events'][number];
 
@@ -9,7 +11,8 @@ export function eventMatchesProduct(event: TimelineEvent, productId: string): bo
   return event.assetSymbols.length === 0 || event.assetSymbols.includes(symbol);
 }
 
-export function MarketEventsPanel({ events, state, productId }: {
+export function MarketEventsPanel({ client,events, state, productId }: {
+  readonly client:CoquiClient;
   readonly events: readonly TimelineEvent[];
   readonly state: 'loading' | 'ready' | 'unavailable';
   readonly productId: string;
@@ -28,6 +31,9 @@ export function MarketEventsPanel({ events, state, productId }: {
         `${event.classification.label.replace('_', ' ')} · ${event.classification.importance}`}</span></div>
       <time dateTime={new Date(event.firstSeenAtMs).toISOString()}><CalendarClock size={13} aria-hidden="true" /> Known {new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(event.firstSeenAtMs)}</time>
       <small title={event.provenanceHash}>Local provenance {event.provenanceHash.slice(0, 10)}</small>
+      <div className="market-event-actions"><EvidenceExplainButton client={client} subject={{kind:'market_event',id:event.id}} label="Why is this relevant?" />
+        <button type="button" className="button-secondary" onClick={()=>void applyAdvisorNavigation(client,{target:'market',
+          decisionId:null,candidateId:null,productId,eventId:event.id})}>Open event evidence</button></div>
     </li>)}</ol>}
   </section>;
 }

@@ -1,8 +1,10 @@
 import type { CoquiClient } from '@coqui/contracts';
-import { useState } from 'react';
+import { useEffect,useRef,useState } from 'react';
 
 import { useChannel } from '../query/use-channel.js';
 import { useCommand } from '../query/use-command.js';
+import { EvidenceExplainButton } from './EvidenceExplainButton.js';
+import { takeAdvisorSelection } from './advisor-navigation.js';
 
 const INVALIDATIONS=['research.lineage','research.jobs'] as const;
 
@@ -32,6 +34,13 @@ function CandidateReviewControls({client,candidate}:{readonly client:CoquiClient
 export function ResearchRuns({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const runs = useChannel(client, 'research.runs', {});
   const lineage = useChannel(client, 'research.lineage', { limit: 50 });
+  const selection=useRef<ReturnType<typeof takeAdvisorSelection>|undefined>(undefined);
+  if(selection.current===undefined) selection.current=takeAdvisorSelection();
+  useEffect(()=>{
+    const candidateId=selection.current?.candidateId;
+    if(candidateId===null||candidateId===undefined||lineage.kind!=='ready') return;
+    document.getElementById(`candidate-${candidateId}`)?.scrollIntoView({block:'center'});
+  },[lineage.kind]);
 
   return (
     <section aria-labelledby="runs-heading" className="panel space-y-3">
@@ -65,10 +74,13 @@ export function ResearchRuns({ client }: { readonly client: CoquiClient }): Reac
       {lineage.kind === 'ready' && lineage.value.candidates.length === 0 &&
         <p className="empty-state">No champion or challenger candidate has been recorded.</p>}
       {lineage.kind === 'ready' && lineage.value.candidates.length > 0 && <ol className="lineage-list">
-        {lineage.value.candidates.map((candidate) => <li key={candidate.candidateId} data-active={candidate.active || undefined}>
+        {lineage.value.candidates.map((candidate) => <li key={candidate.candidateId} id={`candidate-${candidate.candidateId}`}
+          data-active={candidate.active || undefined} data-selected={selection.current?.candidateId===candidate.candidateId||undefined}>
           <div><strong>{candidate.strategyVersion}</strong><span>{candidate.active ? 'active champion' : candidate.state.replaceAll('_', ' ')}</span></div>
           <p>{candidate.parentId === null ? 'Root candidate' : `Child of ${candidate.parentId.slice(0, 10)}…`}</p>
           <small>evidence {candidate.evidenceHash.slice(0, 12)}… · {new Date(candidate.createdAtMs).toISOString()}</small>
+          <EvidenceExplainButton client={client} subject={{kind:'research_candidate',id:candidate.candidateId}}
+            label={candidate.state==='promotion_eligible'?'Why is this eligible?':'Why was this rejected?'} />
           <CandidateReviewControls client={client} candidate={candidate} />
         </li>)}
       </ol>}

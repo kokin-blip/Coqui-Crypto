@@ -117,6 +117,7 @@ export interface RuntimeOptions extends Partial<Pick<Parameters<typeof createAdv
   readonly saveChartSnapshot?: (filenameStem: string, png: Uint8Array) => Promise<'saved' | 'cancelled'>; readonly pickChartExtension?: () => Promise<string | null>;
   /** Only explicitly registered, immutable research definitions may enter the worker host. */
   readonly researchRegistrations?: readonly RegisteredResearchDefinitionV1[];
+  readonly pickMarketEventFile?:()=>Promise<{readonly contents:string;readonly reference:string}|null>;
 }
 export interface CoquiRuntime {
   readonly handlers: ChannelHandlers;
@@ -311,7 +312,8 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     ...createChartWorkspaceHandlers({ profileId: options.profileId, database, clock }),
     ...createPaperCampaignHandlers(options.profileId, clock, database),
     ...createMarketEventHandlers({ profileId: options.profileId, database, clock,
-      requestResearch: (triggerId,at) => researchHost.request(triggerId,at) }),
+      requestResearch: (triggerId,at) => researchHost.request(triggerId,at),
+      ...(options.pickMarketEventFile===undefined?{}:{pickEventFile:options.pickMarketEventFile}) }),
     ...createResearchOrchestrationHandlers({coordinator:researchHost,clock}),
     ...createDecisionHandlers(options.profileId, clock, database),
     'activity.feed': (payload: { readonly limit: number; readonly cursor: string | null }) => ({

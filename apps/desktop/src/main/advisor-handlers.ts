@@ -49,8 +49,13 @@ export function createAdvisorHandlers(input: { readonly profileId: string; reado
     'advisor.decision.explain': (payload: Command & { readonly decisionId: string;
       readonly provider: 'gemini' | 'openai' | 'anthropic' | null }) =>
       command(payload, payload, () => decisions.explain(payload.decisionId, payload.provider)),
+    'advisor.evidence.explain':(payload:Command&{readonly subject:{readonly kind:'research_candidate'|'research_trigger'|'market_event';readonly id:string};
+      readonly provider:'gemini'|'openai'|'anthropic'|null})=>
+      command(payload,payload,()=>decisions.explainEvidence(payload.subject,payload.provider)),
     'advisor.navigation': (payload: Command & { readonly target: 'activity' | 'paper' | 'research' |
-      'risk' | 'market' | 'advisor'; readonly decisionId: string | null }) =>
-      command(payload, payload, () => decisions.navigate(payload.target, payload.decisionId)),
+      'risk' | 'market' | 'advisor'; readonly decisionId: string | null;readonly candidateId?:string|null;
+      readonly productId?:string|null;readonly eventId?:string|null }) =>
+      command(payload, payload, () => decisions.navigate(payload.target,payload.decisionId,
+        {candidateId:payload.candidateId??null,productId:payload.productId??null,eventId:payload.eventId??null})),
   } as ChannelHandlers;
 }

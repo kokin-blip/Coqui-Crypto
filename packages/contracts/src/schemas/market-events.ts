@@ -14,6 +14,15 @@ const eventInput = z.strictObject({ sourceEventId: z.string().min(1).max(200),
   firstSeenAtMs: epochMillisecondsSchema }).readonly();
 
 export const marketEventChannelSchemas = {
+  'market-events.ingest-file': {
+    request:z.strictObject({commandId:z.string().uuid(),sourceId:safeId,confirmed:z.literal(true)}).readonly(),
+    response:z.strictObject({outcome:z.enum(['imported','cancelled']),results:z.array(z.strictObject({
+      eventId:sha256HexSchema,inserted:z.boolean(),contentHash:sha256HexSchema,classificationId:sha256HexSchema,
+      triggerDecisions:z.array(z.strictObject({triggerId:safeId,start:z.boolean(),
+        reasonCode:z.enum(['started','debouncing','cooldown','trial_budget_exhausted','definition_unavailable']),
+        deadlineAt:epochMillisecondsSchema.nullable(),jobId:sha256HexSchema.nullable()}).readonly()).max(100).readonly(),
+      targetInfluence:z.literal(false),executionAuthority:z.literal(false)}).readonly()).max(100).readonly()}).readonly(),
+  },
   'market-events.ingest-local': {
     request: z.strictObject({ commandId: z.string().uuid(), sourceId: safeId,
       reference: z.string().min(1).max(300), confirmed: z.literal(true),

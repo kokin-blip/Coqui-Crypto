@@ -57,7 +57,8 @@ describe('advisor IPC boundary', () => {
       executionAuthority: false } });
     const navigated = await dispatch('advisor.navigation', { commandId: 'ca9dd645-2de6-4dba-a4c8-9f22ab9c68d3',
       target: 'activity', decisionId });
-    expect(navigated).toMatchObject({ status: 'ok', value: { target: 'activity', decisionId } });
+    expect(navigated).toMatchObject({ status: 'ok', value: { target: 'activity', decisionId,
+      candidateId:null,productId:null,eventId:null } });
     runtime.dispose();
   });
 });

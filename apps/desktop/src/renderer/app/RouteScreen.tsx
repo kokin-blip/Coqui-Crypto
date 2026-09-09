@@ -4,6 +4,7 @@ import { Alerts } from './Alerts.js';
 import { Activity } from './Activity.js';
 import { Allocation } from './Allocation.js';
 import { Markets } from './Markets.js';
+import { Events } from './Events.js';
 import { Overview } from './Overview.js';
 import { OperationsFloor } from './OperationsFloor.js';
 import { PaperTrading } from './PaperTrading.js';
@@ -50,6 +51,7 @@ function ScreenBody({
     case 'portfolio/tax': return <Tax client={client} />;
     case 'portfolio/reconciliation': return <Reconciliation client={client} />;
     case 'markets': return <Markets client={client} />;
+    case 'events': return <Events client={client} />;
     case 'paper/overview':
     case 'paper/orders':
     case 'paper/performance': return <PaperTrading client={client} route={route} />;

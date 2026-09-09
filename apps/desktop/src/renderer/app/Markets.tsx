@@ -5,6 +5,7 @@ import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { formatUsd, freshnessBadge, provenanceBadge } from '@coqui/ui-kit';
 
 import { ChartRangeControl, rangeLookbackDays } from './ChartRangeControl.js';
+import { AdvisorSheet } from './AdvisorSheet.js';
 import { ChartViewControl } from './ChartViewControl.js';
 import { MarketHistoryChart } from './MarketHistoryChart.js';
 import { eventMatchesProduct, MarketEventsPanel } from './MarketEventsPanel.js';
@@ -12,6 +13,7 @@ import { useChannel, type ChannelState } from '../query/use-channel.js';
 import { useWorkspace } from './WorkspaceContext.js';
 import { AdvancedMarkets } from './AdvancedMarkets.js';
 import { decisionTimelineMarkers } from './decision-timeline-markers.js';
+import { takeAdvisorSelection } from './advisor-navigation.js';
 
 type LiveView = ChannelResponse<'market-data.live'>;
 type LiveQuote = LiveView['quotes'][number];
@@ -113,6 +115,7 @@ export function Markets({ client }: { readonly client: CoquiClient }): React.JSX
   const live = useChannel(client, 'market-data.live', {});
   const portfolio = useChannel(client, 'portfolio.current', {});
   const [selected, setSelected] = useState<string | null>(null);
+  const [openAdvisorFor,setOpenAdvisorFor]=useState<string|null>(null);
   const eventTimeline = useChannel(client, 'market-events.timeline', { asOfMs: null, limit: 50 });
   const products = useMemo(() => {
     const held = portfolio.kind === 'ready' && portfolio.value !== null ? portfolio.value.exposures
@@ -126,6 +129,12 @@ export function Markets({ client }: { readonly client: CoquiClient }): React.JSX
     if (selected === null && products[0] !== undefined) setSelected(products[0]);
     if (selected !== null && products.length > 0 && !products.includes(selected)) setSelected(products[0] ?? null);
   }, [products, selected]);
+
+  useEffect(()=>{
+    const selection=takeAdvisorSelection();
+    if(selection?.productId!==null&&selection?.productId!==undefined) setSelected(selection.productId);
+    if(selection?.openAdvisor===true&&selection.productId!==null) setOpenAdvisorFor(selection.productId);
+  },[]);
 
   const quote = live.kind === 'ready' && selected !== null
     ? live.value.quotes.find((item) => item.instrument.productId === selected)
@@ -152,7 +161,9 @@ export function Markets({ client }: { readonly client: CoquiClient }): React.JSX
         {selected === null ? <section className="market-detail market-empty"><h2>Select a tracked market</h2><p>Completed Coinbase history and live display quotes will appear here without changing any decision dataset.</p></section> : <MarketDetail client={client} productId={selected} quote={quote} eventTimeline={eventTimeline} />}
       </div>
       <ReferenceContext client={client} />
-      {selected !== null && <MarketEventsPanel productId={selected} events={eventTimeline.kind === 'ready' ? eventTimeline.value.events : []} state={eventTimeline.kind === 'ready' ? 'ready' : eventTimeline.kind === 'loading' ? 'loading' : 'unavailable'} />}
+      {selected !== null && <MarketEventsPanel client={client} productId={selected} events={eventTimeline.kind === 'ready' ? eventTimeline.value.events : []} state={eventTimeline.kind === 'ready' ? 'ready' : eventTimeline.kind === 'loading' ? 'loading' : 'unavailable'} />}
+      {openAdvisorFor!==null&&<AdvisorSheet client={client} productId={openAdvisorFor} bars={[]}
+        onClose={()=>setOpenAdvisorFor(null)} />}
     </div>
   );
 }

@@ -5,6 +5,7 @@ import {
   CandlestickChart,
   FlaskConical,
   LayoutDashboard,
+  Newspaper,
   Settings,
   ShieldCheck,
   WalletCards,
@@ -22,6 +23,7 @@ interface PrimaryDestination {
 const destinations: readonly PrimaryDestination[] = [
   { route: 'overview', label: 'Overview', icon: LayoutDashboard },
   { route: 'markets', label: 'Markets', icon: CandlestickChart },
+  { route: 'events', label: 'Events', icon: Newspaper },
   { route: 'portfolio/holdings', label: 'Portfolio', icon: WalletCards },
   { route: 'paper/overview', label: 'Paper', icon: BarChart3 },
   { route: 'strategies', label: 'Strategies', icon: BookOpenCheck },

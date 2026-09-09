@@ -275,6 +275,14 @@ Coqui possessed news at its earlier publication time. Advisor decision packs
 receive the same temporally filtered event identities from main-process storage,
 never renderer-assembled facts.
 
+The Events workspace makes that boundary operable: users select a local JSON
+fixture through a native file dialog, inspect publication versus first-known time,
+classification provenance, affected assets, and request a deterministic explanation.
+Advisor destination controls navigate through an audited contract; destination
+screens consume the selected decision, candidate, event, or product once and focus
+the recorded evidence. Explanations and navigation never expose configuration,
+credentials, execution, routing, or promotion actions.
+
 ## 7. Phase 5 verification
 
 Phase 5 is not complete until:

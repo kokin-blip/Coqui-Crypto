@@ -53,6 +53,7 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'advisor.chat.history.delete': { refetchIntervalMs: false, staleTimeMs: 0 },
   'advisor.chat.history.export': { refetchIntervalMs: false, staleTimeMs: 0 },
   'advisor.decision.explain': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
+  'advisor.evidence.explain': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
   'advisor.navigation': { refetchIntervalMs: false, staleTimeMs: 0 },
   'chart-extensions.catalog': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
   'chart-extensions.signer.trust': { refetchIntervalMs: false, staleTimeMs: 0 },
@@ -97,6 +98,7 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'market-data.display-bars': { refetchIntervalMs: false, staleTimeMs: MINUTE },
   'market-data.live-candles': { refetchIntervalMs: SECOND, staleTimeMs: SECOND },
   'market-events.ingest-local': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'market-events.ingest-file': { refetchIntervalMs: false, staleTimeMs: 0 },
   'market-events.timeline': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
   // Research runs are immutable once written.
   'research.runs': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },

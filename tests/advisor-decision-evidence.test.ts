@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createMemorySecretStore, type AdvisorProvider, type AdvisorProviderName } from '../packages/adapters/src/index.js';
-import { FixedClock, sha256Hex, strategyDecisionId,
+import { FixedClock, marketEventId, sha256Hex, strategyDecisionId,
   type DecisionEvidenceEventV1, type StrategyDecisionV1 } from '../packages/core/src/index.js';
 import { AdvisorDecisionEvidenceService, MarketEventService } from '../packages/services/src/index.js';
 import { appendDecisionEvidenceEvent, openDatabase, saveStrategyDecision } from '../packages/storage/src/index.js';
@@ -65,6 +65,29 @@ describe('Advisor decision evidence', () => {
     expect(answer).toMatchObject({ provider: 'local', fallbackReason: 'provider_failed' });
     expect(JSON.stringify(database.prepare('SELECT * FROM advisor_decision_evidence_packs_v1').all()))
       .not.toContain('provider-key-that-stays-in-adapter');
+    database.close();
+  });
+
+  it('explains profile-scoped market-event evidence offline and accepts its typed destination', async()=>{
+    const database=openDatabase(':memory:'),clock=new FixedClock(T0),eventId=marketEventId('profile-a','fixture','one');
+    new MarketEventService({profileId:'profile-a',database,clock}).ingestLocal('fixture','events.json',[{
+      sourceEventId:'one',title:'Exchange maintenance',summary:'Planned venue maintenance.',
+      assetSymbols:['BTC'],publishedAtMs:T0-100,firstSeenAtMs:T0-50}]);
+    const service=new AdvisorDecisionEvidenceService({profileId:'profile-a',database,clock,
+      secrets:createMemorySecretStore({'openai-api-key:profile-a':'provider-key'}),
+      providers:providers(async()=>{throw new Error('provider details');})});
+    const answer=await service.explainEvidence({kind:'market_event',id:eventId},null);
+    expect(answer).toMatchObject({provider:'local',subject:{kind:'market_event',id:eventId},executionAuthority:false});
+    expect(answer.text).toContain('cannot influence targets or execution');
+    expect(await service.explainEvidence({kind:'market_event',id:eventId},'openai'))
+      .toMatchObject({provider:'local',fallbackReason:'provider_failed',evidenceHash:answer.evidenceHash});
+    expect(service.navigate('market',null,{candidateId:null,productId:'BTC-USD',eventId}))
+      .toMatchObject({target:'market',productId:'BTC-USD',eventId});
+    expect(()=>service.navigate('paper',null,{candidateId:null,productId:null,eventId})).toThrow('unsupported_navigation');
+    const audits=database.prepare('SELECT outcome,detail_json FROM advisor_navigation_audit_events_v1 ORDER BY rowid')
+      .all() as {outcome:string;detail_json:string}[];
+    expect(audits.map((row)=>row.outcome)).toEqual(['accepted','rejected']);
+    expect(audits[0]?.detail_json).toContain(eventId);
     database.close();
   });
 

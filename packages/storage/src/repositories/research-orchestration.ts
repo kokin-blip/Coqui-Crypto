@@ -63,6 +63,16 @@ export function researchJobBelongsToProfile(profileId:string,jobId:string,databa
     .get(profileId,jobId)!==undefined;
 }
 
+export function researchCandidateBelongsToProfile(profileId:string,candidateId:string,database:Db):boolean {
+  return database.prepare(`SELECT 1 FROM research_job_candidate_links_v1 WHERE profile_id=? AND candidate_id=?`)
+    .get(profileId,candidateId)!==undefined;
+}
+
+export function researchTriggerBelongsToProfile(profileId:string,triggerId:string,database:Db):boolean {
+  return database.prepare(`SELECT 1 FROM research_trigger_job_links_v1 WHERE profile_id=? AND trigger_id=? LIMIT 1`)
+    .get(profileId,triggerId)!==undefined;
+}
+
 export function saveResearchJobCandidateLink(input: {readonly profileId:string;readonly jobId:string;
   readonly candidateId:string;readonly resultHash:string;readonly createdAt:number}, database:Db): string {
   const id=sha256Hex(canonicalJson(input as unknown as CanonicalJsonValue));

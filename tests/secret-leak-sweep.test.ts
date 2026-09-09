@@ -208,6 +208,7 @@ describe('the sweep covers the whole registry', () => {
     expect(unexercised.every((channel) =>
       channel.startsWith('market-data.')
       || channel === 'market-events.ingest-local'
+      || channel === 'market-events.ingest-file'
       || channel === 'portfolio.view'
       || channel === 'portfolio.allocation'
       || channel === 'paper.portfolio'

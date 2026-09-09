@@ -36,10 +36,12 @@ export function getAdvisorEvidencePack(id: string, database: Db): StoredAdvisorE
 export type AdvisorNavigationTarget = 'activity' | 'paper' | 'research' | 'risk' | 'market' | 'advisor';
 export function appendAdvisorNavigationAudit(input: { readonly profileId: string;
   readonly decisionId: string | null; readonly target: AdvisorNavigationTarget;
-  readonly outcome: 'accepted' | 'rejected'; readonly reasonCode: string; readonly at: number }, database: Db): string {
-  const detailJson = JSON.stringify({ advisoryOnly: true, executionAuthority: false });
+  readonly outcome: 'accepted' | 'rejected'; readonly reasonCode: string; readonly at: number;
+  readonly selection?:{readonly candidateId:string|null;readonly productId:string|null;readonly eventId:string|null} }, database: Db): string {
+  const detailJson = JSON.stringify({ advisoryOnly: true, executionAuthority: false,
+    selection:input.selection??{candidateId:null,productId:null,eventId:null} });
   const id = sha256Hex(['advisor-navigation-v1', input.profileId, input.decisionId ?? '', input.target,
-    input.outcome, input.reasonCode, String(input.at)].join(':'));
+    input.outcome, input.reasonCode,detailJson,String(input.at)].join(':'));
   database.prepare(`INSERT OR IGNORE INTO advisor_navigation_audit_events_v1
     (id,profile_id,decision_id,target,outcome,reason_code,at,detail_json) VALUES (?,?,?,?,?,?,?,?)`).run(
       id, input.profileId, input.decisionId, input.target, input.outcome, input.reasonCode, input.at, detailJson);

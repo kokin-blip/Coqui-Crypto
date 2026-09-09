@@ -242,6 +242,9 @@ validated local JSON array with `pnpm events:import-local`; each record carries 
 source identity, source event ID, publication time, first-seen time, and local
 file provenance. Duplicate source identities are idempotent only when their
 canonical contents match. A changed duplicate is rejected rather than revised.
+The desktop Events workspace uses the same parser and service, but Electron main
+selects and reads the file. Only sanitized result identities cross back to the
+renderer; fixture contents and local paths do not.
 
 Event replay is governed by `firstSeenAt`: an event is absent before that time,
 and a classification is absent before its own `classifiedAt`. Events are context

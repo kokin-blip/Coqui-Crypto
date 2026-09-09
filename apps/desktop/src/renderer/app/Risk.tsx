@@ -1,7 +1,9 @@
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
+import { useEffect,useState } from 'react';
 
 import { useChannel } from '../query/use-channel.js';
 import { SurfaceState } from './SurfaceState.js';
+import { takeAdvisorSelection } from './advisor-navigation.js';
 
 type RiskView = ChannelResponse<'risk.dashboard'>;
 type Rung = RiskView['ladder'][number];
@@ -43,6 +45,16 @@ function Rung({ rung }: { readonly rung: Rung }): React.JSX.Element {
 
 export function Risk({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const risk = useChannel(client, 'risk.dashboard', {});
+  const [explanation,setExplanation]=useState<ChannelResponse<'advisor.decision.explain'>|null>(null);
+  const [explanationFailure,setExplanationFailure]=useState<string|null>(null);
+
+  useEffect(()=>{
+    const decisionId=takeAdvisorSelection()?.decisionId;
+    if(decisionId===null||decisionId===undefined) return;
+    void client.query('advisor.decision.explain',{commandId:crypto.randomUUID(),decisionId,provider:null})
+      .then((result)=>result.status==='ok'?setExplanation(result.value):
+        setExplanationFailure(result.issues[0]?.code??'decision_explanation_failed'));
+  },[client]);
 
   if (risk.kind === 'loading') return <SurfaceState kind="loading" title="Loading risk controls" />;
 
@@ -137,6 +149,9 @@ export function Risk({ client }: { readonly client: CoquiClient }): React.JSX.El
         These limits are enforced in code before any order is sized. Nothing on this screen can
         raise or disable them.
       </p>
+      {explanation!==null&&<article className="activity-explanation" aria-live="polite"><strong>Selected risk decision</strong>
+        <p>{explanation.text}</p><small>Evidence {explanation.evidenceHash.slice(0,12)}… · no execution authority</small></article>}
+      {explanationFailure!==null&&<p role="alert">Selected decision unavailable: {explanationFailure.replaceAll('_',' ')}</p>}
     </section>
   );
 }

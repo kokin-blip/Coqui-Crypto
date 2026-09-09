@@ -25,6 +25,7 @@ import { useComparisonSeries } from './use-comparison-series.js';
 import { useChannel } from '../query/use-channel.js';
 import { useCommand } from '../query/use-command.js';
 import { useWorkspace } from './WorkspaceContext.js';
+import { takeAdvisorSelection } from './advisor-navigation.js';
 
 type Product = ChannelResponse<'market-data.products'>['products'][number]; const INTERVALS: readonly WorkstationInterval[] = ['1m', '5m', '15m', '1h', '6h', '1d'];
 const EMPTY_INDICATORS: WorkstationIndicators = Object.freeze({
@@ -199,12 +200,11 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
   const factsBars: readonly WorkstationBar[] = completed.kind === 'ready' ? completed.value.bars : [];
   const activeProfileId = profiles.kind === 'ready' ? profiles.value.activeProfile.id : null;
 
-  useEffect(() => {
-    setRecentProducts([]);
-  }, [activeProfileId]);
+  useEffect(()=>setRecentProducts([]),[activeProfileId]);
 
-  useEffect(() => {
-    const first = portfolioProductIds[0];
+  useEffect(()=>{const selection=takeAdvisorSelection();if(selection?.productId!==null&&selection?.productId!==undefined) {setSelected(selection.productId);setDraftTiles(null);}if(selection?.openAdvisor===true) setAnalystOpen(true);},[]);
+
+  useEffect(()=>{const first=portfolioProductIds[0];
     if (first !== undefined && selected === 'BTC-USD' && !portfolioProductIds.includes(selected)) {
       setSelected(first); setDraftTiles(null);
     }
@@ -308,7 +308,7 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
       <MarketFactsPanel productId={selected} bars={factsBars} freshness={productSearch.kind === 'ready' ? new Date(productSearch.value.asOfMs).toISOString() : 'Unavailable'} onOpenAnalyst={() => setAnalystOpen(true)} />
     </div>
     <footer className="market-workstation-footer"><span>Coinbase display data · informational only</span><label><input type="checkbox" checked={workspace.preferences?.marketLiveCandle ?? false} onChange={(event) => void workspace.update({ marketLiveCandle: event.target.checked })} /> Show provisional candle</label><span>UTC</span></footer>
-    <MarketEventsPanel productId={selected} events={eventTimeline.kind === 'ready' ? eventTimeline.value.events : []} state={eventTimeline.kind === 'ready' ? 'ready' : eventTimeline.kind === 'loading' ? 'loading' : 'unavailable'} />
+    <MarketEventsPanel client={client} productId={selected} events={eventTimeline.kind === 'ready' ? eventTimeline.value.events : []} state={eventTimeline.kind === 'ready' ? 'ready' : eventTimeline.kind === 'loading' ? 'loading' : 'unavailable'} />
     {analystOpen && <AdvisorSheet client={client} productId={selected} bars={factsBars} onClose={() => setAnalystOpen(false)} />}
     {extensionsOpen && <ChartExtensionManager client={client} onClose={() => setExtensionsOpen(false)} />}
   </div>;

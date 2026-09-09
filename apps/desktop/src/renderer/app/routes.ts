@@ -5,6 +5,7 @@ export type AppRoute =
   | 'portfolio/tax'
   | 'portfolio/reconciliation'
   | 'markets'
+  | 'events'
   | 'paper/overview'
   | 'paper/orders'
   | 'paper/performance'
@@ -30,6 +31,7 @@ export const ROUTES: readonly RouteDefinition[] = [
   { route: 'portfolio/tax', label: 'Tax', title: 'Tax evidence', group: 'portfolio' },
   { route: 'portfolio/reconciliation', label: 'Reconciliation', title: 'Portfolio reconciliation', group: 'portfolio' },
   { route: 'markets', label: 'Markets', title: 'Markets', group: 'workspace' },
+  { route: 'events', label: 'Events', title: 'Market events', group: 'workspace' },
   { route: 'paper/overview', label: 'Overview', title: 'Paper Trading', group: 'paper' },
   { route: 'paper/orders', label: 'Orders', title: 'Paper orders', group: 'paper' },
   { route: 'paper/performance', label: 'Performance', title: 'Paper performance', group: 'paper' },

@@ -154,6 +154,14 @@ async function start(): Promise<void> {
         if (!metadata.isFile() || metadata.size < 2 || metadata.size > 2_800_000) throw new TypeError('invalid_chart_extension');
         return readFile(path, 'utf8');
       },
+      async pickMarketEventFile() {
+        const result=await dialog.showOpenDialog({title:'Import local market events',properties:['openFile'],
+          filters:[{name:'JSON event fixture',extensions:['json']}]});
+        if(result.canceled||result.filePaths[0]===undefined) return null;
+        const path=result.filePaths[0],metadata=await stat(path);
+        if(!metadata.isFile()||metadata.size<2||metadata.size>262_144) throw new TypeError('invalid_event_fixture');
+        return {contents:await readFile(path,'utf8'),reference:basename(path)};
+      },
     },
   });
 

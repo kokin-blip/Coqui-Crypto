@@ -572,6 +572,12 @@ Advisor navigation is limited by contracts and service validation to Activity,
 Paper, Research, Risk, Market, and Advisor destinations. Each service-level
 accepted or rejected request is audited. The Advisor has no execution, configuration,
 routing, credential mutation through navigation, or promotion capability.
+The renderer applies only accepted typed destinations and stores a one-shot
+selection for the destination screen. Decision, research-candidate, market-event,
+and market-product identities are revalidated against the active profile in main
+before navigation is accepted. Research candidates, research triggers, and market
+events use the same main-built, allowlisted local-explanation path as decisions;
+cloud providers may only rephrase that exact evidence and failures fall back locally.
 
 ### 6.6 Local authoritative host
 
@@ -723,7 +729,10 @@ records when the source says an event occurred, while `firstSeenAt` records when
 Coqui could first have known it. Temporal reads filter both events and later
 classifications by the requested as-of time, preventing hindsight during replay.
 
-`MarketEventService` accepts bounded local JSON fixtures only. Its deterministic
+`MarketEventService` accepts bounded local JSON fixtures only. In Electron the
+file chooser and file read remain in main; the renderer supplies only a validated
+source identity and explicit confirmation and never receives the fixture body.
+Its deterministic
 classifier is non-predictive; an optional classifier adapter receives an
 allowlisted fact document and must return exactly label, sentiment, and
 importance. New events may request existing debounced research triggers. A

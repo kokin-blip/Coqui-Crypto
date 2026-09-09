@@ -5,6 +5,7 @@ import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 
 import { useChannel } from '../query/use-channel.js';
 import { SurfaceState } from './SurfaceState.js';
+import { applyAdvisorNavigation,takeAdvisorSelection } from './advisor-navigation.js';
 
 type FeedEvent = ChannelResponse<'activity.feed'>['events'][number];
 type DecisionExplanation = ChannelResponse<'advisor.decision.explain'>;
@@ -28,6 +29,17 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
   const payload = useMemo(() => ({ limit: 40, cursor }), [cursor]);
   const feed = useChannel(client, 'activity.feed', payload);
   const page = feed.kind === 'ready' ? feed.value : null;
+
+  useEffect(()=>{
+    const decisionId=takeAdvisorSelection()?.decisionId;
+    if(decisionId===null||decisionId===undefined) return;
+    setDetailLoading(decisionId);
+    void client.query('decision.detail',{decisionId}).then((result)=>{
+      if(result.status==='ok') setDetail(result.value);
+      else setExplanationFailure(result.issues[0]?.code??'decision_detail_failed');
+      setDetailLoading(null);
+    });
+  },[client]);
 
   useEffect(() => {
     if (page === null) return;
@@ -114,6 +126,8 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
                     onClick={() => void inspect(event.decisionId!)}>
                     {detailLoading === event.decisionId ? 'Opening…' : 'Inspect evidence'}
                   </button>
+                  <button type="button" onClick={()=>void applyAdvisorNavigation(client,{target:'risk',
+                    decisionId:event.decisionId,candidateId:null,productId:null,eventId:null})}>Open risk context</button>
                   <code title={event.decisionId}>decision {event.decisionId.slice(0, 10)}…</code>
                 </div>}
                 {event.decisionId !== null && explanations[event.decisionId] !== undefined &&
