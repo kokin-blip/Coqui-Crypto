@@ -1,4 +1,4 @@
-import { Bot, Database, ShieldCheck, Sparkles } from 'lucide-react';
+import { Bot, Database, ShieldCheck, Sparkles, X } from 'lucide-react';
 
 import type { WorkstationBar } from './chart-workstation-types.js';
 
@@ -9,10 +9,12 @@ function percentChange(first: string, last: string): string | null {
     : null;
 }
 
-export function MarketFactsPanel({ productId, bars, freshness, onOpenAnalyst }: {
+export function MarketFactsPanel({ productId, bars, freshness, className = '', onClose, onOpenAnalyst }: {
   readonly productId: string;
   readonly bars: readonly WorkstationBar[];
   readonly freshness: string;
+  readonly className?: string;
+  readonly onClose?: () => void;
   readonly onOpenAnalyst: () => void;
 }): React.JSX.Element {
   const complete = bars.filter((bar) => bar.isComplete);
@@ -25,8 +27,8 @@ export function MarketFactsPanel({ productId, bars, freshness, onOpenAnalyst }: 
     const expected = prior.endTimeMs;
     return count + (bar.startTimeMs > expected ? 1 : 0);
   }, 0);
-  return <aside className="market-facts-inspector" aria-labelledby="market-facts-heading">
-    <header><div><span className="violet-kicker"><Sparkles size={14} /> Key facts</span><h2 id="market-facts-heading">{productId}</h2></div><button type="button" className="icon-button" aria-label="Open AI analyst" onClick={onOpenAnalyst}><Bot size={17} /></button></header>
+  return <aside className={`market-facts-inspector ${className}`.trim()} aria-labelledby="market-facts-heading">
+    <header><div><span className="violet-kicker"><Sparkles size={14} /> Key facts</span><h2 id="market-facts-heading">{productId}</h2></div><button type="button" className="icon-button" aria-label="Open AI analyst" onClick={onOpenAnalyst}><Bot size={17} /></button>{onClose !== undefined && <button type="button" className="market-panel-close" aria-label="Close market facts" onClick={onClose}><X size={16} /></button>}</header>
     <div className="market-fact-list">
       <div><span>Observed move</span><strong>{first !== undefined && last !== undefined ? percentChange(first.open, last.close) : 'Unavailable'}</strong></div>
       <div><span>Visible range</span><strong>{high === null || low === null ? 'Unavailable' : `${low.toLocaleString()} – ${high.toLocaleString()}`}</strong></div>

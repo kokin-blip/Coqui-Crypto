@@ -1,22 +1,16 @@
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
-import {
-  ArrowDownAZ, CircleDot, Columns2, MousePointer2, PanelTop, RectangleHorizontal,
-  Save, Search, SlidersHorizontal, TextCursorInput, TrendingUp, Waves,
-} from 'lucide-react';
-
+import { useQueryClient } from '@tanstack/react-query';
+import { ArrowDownAZ, CircleDot, Save, Search, X } from 'lucide-react';
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
-
 import { AdvisorSheet } from './AdvisorSheet.js';
 import { decisionTimelineMarkers } from './decision-timeline-markers.js';
 import { ChartExtensionManager } from './ChartExtensionManager.js';
 import { ChartLinkController } from './chart-link-controller.js';
 import { ChartDrawingManager } from './ChartDrawingManager.js';
 import { MarketChartTileHeader } from './MarketChartTileHeader.js';
-import type {
-  ChartDrawing, ChartTileConfiguration, DrawingTool, WorkstationBar,
-  WorkstationChartStyle, WorkstationExtensionMarker, WorkstationIndicators, WorkstationInterval, WorkstationLayout,
-} from './chart-workstation-types.js';
+import type { ChartDrawing, ChartTileConfiguration, DrawingTool, WorkstationBar, WorkstationChartStyle, WorkstationExtensionMarker, WorkstationIndicators, WorkstationInterval, WorkstationLayout } from './chart-workstation-types.js';
 import { MarketFactsPanel } from './MarketFactsPanel.js';
+import { MarketDrawingTools, MarketPanelTriggers } from './MarketPanelControls.js';
 import { eventMatchesProduct, MarketEventsDisclosure } from './MarketEventsPanel.js';
 import { MarketFeedStatus } from './MarketFeedStatus.js';
 import { MarketWorkspaceToolbar } from './MarketWorkspaceToolbar.js';
@@ -27,18 +21,12 @@ import { useChannel } from '../query/use-channel.js';
 import { useCommand } from '../query/use-command.js';
 import { useWorkspace } from './WorkspaceContext.js';
 import { takeAdvisorSelection } from './advisor-navigation.js';
-
+import { routeHash } from './routes.js';
 type Product = ChannelResponse<'market-data.products'>['products'][number]; const INTERVALS: readonly WorkstationInterval[] = ['1m', '5m', '15m', '1h', '6h', '1d'];
 const EMPTY_INDICATORS: WorkstationIndicators = Object.freeze({
   sma20: false, sma50: false, ema20: false, bollinger20: false, rsi14: false, macd: false,
 });
-const TOOL_ICONS: ReadonlyArray<readonly [DrawingTool, React.ComponentType<{ size?: number }>, string]> = [
-  ['cursor', MousePointer2, 'Pointer'], ['horizontal', PanelTop, 'Horizontal line'],
-  ['vertical', Columns2, 'Vertical line'], ['trend', TrendingUp, 'Trend line'],
-  ['ray', TrendingUp, 'Ray'], ['rectangle', RectangleHorizontal, 'Range'],
-  ['fibonacci', Waves, 'Fibonacci'], ['text', TextCursorInput, 'Text'],
-  ['measure', SlidersHorizontal, 'Measure'],
-]; const CHART_INVALIDATIONS = ['app.chart.workspace'] as const;
+const CHART_INVALIDATIONS = ['app.chart.workspace'] as const;
 
 function rangeMs(interval: WorkstationInterval): number {
   return { '1m': 86_400_000, '5m': 7 * 86_400_000, '15m': 30 * 86_400_000,
@@ -92,6 +80,7 @@ function ChartTile({ client, tile, tileId, layoutId, style, activeTool, height,
   readonly decisionMarkers: readonly WorkstationExtensionMarker[];
   readonly onDeleteDrawing: (id: string) => void;
 }): React.JSX.Element {
+  const queryClient = useQueryClient();
   const [anchor] = useState(() => Date.now());
   const history = useChannel(client, 'market-data.display-bars', {
     productId: tile.productId, interval: tile.interval,
@@ -113,8 +102,9 @@ function ChartTile({ client, tile, tileId, layoutId, style, activeTool, height,
       .map((drawing) => ({ id: drawing.id, kind: drawing.kind, points: drawing.points, label: drawing.label }))
     : [];
   if (history.kind === 'loading') return <div className="workstation-chart-loading" aria-label={`Loading ${tile.productId} chart`} />;
-  if (history.kind !== 'ready') return <div className="workstation-chart-empty"><strong>Chart unavailable</strong><span>Coinbase history could not be loaded. No substitute source was used.</span></div>;
-  if (bars.length === 0) return <div className="workstation-chart-empty"><strong>No completed candles</strong><span>Try a longer interval or range.</span></div>;
+  const retry = (): void => { void queryClient.invalidateQueries({ queryKey: ['market-data.display-bars'] }); };
+  if (history.kind !== 'ready') return <div className="workstation-chart-empty"><strong>Chart unavailable</strong><span>Coinbase history could not be loaded. No substitute source was used.</span><div><button type="button" onClick={retry}>Refresh history</button><a href={routeHash('settings')}>Open connections</a></div></div>;
+  if (bars.length === 0) return <div className="workstation-chart-empty"><strong>No completed candles</strong><span>Try a longer interval or refresh the completed-bar history.</span><div><button type="button" onClick={retry}>Refresh history</button><a href={routeHash('settings')}>Open connections</a></div></div>;
   return <div className="chart-render-stack">
     {extensionState.kind === 'loading' && <span className="chart-extension-state">Evaluating extensions…</span>}
     {extensionState.failedCount > 0 && <span className="chart-extension-state warning">{extensionState.failedCount} extension{extensionState.failedCount === 1 ? '' : 's'} unavailable</span>}
@@ -145,6 +135,9 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
   const [activeTool, setActiveTool] = useState<DrawingTool>('cursor');
   const [analystOpen, setAnalystOpen] = useState(false);
   const [extensionsOpen, setExtensionsOpen] = useState(false);
+  const [factsOpen, setFactsOpen] = useState(false);
+  const [watchlistOpen, setWatchlistOpen] = useState(false);
+  const [toolsOpen, setToolsOpen] = useState(false);
   const [activeLayoutId, setActiveLayoutId] = useState<string | null>(null);
   const [activeWatchlistId, setActiveWatchlistId] = useState<string | null | undefined>(undefined);
   const [draftTiles, setDraftTiles] = useState<readonly ChartTileConfiguration[] | null>(null);
@@ -270,6 +263,8 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
       <div className="market-symbol"><CircleDot size={15} /><div><strong>{selected}</strong><span>Coinbase spot · {defaultInterval}</span></div></div>
       <MarketFeedStatus client={client} productId={selected} interval={defaultInterval} />
       <div className="market-timeframes" aria-label="Chart interval">{INTERVALS.map((item) => <button key={item} type="button" aria-pressed={item === defaultInterval} onClick={() => changeInterval(item)}>{item}</button>)}</div>
+      <MarketPanelTriggers toolsOpen={toolsOpen} watchlistOpen={watchlistOpen} factsOpen={factsOpen}
+        onTools={() => setToolsOpen((open) => !open)} onWatchlist={() => setWatchlistOpen((open) => !open)} onFacts={() => setFactsOpen((open) => !open)} />
       <MarketWorkspaceToolbar style={style} scaleMode={primaryTile.scaleMode}
         indicators={indicators} volumeVisible={workspace.preferences?.marketVolumeVisible ?? true}
         layout={layout} savedLayouts={stored.layouts} activeLayoutId={activeLayoutId}
@@ -282,7 +277,7 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
         onOpenExtensions={() => setExtensionsOpen(true)} />
     </header>
     <div className="market-workstation-grid">
-      <nav className="drawing-tool-rail" aria-label="Chart drawing tools">{TOOL_ICONS.map(([tool, Icon, label]) => <button key={tool} type="button" aria-label={label} title={label} aria-pressed={activeTool === tool} onClick={() => setActiveTool(tool)}><Icon size={18} /></button>)}</nav>
+      <MarketDrawingTools activeTool={activeTool} open={toolsOpen} onChange={setActiveTool} onClose={() => setToolsOpen(false)} />
       <section className={`market-chart-grid layout-${layout}`} aria-label="Market charts">{tiles.map((tile, index) => {
         const tileId = `${index}:${tile.productId}:${tile.interval}`;
         return <article className="market-chart-tile" key={tileId}>
@@ -299,14 +294,14 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
             onDeleteDrawing={(drawingId) => void chartCommand.run({ commandId: crypto.randomUUID(), action: { kind: 'delete_drawing', drawingId } })} />
         </article>;
       })}</section>
-      <aside className="advanced-watchlist">
-        <header><strong>Watchlist</strong><label className="watchlist-picker"><span className="sr-only">Saved watchlist</span><select value={portfolioWatchlist ? '__portfolio__' : effectiveWatchlistId ?? ''} onChange={(event) => setActiveWatchlistId(event.target.value === '__portfolio__' ? undefined : event.target.value === '' ? null : event.target.value)}>{portfolioProductIds.length > 0 && <option value="__portfolio__">Portfolio</option>}<option value="">All products</option>{stored.watchlists.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><button type="button" className="icon-button" aria-label="Save current watchlist" disabled={visibleProducts.length === 0 || portfolioWatchlist} onClick={saveWatchlist}><Save size={14} /></button></header>
+      <aside className={`advanced-watchlist${watchlistOpen ? ' panel-open' : ''}`}>
+        <header><strong>Watchlist</strong><label className="watchlist-picker"><span className="sr-only">Saved watchlist</span><select value={portfolioWatchlist ? '__portfolio__' : effectiveWatchlistId ?? ''} onChange={(event) => setActiveWatchlistId(event.target.value === '__portfolio__' ? undefined : event.target.value === '' ? null : event.target.value)}>{portfolioProductIds.length > 0 && <option value="__portfolio__">Portfolio</option>}<option value="">All products</option>{stored.watchlists.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><button type="button" className="icon-button" aria-label="Save current watchlist" disabled={visibleProducts.length === 0 || portfolioWatchlist} onClick={saveWatchlist}><Save size={14} /></button><button type="button" className="market-panel-close" aria-label="Close watchlist" onClick={() => setWatchlistOpen(false)}><X size={16} /></button></header>
         <label><Search size={15} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search Coinbase USD" /></label>
         <div className="recent-products" aria-label="Recent products">{recentProducts.map((productId) => <button key={productId} type="button" onClick={() => chooseProduct(productId)}>{productId.replace('-USD', '')}</button>)}</div>
         <div className="watchlist-columns"><button type="button" aria-label={`Sort symbols ${sortAscending ? 'descending' : 'ascending'}`} onClick={() => setSortAscending((value) => !value)}>Symbol <ArrowDownAZ className={sortAscending ? '' : 'sort-descending'} size={11} /></button><span>Venue</span></div>
         <ul>{visibleProducts.map((product: Product) => <li key={product.instrument.productId}><button type="button" aria-pressed={product.instrument.productId === selected} onClick={() => chooseProduct(product.instrument.productId)}><span><strong>{product.symbol}</strong><small>{product.name}</small></span><span>USD</span></button></li>)}</ul>
       </aside>
-      <MarketFactsPanel productId={selected} bars={factsBars} freshness={productSearch.kind === 'ready' ? new Date(productSearch.value.asOfMs).toISOString() : 'Unavailable'} onOpenAnalyst={() => setAnalystOpen(true)} />
+      <MarketFactsPanel className={factsOpen ? 'panel-open' : ''} productId={selected} bars={factsBars} freshness={productSearch.kind === 'ready' ? new Date(productSearch.value.asOfMs).toLocaleString() : 'Unavailable'} onClose={() => setFactsOpen(false)} onOpenAnalyst={() => setAnalystOpen(true)} />
     </div>
     <footer className="market-workstation-footer"><span>Coinbase display data · informational only</span><label><input type="checkbox" checked={workspace.preferences?.marketLiveCandle ?? false} onChange={(event) => void workspace.update({ marketLiveCandle: event.target.checked })} /> Show provisional candle</label><span>UTC</span></footer>
     <MarketEventsDisclosure client={client} productId={selected} events={eventTimeline.kind === 'ready' ? eventTimeline.value.events : []} state={eventTimeline.kind === 'ready' ? 'ready' : eventTimeline.kind === 'loading' ? 'loading' : 'unavailable'} />
