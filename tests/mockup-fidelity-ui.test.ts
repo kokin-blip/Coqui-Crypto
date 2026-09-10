@@ -41,6 +41,11 @@ describe('mockup-fidelity advanced workspace', () => {
     expect(audit).toContain('[data-status-indicator]');
     expect(audit).toContain('element.scrollHeight');
     expect(audit).toContain("['hidden', 'clip']");
+    expect(audit).toContain('documentOverflow');
+    expect(audit).toContain('focusOutside');
+    expect(audit).toContain('unnamedIcons');
+    for (const viewport of ['960, height: 640', '1280, height: 800', '1440, height: 900', '1728, height: 1117']) expect(review).toContain(viewport);
+    expect(review).toContain("zoom: 2, width: 1280, height: 800");
   });
 
   it('contains validation markers in reusable padded status structures', () => {

@@ -6,6 +6,7 @@ import { useChannel } from '../query/use-channel.js';
 import { ProfileSwitcher } from './ProfileSwitcher.js';
 import { CommandMenu } from './CommandMenu.js';
 import { statusSummary } from './workspace-layout.js';
+import { formatLocalTime } from './time-format.js';
 
 type RailView = ChannelResponse<'app.status-rail'>;
 
@@ -23,15 +24,13 @@ type RailView = ChannelResponse<'app.status-rail'>;
 function reconciliationText(reconciliation: RailView['reconciliation']): string {
   if (reconciliation.neverRun) return 'reconcile never run';
 
-  const at = new Date(reconciliation.lastRunAtMs ?? 0)
-    .toISOString()
-    .slice(11, 16);
+  const at = formatLocalTime(reconciliation.lastRunAtMs ?? 0);
 
   // Reporting only the timestamp would answer the rail's own question — "is
   // anything wrong right now?" — with "no" while exceptions sit unresolved.
   return reconciliation.unresolvedCount === 0
-    ? `reconcile ${at}Z · settled`
-    : `reconcile ${at}Z · ${reconciliation.unresolvedCount} unresolved`;
+    ? `reconcile ${at} · settled`
+    : `reconcile ${at} · ${reconciliation.unresolvedCount} unresolved`;
 }
 
 function Freshness({ client }: { readonly client: CoquiClient }): React.JSX.Element {
@@ -39,9 +38,9 @@ function Freshness({ client }: { readonly client: CoquiClient }): React.JSX.Elem
   if (live.kind !== 'ready') return <span className="rail-state"><Radio size={13} aria-hidden="true" /> Market feed unknown</span>;
   const state = live.value.connection;
   return (
-    <span className={`rail-state rail-${state}`}>
+    <span className={`rail-state rail-${state}`} aria-label={`Market feed ${state}`} title={`Market feed ${state}`}>
       <Radio size={13} aria-hidden="true" /> Market feed {state}
-      {live.value.lastMessageAtMs === null ? '' : ` · ${new Date(live.value.lastMessageAtMs).toISOString().slice(11, 16)}Z`}
+      {live.value.lastMessageAtMs === null ? '' : ` · ${formatLocalTime(live.value.lastMessageAtMs)}`}
     </span>
   );
 }
@@ -103,7 +102,7 @@ export function StatusRail({ client }: { readonly client: CoquiClient }): React.
         <Freshness client={client} />
         <StatusEmphasis stateKey={`${summary.tone}:${summary.text}`}><span className={`rail-decision rail-${summary.tone}`}><ShieldCheck size={14} aria-hidden="true" /><span><small>Safety</small><strong>{summary.text}</strong></span></span></StatusEmphasis>
         <details className="status-details">
-          <summary><Activity size={14} aria-hidden="true" /> System status</summary>
+          <summary aria-label="Open system status" title="System status"><Activity size={14} aria-hidden="true" /> System status</summary>
           <div className="status-details-panel">
             <StrategyDecision client={client} />
             <span><Database size={13} aria-hidden="true" /> {reconciliationText(view.reconciliation)}</span>

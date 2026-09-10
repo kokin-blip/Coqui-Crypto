@@ -6,6 +6,7 @@ import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { useChannel } from '../query/use-channel.js';
 import { SurfaceState } from './SurfaceState.js';
 import { applyAdvisorNavigation,takeAdvisorSelection } from './advisor-navigation.js';
+import { exactUtcTimestamp, formatLocalTimestamp } from './time-format.js';
 
 type FeedEvent = ChannelResponse<'activity.feed'>['events'][number];
 type DecisionExplanation = ChannelResponse<'advisor.decision.explain'>;
@@ -14,7 +15,7 @@ type EventFilter = 'all' | FeedEvent['status'];
 const FILTERS: readonly EventFilter[] = ['all', 'info', 'pending', 'blocked', 'failed', 'succeeded', 'unknown'];
 
 function eventTime(at: number): string {
-  return new Date(at).toISOString().replace('T', ' ').slice(0, 16) + 'Z';
+  return formatLocalTimestamp(at);
 }
 
 export function Activity({ client }: { readonly client: CoquiClient }): React.JSX.Element {
@@ -112,7 +113,7 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
                 </div>
                 <p>{event.detail}</p>
                 <small>
-                  <time dateTime={new Date(event.occurredAt).toISOString()}>{eventTime(event.occurredAt)}</time>
+                  <time dateTime={exactUtcTimestamp(event.occurredAt)} title={exactUtcTimestamp(event.occurredAt)}>{eventTime(event.occurredAt)}</time>
                   {event.provenance === null ? '' : ` · evidence ${event.provenance.slice(0, 12)}…`}
                 </small>
                 {event.reasonCode !== null && <span className="activity-reason">{event.reasonCode.replaceAll('_', ' ')}</span>}

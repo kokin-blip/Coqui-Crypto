@@ -5,6 +5,7 @@ import { useChannel } from '../query/use-channel.js';
 import { SurfaceState } from './SurfaceState.js';
 import { takeAdvisorSelection } from './advisor-navigation.js';
 import { boundedRiskMeter } from './evidence-visualization.js';
+import { exactUtcTimestamp, formatLocalTimestamp } from './time-format.js';
 
 type RiskView = ChannelResponse<'risk.dashboard'>;
 type Rung = RiskView['ladder'][number];
@@ -152,7 +153,7 @@ export function Risk({ client }: { readonly client: CoquiClient }): React.JSX.El
         {timeline.kind==='ready'&&timeline.value.items.filter((item)=>item.kind==='risk_evaluated').length===0&&<p className="empty-state">No historical risk evaluation is recorded.</p>}
         {timeline.kind==='ready'&&<ol>{timeline.value.items.filter((item)=>item.kind==='risk_evaluated').slice(0,12).map((item)=><li key={item.eventId}>
           <span className={`event-marker status-${item.status}`} aria-hidden="true"/><div><strong>{item.status}</strong>
-            <time dateTime={new Date(item.occurredAtMs).toISOString()}>{new Date(item.occurredAtMs).toISOString()}</time>
+            <time dateTime={exactUtcTimestamp(item.occurredAtMs)} title={exactUtcTimestamp(item.occurredAtMs)}>{formatLocalTimestamp(item.occurredAtMs)}</time>
             <small>decision {item.decisionId.slice(0,12)}… · evidence {item.payloadHash.slice(0,12)}…</small></div></li>)}</ol>}
       </section>
 

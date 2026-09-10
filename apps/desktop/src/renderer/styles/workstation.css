@@ -1048,6 +1048,39 @@
   .advanced-watchlist li button[aria-pressed='true'] { outline: 2px solid Highlight; outline-offset: -2px; }
 }
 
+/* Final legibility floor for dense workstation metadata. */
+.metric-note,
+.validation-state,
+.market-last-price span,
+.market-quote-strip dt,
+.data-boundary,
+.market-event-timeline :is(span, time, small),
+.market-feed-chip,
+.market-symbol span,
+.chart-options-panel :is(legend, label),
+.chart-tile-selectors select,
+.compare-picker select,
+.chart-tile-label small,
+.compare-chip,
+.chart-link-toggle,
+.advanced-watchlist :is(small, .watchlist-columns),
+.recent-products button,
+.advisor-sheet :is(label, legend, small, footer),
+.settings-readout dt,
+.connection-badge {
+  font-size: 11px;
+}
+
+@media (pointer: coarse) {
+  .market-panel-triggers button,
+  .chart-workspace-controls button,
+  .market-timeframes button,
+  .advanced-watchlist button,
+  .advisor-sheet button {
+    min-height: 44px;
+  }
+}
+
 .portfolio-master-detail {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 250px;
@@ -1095,7 +1128,7 @@
 .risk-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; overflow: hidden; background: var(--coqui-surface-2); border: 1px solid var(--coqui-border); border-radius: var(--coqui-radius-md); }
 .risk-summary > div { padding: 14px; background: var(--coqui-surface-2); border-right: 1px solid var(--coqui-border); border-bottom: 1px solid var(--coqui-border); }
 .risk-summary dt { color: var(--coqui-text-subtle); font-size: 11px; }
-.risk-summary dd { margin: 6px 0 0; font-size: 18px; font-weight: 670; }
+.risk-summary dd { margin: 6px 0 0; font-size: 18px; font-weight: 670; line-height: 1.35; }
 .risk-callout { margin: 0; padding: 12px 14px; border: 1px solid var(--coqui-border); border-radius: var(--coqui-radius-sm); }
 .risk-callout.warning { color: var(--coqui-warning); background: var(--coqui-warning-soft); }
 .risk-callout.danger { color: var(--coqui-negative); background: var(--coqui-negative-soft); }
@@ -1248,7 +1281,24 @@
 
 .shell-standard .status-primary,
 .shell-compact .status-primary {
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+}
+
+@container workspace (max-width: 900px) {
+  .shell-standard .status-details > summary,
+  .shell-standard .command-menu-trigger {
+    width: 36px;
+    min-width: 36px;
+    padding-inline: 9px;
+    overflow: hidden;
+    font-size: 0;
+    white-space: nowrap;
+  }
+
+  .shell-standard .command-menu-trigger span { display: none; }
+  .shell-standard .profile-status-module { min-width: 0; }
+  .shell-standard .profile-status-module .profile-switcher select { max-width: 130px; }
+  .shell-standard .rail-decision small { display: none; }
 }
 
 .shell-compact .status-primary {
@@ -1257,19 +1307,29 @@
 }
 
 .shell-compact .profile-status-module {
-  flex: 1 1 180px;
+  flex: 1 1 150px;
   min-width: 0;
 }
 
+.shell-compact .profile-status-module .profile-switcher select { max-width: 108px; }
+
 .shell-compact .status-primary > .rail-state {
-  order: 3;
-  flex: 1 1 100%;
+  flex: 0 0 36px;
+  width: 36px;
+  padding-inline: 9px;
+  overflow: hidden;
   margin-left: 0;
+  font-size: 0;
 }
 
 .shell-compact .status-primary > .coqui-status-emphasis {
-  flex: 1 1 190px;
+  flex: 1 1 150px;
+  min-width: 0;
 }
+
+.shell-compact .rail-decision { min-width: 0; }
+.shell-compact .rail-decision small { display: none; }
+.shell-compact .rail-decision strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .shell-compact .status-details {
   margin-left: 0;
@@ -1280,7 +1340,11 @@
   padding-inline: 9px;
   overflow: hidden;
   white-space: nowrap;
+  font-size: 0;
 }
+
+.shell-compact .command-menu-trigger { width: 36px; min-width: 36px; padding-inline: 9px; overflow: hidden; }
+.shell-compact .command-menu-trigger span { display: none; }
 
 .shell-compact .status-details-panel {
   position: fixed;

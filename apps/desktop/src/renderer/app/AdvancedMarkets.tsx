@@ -101,7 +101,7 @@ function ChartTile({ client, tile, tileId, layoutId, style, activeTool, height,
     ? chartWorkspace.value.drawings.filter((drawing) => drawing.layoutId === null || drawing.layoutId === layoutId)
       .map((drawing) => ({ id: drawing.id, kind: drawing.kind, points: drawing.points, label: drawing.label }))
     : [];
-  if (history.kind === 'loading') return <div className="workstation-chart-loading" aria-label={`Loading ${tile.productId} chart`} />;
+  if (history.kind === 'loading') return <div className="workstation-chart-loading workstation-chart-empty" role="status"><strong>Loading completed candles</strong><span>Reading decision-eligible Coinbase history for {tile.productId}.</span></div>;
   const retry = (): void => { void queryClient.invalidateQueries({ queryKey: ['market-data.display-bars'] }); };
   if (history.kind !== 'ready') return <div className="workstation-chart-empty"><strong>Chart unavailable</strong><span>Coinbase history could not be loaded. No substitute source was used.</span><div><button type="button" onClick={retry}>Refresh history</button><a href={routeHash('settings')}>Open connections</a></div></div>;
   if (bars.length === 0) return <div className="workstation-chart-empty"><strong>No completed candles</strong><span>Try a longer interval or refresh the completed-bar history.</span><div><button type="button" onClick={retry}>Refresh history</button><a href={routeHash('settings')}>Open connections</a></div></div>;

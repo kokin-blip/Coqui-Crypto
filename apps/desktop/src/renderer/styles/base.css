@@ -63,6 +63,29 @@ textarea {
   font: inherit;
 }
 
+button,
+[role='button'],
+select,
+input:not([type='checkbox']):not([type='radio']) {
+  min-height: 36px;
+}
+
+small,
+time,
+dt {
+  font-size: max(11px, .78em);
+}
+
+@media (pointer: coarse) {
+  button,
+  [role='button'],
+  select,
+  input:not([type='checkbox']):not([type='radio']),
+  summary {
+    min-height: 44px;
+  }
+}
+
 :focus-visible {
   outline: 2px solid var(--coqui-focus);
   outline-offset: 3px;

@@ -18,7 +18,7 @@ import { assertNoTextClipping } from './visual-overflow-audit.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const repository = dirname(dirname(root));
-const output = join(repository, 'docs/design/screenshots/review-2026-09-04-polish');
+const output = join(repository, 'docs/design/screenshots/review-2026-09-09-responsive');
 const entry = join(root, 'dist/renderer/index.html');
 
 if (!existsSync(entry)) {
@@ -31,6 +31,11 @@ const { createDispatcher } = await import(join(root, 'dist/main/dispatch.js'));
 const { applyWindowHardening, WEB_PREFERENCES } = await import(join(root, 'dist/main/security.js'));
 
 const capturePlan = [
+  { name: 'overview-compact-960x640', route: 'overview', mode: 'simple', theme: 'dark', density: 'comfortable', zoom: 1, width: 960, height: 640 },
+  { name: 'markets-standard-1280x800', route: 'markets', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1, width: 1280, height: 800 },
+  { name: 'settings-standard-1440x900', route: 'settings', mode: 'advanced', theme: 'light', density: 'comfortable', zoom: 1, width: 1440, height: 900 },
+  { name: 'research-wide-1728x1117-inspector', route: 'research', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1, width: 1728, height: 1117, inspectorOpen: true },
+  { name: 'risk-200-percent', route: 'risk', mode: 'advanced', theme: 'high-contrast', density: 'compact', zoom: 2, width: 1280, height: 800 },
   { name: 'research-grid-dark', route: 'overview', mode: 'advanced', preset: 'research_grid', theme: 'dark', density: 'comfortable', zoom: 1 },
   { name: 'research-grid-light', route: 'overview', mode: 'advanced', preset: 'research_grid', theme: 'light', density: 'comfortable', zoom: 1 },
   { name: 'chart-focus-dark', route: 'overview', mode: 'advanced', preset: 'chart_focus', theme: 'dark', density: 'comfortable', zoom: 1 },
@@ -159,6 +164,7 @@ async function run() {
           }),
           ...(capture.portfolioChart === undefined ? {} : { portfolioChart: capture.portfolioChart }),
           ...(capture.marketLayout === undefined ? {} : { marketLayout: capture.marketLayout }),
+          ...(capture.inspectorOpen === undefined ? {} : { inspectorOpen: capture.inspectorOpen }),
         },
       });
       if (workspaceOutcome.status !== 'ok') {
@@ -186,7 +192,6 @@ async function run() {
     if (capture.coinbaseState === 'attention') {
       await secrets.remove('coinbase-credentials', runtime.activeProfile().id);
     }
-    await window.webContents.setZoomFactor(capture.zoom);
     if (index === 0) {
       await window.loadFile(entry, { hash: `/${capture.route}` });
     } else {
@@ -197,7 +202,10 @@ async function run() {
       window.webContents.reload();
       await loaded;
     }
+    await window.webContents.setZoomFactor(capture.zoom);
     await waitForReady(window);
+    const layout = await window.webContents.executeJavaScript(`({ shell: document.querySelector('.app-shell')?.className, viewport: [innerWidth, innerHeight], workspace: document.querySelector('.app-workspace')?.getBoundingClientRect().width, route: document.querySelector('.route-content')?.getBoundingClientRect().width })`);
+    console.log(`LAYOUT    ${capture.name} ${JSON.stringify(layout)}`);
     await window.webContents.executeJavaScript(`
       (() => {
         const target = ${JSON.stringify(capture.scrollTarget ?? (capture.name.startsWith('coinbase-') ? '.coinbase-settings' : null))};
