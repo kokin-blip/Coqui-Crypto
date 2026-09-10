@@ -2,14 +2,15 @@
 
 **Status:** AMENDED
 **Date:** 2026-08-01
-**Amended:** 2026-09-08
+**Amended:** 2026-09-09
 
 ## Decision
 
 Do not migrate `SpriteAnim`, `WalkAround`, `BotBuddy`, their Python build script,
 or autonomous mascot behavior. The dedicated Operations workspace may use six
-static, decorative subsystem illustrations: Coqui, Scout, Darwin, Guard,
-Courier, and Advisor.
+code-native, decorative subsystem robots: Coqui, Scout, Darwin, Guard, Courier,
+and Advisor. They share a compact mechanical design language and use distinct
+role accessories.
 
 Each illustration is paired with one bounded persisted read model. State,
 timestamps, progress, conclusions, and evidence identities come from those read
@@ -28,9 +29,10 @@ recorded evidence visibly authoritative.
 
 - General Advisor chat remains a functional evidence surface, not an animated
   mascot experience.
-- Illustrations are decorative (`alt=""`), static by default, and cannot create
-  or mutate operational state.
-- No animation, hidden-reasoning simulation, synthetic terminal noise, or
-  character-authored telemetry is allowed.
+- Illustrations are hidden from assistive technology because their name and
+  state are already present as text, and cannot create or mutate operational state.
+- Restrained CSS motion may mirror the recorded state (for example blink,
+  signal, or attention). It must stop in reduced/no-motion modes. Hidden-reasoning
+  simulation, synthetic terminal noise, and character-authored telemetry remain forbidden.
 - Any future interactive or autonomous character behavior requires a new ADR and
   must not expand the research, credential, routing, or execution boundaries.

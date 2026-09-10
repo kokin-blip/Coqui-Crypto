@@ -716,8 +716,10 @@ selects the newest verified route or execution outcome; the Advisor item selects
 the newest navigation or generation audit without forwarding stored request or
 detail payloads. Missing rows are returned as `unavailable`; the renderer never
 infers health from illustration, animation, network presence, or placeholder
-data. The six static character assets are decorative renderer resources and
-have no service, credential, research, routing, or execution authority.
+data. The six code-native robot illustrations are decorative renderer resources
+and have no service, credential, research, routing, or execution authority.
+Their bounded status motion is a direct presentation of the same returned state,
+stops under reduced/no-motion preferences, and cannot imply hidden work.
 Research is explicitly labelled global until jobs gain a profile identity.
 `research.lineage` adds a bounded, integrity-checked global
 champion/challenger projection without exposing metrics bodies or approval

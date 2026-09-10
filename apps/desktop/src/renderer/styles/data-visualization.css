@@ -368,6 +368,21 @@
 .research-metric-track i[data-negative='true'] { background: var(--coqui-negative); }
 .worker-progress-list progress,.risk-meter-grid progress { width: 100%; height: 7px; accent-color: var(--coqui-accent); }
 .worker-progress-list li[data-state='failed'] progress,.worker-progress-list li[data-state='cancelled'] progress { accent-color: var(--coqui-negative); }
+.researcher-empty { display: grid; gap: var(--coqui-space-3); margin-top: var(--coqui-space-3); }
+.researcher-idle-crew { display: flex; align-items: end; justify-content: center; gap: var(--coqui-space-3); min-height: 88px; }
+.researcher-idle-crew .crew-robot:nth-child(2) { transform: translateY(-5px); }
+.researcher-roster > li { grid-template-columns: 74px minmax(0,1fr); align-items: center; gap: var(--coqui-space-3); padding-block: var(--coqui-space-2); border-bottom: 1px solid var(--coqui-border); }
+.researcher-roster > li:last-child { border-bottom: 0; }
+.researcher-job { display: grid; min-width: 0; gap: 7px; }
+.researcher-job > div { display: flex; justify-content: space-between; gap: 12px; }
+@media (prefers-reduced-motion: reduce) { .researcher-idle-crew .crew-robot { transform: none !important; } }
+:root[data-motion='reduced'] .researcher-idle-crew .crew-robot,:root[data-motion='none'] .researcher-idle-crew .crew-robot { transform: none !important; }
+@container route (max-width: 560px) {
+  .researcher-roster > li { grid-template-columns: 58px minmax(0,1fr); }
+  .researcher-roster .crew-robot { width: 58px; height: 58px; }
+  .researcher-idle-crew { gap: var(--coqui-space-2); }
+  .researcher-idle-crew .crew-robot { width: 62px; height: 62px; }
+}
 .research-availability { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1px; overflow: hidden; background: var(--coqui-border); border: 1px solid var(--coqui-border); border-radius: var(--coqui-radius-sm); }
 .research-availability > div { min-width: 0; padding: 10px 12px; background: var(--coqui-surface-2); }
 .research-availability dt { color: var(--coqui-text-subtle); font-size: 10px; text-transform: uppercase; letter-spacing: .05em; }

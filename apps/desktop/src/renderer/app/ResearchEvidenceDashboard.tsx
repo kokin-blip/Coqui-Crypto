@@ -4,10 +4,12 @@ import { FinancialChart,type FinancialChartSeries } from './FinancialChart.js';
 import { SurfaceState } from './SurfaceState.js';
 import { useChannel } from '../query/use-channel.js';
 import { boundedMetricWidth } from './evidence-visualization.js';
+import { CrewRobot, type CrewRobotState } from './CrewRobot.js';
 
 type Track=ChannelResponse<'research.scoreboard'>['tracks'][number];
 const LABELS:Record<Track['trackId'],string>={selected:'Selected',hold:'Buy and hold',passive:'Passive mix'};
 const COLORS=[CHART_COLORS.primary,CHART_COLORS.benchmark,CHART_COLORS.supportingText] as const;
+function workerState(status: ChannelResponse<'research.jobs'>[number]['status']): CrewRobotState { return status; }
 
 export function ResearchEvidenceDashboard({client}:{readonly client:CoquiClient}):React.JSX.Element {
   const scoreboard=useChannel(client,'research.scoreboard',{});
@@ -39,10 +41,12 @@ export function ResearchEvidenceDashboard({client}:{readonly client:CoquiClient}
     </section>
     <section className="panel" aria-labelledby="worker-progress-heading"><div className="panel-heading"><div><p className="eyebrow">Bounded worker pool</p><h2 id="worker-progress-heading">Worker progress</h2></div></div>
       {jobs.kind==='loading'&&<SurfaceState kind="loading" title="Loading worker evidence" compact />}
-      {jobs.kind==='ready'&&jobs.value.length===0&&<SurfaceState kind="empty" title="No worker attempt recorded" compact />}
-      {jobs.kind==='ready'&&jobs.value.length>0&&<ol className="worker-progress-list">{jobs.value.map((job)=><li key={job.id} data-state={job.status}>
-        <div><strong>{job.kind}</strong><span>{job.status}</span></div><progress aria-label={`${job.kind} job ${job.status}`} max={100} value={job.status==='queued'?15:job.status==='running'?60:100}>{job.status}</progress>
-        <small>{job.attemptCount} attempt{job.attemptCount===1?'':'s'} · {job.failureReason.replaceAll('_',' ')}</small></li>)}</ol>}
+      {jobs.kind==='ready'&&jobs.value.length===0&&<div className="researcher-empty"><div className="researcher-idle-crew">
+        {(['matrix','stress','review'] as const).map((identity,index)=><CrewRobot key={identity} role="research" identity={identity} accessoryVariant={index as 0|1|2} state="unavailable" />)}
+      </div><SurfaceState kind="empty" title="Research crew is waiting" detail="No worker attempt has been recorded. Researchers activate only when the host starts a durable job." compact /></div>}
+      {jobs.kind==='ready'&&jobs.value.length>0&&<ol className="worker-progress-list researcher-roster">{jobs.value.map((job)=><li key={job.id} data-state={job.status}>
+        <CrewRobot role="research" identity={job.id} state={workerState(job.status)} /><div className="researcher-job"><div><strong>{job.kind}</strong><span>{job.status}</span></div><progress aria-label={`${job.kind} job ${job.status}`} max={100} value={job.status==='queued'?15:job.status==='running'?60:100}>{job.status}</progress>
+        <small>{job.attemptCount} attempt{job.attemptCount===1?'':'s'} · {job.failureReason.replaceAll('_',' ')}</small></div></li>)}</ol>}
     </section>
     <section className="panel" aria-labelledby="research-evidence-map-heading"><div className="panel-heading"><div><p className="eyebrow">Evidence availability</p><h2 id="research-evidence-map-heading">Validation map</h2></div></div>
       <dl className="research-availability">

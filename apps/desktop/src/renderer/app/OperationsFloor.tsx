@@ -1,16 +1,17 @@
 import type { CoquiClient } from '@coqui/contracts';
 
 import { useChannel } from '../query/use-channel.js';
+import { CrewRobot } from './CrewRobot.js';
 import { SurfaceState } from './SurfaceState.js';
 import { exactUtcTimestamp, formatEvidenceTime, formatLocalTime } from './time-format.js';
 
 const CHARACTERS = {
-  host: { name: 'Coqui', image: new URL('../operations/coqui.png', import.meta.url).href },
-  market: { name: 'Scout', image: new URL('../operations/scout.png', import.meta.url).href },
-  research: { name: 'Darwin', image: new URL('../operations/darwin.png', import.meta.url).href },
-  risk: { name: 'Guard', image: new URL('../operations/guard.png', import.meta.url).href },
-  execution: { name: 'Courier', image: new URL('../operations/courier.png', import.meta.url).href },
-  advisor: { name: 'Advisor', image: new URL('../operations/advisor.png', import.meta.url).href },
+  host: { name: 'Coqui' },
+  market: { name: 'Scout' },
+  research: { name: 'Darwin' },
+  risk: { name: 'Guard' },
+  execution: { name: 'Courier' },
+  advisor: { name: 'Advisor' },
 } as const;
 
 export function OperationsFloor({ client }: { readonly client: CoquiClient }): React.JSX.Element {
@@ -26,7 +27,8 @@ export function OperationsFloor({ client }: { readonly client: CoquiClient }): R
       title="Operations evidence unavailable" detail={floor.issues.map((issue) => issue.code).join(', ')} compact />}
     {floor.kind === 'ready' && <ul className="operations-floor-grid">
       {floor.value.subsystems.map((item) => <li key={item.subsystem} data-state={item.state}>
-        <img src={CHARACTERS[item.subsystem].image} alt="" />
+        <CrewRobot role={item.subsystem} state={item.state}
+          {...(item.subsystem === 'research' ? { accessoryVariant: 0 as const } : {})} className="operations-avatar" />
         <header><span className="operations-state" aria-hidden="true" /><strong>{CHARACTERS[item.subsystem].name}</strong>
           <span>{item.state}</span></header>
         <small>{item.title}</small>

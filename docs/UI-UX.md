@@ -252,12 +252,14 @@ Phase 7 implements the chart ownership requirement through the shared renderer
 semantic canvas colors. Activity is now the decision timeline: no-trade and
 stand-down steps expose their stable reason code, decision identity, evidence
 hash, and an evidence-bound local “Ask Coqui why” action. The operations floor
-uses six fixed persisted read models. Phase 9 pairs them with static decorative
-characters: Coqui for host/evolution, Scout for market and event ingestion,
+uses six fixed persisted read models. Phase 9 pairs them with a shared family of
+code-native robot portraits: Coqui for host/evolution, Scout for market and event ingestion,
 Darwin for research, Guard for risk, Courier for routing and paper execution,
 and Advisor for explanations and allowlisted navigation. A subsystem with no
-row says “unavailable”; it does not receive a synthetic status, motion,
-progress, or character activity. Status text, timestamps, and evidence
+row says “unavailable”; it does not receive a synthetic status or progress.
+Distinct accessories communicate role, while restrained blink, signal, and
+attention treatments only mirror the recorded state and stop in reduced/no-motion
+modes. Status text, timestamps, and evidence
 identities remain authoritative in every theme and motion mode.
 
 Decision markers are asset-scoped through immutable v74 evidence links. Global
