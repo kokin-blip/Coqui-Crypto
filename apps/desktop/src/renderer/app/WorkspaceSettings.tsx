@@ -2,6 +2,8 @@ import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { presentAction } from '@coqui/ui-kit';
 
 import { useCommand } from '../query/use-command.js';
+import { useChannel } from '../query/use-channel.js';
+import { useState } from 'react';
 import { WorkspaceModeControl } from './WorkspaceModeControl.js';
 import { customPanelPatch, presetPatch } from './overview-presets.js';
 
@@ -16,6 +18,10 @@ export function WorkspaceSettings({
   readonly preferences: Workspace;
 }): React.JSX.Element {
   const command = useCommand(client, 'accounts.workspace.set', INVALIDATIONS);
+  const person = useChannel(client, 'app.person', {});
+  const setPerson = useCommand(client, 'app.person.set', ['app.person', 'app.onboarding.status']);
+  const restart = useCommand(client, 'app.onboarding.restart', ['app.onboarding.status']);
+  const [name, setName] = useState('');
   const action = presentAction(command.state, { idle: '', pending: 'Saving workspace preference…' });
   const save = (patch: Parameters<typeof command.run>[0]['patch']): void => {
     void command.run({ commandId: crypto.randomUUID(), patch });
@@ -64,6 +70,11 @@ export function WorkspaceSettings({
       <fieldset className="settings-toggle-grid"><legend>Advanced Overview panels</legend>{Object.entries({ strategyDetail: 'Strategy detail', strategyComparison: 'Strategy comparison', recentActivity: 'Recent activity', proposalPreview: 'Proposal preview', healthStrip: 'Health strip', negativeFindings: 'Negative findings' } as const).map(([key, label]) => <label key={key}><input type="checkbox" checked={preferences.advancedOverviewPanels[key as keyof Workspace['advancedOverviewPanels']]} disabled={action.disabled} onChange={() => save(customPanelPatch(preferences.advancedOverviewPanels, key as keyof Workspace['advancedOverviewPanels']))} /> {label}</label>)}</fieldset>
       <div className="settings-toggle-grid"><label><input type="checkbox" checked={preferences.overviewBenchmarkVisible} disabled={action.disabled} onChange={() => save({ overviewBenchmarkVisible: !preferences.overviewBenchmarkVisible })} /> Show Overview benchmark</label><label><input type="checkbox" checked={preferences.marketVolumeVisible} disabled={action.disabled} onChange={() => save({ marketVolumeVisible: !preferences.marketVolumeVisible })} /> Show market volume</label></div>
       <button type="button" className="button-secondary" disabled={action.disabled} onClick={() => save(presetPatch('research_grid'))}>Restore Research Grid</button>
+      <section className="workspace-setup-controls" aria-labelledby="personal-setup-heading">
+        <div><strong id="personal-setup-heading">Personal setup</strong><small>Your local display name is separate from portfolio profiles and is never sent to an AI provider.</small></div>
+        <label>What Coqui calls you<input value={name} maxLength={40} placeholder={person.kind === 'ready' ? person.value.displayName ?? 'Name' : 'Name'} onChange={(event) => setName(event.target.value)} /></label>
+        <div className="coinbase-action-row"><button type="button" className="button-secondary" disabled={name.trim().length === 0 || setPerson.state.kind === 'pending'} onClick={() => { void setPerson.run({ commandId: crypto.randomUUID(), displayName: name }); setName(''); }}>Save name</button><button type="button" className="button-quiet" disabled={restart.state.kind === 'pending'} onClick={() => void restart.run({ commandId: crypto.randomUUID() })}>Restart guided setup</button></div>
+      </section>
       <span className="sr-only" aria-live="polite">{action.liveMessage}</span>
     </div>
   );

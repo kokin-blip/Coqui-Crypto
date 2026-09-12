@@ -35,6 +35,10 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'connections.list': { refetchIntervalMs: false, staleTimeMs: 30 * SECOND },
   'connections.status': { refetchIntervalMs: false, staleTimeMs: 30 * SECOND },
   'connections.connect-file': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'connections.robinhood.keypair.begin': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'connections.robinhood.keypair.status': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'connections.robinhood.keypair.complete': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'connections.robinhood.keypair.cancel': { refetchIntervalMs: false, staleTimeMs: 0 },
   'connections.rename': { refetchIntervalMs: false, staleTimeMs: 0 },
   'connections.disconnect': { refetchIntervalMs: false, staleTimeMs: 0 },
   'connections.sync': { refetchIntervalMs: false, staleTimeMs: 0 },
@@ -45,6 +49,8 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'app.chart.workspace.set': { refetchIntervalMs: false, staleTimeMs: 0 },
   'advisor.providers': { refetchIntervalMs: false, staleTimeMs: 30 * SECOND },
   'advisor.provider.connect': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'advisor.provider.connect-copied': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'advisor.provider.verify': { refetchIntervalMs: false, staleTimeMs: 0 },
   'advisor.provider.disconnect': { refetchIntervalMs: false, staleTimeMs: 0 },
   'advisor.context.prepare': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
   'advisor.facts.generate': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
@@ -151,6 +157,13 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'accounts.workspace': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
   'accounts.workspace.set': { refetchIntervalMs: false, staleTimeMs: 0 },
   'app.status-rail': { refetchIntervalMs: 30 * SECOND, staleTimeMs: 10 * SECOND },
+  'app.person': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
+  'app.person.set': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'app.onboarding.status': { refetchIntervalMs: false, staleTimeMs: 15 * SECOND },
+  'app.onboarding.skip': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'app.onboarding.restart': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'app.onboarding.complete': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'app.profile-readiness': { refetchIntervalMs: 30 * SECOND, staleTimeMs: 10 * SECOND },
 };
 
 /** Total polls per hour across every channel, for the review in UI-UX §5. */

@@ -10,6 +10,7 @@ export interface AdvisorProviderRequest {
 export interface AdvisorProvider {
   readonly name: AdvisorProviderName;
   readonly model: string;
+  verify?(apiKey: string): Promise<'verified' | 'unauthorized' | 'billing_required' | 'rate_limited' | 'provider_unavailable' | 'verification_inconclusive'>;
   generate(request: AdvisorProviderRequest): Promise<string>;
 }
 
@@ -24,6 +25,19 @@ function answer(value: unknown): string {
 class HttpAdvisorProvider implements AdvisorProvider {
   constructor(readonly name: AdvisorProviderName, readonly model: string,
     private readonly http: HttpClient) {}
+  async verify(apiKey: string): Promise<'verified' | 'unauthorized' | 'billing_required' | 'rate_limited' | 'provider_unavailable' | 'verification_inconclusive'> {
+    const result = this.name === 'openai'
+      ? await this.http.getJson('https://api.openai.com/v1/models', { headers: { authorization: `Bearer ${apiKey}` } })
+      : this.name === 'anthropic'
+        ? await this.http.getJson('https://api.anthropic.com/v1/models', { headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' } })
+        : await this.http.getJson('https://generativelanguage.googleapis.com/v1beta/models', { headers: { 'x-goog-api-key': apiKey } });
+    if (result.ok) return 'verified';
+    if (result.status === 401 || result.status === 403) return 'unauthorized';
+    if (result.status === 402) return 'billing_required';
+    if (result.status === 429) return 'rate_limited';
+    if (result.reason === 'network' || result.reason === 'timeout' || result.status >= 500) return 'provider_unavailable';
+    return 'verification_inconclusive';
+  }
   async generate(request: AdvisorProviderRequest): Promise<string> {
     if (this.name === 'openai') {
       const result = await this.http.postJson<{ output_text?: string }>('https://api.openai.com/v1/responses', {

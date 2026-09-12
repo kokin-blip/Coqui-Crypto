@@ -1,7 +1,6 @@
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { formatPercent, riskBadge, validationBadge } from '@coqui/ui-kit';
 
-import { NegativeFindings } from './NegativeFindings.js';
 import { SurfaceState } from './SurfaceState.js';
 import { TrackTable } from './TrackTable.js';
 import { useChannel, type ChannelState } from '../query/use-channel.js';
@@ -166,8 +165,6 @@ export function Scoreboard({
           Live execution is not available in this build, and meeting the gate would not enable it.
         </p>
       </div>
-
-      {detail === 'full' && <NegativeFindings client={client} />}
 
       {detail === 'full' && <div>
         <h3 className="mb-1 font-semibold">Provenance</h3>

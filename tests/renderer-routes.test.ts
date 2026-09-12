@@ -33,6 +33,6 @@ describe('renderer route registry', () => {
   it('keeps portfolio and paper subroutes in their persistent sections', () => {
     expect(routeSection('portfolio/tax')).toBe('portfolio/holdings');
     expect(routeSection('paper/orders')).toBe('paper/overview');
-    expect(routeSection('research')).toBe('research');
+    expect(routeSection('research')).toBe('strategies');
   });
 });

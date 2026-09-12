@@ -19,6 +19,15 @@ submission path.
   reading it back for exact verification, and only then removing the old entry.
 - Disconnect removes the selected connection's current secret. Immutable account
   and portfolio snapshots remain as historical evidence.
+- Robinhood guided setup persists only an opaque setup ID and public key in SQLite.
+  Its generated private seed stays in a temporary profile-scoped keychain entry,
+  expires after 30 minutes, and is removed on cancellation or verified completion.
+  On restart, the host restores only the public setup metadata after confirming the
+  matching profile-scoped keychain entry still exists; private material never crosses IPC.
+- Copied Robinhood and Advisor keys are read by Electron main only after the user
+  activates an import command. The renderer receives status, never clipboard text.
+  Advisor keys are verified before storage and the clipboard is cleared only when
+  the user opts in and its content is still unchanged.
 
 Coinbase connections reject trade or transfer permission. The Robinhood Crypto
 adapter exposes bounded authenticated reads and deliberately exports no real

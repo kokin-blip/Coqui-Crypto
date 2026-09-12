@@ -56,7 +56,7 @@ describe('the ladder is derived, never stored', () => {
   });
 
   it('always describes every rung, including the ones not active', () => {
-    const result = view([10_000, 10_100]);
+    const result = view(Array.from({ length: 40 }, (_, index) => 10_000 + index * 5));
     // A ladder showing only the current rung teaches the user that the absence
     // of a warning means nothing was checked.
     expect(result.ladder.map((rung) => rung.stage)).toEqual([
@@ -76,10 +76,19 @@ describe('a short history says so', () => {
     // it renders identically to a real measurement unless it is labelled.
     expect(result.insufficientHistory).toBe(true);
     expect(result.sampleCount).toBe(2);
+    expect(result.assessmentState).toBe('unassessed');
+    expect(result.stage).toBeNull();
+    expect(result.exposureScale).toBeNull();
+    expect(result.drawdownPct).toBeNull();
+    expect(result.expectedShortfallPct).toBeNull();
+    expect(result.ladder.every((rung) => !rung.active)).toBe(true);
   });
 
   it('stops flagging once there is enough', () => {
-    expect(view(Array.from({ length: 40 }, () => 10_000)).insufficientHistory).toBe(false);
+    const result = view(Array.from({ length: 40 }, () => 10_000));
+    expect(result.insufficientHistory).toBe(false);
+    expect(result.assessmentState).toBe('assessed');
+    expect(result.stage).toBe('normal');
   });
 });
 
@@ -113,7 +122,14 @@ describe('the gate cannot be edited from the UI', () => {
       'accounts.profile.switch',
       'accounts.settings.set',
       'accounts.workspace.set',
+      'app.person.set',
+      'app.onboarding.skip',
+      'app.onboarding.restart',
+      'app.onboarding.complete',
       'connections.connect-file',
+      'connections.robinhood.keypair.begin',
+      'connections.robinhood.keypair.complete',
+      'connections.robinhood.keypair.cancel',
       'connections.rename',
       'connections.disconnect',
       'connections.sync',
@@ -127,6 +143,8 @@ describe('the gate cannot be edited from the UI', () => {
       'advisor.facts.generate',
       'advisor.navigation',
       'advisor.provider.connect',
+      'advisor.provider.connect-copied',
+      'advisor.provider.verify',
       'advisor.provider.disconnect',
       'chart-extensions.install',
       'chart-extensions.install.pick',

@@ -4,3 +4,4 @@ export * from './dashboard.js';
 export * from './deletion.js';
 export * from './duplication.js';
 export * from './manifest.js';
+export * from './person.js';

@@ -56,7 +56,9 @@ const statusRailSchema = z
     executionPermitted: z.boolean(),
     killSwitchEngaged: z.boolean(),
     killSwitchReason: z.enum(['risk_hard_stop', 'safety_stop']).nullable(),
+    riskAssessmentState: z.enum(['assessed', 'unassessed']),
     riskStage: z.string().min(1).max(64).nullable(),
+    portfolioState: z.enum(['complete', 'incomplete', 'unavailable']),
     activeJobCount: z.number().int().nonnegative(),
     scheduledJobCount: z.number().int().nonnegative(),
     reconciliation: z
@@ -90,7 +92,8 @@ export const riskChannelSchemas = {
     response: z
       .strictObject({
         asOfMs: epochMillisecondsSchema,
-        stage: z.enum(['normal', 'caution', 'defense', 'hard_stop']),
+        assessmentState: z.enum(['assessed', 'unassessed']),
+        stage: z.enum(['normal', 'caution', 'defense', 'hard_stop']).nullable(),
         ladder: z
           .array(
             z
@@ -104,9 +107,9 @@ export const riskChannelSchemas = {
           )
           .max(8)
           .readonly(),
-        exposureScale: z.number().min(0).max(1),
-        drawdownPct: z.number(),
-        expectedShortfallPct: z.number(),
+        exposureScale: z.number().min(0).max(1).nullable(),
+        drawdownPct: z.number().nullable(),
+        expectedShortfallPct: z.number().nullable(),
         realizedVolatilityPct: z.number().nullable(),
         forecastVolatilityPct: z.number().nullable(),
         volatilityRatio: z.number().nullable(),

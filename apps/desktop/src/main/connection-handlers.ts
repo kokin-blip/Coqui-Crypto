@@ -1,3 +1,5 @@
+import { generateKeyPairSync, randomUUID } from 'node:crypto';
+
 import {
   migrateConnectionSecretAlias,
   migrateLegacyConnectionSecret,
@@ -5,6 +7,7 @@ import {
   parseRobinhoodCryptoCredentialsJson,
   parseStoredRobinhoodCryptoCredentials,
   parseStoredCoinbaseCredentials,
+  readConnectionSecret,
   removeConnectionSecret,
   serializeCoinbaseCredentials,
   serializeRobinhoodCryptoCredentials,
@@ -33,7 +36,12 @@ import {
   listProfileConnections,
   listProfileConnectionsV2,
   listProviderAccountRefs,
+  getRobinhoodConnectionSetup,
+  getLatestPendingRobinhoodConnectionSetup,
+  listExpiredRobinhoodConnectionSetups,
+  saveRobinhoodConnectionSetup,
   saveProfileConnectionV2,
+  updateRobinhoodConnectionSetupStatus,
   type Db,
 } from '@coqui/storage';
 
@@ -43,6 +51,25 @@ export interface ConnectionFileSelection {
   readonly contents: string;
 }
 
+const ROBINHOOD_SETUP_TTL_MS = 30 * 60 * 1_000;
+function pendingRobinhoodScope(profileId: string, setupId: string): string {
+  return `pending.${profileId}.${setupId}`;
+}
+
+function createRobinhoodKeyPair(): { readonly publicKeyBase64: string; readonly privateKeyBase64: string } {
+  const pair = generateKeyPairSync('ed25519');
+  const publicDer = pair.publicKey.export({ format: 'der', type: 'spki' });
+  const privateDer = pair.privateKey.export({ format: 'der', type: 'pkcs8' });
+  return Object.freeze({ publicKeyBase64: publicDer.subarray(publicDer.length - 32).toString('base64'),
+    privateKeyBase64: privateDer.subarray(privateDer.length - 32).toString('base64') });
+}
+
+function pendingRobinhoodView(setup: { readonly id: string; readonly publicKeyBase64: string;
+  readonly expiresAtMs: number }) {
+  return Object.freeze({ setupId: setup.id, publicKeyBase64: setup.publicKeyBase64,
+    expiresAtMs: setup.expiresAtMs, privateKeyLocation: 'os_keychain' as const });
+}
+
 function secretRef(connection: ProfileConnectionV2) {
   return { profileId: connection.profileId, connectionId: connection.id,
     provider: connection.provider, credentialType: 'api_credentials' as const, schemaVersion: 2 as const };
@@ -50,6 +77,19 @@ function secretRef(connection: ProfileConnectionV2) {
 
 function view(connection: ProfileConnectionV2, database: Db) {
   const snapshot = getLatestConnectionAccountSnapshotV2(connection.profileId, connection.id, database);
+  const unified = getLatestUnifiedPortfolioSnapshotV2(connection.profileId, false, database);
+  const health = snapshot?.health ?? 'unknown' as const;
+  const connectionAvailable = connection.status !== 'disconnected';
+  const lifecycle = Object.freeze({ schemaVersion: 2 as const,
+    credentialVerification: connection.status === 'active' ? 'verified' as const : connection.status === 'disconnected' ? 'unavailable' as const : 'failed' as const,
+    synchronization: snapshot === null ? 'never' as const : snapshot.health === 'unavailable' ? 'failed' as const : 'succeeded' as const,
+    health,
+    valuation: snapshot === null ? 'unavailable' as const : snapshot.complete ? 'complete' as const : 'incomplete' as const,
+    portfolioReadiness: connectionAvailable && snapshot?.complete === true && unified?.complete === true
+      ? 'ready' as const : 'blocked' as const,
+    reasonCode: !connectionAvailable ? 'connection_disconnected' : snapshot?.failureReason ??
+      (snapshot === null ? 'sync_required' : snapshot.complete ? null : 'valuation_incomplete'),
+  });
   return Object.freeze({
     id: connection.id, profileId: connection.profileId, provider: connection.provider,
     label: connection.label, credentialFingerprint: connection.credentialFingerprint,
@@ -58,8 +98,9 @@ function view(connection: ProfileConnectionV2, database: Db) {
     accountSuffixes: listProviderAccountRefs(connection.profileId, connection.id, database)
       .map((account) => account.maskedDisplaySuffix),
     lastSuccessfulSyncAtMs: snapshot?.health === 'healthy' ? snapshot.asOfMs : null,
-    permissions: snapshot?.permissions ?? null, health: snapshot?.health ?? 'unknown' as const,
+    permissions: snapshot?.permissions ?? null, health,
     valuationComplete: snapshot?.complete ?? false, failureReason: snapshot?.failureReason ?? null,
+    lifecycle,
     readOnly: true as const, liveExecutionAuthority: false as const,
   });
 }
@@ -71,6 +112,7 @@ export function createConnectionHandlers(input: {
   readonly priceSource: PriceSource;
   readonly secrets?: SecretStore;
   readonly pickConnectionFile?: (provider: 'coinbase' | 'robinhood_crypto') => Promise<ConnectionFileSelection | null>;
+  readonly readClipboardText?: () => string;
   readonly coinbaseAcquirer?: CoinbaseEvidenceAcquirer;
   readonly coinbaseVerifier?: CoinbaseCredentialVerifier;
   readonly robinhoodClientFactory?: (credentials: Parameters<typeof createRobinhoodCryptoReadClient>[0]) => RobinhoodCryptoReadClient;
@@ -150,8 +192,34 @@ export function createConnectionHandlers(input: {
     return result;
   }
 
+  async function expireRobinhoodSetups(): Promise<void> {
+    if (input.secrets === undefined) return;
+    const now = input.clock.nowMs();
+    for (const setup of listExpiredRobinhoodConnectionSetups(input.profileId, now, input.database)) {
+      const removed = await input.secrets.remove('robinhood-pending-private-key', pendingRobinhoodScope(input.profileId, setup.id));
+      if (removed.ok) updateRobinhoodConnectionSetupStatus(input.profileId, setup.id, 'pending', 'expired', now, input.database);
+    }
+  }
+
+  async function pendingRobinhoodStatus() {
+    await expireRobinhoodSetups();
+    const setup = getLatestPendingRobinhoodConnectionSetup(input.profileId, input.clock.nowMs(), input.database);
+    if (setup === null) return { state: 'none' as const, setup: null, reasonCode: null };
+    const view = pendingRobinhoodView(setup);
+    if (input.secrets === undefined) return { state: 'unavailable' as const, setup: view,
+      reasonCode: 'secret_store_unavailable' as const };
+    const pending = await input.secrets.read('robinhood-pending-private-key',
+      pendingRobinhoodScope(input.profileId, setup.id));
+    if (!pending.ok) return { state: 'unavailable' as const, setup: view,
+      reasonCode: 'secret_store_unavailable' as const };
+    if (pending.value === null) return { state: 'unavailable' as const, setup: view,
+      reasonCode: 'pending_key_unavailable' as const };
+    return { state: 'pending' as const, setup: view, reasonCode: null };
+  }
+
   return {
     'connections.list': async () => {
+      await expireRobinhoodSetups();
       await ensureLegacyCoinbase();
       return { ok: true, value: { asOfMs: input.clock.nowMs(),
         connections: listProfileConnectionsV2(input.profileId, input.database).map((item) => view(item, input.database)) } };
@@ -161,6 +229,7 @@ export function createConnectionHandlers(input: {
       return connection === null ? { ok: false, issues: [{ path: ['connectionId'], code: 'connection_not_found' }] }
         : { ok: true, value: view(connection, input.database) };
     },
+    'connections.robinhood.keypair.status': async () => ({ ok: true, value: await pendingRobinhoodStatus() }),
     'connections.connect-file': async (payload: { readonly commandId: string; readonly provider: 'coinbase' | 'robinhood_crypto'; readonly label?: string }) => once(payload.commandId, async () => {
       if (input.secrets === undefined || input.pickConnectionFile === undefined) return { ok: false, issues: [{ path: [], code: 'connection_file_unavailable' }] };
       const selected = await input.pickConnectionFile(payload.provider);
@@ -196,6 +265,68 @@ export function createConnectionHandlers(input: {
       }
       const synced = await sync(connection);
       return synced.ok ? synced : { ok: true, value: view(connection, input.database) };
+    }),
+    'connections.robinhood.keypair.begin': async (payload: { readonly commandId: string }) => once(payload.commandId, async () => {
+      if (input.secrets === undefined) return { ok: false, issues: [{ path: [], code: 'secret_store_unavailable' }] };
+      const existing = await pendingRobinhoodStatus();
+      if (existing.state === 'pending' && existing.setup !== null) return { ok: true, value: existing.setup };
+      if (existing.state === 'unavailable' && existing.reasonCode === 'secret_store_unavailable') {
+        return { ok: false, issues: [{ path: [], code: 'secret_store_unavailable' }] };
+      }
+      const setupId = randomUUID(), now = input.clock.nowMs(), pair = createRobinhoodKeyPair();
+      const written = await input.secrets.write('robinhood-pending-private-key', pair.privateKeyBase64,
+        pendingRobinhoodScope(input.profileId, setupId));
+      if (!written.ok) return { ok: false, issues: [{ path: [], code: 'secret_store_unavailable' }] };
+      try {
+        saveRobinhoodConnectionSetup({ id: setupId, profileId: input.profileId, publicKeyBase64: pair.publicKeyBase64,
+          status: 'pending', createdAtMs: now, expiresAtMs: now + ROBINHOOD_SETUP_TTL_MS, completedAtMs: null }, input.database);
+      } catch {
+        await input.secrets.remove('robinhood-pending-private-key', pendingRobinhoodScope(input.profileId, setupId));
+        return { ok: false, issues: [{ path: [], code: 'connection_setup_storage_rejected' }] };
+      }
+      return { ok: true, value: pendingRobinhoodView({ id: setupId,
+        publicKeyBase64: pair.publicKeyBase64, expiresAtMs: now + ROBINHOOD_SETUP_TTL_MS }) };
+    }),
+    'connections.robinhood.keypair.complete': async (payload: { readonly commandId: string; readonly setupId: string; readonly label?: string }) => once(payload.commandId, async () => {
+      if (input.secrets === undefined || input.readClipboardText === undefined) return { ok: false, issues: [{ path: [], code: 'clipboard_or_secret_store_unavailable' }] };
+      await expireRobinhoodSetups();
+      const setup = getRobinhoodConnectionSetup(input.profileId, payload.setupId, input.database);
+      if (setup === null || setup.status !== 'pending' || setup.expiresAtMs <= input.clock.nowMs()) {
+        return { ok: false, issues: [{ path: ['setupId'], code: 'robinhood_setup_unavailable' }] };
+      }
+      const pending = await input.secrets.read('robinhood-pending-private-key', pendingRobinhoodScope(input.profileId, setup.id));
+      if (!pending.ok || pending.value === null) return { ok: false, issues: [{ path: [], code: 'robinhood_pending_key_unavailable' }] };
+      const parsed = parseRobinhoodCryptoCredentialsJson(JSON.stringify({ apiKey: input.readClipboardText().trim(), privateKeyBase64: pending.value }));
+      if (!parsed.ok) return { ok: false, issues: [{ path: [], code: `robinhood_${parsed.code}` }] };
+      const now = input.clock.nowMs(), connection = profileConnectionV2(input.profileId, 'robinhood_crypto',
+        sha256Hex(parsed.credentials.apiKey), now, payload.label);
+      const permanent = await writeConnectionSecret(input.secrets, secretRef(connection), serializeRobinhoodCryptoCredentials(parsed.credentials));
+      if (!permanent.ok) return { ok: false, issues: [{ path: [], code: 'secret_store_unavailable' }] };
+      const verified = await readConnectionSecret(input.secrets, secretRef(connection));
+      if (!verified.ok || verified.value !== serializeRobinhoodCryptoCredentials(parsed.credentials)) {
+        await removeConnectionSecret(input.secrets, secretRef(connection));
+        return { ok: false, issues: [{ path: [], code: 'secret_verification_failed' }] };
+      }
+      saveProfileConnectionV2(connection, input.database);
+      const synced = await sync(connection);
+      if (!synced.ok) {
+        await removeConnectionSecret(input.secrets, secretRef(connection));
+        saveProfileConnectionV2({ ...connection, status: 'attention_required', updatedAtMs: input.clock.nowMs() }, input.database);
+        return synced;
+      }
+      const removed = await input.secrets.remove('robinhood-pending-private-key', pendingRobinhoodScope(input.profileId, setup.id));
+      if (!removed.ok) return { ok: false, issues: [{ path: [], code: 'pending_secret_cleanup_failed' }] };
+      updateRobinhoodConnectionSetupStatus(input.profileId, setup.id, 'pending', 'completed', input.clock.nowMs(), input.database);
+      return synced;
+    }),
+    'connections.robinhood.keypair.cancel': async (payload: { readonly commandId: string; readonly setupId: string }) => once(payload.commandId, async () => {
+      if (input.secrets === undefined) return { ok: false, issues: [{ path: [], code: 'secret_store_unavailable' }] };
+      const setup = getRobinhoodConnectionSetup(input.profileId, payload.setupId, input.database);
+      if (setup === null || setup.status !== 'pending') return { ok: false, issues: [{ path: ['setupId'], code: 'robinhood_setup_unavailable' }] };
+      const removed = await input.secrets.remove('robinhood-pending-private-key', pendingRobinhoodScope(input.profileId, setup.id));
+      if (!removed.ok) return { ok: false, issues: [{ path: [], code: 'secret_store_unavailable' }] };
+      updateRobinhoodConnectionSetupStatus(input.profileId, setup.id, 'pending', 'cancelled', input.clock.nowMs(), input.database);
+      return { ok: true, value: { outcome: 'cancelled' as const } };
     }),
     'connections.rename': async (payload: { readonly commandId: string; readonly connectionId: string; readonly label: string }) => once(payload.commandId, async () => {
       const connection = getProfileConnectionV2(input.profileId, payload.connectionId, input.database);

@@ -1,4 +1,5 @@
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
+import { useState } from 'react';
 
 import { useChannel } from '../query/use-channel.js';
 import { SurfaceState } from './SurfaceState.js';
@@ -51,6 +52,7 @@ export function NegativeFindings({
   readonly client: CoquiClient;
 }): React.JSX.Element {
   const ledger = useChannel(client, 'research.negative-findings', {});
+  const [query, setQuery] = useState('');
 
   if (ledger.kind === 'loading') return <SurfaceState kind="loading" title="Loading findings" compact />;
   if (ledger.kind !== 'ready') {
@@ -58,22 +60,30 @@ export function NegativeFindings({
   }
 
   const { findings, ledgerNote } = ledger.value;
+  const needle = query.trim().toLocaleLowerCase();
+  const visible = needle.length === 0 ? findings : findings.filter((finding) =>
+    `${finding.title} ${finding.summary} ${finding.reference} ${finding.outcome}`.toLocaleLowerCase().includes(needle));
 
   return (
     <section aria-labelledby="findings-heading" className="space-y-2" data-review-target="negative-findings">
       <h3 id="findings-heading" className="font-semibold">
-        NEGATIVE FINDINGS ({findings.length})
+        Findings archive ({findings.length})
       </h3>
       <p className="opacity-70">
         Ideas that were tested and did not earn a place in the defaults. Each one is a
         result, not a gap.
       </p>
 
+      <label className="findings-search"><span>Search recorded findings</span>
+        <input type="search" value={query} onChange={(event) => setQuery(event.target.value)}
+          placeholder="Title, outcome, or evidence reference" /></label>
+
       <ul>
-        {findings.map((finding) => (
+        {visible.map((finding) => (
           <Row key={finding.id} finding={finding} />
         ))}
       </ul>
+      {visible.length === 0 && <p className="opacity-70">No recorded findings match this search.</p>}
 
       {/* The predecessor's own two enumerations disagree; saying so is cheaper
           than silently dropping or merging an entry. */}

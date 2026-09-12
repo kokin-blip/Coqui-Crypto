@@ -6,9 +6,15 @@ import { readChartWorkspaceCommand, saveChartWorkspaceCommand, type Db } from '@
 import type { ChannelHandlers } from './dispatch.js';
 
 interface Command { readonly commandId: string }
+const ADVISOR_FAILURE_CODES = new Set([
+  'invalid_api_key', 'secret_store_unavailable', 'clipboard_unavailable', 'unauthorized',
+  'billing_required', 'rate_limited', 'provider_unavailable', 'verification_inconclusive',
+]);
 export function createAdvisorHandlers(input: { readonly profileId: string; readonly database: Db;
   readonly clock: Clock; readonly http: HttpClient; readonly secrets?: SecretStore;
-  readonly saveHistory?: (data: string) => Promise<'saved' | 'cancelled'> }): ChannelHandlers {
+  readonly saveHistory?: (data: string) => Promise<'saved' | 'cancelled'>;
+  readonly readClipboardText?: () => string;
+  readonly clearClipboardIfMatches?: (expected: string) => void }): ChannelHandlers {
   const secrets = input.secrets ?? createMemorySecretStore(), providers = createHttpAdvisorProviders(input.http);
   const service = new AdvisorAnalystService({ ...input, providers, secrets });
   const decisions = new AdvisorDecisionEvidenceService({ ...input, providers, secrets });
@@ -22,11 +28,25 @@ export function createAdvisorHandlers(input: { readonly profileId: string; reado
       saveChartWorkspaceCommand({ commandId: payload.commandId, profileId: input.profileId,
         requestHash, outcomeJson: JSON.stringify(outcome), recordedAtMs: input.clock.nowMs() }, input.database);
       return outcome;
-    } catch { return { ok: false as const, issues: [{ code: 'advisor_request_failed' }] }; }
+    } catch (error) {
+      const code = error instanceof TypeError && ADVISOR_FAILURE_CODES.has(error.message)
+        ? error.message : 'advisor_request_failed';
+      return { ok: false as const, issues: [{ code }] };
+    }
   };
   return {
     'advisor.providers': async () => ({ ok: true, value: await service.providers() }),
     'advisor.provider.connect': (payload: Command & { readonly provider: 'gemini' | 'openai' | 'anthropic'; readonly apiKey: string }) => command(payload, { ...payload, apiKey: sha256Hex(payload.apiKey) }, () => service.connectProvider(payload.provider, payload.apiKey)),
+    'advisor.provider.connect-copied': (payload: Command & { readonly provider: 'gemini' | 'openai' | 'anthropic'; readonly clearClipboard: boolean }) =>
+      command(payload, payload, async () => {
+        if (input.readClipboardText === undefined) throw new TypeError('clipboard_unavailable');
+        const apiKey = input.readClipboardText().trim();
+        const result = await service.connectProviderVerified(payload.provider, apiKey);
+        if (payload.clearClipboard) input.clearClipboardIfMatches?.(apiKey);
+        return result;
+      }),
+    'advisor.provider.verify': (payload: Command & { readonly provider: 'gemini' | 'openai' | 'anthropic' }) =>
+      command(payload, payload, () => service.verifyProvider(payload.provider)),
     'advisor.provider.disconnect': (payload: Command & { readonly provider: 'gemini' | 'openai' | 'anthropic' }) => command(payload, payload, () => service.disconnectProvider(payload.provider)),
     'advisor.context.prepare': (payload: Parameters<typeof service.prepare>[0]) => {
       const prepared = service.prepare(payload);

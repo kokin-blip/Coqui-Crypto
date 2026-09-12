@@ -7,6 +7,7 @@ import { ExecutionPolicySettings } from './ExecutionPolicySettings.js';
 import { PaperCampaignSettings } from './PaperCampaignSettings.js';
 import { SurfaceState } from './SurfaceState.js';
 import { useChannel } from '../query/use-channel.js';
+import { useCommand } from '../query/use-command.js';
 import { WorkspaceSettings } from './WorkspaceSettings.js';
 
 type SettingsView = ChannelResponse<'accounts.settings'>;
@@ -35,6 +36,7 @@ function AdvisorSettingsSummary({ client }: { readonly client: CoquiClient }): R
 
 function DiagnosticsSettings({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const incidents = useChannel(client, 'app.incidents', { limit: 20 });
+  const importEvents = useCommand(client, 'market-events.ingest-file', ['market-events.timeline']);
   return <section className="settings-section" aria-labelledby="diagnostics-settings-heading">
     <div><p className="section-label">Recorded runtime evidence</p><h3 id="diagnostics-settings-heading">Diagnostics</h3></div>
     {incidents.kind === 'loading' && <SurfaceState kind="loading" title="Loading diagnostics" compact />}
@@ -42,6 +44,7 @@ function DiagnosticsSettings({ client }: { readonly client: CoquiClient }): Reac
     {incidents.kind === 'ready' && incidents.value.incidents.length === 0 && <SurfaceState kind="empty" title="No runtime incidents recorded" detail="Warnings and recovery evidence will appear here when the host records them." compact />}
     {incidents.kind === 'ready' && incidents.value.incidents.length > 0 && <ul className="settings-incident-list">{incidents.value.incidents.map((incident) => <li key={incident.id}><span><strong>{incident.kind.replaceAll('_', ' ')}</strong><small>{incident.source} · {new Date(incident.occurredAt).toLocaleString()}</small></span><span className={`connection-badge connection-${incident.severity === 'warning' ? 'attention_required' : 'unavailable'}`}>{incident.resolvedAt === null ? incident.severity : 'resolved'}</span></li>)}</ul>}
     <details className="settings-details"><summary>What is collected</summary><p>Sanitized runtime failures, recovery outcomes, and safety stops. Credentials, raw authorization headers, and decrypted Advisor conversations are excluded.</p></details>
+    <details className="settings-details"><summary>Local event fixtures</summary><p>Import validated local JSON for temporal replay and research triggers. Event data cannot influence strategy targets or execution.</p><button type="button" className="button-secondary" disabled={importEvents.state.kind === 'pending'} onClick={() => void importEvents.run({ commandId: crypto.randomUUID(), sourceId: 'local.diagnostics', confirmed: true })}>{importEvents.state.kind === 'pending' ? 'Validating…' : 'Import event fixture'}</button>{importEvents.state.kind === 'failed' && <SurfaceState kind="error" title="Fixture not imported" detail={importEvents.state.codes.join(', ')} compact />}</details>
   </section>;
 }
 

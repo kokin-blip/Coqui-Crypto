@@ -66,6 +66,21 @@ export class AdvisorAnalystService {
     if (!result.ok) throw new TypeError('secret_store_unavailable');
     return { provider, credentialState: 'connected' as const };
   }
+  async connectProviderVerified(provider: AnalystProvider, apiKey: string) {
+    if (apiKey.length < 20 || apiKey.length > 512) throw new TypeError('invalid_api_key');
+    const verification = await this.input.providers[provider].verify?.(apiKey) ?? 'verification_inconclusive';
+    if (verification !== 'verified') throw new TypeError(verification);
+    const result = await this.input.secrets.write(PROVIDER_KEYS[provider], apiKey, this.input.profileId);
+    if (!result.ok) throw new TypeError('secret_store_unavailable');
+    return { provider, credentialState: 'connected' as const, verification: 'verified' as const };
+  }
+  async verifyProvider(provider: AnalystProvider) {
+    const secret = await this.input.secrets.read(PROVIDER_KEYS[provider], this.input.profileId);
+    if (!secret.ok) throw new TypeError('secret_store_unavailable');
+    if (secret.value === null) return { provider, credentialState: 'disconnected' as const, verification: 'unauthorized' as const };
+    const verification = await this.input.providers[provider].verify?.(secret.value) ?? 'verification_inconclusive';
+    return { provider, credentialState: verification === 'verified' ? 'connected' as const : 'disconnected' as const, verification };
+  }
   async disconnectProvider(provider: AnalystProvider) {
     const result = await this.input.secrets.remove(PROVIDER_KEYS[provider], this.input.profileId);
     if (!result.ok) throw new TypeError('secret_store_unavailable');

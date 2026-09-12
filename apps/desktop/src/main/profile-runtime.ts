@@ -7,11 +7,13 @@ import {
   CoinbaseConnectionService,
   createProfileOperationGate,
   createCoinbaseViewOnlyVerifier,
+  PersonIdentityService,
+  ProfileReadinessService,
   type CoinbaseCredentialVerifier,
   type AccountProfileView,
   type PreparedProfileContext,
 } from '@coqui/services';
-import { createFileProfileManifestStore } from '@coqui/storage';
+import { createFilePersonIdentityStore, createFileProfileManifestStore } from '@coqui/storage';
 
 import { createRuntime, type CoquiRuntime, type RuntimeOptions } from './composition.js';
 import type { ChannelHandlers, ServiceResult } from './dispatch.js';
@@ -53,6 +55,10 @@ export function createRuntimeProfileController(
   const clock = new SystemClock(options.runtime.readSystemTime ?? (() => Date.now()));
   const manifestStore = createFileProfileManifestStore(
     join(options.dataDirectory, 'wallet-profiles.json'),
+  );
+  const person = new PersonIdentityService(
+    createFilePersonIdentityStore(join(options.dataDirectory, 'coqui-person.json')),
+    clock,
   );
   const profileOperationGate = createProfileOperationGate();
   let current: CoquiRuntime | null = null;
@@ -138,7 +144,32 @@ export function createRuntimeProfileController(
 
   const switchOutcomes = new Map<string, ServiceResult<unknown>>();
   const coinbaseOutcomes = new Map<string, ServiceResult<unknown>>();
+  const personOutcomes = new Map<string, ServiceResult<unknown>>();
+  const personCommand = (commandId: string, execute: () => ServiceResult<unknown>): ServiceResult<unknown> => {
+    const prior = personOutcomes.get(commandId);
+    if (prior !== undefined) return prior;
+    const result = execute();
+    personOutcomes.set(commandId, result);
+    return result;
+  };
   const globalHandlers: ChannelHandlers = {
+    'app.person': () => person.status(),
+    'app.person.set': (payload: { readonly commandId: string; readonly displayName: string }) =>
+      personCommand(payload.commandId, () => person.setDisplayName(payload.displayName)),
+    'app.onboarding.status': () => person.status(),
+    'app.onboarding.skip': (payload: { readonly commandId: string }) =>
+      personCommand(payload.commandId, () => person.skip()),
+    'app.onboarding.restart': (payload: { readonly commandId: string }) =>
+      personCommand(payload.commandId, () => person.restart()),
+    'app.onboarding.complete': (payload: { readonly commandId: string }) =>
+      personCommand(payload.commandId, () => {
+        const active = profiles.active();
+        if (current === null || !active.ok || active.value === null ||
+            !new ProfileReadinessService(current.database, clock).view(active.value.id).portfolioReady) {
+          return serviceFailure('portfolio_not_ready');
+        }
+        return person.markPortfolioReady();
+      }),
     'accounts.coinbase.status': async () => {
       if (coinbaseConnection === null) return serviceFailure('secret_store_unavailable');
       const active = profiles.active();

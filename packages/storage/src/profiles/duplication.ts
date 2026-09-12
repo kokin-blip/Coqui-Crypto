@@ -290,6 +290,8 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
             BEGIN SELECT RAISE(ABORT, 'advisor navigation audit is append-only'); END;
         `);
 
+        const robinhoodSetupRows = countQuery(target, 'SELECT COUNT(*) AS count FROM robinhood_connection_setups_v1 WHERE profile_id = ?', input.targetProfileId.toLowerCase());
+        target.prepare('DELETE FROM robinhood_connection_setups_v1 WHERE profile_id = ?').run(input.targetProfileId.toLowerCase());
         const connectionRows = countQuery(target, `
           SELECT
             (SELECT COUNT(*) FROM profile_connections_v1 WHERE profile_id = ?) +
@@ -448,10 +450,8 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
         target.prepare(
           `DELETE FROM app_settings WHERE key IN (${credentialMetadataKeys.map(() => '?').join(', ')})`,
         ).run(...credentialMetadataKeys);
-        const excludedTransientRowCount = pendingImportRows + scheduleRows +
-          privateAdvisorRows + connectionRows;
-        const excludedTransientRowCountWithRouting = excludedTransientRowCount + routingRows +
-          connectionCampaignRows + authorityRows + hostAuthorityRows;
+        const excludedTransientRowCount = pendingImportRows + scheduleRows + privateAdvisorRows + robinhoodSetupRows + connectionRows;
+        const excludedTransientRowCountWithRouting = excludedTransientRowCount + routingRows + connectionCampaignRows + authorityRows + hostAuthorityRows;
         if (!Number.isSafeInteger(excludedTransientRowCountWithRouting)) throw new RangeError('Duplication exclusion count overflow.');
         target.exec('COMMIT');
 

@@ -33,11 +33,12 @@ export interface RiskLadderRung {
 
 export interface RiskDashboardView {
   readonly asOfMs: number;
-  readonly stage: RiskLadderStage;
+  readonly assessmentState: 'assessed' | 'unassessed';
+  readonly stage: RiskLadderStage | null;
   readonly ladder: readonly RiskLadderRung[];
-  readonly exposureScale: number;
-  readonly drawdownPct: number;
-  readonly expectedShortfallPct: number;
+  readonly exposureScale: number | null;
+  readonly drawdownPct: number | null;
+  readonly expectedShortfallPct: number | null;
   readonly realizedVolatilityPct: number | null;
   readonly forecastVolatilityPct: number | null;
   readonly volatilityRatio: number | null;
@@ -134,16 +135,20 @@ export class RiskDashboardService {
     const newest = snapshots.at(-1)?.at ?? null;
     const state = resolveRiskControlState({ equityValues });
 
+    const insufficientHistory = equityValues.length < MIN_OBSERVATIONS;
     return Object.freeze({
       asOfMs,
-      stage: state.stage,
-      ladder: ladderFor(state),
-      exposureScale: state.exposureScale,
-      drawdownPct: state.drawdownPct,
-      expectedShortfallPct: state.expectedShortfallPct,
-      realizedVolatilityPct: state.realizedVolatilityPct,
-      forecastVolatilityPct: state.forecastVolatilityPct,
-      volatilityRatio: state.volatilityRatio,
+      assessmentState: insufficientHistory ? 'unassessed' : 'assessed',
+      stage: insufficientHistory ? null : state.stage,
+      ladder: insufficientHistory
+        ? ladderFor(state).map((rung) => Object.freeze({ ...rung, active: false }))
+        : ladderFor(state),
+      exposureScale: insufficientHistory ? null : state.exposureScale,
+      drawdownPct: insufficientHistory ? null : state.drawdownPct,
+      expectedShortfallPct: insufficientHistory ? null : state.expectedShortfallPct,
+      realizedVolatilityPct: insufficientHistory ? null : state.realizedVolatilityPct,
+      forecastVolatilityPct: insufficientHistory ? null : state.forecastVolatilityPct,
+      volatilityRatio: insufficientHistory ? null : state.volatilityRatio,
       maxGrossExposurePct: state.maxGrossExposurePct,
       maxTurnoverPct: state.maxTurnoverPct,
       maxTradeCount: state.maxTradeCount,
@@ -156,7 +161,7 @@ export class RiskDashboardService {
       snapshotAgeMs: newest === null ? null : Math.max(0, asOfMs - newest),
       // Said outright rather than left for the reader to infer from a small
       // number: a drawdown computed over three points looks like a measurement.
-      insufficientHistory: equityValues.length < MIN_OBSERVATIONS,
+      insufficientHistory,
     });
   }
 }

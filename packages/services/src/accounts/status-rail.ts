@@ -7,6 +7,7 @@ import {
 } from '@coqui/core';
 import {
   getSetting,
+  getLatestUnifiedPortfolioSnapshotV2,
   getWalletRiskState,
   listCoinbaseBalanceDiscrepancies,
   listWalletSchedules,
@@ -55,7 +56,9 @@ export interface StatusRailView {
   readonly killSwitchEngaged: boolean;
   /** Which halt source engaged, so the rail can say why rather than only that. */
   readonly killSwitchReason: 'risk_hard_stop' | 'safety_stop' | null;
+  readonly riskAssessmentState: 'assessed' | 'unassessed';
   readonly riskStage: string | null;
+  readonly portfolioState: 'complete' | 'incomplete' | 'unavailable';
   /** Scheduled wallet jobs currently holding a lease. */
   readonly activeJobCount: number;
   readonly scheduledJobCount: number;
@@ -116,6 +119,7 @@ export class StatusRailService {
 
     try {
       const risk = getWalletRiskState(profileId, this.#database);
+      const portfolio = getLatestUnifiedPortfolioSnapshotV2(profileId, false, this.#database);
       const schedules = listWalletSchedules(MAX_DISCREPANCIES, this.#database);
       const discrepancies = listCoinbaseBalanceDiscrepancies(this.#database, MAX_DISCREPANCIES);
       const lastRunAtMs = epochFromSetting(
@@ -135,10 +139,15 @@ export class StatusRailService {
         value: {
           profileId,
           mode,
-          executionPermitted: canExecute(mode, killSwitchEngaged),
+          executionPermitted: canExecute(mode, killSwitchEngaged) && risk !== null &&
+            portfolio?.complete === true && lastRunAtMs !== null,
           killSwitchEngaged,
           killSwitchReason: killSwitch.reason,
+          riskAssessmentState: risk === null ? 'unassessed' : 'assessed',
           riskStage: risk?.stage ?? null,
+          portfolioState: portfolio === null
+            ? 'unavailable'
+            : portfolio.complete ? 'complete' : 'incomplete',
           // A lease that has expired is not a running job. Counting by owner
           // alone would report a crashed worker as still working.
           activeJobCount: schedules.filter(

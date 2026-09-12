@@ -8,6 +8,7 @@ import { EvidenceInspector } from './EvidenceInspector.js';
 import { Sidebar } from './Sidebar.js';
 import { SimpleNavigation } from './SimpleNavigation.js';
 import { StatusRail } from './StatusRail.js';
+import { Onboarding } from './Onboarding.js';
 import { useRoute } from './use-route.js';
 import { useWorkspace, WorkspaceProvider } from './WorkspaceContext.js';
 
@@ -29,6 +30,7 @@ function WorkspaceApp({ client }: { readonly client: CoquiClient }): React.JSX.E
   return (
     <div className={`app-shell workspace-${mode} shell-${shellState}`}>
       <PreferenceBoundary client={client} />
+      <Onboarding client={client} />
       {mode === 'advanced' ? <Sidebar route={route} /> : <SimpleNavigation route={route} />}
       <div className="app-workspace">
         <StatusRail client={client} />

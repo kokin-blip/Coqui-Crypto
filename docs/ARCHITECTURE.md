@@ -779,6 +779,22 @@ market timestamp, and chart markers use `firstSeenAt`, never `publishedAt`.
 
 ## 10. Security boundaries
 
+### 10.0 Guided setup boundary
+
+Guided onboarding is renderer presentation over host-owned services. The app-wide
+`PersonIdentityV1` file contains only a local display name and onboarding timestamps;
+it is independent from profile identity and never enters evidence, logs, credentials,
+or provider prompts. `ProfileReadinessV1` is derived from current connection,
+portfolio, allocation, market, paper-campaign, and decision evidence. No renderer
+command can mark a financial readiness step complete.
+
+Migration 76 stores only expiring Robinhood setup IDs, public keys, and lifecycle
+timestamps. Main generates the Ed25519 pair and places the pending private seed in
+the OS keychain. Completion reads the copied API key after an explicit command,
+verifies account access, writes and rereads the permanent connection secret, then
+removes the pending entry. Advisor copied-key setup follows the same host-owned
+clipboard rule and stores a key only after an adapter-owned verification probe.
+
 ```
 Zone 1  Renderer (untrusted)
           contextIsolation: true · nodeIntegration: false · sandbox: true

@@ -4,12 +4,9 @@ const destinations: readonly { readonly route: AppRoute; readonly label: string 
   { route: 'overview', label: 'Overview' },
   { route: 'portfolio/holdings', label: 'Portfolio' },
   { route: 'markets', label: 'Markets' },
-  { route: 'events', label: 'Events' },
   { route: 'paper/overview', label: 'Paper' },
-  { route: 'strategies', label: 'Strategies' },
-  { route: 'research', label: 'Research' },
-  { route: 'activity', label: 'Activity' },
-  { route: 'risk', label: 'Risk' },
+  { route: 'strategies', label: 'Strategy' },
+  { route: 'activity', label: 'Operations' },
   { route: 'settings', label: 'Settings' },
 ];
 

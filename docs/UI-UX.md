@@ -310,6 +310,35 @@ instead of substituting zeros.
 
 ## 7. Phase 5 verification
 
+### 6.10 Guided onboarding and readiness
+
+New installations receive a short, skippable flow for a device-local name, the
+read-only/paper-only boundary, one optional exchange connection, and one optional
+Advisor provider. Coinbase uses host-owned JSON selection and Robinhood defaults to
+host-generated keys; both distinguish credential verification from a complete,
+nonempty valued portfolio. Provider setup is never required for local explanations.
+An unexpired Robinhood public-key step resumes after application restart. If its
+matching keychain entry is unavailable, the setup is shown as unrecoverable and the
+user is guided to start over rather than registering a mismatched key.
+
+After dismissal, Overview shows a seven-step readiness guide derived from durable
+services through the first paper decision. Each blocked step presents one reason and
+one recovery action. Portfolio defaults to authoritative connected balances, while
+imported tax lots remain under a separate Accounting view and are never added to
+connected quantities. Top-level navigation groups Events under Markets, Research
+under Strategy, and Risk under Operations while retaining legacy route hashes.
+The readiness card also exposes the current host task, latest durable action,
+current blocker, next action, and a link to recorded evidence. The global rail's
+notification disclosure is derived from unread alerts and actionable Activity
+events; it never creates synthetic notifications. The Research workspace owns a
+searchable Findings Archive so the same negative-result wall is not repeated in
+the Strategy summary.
+
+Markets, Research, Risk, and Overview are loaded at the route boundary. This
+keeps chart and evidence-heavy modules out of the initial renderer bundle until
+the user opens the relevant workspace; a production bundle comparison is part
+of the release check.
+
 Phase 5 is not complete until:
 
 1. The scoreboard passes task-based review: identify the leader, its evidence,

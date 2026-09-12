@@ -66,5 +66,8 @@ export function routeDefinition(route: AppRoute): RouteDefinition {
 export function routeSection(route: AppRoute): AppRoute {
   if (route.startsWith('portfolio/')) return 'portfolio/holdings';
   if (route.startsWith('paper/')) return 'paper/overview';
+  if (route === 'events') return 'markets';
+  if (route === 'research') return 'strategies';
+  if (route === 'risk') return 'activity';
   return route;
 }

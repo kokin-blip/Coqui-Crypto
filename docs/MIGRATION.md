@@ -413,6 +413,11 @@ still requires a separate human note and host-owned approval event. Profile
 duplication rewrites these non-secret evidence links without granting the copy
 credentials or execution authority.
 
+Migration 76 adds expiring, non-secret Robinhood guided-setup records. Existing
+connection, portfolio, paper, research, and Advisor evidence is untouched. Generated
+private keys remain in the OS keychain and are not part of database backup or profile
+duplication content.
+
 Each step leaves the repo working.
 
 ```

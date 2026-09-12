@@ -153,9 +153,25 @@ function Header({ view }: { readonly view: PortfolioView }): React.JSX.Element {
 
 export function Portfolio({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const portfolio = useChannel(client, 'portfolio.view', {});
+  const connected = useChannel(client, 'portfolio.current', {});
   const workspace = useWorkspace();
   const workspaceCommand = useCommand(client, 'accounts.workspace.set', WORKSPACE_INVALIDATIONS);
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
+  const [section, setSection] = useState<'connected' | 'accounting'>('connected');
+
+  const sectionHeader = <><header className="route-heading"><div><p className="eyebrow">Portfolio</p><h2 id="portfolio-heading">{section === 'connected' ? 'Connected holdings' : 'Portfolio accounting'}</h2></div></header><div className="surface-toolbar portfolio-section-tabs" role="tablist" aria-label="Portfolio sections"><button type="button" role="tab" aria-selected={section === 'connected'} onClick={() => setSection('connected')}>Connected holdings</button><button type="button" role="tab" aria-selected={section === 'accounting'} onClick={() => setSection('accounting')}>Accounting and tax lots</button></div></>;
+
+  if (section === 'connected') {
+    if (connected.kind === 'loading') return <section aria-labelledby="portfolio-heading" className="space-y-4">{sectionHeader}<SurfaceState kind="loading" title="Loading connected holdings" /></section>;
+    if (connected.kind !== 'ready') return <section aria-labelledby="portfolio-heading" className="space-y-4">{sectionHeader}<SurfaceState kind="error" title="Connected portfolio unavailable" detail="The latest account snapshot could not be read." /></section>;
+    if (connected.value === null) return <section aria-labelledby="portfolio-heading" className="space-y-4">{sectionHeader}<SurfaceState kind="empty" title="No connected portfolio yet" detail="Add a read-only Coinbase or Robinhood connection and synchronize it to see authoritative balances." action={{ label: 'Open Connections', href: '#/settings' }} /></section>;
+    const currentAllocation = connected.value.exposures.flatMap((exposure) => exposure.valueUsd === null ? [] : [{ id: exposure.exposureKey, label: exposure.exposureKey, valueUsd: exposure.valueUsd }]);
+    return <section aria-labelledby="portfolio-heading" className="space-y-4">{sectionHeader}
+      <div className="connected-portfolio-summary"><div><p className="eyebrow">Authoritative connected total</p><strong><Money value={connected.value.totalValueUsd} /></strong><small>{connected.value.complete ? 'Complete valuation' : 'Valuation incomplete — unavailable values are not treated as zero'}</small></div><div><p className="eyebrow">As of</p><strong>{new Date(connected.value.asOfMs).toLocaleString()}</strong><small>{connected.value.connectionSnapshotIds.length} connection snapshot{connected.value.connectionSnapshotIds.length === 1 ? '' : 's'}</small></div></div>
+      <div className="portfolio-master-detail"><div className="portfolio-table-scroll"><table className="w-full text-left"><caption className="sr-only">Authoritative connected holdings and account attribution</caption><thead><tr><th scope="col">Asset</th><th scope="col" className="text-right">Quantity</th><th scope="col" className="text-right">Value</th><th scope="col">Connection attribution</th></tr></thead><tbody>{connected.value.exposures.map((exposure) => <tr key={exposure.exposureKey}><th scope="row">{exposure.exposureKey}</th><td className="text-right tabular-nums">{formatQuantity(exposure.quantity) ?? exposure.quantity}</td><td className="text-right tabular-nums"><Money value={exposure.valueUsd} /></td><td>{[...new Set(exposure.contributions.map((item) => item.provider === 'coinbase' ? 'Coinbase' : 'Robinhood Crypto'))].join(', ')}</td></tr>)}</tbody></table></div><aside className="holding-detail"><p className="section-label">Allocation</p><h3>Connected balances</h3><AllocationRing data={currentAllocation} /></aside></div>
+      <p className="opacity-70">Imported tax lots are kept separately under Accounting and are never added to these quantities.</p>
+    </section>;
+  }
 
   if (portfolio.kind === 'loading') return <SurfaceState kind="loading" title="Loading portfolio" />;
 
@@ -173,9 +189,7 @@ export function Portfolio({ client }: { readonly client: CoquiClient }): React.J
 
   return (
     <section aria-labelledby="portfolio-heading" className="space-y-4">
-      <h2 id="portfolio-heading" className="font-semibold">
-        Portfolio accounting
-      </h2>
+      {sectionHeader}
 
       <div className="surface-toolbar">
         <span>Imported tax-lot view</span>

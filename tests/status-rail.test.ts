@@ -32,7 +32,7 @@ function riskState(overrides: Partial<Parameters<typeof saveWalletRiskState>[0]>
 }
 
 describe('StatusRailService', () => {
-  it('reports paper mode and permitted execution on a clean profile', () => {
+  it('reports a new profile as unassessed rather than nominal', () => {
     const db = openDatabase(':memory:');
     const result = service(db).status(PROFILE);
 
@@ -40,8 +40,10 @@ describe('StatusRailService', () => {
     if (!result.ok) return;
     // Invariant 1: paper is the only executable mode in this build.
     expect(result.value.mode).toBe('paper');
-    expect(result.value.executionPermitted).toBe(true);
+    expect(result.value.executionPermitted).toBe(false);
     expect(result.value.killSwitchEngaged).toBe(false);
+    expect(result.value.riskAssessmentState).toBe('unassessed');
+    expect(result.value.portfolioState).toBe('unavailable');
     expect(result.value.costModelBps).toBeGreaterThan(0);
     db.close();
   });
@@ -58,6 +60,7 @@ describe('StatusRailService', () => {
     // alongside permitted execution.
     expect(result.value.executionPermitted).toBe(false);
     expect(result.value.riskStage).toBe('stage_2');
+    expect(result.value.riskAssessmentState).toBe('assessed');
     db.close();
   });
 });

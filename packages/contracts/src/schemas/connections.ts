@@ -17,7 +17,19 @@ const connection = z.strictObject({
   }).readonly().nullable(),
   health: z.enum(['healthy', 'degraded', 'unavailable', 'unknown']),
   valuationComplete: z.boolean(), failureReason: z.string().min(1).max(80).nullable(),
+  lifecycle: z.strictObject({ schemaVersion: z.literal(2),
+    credentialVerification: z.enum(['verified','failed','unavailable']),
+    synchronization: z.enum(['never','succeeded','failed']),
+    health: z.enum(['healthy','degraded','unavailable','unknown']),
+    valuation: z.enum(['complete','incomplete','unavailable']),
+    portfolioReadiness: z.enum(['ready','blocked']), reasonCode: z.string().max(80).nullable(),
+  }).readonly(),
   readOnly: z.literal(true), liveExecutionAuthority: z.literal(false),
+}).readonly();
+
+const robinhoodPendingSetup = z.strictObject({
+  setupId: z.string().uuid(), publicKeyBase64: z.string().min(40).max(48),
+  expiresAtMs: epochMillisecondsSchema, privateKeyLocation: z.literal('os_keychain'),
 }).readonly();
 
 const contribution = z.strictObject({
@@ -50,6 +62,24 @@ export const connectionChannelSchemas = {
   },
   'connections.connect-file': {
     request: z.strictObject({ commandId, provider, label: z.string().min(1).max(80).optional() }).readonly(), response: connection,
+  },
+  'connections.robinhood.keypair.begin': {
+    request: z.strictObject({ commandId }).readonly(),
+    response: robinhoodPendingSetup,
+  },
+  'connections.robinhood.keypair.status': {
+    request: z.strictObject({}).readonly(),
+    response: z.strictObject({ state: z.enum(['none','pending','unavailable']),
+      setup: robinhoodPendingSetup.nullable(),
+      reasonCode: z.enum(['secret_store_unavailable','pending_key_unavailable']).nullable() }).readonly(),
+  },
+  'connections.robinhood.keypair.complete': {
+    request: z.strictObject({ commandId, setupId: z.string().uuid(), label: z.string().min(1).max(80).optional() }).readonly(),
+    response: connection,
+  },
+  'connections.robinhood.keypair.cancel': {
+    request: z.strictObject({ commandId, setupId: z.string().uuid() }).readonly(),
+    response: z.strictObject({ outcome: z.literal('cancelled') }).readonly(),
   },
   'connections.rename': {
     request: z.strictObject({ commandId, connectionId: sha256HexSchema, label: z.string().min(1).max(80) }).readonly(), response: connection,

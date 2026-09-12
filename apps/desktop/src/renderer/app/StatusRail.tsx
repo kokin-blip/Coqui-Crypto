@@ -1,6 +1,6 @@
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { StatusEmphasis } from '@coqui/ui-kit';
-import { Activity, CircleDollarSign, Database, Radio, ShieldCheck, UserRound } from 'lucide-react';
+import { Activity, Bell, CircleDollarSign, Database, Radio, ShieldCheck, UserRound } from 'lucide-react';
 
 import { useChannel } from '../query/use-channel.js';
 import { ProfileSwitcher } from './ProfileSwitcher.js';
@@ -68,6 +68,27 @@ function StrategyDecision({ client }: { readonly client: CoquiClient }): React.J
   );
 }
 
+function NotificationCenter({ client }: { readonly client: CoquiClient }): React.JSX.Element {
+  const alerts = useChannel(client, 'alerts.view', {});
+  const activity = useChannel(client, 'activity.feed', { limit: 12, cursor: null });
+  const alertItems = alerts.kind === 'ready' ? alerts.value.alerts.filter((item) => item.readAt === null)
+    .map((item) => ({ id: item.id, title: item.reasonCode.replaceAll('_', ' '), at: item.occurredAt })) : [];
+  const operationItems = activity.kind === 'ready' ? activity.value.events
+    .filter((item) => item.status === 'failed' || item.status === 'blocked' ||
+      ['fill', 'research', 'host'].includes(item.kind))
+    .map((item) => ({ id: item.id, title: item.title, at: item.occurredAt })) : [];
+  const items = [...alertItems, ...operationItems].sort((a, b) => b.at - a.at).slice(0, 6);
+  return <details className="status-details notification-center">
+    <summary aria-label={`Open notifications, ${items.length} recent`} title="Notifications"><Bell size={14} aria-hidden="true" />
+      <span>Notifications</span>{items.length > 0 && <strong>{items.length}</strong>}</summary>
+    <div className="status-details-panel">
+      {items.length === 0 ? <span>No unread or actionable evidence</span> : items.map((item) =>
+        <a key={item.id} href="#/activity"><span>{item.title}</span><small>{formatLocalTime(item.at)}</small></a>)}
+      <a href="#/activity">Open all operational evidence</a>
+    </div>
+  </details>;
+}
+
 export function StatusRail({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const rail = useChannel(client, 'app.status-rail', {});
 
@@ -111,6 +132,7 @@ export function StatusRail({ client }: { readonly client: CoquiClient }): React.
             <span><ShieldCheck size={13} aria-hidden="true" /> risk stage {view.riskStage ?? 'unassessed'}</span>
           </div>
         </details>
+        <NotificationCenter client={client} />
         <CommandMenu />
       </div>
     </header>

@@ -23,6 +23,16 @@ export const advisorAnalystChannelSchemas = {
       apiKey: z.string().min(20).max(512), confirmed: z.literal(true) }).readonly(),
     response: z.strictObject({ provider, credentialState: z.literal('connected') }).readonly(),
   },
+  'advisor.provider.connect-copied': {
+    request: z.strictObject({ commandId: z.string().uuid(), provider,
+      clearClipboard: z.boolean(), confirmed: z.literal(true) }).readonly(),
+    response: z.strictObject({ provider, credentialState: z.literal('connected'), verification: z.literal('verified') }).readonly(),
+  },
+  'advisor.provider.verify': {
+    request: z.strictObject({ commandId: z.string().uuid(), provider }).readonly(),
+    response: z.strictObject({ provider, credentialState: z.enum(['connected', 'disconnected']),
+      verification: z.enum(['verified','unauthorized','billing_required','rate_limited','provider_unavailable','verification_inconclusive']) }).readonly(),
+  },
   'advisor.provider.disconnect': {
     request: z.strictObject({ commandId: z.string().uuid(), provider, confirmed: z.literal(true) }).readonly(),
     response: z.strictObject({ provider, credentialState: z.literal('disconnected') }).readonly(),

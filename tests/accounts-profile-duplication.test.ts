@@ -121,6 +121,10 @@ function createSource(root: string, profileId = 'main'): string {
      content_json, content_hash, created_at)
     VALUES (?, ?, 'connection-source', 'coinbase', 5, 1, 'healthy', '{}', ?, 5)`)
     .run('2'.repeat(64), profileId, '3'.repeat(64));
+  database.prepare(`INSERT INTO robinhood_connection_setups_v1
+    (id,profile_id,public_key_base64,status,created_at_ms,expires_at_ms,completed_at_ms)
+    VALUES ('00000000-0000-4000-8000-000000000099',?,?, 'pending',5,100,NULL)`)
+    .run(profileId, Buffer.alloc(32, 1).toString('base64'));
   database.prepare(`INSERT INTO unified_portfolio_snapshots_v1
     (id, profile_id, as_of, complete, content_json, content_hash, created_at)
     VALUES (?, ?, 5, 1, '{}', ?, 5)`).run('4'.repeat(64), profileId, '5'.repeat(64));
@@ -156,10 +160,10 @@ describe('profile database duplication storage', { timeout: 20_000 }, () => {
     expect(result).toEqual({
       ok: true,
       evidence: expect.objectContaining({
-        schemaVersion: 75,
-        profileScopedTableCount: 85,
-        rewrittenRowCount: 12,
-        excludedTransientRowCount: 10,
+        schemaVersion: 76,
+        profileScopedTableCount: 86,
+        rewrittenRowCount: 13,
+        excludedTransientRowCount: 11,
         clearedCredentialMetadataCount: 4,
         integrityVerified: true,
       }),
@@ -195,6 +199,8 @@ describe('profile database duplication storage', { timeout: 20_000 }, () => {
     expect(target.prepare('SELECT COUNT(*) AS count FROM advisor_messages_v1').get())
       .toEqual({ count: 0 });
     expect(target.prepare('SELECT COUNT(*) AS count FROM advisor_audit_events_v1').get())
+      .toEqual({ count: 0 });
+    expect(target.prepare('SELECT COUNT(*) AS count FROM robinhood_connection_setups_v1').get())
       .toEqual({ count: 0 });
     expect(target.prepare('SELECT model_policy_id FROM advisor_profile_configs_v1').get())
       .toEqual({ model_policy_id: 'advisor_balanced_v1' });
@@ -316,10 +322,10 @@ describe('accounts profile duplication service', { timeout: 20_000 }, () => {
           lastOpenedAtMs: 50,
           order: 1,
         },
-        schemaVersion: 75,
-        profileScopedTableCount: 85,
-        rewrittenRowCount: 12,
-        excludedTransientRowCount: 10,
+        schemaVersion: 76,
+        profileScopedTableCount: 86,
+        rewrittenRowCount: 13,
+        excludedTransientRowCount: 11,
         clearedCredentialMetadataCount: 4,
         credentialsCopied: false,
         providerFingerprintsCopied: false,

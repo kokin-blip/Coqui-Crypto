@@ -37,6 +37,8 @@ export * from './research-evolution.js';
 export * from './research-orchestration.js';
 export * from './research-evidence.js';
 export * from './research-study-runs.js';
+export * from './robinhood-setups.js';
+export * from './robinhood-setups.js';
 export * from './settings.js';
 export * from './trials.js';
 export * from './universe.js';

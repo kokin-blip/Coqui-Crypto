@@ -2,7 +2,7 @@ import { basename, dirname, join } from 'node:path';
 import { readFile, stat, writeFile } from 'node:fs/promises';
 
 import { createOsKeyringSecretStore, type SecretStore } from '@coqui/adapters';
-import { app, BrowserWindow, dialog, ipcMain, Notification, shell } from 'electron';
+import { app, BrowserWindow, clipboard, dialog, ipcMain, Notification, shell } from 'electron';
 
 import { createDispatcher } from './dispatch.js';
 import { createRuntime, type CoquiRuntime } from './composition.js';
@@ -119,6 +119,10 @@ async function start(): Promise<void> {
       notifier: osNotifier,
       coinGeckoApiKey: await coinGeckoApiKey(secrets),
       secrets,
+      readClipboardText: () => clipboard.readText(),
+      clearClipboardIfMatches(expected) {
+        if (clipboard.readText().trim() === expected) clipboard.clear();
+      },
       async pickConnectionFile(provider) {
         const result = await dialog.showOpenDialog({
           title: provider === 'coinbase' ? 'Connect Coinbase' : 'Connect Robinhood Crypto',

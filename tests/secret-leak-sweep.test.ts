@@ -227,6 +227,9 @@ describe('the sweep covers the whole registry', () => {
       || channel === 'app.chart.snapshot.save'
       || channel === 'app.chart.workspace'
       || channel === 'app.chart.workspace.set'
+      || channel.startsWith('app.person')
+      || channel.startsWith('app.onboarding.')
+      || channel === 'app.profile-readiness'
       || channel.startsWith('chart-extensions.')
       || channel.startsWith('advisor.')
       || channel.startsWith('connections.')

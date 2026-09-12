@@ -1,4 +1,5 @@
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
+import { AlertTriangle, ShieldX } from 'lucide-react';
 import { useEffect,useState } from 'react';
 
 import { useChannel } from '../query/use-channel.js';
@@ -72,7 +73,9 @@ export function Risk({ client }: { readonly client: CoquiClient }): React.JSX.El
       <h2 id="risk-heading" className="font-semibold">
         Risk controls
         <span className="ml-3 font-normal opacity-70">
-          stage {STAGE_LABEL[view.stage]} · sizing ×{view.exposureScale}
+          {view.assessmentState === 'unassessed'
+            ? 'UNASSESSED · paper actions stand down'
+            : `stage ${STAGE_LABEL[view.stage!]} · sizing ×${view.exposureScale}`}
         </span>
       </h2>
 
@@ -80,16 +83,16 @@ export function Risk({ client }: { readonly client: CoquiClient }): React.JSX.El
         // Said outright. A drawdown computed over three observations looks
         // exactly like a measurement, and reads as one.
         <p role="note" className="risk-callout warning">
-          <span aria-hidden="true">⚠ </span>
+          <AlertTriangle aria-hidden="true" size={17} />
           {view.sampleCount} equity observation{view.sampleCount === 1 ? '' : 's'} — too few for
-          these figures to describe anything yet. The ladder still applies; the numbers do not
-          mean much.
+          a meaningful assessment. Measured risk and permitted exposure remain unavailable until
+          enough paper-equity history exists.
         </p>
       )}
 
       {view.blockReason !== null && (
         <p role="alert" className="risk-callout danger">
-          <span aria-hidden="true">■ </span>
+          <ShieldX aria-hidden="true" size={17} />
           Trading halted: {view.blockReason}
         </p>
       )}
@@ -112,7 +115,7 @@ export function Risk({ client }: { readonly client: CoquiClient }): React.JSX.El
           <dd>{percent(view.forecastVolatilityPct)}</dd>
         </div>
         <div>
-          <dt className="opacity-70">max gross exposure</dt>
+          <dt className="opacity-70">configured gross cap</dt>
           <dd>{percent(view.maxGrossExposurePct, 0)}</dd>
         </div>
         <div>
@@ -134,8 +137,8 @@ export function Risk({ client }: { readonly client: CoquiClient }): React.JSX.El
       <section className="risk-visuals" aria-labelledby="risk-visuals-heading"><div className="panel-heading"><div>
         <p className="eyebrow">Current measured state</p><h3 id="risk-visuals-heading">Exposure, volatility, and drawdown</h3></div></div>
         <div className="risk-meter-grid">
-          <label><span>Permitted exposure</span><strong>{percent(view.exposureScale*100)}</strong><progress max={100} value={view.exposureScale*100} /></label>
-          <label><span>Drawdown</span><strong>{percent(view.drawdownPct)}</strong><progress max={100} value={boundedRiskMeter(view.drawdownPct)??0} /></label>
+          <label><span>Permitted exposure</span><strong>{view.exposureScale === null ? 'Unavailable' : percent(view.exposureScale * 100)}</strong>{view.exposureScale === null ? <em>Assessment required</em> : <progress max={100} value={view.exposureScale * 100} />}</label>
+          <label><span>Drawdown</span><strong>{percent(view.drawdownPct)}</strong>{boundedRiskMeter(view.drawdownPct) === null ? <em>Unavailable</em> : <progress max={100} value={boundedRiskMeter(view.drawdownPct)!} />}</label>
           <label><span>Realized volatility</span><strong>{percent(view.realizedVolatilityPct)}</strong>{boundedRiskMeter(view.realizedVolatilityPct)===null?<em>Unavailable</em>:<progress max={100} value={boundedRiskMeter(view.realizedVolatilityPct)!} />}</label>
           <label><span>Forecast volatility</span><strong>{percent(view.forecastVolatilityPct)}</strong>{boundedRiskMeter(view.forecastVolatilityPct)===null?<em>Unavailable</em>:<progress max={100} value={boundedRiskMeter(view.forecastVolatilityPct)!} />}</label>
         </div>

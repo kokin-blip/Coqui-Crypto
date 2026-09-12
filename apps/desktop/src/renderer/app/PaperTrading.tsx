@@ -24,6 +24,7 @@ export function PaperTrading({
   const policy = useChannel(client, 'paper.execution.policy', {});
   const proposals = useChannel(client, 'paper.execution.proposals', { limit: 100 });
   const prepare = useCommand(client, 'paper.execution.prepare', PREPARE_INVALIDATIONS);
+  const readiness = useChannel(client, 'app.profile-readiness', {});
   const presentation = presentAction(prepare.state, {
     idle: 'Prepare current rebalance', pending: 'Preparing proposal…',
   }, 'consequential');
@@ -33,6 +34,7 @@ export function PaperTrading({
   }
 
   const rows = proposals.kind === 'ready' ? proposals.value.proposals : [];
+  const unmet = readiness.kind === 'ready' ? readiness.value.steps.slice(0, 5).find((step) => step.status !== 'complete') : undefined;
   return (
     <div className="screen-stack">
       <section className="paper-control-panel">
@@ -45,7 +47,7 @@ export function PaperTrading({
           <button
             type="button"
             className="button-primary"
-            disabled={presentation.disabled}
+            disabled={presentation.disabled || unmet !== undefined}
             aria-busy={presentation.busy}
             onClick={() => void prepare.run({ commandId: crypto.randomUUID() })}
           >
@@ -53,6 +55,8 @@ export function PaperTrading({
           </button>
         )}
       </section>
+
+      {route === 'paper/overview' && unmet !== undefined && <SurfaceState kind="blocked" title="Paper preparation is not ready" detail={unmet.detail} action={{ label: unmet.actionLabel, href: unmet.route }} />}
 
       {prepare.value !== null && (
         <p className={`execution-outcome outcome-${prepare.value.status}`} role="status">

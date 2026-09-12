@@ -37,6 +37,7 @@ import {
   type RegisteredResearchDefinitionV1,
   RiskDashboardService,
   RiskEvidenceTrackerService,
+  ProfileReadinessService,
   resolveKillSwitch,
   StatusRailService,
 } from '@coqui/services';
@@ -85,7 +86,8 @@ function paperGrossEdgeLowerBoundPct(profileId: string, database: Db): number {
   return readProfitabilityEstimateEvidence(profileId, database)?.grossEdgeLowerBoundPct ?? 0;
 }
 
-export interface RuntimeOptions extends Partial<Pick<Parameters<typeof createAdvisorHandlers>[0], 'secrets' | 'saveHistory'>> {
+export interface RuntimeOptions extends Partial<Pick<Parameters<typeof createAdvisorHandlers>[0], 'secrets' | 'saveHistory' |
+  'readClipboardText' | 'clearClipboardIfMatches'>> {
   readonly databasePath: string; readonly profileId: string; readonly hostId?: string;
   /** Supplied by the composition root so `core` never reads the host clock. */
   readonly readSystemTime?: () => number;
@@ -217,6 +219,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   });
   const riskDashboard = new RiskDashboardService({ database, clock });
   const statusRail = new StatusRailService({ database, clock });
+  const profileReadiness = new ProfileReadinessService(database, clock);
 
   // The paper engine. Its decision is synchronous, so the two things it needs
   // from the outside world — market data and a holdings snapshot — are
@@ -304,10 +307,11 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     }),
     ...createConnectionHandlers({ profileId: options.profileId, database, clock, priceSource, ...(options.secrets === undefined ? {} : { secrets: options.secrets }),
       ...(options.pickConnectionFile === undefined ? {} : { pickConnectionFile: options.pickConnectionFile }), ...(options.coinbaseAcquirer === undefined ? {} : { coinbaseAcquirer: options.coinbaseAcquirer }),
-      ...(options.coinbaseVerifier === undefined ? {} : { coinbaseVerifier: options.coinbaseVerifier }) }),
+      ...(options.coinbaseVerifier === undefined ? {} : { coinbaseVerifier: options.coinbaseVerifier }),
+      ...(options.readClipboardText === undefined ? {} : { readClipboardText: options.readClipboardText }) }),
     ...createAdvisorHandlers({ profileId: options.profileId, database, clock, http,
-      ...(options.secrets === undefined ? {} : { secrets: options.secrets }),
-      ...(options.saveHistory === undefined ? {} : { saveHistory: options.saveHistory }) }),
+      ...(options.secrets === undefined ? {} : { secrets: options.secrets }), ...(options.saveHistory === undefined ? {} : { saveHistory: options.saveHistory }),
+      ...(options.readClipboardText === undefined ? {} : { readClipboardText: options.readClipboardText }), ...(options.clearClipboardIfMatches === undefined ? {} : { clearClipboardIfMatches: options.clearClipboardIfMatches }) }),
     ...createChartExtensionHandlers({ profileId: options.profileId, database, clock, ...(options.pickChartExtension === undefined ? {} : { pickPackage: options.pickChartExtension }) }),
     ...createChartSnapshotHandlers({ profileId: options.profileId, database, clock, ...(options.saveChartSnapshot === undefined ? {} : { save: options.saveChartSnapshot }) }),
     ...createChartWorkspaceHandlers({ profileId: options.profileId, database, clock }),
@@ -555,6 +559,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       value: alerts.view(options.profileId),
     }),
     'app.status-rail': () => statusRail.status(options.profileId),
+    'app.profile-readiness': () => ({ ok: true, value: profileReadiness.view(options.profileId) }),
   } as ChannelHandlers;
 
   return {

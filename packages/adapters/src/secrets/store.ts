@@ -13,7 +13,8 @@ export type SecretKey =
   | 'advisor-history-key'
   | 'coingecko-api-key'
   | 'coinmarketcap-api-key'
-  | 'robinhood-crypto-credentials';
+  | 'robinhood-crypto-credentials'
+  | 'robinhood-pending-private-key';
 
 export type SecretStoreErrorCode =
   | 'unavailable'

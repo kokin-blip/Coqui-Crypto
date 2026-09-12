@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Bot, Download, LockKeyhole, Send, Sparkles, Trash2, X } from 'lucide-react';
+import { Bot, ClipboardPaste, Download, LockKeyhole, Send, Sparkles, Trash2, X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
@@ -23,6 +23,7 @@ export function AdvisorSheet({ client, productId, bars, onClose }: {
   const removeHistory = useCommand(client, 'advisor.chat.history.delete', ['advisor.chat.history']);
   const exportHistory = useCommand(client, 'advisor.chat.history.export');
   const connectProvider = useCommand(client, 'advisor.provider.connect', ['advisor.providers']);
+  const connectCopied = useCommand(client, 'advisor.provider.connect-copied', ['advisor.providers']);
   const disconnectProvider = useCommand(client, 'advisor.provider.disconnect', ['advisor.providers']);
   const available = providers.kind === 'ready' ? providers.value.providers : [];
   const [provider, setProvider] = useState<Provider>('gemini');
@@ -37,6 +38,7 @@ export function AdvisorSheet({ client, productId, bars, onClose }: {
   const [busy, setBusy] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
   const [apiKey, setApiKey] = useState('');
+  const [clearCopiedKey, setClearCopiedKey] = useState(true);
   const [preparedContextHash, setPreparedContextHash] = useState<string | null>(null);
   const dialogRef = useRef<HTMLElement>(null);
   useDialogFocus(dialogRef, onClose);
@@ -102,7 +104,7 @@ export function AdvisorSheet({ client, productId, bars, onClose }: {
       <details className="advisor-section">
       <summary>Provider and response</summary>
       <div className="advisor-provider-row"><label>Provider<select value={provider} onChange={(event) => setProvider(event.target.value as Provider)}>{available.map((item) => <option key={item.provider} value={item.provider}>{item.provider} · {item.credentialState}</option>)}</select></label><label>Response<select value={mode} onChange={(event) => setMode(event.target.value as 'analysis' | 'scenario_ideas')}><option value="analysis">Analysis</option><option value="scenario_ideas">Scenario ideas</option></select></label></div>
-      {selected?.credentialState !== 'connected' ? <div className="advisor-connect"><label><span>{provider} API key</span><input type="password" autoComplete="off" value={apiKey} onChange={(event) => setApiKey(event.target.value)} placeholder="Stored in the OS secret store" /></label><button type="button" disabled={apiKey.length < 20 || connectProvider.state.kind === 'pending'} onClick={() => { void connectProvider.run({ commandId: crypto.randomUUID(), provider, apiKey, confirmed: true }); setApiKey(''); }}>Connect</button></div> : <button type="button" className="advisor-disconnect" onClick={() => void disconnectProvider.run({ commandId: crypto.randomUUID(), provider, confirmed: true })}>Disconnect {provider}</button>}
+      {selected?.credentialState !== 'connected' ? <div className="advisor-connect"><p>Copy a dedicated {provider} key, then import it. Coqui reads the clipboard only after you press the button; the key never enters this page.</p><button type="button" className="button-primary" disabled={connectCopied.state.kind === 'pending'} onClick={() => void connectCopied.run({ commandId: crypto.randomUUID(), provider, clearClipboard: clearCopiedKey, confirmed: true })}><ClipboardPaste size={14} />{connectCopied.state.kind === 'pending' ? 'Verifying…' : 'Import copied key'}</button><label className="onboarding-check"><input type="checkbox" checked={clearCopiedKey} onChange={(event) => setClearCopiedKey(event.target.checked)} />Clear the key afterward if the clipboard is unchanged</label><details><summary>Advanced: enter a key manually</summary><label><span>{provider} API key</span><input type="password" autoComplete="off" value={apiKey} onChange={(event) => setApiKey(event.target.value)} placeholder="Stored in the OS secret store" /></label><button type="button" disabled={apiKey.length < 20 || connectProvider.state.kind === 'pending'} onClick={() => { void connectProvider.run({ commandId: crypto.randomUUID(), provider, apiKey, confirmed: true }); setApiKey(''); }}>Connect without verification</button></details></div> : <button type="button" className="advisor-disconnect" onClick={() => void disconnectProvider.run({ commandId: crypto.randomUUID(), provider, confirmed: true })}>Disconnect {provider}</button>}
       </details>
       <div className="advisor-fact-actions"><button type="button" disabled={busy} onClick={() => void generateFacts(false)}>Generate local facts</button><button type="button" disabled={busy || selected?.credentialState !== 'connected'} onClick={() => void generateFacts(true)}>Enrich with {provider}</button></div>
       {answer !== null && <article className="advisor-answer" data-stale={answerIsStale || undefined}><header><strong>{answer.provider === 'local' ? 'Deterministic local facts' : `${answer.provider} · ${answer.model}`}</strong><span>{answerIsStale ? 'STALE' : answer.mode === 'scenario_ideas' ? 'SCENARIOS' : 'ANALYSIS'}</span></header>{answerIsStale && <p className="advisor-stale" role="status">Source context changed. Generate a new answer before relying on this analysis.</p>}<p>{answer.text}</p><footer title={exactUtcTimestamp(answer.dataTimestampMs)}>Context {answer.contextHash.slice(0, 10)}… · data {formatLocalTimestamp(answer.dataTimestampMs)}<br />Advisory only · No execution authority</footer></article>}

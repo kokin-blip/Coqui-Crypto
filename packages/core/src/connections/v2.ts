@@ -20,6 +20,16 @@ export interface ProfileConnectionV2 {
   readonly updatedAtMs: number;
 }
 
+export interface ConnectionLifecycleV2 {
+  readonly schemaVersion: 2;
+  readonly credentialVerification: 'verified' | 'failed' | 'unavailable';
+  readonly synchronization: 'never' | 'succeeded' | 'failed';
+  readonly health: 'healthy' | 'degraded' | 'unavailable' | 'unknown';
+  readonly valuation: 'complete' | 'incomplete' | 'unavailable';
+  readonly portfolioReadiness: 'ready' | 'blocked';
+  readonly reasonCode: string | null;
+}
+
 export interface ProviderAccountRefV1 {
   readonly schemaVersion: 1;
   readonly id: string;

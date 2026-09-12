@@ -1,22 +1,24 @@
 import type { CoquiClient } from '@coqui/contracts';
+import { lazy, Suspense } from 'react';
 
 import { Alerts } from './Alerts.js';
 import { Activity } from './Activity.js';
 import { Allocation } from './Allocation.js';
-import { Markets } from './Markets.js';
 import { Events } from './Events.js';
-import { Overview } from './Overview.js';
 import { OperationsFloor } from './OperationsFloor.js';
 import { PaperTrading } from './PaperTrading.js';
 import { Portfolio } from './Portfolio.js';
 import { Reconciliation } from './Reconciliation.js';
-import { Research } from './Research.js';
-import { Risk } from './Risk.js';
 import { routeDefinition, routeHash, type AppRoute } from './routes.js';
 import { Scoreboard } from './Scoreboard.js';
 import { Settings } from './Settings.js';
 import { Tax } from './Tax.js';
 import { useWorkspace } from './WorkspaceContext.js';
+
+const Markets = lazy(async () => ({ default: (await import('./Markets.js')).Markets }));
+const Overview = lazy(async () => ({ default: (await import('./Overview.js')).Overview }));
+const Research = lazy(async () => ({ default: (await import('./Research.js')).Research }));
+const Risk = lazy(async () => ({ default: (await import('./Risk.js')).Risk }));
 
 const LOCAL_TABS: Readonly<Partial<Record<AppRoute, readonly AppRoute[]>>> = {
   'portfolio/holdings': ['portfolio/holdings', 'portfolio/allocation', 'portfolio/tax', 'portfolio/reconciliation'],
@@ -26,6 +28,12 @@ const LOCAL_TABS: Readonly<Partial<Record<AppRoute, readonly AppRoute[]>>> = {
   'paper/overview': ['paper/overview', 'paper/orders', 'paper/performance'],
   'paper/orders': ['paper/overview', 'paper/orders', 'paper/performance'],
   'paper/performance': ['paper/overview', 'paper/orders', 'paper/performance'],
+  'markets': ['markets', 'events'],
+  'events': ['markets', 'events'],
+  'strategies': ['strategies', 'research'],
+  'research': ['strategies', 'research'],
+  'activity': ['activity', 'risk'],
+  'risk': ['activity', 'risk'],
 };
 
 function RouteTabs({ route }: { readonly route: AppRoute }): React.JSX.Element | null {
@@ -79,7 +87,9 @@ export function RouteScreen({
         {!integrated && <span className="screen-mode">PAPER ONLY</span>}
       </header>
       {mode === 'advanced' && <RouteTabs route={route} />}
-      <ScreenBody client={client} route={route} />
+      <Suspense fallback={<div className="panel"><span className="muted">Loading workspace…</span></div>}>
+        <ScreenBody client={client} route={route} />
+      </Suspense>
     </section>
   );
 }

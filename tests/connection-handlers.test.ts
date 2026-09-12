@@ -81,4 +81,99 @@ describe('provider-neutral connection handlers', () => {
     expect(stored).not.toContain(PRIVATE_KEY);
     database.close();
   });
+
+  it('keeps a generated Robinhood private key out of IPC and completes from an explicit clipboard read', async () => {
+    const database = openDatabase(':memory:'), secrets = createMemorySecretStore();
+    const handlers = createConnectionHandlers({ profileId: 'main', database,
+      clock: new FixedClock(1_800_000_000_000), secrets, readClipboardText: () => API_KEY,
+      robinhoodClientFactory: () => robinhoodClient(),
+      priceSource: { name: 'fixture', async spot(instruments) { return new Map(instruments.map((instrument) => [instrumentKey(instrument), {
+        priceUsd: '50000' as never, source: 'fixture', quality: 'venue_reported_last' as const,
+        observedAtMs: 1_799_999_999_000,
+      }])); } },
+    });
+    const begin = handlers['connections.robinhood.keypair.begin'] as unknown as (payload: { commandId: string }) => Promise<{ ok: true; value: { setupId: string; publicKeyBase64: string; privateKeyLocation: string } }>;
+    const started = await begin({ commandId: '00000000-0000-4000-8000-000000000002' });
+    expect(started.value).toMatchObject({ privateKeyLocation: 'os_keychain' });
+    expect(JSON.stringify(started)).not.toContain(PRIVATE_KEY);
+    expect(started.value.publicKeyBase64).toHaveLength(44);
+    const complete = handlers['connections.robinhood.keypair.complete'] as unknown as (payload: { commandId: string; setupId: string }) => Promise<{ ok: boolean; value?: { provider: string } }>;
+    await expect(complete({ commandId: '00000000-0000-4000-8000-000000000003', setupId: started.value.setupId }))
+      .resolves.toMatchObject({ ok: true, value: { provider: 'robinhood_crypto' } });
+    await expect(secrets.read('robinhood-pending-private-key', `pending.main.${started.value.setupId}`))
+      .resolves.toEqual({ ok: true, value: null });
+    expect(database.prepare('SELECT status FROM robinhood_connection_setups_v1 WHERE id=?').get(started.value.setupId))
+      .toEqual({ status: 'completed' });
+    database.close();
+  });
+
+  it('restores an unexpired Robinhood setup after the host is reconstructed', async () => {
+    const database = openDatabase(':memory:'), secrets = createMemorySecretStore();
+    const shared = { profileId: 'main', database, clock: new FixedClock(1_800_000_000_000), secrets,
+      readClipboardText: () => API_KEY, robinhoodClientFactory: () => robinhoodClient(),
+      priceSource: { name: 'fixture', async spot(instruments: readonly Parameters<typeof instrumentKey>[0][]) {
+        return new Map(instruments.map((instrument) => [instrumentKey(instrument), {
+          priceUsd: '50000' as never, source: 'fixture', quality: 'venue_reported_last' as const,
+          observedAtMs: 1_799_999_999_000,
+        }]));
+      } },
+    };
+    const firstHost = createConnectionHandlers(shared);
+    const begin = firstHost['connections.robinhood.keypair.begin'] as unknown as
+      (payload: { commandId: string }) => Promise<{ ok: true; value: { setupId: string; publicKeyBase64: string } }>;
+    const started = await begin({ commandId: '00000000-0000-4000-8000-000000000004' });
+
+    const restartedHost = createConnectionHandlers(shared);
+    const resume = restartedHost['connections.robinhood.keypair.begin'] as unknown as
+      (payload: { commandId: string }) => Promise<{ ok: true; value: { setupId: string } }>;
+    await expect(resume({ commandId: '00000000-0000-4000-8000-000000000007' }))
+      .resolves.toMatchObject({ ok: true, value: { setupId: started.value.setupId } });
+    const status = restartedHost['connections.robinhood.keypair.status'] as unknown as () => Promise<unknown>;
+    const restored = await status();
+    expect(restored).toMatchObject({ ok: true, value: { state: 'pending', setup: {
+      setupId: started.value.setupId, publicKeyBase64: started.value.publicKeyBase64,
+      privateKeyLocation: 'os_keychain',
+    }, reasonCode: null } });
+    expect(JSON.stringify(restored)).not.toContain('privateKeyBase64');
+
+    const complete = restartedHost['connections.robinhood.keypair.complete'] as unknown as
+      (payload: { commandId: string; setupId: string }) => Promise<unknown>;
+    await expect(complete({ commandId: '00000000-0000-4000-8000-000000000005',
+      setupId: started.value.setupId })).resolves.toMatchObject({ ok: true,
+      value: { provider: 'robinhood_crypto' } });
+    database.close();
+  });
+
+  it('does not restore a pending setup across profiles', async () => {
+    const database = openDatabase(':memory:'), secrets = createMemorySecretStore();
+    const setup = createConnectionHandlers({ profileId: 'main', database,
+      clock: new FixedClock(1_800_000_000_000), secrets,
+      priceSource: { name: 'fixture', async spot() { return new Map(); } } });
+    const begin = setup['connections.robinhood.keypair.begin'] as unknown as
+      (payload: { commandId: string }) => Promise<unknown>;
+    await begin({ commandId: '00000000-0000-4000-8000-000000000006' });
+    const otherProfile = createConnectionHandlers({ profileId: 'other', database,
+      clock: new FixedClock(1_800_000_000_000), secrets,
+      priceSource: { name: 'fixture', async spot() { return new Map(); } } });
+    const status = otherProfile['connections.robinhood.keypair.status'] as unknown as () => Promise<unknown>;
+    await expect(status()).resolves.toEqual({ ok: true,
+      value: { state: 'none', setup: null, reasonCode: null } });
+    database.close();
+  });
+
+  it('reports an unavailable restored setup when its keychain entry is missing', async () => {
+    const database = openDatabase(':memory:'), secrets = createMemorySecretStore();
+    const input = { profileId: 'main', database, clock: new FixedClock(1_800_000_000_000), secrets,
+      priceSource: { name: 'fixture', async spot() { return new Map(); } } };
+    const handlers = createConnectionHandlers(input);
+    const begin = handlers['connections.robinhood.keypair.begin'] as unknown as
+      (payload: { commandId: string }) => Promise<{ ok: true; value: { setupId: string } }>;
+    const started = await begin({ commandId: '00000000-0000-4000-8000-000000000008' });
+    await secrets.remove('robinhood-pending-private-key', `pending.main.${started.value.setupId}`);
+    const restarted = createConnectionHandlers(input);
+    const status = restarted['connections.robinhood.keypair.status'] as unknown as () => Promise<unknown>;
+    await expect(status()).resolves.toMatchObject({ ok: true, value: { state: 'unavailable',
+      setup: { setupId: started.value.setupId }, reasonCode: 'pending_key_unavailable' } });
+    database.close();
+  });
 });
