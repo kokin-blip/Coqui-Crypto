@@ -1,4 +1,4 @@
-# Coqui — release
+# Coqui 0.1.0-beta.2 — experimental macOS build
 
 Local-first connected portfolio tracking, separate tax-lot accounting,
 allocation, and paper-trading research. No account, no server, no cloud database.
@@ -48,8 +48,10 @@ expected warning apart from the one that means the download is broken.
 ## Known limitations
 
 - Live trading does not exist and is not planned for this build.
-- The paper engine stands down by default: its profitability gate requires a
-  registered per-trade net-edge estimate, and no study has registered one for
-  the shipped strategy. The portfolio screen states this rather than hiding it.
+- Validated paper mode still stands down without applicable verified edge
+  evidence. The explicitly confirmed Exploratory Paper mode may observe the
+  current unvalidated TrendVol strategy without inventing an edge: failed or
+  unavailable profitability remains visible, all safety gates remain active,
+  and its evidence is ineligible for validation, promotion, or live execution.
 - Real Coinbase, Robinhood Crypto, and CoinGecko access needs your own keys.
   Coqui ships none; connection secrets remain in the OS credential store.
