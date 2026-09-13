@@ -10,6 +10,7 @@ export * from './coinbase-evidence.js';
 export * from './connections.js';
 export * from './connections-v2.js';
 export * from './paper-connection-books.js';
+export * from './exploratory-paper.js';
 export * from './display-universe.js';
 export * from './display-market.js';
 export * from './decision-evidence.js';

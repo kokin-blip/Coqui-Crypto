@@ -41,7 +41,7 @@ function tableNames(database: Db): Set<string> {
 describe('ported predecessor migration manifest', () => {
   it('preserves predecessor versions 1-28 and appends Coqui-native migrations', () => {
     expect(migrations.map((migration) => migration.version)).toEqual(
-      Array.from({ length: 76 }, (_, index) => index + 1),
+      Array.from({ length: 77 }, (_, index) => index + 1),
     );
     expect(migrations.map((migration) => migration.name)).toEqual([
       'initial_schema',
@@ -120,13 +120,14 @@ describe('ported predecessor migration manifest', () => {
       'decision_asset_evidence_v1',
       'research_trigger_jobs_and_human_reviews_v1',
       'robinhood_guided_setups_v1',
+      'exploratory_paper_campaigns_v1',
     ]);
   });
 
   it('creates the current schema while retaining only intended legacy tables', () => {
     const database = openDatabase(':memory:');
     const tables = tableNames(database);
-    expect(userVersion(database)).toBe(76);
+    expect(userVersion(database)).toBe(77);
     for (const expected of [
       'app_settings',
       'tax_lots',
@@ -239,6 +240,13 @@ describe('ported predecessor migration manifest', () => {
       'multi_connection_paper_campaigns_v1',
       'paper_connection_book_snapshots_v1',
       'paper_connection_route_links_v1',
+      'exploratory_paper_campaigns_v1',
+      'exploratory_paper_campaign_events_v1',
+      'exploratory_paper_campaign_state_v1',
+      'exploratory_paper_balances_v1',
+      'exploratory_paper_ledger_entries_v1',
+      'exploratory_paper_execution_links_v1',
+      'exploratory_paper_valuations_v1',
       'robinhood_connection_setups_v1',
       'decision_asset_links_v1',
       'decision_evidence_asset_links_v1',
@@ -268,7 +276,7 @@ describe('ported predecessor migration manifest', () => {
       database.prepare('INSERT INTO migration_sentinel VALUES (?, ?)')
         .run(9_007_199_254_740_993n, '1234567890.123456789');
 
-      expect(runMigrations(database)).toBe(76);
+      expect(runMigrations(database)).toBe(77);
       const statement = database.prepare('SELECT id, amount_text FROM migration_sentinel');
       statement.setReadBigInts(true);
       expect(statement.get()).toEqual({
@@ -288,7 +296,7 @@ describe('forward migration safety', () => {
     old.close();
 
     const migrated = openDatabase(fixture.path, { now: () => 123 });
-    expect(userVersion(migrated)).toBe(76);
+    expect(userVersion(migrated)).toBe(77);
     expect(migrated.prepare("SELECT value FROM app_settings WHERE key = 'preserved'").get())
       .toEqual({ value: 'yes' });
     migrated.close();
@@ -305,7 +313,7 @@ describe('forward migration safety', () => {
   it('rolls back schema changes and version advancement when a migration fails', () => {
     const database = openDatabase(':memory:');
     const failing: Migration = {
-      version: 77,
+      version: 78,
       name: 'failure_fixture',
       up(db) {
         db.exec('CREATE TABLE should_rollback (id INTEGER);');
@@ -315,7 +323,7 @@ describe('forward migration safety', () => {
 
     expect(() => runMigrations(database, [...migrations, failing]))
       .toThrow('injected migration failure');
-    expect(userVersion(database)).toBe(76);
+    expect(userVersion(database)).toBe(77);
     expect(tableNames(database).has('should_rollback')).toBe(false);
     database.close();
   });
@@ -324,7 +332,7 @@ describe('forward migration safety', () => {
     const database = openDatabase(':memory:');
     expect(() => runMigrations(database, [migrations[1]!, migrations[0]!]))
       .toThrow('contiguous and ordered');
-    database.exec('PRAGMA user_version = 77');
+    database.exec('PRAGMA user_version = 78');
     expect(() => runMigrations(database)).toThrow('newer than this application');
     database.close();
   });

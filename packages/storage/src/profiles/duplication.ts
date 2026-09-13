@@ -4,8 +4,9 @@ import { isAbsolute, relative, resolve } from 'node:path';
 import { DatabaseSync, type SQLInputValue } from 'node:sqlite';
 
 import { backupDatabase } from '../sqlite/index.js';
-import { connectionCampaignRowCount, hostAuthorityRowCount } from './duplication-transient-counts.js';
+import { campaignAuthorityRowCount } from './duplication-transient-counts.js';
 import { dropDecisionDuplicationTriggers, restoreDecisionDuplicationTriggers } from './duplication-decision-triggers.js';
+import { deleteExploratoryCampaignRows, dropExploratoryDuplicationTriggers, restoreExploratoryDuplicationTriggers } from './duplication-exploratory-triggers.js';
 import { dropResearchDuplicationTriggers, restoreResearchDuplicationTriggers } from './duplication-research-triggers.js';
 
 export interface DuplicateProfileDatabaseInput {
@@ -151,7 +152,7 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
           throw new TypeError('Invalid profile-scoped table identity.');
         }
         let rewrittenRowCount = 0;
-        dropDecisionDuplicationTriggers(target);
+        dropDecisionDuplicationTriggers(target); dropExploratoryDuplicationTriggers(target);
         target.exec(`
           DROP TRIGGER advisor_audit_events_v1_no_update;
           DROP TRIGGER advisor_audit_events_v1_no_delete;
@@ -326,8 +327,8 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
         `, input.targetProfileId.toLowerCase(), input.targetProfileId.toLowerCase(),
         input.targetProfileId.toLowerCase());
         const targetProfileId = input.targetProfileId.toLowerCase();
-        const connectionCampaignRows = connectionCampaignRowCount(target, targetProfileId);
-        const hostAuthorityRows = hostAuthorityRowCount(target, targetProfileId);
+        const campaignAuthorityRows = campaignAuthorityRowCount(target, targetProfileId);
+        deleteExploratoryCampaignRows(target);
         target.exec(`
           DELETE FROM host_takeover_history_v1;
           DELETE FROM authoritative_hosts_v1;
@@ -438,8 +439,7 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
           CREATE TRIGGER host_takeover_history_v1_no_delete BEFORE DELETE ON host_takeover_history_v1
             BEGIN SELECT RAISE(ABORT,'host takeover history is immutable'); END;
         `);
-        restoreResearchDuplicationTriggers(target);
-        restoreDecisionDuplicationTriggers(target);
+        restoreExploratoryDuplicationTriggers(target); restoreResearchDuplicationTriggers(target); restoreDecisionDuplicationTriggers(target);
         const credentialMetadataKeys = ['credentials.coinbase.v2', 'credentials.coinbase.v3.status',
           'credentials.gemini.v2', 'coinbase.last_sync_at'] as const;
         const clearedCredentialMetadataCount = countQuery(
@@ -451,7 +451,7 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
           `DELETE FROM app_settings WHERE key IN (${credentialMetadataKeys.map(() => '?').join(', ')})`,
         ).run(...credentialMetadataKeys);
         const excludedTransientRowCount = pendingImportRows + scheduleRows + privateAdvisorRows + robinhoodSetupRows + connectionRows;
-        const excludedTransientRowCountWithRouting = excludedTransientRowCount + routingRows + connectionCampaignRows + authorityRows + hostAuthorityRows;
+        const excludedTransientRowCountWithRouting = excludedTransientRowCount + routingRows + campaignAuthorityRows + authorityRows;
         if (!Number.isSafeInteger(excludedTransientRowCountWithRouting)) throw new RangeError('Duplication exclusion count overflow.');
         target.exec('COMMIT');
 

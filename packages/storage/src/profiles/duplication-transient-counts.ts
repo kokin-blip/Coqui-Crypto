@@ -22,3 +22,19 @@ export function hostAuthorityRowCount(database: Db, profileId: string): number {
     (SELECT COUNT(*) FROM host_reconciliation_evidence_v1 WHERE profile_id=?) +
     (SELECT COUNT(*) FROM host_takeover_history_v1 WHERE profile_id=?) AS count`, profileId, 3);
 }
+
+export function exploratoryCampaignRowCount(database: Db, profileId: string): number {
+  return count(database, `SELECT
+    (SELECT COUNT(*) FROM exploratory_paper_campaigns_v1 WHERE profile_id=?) +
+    (SELECT COUNT(*) FROM exploratory_paper_campaign_events_v1 WHERE profile_id=?) +
+    (SELECT COUNT(*) FROM exploratory_paper_campaign_state_v1 WHERE profile_id=?) +
+    (SELECT COUNT(*) FROM exploratory_paper_balances_v1 WHERE profile_id=?) +
+    (SELECT COUNT(*) FROM exploratory_paper_ledger_entries_v1 WHERE profile_id=?) +
+    (SELECT COUNT(*) FROM exploratory_paper_execution_links_v1 WHERE profile_id=?) +
+    (SELECT COUNT(*) FROM exploratory_paper_valuations_v1 WHERE profile_id=?) AS count`, profileId, 7);
+}
+
+export function campaignAuthorityRowCount(database: Db, profileId: string): number {
+  return connectionCampaignRowCount(database, profileId) +
+    exploratoryCampaignRowCount(database, profileId) + hostAuthorityRowCount(database, profileId);
+}
