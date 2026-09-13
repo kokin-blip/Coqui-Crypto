@@ -1,4 +1,4 @@
-# Coqui 0.1.0-beta.2 — experimental macOS build
+# Coqui 0.1.0-beta.3 — experimental macOS build
 
 Local-first connected portfolio tracking, separate tax-lot accounting,
 allocation, and paper-trading research. No account, no server, no cloud database.
@@ -8,6 +8,21 @@ does not exist, and a Coinbase key carrying trade or transfer permission is
 rejected at connect time. The Robinhood Crypto adapter is read-only and exports
 no real placement method. Paper figures are a simulation and are labelled as one
 wherever they appear.
+
+## Fixed in beta.3
+
+- **Guided setup now appears in front of the application.** The modal layering
+  tokens the shell referenced were never defined, so the onboarding dialog (and
+  every other modal) could render beneath the sidebar and status rail.
+- **Coinbase sync produces a portfolio again.** Coinbase stopped returning the
+  legacy `usd_from`/`usd_to` fields on its fee-tier summary, and that failure
+  discarded an otherwise complete accounts-and-fills dataset, leaving the
+  connected portfolio empty. The parser now falls back to the documented
+  `aop_from`/`aop_to` range, and fee-tier evidence — provenance, not pricing —
+  degrades to null instead of failing the whole sync.
+- **Connecting reports the truth.** A failed first synchronization no longer
+  shows "Credentials verified". The connection is kept for resume and the
+  actual failure is shown.
 
 ## Downloads
 
