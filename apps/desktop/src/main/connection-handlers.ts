@@ -264,7 +264,11 @@ export function createConnectionHandlers(input: {
         return { ok: false, issues: [{ path: [], code: 'connection_storage_rejected' }] };
       }
       const synced = await sync(connection);
-      return synced.ok ? synced : { ok: true, value: view(connection, input.database) };
+      /* The credential is stored, but a failed first sync means no portfolio
+         snapshot exists: reporting ok here would show “Credentials verified ·
+         Coqui synchronized the account” while holdings never appear. The
+         connection row stays for resume; the surface must show the truth. */
+      return synced;
     }),
     'connections.robinhood.keypair.begin': async (payload: { readonly commandId: string }) => once(payload.commandId, async () => {
       if (input.secrets === undefined) return { ok: false, issues: [{ path: [], code: 'secret_store_unavailable' }] };

@@ -383,17 +383,22 @@ export async function fetchCoinbaseAccountEvidence(
     const feeTier = options.includeFeeTier === true
       ? await fetchCoinbaseFeeTierEvidence(http, acquisitionSignal)
       : { ok: true as const, value: null };
-    if (!feeTier.ok) return failure(feeTier, 'fee_tier');
+    /* Fee-tier evidence is provenance, not pricing. The cost model reads the
+       registered conservative profile, never this fetch, so a failed or
+       malformed tier response must not discard an otherwise complete account
+       dataset — that failure mode once blocked every sync and left the
+       portfolio empty. Null degrades the evidence hash, not the pessimism. */
+    const feeTierValue = feeTier.ok ? feeTier.value : null;
     const value = Object.freeze({
       accounts: accounts.rows,
       fills: fills.rows,
       transactions: transactions.rows,
-      feeTier: feeTier.value,
+      feeTier: feeTierValue,
       accountPageCount: accounts.pageCount,
       fillPageCount: fills.pageCount,
       transactionPageCount: transactions.pageCount,
       datasetHash: coinbaseEvidenceDatasetHash(
-        accounts.rows, fills.rows, transactions.rows, feeTier.value,
+        accounts.rows, fills.rows, transactions.rows, feeTierValue,
       ),
     });
     return Object.freeze({ ok: true, value });

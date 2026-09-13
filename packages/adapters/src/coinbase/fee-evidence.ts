@@ -56,11 +56,15 @@ export async function fetchCoinbaseFeeTierEvidence(
     !TIER.test(raw['pricing_tier'])) return { ok: false, code: 'invalid_response' };
   const makerFeeRate = exact(raw['maker_fee_rate']);
   const takerFeeRate = exact(raw['taker_fee_rate']);
-  const usdFrom = exact(raw['usd_from']);
-  const usdTo = raw['usd_to'] === undefined || raw['usd_to'] === null || raw['usd_to'] === ''
-    ? null : exact(raw['usd_to']);
+  const fromRange = raw['usd_from'] === undefined || raw['usd_from'] === null || raw['usd_from'] === ''
+    ? raw['aop_from'] : raw['usd_from'];
+  const toRange = raw['usd_to'] === undefined || raw['usd_to'] === null || raw['usd_to'] === ''
+    ? raw['aop_to'] : raw['usd_to'];
+  const usdFrom = exact(fromRange);
+  const usdTo = toRange === undefined || toRange === null || toRange === ''
+    ? null : exact(toRange);
   if (makerFeeRate === null || takerFeeRate === null || usdFrom === null ||
-    (raw['usd_to'] !== undefined && raw['usd_to'] !== null && raw['usd_to'] !== '' &&
+    (toRange !== undefined && toRange !== null && toRange !== '' &&
       usdTo === null)) return { ok: false, code: 'invalid_response' };
   return { ok: true, value: Object.freeze({
     pricingTier: raw['pricing_tier'], makerFeeRate, takerFeeRate, usdFrom, usdTo,

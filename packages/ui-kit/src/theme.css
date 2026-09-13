@@ -32,6 +32,17 @@
   --coqui-selection-text: #020b08;
   --coqui-focus: #8b7cff;
   --coqui-shadow: 0 2px 8px rgb(0 0 0 / 28%);
+  --coqui-shadow-overlay: 0 24px 64px rgb(0 0 0 / 44%);
+
+  /* Layering ladder. These were referenced by every modal backdrop in the
+     shell without ever being defined here; an undefined var() invalidates the
+     z-index declaration, the property computed to auto, and dialogs landed in
+     DOM order — beneath the sidebar (z-index: 20) and the status rail (10).
+     That is why onboarding rendered behind the application. */
+  --coqui-z-dropdown: 400;
+  --coqui-z-popover: 500;
+  --coqui-z-modal-backdrop: 900;
+  --coqui-z-modal: 910;
 
   --coqui-radius-sm: 6px;
   --coqui-radius-md: 7px;
@@ -91,6 +102,7 @@
   --coqui-selection-text: #ffffff;
   --coqui-focus: #5948d6;
   --coqui-shadow: 0 14px 40px rgb(24 41 72 / 12%);
+  --coqui-shadow-overlay: 0 24px 64px rgb(24 41 72 / 22%);
 }
 
 :root[data-theme='high-contrast'] {
@@ -126,6 +138,17 @@
   --coqui-selection-text: HighlightText;
   --coqui-focus: #ffffff;
   --coqui-shadow: none;
+  --coqui-shadow-overlay: none;
+}
+
+/* The layering ladder is structural, not thematic: it is identical in every
+   theme, including forced-colors. */
+:root[data-theme='light'],
+:root[data-theme='high-contrast'] {
+  --coqui-z-dropdown: 400;
+  --coqui-z-popover: 500;
+  --coqui-z-modal-backdrop: 900;
+  --coqui-z-modal: 910;
 }
 
 :root[data-density='compact'] {

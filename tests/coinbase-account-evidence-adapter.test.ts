@@ -210,4 +210,46 @@ describe('Coinbase account evidence adapter', () => {
       feeTier: { makerFeeRate: '0.004', takerFeeRate: '0.006' },
     });
   });
+
+  it('keeps a complete dataset when the fee-tier response is unusable', async () => {
+    /* A malformed or unparseable fee-tier summary is provenance loss, not
+       data loss. It once failed the whole acquisition, so no portfolio
+       snapshot ever persisted and the app showed an empty portfolio. */
+    const http = client([
+      success({ accounts: [account()], has_next: false }),
+      success({ fills: [], has_next: false }),
+      success({ pagination: {}, data: [] }),
+      success({ fee_tier: { pricing_tier: 'Advanced 1' } }),
+    ]);
+
+    const result = await fetchCoinbaseAccountEvidence(http, undefined, {
+      includeTransactions: true,
+      includeFeeTier: true,
+    });
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.feeTier).toBeNull();
+    expect(result.value.accounts).toHaveLength(1);
+    expect(result.value.datasetHash).toMatch(/^[0-9a-f]{64}$/u);
+  });
+
+  it('keeps a complete dataset when the fee-tier endpoint fails', async () => {
+    const http = client([
+      success({ accounts: [account()], has_next: false }),
+      success({ fills: [], has_next: false }),
+      success({ pagination: {}, data: [] }),
+      { ok: false, status: 500, reason: 'http', retried: 1 },
+    ]);
+
+    const result = await fetchCoinbaseAccountEvidence(http, undefined, {
+      includeTransactions: true,
+      includeFeeTier: true,
+    });
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.feeTier).toBeNull();
+    expect(result.value.accounts).toHaveLength(1);
+  });
 });

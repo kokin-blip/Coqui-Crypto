@@ -82,6 +82,38 @@ describe('provider-neutral connection handlers', () => {
     database.close();
   });
 
+  it('refuses a Coinbase connect whose first sync fails instead of reporting false success', async () => {
+    const database = openDatabase(':memory:'), secrets = createMemorySecretStore();
+    const keyFile = {
+      name: 'organizations/0/keys/00000000-0000-4000-8000-0000000000aa',
+      privateKey: 'xQnTJVeQLmw1/Mg2YimEViSpw/SdJcgNXZ5kQkAXNPU=',
+    };
+    const verifier = { verify: vi.fn(async () => ({ ok: true as const, portfolioUuid: '11111111-2222-4333-8444-555555555555' })) };
+    const acquirer = { acquire: vi.fn(async () => ({
+      ok: false as const, code: 'rate_limited' as const,
+      resource: 'accounts' as const,
+    })) };
+    const handlers = createConnectionHandlers({ profileId: 'main', database,
+      clock: new FixedClock(1_800_000_000_000), secrets,
+      pickConnectionFile: async () => ({ contents: JSON.stringify(keyFile) }),
+      coinbaseVerifier: verifier, coinbaseAcquirer: acquirer,
+      priceSource: { name: 'fixture', async spot() { return new Map(); } },
+    });
+    const connect = handlers['connections.connect-file'] as unknown as (payload: {
+      commandId: string; provider: 'coinbase';
+    }) => Promise<{ ok: boolean; issues?: readonly { code: string }[] }>;
+
+    /* The credential is stored and the connection row exists for resume, but
+       no snapshot was taken: the surface must show the failure, not “verified”. */
+    await expect(connect({
+      commandId: '00000000-0000-4000-8000-000000000010', provider: 'coinbase',
+    })).resolves.toMatchObject({ ok: false, issues: [{ code: 'coinbase_rate_limited' }] });
+    expect(getLatestUnifiedPortfolioSnapshotV2('main', false, database)).toBeNull();
+    expect(getLatestUnifiedPortfolioSnapshotV2('main', true, database)).toBeNull();
+    expect(listProfileConnectionsV2('main', database)).toHaveLength(1);
+    database.close();
+  });
+
   it('keeps a generated Robinhood private key out of IPC and completes from an explicit clipboard read', async () => {
     const database = openDatabase(':memory:'), secrets = createMemorySecretStore();
     const handlers = createConnectionHandlers({ profileId: 'main', database,

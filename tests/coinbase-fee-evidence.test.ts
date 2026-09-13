@@ -41,6 +41,37 @@ describe('Coinbase fee-tier evidence adapter', () => {
     );
   });
 
+  it('uses the documented AOP range when Coinbase leaves legacy USD ranges empty', async () => {
+    const getJson = vi.fn(async () => ({
+      ok: true as const,
+      status: 200,
+      data: {
+        fee_tier: {
+          pricing_tier: 'Advanced 1',
+          maker_fee_rate: '0.004',
+          taker_fee_rate: '0.006',
+          usd_from: '',
+          usd_to: '',
+          aop_from: '0',
+          aop_to: '10000',
+        },
+      },
+    }));
+
+    await expect(fetchCoinbaseFeeTierEvidence({ getJson } as unknown as Pick<
+      CoinbaseReadHttpClient, 'getJson'
+    >)).resolves.toEqual({
+      ok: true,
+      value: {
+        pricingTier: 'Advanced 1',
+        makerFeeRate: '0.004',
+        takerFeeRate: '0.006',
+        usdFrom: '0',
+        usdTo: '10000',
+      },
+    });
+  });
+
   it('rejects non-string and exponent fee values instead of rounding them', async () => {
     const getJson = vi.fn(async () => ({
       ok: true as const,

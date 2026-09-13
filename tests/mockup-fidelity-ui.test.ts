@@ -5,6 +5,30 @@ import { describe, expect, it } from 'vitest';
 const read = (path: string): string => readFileSync(resolve(path), 'utf8');
 
 describe('mockup-fidelity advanced workspace', () => {
+  it('defines every z-index and overlay token the stylesheets reference', () => {
+    /* The onboarding dialog once rendered behind the entire application: the
+       shell referenced --coqui-z-modal-backdrop / --coqui-z-modal without a
+       definition, z-index computed to auto, and DOM order beat the dialog. */
+    const theme = read('packages/ui-kit/src/theme.css');
+    const styles = ['apps/desktop/src/renderer/styles/shell.css',
+      'apps/desktop/src/renderer/styles/features.css',
+      'apps/desktop/src/renderer/styles/workstation.css',
+      'apps/desktop/src/renderer/styles/data-visualization.css',
+    ].map(read).join('\n');
+
+    const referenced = [...styles.matchAll(/var\(--coqui-(z-[a-z-]+|shadow-overlay)\)/gu)]
+      .map((match) => match[1]);
+    expect(referenced.length).toBeGreaterThan(0);
+    for (const token of new Set(referenced)) {
+      expect(theme).toContain(`--coqui-${token}:`);
+    }
+    /* The modal pair is the load-bearing one — assert both explicitly, per theme. */
+    for (const token of ['--coqui-z-modal-backdrop: 900', '--coqui-z-modal: 910']) {
+      expect(theme).toContain(token);
+    }
+    expect(styles).toContain('z-index: var(--coqui-z-modal-backdrop)');
+  });
+
   it('locks the selected dark workstation palette and compact geometry', () => {
     const theme = read('packages/ui-kit/src/theme.css');
     const shell = read('apps/desktop/src/renderer/styles/shell.css');
