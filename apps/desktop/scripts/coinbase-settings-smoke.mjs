@@ -76,12 +76,12 @@ export async function checkCoinbaseSettings(window, fixture, check) {
   await waitFor('document.body.innerText.includes("Exchange connections")');
   check('Provider-neutral Settings renders', true);
   check('Credential contents stay outside renderer', await evaluate('!document.body.innerText.includes("PRIVATE KEY") && !document.body.innerText.includes("organizations/smoke")'));
-  await click('Add connection', true);
+  await click('Choose Coinbase key file', true);
   await waitFor('document.body.innerText.includes("coinbase_excess_permissions")');
   check('Coinbase excessive permissions rejected and duplicate activation suppressed', fixture.control.verifications === 1);
   fixture.control.rejectKey = false;
   fixture.control.failSync = false;
-  await click('Add connection', true);
+  await click('Choose Coinbase key file', true);
   await waitFor('document.body.innerText.includes("Portfolio updated") || document.body.innerText.includes("Connection added")');
   check('Coinbase file connects and creates current portfolio evidence', fixture.control.verifications === 2 && fixture.control.acquisitions === 1);
   const current = JSON.parse(await evaluate('window.coqui.query("portfolio.current", {}).then(JSON.stringify)'));

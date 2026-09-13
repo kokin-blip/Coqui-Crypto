@@ -11,6 +11,8 @@ interface StatusSummaryInput {
   readonly riskAssessmentState: 'assessed' | 'unassessed';
   readonly riskStage: string | null;
   readonly portfolioState: 'complete' | 'incomplete' | 'unavailable';
+  readonly paperAdmissionMode?: 'validated' | 'exploratory';
+  readonly exploratoryCampaignStatus?: 'active' | 'paused' | 'stopping' | 'stopped' | null;
   readonly reconciliation: { readonly unresolvedCount: number; readonly neverRun: boolean };
 }
 
@@ -20,6 +22,10 @@ export function statusSummary(rail: StatusSummaryInput): { readonly tone: string
   if (rail.portfolioState === 'unavailable') return { tone: 'warning', text: 'Portfolio not connected' };
   if (rail.portfolioState === 'incomplete') return { tone: 'warning', text: 'Portfolio valuation incomplete' };
   if (rail.riskAssessmentState === 'unassessed') return { tone: 'warning', text: 'Risk unassessed' };
+  if (rail.paperAdmissionMode === 'exploratory') {
+    return { tone: 'warning', text: rail.exploratoryCampaignStatus === 'paused'
+      ? 'Exploratory paper paused' : 'Exploratory paper mode active' };
+  }
   if (rail.reconciliation.unresolvedCount > 0) {
     const noun = rail.reconciliation.unresolvedCount === 1 ? 'item' : 'items';
     return { tone: 'warning', text: `${rail.reconciliation.unresolvedCount} unresolved reconciliation ${noun}` };

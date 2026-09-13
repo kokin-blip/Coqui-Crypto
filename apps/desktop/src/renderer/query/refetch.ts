@@ -151,6 +151,14 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'portfolio.reconciliation.resolve': { refetchIntervalMs: false, staleTimeMs: 0 },
   // Reprices with the market, alongside the real portfolio it sits next to.
   'paper.portfolio': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
+  'paper.exploratory.status': { refetchIntervalMs: 30 * SECOND, staleTimeMs: 10 * SECOND },
+  'paper.exploratory.start': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.exploratory.pause': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.exploratory.resume': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.exploratory.stop': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.exploratory.evaluate-now': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.exploratory.portfolio': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
+  'paper.exploratory.performance': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
   // Preferences change only when the user changes them.
   'accounts.settings': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
   'accounts.settings.set': { refetchIntervalMs: false, staleTimeMs: 0 },

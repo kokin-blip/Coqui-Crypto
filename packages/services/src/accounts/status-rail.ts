@@ -11,6 +11,7 @@ import {
   getWalletRiskState,
   listCoinbaseBalanceDiscrepancies,
   listWalletSchedules,
+  currentExploratoryPaperCampaign,
   type Db,
 } from '@coqui/storage';
 
@@ -59,6 +60,8 @@ export interface StatusRailView {
   readonly riskAssessmentState: 'assessed' | 'unassessed';
   readonly riskStage: string | null;
   readonly portfolioState: 'complete' | 'incomplete' | 'unavailable';
+  readonly paperAdmissionMode: 'validated' | 'exploratory';
+  readonly exploratoryCampaignStatus: 'active' | 'paused' | 'stopping' | 'stopped' | null;
   /** Scheduled wallet jobs currently holding a lease. */
   readonly activeJobCount: number;
   readonly scheduledJobCount: number;
@@ -121,6 +124,7 @@ export class StatusRailService {
       const risk = getWalletRiskState(profileId, this.#database);
       const portfolio = getLatestUnifiedPortfolioSnapshotV2(profileId, false, this.#database);
       const schedules = listWalletSchedules(MAX_DISCREPANCIES, this.#database);
+      const exploratory = currentExploratoryPaperCampaign(profileId, this.#database);
       const discrepancies = listCoinbaseBalanceDiscrepancies(this.#database, MAX_DISCREPANCIES);
       const lastRunAtMs = epochFromSetting(
         getSetting('coinbase.last_sync_at', this.#database),
@@ -139,7 +143,8 @@ export class StatusRailService {
         value: {
           profileId,
           mode,
-          executionPermitted: canExecute(mode, killSwitchEngaged) && risk !== null &&
+          executionPermitted: canExecute(mode, killSwitchEngaged) &&
+            (risk !== null || (exploratory !== null && exploratory.status === 'active')) &&
             portfolio?.complete === true && lastRunAtMs !== null,
           killSwitchEngaged,
           killSwitchReason: killSwitch.reason,
@@ -148,6 +153,9 @@ export class StatusRailService {
           portfolioState: portfolio === null
             ? 'unavailable'
             : portfolio.complete ? 'complete' : 'incomplete',
+          paperAdmissionMode: exploratory !== null && exploratory.status !== 'stopped'
+            ? 'exploratory' : 'validated',
+          exploratoryCampaignStatus: exploratory?.status ?? null,
           // A lease that has expired is not a running job. Counting by owner
           // alone would report a crashed worker as still working.
           activeJobCount: schedules.filter(

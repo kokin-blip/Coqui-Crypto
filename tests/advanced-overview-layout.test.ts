@@ -9,13 +9,14 @@ describe('advanced overview composition', () => {
   it('keeps portfolio health ahead of strategy detail in both workspace modes', () => {
     const simpleStart = overview.indexOf("workspace.mode === 'simple'");
     const advancedStart = overview.indexOf('research-grid-primary');
-    const primary = overview.indexOf('{chartPanel}<EvidenceStack');
+    const primary = overview.indexOf('{chartPanel}{connectedReference}<EvidenceStack');
     const secondary = overview.indexOf('research-grid-secondary');
     const health = overview.lastIndexOf('{panels.healthStrip && health}');
     const negative = overview.lastIndexOf('{panels.negativeFindings &&');
 
     expect(simpleStart).toBeGreaterThan(-1);
-    expect(overview.slice(simpleStart, advancedStart)).toContain('{health}{chartPanel}{decision}');
+    expect(overview.slice(simpleStart, advancedStart))
+      .toContain('{health}{chartPanel}{connectedReference}{decision}');
     expect(health).toBeLessThan(primary);
     expect(primary).toBeGreaterThan(advancedStart);
     expect(secondary).toBeGreaterThan(primary);

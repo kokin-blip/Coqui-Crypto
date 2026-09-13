@@ -30,4 +30,10 @@ describe('responsive workspace shell', () => {
     expect(statusSummary(rail()).tone).toBe('warning');
     expect(statusSummary(rail()).text).toBe('Risk unassessed');
   });
+
+  it('labels an active exploratory campaign without implying live or validated authority', () => {
+    expect(statusSummary(rail({ riskAssessmentState: 'assessed', paperAdmissionMode: 'exploratory',
+      exploratoryCampaignStatus: 'active' }))).toEqual({ tone: 'warning',
+      text: 'Exploratory paper mode active' });
+  });
 });

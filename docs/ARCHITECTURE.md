@@ -430,6 +430,39 @@ completed bar N + saved base allocation
   → reconciliation harness
 ```
 
+### 6.0.1 Exploratory paper admission
+
+Migration 77 adds a separate, opt-in `trendvol-exploratory-paper-v1` campaign.
+It does not change the strategy or weaken execution safety. Instead, it separates
+research/profitability admission from the remaining gate chain: missing validated
+edge is stored as `unavailable`, and a failing assessment is stored as
+`would_refuse`, while neither outcome blocks this simulation-only mode. Kill
+switches, hard risk stops, absolute guardrails, completed-bar freshness, product
+rules, idempotency, reconciliation, host fencing, and exact next-open settlement
+remain mandatory. The global paper policy `off` remains absolute.
+
+A campaign starts only after explicit confirmation and atomically copies one
+complete, nonempty connected-portfolio snapshot into an isolated aggregate paper
+book. Coinbase decision-eligible assets form the managed sleeve; supported assets
+originating at Robinhood may use the same Coinbase reference instrument. Other
+holdings remain valued but unmanaged. Opening managed weights are immutable, cash
+is copied when reported and otherwise explicitly recorded as
+`unknown_assumed_zero`, and later connected-account changes never reseed or alter
+campaign returns. Imported tax lots are not an input.
+
+The daily host remains authoritative. It settles prior simulator orders, calls the
+same pure TrendVol target function used by research, persists a slot-stable decision,
+then may submit for exactly bar N+1. Manual evaluation calls this same slot-stable
+path. Pausing stops new decisions while allowing deterministic settlement;
+stopping is refused until campaign pending orders are terminal. The legacy
+validated runtime cannot place alongside a non-stopped exploratory campaign.
+
+Every campaign, decision, order, fill, valuation, and UI read model carries the
+campaign identity and permanently false validation, promotion, and live-execution
+eligibility. Forward-study capture ignores the exploratory strategy version, and
+the evolution coordinator rejects it before candidate scoring. Exploratory results
+are operational observations only; they cannot validate or promote TrendVol.
+
 **Reconciliation harness** is the second new component: it continuously compares
 what the paper engine actually filled against what the backtest assumed, and
 reports the divergence. It is the only mechanism that can detect a dishonest

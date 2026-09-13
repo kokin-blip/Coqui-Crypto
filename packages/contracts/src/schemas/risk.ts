@@ -59,6 +59,8 @@ const statusRailSchema = z
     riskAssessmentState: z.enum(['assessed', 'unassessed']),
     riskStage: z.string().min(1).max(64).nullable(),
     portfolioState: z.enum(['complete', 'incomplete', 'unavailable']),
+    paperAdmissionMode: z.enum(['validated', 'exploratory']),
+    exploratoryCampaignStatus: z.enum(['active', 'paused', 'stopping', 'stopped']).nullable(),
     activeJobCount: z.number().int().nonnegative(),
     scheduledJobCount: z.number().int().nonnegative(),
     reconciliation: z

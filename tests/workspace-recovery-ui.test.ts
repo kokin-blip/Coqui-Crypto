@@ -9,7 +9,7 @@ describe('workspace hierarchy and recovery', () => {
   it('places connected portfolio content before strategy detail on Overview', () => {
     const overview = read('apps/desktop/src/renderer/app/Overview.tsx');
     const simple = overview.slice(overview.indexOf("workspace.mode === 'simple'"));
-    expect(simple.indexOf('{health}{chartPanel}{decision}')).toBeGreaterThanOrEqual(0);
+    expect(simple.indexOf('{health}{chartPanel}{connectedReference}{decision}')).toBeGreaterThanOrEqual(0);
     const advanced = overview.slice(overview.indexOf('return <OverviewStrategyProvider'));
     expect(advanced.indexOf('{panels.healthStrip && health}')).toBeLessThan(advanced.indexOf('research-grid-primary'));
   });

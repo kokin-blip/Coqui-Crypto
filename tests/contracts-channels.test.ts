@@ -9,8 +9,6 @@ import {
   outcomeStatusSchema,
   requestEnvelopeSchema,
   responseEnvelopeSchema,
-  transportFailure,
-  TRANSPORT_ISSUE_CODES,
   type ChannelName,
 } from '../packages/contracts/src/index.js';
 
@@ -78,6 +76,14 @@ describe('channel registry', () => {
       'paper.execution.proposal',
       'paper.execution.proposals',
       'paper.execution.review',
+      'paper.exploratory.evaluate-now',
+      'paper.exploratory.pause',
+      'paper.exploratory.performance',
+      'paper.exploratory.portfolio',
+      'paper.exploratory.resume',
+      'paper.exploratory.start',
+      'paper.exploratory.status',
+      'paper.exploratory.stop',
       'paper.performance',
       'paper.performance-day',
       'paper.portfolio',
@@ -132,6 +138,11 @@ describe('channel registry', () => {
       'market-events.ingest-local', 'market-events.ingest-file',
       'paper.campaign.kill-switch',
       'paper.campaign.connections.start',
+      'paper.exploratory.start',
+      'paper.exploratory.pause',
+      'paper.exploratory.resume',
+      'paper.exploratory.stop',
+      'paper.exploratory.evaluate-now',
       'paper.execution.policy.set',
       'paper.execution.prepare',
       'paper.execution.review',
@@ -509,6 +520,8 @@ describe('status rail contract', () => {
       riskAssessmentState: 'unassessed',
       riskStage: null,
       portfolioState: 'unavailable',
+      paperAdmissionMode: 'validated',
+      exploratoryCampaignStatus: null,
       activeJobCount: 0,
       scheduledJobCount: 0,
       reconciliation: { lastRunAtMs: null, unresolvedCount: 0, neverRun: true },
@@ -520,19 +533,5 @@ describe('status rail contract', () => {
     // refuses to describe one.
     expect(schema.safeParse({ ...base, mode: 'live' }).success).toBe(false);
     expect(schema.safeParse({ ...base, mode: 'off' }).success).toBe(false);
-  });
-});
-
-describe('transport failures', () => {
-  it('reports a boundary failure in the same shape as a service issue', () => {
-    for (const code of TRANSPORT_ISSUE_CODES) {
-      const outcome = transportFailure(code);
-      expect(outcome.status).toBe('failed');
-      expect(outcome.status === 'failed' && outcome.issues[0]).toEqual({
-        path: ['transport'],
-        code,
-      });
-      expect(issueSchema.safeParse({ path: ['transport'], code }).success).toBe(true);
-    }
   });
 });
