@@ -10,6 +10,8 @@ import {
   type ExecutionIntent,
   type Holding,
   type MarketQualitySnapshot,
+  type PaperAdmissionModeV1,
+  type ProfitabilityAssessmentV1,
   type RiskControlInput,
   type RiskControlState,
   type SkippedAutoTrade,
@@ -62,6 +64,15 @@ export interface ApprovedExecution {
   readonly mode: AutoTradeMode & 'paper';
   readonly riskState: RiskControlState;
   readonly skipped: readonly SkippedAutoTrade[];
+  readonly admissionMode: PaperAdmissionModeV1;
+  readonly campaignId: string | null;
+  readonly paperBookRef: Readonly<{ kind: 'profile' } | { kind: 'exploratory_campaign'; campaignId: string }>;
+  readonly profitabilityAssessment: ProfitabilityAssessmentV1;
+  readonly evidenceEligibility: Readonly<{
+    validation: boolean;
+    promotion: boolean;
+    liveExecution: false;
+  }>;
 }
 
 export type ExecutionRefusalCode =
@@ -102,7 +113,9 @@ export interface ExecutionGateInput {
    * default. Overriding this is for tests that are specifically about cost.
    */
   readonly costProfile?: VenueCostProfile;
-  readonly historicalGrossEdgeLowerBoundPct: number;
+  readonly admissionMode?: PaperAdmissionModeV1;
+  readonly campaignId?: string | null;
+  readonly historicalGrossEdgeLowerBoundPct: number | null;
   readonly guardrails?: AutoTradeGuardrails;
   readonly riskInput?: RiskControlInput;
   readonly marketQuality?: MarketQualitySnapshot | null;
@@ -120,6 +133,10 @@ export interface ExecutionGateInput {
  * them. Nothing is skipped and nothing is reordered in substance.
  */
 export function runExecutionGates(input: ExecutionGateInput): ExecutionGateOutcome {
+  const admissionMode = input.admissionMode ?? 'validated';
+  if (admissionMode === 'exploratory' && !input.campaignId) {
+    throw new TypeError('Exploratory execution requires a campaign identity.');
+  }
   const riskState = resolveRiskControlState(input.riskInput ?? {});
 
   // Gate 0 — the kill switch precedes everything. Invariant 5 makes it global,
@@ -158,22 +175,61 @@ export function runExecutionGates(input: ExecutionGateInput): ExecutionGateOutco
     ...(riskState.blockReason === null ? {} : { blockReason: riskState.blockReason }),
   };
   const guarded = applyAutoTradeGuardrails(input.intents, input.holdings, guardrails);
+  if (guarded.intents.length === 0) {
+    return {
+      refused: true,
+      code: 'all_intents_filtered',
+      gate: 'guardrails',
+      skipped: Object.freeze([...guarded.skippedTrades]),
+      riskState,
+    };
+  }
 
   // Gate 2 — profitability. Expected edge must clear the cost model with room.
-  const profitable = applyProfitabilityGate(
-    [...guarded.intents],
-    input.costProfile ?? DEFAULT_VENUE_COST_PROFILE,
-    input.historicalGrossEdgeLowerBoundPct,
-    {
-      asOfMs: input.nowMs,
-      riskState,
-      ...(input.marketQuality === undefined ? {} : { marketQuality: input.marketQuality }),
-    },
-  );
+  const profitabilityInput = {
+    asOfMs: input.nowMs,
+    riskState,
+    ...(input.marketQuality === undefined ? {} : { marketQuality: input.marketQuality }),
+  };
+  const profitable = input.historicalGrossEdgeLowerBoundPct === null
+    ? { intents: [] as ExecutionIntent[], skippedTrades: [] as SkippedAutoTrade[], checks: [] }
+    : applyProfitabilityGate(
+        [...guarded.intents],
+        input.costProfile ?? DEFAULT_VENUE_COST_PROFILE,
+        input.historicalGrossEdgeLowerBoundPct,
+        profitabilityInput,
+      );
 
-  const skipped = Object.freeze([...guarded.skippedTrades, ...profitable.skippedTrades]);
+  const costProfile = input.costProfile ?? DEFAULT_VENUE_COST_PROFILE;
+  const venueFeeBps = costProfile.preferredLiquidity === 'maker'
+    ? costProfile.makerFeeBps
+    : costProfile.takerFeeBps;
+  const estimatedCostUsd = guarded.intents.reduce((total, intent) => {
+    const notional = Number(intent.amountUsd);
+    return total + notional * (venueFeeBps + costProfile.spreadBps + costProfile.slippageBps) / 10_000;
+  }, 0);
+  const requiredEdgeUsd = estimatedCostUsd * costProfile.profitBufferMultiple;
+  const profitabilityAssessment: ProfitabilityAssessmentV1 = input.historicalGrossEdgeLowerBoundPct === null
+    ? Object.freeze({
+        status: 'unavailable', historicalGrossEdgeLowerBoundPct: null,
+        estimatedCostUsd, requiredEdgeUsd, reason: 'no_applicable_validated_edge',
+      })
+    : Object.freeze({
+        status: 'assessed',
+        historicalGrossEdgeLowerBoundPct: input.historicalGrossEdgeLowerBoundPct,
+        estimatedCostUsd,
+        requiredEdgeUsd,
+        outcome: profitable.intents.length === guarded.intents.length ? 'passed' : 'would_refuse',
+      });
 
-  if (profitable.intents.length === 0) {
+  const enforceProfitability = admissionMode === 'validated';
+  const approvedIntents = enforceProfitability ? profitable.intents : guarded.intents;
+  const skipped = Object.freeze([
+    ...guarded.skippedTrades,
+    ...(enforceProfitability ? profitable.skippedTrades : []),
+  ]);
+
+  if (approvedIntents.length === 0) {
     return {
       refused: true,
       code: 'all_intents_filtered',
@@ -199,10 +255,10 @@ export function runExecutionGates(input: ExecutionGateInput): ExecutionGateOutco
     profileId: input.profileId,
     runId: input.runId,
     approvedAtMs: input.nowMs,
-    intents: Object.freeze([...profitable.intents]),
+    intents: Object.freeze([...approvedIntents]),
     gatesPassed: Object.freeze([
       'guardrails',
-      'profitability',
+      ...(enforceProfitability ? ['profitability' as const] : []),
       'risk_control',
       'execution_permission',
     ] as const),
@@ -210,5 +266,16 @@ export function runExecutionGates(input: ExecutionGateInput): ExecutionGateOutco
     mode: 'paper',
     riskState,
     skipped,
+    admissionMode,
+    campaignId: input.campaignId ?? null,
+    paperBookRef: admissionMode === 'exploratory'
+      ? Object.freeze({ kind: 'exploratory_campaign' as const, campaignId: input.campaignId! })
+      : Object.freeze({ kind: 'profile' as const }),
+    profitabilityAssessment,
+    evidenceEligibility: Object.freeze({
+      validation: admissionMode === 'validated',
+      promotion: admissionMode === 'validated',
+      liveExecution: false as const,
+    }),
   }) as ApprovedExecution;
 }

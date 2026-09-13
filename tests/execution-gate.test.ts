@@ -177,6 +177,47 @@ describe('guardrails and profitability', () => {
     // "Nothing to do" is not "everything was rejected".
     expect(outcome.code).toBe('no_intents');
   });
+
+  it('observes unavailable profitability without inventing edge in exploratory paper', () => {
+    const outcome = runExecutionGates(input({
+      admissionMode: 'exploratory',
+      campaignId: 'campaign-1',
+      historicalGrossEdgeLowerBoundPct: null,
+    }));
+    expect(isApproved(outcome)).toBe(true);
+    if (!isApproved(outcome)) return;
+    expect(outcome.gatesPassed).not.toContain('profitability');
+    expect(outcome.profitabilityAssessment).toEqual(expect.objectContaining({
+      status: 'unavailable',
+      historicalGrossEdgeLowerBoundPct: null,
+      reason: 'no_applicable_validated_edge',
+    }));
+    expect(outcome.evidenceEligibility).toEqual({
+      validation: false,
+      promotion: false,
+      liveExecution: false,
+    });
+  });
+
+  it('records a would-refuse result without filtering exploratory intents', () => {
+    const outcome = runExecutionGates(input({
+      admissionMode: 'exploratory',
+      campaignId: 'campaign-1',
+      historicalGrossEdgeLowerBoundPct: 0,
+    }));
+    expect(isApproved(outcome)).toBe(true);
+    if (!isApproved(outcome)) return;
+    expect(outcome.intents).toHaveLength(1);
+    expect(outcome.profitabilityAssessment).toEqual(expect.objectContaining({
+      status: 'assessed', outcome: 'would_refuse', historicalGrossEdgeLowerBoundPct: 0,
+    }));
+  });
+
+  it('requires host-owned campaign identity for exploratory admission', () => {
+    expect(() => runExecutionGates(input({ admissionMode: 'exploratory' }))).toThrow(
+      'Exploratory execution requires a campaign identity.',
+    );
+  });
 });
 
 describe('resolveKillSwitch', () => {
