@@ -3,6 +3,7 @@ import {
   type ExecutionIntent,
   type Holding,
   type MarketQualitySnapshot,
+  type PaperAdmissionModeV1,
   type RiskControlInput,
 } from '@coqui/core';
 import {
@@ -11,6 +12,7 @@ import {
   getPaperExecutionAttemptOutcome,
   getPaperExecutionPolicy,
   getPaperExecutionProposal,
+  linkExploratoryPaperExecution,
   getPaperProposalPendingContext,
   recordPaperExecutionAttempt,
   recordPaperExecutionReview,
@@ -34,7 +36,10 @@ export interface PaperExecutionState {
   readonly holdings: readonly Holding[];
   readonly killSwitchEngaged: boolean;
   readonly evidenceVerified: boolean;
-  readonly historicalGrossEdgeLowerBoundPct: number;
+  readonly historicalGrossEdgeLowerBoundPct: number | null;
+  readonly admissionMode?: PaperAdmissionModeV1;
+  readonly campaignId?: string | null;
+  readonly exploratoryAuthorized?: boolean;
   readonly riskInput?: RiskControlInput;
   readonly marketQuality?: MarketQualitySnapshot | null;
 }
@@ -125,13 +130,19 @@ export class PaperExecutionService {
 
   /** Reconcile durable simulator submissions through the same sole OMS boundary. */
   settlePending(): PaperPendingSettlementResult {
+    const snapshot = this.#state();
     return new PaperOmsService({
       database: this.#database,
       clock: { nowMs: this.#nowMs },
       market: this.#market,
       onUnexpectedError: (productId, error) =>
         this.#onUnexpectedError(`paper_settlement:${productId}`, error),
-    }).settlePending(this.#profileId);
+    }).settlePending(
+      this.#profileId,
+      (snapshot.admissionMode ?? 'validated') === 'exploratory'
+        ? snapshot.campaignId ?? null
+        : null,
+    );
   }
 
   prepare(action: ProposedPaperAction): PaperExecutionResult {
@@ -143,7 +154,11 @@ export class PaperExecutionService {
     let reasonCode: string | null = null;
 
     if (policy.mode === 'off') reasonCode = 'paper_execution_off';
-    else if (!snapshot.evidenceVerified) reasonCode = 'evidence_not_verified';
+    else if ((snapshot.admissionMode ?? 'validated') === 'exploratory' &&
+        snapshot.exploratoryAuthorized !== true) reasonCode = 'exploratory_campaign_not_active';
+    else if ((snapshot.admissionMode ?? 'validated') === 'validated' && !snapshot.evidenceVerified) {
+      reasonCode = 'evidence_not_verified';
+    }
 
     const gates = reasonCode === null
       ? runExecutionGates({
@@ -154,6 +169,8 @@ export class PaperExecutionService {
           killSwitchEngaged: snapshot.killSwitchEngaged,
           intents: action.intents,
           holdings: snapshot.holdings,
+          admissionMode: snapshot.admissionMode ?? 'validated',
+          campaignId: snapshot.campaignId ?? null,
           historicalGrossEdgeLowerBoundPct: snapshot.historicalGrossEdgeLowerBoundPct,
           ...(snapshot.riskInput === undefined ? {} : { riskInput: snapshot.riskInput }),
           ...(snapshot.marketQuality === undefined ? {} : { marketQuality: snapshot.marketQuality }),
@@ -175,6 +192,13 @@ export class PaperExecutionService {
     if (action.pending !== undefined) {
       savePaperProposalPendingContext(proposal.id, action.pending, this.#database);
     }
+    if ((snapshot.admissionMode ?? 'validated') === 'exploratory' && snapshot.campaignId !== null &&
+        snapshot.campaignId !== undefined) {
+      linkExploratoryPaperExecution({ campaignId: snapshot.campaignId,
+        profileId: this.#profileId,
+        ...(action.pending === undefined ? {} : { decisionId: action.pending.decisionId }),
+        proposalId: proposal.id, createdAtMs: at }, this.#database);
+    }
     appendPaperExecutionEvent(proposal.id, this.#profileId, 'prepared', at, {
       proposalHash: hash,
       policy: policy.mode,
@@ -182,15 +206,20 @@ export class PaperExecutionService {
     }, this.#database);
 
     if (reasonCode !== null) return result(proposal, 'blocked', reasonCode);
-    if (policy.mode === 'review_required') return result(proposal, 'pending', 'human_review_required');
+    if (policy.mode === 'review_required' && (snapshot.admissionMode ?? 'validated') !== 'exploratory') {
+      return result(proposal, 'pending', 'human_review_required');
+    }
 
     const commandId = sha256Hex(`unattended:${proposal.id}:${proposal.proposalHash}`);
+    const exploratory = (snapshot.admissionMode ?? 'validated') === 'exploratory';
     recordPaperExecutionReview({
       commandId,
       proposal,
       decision: 'system_not_required',
-      reviewer: 'explicit unattended policy',
-      note: `policy provenance ${policy.provenanceHash}`,
+      reviewer: exploratory ? 'explicit exploratory campaign' : 'explicit unattended policy',
+      note: exploratory
+        ? `campaign ${snapshot.campaignId} · validation and profitability admission observational only`
+        : `policy provenance ${policy.provenanceHash}`,
       decidedAt: at,
     }, this.#database);
     return this.#submit(proposal, commandId);
@@ -251,9 +280,13 @@ export class PaperExecutionService {
     const snapshot = this.#state();
     const intents = JSON.parse(proposal.intentsJson) as readonly ExecutionIntent[];
     let refusal: ExecutionRefusalCode | 'paper_execution_off' | 'evidence_not_verified' |
-      'execution_lease_unavailable' | null = null;
+      'execution_lease_unavailable' | 'exploratory_campaign_not_active' | null = null;
     if (policy.mode === 'off') refusal = 'paper_execution_off';
-    else if (!snapshot.evidenceVerified) refusal = 'evidence_not_verified';
+    else if ((snapshot.admissionMode ?? 'validated') === 'exploratory' &&
+        snapshot.exploratoryAuthorized !== true) refusal = 'exploratory_campaign_not_active';
+    else if ((snapshot.admissionMode ?? 'validated') === 'validated' && !snapshot.evidenceVerified) {
+      refusal = 'evidence_not_verified';
+    }
     const gates = refusal === null
       ? runExecutionGates({
           profileId: this.#profileId,
@@ -263,6 +296,8 @@ export class PaperExecutionService {
           killSwitchEngaged: snapshot.killSwitchEngaged,
           intents,
           holdings: snapshot.holdings,
+          admissionMode: snapshot.admissionMode ?? 'validated',
+          campaignId: snapshot.campaignId ?? null,
           historicalGrossEdgeLowerBoundPct: snapshot.historicalGrossEdgeLowerBoundPct,
           ...(snapshot.riskInput === undefined ? {} : { riskInput: snapshot.riskInput }),
           ...(snapshot.marketQuality === undefined ? {} : { marketQuality: snapshot.marketQuality }),
@@ -281,6 +316,12 @@ export class PaperExecutionService {
       policy: policy.mode,
       policyProvenanceHash: policy.provenanceHash,
       evidenceVerified: snapshot.evidenceVerified,
+      admissionMode: snapshot.admissionMode ?? 'validated',
+      campaignId: snapshot.campaignId ?? null,
+      exploratoryAuthorized: snapshot.exploratoryAuthorized ?? false,
+      profitabilityAssessment: gates !== null && isApproved(gates)
+        ? gates.profitabilityAssessment
+        : null,
       killSwitchEngaged: snapshot.killSwitchEngaged,
       refusal,
     });

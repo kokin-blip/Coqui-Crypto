@@ -32,6 +32,28 @@ import { capturePaperPerformanceEvidence } from './paper-performance-evidence.js
 const DAY_MS = 86_400_000;
 const STRATEGY_MISMATCH_REASON = 'strategy_implementation_mismatch';
 
+export function readForwardEdgeStatus(profileId: string, database: Db) {
+  const status = readForwardEdgeStudyStatus(database);
+  const observations = status.planHash === null ? []
+    : listForwardEdgeObservations(status.planHash, profileId, database);
+  const completedDays = observations.filter((item) => item.valuationComplete).length;
+  const costBearingRebalances = observations.filter((item) => Number(item.turnoverUsd) > 0).length;
+  const outcome = status.result?.outcome ?? 'not_registered';
+  return {
+    status: status.plan === null ? 'not_registered' as const
+      : outcome === 'not_registered' ? 'collecting' as const : outcome,
+    planHash: status.planHash, costProfileHash: status.plan?.costProfileHash ?? null,
+    resultHash: status.resultHash, registeredAtMs: status.plan?.registeredAtMs ?? null,
+    firstEligibleDayUtcMs: status.plan?.firstEligibleDayUtcMs ?? null,
+    completedDays: status.result?.completedDays ?? completedDays, minimumCompletedDays: 365 as const,
+    costBearingRebalances: status.result?.costBearingRebalances ?? costBearingRebalances,
+    minimumCostBearingRebalances: 30 as const, trialUpperBound: 215 as const,
+    grossEdgeLowerBoundPct: status.result?.grossEdgeLowerConfidenceBoundPct ?? null,
+    netEdgeLowerBoundPct: status.result?.netEdgeLowerConfidenceBoundPct ?? null,
+    sourceHashes: status.result?.sourceHashes ?? [], outcome, activated: status.activated,
+  };
+}
+
 /**
  * Preserve the immutable campaign while marking it ineligible for strategy
  * evidence. Repeated startup/capture attempts are idempotent through the
@@ -236,6 +258,9 @@ export async function captureScheduledForwardEvidence(input: {
   readonly priceSource: Parameters<typeof capturePaperPerformanceEvidence>[0]['priceSource'];
   readonly market: PaperMarketData;
 }): Promise<void> {
+  // Exploratory campaigns are intentionally observational and must not retire,
+  // extend, or otherwise alter the registered validation campaign.
+  if (input.summary.strategyVersion === 'trendvol-exploratory-paper-v1') return;
   if (input.summary.strategyVersion !== input.plan.strategyId) {
     retireIncompatiblePaperCampaign({
       profileId: input.profileId,

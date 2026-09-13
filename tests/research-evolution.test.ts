@@ -51,6 +51,16 @@ describe('host-owned research evolution', () => {
     expect(() => listResearchLineage(101, database)).toThrow('Invalid lineage limit');
     database.close();
   });
+
+  it('rejects exploratory paper evidence before candidate scoring', () => {
+    const database = openDatabase(':memory:'), evolution = new EvolutionCoordinator(database);
+    expect(() => evolution.evaluate({ family: 'trendvol',
+      strategyVersion: 'trendvol-exploratory-paper-v1', evidenceId: 'paper-decision',
+      evidenceHash: 'd'.repeat(64), metrics, policy, createdAt: 1 }))
+      .toThrow('ineligible for research promotion');
+    expect(listResearchLineage(10, database)).toEqual([]);
+    database.close();
+  });
 });
 
 describe('research trigger coordinator', () => {

@@ -9,6 +9,7 @@ import {
   type DecisionMarketDataset,
   type Holding,
   type InstrumentKey,
+  type ExecutionIntent,
   type PaperPortfolioSnapshotV1,
 } from '@coqui/core';
 import { Decimal } from 'decimal.js';
@@ -88,7 +89,7 @@ export interface PaperRunLoopDependencies {
   readonly holdings: () => readonly Holding[];
   readonly policy: () => AllocationPolicy | null;
   readonly preparation: () => PaperDecisionPreparation;
-  readonly historicalGrossEdgeLowerBoundPct: number;
+  readonly historicalGrossEdgeLowerBoundPct: number | null;
   readonly evidenceVerified?: () => boolean;
   readonly executionOwnerId?: string;
   readonly captureEvidence?: (summary: PaperRunSummary) => Promise<void>;
@@ -179,6 +180,41 @@ export function normalizedMix(policy: AllocationPolicy, dataset: DecisionMarketD
     }
     return sum + (target.weight / total) * (series[index] / series[0]);
   }, 0));
+}
+
+/** Plan against a cash-inclusive campaign sleeve without representing cash as a fake instrument. */
+export function planExploratoryRebalance(
+  holdings: readonly Holding[],
+  cashUsd: string,
+  policy: AllocationPolicy,
+): readonly ExecutionIntent[] {
+  const byId = new Map(holdings.map((holding) => [instrumentKey(holding.asset.instrument), holding]));
+  const sleeveValue = holdings.reduce((sum, holding) => sum.add(holding.valueUsd ?? '0'),
+    new Decimal(cashUsd));
+  if (!sleeveValue.isPositive()) return [];
+  const intents: ExecutionIntent[] = [];
+  for (const target of policy.targets) {
+    const holding = byId.get(instrumentKey(target.instrument));
+    if (holding === undefined || holding.priceUsd === null || holding.valueUsd === null) continue;
+    const actual = new Decimal(holding.valueUsd);
+    const actualWeight = actual.div(sleeveValue).toNumber();
+    const driftPct = (actualWeight - target.weight) * 100;
+    if (Math.abs(driftPct) < policy.rebalanceBandPct) continue;
+    const delta = sleeveValue.mul(target.weight).minus(actual);
+    if (delta.isZero()) continue;
+    intents.push({
+      asset: holding.asset,
+      side: delta.isPositive() ? 'buy' : 'sell',
+      amountUsd: decimal(delta.abs().toFixed()),
+      origin: 'rebalance',
+      reason: `${delta.isPositive() ? 'underweight' : 'overweight'} ${driftPct >= 0 ? '+' : ''}${driftPct.toFixed(1)}pp vs ${(target.weight * 100).toFixed(0)}% target`,
+      urgency: 'passive',
+      referencePriceUsd: holding.priceUsd,
+    });
+  }
+  return Object.freeze(intents.sort((left, right) => left.side !== right.side
+    ? left.side === 'sell' ? -1 : 1
+    : instrumentKey(left.asset.instrument).localeCompare(instrumentKey(right.asset.instrument))));
 }
 
 export function journal(

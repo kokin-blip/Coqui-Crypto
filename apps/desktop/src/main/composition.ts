@@ -27,6 +27,7 @@ import {
   PortfolioReadModelService,
   PortfolioTaxService,
   PaperExecutionService,
+  ExploratoryPaperCampaignService,
   ReconciliationLedgerService,
   paperPortfolioView,
   MarketDisplayQueryService,
@@ -43,6 +44,7 @@ import {
 } from '@coqui/services';
 import {
   getAllocationPolicy, isAuthoritativeHost,
+  currentExploratoryPaperCampaign,
   getPaperDailyValuationEvidence,
   getPaperExecutionPolicy,
   getPaperExecutionProposal,
@@ -50,13 +52,11 @@ import {
   listRuntimeIncidents,
   listCoinbaseBalanceDiscrepancies,
   listDisplayUniverse,
-  listForwardEdgeObservations,
   listPaperExecutionProposals,
   listPaperDailyValuationEvidence,
   listPaperFillPerformanceFacts,
   listPaperPerformanceDayFacts,
   openDatabase,
-  readForwardEdgeStudyStatus,
   readProfitabilityEstimateEvidence, readOperationsFloor, listResearchLineage,
   registerForwardEdgeStudy,
   setPaperExecutionPolicy,
@@ -64,6 +64,7 @@ import {
 } from '@coqui/storage';
 
 import { createDiagnostics } from './diagnostics.js';
+import { createExploratoryPaperRuntime } from './exploratory-paper-handlers.js';
 import { createDecisionHandlers } from './decision-handlers.js';
 import { createAdvisorHandlers } from './advisor-handlers.js';
 import { createChartExtensionHandlers, createChartSnapshotHandlers, createChartWorkspaceHandlers } from './chart-handler-factories.js';
@@ -74,7 +75,7 @@ import { createConnectionHandlers, type ConnectionFileSelection } from './connec
 import { createMarketHandlers } from './market-handlers.js'; import { createMarketEventHandlers } from './market-event-handlers.js';
 import { createResearchOrchestrationHandlers } from './research-handlers.js';
 import { SHIPPED_FORWARD_EDGE_PLAN } from './forward-edge-plan.js';
-import { captureScheduledForwardEvidence } from './forward-edge-runtime.js';
+import { captureScheduledForwardEvidence, readForwardEdgeStatus } from './forward-edge-runtime.js';
 import { createAlertNotificationPump } from './notifications.js';
 import { createPaperMarketFeed } from './paper-market.js';
 import { createPaperCampaignHandlers } from './paper-campaign-handlers.js';
@@ -82,8 +83,8 @@ import { paperProposalView } from './paper-proposal-view.js';
 import { createCandleSource, createDisplayDataService, createReferenceSources } from './reference-sources.js';
 import { startSchedulerRuntime, type SchedulerRuntime } from './scheduler-runtime.js';
 import type { ChannelHandlers } from './dispatch.js';
-function paperGrossEdgeLowerBoundPct(profileId: string, database: Db): number {
-  return readProfitabilityEstimateEvidence(profileId, database)?.grossEdgeLowerBoundPct ?? 0;
+function paperGrossEdgeLowerBoundPct(profileId: string, database: Db): number | null {
+  return readProfitabilityEstimateEvidence(profileId, database)?.grossEdgeLowerBoundPct ?? null;
 }
 
 export interface RuntimeOptions extends Partial<Pick<Parameters<typeof createAdvisorHandlers>[0], 'secrets' | 'saveHistory' |
@@ -220,6 +221,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   const riskDashboard = new RiskDashboardService({ database, clock });
   const statusRail = new StatusRailService({ database, clock });
   const profileReadiness = new ProfileReadinessService(database, clock);
+  const exploratoryCampaigns = new ExploratoryPaperCampaignService(database);
 
   // The paper engine. Its decision is synchronous, so the two things it needs
   // from the outside world — market data and a holdings snapshot — are
@@ -227,7 +229,17 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   const paperMarket = createPaperMarketFeed({
     database,
     http,
-    instruments: () => getAllocationPolicy(database).targets.map((target) => target.instrument),
+    instruments: () => {
+      const exploratory = currentExploratoryPaperCampaign(options.profileId, database);
+      if (exploratory !== null && exploratory.status !== 'stopped') {
+        return exploratory.campaign.baseWeights.map(({ assetId }) => {
+          const [, , productId] = assetId.split('|');
+          if (!productId) throw new Error('Invalid exploratory campaign instrument.');
+          return { venue: 'coinbase' as const, productType: 'spot' as const, productId };
+        });
+      }
+      return getAllocationPolicy(database).targets.map((target) => target.instrument);
+    },
     bars: (instrument, lookbackDays, nowMs) => candles.dailyBars(instrument, lookbackDays, nowMs),
     onUnexpectedError: report,
   });
@@ -255,6 +267,22 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     }),
     onUnexpectedError: report, executionOwnerId: hostId,
   });
+  const paperRunDependencies = {
+    database, clock, profileId: options.profileId, market: paperMarket.view,
+    preparation: paperMarket.preparation, holdings: () => paperHoldings,
+    policy: () => {
+      const policy = getAllocationPolicy(database);
+      return policy.targets.length === 0 ? null : policy;
+    },
+    historicalGrossEdgeLowerBoundPct: paperGrossEdgeLowerBoundPct(options.profileId, database),
+    evidenceVerified: () => evidence.track().conversationEligible, executionOwnerId: hostId,
+    captureEvidence: async (summary: Parameters<typeof captureScheduledForwardEvidence>[0]['summary']) => {
+      await captureScheduledForwardEvidence({ profileId: options.profileId,
+        plan: SHIPPED_FORWARD_EDGE_PLAN, planHash: forwardPlanHash, summary, clock,
+        priceSource, market: paperMarket.view, database });
+    },
+    onUnexpectedError: report,
+  };
   let scheduler: SchedulerRuntime | null = null, disposed = false;
   const startScheduler = (): void => {
     if (disposed || scheduler !== null) return;
@@ -270,36 +298,12 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
           // Deliver alerts raised by this refresh in the same tick.
           notifications?.deliver(nowMs);
         },
-        paper: {
-          database,
-          clock,
-          profileId: options.profileId,
-          market: paperMarket.view, preparation: paperMarket.preparation,
-          holdings: () => paperHoldings,
-          // Empty targets mean no policy; rebalancing against nothing would sell everything.
-          policy: () => {
-            const policy = getAllocationPolicy(database);
-            return policy.targets.length === 0 ? null : policy;
-          },
-          historicalGrossEdgeLowerBoundPct: paperGrossEdgeLowerBoundPct(options.profileId, database),
-          evidenceVerified: () => evidence.track().conversationEligible, executionOwnerId: hostId,
-          captureEvidence: async (summary) => {
-            await captureScheduledForwardEvidence({
-              profileId: options.profileId,
-              plan: SHIPPED_FORWARD_EDGE_PLAN,
-              planHash: forwardPlanHash,
-              summary,
-              clock,
-              priceSource,
-              market: paperMarket.view,
-              database,
-            });
-          },
-          onUnexpectedError: report,
-        },
+        paper: paperRunDependencies,
       });
   };
   if (options.disableScheduler !== true) startScheduler();
+  const exploratoryRuntime = createExploratoryPaperRuntime({ profileId: options.profileId,
+    database, clock, market: paperMarket, campaigns: exploratoryCampaigns, run: paperRunDependencies });
   const handlers: ChannelHandlers = {
     ...createCoinbaseSyncHandlers({ profileId: options.profileId, database, clock, priceSource,
       ...(options.secrets === undefined ? {} : { secrets: options.secrets }),
@@ -321,6 +325,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       ...(options.pickMarketEventFile===undefined?{}:{pickEventFile:options.pickMarketEventFile}) }),
     ...createResearchOrchestrationHandlers({coordinator:researchHost,clock}),
     ...createDecisionHandlers(options.profileId, clock, database),
+    ...exploratoryRuntime.handlers,
     'activity.feed': (payload: { readonly limit: number; readonly cursor: string | null }) => ({
       ok: true,
       value: {
@@ -405,6 +410,21 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
         : { ok: true, value: paperProposalView(proposal, database) };
     },
     'paper.execution.prepare': async (payload: { readonly commandId: string }) => {
+      const exploratory = exploratoryRuntime.status();
+      if (exploratory !== null && exploratory.status === 'active') {
+        const evaluated = await exploratoryRuntime.evaluate();
+        if (!evaluated.ok) return evaluated;
+        const proposal = listPaperExecutionProposals(options.profileId, 200, database)
+          .find((item) => item.runId === evaluated.value.runId);
+        return { ok: true, value: {
+          status: evaluated.value.submittedCount > 0 ? 'submitted' as const
+            : evaluated.value.filledCount > 0 ? 'succeeded' as const : 'blocked' as const,
+          proposalId: proposal?.id ?? sha256Hex(`exploratory-no-proposal:${evaluated.value.runId}`),
+          proposalHash: proposal?.proposalHash ?? sha256Hex(`exploratory-no-proposal:${evaluated.value.runId}`),
+          reasonCode: evaluated.value.standDown,
+          filledCount: evaluated.value.filledCount, refusedCount: evaluated.value.refusedCount,
+        } };
+      }
       const now = clock.nowMs();
       await paperMarket.refresh(now);
       paperHoldings = (await portfolio.portfolioView()).holdings;
@@ -439,32 +459,8 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     ...createMarketHandlers(marketData, displayData, liveMarket),
     'research.runs': () => research.runs(),
     'research.performance': () => research.performance(),
-    'research.edge-study': () => {
-      const status = readForwardEdgeStudyStatus(database);
-      const observations = status.planHash === null ? []
-        : listForwardEdgeObservations(status.planHash, options.profileId, database);
-      const completedDays = observations.filter((item) => item.valuationComplete).length;
-      const costBearingRebalances = observations.filter((item) => Number(item.turnoverUsd) > 0).length;
-      const outcome = status.result?.outcome ?? 'not_registered';
-      return { ok: true, value: {
-        status: status.plan === null ? 'not_registered' : outcome === 'not_registered' ? 'collecting' : outcome,
-        planHash: status.planHash,
-        costProfileHash: status.plan?.costProfileHash ?? null,
-        resultHash: status.resultHash,
-        registeredAtMs: status.plan?.registeredAtMs ?? null,
-        firstEligibleDayUtcMs: status.plan?.firstEligibleDayUtcMs ?? null,
-        completedDays: status.result?.completedDays ?? completedDays,
-        minimumCompletedDays: 365 as const,
-        costBearingRebalances: status.result?.costBearingRebalances ?? costBearingRebalances,
-        minimumCostBearingRebalances: 30 as const,
-        trialUpperBound: 215 as const,
-        grossEdgeLowerBoundPct: status.result?.grossEdgeLowerConfidenceBoundPct ?? null,
-        netEdgeLowerBoundPct: status.result?.netEdgeLowerConfidenceBoundPct ?? null,
-        sourceHashes: status.result?.sourceHashes ?? [],
-        outcome,
-        activated: status.activated,
-      } };
-    },
+    'research.edge-study': () => ({ ok: true,
+      value: readForwardEdgeStatus(options.profileId, database) }),
     'research.jobs': (payload: { readonly limit: number }) => research.jobs(payload.limit),
     'research.job': (payload: { readonly id: string }) => research.job(payload.id),
     'portfolio.view': async () => ({ ok: true, value: await portfolio.portfolioView() }),

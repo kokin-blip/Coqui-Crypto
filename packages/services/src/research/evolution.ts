@@ -9,6 +9,9 @@ export class EvolutionCoordinator {
   evaluate(input: { readonly family: string; readonly strategyVersion: string;
     readonly parentId?: string; readonly evidenceId: string; readonly evidenceHash: string;
     readonly metrics: EvolutionMetricsV1; readonly policy: EvolutionPolicyV1; readonly createdAt: number }): ResearchCandidateRecord {
+    if (input.strategyVersion === 'trendvol-exploratory-paper-v1') {
+      throw new Error('Exploratory paper evidence is ineligible for research promotion.');
+    }
     const parent = input.parentId === undefined ? null : getResearchCandidate(input.parentId, this.database);
     if (input.parentId !== undefined && (parent === null || parent.family !== input.family)) {
       throw new Error('Candidate parent is missing or belongs to another family.');

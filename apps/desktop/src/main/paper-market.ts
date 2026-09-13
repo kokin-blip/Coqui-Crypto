@@ -60,6 +60,8 @@ export interface PaperMarketFeed {
   preparation(): PaperDecisionPreparation;
   /** Fetch and persist bars and venue rules. Returns a typed stand-down on failure. */
   refresh(nowMs: number): Promise<PaperDecisionPreparation>;
+  /** Explicit-universe refresh used only while validating a new campaign. */
+  refreshFor(instruments: readonly InstrumentIdentity[], nowMs: number): Promise<PaperDecisionPreparation>;
 }
 
 export function createPaperMarketFeed(
@@ -135,18 +137,10 @@ export function createPaperMarketFeed(
     })) as unknown as CanonicalJsonValue));
   }
 
-  return {
-    view,
-    preparation: () => latestPreparation,
-    async refresh(nowMs) {
-      let instruments: readonly InstrumentIdentity[];
-      try {
-        instruments = dependencies.instruments();
-      } catch (error) {
-        report('paper_market_instruments', error);
-        latestPreparation = { ok: false, code: 'market_fetch_failed' };
-        return latestPreparation;
-      }
+  const refreshFor = async (
+    instruments: readonly InstrumentIdentity[],
+    nowMs: number,
+  ): Promise<PaperDecisionPreparation> => {
       if (instruments.length === 0) return latestPreparation;
 
       try {
@@ -214,6 +208,22 @@ export function createPaperMarketFeed(
         latestPreparation = { ok: false, code: 'market_fetch_failed' };
       }
       return latestPreparation;
+  };
+
+  return {
+    view,
+    preparation: () => latestPreparation,
+    refreshFor,
+    async refresh(nowMs) {
+      let instruments: readonly InstrumentIdentity[];
+      try {
+        instruments = dependencies.instruments();
+      } catch (error) {
+        report('paper_market_instruments', error);
+        latestPreparation = { ok: false, code: 'market_fetch_failed' };
+        return latestPreparation;
+      }
+      return refreshFor(instruments, nowMs);
     },
   };
 }

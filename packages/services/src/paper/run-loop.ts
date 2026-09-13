@@ -21,7 +21,6 @@ import {
   listDecisionEvidenceEvents,
   listPaperBalances,
   listSubmittedPaperExecutions,
-  recoverInterruptedPaperOrders,
   savePaperCampaignPlanV2,
   saveWalletDecisionRun,
 } from '@coqui/storage';
@@ -483,62 +482,4 @@ export function runPaperDecision(
     );
   }
   return finish(null, outcome.filledCount, outcome.refusedCount);
-}
-
-/**
- * Sweep orders left non-terminal by a crash, before the first tick.
- *
- * `recoverInterruptedPaperOrders` classifies each one: fully filled becomes
- * `filled`, untouched becomes `cancelled`, and anything ambiguous becomes
- * `unknown` rather than a guess — invariant 15 applied to a restart.
- */
-export function recoverPaperOrdersAtStartup(
-  dependencies: Pick<PaperRunLoopDependencies, 'database' | 'clock' | 'profileId'>,
-): { readonly reconciled: number; readonly blocked: number } {
-  return recoverInterruptedPaperOrders(
-    dependencies.profileId,
-    dependencies.clock.nowMs(),
-    dependencies.database,
-  );
-}
-
-export interface PaperSchedulerTask {
-  readonly profileId: string;
-  readonly cadenceMs: number;
-  readonly utcOffsetMs?: number;
-  readonly catchUpPolicy: 'recompute_current';
-  execute(context: {
-    readonly scheduledForMs: number;
-  }): Promise<{ readonly status: 'completed' | 'degraded'; readonly reasonCode?: string }>;
-}
-
-/**
- * Wrap the decision as a `WalletSchedulerTask`.
- *
- * A stand-down reports `completed`, not `degraded`. The scheduler outcome
- * describes whether the *task* ran, and the scheduler's own validation forbids
- * a reason code on `completed` — the reason a run traded nothing belongs in the
- * journal, which is where a user or the reconciliation harness will look.
- */
-export function createPaperRunLoopTask(
-  dependencies: PaperRunLoopDependencies,
-  cadenceMs = 86_400_000,
-  utcOffsetMs = 0,
-): PaperSchedulerTask {
-  return {
-    profileId: dependencies.profileId,
-    cadenceMs,
-    utcOffsetMs,
-    catchUpPolicy: 'recompute_current',
-    async execute(context) {
-      try {
-        const summary = runPaperDecision(dependencies, context.scheduledForMs);
-        await dependencies.captureEvidence?.(summary);
-        return { status: 'completed' };
-      } catch (error) {
-        dependencies.onUnexpectedError?.('paper_run', error);
-        return { status: 'degraded', reasonCode: 'paper_run_failed' };
-      }
-    },
-  };
 }

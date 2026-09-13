@@ -9,16 +9,17 @@ import {
   type PaperOrderState,
   type ProductRuleSnapshot,
 } from '@coqui/core';
-import { Decimal } from 'decimal.js';
 import {
   appendPaperOrderEvent,
+  commitExploratoryPaperFill,
   commitPaperFill,
   getPaperPendingExecution,
   getPaperOrder,
   getProductRuleSnapshot,
   inTransaction,
   listSubmittedPaperExecutions,
-  listPaperBalances,
+  listSubmittedExploratoryPaperExecutions,
+  linkExploratoryPaperExecution,
   savePaperPendingExecution,
   settlePaperPendingExecution,
   saveProductRuleSnapshot,
@@ -27,6 +28,7 @@ import {
 } from '@coqui/storage';
 
 import { isApproved, type ApprovedExecution } from './execution-gate.js';
+import { availableForPaperIntentUsd } from './oms-book.js';
 import {
   isFilled,
   paperCostModelHash,
@@ -49,8 +51,6 @@ import {
  * illegal transition and freezes order identity, and `commitPaperFill` writes
  * the fill, its ledger legs and the balance changes inside one transaction.
  */
-
-const OPENING_CASH_ASSET = 'USD' as const;
 
 export type OmsIssueCode =
   | 'no_product_rules'
@@ -134,25 +134,7 @@ function issue(path: readonly string[], code: OmsIssueCode, detail: string | nul
 
 /** Deterministic per (run, product, side) — the schema's uniqueness key. */
 function orderIdFor(approval: ApprovedExecution, productId: string, side: string): string {
-  return sha256Hex(`${approval.profileId}:${approval.runId}:${productId}:${side}`);
-}
-
-function availableCashUsd(profileId: string, database: Db): string {
-  const balances = listPaperBalances(profileId, database);
-  return balances.find((balance) => balance.assetId === OPENING_CASH_ASSET)?.quantity ?? '0';
-}
-
-function availableForIntentUsd(
-  profileId: string,
-  side: 'buy' | 'sell',
-  instrument: ProductRuleSnapshot['instrument'],
-  priceUsd: string,
-  database: Db,
-): string {
-  if (side === 'buy') return availableCashUsd(profileId, database);
-  const quantity = listPaperBalances(profileId, database)
-    .find((balance) => balance.assetId === instrumentKey(instrument))?.quantity ?? '0';
-  return new Decimal(quantity).mul(priceUsd).toFixed();
+  return sha256Hex(`${approval.profileId}:${approval.campaignId ?? 'legacy'}:${approval.runId}:${productId}:${side}`);
 }
 
 /**
@@ -249,7 +231,11 @@ export class PaperOmsService {
             createdAt: this.#clock.nowMs(), updatedAt: this.#clock.nowMs(),
           };
           savePaperOrder(order, this.#database);
-          this.#event(order, 'proposed', 0, order.createdAt, { gatesPassed: approval.gatesPassed });
+          this.#event(order, 'proposed', 0, order.createdAt, {
+            gatesPassed: approval.gatesPassed, admissionMode: approval.admissionMode,
+            campaignId: approval.campaignId, profitabilityAssessment: approval.profitabilityAssessment,
+            evidenceEligibility: approval.evidenceEligibility,
+          });
           let sequence = 1;
           for (const state of ['risk_approved', 'submission_pending', 'submitted'] as const) {
             this.#advance(order, state, sequence++, order.createdAt, null);
@@ -271,6 +257,11 @@ export class PaperOmsService {
             submittedAtMs: order.createdAt,
             settledAtMs: null,
           }, this.#database);
+          if (approval.campaignId !== null) {
+            linkExploratoryPaperExecution({ campaignId: approval.campaignId,
+              profileId: approval.profileId, decisionId: context.decisionId,
+              orderId, pendingId, createdAtMs: order.createdAt }, this.#database);
+          }
         });
         orderIds.push(orderId);
       } catch (error) {
@@ -282,7 +273,7 @@ export class PaperOmsService {
   }
 
   /** Settle only the recorded execution interval; never substitute a later bar. */
-  settlePending(profileId: string): PaperPendingSettlementResult {
+  settlePending(profileId: string, campaignId: string | null = null): PaperPendingSettlementResult {
     let filledCount = 0;
     let expiredCount = 0;
     let pendingCount = 0;
@@ -293,7 +284,9 @@ export class PaperOmsService {
       disposition: 'filled' | 'expired';
       atMs: number;
     }> = [];
-    const pending = [...listSubmittedPaperExecutions(profileId, this.#database)].sort((left, right) =>
+    const pending = [...(campaignId === null
+      ? listSubmittedPaperExecutions(profileId, this.#database)
+      : listSubmittedExploratoryPaperExecutions(campaignId, profileId, this.#database))].sort((left, right) =>
       left.side !== right.side ? left.side === 'sell' ? -1 : 1 : left.id < right.id ? -1 : 1);
     inTransaction(this.#database, () => { for (const item of pending) {
       const bars = this.#market.bars(instrumentKey(item.instrument));
@@ -329,8 +322,8 @@ export class PaperOmsService {
       const outcome = simulateFill({
         instrument: item.instrument, symbol: item.symbol, side: item.side,
         requestedUsd: item.requestedUsd,
-        availableCashUsd: availableForIntentUsd(
-          profileId,
+        availableCashUsd: availableForPaperIntentUsd(
+          { profileId, campaignId },
           item.side,
           item.instrument,
           String(exact.open),
@@ -361,10 +354,12 @@ export class PaperOmsService {
         impactCost: outcome.impactCost as PaperFill['impactCost'], filledAt: outcome.filledAtMs,
         marketSnapshotHash: sha256Hex(`${instrumentKey(item.instrument)}:${exact.startTimeMs}:${exact.open}`),
       };
-      commitPaperFill(fill, order.runId, paperFillLedgerEntries({
+      const ledgerEntries = paperFillLedgerEntries({
         instrument: item.instrument, side: item.side, quantity: outcome.quantity,
         executionPrice: outcome.executionPrice, venueFee: outcome.venueFee,
-      }), this.#database);
+      });
+      if (campaignId === null) commitPaperFill(fill, order.runId, ledgerEntries, this.#database);
+      else commitExploratoryPaperFill(campaignId, fill, order.runId, ledgerEntries, this.#database);
       this.#advance(order, 'filled', 4, outcome.filledAtMs, null);
       settlePaperPendingExecution(item.id, 'filled', outcome.filledAtMs, this.#database);
       filledCount += 1;
@@ -417,8 +412,8 @@ export class PaperOmsService {
       symbol: intent.asset.symbol,
       side: intent.side,
       requestedUsd: String(intent.amountUsd),
-      availableCashUsd: availableForIntentUsd(
-        approval.profileId,
+      availableCashUsd: availableForPaperIntentUsd(
+        approval,
         intent.side,
         instrument,
         String(selectExecutionBar(bars, approval.approvedAtMs)?.open ?? 0),
@@ -452,7 +447,11 @@ export class PaperOmsService {
         updatedAt: now,
       };
       savePaperOrder(order, this.#database);
-      this.#event(order, 'proposed', 0, now, { gatesPassed: approval.gatesPassed });
+      this.#event(order, 'proposed', 0, now, {
+        gatesPassed: approval.gatesPassed, admissionMode: approval.admissionMode,
+        campaignId: approval.campaignId, profitabilityAssessment: approval.profitabilityAssessment,
+        evidenceEligibility: approval.evidenceEligibility,
+      });
 
       if (!isFilled(outcome)) {
         // The gate chain approved the intent; the venue then refused it on its
