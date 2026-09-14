@@ -11,6 +11,8 @@ import {
   type Db,
 } from '@coqui/storage';
 
+import { seedAllocationFromCoinbaseSnapshot } from './connection-snapshots-v2.js';
+
 export type ProfileReadinessStepId = 'connection' | 'sync' | 'portfolio' | 'allocation' |
   'market_data' | 'paper_campaign' | 'first_decision';
 export type ProfileReadinessStepStatus = 'complete' | 'current' | 'blocked' | 'pending';
@@ -53,6 +55,12 @@ export class ProfileReadinessService {
     const snapshots = connections.map((connection) =>
       getLatestConnectionAccountSnapshotV2(profileId, connection.id, this.database));
     const unified = getLatestUnifiedPortfolioSnapshotV2(profileId, false, this.database);
+    connections.forEach((connection, index) => {
+      const snapshot = snapshots[index];
+      if (connection.provider === 'coinbase' && snapshot !== null && snapshot !== undefined) {
+        seedAllocationFromCoinbaseSnapshot(snapshot, this.database);
+      }
+    });
     const policy = getAllocationPolicy(this.database);
     const marketReady = policy.targets.length > 0 && policy.targets.every((target) => {
       const complete = listMarketBars(target.instrument, this.database).filter((bar) => bar.isComplete);

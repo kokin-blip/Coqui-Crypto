@@ -23,8 +23,10 @@ import {
   ensureLegacyCoinbaseConnection,
   getLatestConnectionAccountSnapshotV2,
   getProfileConnectionV2,
+  getAllocationPolicy,
   linkProfileConnectionMigration,
   listProfileConnectionsV2,
+  saveAllocationPolicy,
   saveConnectionAccountSnapshotV2,
   saveProfileConnectionV2,
   saveProviderAccountRef,
@@ -36,6 +38,41 @@ function validPrice(observation: SpotPriceObservation | undefined): string | nul
   if (observation === undefined) return null;
   const value = new Decimal(observation.priceUsd);
   return value.isFinite() && value.gt(0) ? value.toString() : null;
+}
+
+/**
+ * The current desktop build has no allocation editor. Until it does, use a
+ * complete Coinbase snapshot as the paper strategy's initial allocation.
+ * An existing policy is always user-owned and is never replaced.
+ */
+export function seedAllocationFromCoinbaseSnapshot(
+  snapshot: ConnectionAccountSnapshotV2,
+  database: Db,
+): boolean {
+  if (snapshot.provider !== 'coinbase' || !snapshot.complete ||
+      getAllocationPolicy(database).targets.length > 0) return false;
+
+  const values = new Map<string, { instrument: NonNullable<ConnectionAccountBalanceV2['instrument']>; value: Decimal }>();
+  for (const balance of snapshot.balances) {
+    if (balance.instrument === null || balance.valueUsd === null) continue;
+    const value = new Decimal(balance.valueUsd);
+    if (!value.gt(0)) continue;
+    const key = instrumentKey(balance.instrument);
+    const prior = values.get(key);
+    values.set(key, { instrument: balance.instrument, value: prior === undefined ? value : prior.value.plus(value) });
+  }
+  const total = [...values.values()].reduce((sum, item) => sum.plus(item.value), new Decimal(0));
+  if (!total.gt(0)) return false;
+
+  const entries = [...values.entries()].sort(([left], [right]) => left.localeCompare(right));
+  let assigned = 0;
+  const targets = entries.map(([, item], index) => {
+    const weight = index === entries.length - 1 ? 1 - assigned : item.value.div(total).toNumber();
+    assigned += weight;
+    return { instrument: item.instrument, weight };
+  });
+  saveAllocationPolicy({ targets, rebalanceBandPct: getAllocationPolicy(database).rebalanceBandPct }, database);
+  return true;
 }
 
 export interface PersistCoinbaseSnapshotV2Input {
@@ -126,6 +163,7 @@ export async function persistCoinbasePortfolioSnapshotV2(
   const snapshot = Object.freeze({ ...material,
     id: sha256Hex(`connection-account-snapshot-v2:${contentHash}`), contentHash });
   saveConnectionAccountSnapshotV2(snapshot, database);
+  seedAllocationFromCoinbaseSnapshot(snapshot, database);
 
   const sources = listProfileConnectionsV2(input.profileId, database)
     .filter((candidate) => candidate.status !== 'disconnected')

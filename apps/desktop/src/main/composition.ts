@@ -186,7 +186,6 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     createCoinGeckoPriceSource(coinGeckoHttp, trackedAssets()),
   );
   const portfolio = new PortfolioReadModelService({ database, clock, priceSource });
-
   const candles = createCandleSource(http);
   const marketData = new MarketDisplayQueryService({
     clock,

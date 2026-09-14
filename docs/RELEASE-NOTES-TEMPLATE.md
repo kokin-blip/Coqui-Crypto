@@ -1,4 +1,4 @@
-# Coqui 0.1.0-beta.3 — experimental macOS build
+# Coqui 0.1.0-beta.4 — experimental macOS build
 
 Local-first connected portfolio tracking, separate tax-lot accounting,
 allocation, and paper-trading research. No account, no server, no cloud database.
@@ -9,27 +9,17 @@ rejected at connect time. The Robinhood Crypto adapter is read-only and exports
 no real placement method. Paper figures are a simulation and are labelled as one
 wherever they appear.
 
-## Fixed in beta.3
+## Fixed in beta.4
 
-- **Guided setup now appears in front of the application.** The modal layering
-  tokens the shell referenced were never defined, so the onboarding dialog (and
-  every other modal) could render beneath the sidebar and status rail.
-- **Coinbase sync produces a portfolio again.** Coinbase stopped returning the
-  legacy `usd_from`/`usd_to` fields on its fee-tier summary, and that failure
-  discarded an otherwise complete accounts-and-fills dataset, leaving the
-  connected portfolio empty. The parser now falls back to the documented
-  `aop_from`/`aop_to` range, and fee-tier evidence — provenance, not pricing —
-  degrades to null instead of failing the whole sync.
-- **Connecting reports the truth.** A failed first synchronization no longer
-  shows "Credentials verified". The connection is kept for resume and the
-  actual failure is shown.
+- **Paper mode now starts from connected Coinbase values.** A complete Coinbase
+  snapshot seeds the missing paper allocation as its current USD-weighted asset
+  mix. Existing saved allocations are preserved.
 
 ## Downloads
 
 | Platform | File |
 |---|---|
 | macOS (Apple Silicon) | `Coqui-<version>-mac-arm64.dmg` |
-| Windows (x64) | `Coqui-<version>-win-x64-setup.exe` |
 
 There is no Intel Mac build: nothing verifies one, and shipping a binary no gate
 covers would be a claim this project cannot back.
@@ -48,7 +38,7 @@ certutil -hashfile <file> SHA256          # Windows
 ## First launch
 
 Coqui is **ad-hoc signed**, not signed with an Apple Developer certificate, so
-both platforms will warn about an unverified publisher on first open.
+macOS will warn about an unverified publisher on first open.
 `docs/INSTALL.md` explains what to expect, and — importantly — how to tell the
 expected warning apart from the one that means the download is broken.
 
@@ -56,7 +46,7 @@ expected warning apart from the one that means the download is broken.
 
 - Full `pnpm verify` on the tagged commit, before anything was packaged.
 - The packaged application opened a migrated database through `node:sqlite`
-  from inside the asar archive, on each platform it ships for (ADR-0003's gate).
+  from inside the asar archive on macOS (ADR-0003's gate).
 - macOS: ad-hoc signature present, arbitrary network loads denied, camera,
   microphone and Bluetooth usage descriptions stripped from the bundle.
 

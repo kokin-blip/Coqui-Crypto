@@ -25,6 +25,7 @@ import {
 } from '../packages/services/src/index.js';
 import {
   getSetting,
+  getAllocationPolicy,
   getLatestUnifiedPortfolioSnapshotV2,
   insertDisposals,
   insertTaxLots,
@@ -121,6 +122,9 @@ describe('Coinbase account sync service', () => {
     expect(getLatestUnifiedPortfolioSnapshotV2('main', true, target.database)).toMatchObject({
       totalValueUsd: '65000', complete: true,
       exposures: [{ exposureKey: 'BTC', quantity: '1.3', valueUsd: '65000' }],
+    });
+    expect(getAllocationPolicy(target.database)).toEqual({
+      targets: [{ instrument: BTC.instrument, weight: 1 }], rebalanceBandPct: 5,
     });
     expect(rawLedger(target.database).lots).toHaveLength(1);
     target.database.close();

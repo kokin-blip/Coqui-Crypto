@@ -1,6 +1,6 @@
 {
   "name": "@coqui/desktop",
-  "version": "0.1.0-beta.3",
+  "version": "0.1.0-beta.4",
   "description": "Evidence-first crypto research and paper-trading workstation with live execution disabled.",
   "author": "Coqui Crypto",
   "private": true,
