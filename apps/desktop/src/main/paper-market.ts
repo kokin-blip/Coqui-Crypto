@@ -111,7 +111,9 @@ export function createPaperMarketFeed(
     nowMs: number,
     instruments: readonly InstrumentIdentity[],
   ): Promise<string | null> {
-    const result = await fetchCoinbaseProductRules(dependencies.http, { nowMs });
+    const result = await fetchCoinbaseProductRules(dependencies.http, {
+      nowMs, productIds: instruments.map((instrument) => instrument.productId),
+    });
     if (!result.ok) return null;
     const wanted = new Set(instruments.map((instrument) => instrument.productId));
     for (const rule of result.rules) {

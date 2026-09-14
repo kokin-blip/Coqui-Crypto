@@ -152,6 +152,8 @@ function parseProductRules(value: unknown, nowMs: number): ProductRuleSnapshot |
 export interface CoinbaseProductRuleOptions {
   /** Injected so the adapter never reads the host clock. */
   readonly nowMs: number;
+  /** Fetch just these products when the caller already knows its trade universe. */
+  readonly productIds?: readonly string[];
   readonly enrichment?: CoinbaseProductRuleEnrichment;
   readonly signal?: AbortSignal;
 }
@@ -168,6 +170,25 @@ export async function fetchCoinbaseProductRules(
   http: HttpClient,
   options: CoinbaseProductRuleOptions,
 ): Promise<CoinbaseProductRuleResult> {
+  if (options.productIds !== undefined) {
+    const responses = await Promise.all(options.productIds.map(async (productId) => {
+      const response = await http.getJson<unknown>(
+        `${PRODUCTS_URL}/${encodeURIComponent(productId)}`,
+        options.signal ? { signal: options.signal } : undefined,
+      );
+      return response;
+    }));
+    const failed = responses.find((response) => !response.ok);
+    if (failed !== undefined && !failed.ok) return { ok: false, code: failure(failed) };
+    const rows = responses.map((response, index) => {
+      if (!response.ok) return null;
+      const data = Array.isArray(response.data)
+        ? response.data.find((row) => record(row)?.['id'] === options.productIds![index])
+        : response.data;
+      return parseProductRules(data, options.nowMs);
+    });
+    return { ok: true, rules: Object.freeze(rows.filter((row): row is ProductRuleSnapshot => row !== null)) };
+  }
   const response = await http.getJson<unknown>(
     PRODUCTS_URL,
     options.signal ? { signal: options.signal } : undefined,

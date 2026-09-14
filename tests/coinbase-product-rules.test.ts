@@ -44,6 +44,19 @@ function client(data: unknown, failure?: HttpResult<unknown>): HttpClient {
 }
 
 describe('product rules mapping', () => {
+  it('fetches only requested products for a known paper universe', async () => {
+    const urls: string[] = [];
+    const getJson: HttpClient['getJson'] = async <T>(url: string) => {
+      urls.push(url);
+      return { ok: true, data: product() as T, status: 200 };
+    };
+    const result = await fetchCoinbaseProductRules({ ...client([]), getJson }, {
+      nowMs: NOW, productIds: ['BTC-USD'],
+    });
+    expect(result.ok).toBe(true);
+    expect(urls).toEqual(['https://api.exchange.coinbase.com/products/BTC-USD']);
+  });
+
   it('produces a snapshot normalizePaperOrder actually accepts', async () => {
     const result = await fetchCoinbaseProductRules(client([product()]), { nowMs: NOW });
     expect(result.ok).toBe(true);

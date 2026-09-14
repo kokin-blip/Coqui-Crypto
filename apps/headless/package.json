@@ -1,6 +1,6 @@
 {
   "name": "@coqui/headless",
-  "version": "0.1.0-beta.5",
+  "version": "0.1.0-beta.6",
   "description": "Local paper-only Coqui host CLI.",
   "private": true,
   "type": "module",

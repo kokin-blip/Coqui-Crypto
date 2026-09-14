@@ -1,4 +1,4 @@
-# Coqui 0.1.0-beta.5 — experimental macOS build
+# Coqui 0.1.0-beta.6 — experimental macOS build
 
 Local-first connected portfolio tracking, separate tax-lot accounting,
 allocation, and paper-trading research. No account, no server, no cloud database.
@@ -9,7 +9,7 @@ rejected at connect time. The Robinhood Crypto adapter is read-only and exports
 no real placement method. Paper figures are a simulation and are labelled as one
 wherever they appear.
 
-## Fixed in beta.5
+## Fixed in beta.6
 
 - **Paper mode now starts from connected Coinbase values.** A complete Coinbase
   snapshot seeds the missing paper allocation as its current USD-weighted asset
@@ -18,6 +18,8 @@ wherever they appear.
   subscribes to the assets used for Paper decisions even when no separate
   display watchlist is configured, and a manual rebalance refreshes that
   subscription immediately.
+- **Paper admission fetches only its own venue rules.** This avoids a slow
+  all-products Coinbase request preventing an otherwise eligible BTC campaign.
 
 ## Downloads
 
