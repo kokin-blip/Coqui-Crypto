@@ -309,6 +309,22 @@ describe('the market feed reads locally and fetches beforehand', () => {
     db.close();
   });
 
+  it('accepts a freshly fetched rule whose immutable content snapshot already exists', async () => {
+    const db = seeded();
+    saveProductRuleSnapshot(RULES, db);
+    const feed = createPaperMarketFeed({
+      database: db,
+      http: { getJson: async () => ({ ok: true, status: 200, data: [{
+        id: 'BTC-USD', quote_currency: 'USD', status: 'online',
+        base_increment: '0.00000001', quote_increment: '0.01', min_market_funds: '1',
+        trading_disabled: false, cancel_only: false, limit_only: false, post_only: false,
+      }] }) } as never,
+      instruments: () => [BTC], bars: async () => ({ ok: true, bars: bars(121) }),
+    });
+    expect(await feed.refresh(T0 + 10 * 60_000)).toEqual(expect.objectContaining({ ok: true }));
+    db.close();
+  });
+
   it('refuses a product it has no rules for rather than assuming them', async () => {
     const db = seeded();
     const feed = createPaperMarketFeed({

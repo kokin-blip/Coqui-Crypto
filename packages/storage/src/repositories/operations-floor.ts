@@ -1,5 +1,6 @@
 import { getStrategyDecision } from './decision-evidence.js';
 import { getExecutionPlan, listExecutionRoutes } from './execution-routing.js';
+import { currentExploratoryPaperCampaign } from './exploratory-paper.js';
 import { listResearchJobs } from './research.js';
 import type { Db } from '../sqlite/index.js';
 
@@ -54,6 +55,16 @@ export function readOperationsFloor(profileId: string, database: Db): readonly O
     } catch {
       market = { ...market, state: 'attention', detail: 'Latest decision evidence failed integrity verification.' };
     }
+  }
+  const exploratory = currentExploratoryPaperCampaign(profileId, database);
+  if (exploratory?.status === 'active' &&
+      (market.evidenceAtMs === null || market.evidenceAtMs < exploratory.campaign.startedAtMs)) {
+    market = {
+      subsystem: 'market', state: 'active', title: 'Market observer',
+      detail: 'Exploratory paper is active; awaiting its first completed-bar evaluation.',
+      evidenceAtMs: exploratory.campaign.startedAtMs, evidenceId: exploratory.campaign.contentHash,
+      decisionId: null, scope: 'profile',
+    };
   }
 
   const riskRow = database.prepare(`SELECT id, decision_id, at, payload_json FROM decision_evidence_events_v1

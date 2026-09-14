@@ -131,7 +131,10 @@ export function createPaperMarketFeed(
         const rightId = right?.instrument.productId ?? '';
         return leftId < rightId ? -1 : leftId > rightId ? 1 : 0;
       });
-    if (snapshots.some((snapshot) => snapshot === null || snapshot.retrievedAt !== nowMs)) return null;
+    // The snapshot id is the canonical venue response hash. An unchanged rule
+    // therefore reuses its immutable row; this successful fetch is the
+    // freshness evidence, not a reason to require a duplicate row timestamp.
+    if (snapshots.some((snapshot) => snapshot === null)) return null;
     return sha256Hex(canonicalJson(snapshots.map((snapshot) => ({
       id: snapshot!.id,
       productId: snapshot!.instrument.productId,
