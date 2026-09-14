@@ -221,6 +221,17 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   const statusRail = new StatusRailService({ database, clock });
   const profileReadiness = new ProfileReadinessService(database, clock);
   const exploratoryCampaigns = new ExploratoryPaperCampaignService(database);
+  const paperInstruments = (): readonly import('@coqui/core').InstrumentIdentity[] => {
+    const exploratory = currentExploratoryPaperCampaign(options.profileId, database);
+    if (exploratory !== null && exploratory.status !== 'stopped') {
+      return exploratory.campaign.baseWeights.map(({ assetId }) => {
+        const [, , productId] = assetId.split('|');
+        if (!productId) throw new Error('Invalid exploratory campaign instrument.');
+        return { venue: 'coinbase' as const, productType: 'spot' as const, productId };
+      });
+    }
+    return getAllocationPolicy(database).targets.map((target) => target.instrument);
+  };
 
   // The paper engine. Its decision is synchronous, so the two things it needs
   // from the outside world — market data and a holdings snapshot — are
@@ -228,17 +239,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   const paperMarket = createPaperMarketFeed({
     database,
     http,
-    instruments: () => {
-      const exploratory = currentExploratoryPaperCampaign(options.profileId, database);
-      if (exploratory !== null && exploratory.status !== 'stopped') {
-        return exploratory.campaign.baseWeights.map(({ assetId }) => {
-          const [, , productId] = assetId.split('|');
-          if (!productId) throw new Error('Invalid exploratory campaign instrument.');
-          return { venue: 'coinbase' as const, productType: 'spot' as const, productId };
-        });
-      }
-      return getAllocationPolicy(database).targets.map((target) => target.instrument);
-    },
+    instruments: paperInstruments,
     bars: (instrument, lookbackDays, nowMs) => candles.dailyBars(instrument, lookbackDays, nowMs),
     onUnexpectedError: report,
   });
@@ -286,13 +287,14 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   const startScheduler = (): void => {
     if (disposed || scheduler !== null) return;
     if (!isAuthoritativeHost(options.profileId, hostId, database)) return;
-    liveMarket.start(trackedAssets().map((asset) => asset.instrument.productId));
+    liveMarket.start(paperInstruments().map((instrument) => instrument.productId));
     scheduler = startSchedulerRuntime({
         database,
         clock,
         profileId: options.profileId, hostId, onUnexpectedError: report, research: researchHost,
         async prepare(nowMs) {
           await paperMarket.refresh(nowMs);
+          liveMarket.configure(paperInstruments().map((instrument) => instrument.productId));
           paperHoldings = (await portfolio.portfolioView()).holdings;
           // Deliver alerts raised by this refresh in the same tick.
           notifications?.deliver(nowMs);
@@ -426,6 +428,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       }
       const now = clock.nowMs();
       await paperMarket.refresh(now);
+      liveMarket.configure(paperInstruments().map((instrument) => instrument.productId));
       paperHoldings = (await portfolio.portfolioView()).holdings;
       const policy = getAllocationPolicy(database);
       const intents = policy.targets.length === 0
