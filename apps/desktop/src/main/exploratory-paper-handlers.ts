@@ -26,12 +26,17 @@ export function createExploratoryPaperRuntime(input: {
         code: 'exploratory_campaign_not_active' }] };
     }
     const now = input.clock.nowMs();
-    await input.market.refresh(now);
+    try { await input.market.refresh(now); } catch { /* refresh has its own catch; defence-in-depth */ }
     const scheduledForMs = Math.floor(now / 86_400_000) * 86_400_000;
-    const summary = runExploratoryPaperDecision(input.run, scheduledForMs);
-    exploratoryPaperPortfolioView({ profileId: input.profileId, database: input.database,
-      market: input.market.view, nowMs: now, persistValuation: true });
-    return { ok: true as const, value: summary };
+    try {
+      const summary = runExploratoryPaperDecision(input.run, scheduledForMs);
+      exploratoryPaperPortfolioView({ profileId: input.profileId, database: input.database,
+        market: input.market.view, nowMs: now, persistValuation: true });
+      return { ok: true as const, value: summary };
+    } catch (error) {
+      return { ok: false as const, issues: [{ path: [] as const,
+        code: error instanceof Error ? error.message : 'evaluate_unexpected_error' }] };
+    }
   };
   const handlers: ChannelHandlers = {
     'paper.exploratory.status': () => ({ ok: true, value: status() }),

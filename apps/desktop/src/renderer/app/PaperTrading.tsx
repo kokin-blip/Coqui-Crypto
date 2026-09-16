@@ -33,7 +33,7 @@ export function PaperTrading({
   const exploratoryPortfolio = useChannel(client, 'paper.exploratory.portfolio', {});
   const evaluate = useCommand(client, 'paper.exploratory.evaluate-now', [
     'paper.exploratory.portfolio', 'paper.exploratory.performance',
-    'paper.execution.proposals', 'activity.feed',
+    'paper.execution.proposals', 'activity.feed', 'operations.floor',
   ]);
   const exploratoryActive = exploratory.kind === 'ready' && exploratory.value?.status === 'active';
   const presentation = presentAction(prepare.state, {
@@ -100,6 +100,15 @@ export function PaperTrading({
       )}
       {evaluate.value !== null && <p className="execution-outcome" role="status">
         {evaluate.value.standDown === null ? 'EVALUATED' : evaluate.value.standDown.replaceAll('_', ' ').toUpperCase()} · {evaluate.value.submittedCount} submitted · {evaluate.value.filledCount} filled
+      </p>}
+      {evaluate.state.kind === 'failed' && <p className="execution-outcome outcome-failed" role="alert">
+        FAILED · {evaluate.state.codes.join(', ').replaceAll('_', ' ')}
+      </p>}
+      {evaluate.state.kind === 'blocked' && <p className="execution-outcome outcome-blocked" role="alert">
+        BLOCKED · {evaluate.state.codes.join(', ').replaceAll('_', ' ')}
+      </p>}
+      {evaluate.state.kind === 'unknown' && <p className="execution-outcome outcome-unknown" role="alert">
+        UNKNOWN · {evaluate.state.codes.join(', ').replaceAll('_', ' ')}
       </p>}
 
       <section aria-labelledby="proposal-heading" className="panel">

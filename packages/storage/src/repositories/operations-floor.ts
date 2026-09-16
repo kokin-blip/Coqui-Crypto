@@ -49,7 +49,7 @@ export function readOperationsFloor(profileId: string, database: Db): readonly O
         market = { subsystem: 'market', state: ready ? 'nominal' : 'attention', title: 'Market observer',
           detail: ready ? 'Latest completed decision dataset and rules were fresh.' :
             `Latest decision dataset was ${value.freshness}; refresh ${value.refreshResult.replaceAll('_', ' ')}.`,
-          evidenceAtMs: value.asOfMs ?? stored.decision.createdAtMs, evidenceId: stored.contentHash,
+          evidenceAtMs: Math.max(value.asOfMs ?? 0, stored.decision.createdAtMs), evidenceId: stored.contentHash,
           decisionId: stored.decision.decisionId, scope: 'profile' };
       }
     } catch {
