@@ -25,6 +25,15 @@ export interface ChannelPolicy {
 }
 
 export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
+  'alpaca.paper.status': { refetchIntervalMs: false, staleTimeMs: 30 * SECOND },
+  'alpaca.paper.connect': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'alpaca.paper.refresh': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'alpaca.paper.disconnect': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'parallel.paper.status': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
+  'parallel.paper.start': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'parallel.paper.pause': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'parallel.paper.resume': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'parallel.paper.stop': { refetchIntervalMs: false, staleTimeMs: 0 },
   'decision.timeline': { refetchIntervalMs: 30_000, staleTimeMs: 15_000 },
   'decision.detail': { refetchIntervalMs: false, staleTimeMs: Infinity },
   'accounts.coinbase.status': { refetchIntervalMs: false, staleTimeMs: 30 * SECOND },

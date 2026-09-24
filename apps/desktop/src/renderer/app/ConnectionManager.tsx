@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useChannel } from '../query/use-channel.js';
 import { useCommand } from '../query/use-command.js';
 import { SurfaceState } from './SurfaceState.js';
+import { AlpacaPaperConnection } from './AlpacaPaperConnection.js';
 
 type Connection = ChannelResponse<'connections.list'>['connections'][number];
 const INVALIDATIONS = ['connections.list', 'portfolio.current', 'portfolio.history', 'app.status-rail'] as const;
@@ -61,6 +62,7 @@ export function ConnectionManager({ client }: { readonly client: CoquiClient }):
     } else if (pendingRobinhood.value.state === 'none') setRobinhoodSetup(null);
   }, [pendingRobinhood]);
   return (
+    <>
     <section className="settings-section coinbase-settings" aria-labelledby="connection-manager-heading">
       <header className="coinbase-settings-heading">
         <div><p className="section-label">Connected accounts</p><h3 id="connection-manager-heading">Exchange connections</h3></div>
@@ -85,5 +87,7 @@ export function ConnectionManager({ client }: { readonly client: CoquiClient }):
       {connections.kind === 'ready' && connections.value.connections.length === 0 && <div className="panel-empty-body"><p>No exchange connections yet.</p></div>}
       {connections.kind === 'ready' && connections.value.connections.map((connection) => <ConnectionRow key={connection.id} client={client} connection={connection} />)}
     </section>
+    <AlpacaPaperConnection client={client} />
+    </>
   );
 }

@@ -28,6 +28,7 @@ export * from './paper.js';
 export * from './paper-runtime.js';
 export * from './paper-execution.js';
 export * from './paper-performance.js';
+export * from './parallel-paper.js';
 export * from './pre-registrations.js';
 export * from './portfolio.js';
 export * from './portfolio-evidence.js';

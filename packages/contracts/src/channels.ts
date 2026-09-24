@@ -1,6 +1,7 @@
 import * as z from 'zod';
 
 import { activityChannelSchemas } from './schemas/activity.js';
+import { alpacaPaperChannelSchemas } from './schemas/alpaca-paper.js';
 import { appChannelSchemas } from './schemas/app.js';
 import { chartExtensionChannelSchemas } from './schemas/chart-extensions.js';
 import { accountsChannelSchemas } from './schemas/accounts.js';
@@ -11,6 +12,7 @@ import { marketEventChannelSchemas } from './schemas/market-events.js';
 import { operationsChannelSchemas } from './schemas/operations.js';
 import { paperExecutionChannelSchemas } from './schemas/paper-execution.js';
 import { paperPerformanceChannelSchemas } from './schemas/paper-performance.js';
+import { parallelPaperChannelSchemas } from './schemas/parallel-paper.js';
 import { portfolioChannelSchemas } from './schemas/portfolio.js';
 import { researchChannelSchemas } from './schemas/research.js';
 import { riskChannelSchemas } from './schemas/risk.js';
@@ -33,6 +35,7 @@ import type { ContractSchema, DeepReadonly } from './messages.js';
  */
 export const CHANNEL_SCHEMAS = {
   ...activityChannelSchemas,
+  ...alpacaPaperChannelSchemas,
   ...appChannelSchemas,
   ...chartExtensionChannelSchemas,
   ...accountsChannelSchemas,
@@ -43,6 +46,7 @@ export const CHANNEL_SCHEMAS = {
   ...operationsChannelSchemas,
   ...paperExecutionChannelSchemas,
   ...paperPerformanceChannelSchemas,
+  ...parallelPaperChannelSchemas,
   ...portfolioChannelSchemas,
   ...researchChannelSchemas,
   ...riskChannelSchemas,
@@ -85,6 +89,13 @@ export function isChannelName(value: unknown): value is ChannelName {
  * which changes no balance and no tax lot.
  */
 const WRITE_CHANNELS = [
+  'alpaca.paper.connect',
+  'alpaca.paper.refresh',
+  'alpaca.paper.disconnect',
+  'parallel.paper.start',
+  'parallel.paper.pause',
+  'parallel.paper.resume',
+  'parallel.paper.stop',
   'accounts.coinbase.connect',
   'accounts.coinbase.connect-json',
   'accounts.coinbase.disconnect',

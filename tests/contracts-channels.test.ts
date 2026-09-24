@@ -46,7 +46,8 @@ describe('channel registry', () => {
       'advisor.chat.history', 'advisor.chat.history.delete', 'advisor.chat.history.export',
       'advisor.chat.send', 'advisor.context.prepare', 'advisor.decision.explain', 'advisor.evidence.explain', 'advisor.facts.generate', 'advisor.navigation',
       'advisor.provider.connect', 'advisor.provider.connect-copied', 'advisor.provider.disconnect', 'advisor.provider.verify', 'advisor.providers',
-      'alerts.view', 'app.chart.snapshot.save', 'app.chart.workspace', 'app.chart.workspace.set', 'app.incidents',
+      'alerts.view', 'alpaca.paper.connect', 'alpaca.paper.disconnect', 'alpaca.paper.refresh', 'alpaca.paper.status',
+      'app.chart.snapshot.save', 'app.chart.workspace', 'app.chart.workspace.set', 'app.incidents',
       'app.onboarding.complete', 'app.onboarding.restart', 'app.onboarding.skip', 'app.onboarding.status',
       'app.person', 'app.person.set', 'app.profile-readiness',
       'app.status-rail',
@@ -87,6 +88,7 @@ describe('channel registry', () => {
       'paper.performance',
       'paper.performance-day',
       'paper.portfolio',
+      'parallel.paper.pause', 'parallel.paper.resume', 'parallel.paper.start', 'parallel.paper.status', 'parallel.paper.stop',
       'portfolio.allocation',
       'portfolio.current',
       'portfolio.history',
@@ -116,6 +118,8 @@ describe('channel registry', () => {
     expect([...CHANNEL_KINDS.read, ...CHANNEL_KINDS.write].sort())
       .toEqual([...CHANNEL_NAMES].sort());
     expect(CHANNEL_KINDS.write).toEqual([
+      'alpaca.paper.connect', 'alpaca.paper.refresh', 'alpaca.paper.disconnect',
+      'parallel.paper.start', 'parallel.paper.pause', 'parallel.paper.resume', 'parallel.paper.stop',
       'accounts.coinbase.connect', 'accounts.coinbase.connect-json', 'accounts.coinbase.disconnect',
       'accounts.coinbase.sync', 'accounts.profile.switch',
       'accounts.settings.set', 'accounts.workspace.set',

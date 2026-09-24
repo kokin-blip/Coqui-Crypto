@@ -220,6 +220,8 @@ describe('the sweep covers the whole registry', () => {
       || channel === 'paper.execution.prepare'
       || channel === 'paper.execution.review'
       || channel.startsWith('paper.exploratory.')
+      || channel.startsWith('alpaca.paper.')
+      || channel.startsWith('parallel.paper.')
       || channel === 'accounts.profiles'
       || channel === 'accounts.profile.switch'
       || channel.startsWith('accounts.coinbase.')

@@ -14,7 +14,8 @@ export type SecretKey =
   | 'coingecko-api-key'
   | 'coinmarketcap-api-key'
   | 'robinhood-crypto-credentials'
-  | 'robinhood-pending-private-key';
+  | 'robinhood-pending-private-key'
+  | 'alpaca-paper-credentials';
 
 export type SecretStoreErrorCode =
   | 'unavailable'

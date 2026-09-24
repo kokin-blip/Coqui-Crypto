@@ -4,8 +4,15 @@
   "description": "Local paper-only Coqui host CLI.",
   "private": true,
   "type": "module",
-  "bin": { "coqui-headless": "dist/index.js" },
-  "scripts": { "build": "tsc -b", "start": "pnpm build && node dist/index.js" },
+  "bin": {
+    "coqui-headless": "dist/index.js",
+    "coqui-algorithm": "dist/algorithm.js"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "start": "pnpm build && node dist/index.js",
+    "algorithm": "pnpm build && node dist/algorithm.js"
+  },
   "dependencies": {
     "@coqui/core": "workspace:*",
     "@coqui/desktop": "workspace:*",

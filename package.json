@@ -1,6 +1,6 @@
 {
   "name": "coqui-crypto",
-  "version": "0.1.0-beta.8",
+  "version": "0.1.0-beta.9",
   "description": "Evidence-first crypto research and paper-trading workstation with live execution disabled.",
   "author": "Coqui Crypto",
   "private": true,
@@ -31,6 +31,7 @@
     "research:run-plan": "pnpm build && node scripts/run-registered-study.mjs",
     "events:import-local": "pnpm build && node scripts/import-market-events.mjs",
     "headless": "pnpm --filter @coqui/headless start",
+    "algorithm": "pnpm --filter @coqui/headless algorithm",
     "providers:smoke": "node --env-file=.env scripts/provider-smoke.mjs",
     "coinbase:verify-view-only": "pnpm build && node scripts/verify-coinbase-view-only.mjs",
     "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm build",

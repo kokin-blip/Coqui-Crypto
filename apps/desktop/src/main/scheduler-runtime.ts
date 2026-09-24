@@ -53,6 +53,7 @@ export interface SchedulerRuntimeOptions {
   readonly pollMs?: number;
   readonly onUnexpectedError?: (context: string, error: unknown) => void;
   readonly research?: { recover():unknown; tick():Promise<void> };
+  readonly parallelPaper?: { tick(): Promise<void> };
 }
 
 export interface SchedulerRuntime extends HostLifecycle {
@@ -86,6 +87,7 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
         }
       }
       await scheduler?.tick(tasks);
+      if (options.parallelPaper !== undefined) await options.parallelPaper.tick();
       if (options.research !== undefined) await options.research.tick();
     } catch (error) {
       report('scheduler_tick', error);

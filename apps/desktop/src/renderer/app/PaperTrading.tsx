@@ -4,6 +4,7 @@ import { formatUsd, presentAction } from '@coqui/ui-kit';
 import { PaperProposalReview } from './PaperProposalReview.js';
 import { Performance } from './Performance.js';
 import { SurfaceState } from './SurfaceState.js';
+import { ParallelPaperComparison } from './ParallelPaperComparison.js';
 import type { AppRoute } from './routes.js';
 import { useChannel } from '../query/use-channel.js';
 import { useCommand } from '../query/use-command.js';
@@ -74,6 +75,8 @@ export function PaperTrading({
       </section>
 
       {route === 'paper/overview' && unmet !== undefined && !exploratoryActive && <SurfaceState kind="blocked" title="Paper preparation is not ready" detail={unmet.detail} action={{ label: unmet.actionLabel, href: unmet.route }} />}
+
+      {route === 'paper/overview' && <ParallelPaperComparison client={client} />}
 
       {exploratoryPortfolio.kind === 'ready' && exploratoryPortfolio.value !== null && exploratoryPortfolio.value.primary && (
         <section className="panel exploratory-paper-summary" aria-labelledby="exploratory-summary-heading">

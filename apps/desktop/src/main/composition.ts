@@ -44,7 +44,6 @@ import {
 } from '@coqui/services';
 import {
   getAllocationPolicy, isAuthoritativeHost,
-  currentExploratoryPaperCampaign,
   getPaperDailyValuationEvidence,
   getPaperExecutionPolicy,
   getPaperExecutionProposal,
@@ -72,12 +71,16 @@ import { createAccountPreferenceHandlers } from './account-preference-handlers.j
 import { CoinbaseMarketStreamService } from './coinbase-market-stream.js';
 import { createCoinbaseSyncHandlers, lastCoinbaseSyncAtMs } from './coinbase-handlers.js';
 import { createConnectionHandlers, type ConnectionFileSelection } from './connection-handlers.js';
+import { createAlpacaPaperHandlers } from './alpaca-paper-handlers.js';
+import { createParallelPaperHandlers } from './parallel-paper-handlers.js';
+import { createParallelPaperRuntime } from './parallel-paper-runtime.js';
 import { createMarketHandlers } from './market-handlers.js'; import { createMarketEventHandlers } from './market-event-handlers.js';
 import { createResearchOrchestrationHandlers } from './research-handlers.js';
 import { SHIPPED_FORWARD_EDGE_PLAN } from './forward-edge-plan.js';
 import { captureScheduledForwardEvidence, readForwardEdgeStatus } from './forward-edge-runtime.js';
 import { createAlertNotificationPump } from './notifications.js';
 import { createPaperMarketFeed } from './paper-market.js';
+import { paperInstruments as resolvePaperInstruments } from './paper-instruments.js';
 import { createPaperCampaignHandlers } from './paper-campaign-handlers.js';
 import { paperProposalView } from './paper-proposal-view.js';
 import { createCandleSource, createDisplayDataService, createReferenceSources } from './reference-sources.js';
@@ -90,14 +93,9 @@ function paperGrossEdgeLowerBoundPct(profileId: string, database: Db): number | 
 export interface RuntimeOptions extends Partial<Pick<Parameters<typeof createAdvisorHandlers>[0], 'secrets' | 'saveHistory' |
   'readClipboardText' | 'clearClipboardIfMatches'>> {
   readonly databasePath: string; readonly profileId: string; readonly hostId?: string;
-  /** Supplied by the composition root so `core` never reads the host clock. */
   readonly readSystemTime?: () => number;
-  /** Reported rather than thrown, so one bad tick cannot take down the app. */
   readonly onUnexpectedError?: (context: string, error: unknown) => void;
-  /**
-   * Leave the paper scheduler stopped. The smoke harness boots the runtime to
-   * check wiring and should not start a timer or reach the network to do it.
-   */
+  /** Leave the scheduler stopped for smoke tests. */
   readonly disableScheduler?: boolean;
   /**
    * A verified CoinGecko Demo key, read from the secret store *before* the
@@ -109,7 +107,6 @@ export interface RuntimeOptions extends Partial<Pick<Parameters<typeof createAdv
    * reach a service or a channel (invariant 3).
    */
   readonly coinGeckoApiKey?: string | null;
-  /** Testable authenticated acquisition boundary; production uses the hardened Coinbase adapter. */
   readonly coinbaseAcquirer?: CoinbaseEvidenceAcquirer; readonly coinbaseVerifier?: CoinbaseCredentialVerifier; readonly pickConnectionFile?: (provider: 'coinbase' | 'robinhood_crypto') => Promise<ConnectionFileSelection | null>;
   /**
    * Delivers OS notifications. Injected because `electron.Notification` is
@@ -118,7 +115,6 @@ export interface RuntimeOptions extends Partial<Pick<Parameters<typeof createAdv
    */
   readonly notifier?: Parameters<typeof createAlertNotificationPump>[0]['notifier'];
   readonly saveChartSnapshot?: (filenameStem: string, png: Uint8Array) => Promise<'saved' | 'cancelled'>; readonly pickChartExtension?: () => Promise<string | null>;
-  /** Only explicitly registered, immutable research definitions may enter the worker host. */
   readonly researchRegistrations?: readonly RegisteredResearchDefinitionV1[];
   readonly pickMarketEventFile?:()=>Promise<{readonly contents:string;readonly reference:string}|null>;
 }
@@ -221,21 +217,9 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   const statusRail = new StatusRailService({ database, clock });
   const profileReadiness = new ProfileReadinessService(database, clock);
   const exploratoryCampaigns = new ExploratoryPaperCampaignService(database);
-  const paperInstruments = (): readonly import('@coqui/core').InstrumentIdentity[] => {
-    const exploratory = currentExploratoryPaperCampaign(options.profileId, database);
-    if (exploratory !== null && exploratory.status !== 'stopped') {
-      return exploratory.campaign.baseWeights.map(({ assetId }) => {
-        const [, , productId] = assetId.split('|');
-        if (!productId) throw new Error('Invalid exploratory campaign instrument.');
-        return { venue: 'coinbase' as const, productType: 'spot' as const, productId };
-      });
-    }
-    return getAllocationPolicy(database).targets.map((target) => target.instrument);
-  };
+  const paperInstruments = () => resolvePaperInstruments(options.profileId, database);
 
-  // The paper engine. Its decision is synchronous, so the two things it needs
-  // from the outside world — market data and a holdings snapshot — are
-  // refreshed before each tick rather than awaited inside one.
+  // Market data and holdings are refreshed before each synchronous paper tick.
   const paperMarket = createPaperMarketFeed({
     database,
     http,
@@ -243,6 +227,9 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     bars: (instrument, lookbackDays, nowMs) => candles.dailyBars(instrument, lookbackDays, nowMs),
     onUnexpectedError: report,
   });
+  const parallel = createParallelPaperRuntime({ profileId: options.profileId, database, clock, http,
+    bars: (instrument, lookbackDays, nowMs) => candles.dailyBars(instrument, lookbackDays, nowMs),
+    onUnexpectedError: report, ...(options.secrets === undefined ? {} : { secrets: options.secrets }) });
 
   const notifications = options.notifier === undefined
     ? null
@@ -294,18 +281,24 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
         profileId: options.profileId, hostId, onUnexpectedError: report, research: researchHost,
         async prepare(nowMs) {
           await paperMarket.refresh(nowMs);
+          await parallel.refreshIfActive(nowMs);
           liveMarket.configure(paperInstruments().map((instrument) => instrument.productId));
           paperHoldings = (await portfolio.portfolioView()).holdings;
           // Deliver alerts raised by this refresh in the same tick.
           notifications?.deliver(nowMs);
         },
         paper: paperRunDependencies,
+        parallelPaper: parallel.service,
       });
   };
   if (options.disableScheduler !== true) startScheduler();
   const exploratoryRuntime = createExploratoryPaperRuntime({ profileId: options.profileId,
     database, clock, market: paperMarket, campaigns: exploratoryCampaigns, run: paperRunDependencies });
   const handlers: ChannelHandlers = {
+    ...createAlpacaPaperHandlers({ profileId: options.profileId, database, clock,
+      onDisconnect: () => parallel.service.pauseForDisconnect(),
+      ...(options.secrets === undefined ? {} : { secrets: options.secrets }) }),
+    ...createParallelPaperHandlers(parallel.service),
     ...createCoinbaseSyncHandlers({ profileId: options.profileId, database, clock, priceSource,
       ...(options.secrets === undefined ? {} : { secrets: options.secrets }),
       ...(options.coinbaseAcquirer === undefined ? {} : { acquirer: options.coinbaseAcquirer }),

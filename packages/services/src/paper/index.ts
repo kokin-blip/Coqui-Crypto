@@ -10,6 +10,8 @@ export * from './connection-campaign.js';
 export * from './exploratory-campaign.js';
 export * from './exploratory-run-loop.js';
 export * from './exploratory-portfolio.js';
+export * from './parallel-signal.js';
+export * from './parallel-paper-service.js';
 export * from './run-loop.js';
 export * from './paper-scheduler-task.js';
 export * from './venue.js';

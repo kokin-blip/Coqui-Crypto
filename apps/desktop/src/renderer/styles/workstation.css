@@ -1204,6 +1204,10 @@
 .coinbase-key-copy small,
 .coinbase-sync-copy small { color: var(--coqui-text-muted); }
 .coinbase-key-control { display: grid; gap: 12px; padding: 14px; background: var(--coqui-surface-1); border: 1px solid var(--coqui-border); border-radius: var(--coqui-radius-md); }
+.parallel-paper-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-block: 16px; }
+.parallel-paper-positions { overflow-x: auto; margin-block-start: 16px; }
+.parallel-paper-positions table { width: 100%; border-collapse: collapse; text-align: left; }
+.parallel-paper-positions th, .parallel-paper-positions td { padding: 8px; border-bottom: 1px solid var(--coqui-border); }
 .coinbase-key-copy { color: var(--coqui-text); }
 .coinbase-key-copy > svg { color: var(--coqui-text-muted); }
 .coinbase-key-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }

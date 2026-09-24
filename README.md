@@ -47,6 +47,21 @@ The headless CLI opens no network listener and has no remote credential or live
 execution mode. Use `relinquish --confirm` before returning placement authority
 to the desktop runtime.
 
+### Algorithm laboratory
+
+The separate terminal laboratory runs the same canonical TrendVol implementation
+without starting the desktop app, scheduler, network access, or database writes.
+It is intended for observing decisions and evolving strategies before any
+deliberate integration into the paper backend or UI.
+
+```sh
+pnpm algorithm -- explain --input=examples/trendvol-snapshot.json
+```
+
+The command prints a readable decision trace followed by the complete JSON
+report, including configuration, momentum statistics, volatility evidence,
+target weights, cash weight, and history status.
+
 The root typecheck works in a pristine clone before build output exists.
 
 ## Verification

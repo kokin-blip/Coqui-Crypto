@@ -5,6 +5,7 @@ import { ConnectionManager } from './ConnectionManager.js';
 import { DisplaySettings } from './DisplaySettings.js';
 import { ExecutionPolicySettings } from './ExecutionPolicySettings.js';
 import { ExploratoryPaperSettings } from './ExploratoryPaperSettings.js';
+import { ParallelPaperSettings } from './ParallelPaperSettings.js';
 import { PaperCampaignSettings } from './PaperCampaignSettings.js';
 import { SurfaceState } from './SurfaceState.js';
 import { useChannel } from '../query/use-channel.js';
@@ -82,7 +83,7 @@ export function Settings({ client }: { readonly client: CoquiClient }): React.JS
         {category === 'connections' && <ConnectionManager key={view.profileId} client={client} />}
         {category === 'appearance' && <section className="settings-section" aria-labelledby="appearance-settings-heading"><div><p className="section-label">Profile presentation</p><h3 id="appearance-settings-heading">Appearance and accessibility</h3></div><DisplaySettings client={client} preferences={view.preferences} /><p className="opacity-70">{view.source === 'default' ? 'Using verified workstation defaults for this profile.' : 'Saved for this profile.'}</p></section>}
         {category === 'workspace' && <section className="settings-section" aria-labelledby="workspace-settings-heading"><div><p className="section-label">Workspace</p><h3 id="workspace-settings-heading">Mode and chart defaults</h3></div><WorkspaceSettings client={client} preferences={view.preferences} /></section>}
-        {category === 'paper' && <div className="settings-panel-stack"><ExploratoryPaperSettings client={client} /><ExecutionPolicySettings client={client} /><PaperCampaignSettings client={client} /></div>}
+        {category === 'paper' && <div className="settings-panel-stack"><ParallelPaperSettings client={client} /><ExploratoryPaperSettings client={client} /><ExecutionPolicySettings client={client} /><PaperCampaignSettings client={client} /></div>}
         {category === 'advisor' && <AdvisorSettingsSummary client={client} />}
         {category === 'diagnostics' && <DiagnosticsSettings client={client} />}
       </div>
