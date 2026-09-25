@@ -238,7 +238,7 @@ function risk(facts: StoredProfileDashboardFacts): DashboardRiskView | null {
 
 function safety(facts: StoredProfileDashboardFacts): DashboardSafetyStopView | null {
   const stop = facts.safetyStop;
-  if (!stop || !safeTime(stop.triggeredAt) ||
+  if (!stop || stop.kind === 'campaign_exercise' || !safeTime(stop.triggeredAt) ||
     (stop.acknowledgedAt !== null && !safeTime(stop.acknowledgedAt))) return null;
   return {
     active: stop.active,

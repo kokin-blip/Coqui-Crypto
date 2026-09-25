@@ -9,10 +9,11 @@ import { getWalletRiskState, getWalletSafetyStop, type Db } from '@coqui/storage
  * including the manual kill switch that migration 25 carried over from the
  * predecessor's `app_settings` key.
  *
- * Either halts everything. Reading only one is how a manual kill switch ends
- * up displayed as "armed·off" — which is exactly what the status rail did
- * before this existed. One predicate, used by both the rail and the execution
- * gate, so the two cannot disagree about whether trading is stopped.
+ * A campaign exercise is observational evidence, not an operational stop.
+ * Older versions persisted it as an active safety stop; ignore that legacy
+ * record so it cannot block either paper simulator. Other explicit safety
+ * stops and risk hard stops remain operational. The rail and execution gate
+ * use this same predicate so they agree about whether trading is stopped.
  */
 export type KillSwitchReason = 'risk_hard_stop' | 'safety_stop' | null;
 
@@ -30,7 +31,7 @@ export function resolveKillSwitch(profileId: string, database: Db): KillSwitchSt
   }
 
   const safetyStop = getWalletSafetyStop(profileId, database);
-  if (safetyStop?.active === true) {
+  if (safetyStop?.active === true && safetyStop.kind !== 'campaign_exercise') {
     return { engaged: true, reason: 'safety_stop', detail: safetyStop.reason };
   }
 

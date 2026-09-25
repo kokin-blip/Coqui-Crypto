@@ -4,7 +4,7 @@ import { createMemorySecretStore, AlpacaPaperError } from '../packages/adapters/
 import { assetExposureKey, connectionAccountSnapshotV2Hash, FixedClock, instrumentKey, profileConnectionV2, sha256Hex,
   type ConnectionAccountSnapshotV2, type DecisionMarketDataset } from '../packages/core/src/index.js';
 import { ParallelPaperService, PARALLEL_INSTRUMENTS, parallelAnchor, parallelDecision } from '../packages/services/src/index.js';
-import { listParallelEvents, openDatabase, saveConnectionAccountSnapshotV2, saveProfileConnectionV2,
+import { appendParallelEvent, listParallelEvents, openDatabase, saveConnectionAccountSnapshotV2, saveProfileConnectionV2,
   setSetting } from '../packages/storage/src/index.js';
 
 const TODAY = Date.parse('2026-09-24T00:06:00Z');
@@ -26,7 +26,7 @@ function dataset(days = 121, end = '2026-09-23'): DecisionMarketDataset {
     latestRetrievedAtMsByAsset: {} as DecisionMarketDataset['latestRetrievedAtMsByAsset'] };
 }
 
-async function setup() {
+async function setup(openingUsd = '1000') {
   const database = openDatabase(':memory:');
   const clock = new FixedClock(TODAY), secrets = createMemorySecretStore();
   const connection = profileConnectionV2('main', 'coinbase', sha256Hex('key'), TODAY - 60_000);
@@ -34,8 +34,8 @@ async function setup() {
   const material = {
     schemaVersion: 2 as const, profileId: 'main', connectionId: connection.id, provider: 'coinbase' as const,
     asOfMs: TODAY - 1_000, balances: [{ accountRefId: sha256Hex('account'), exposureKey: assetExposureKey('USD'),
-      instrument: null, availableQuantity: '1000', heldQuantity: '0', totalQuantity: '1000',
-      priceUsd: '1', valueUsd: '1000' }], cashUsd: '1000', buyingPowerUsd: '1000', pendingOrderIds: [],
+      instrument: null, availableQuantity: openingUsd, heldQuantity: '0', totalQuantity: openingUsd,
+      priceUsd: '1', valueUsd: openingUsd }], cashUsd: openingUsd, buyingPowerUsd: openingUsd, pendingOrderIds: [],
     permissions: { accountRead: true, marketRead: true, orderRead: true, trade: false as const },
     rulesHash: null, feeEvidenceHash: null, health: 'healthy' as const, failureReason: null,
     complete: true, provenance: { source: 'coinbase' as const,
@@ -78,6 +78,20 @@ function mockClient(submitFailure = false, fillStatus = 'filled') {
 }
 
 describe('parallel paper experiment', () => {
+  it('can start Alpaca with a small independent Coinbase comparison book', async () => {
+    const { database, clock, secrets } = await setup('47');
+    const prepared = { ok: true as const, dataset: dataset(), datasetHash: sha256Hex('data'),
+      latestCompletedStartMs: TODAY - DAY, expectedCompletedStartMs: TODAY - DAY,
+      ruleSnapshotHash: sha256Hex('rules') };
+    const service = new ParallelPaperService({ profileId: 'main', database, clock, secrets,
+      preparation: () => prepared, refreshFor: async () => prepared,
+      clientFactory: () => mockClient().client as never, killSwitchEngaged: () => false });
+    expect(await service.start('00000000-0000-4000-8000-000000000010', true)).toMatchObject({
+      ok: true, experiment: { openingCoquiCash: '47', openingAlpacaCash: '100000' },
+    });
+    database.close();
+  });
+
   it('keeps the first mix anchor when the rolling data window advances', () => {
     const full = dataset(140);
     const anchor = parallelAnchor(full);
@@ -111,6 +125,26 @@ describe('parallel paper experiment', () => {
     expect(mock.submit).toHaveBeenCalledTimes(submitted);
     expect(service.summary()).toMatchObject({ state: 'active', decisionCount: 1,
       coquiOpeningUsd: '1000', alpacaOpeningUsd: '100000', alpacaOrderCount: submitted });
+    expect(service.summary()).toMatchObject({ runtimeState: 'order_pending', lastCheckAtMs: TODAY,
+      latestDecision: { day: '2026-09-23', targets: expect.arrayContaining([{ symbol: 'BTCUSD', weightPct: expect.any(String) }]) } });
+    expect(service.summary().activity.some((item) => item.kind === 'order' && item.alpacaOrderId !== null)).toBe(true);
+    const experimentId = service.status().experiment!.id;
+    const recordedOrder = service.status().events.find((event) => event.kind === 'external_order')!;
+    appendParallelEvent({ experimentId, profileId: 'main', kind: 'external_fill',
+      key: 'fill:paper-activity-test', at: TODAY, detail: { activityId: 'paper-activity-test',
+        orderId: recordedOrder.detail['orderId'], symbol: recordedOrder.detail['symbol'],
+        quantity: '0.01', price: '100', at: new Date(TODAY).toISOString() } }, database);
+    expect(service.summary().alpacaFillCount).toBe(1);
+    expect(service.summary().activity[0]).toMatchObject({ kind: 'fill', alpacaOrderId: recordedOrder.detail['orderId'] });
+    expect(service.summary().runtimeState).toBe('order_pending');
+    for (const order of service.status().events.filter((event) => event.kind === 'external_order')) {
+      appendParallelEvent({ experimentId, profileId: 'main', kind: 'external_fill',
+        key: `fill:full:${String(order.detail['orderId'])}`, at: TODAY,
+        detail: { activityId: `full:${String(order.detail['orderId'])}`,
+          orderId: order.detail['orderId'], symbol: order.detail['symbol'],
+          quantity: order.detail['filledQty'], price: '100', at: new Date(TODAY).toISOString() } }, database);
+    }
+    expect(service.summary().runtimeState).toBe('reconciled');
     database.close();
   });
 
@@ -150,11 +184,43 @@ describe('parallel paper experiment', () => {
     const submitted = mock.submit.mock.calls.length;
     expect(submitted).toBeGreaterThan(0);
     expect(service.summary()).toMatchObject({ state: 'active', alpacaOrderCount: submitted });
+    expect(service.summary()).toMatchObject({ runtimeState: 'order_pending' });
+    expect(service.summary().activity.some((item) => item.kind === 'order' && item.title.includes('partially filled'))).toBe(true);
     clock.set(Date.parse('2026-09-24T00:16:00Z'));
     await service.tick();
     expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'execution_window_missed' });
+    expect(service.summary()).toMatchObject({ runtimeState: 'attention' });
+    expect(service.summary().activity[0]).toMatchObject({ kind: 'paused', detail: 'execution window missed' });
     await service.tick();
     expect(mock.submit).toHaveBeenCalledTimes(submitted);
+    database.close();
+  });
+
+  it('shows waiting, explicit no-trade, and an overdue scheduler without inventing orders', async () => {
+    const { database, clock, secrets } = await setup();
+    const prepared = { ok: true as const, dataset: dataset(), datasetHash: sha256Hex('data'),
+      latestCompletedStartMs: TODAY - DAY, expectedCompletedStartMs: TODAY - DAY,
+      ruleSnapshotHash: sha256Hex('rules') };
+    const service = new ParallelPaperService({ profileId: 'main', database, clock, secrets,
+      preparation: () => prepared, refreshFor: async () => prepared,
+      clientFactory: () => mockClient().client as never, killSwitchEngaged: () => false });
+    expect((await service.start('00000000-0000-4000-8000-000000000005', true)).ok).toBe(true);
+    expect(service.summary()).toMatchObject({ runtimeState: 'awaiting', lastCheckAtMs: null,
+      lastDecisionAtMs: null, activity: [] });
+    const experimentId = service.status().experiment!.id;
+    const record = (kind: string, key: string, detail: Record<string, unknown>) =>
+      appendParallelEvent({ experimentId, profileId: 'main', kind, key, at: clock.nowMs(), detail }, database);
+    record('decision', 'decision:2026-09-23', { day: '2026-09-23', exposure: 0.5,
+      cashWeight: 0.5, mixVolPct: 12, belowTrend: true, weights: {} });
+    record('sell_plan', 'sell-plan:2026-09-23', { day: '2026-09-23', count: 0 });
+    record('buy_plan', 'buy-plan:2026-09-23', { day: '2026-09-23', count: 0 });
+    record('external_complete', 'external-complete:2026-09-23', { day: '2026-09-23' });
+    await service.tick();
+    expect(service.summary()).toMatchObject({ runtimeState: 'reconciled', alpacaOrderCount: 0,
+      latestDecision: { exposurePct: '50.0', cashPct: '50.0', belowTrend: true } });
+    expect(service.summary().activity[0]).toMatchObject({ kind: 'no_trade', title: 'No Alpaca order needed' });
+    clock.set(TODAY + 240_000);
+    expect(service.summary()).toMatchObject({ runtimeState: 'attention', lastCheckAtMs: TODAY });
     database.close();
   });
 });

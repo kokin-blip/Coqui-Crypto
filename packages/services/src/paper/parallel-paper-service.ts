@@ -11,6 +11,7 @@ import {
 
 import { PARALLEL_COSTS, PARALLEL_INSTRUMENTS, PARALLEL_TRENDVOL_VERSION,
   parallelAnchor, parallelDecision } from './parallel-signal.js';
+import { parallelDayReconciled, parallelRuntimeState, projectParallelPaperActivity } from './parallel-paper-activity.js';
 import type { PaperDecisionPreparation } from './runtime-model.js';
 
 const DAY_MS = 86_400_000;
@@ -68,6 +69,8 @@ export interface ParallelPaperDependencies {
 export class ParallelPaperService {
   readonly #input: ParallelPaperDependencies;
   readonly #clientFactory: (credentials: AlpacaPaperCredentials) => Client;
+  #lastCheckAtMs: number | null = null;
+  #checking = false;
 
   constructor(input: ParallelPaperDependencies) {
     this.#input = input;
@@ -112,7 +115,6 @@ export class ParallelPaperService {
     if (!opening.isPositive() || snapshot.balances.some((item) => item.valueUsd === null)) {
       return { ok: false, code: 'coinbase_valuation_incomplete' };
     }
-    if (opening.lessThan(75)) return { ok: false, code: 'coinbase_wallet_too_small' };
     const preparation = await this.#input.refreshFor(now);
     if (!preparation.ok) return { ok: false, code: preparation.code };
     let client: Client;
@@ -156,14 +158,15 @@ export class ParallelPaperService {
   }
 
   summary() {
-    const current = this.status();
-    const experiment = current.experiment;
-    const events = current.events;
+    const current = this.status(), experiment = current.experiment, events = current.events;
     const mark = [...events].reverse().find((event) => event.kind === 'account_mark');
-    const latestState = [...events].reverse().find((event) =>
-      ['paused', 'resumed', 'stopped', 'started'].includes(event.kind));
-    const coquiEquity = mark === undefined ? null : String(mark.detail['coquiEquityUsd']);
-    const alpacaEquity = mark === undefined ? null : String(mark.detail['alpacaEquityUsd']);
+    const latestState = [...events].reverse().find((event) => ['paused', 'resumed', 'stopped', 'started'].includes(event.kind));
+    const { latestDecision, lastDecisionAtMs, decisionDay, activity } = projectParallelPaperActivity(events), completed = parallelDayReconciled(events, decisionDay);
+    const runtimeState = parallelRuntimeState({ exists: experiment !== null, status: current.status,
+      pauseReason: latestState?.detail['reason'], lastCheckAtMs: this.#lastCheckAtMs, checking: this.#checking,
+      nowMs: this.#input.clock.nowMs(), decisionDay, completed });
+    const coquiEquity = mark === undefined ? null : String(mark.detail['coquiEquityUsd']),
+      alpacaEquity = mark === undefined ? null : String(mark.detail['alpacaEquityUsd']);
     const percent = (currentValue: string | null, opening: string): string | null => currentValue === null
       ? null : money(currentValue).div(opening).minus(1).mul(100).toDecimalPlaces(2).toFixed(2);
     return {
@@ -176,6 +179,8 @@ export class ParallelPaperService {
       alpacaReturnPct: experiment === null ? null : percent(alpacaEquity, experiment.openingAlpacaEquity),
       lastMarkDay: mark === undefined ? null : String(mark.detail['day']),
       decisionCount: events.filter((event) => event.kind === 'decision').length,
+      runtimeState, lastCheckAtMs: this.#lastCheckAtMs,
+      lastDecisionAtMs, latestDecision, activity,
       coquiFillCount: events.filter((event) => event.kind === 'local_fill').length,
       alpacaFillCount: events.filter((event) => event.kind === 'external_fill').length,
       alpacaOrderCount: events.filter((event) => event.kind === 'external_intent').length,
@@ -239,6 +244,11 @@ export class ParallelPaperService {
   }
 
   async tick(): Promise<void> {
+    this.#lastCheckAtMs = this.#input.clock.nowMs(); this.#checking = true;
+    try { await this.#tick(); } finally { this.#checking = false; }
+  }
+
+  async #tick(): Promise<void> {
     const current = this.status();
     if (current.experiment === null || current.status === 'stopped') return;
     const experiment = current.experiment;

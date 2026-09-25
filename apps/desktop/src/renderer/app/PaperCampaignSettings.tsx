@@ -30,8 +30,8 @@ export function PaperCampaignSettings({ client }: {
         {value === null
           ? <p className="muted">Starts with the first real prospective scheduler observation.</p>
           : <p className="muted">
-              {value.observedDays}/7 observed UTC days · safety stop{' '}
-              {value.killSwitchExercised ? 'exercised' : 'not exercised'} · acknowledgement{' '}
+              {value.observedDays}/7 observed UTC days · legacy exercise{' '}
+              {value.killSwitchExercised ? 'recorded' : 'not recorded'} · review{' '}
               {value.killSwitchAcknowledged ? 'recorded' : 'pending'} · reconciliation{' '}
               {value.reconciled ? 'complete' : 'pending'}.
             </p>}
@@ -43,7 +43,9 @@ export function PaperCampaignSettings({ client }: {
             checked={confirmed}
             onChange={(event) => { setConfirmed(event.target.checked); command.reset(); }}
           />
-          I understand this engages the paper safety stop and requires an explicit acknowledgement.
+          {value.killSwitchExercised
+            ? 'I reviewed the recorded campaign exercise.'
+            : 'I understand this records a campaign exercise without stopping paper trading.'}
         </label>
       )}
       {value !== null && !value.killSwitchExercised && (
@@ -59,7 +61,7 @@ export function PaperCampaignSettings({ client }: {
         </button>
       )}
       {value?.killSwitchExercised === true && !value.killSwitchAcknowledged && (
-        <button
+        <><p className="muted">Reviewing this legacy exercise completes the campaign record. It does not control paper scheduling or Alpaca orders.</p><button
           type="button"
           className="button-primary"
           disabled={action.disabled || !confirmed}
@@ -67,8 +69,8 @@ export function PaperCampaignSettings({ client }: {
             commandId: crypto.randomUUID(), action: 'acknowledge', explicitConfirmation: true,
           })}
         >
-          Acknowledge and restore paper scheduling
-        </button>
+          Record campaign review
+        </button></>
       )}
       <span aria-live="polite">{action.liveMessage}</span>
       <div className="settings-divider" />

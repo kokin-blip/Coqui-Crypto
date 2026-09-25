@@ -12,7 +12,6 @@ import {
 } from '@coqui/services';
 import {
   acknowledgeWalletSafetyStop,
-  activateWalletSafetyStop,
   appendPaperCampaignEvent,
   ensurePaperCampaign,
   getWalletSafetyStop,
@@ -323,29 +322,30 @@ export function handlePaperCampaignKillSwitch(input: {
 }): PaperCampaignStatus | null {
   const campaign = latestPaperCampaign(input.profileId, input.database);
   if (campaign === null) return null;
+  const status = input.action === 'exercise' ? 'kill_switch_exercised' : 'kill_switch_acknowledged';
+  const previous = input.database.prepare(`SELECT status FROM paper_campaign_events_v1
+    WHERE campaign_id = ? AND run_id = ? AND status IN ('kill_switch_exercised', 'kill_switch_acknowledged')
+    LIMIT 1`).get(campaign.id, input.commandId) as { status: string } | undefined;
+  if (previous !== undefined && previous.status !== status) {
+    throw new Error('Campaign command identity cannot change action.');
+  }
   const currentStop = getWalletSafetyStop(input.profileId, input.database);
   if (currentStop?.active === true && currentStop.kind !== 'campaign_exercise') {
     throw new Error('An unrelated safety stop cannot be replaced or acknowledged by the campaign.');
   }
-  if (input.action === 'exercise') activateWalletSafetyStop({
+  // The campaign exercise is an evidence marker. Never create a profile-wide
+  // stop for either the local simulator or the separate Alpaca paper account.
+  if (input.action === 'acknowledge' && currentStop?.active === true) acknowledgeWalletSafetyStop({
     eventId: sha256Hex(`campaign-kill-switch:${input.commandId}`),
     profileId: input.profileId,
-    kind: 'campaign_exercise',
-    reason: 'Seven-day paper campaign safety-stop exercise.',
-    at: input.at,
-    runId: input.commandId,
-  }, input.database);
-  else acknowledgeWalletSafetyStop({
-    eventId: sha256Hex(`campaign-kill-switch:${input.commandId}`),
-    profileId: input.profileId,
-    reason: 'Campaign exercise observed; restore acknowledged through the normal safety path.',
+    reason: 'Legacy campaign exercise acknowledged.',
     at: input.at,
   }, input.database);
   appendPaperCampaignEvent({
     campaignId: campaign.id,
     dayUtc: Math.floor(input.at / DAY_MS) * DAY_MS,
     runId: input.commandId,
-    status: input.action === 'exercise' ? 'kill_switch_exercised' : 'kill_switch_acknowledged',
+    status,
     at: input.at,
     detail: { explicitConfirmation: input.explicitConfirmation },
   }, input.database);

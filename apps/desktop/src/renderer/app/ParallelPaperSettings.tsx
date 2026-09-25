@@ -18,6 +18,7 @@ export function ParallelPaperSettings({ client }: { readonly client: CoquiClient
   const [stopConfirmed, setStopConfirmed] = useState(false);
   const current = status.kind === 'ready' ? status.value : null;
   const issue = [start, pause, resume, stop].find((item) => item.state.kind === 'failed' || item.state.kind === 'blocked');
+  const issueCodes = issue !== undefined && 'codes' in issue.state ? issue.state.codes : [];
 
   return <section className="settings-section exploratory-paper-settings" aria-labelledby="parallel-paper-heading">
     <div className="settings-section-heading">
@@ -55,6 +56,6 @@ export function ParallelPaperSettings({ client }: { readonly client: CoquiClient
         <button type="button" className="button-danger" disabled={!stopConfirmed || stop.state.kind === 'pending'} onClick={() => void stop.run({ commandId: crypto.randomUUID() })}>Stop experiment</button>
       </>}
     </div>}
-    {issue !== undefined && <p className="action-error" role="alert">{'codes' in issue.state ? issue.state.codes.join(', ').replaceAll('_', ' ') : 'Action failed'}</p>}
+    {issue !== undefined && <p className="action-error" role="alert">{issueCodes.length > 0 ? issueCodes.join(', ').replaceAll('_', ' ') : 'Action failed'}</p>}
   </section>;
 }

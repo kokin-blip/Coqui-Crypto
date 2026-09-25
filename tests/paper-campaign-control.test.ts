@@ -7,6 +7,7 @@ import {
 } from '../apps/desktop/src/main/forward-edge-runtime.js';
 import { SHIPPED_FORWARD_EDGE_PLAN } from '../apps/desktop/src/main/forward-edge-plan.js';
 import { FixedClock } from '../packages/core/src/index.js';
+import { resolveKillSwitch } from '../packages/services/src/index.js';
 import {
   activateWalletSafetyStop,
   appendPaperCampaignEvent,
@@ -113,14 +114,15 @@ describe('paper campaign safety-stop control', () => {
     };
     expect(handlePaperCampaignKillSwitch(exercise)?.killSwitchExercised).toBe(true);
     expect(handlePaperCampaignKillSwitch(exercise)?.killSwitchExercised).toBe(true);
-    expect(getWalletSafetyStop('main', database)?.active).toBe(true);
+    expect(getWalletSafetyStop('main', database)).toBeNull();
+    expect(resolveKillSwitch('main', database).engaged).toBe(false);
     const acknowledge = {
       profileId: 'main', commandId: 'acknowledge-1', action: 'acknowledge' as const,
       explicitConfirmation: true as const, at: 20_000 * DAY + 1, database,
     };
     expect(handlePaperCampaignKillSwitch(acknowledge)?.killSwitchAcknowledged).toBe(true);
     expect(handlePaperCampaignKillSwitch(acknowledge)?.killSwitchAcknowledged).toBe(true);
-    expect(getWalletSafetyStop('main', database)?.active).toBe(false);
+    expect(getWalletSafetyStop('main', database)).toBeNull();
     database.close();
   });
 
@@ -152,6 +154,15 @@ describe('paper campaign safety-stop control', () => {
     expect(getWalletSafetyStop('main', database)).toMatchObject({
       active: true, kind: 'drawdown',
     });
+    database.close();
+  });
+
+  it('does not let a legacy active campaign exercise halt paper execution', () => {
+    const database = openDatabase(':memory:');
+    activateWalletSafetyStop({ eventId: 'legacy-campaign-stop', profileId: 'main',
+      kind: 'campaign_exercise', reason: 'Old paper exercise', at: 20_000 * DAY }, database);
+    expect(getWalletSafetyStop('main', database)?.active).toBe(true);
+    expect(resolveKillSwitch('main', database)).toMatchObject({ engaged: false, reason: null });
     database.close();
   });
 });
