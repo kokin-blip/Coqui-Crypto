@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import type { CoquiClient } from '@coqui/contracts';
 import { CHART_COLORS } from '@coqui/ui-kit';
@@ -9,6 +9,9 @@ import {
 } from 'lightweight-charts';
 
 import { ChartFrame } from './ChartFrame.js';
+import { ChartEvidenceList } from './ChartEvidenceList.js';
+import { groupChartEvidence } from './chart-evidence-groups.js';
+import { exactUtcTimestamp, formatLocalTimestamp } from './time-format.js';
 import { ChartDrawingLayer, type DrawingShape } from './ChartDrawingLayer.js';
 import { bindChartLink, createChartLifecycle } from './chart-lifecycle.js';
 import type { ChartLinkController } from './chart-link-controller.js';
@@ -61,6 +64,7 @@ export function TradingWorkstationChart({ bars, productId, style, scaleMode,
   const suppressSync = useRef(false);
   const [cursorLabel, setCursorLabel] = useState<string | null>(null);
   const [drawingShapes, setDrawingShapes] = useState<readonly DrawingShape[]>([]);
+  const groupedMarkers = useMemo(() => groupChartEvidence(bars, extensionMarkers ?? []), [bars, extensionMarkers]);
 
   useEffect(() => {
     if (container.current === null) return;
@@ -127,13 +131,13 @@ export function TradingWorkstationChart({ bars, productId, style, scaleMode,
     for (const series of extensionSeries ?? []) {
       addLine(series.points.map((point) => ({ day: String(Math.floor(point.timeMs / 1_000)), value: Number(point.value) })), series.color, series.title, series.pane);
     }
-    if ((extensionMarkers?.length ?? 0) > 0) {
+    if (groupedMarkers.length > 0) {
       const colors = { neutral: CHART_COLORS.supportingText, positive: CHART_COLORS.primary,
         negative: CHART_COLORS.negative, warning: '#f2b84b' } as const;
-      createSeriesMarkers(price, extensionMarkers!.map((marker): SeriesMarker<Time> => ({
-        time: Math.floor(marker.timeMs / 1_000) as Time, position: 'aboveBar',
-        shape: marker.tone === 'positive' ? 'arrowUp' : marker.tone === 'negative' ? 'arrowDown' : 'circle',
-        color: colors[marker.tone], text: marker.label,
+      createSeriesMarkers(price, groupedMarkers.map((group): SeriesMarker<Time> => ({
+        time: Math.floor(group.timeMs / 1_000) as Time, position: 'aboveBar',
+        shape: group.tone === 'positive' ? 'arrowUp' : group.tone === 'negative' ? 'arrowDown' : 'circle',
+        color: colors[group.tone], text: `${group.items.length} event${group.items.length === 1 ? '' : 's'}`,
       })));
     }
     const updateDrawingShapes = (): void => {
@@ -188,7 +192,7 @@ export function TradingWorkstationChart({ bars, productId, style, scaleMode,
       }
       const match = bars.find((bar) => Number(timeOf(bar)) === Number(parameter.time));
       setCursorLabel(match === undefined ? String(parameter.time) :
-        `${new Date(match.startTimeMs).toISOString()} · O ${match.open} H ${match.high} L ${match.low} C ${match.close}${match.isComplete ? '' : ' · LIVE'}`);
+        `${formatLocalTimestamp(match.startTimeMs)} · UTC ${exactUtcTimestamp(match.startTimeMs)} · O ${match.open} H ${match.high} L ${match.low} C ${match.close}${match.isComplete ? '' : ' · LIVE'}`);
       if (!suppressSync.current) publishLink({ kind: 'crosshair', timeMs: Number(parameter.time) * 1_000 });
     });
     chart.timeScale().fitContent();
@@ -206,7 +210,7 @@ export function TradingWorkstationChart({ bars, productId, style, scaleMode,
     lifecycle.registerCleanup(() => chart.timeScale().unsubscribeVisibleLogicalRangeChange(updateDrawingShapes));
     lifecycle.registerCleanup(() => chart.timeScale().unsubscribeVisibleTimeRangeChange(publishRange));
     return () => { lifecycle.destroy(); chartApi.current = null; priceApi.current = null; };
-  }, [bars, comparisons, drawings, extensionMarkers, extensionSeries, height, indicators, linkController, linkGroup, scaleMode, style, syncId, volumeVisible]);
+  }, [bars, comparisons, drawings, extensionSeries, groupedMarkers, height, indicators, linkController, linkGroup, scaleMode, style, syncId, volumeVisible]);
 
   const capturePoint = (event: React.PointerEvent<HTMLDivElement>): void => {
     if (activeTool === 'cursor' || chartApi.current === null || priceApi.current === null) return;
@@ -230,11 +234,11 @@ export function TradingWorkstationChart({ bars, productId, style, scaleMode,
     });
   };
   const observations = bars.map((bar) => ({ day: String(bar.startTimeMs),
-    label: `${new Date(bar.startTimeMs).toISOString()}: close ${bar.close}${bar.isComplete ? '' : ', live candle'}` }));
-  return <div className={`workstation-chart-host tool-${activeTool}`} onPointerDown={capturePoint}>
+    label: `${formatLocalTimestamp(bar.startTimeMs)} (UTC ${exactUtcTimestamp(bar.startTimeMs)}): close ${bar.close}${bar.isComplete ? '' : ', live candle'}` }));
+  return <><div className={`workstation-chart-host tool-${activeTool}`} onPointerDown={capturePoint}>
     <ChartFrame className="trading-workstation-chart" containerRef={container}
       observations={observations} summary={`${bars.length} Coinbase ${bars[0]?.interval ?? ''} observations for ${productId}. Provisional bars are display only.`}
       cursorLabel={cursorLabel} onSnapshot={snapshot} />
     <ChartDrawingLayer shapes={drawingShapes} />
-  </div>;
+  </div><ChartEvidenceList bars={bars} items={extensionMarkers ?? []} /></>;
 }

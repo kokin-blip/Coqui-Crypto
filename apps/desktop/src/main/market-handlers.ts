@@ -1,6 +1,7 @@
 import type { CoinbaseDisplayDataService, MarketDisplayQueryService } from '@coqui/services';
 
 import type { CoinbaseMarketStreamService } from './coinbase-market-stream.js';
+import type { createCoinbaseMarketDiagnostics } from './coinbase-market-diagnostics.js';
 import type { ChannelHandlers } from './dispatch.js';
 
 /** Keep the market boundary together as live display data joins completed history. */
@@ -8,6 +9,7 @@ export function createMarketHandlers(
   marketData: MarketDisplayQueryService,
   displayData: CoinbaseDisplayDataService,
   liveMarket: CoinbaseMarketStreamService,
+  diagnostics: ReturnType<typeof createCoinbaseMarketDiagnostics>,
 ): ChannelHandlers {
   return {
     'market-data.prices': () => marketData.prices(),
@@ -21,6 +23,8 @@ export function createMarketHandlers(
       readonly lookbackDays: number;
     }) => marketData.candles(payload.instrument, payload.lookbackDays),
     'market-data.live': () => ({ ok: true, value: liveMarket.snapshot() }),
+    'market-data.coinbase-diagnostics': async (payload: { readonly productId: string }) =>
+      ({ ok: true, value: await diagnostics.snapshot(payload.productId) }),
     'market-data.products': async (payload: { readonly query: string; readonly limit: number }) => {
       const result = await displayData.products(payload.query, payload.limit);
       return result.ok ? { ok: true, value: {

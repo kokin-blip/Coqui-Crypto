@@ -1,5 +1,6 @@
 import type { CoquiClient } from '@coqui/contracts';
-import { formatUsd, presentAction } from '@coqui/ui-kit';
+import { formatApproxUsd, formatUsd, presentAction } from '@coqui/ui-kit';
+import { useState } from 'react';
 
 import { PaperProposalReview } from './PaperProposalReview.js';
 import { Performance } from './Performance.js';
@@ -8,6 +9,7 @@ import { ParallelPaperComparison } from './ParallelPaperComparison.js';
 import type { AppRoute } from './routes.js';
 import { useChannel } from '../query/use-channel.js';
 import { useCommand } from '../query/use-command.js';
+import { exactUtcTimestamp, formatLocalTimestamp } from './time-format.js';
 
 const PREPARE_INVALIDATIONS = ['paper.execution.proposals', 'paper.execution.policy'] as const;
 
@@ -36,6 +38,8 @@ export function PaperTrading({
     'paper.exploratory.portfolio', 'paper.exploratory.performance',
     'paper.execution.proposals', 'activity.feed', 'operations.floor',
   ]);
+  const [proposalStatus, setProposalStatus] = useState('all');
+  const [proposalPeriod, setProposalPeriod] = useState('all');
   const exploratoryActive = exploratory.kind === 'ready' && exploratory.value?.status === 'active';
   const presentation = presentAction(prepare.state, {
     idle: 'Prepare current rebalance', pending: 'Preparing proposal…',
@@ -46,15 +50,62 @@ export function PaperTrading({
   }
 
   const rows = proposals.kind === 'ready' ? proposals.value.proposals : [];
+  const visibleRows = rows.filter((proposal) => (proposalStatus === 'all' || proposal.status === proposalStatus) &&
+    (proposalPeriod === 'all' || proposal.createdAt >= Date.now() - Number(proposalPeriod) * 86_400_000));
   const unmet = readiness.kind === 'ready' ? readiness.value.steps.slice(0, 5).find((step) => step.status !== 'complete') : undefined;
+  const proposalQueue = <section aria-labelledby="proposal-heading" className="panel paper-proposal-workspace">
+    <div className="panel-heading">
+      <div><p className="eyebrow">Durable queue</p><h2 id="proposal-heading">Paper proposals</h2></div>
+      <span className="muted">{visibleRows.length === rows.length ? `${rows.length} recorded` : `${visibleRows.length} shown · ${rows.length} recorded`}</span>
+    </div>
+    {rows.length > 0 && <div className="proposal-filters">
+      <label>Status<select value={proposalStatus} onChange={(event) => setProposalStatus(event.target.value)}>
+        {['all', 'pending_review', 'approved', 'rejected', 'executing', 'blocked', 'failed', 'succeeded', 'unknown'].map((status) =>
+          <option key={status} value={status}>{statusLabel(status)}</option>)}
+      </select></label>
+      <label>Created<select value={proposalPeriod} onChange={(event) => setProposalPeriod(event.target.value)}>
+        <option value="all">Any time</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option>
+      </select></label>
+    </div>}
+    {proposals.kind === 'loading' && <SurfaceState kind="loading" title="Loading proposals" compact />}
+    {proposals.kind !== 'loading' && proposals.kind !== 'ready' &&
+      <SurfaceState kind="error" title="Could not load proposals" detail={proposals.issues.map((issue) => issue.code).join(', ')} compact />}
+    {proposals.kind === 'ready' && rows.length === 0 &&
+      <SurfaceState kind="empty" title="No paper proposal recorded" detail="System-generated rebalances appear here after preparation. The current readiness and execution policy determine whether one can be prepared." compact />}
+    {rows.length > 0 && visibleRows.length === 0 && <SurfaceState kind="empty" title="No proposals match these filters" detail="Change the status or date range to see the durable queue." compact />}
+    {visibleRows.length > 0 && <ul className="proposal-list">
+      {visibleRows.map((proposal) => <li key={proposal.id}>
+        <div className="proposal-main">
+          <strong>{proposal.actions.length} rebalance action{proposal.actions.length === 1 ? '' : 's'}</strong>
+          <time className="proposal-time" dateTime={exactUtcTimestamp(proposal.createdAt)} title={exactUtcTimestamp(proposal.createdAt)}>{formatLocalTimestamp(proposal.createdAt)}</time>
+          <small>revision {proposal.revision} · <code title={proposal.proposalHash}>{proposal.proposalHash.slice(0, 12)}…</code></small>
+          {proposal.actions.length > 0 && <span className="proposal-route-summary">{proposal.actions.map((action) =>
+            `${action.side.toUpperCase()} ${action.productId} · ${formatUsd(action.amountUsd)?.text ?? `${action.amountUsd} USD`}`).join('  |  ')}</span>}
+          {proposal.status === 'blocked' && <span className="proposal-block-reason">Reason: {proposal.reasonCode?.replaceAll('_', ' ') ?? 'not recorded for this proposal'}</span>}
+          {proposal.status === 'unknown' && <span className="proposal-unknown-note">Outcome unknown · reconcile before retrying.</span>}
+        </div>
+        <span className={`status-text status-${proposal.status}`}>{statusLabel(proposal.status)}</span>
+        {proposal.status === 'pending_review' && <PaperProposalReview client={client} proposal={proposal} />}
+        {(proposal.status === 'blocked' || proposal.status === 'failed' || proposal.status === 'unknown') &&
+          <details className="proposal-evidence"><summary>Inspect proposal evidence</summary>
+            <dl><div><dt>Recorded reason</dt><dd>{proposal.reasonCode?.replaceAll('_', ' ') ?? 'Not available in the persisted proposal events'}</dd></div>
+              <div><dt>Evidence event</dt><dd>{proposal.evidenceId ?? 'No event recorded'}</dd></div>
+              <div><dt>Decision</dt><dd>{proposal.decisionId ?? 'No linked decision recorded'}</dd></div>
+              <div><dt>Exact proposal hash</dt><dd>{proposal.proposalHash}</dd></div></dl>
+            <a href="#/activity">Open Operations feed</a>
+          </details>}
+      </li>)}
+    </ul>}
+  </section>;
   return (
     <div className="screen-stack">
+      {route === 'paper/orders' && proposalQueue}
       <section className="paper-control-panel">
         <div>
           <p className="eyebrow">Execution policy</p>
-          <h2>{exploratoryActive ? 'Exploratory · unattended paper' : policy.kind === 'ready' ? statusLabel(policy.value.mode) : 'policy unavailable'}</h2>
+          <h2>{exploratoryActive ? 'Exploratory simulation active' : policy.kind === 'ready' ? statusLabel(policy.value.mode) : 'policy unavailable'}</h2>
           <p className="muted">{exploratoryActive
-            ? 'Current TrendVol strategy · unvalidated · Coinbase reference simulation · no live authority.'
+            ? `Current TrendVol strategy · unvalidated · Coinbase reference simulation. Paper submission policy: ${policy.kind === 'ready' ? statusLabel(policy.value.mode) : 'unavailable'}; every order still passes the enforced gates. Active does not mean approved to submit.`
             : 'System-generated rebalances only. Every submission reruns all gates.'}</p>
         </div>
         {route === 'paper/overview' && (
@@ -80,7 +131,8 @@ export function PaperTrading({
 
       {exploratoryPortfolio.kind === 'ready' && exploratoryPortfolio.value !== null && exploratoryPortfolio.value.primary && (
         <section className="panel exploratory-paper-summary" aria-labelledby="exploratory-summary-heading">
-          <div className="panel-heading"><div><span className="status-chip status-warning">Paper simulation</span><h2 id="exploratory-summary-heading">Exploratory campaign</h2></div><strong>{exploratoryPortfolio.value.valuationStatus === 'complete' && exploratoryPortfolio.value.currentEquityUsd !== null ? formatUsd(exploratoryPortfolio.value.currentEquityUsd)?.text : 'Valuation unavailable'}</strong></div>
+          <div className="panel-heading"><div><span className="status-chip status-warning">Paper simulation</span><h2 id="exploratory-summary-heading">Exploratory campaign</h2></div><strong>{exploratoryPortfolio.value.valuationStatus === 'complete' && exploratoryPortfolio.value.currentEquityUsd !== null ? formatApproxUsd(exploratoryPortfolio.value.currentEquityUsd) : 'Valuation unavailable'}</strong></div>
+          {exploratoryPortfolio.value.currentEquityUsd !== null && <details className="exact-value-detail"><summary>Exact current equity</summary><span>{formatUsd(exploratoryPortfolio.value.currentEquityUsd)?.text}</span></details>}
           <dl className="settings-readout exploratory-paper-metrics">
             <div><dt>Opening reference</dt><dd>{formatUsd(exploratoryPortfolio.value.openingEquityUsd)?.text}</dd></div>
             <div><dt>Buy-and-hold</dt><dd>{exploratoryPortfolio.value.buyAndHoldBenchmarkUsd === null ? 'Unavailable' : formatUsd(exploratoryPortfolio.value.buyAndHoldBenchmarkUsd)?.text}</dd></div>
@@ -101,6 +153,9 @@ export function PaperTrading({
           {prepare.value.reasonCode?.replaceAll('_', ' ') ?? 'proposal settled'}
         </p>
       )}
+      {prepare.state.kind === 'failed' && <SurfaceState kind="error" title="Proposal preparation failed" detail={prepare.state.codes.join(', ').replaceAll('_', ' ')} compact />}
+      {prepare.state.kind === 'blocked' && <SurfaceState kind="blocked" title="Proposal preparation blocked" detail={prepare.state.codes.join(', ').replaceAll('_', ' ')} compact />}
+      {prepare.state.kind === 'unknown' && <SurfaceState kind="error" title="Proposal outcome unknown" detail="Do not retry. Review the durable queue and reconcile before another action." compact />}
       {evaluate.value !== null && <p className="execution-outcome" role="status">
         {evaluate.value.standDown === null ? 'EVALUATED' : evaluate.value.standDown.replaceAll('_', ' ').toUpperCase()} · {evaluate.value.submittedCount} submitted · {evaluate.value.filledCount} filled
       </p>}
@@ -114,37 +169,7 @@ export function PaperTrading({
         UNKNOWN · {evaluate.state.codes.join(', ').replaceAll('_', ' ')}
       </p>}
 
-      <section aria-labelledby="proposal-heading" className="panel">
-        <div className="panel-heading">
-          <div><p className="eyebrow">Durable queue</p><h2 id="proposal-heading">Paper proposals</h2></div>
-          <span className="muted">{rows.length} recorded</span>
-        </div>
-        {proposals.kind === 'loading' && <SurfaceState kind="loading" title="Loading proposals" compact />}
-        {proposals.kind !== 'loading' && proposals.kind !== 'ready' && (
-          <SurfaceState kind="error" title="Could not load proposals" detail={proposals.issues.map((issue) => issue.code).join(', ')} compact />
-        )}
-        {proposals.kind === 'ready' && rows.length === 0 && (
-          <SurfaceState kind="empty" title="No paper proposal has been prepared for this profile." compact />
-        )}
-        {rows.length > 0 && (
-          <ul className="proposal-list">
-            {rows.map((proposal) => (
-              <li key={proposal.id}>
-                <div>
-                  <strong>{proposal.actions.length} rebalance action{proposal.actions.length === 1 ? '' : 's'}</strong>
-                  <span className="muted">revision {proposal.revision} · {proposal.proposalHash.slice(0, 12)}…</span>
-                  {proposal.actions.length>0&&<span className="proposal-route-summary">{proposal.actions.map((action)=>
-                    `${action.side.toUpperCase()} ${action.productId} · ${action.amountUsd} USD`).join('  |  ')}</span>}
-                </div>
-                <span className={`status-text status-${proposal.status}`}>{statusLabel(proposal.status)}</span>
-                {proposal.status === 'pending_review' && (
-                  <PaperProposalReview client={client} proposal={proposal} />
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      {route !== 'paper/orders' && proposalQueue}
     </div>
   );
 }

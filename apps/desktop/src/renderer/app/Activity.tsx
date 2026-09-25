@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Sparkles } from 'lucide-react';
 
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
@@ -27,6 +27,8 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
   const [explaining, setExplaining] = useState<string | null>(null);
   const [detail, setDetail] = useState<DecisionDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState<string | null>(null);
+  const detailHeadingRef = useRef<HTMLHeadingElement>(null);
+  const detailOpenerRef = useRef<HTMLButtonElement | null>(null);
   const payload = useMemo(() => ({ limit: 40, cursor }), [cursor]);
   const feed = useChannel(client, 'activity.feed', payload);
   const page = feed.kind === 'ready' ? feed.value : null;
@@ -51,6 +53,12 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
     });
   }, [cursor, page]);
 
+  useEffect(() => {
+    if (detail === null) return;
+    detailHeadingRef.current?.scrollIntoView({ block: 'start' });
+    detailHeadingRef.current?.focus({ preventScroll: true });
+  }, [detail]);
+
   if (feed.kind === 'loading' && events.length === 0) {
     return <SurfaceState kind="loading" title="Loading operational activity" />;
   }
@@ -69,13 +77,26 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
     else setExplanationFailure(result.issues[0]?.code ?? 'decision_explanation_failed');
     setExplaining(null);
   };
-  const inspect = async (decisionId: string): Promise<void> => {
+  const inspect = async (decisionId: string, opener: HTMLButtonElement): Promise<void> => {
+    detailOpenerRef.current = opener;
     setDetailLoading(decisionId); setExplanationFailure(null);
     const result = await client.query('decision.detail', { decisionId });
     if (result.status === 'ok') setDetail(result.value);
     else setExplanationFailure(result.issues[0]?.code ?? 'decision_detail_failed');
     setDetailLoading(null);
   };
+  const closeDetail = (): void => {
+    setDetail(null);
+    requestAnimationFrame(() => {
+      detailOpenerRef.current?.scrollIntoView({ block: 'center' });
+      detailOpenerRef.current?.focus({ preventScroll: true });
+      detailOpenerRef.current = null;
+    });
+  };
+  const gateReasons = detail?.events.flatMap((item) => item.event.kind === 'risk_evaluated' && !item.event.detail.approved
+    ? item.event.detail.reasonCodes : []).filter((reason) => reason !== 'gates_refused') ?? [];
+  const refusalReasons = detail?.events.flatMap((item) => item.event.kind === 'execution_refused' &&
+    item.event.detail.reasonCode !== 'gates_refused' ? [item.event.detail.reasonCode] : []) ?? [];
   return (
     <section className="panel" aria-labelledby="activity-feed-heading">
       <div className="panel-heading">
@@ -124,7 +145,8 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
                     {explaining === event.decisionId ? 'Reading evidence…' : 'Ask Coqui why'}</button>
                   <button type="button" aria-expanded={detail?.decision.decisionId === event.decisionId}
                     disabled={detailLoading === event.decisionId}
-                    onClick={() => void inspect(event.decisionId!)}>
+                    aria-controls="decision-detail"
+                    onClick={(click) => void inspect(event.decisionId!, click.currentTarget)}>
                     {detailLoading === event.decisionId ? 'Opening…' : 'Inspect evidence'}
                   </button>
                   <button type="button" onClick={()=>void applyAdvisorNavigation(client,{target:'risk',
@@ -139,10 +161,13 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
           ))}
         </ol>
       )}
-      {detail !== null && <aside className="activity-explanation" aria-labelledby="decision-detail-heading">
+      {detail !== null && <aside id="decision-detail" className="activity-explanation activity-decision-detail" aria-labelledby="decision-detail-heading">
         <div className="panel-heading"><div><p className="eyebrow">Historical as-of evidence</p>
-          <h3 id="decision-detail-heading">Decision detail</h3></div>
-          <button type="button" className="button-secondary" onClick={() => setDetail(null)}>Close</button></div>
+          <h3 id="decision-detail-heading" ref={detailHeadingRef} tabIndex={-1}>Decision detail</h3></div>
+          <button type="button" className="button-secondary" onClick={closeDetail}>Close</button></div>
+        {gateReasons.length > 0 && <div className="decision-gate-reasons"><strong>Recorded gate reasons</strong><ul>{gateReasons.map((reason, index) => <li key={`${reason}:${index}`}>{reason.replaceAll('_', ' ')}</li>)}</ul></div>}
+        {refusalReasons.length > 0 && <div className="decision-gate-reasons"><strong>Recorded refusal codes</strong><ul>{refusalReasons.map((reason, index) => <li key={`${reason}:${index}`}>{reason.replaceAll('_', ' ')}</li>)}</ul></div>}
+        {gateReasons.length === 0 && refusalReasons.length === 0 && detail.events.some((item) => item.event.kind === 'execution_refused') && <p className="metric-note">The persisted record contains a general refusal; no specific failed gate is available in this decision detail.</p>}
         <dl className="evidence-grid">
           <div><dt>Strategy</dt><dd>{detail.decision.strategy.version}</dd></div>
           <div><dt>Completed market interval</dt><dd>{detail.decision.market.asOfMs === null
@@ -164,9 +189,10 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
         <ol className="activity-feed">{detail.events.map((item) => <li key={item.eventId}>
           <span className="event-marker status-info" aria-hidden="true" /><div>
             <strong>{item.event.kind.replaceAll('_', ' ')}</strong>
-            <p>{item.event.kind === 'no_trade' || item.event.kind === 'stand_down' ||
-              item.event.kind === 'execution_refused' ? item.event.detail.reasonCode.replaceAll('_', ' ') :
-              'Recorded immutable evidence.'}</p>
+            <p>{item.event.kind === 'risk_evaluated' ? item.event.detail.approved ? 'Risk evaluation approved.' :
+              item.event.detail.reasonCodes.length > 0 ? `Refused: ${item.event.detail.reasonCodes.map((code) => code.replaceAll('_', ' ')).join(', ')}` : 'Risk evaluation refused; no specific reason recorded.' :
+              item.event.kind === 'no_trade' || item.event.kind === 'stand_down' || item.event.kind === 'execution_refused'
+                ? item.event.detail.reasonCode.replaceAll('_', ' ') : 'Recorded immutable evidence.'}</p>
             <small>{eventTime(item.event.atMs)} · {item.payloadHash.slice(0, 12)}…</small>
           </div></li>)}</ol>
       </aside>}

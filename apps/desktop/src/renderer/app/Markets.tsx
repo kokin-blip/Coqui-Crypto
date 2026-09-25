@@ -12,6 +12,7 @@ import { eventMatchesProduct, MarketEventsDisclosure } from './MarketEventsPanel
 import { useChannel, type ChannelState } from '../query/use-channel.js';
 import { useWorkspace } from './WorkspaceContext.js';
 import { AdvancedMarkets } from './AdvancedMarkets.js';
+import { CoinbaseMarketContext } from './CoinbaseMarketContext.js';
 import { decisionTimelineMarkers } from './decision-timeline-markers.js';
 import { takeAdvisorSelection } from './advisor-navigation.js';
 import { completedBarQuality } from './evidence-visualization.js';
@@ -93,6 +94,7 @@ function MarketDetail({ client, productId, quote, eventTimeline }: {
           <div><dt>Latest completion</dt><dd>{quality?.latest===null||quality===null?'Unavailable':new Date(quality.latest).toISOString()}</dd></div></dl>
         <p>Live quotes and Robinhood prices remain display or valuation evidence only; they cannot replace this dataset.</p>
       </section>
+      <CoinbaseMarketContext client={client} productId={productId} />
     </section>
   );
 }

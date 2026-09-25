@@ -6,6 +6,9 @@ import { dirname, join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import { fileURLToPath } from 'node:url';
 import { coinbaseSmokeFixture, checkCoinbaseSettings, seedCoinbaseSmokeProfile } from './coinbase-settings-smoke.mjs';
+import { sha256Hex, strategyDecisionId } from '@coqui/core';
+import { appendDecisionEvidenceEvent, appendPaperExecutionEvent, openDatabase,
+  savePaperExecutionProposal, saveStrategyDecision } from '@coqui/storage';
 
 /**
  * Stage 2.4 smoke gate.
@@ -292,6 +295,70 @@ async function run() {
     railOutcome.status === 'ok' && railOutcome.value.mode === 'paper',
     `status=${railOutcome.status}, mode=${railOutcome.value?.mode}`,
   );
+
+  const profileId = runtime.activeProfile().id;
+  const atMs = Date.now();
+  const decisionId = strategyDecisionId(profileId, atMs);
+  const evidenceDatabase = openDatabase(join(dataDir, 'coqui.db'));
+  const stored = saveStrategyDecision({ schemaVersion: 1, decisionId, profileId,
+    runId: sha256Hex(`focus:${atMs}`), scheduledForMs: atMs,
+    strategy: { id: 'trendvol', version: 'trendvol-paper-v1-unvalidated', configHash: sha256Hex('focus-config') },
+    market: { snapshotHash: sha256Hex('focus-market'), asOfMs: atMs, expectedAsOfMs: atMs,
+      freshness: 'fresh', refreshResult: 'succeeded', ruleSnapshotHash: sha256Hex('focus-rules'), rulesFresh: true },
+    portfolio: { snapshotHash: sha256Hex('focus-portfolio'), version: 'paper-v1', source: 'paper_ledger' },
+    targets: [], cashWeight: 1, exposure: 0, historyStatus: 'complete', facts: null, createdAtMs: atMs,
+  }, evidenceDatabase);
+  appendDecisionEvidenceEvent({ schemaVersion: 1, decisionId, profileId, sequence: 0,
+    kind: 'strategy_evaluated', atMs, detail: { decisionHash: stored.contentHash } }, evidenceDatabase);
+  appendDecisionEvidenceEvent({ schemaVersion: 1, decisionId, profileId, sequence: 1,
+    kind: 'risk_evaluated', atMs: atMs + 1,
+    detail: { approved: false, reasonCodes: ['profitability_gate_failed'], assessmentHash: sha256Hex('focus-risk') } }, evidenceDatabase);
+  for (const status of ['blocked', 'unknown']) {
+    const proposalId = `smoke-${status}`;
+    savePaperExecutionProposal({ id: proposalId, profileId, runId: `smoke-${status}`,
+      revision: 1, proposalHash: sha256Hex(proposalId), intentsJson: '[]', status,
+      createdAt: atMs, updatedAt: atMs }, evidenceDatabase);
+    appendPaperExecutionEvent(proposalId, profileId, status, atMs,
+      { reasonCode: status === 'blocked' ? 'risk_unassessed' : null }, evidenceDatabase);
+  }
+  evidenceDatabase.close();
+  const focusResult = JSON.parse(await withTimeout('evidence focus return', window.webContents.executeJavaScript(`
+    (async () => {
+      location.hash = '#/activity';
+      const until = async (predicate) => {
+        for (let attempt = 0; attempt < 120; attempt++) {
+          const value = predicate();
+          if (value) return value;
+          await new Promise((resolve) => setTimeout(resolve, 50));
+        }
+        return null;
+      };
+      const opener = await until(() => [...document.querySelectorAll('button')].find((button) => button.textContent?.includes('Inspect evidence')));
+      if (!opener) return JSON.stringify({ opened: false });
+      opener.click();
+      const heading = await until(() => document.querySelector('#decision-detail-heading'));
+      const focused = heading !== null && document.activeElement === heading;
+      const reason = document.querySelector('.decision-gate-reasons')?.textContent ?? '';
+      document.querySelector('#decision-detail .button-secondary')?.click();
+      const restored = await until(() => document.activeElement === opener);
+      return JSON.stringify({ opened: heading !== null, focused, restored: restored === true,
+        reason: reason.includes('profitability gate failed') });
+    })()
+  `)));
+  check('decision detail opens with focus and recorded gate reason', focusResult.opened && focusResult.focused && focusResult.reason);
+  check('decision detail close returns focus to opener', focusResult.restored === true);
+  const proposalResult = JSON.parse(await withTimeout('proposal rows', window.webContents.executeJavaScript(`
+    (async () => {
+      location.hash = '#/paper/orders';
+      for (let attempt = 0; attempt < 120 && !document.querySelector('.proposal-list'); attempt++)
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      const text = document.querySelector('.proposal-list')?.textContent ?? '';
+      return JSON.stringify({ blocked: text.includes('Reason: risk unassessed'),
+        unknown: text.includes('Outcome unknown'), evidence: text.includes('Inspect proposal evidence') });
+    })()
+  `)));
+  check('blocked and unknown proposal rows retain evidence and recovery guidance',
+    proposalResult.blocked && proposalResult.unknown && proposalResult.evidence);
 
   await withTimeout('Coinbase Settings interactions', checkCoinbaseSettings(window, coinbaseFixture, check));
   window.destroy();

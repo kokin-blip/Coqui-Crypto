@@ -2,6 +2,8 @@
 
 This is a paper-only experiment. Coinbase remains read-only. Coqui copies a fresh, complete Coinbase portfolio **USD value** into a new cash-only local simulator; it does not copy Coinbase holdings or obtain Coinbase trading authority. Alpaca uses the dedicated paper account's actual USD cash and equity. Both legs receive the same frozen TrendVol v4.2 targets from completed Coinbase UTC daily bars. Their order timing, fills, and balances can differ.
 
+The daily dataset requests up to 400 days of historical Coinbase candles on refresh, so its 121-bar minimum does not require 121 days of app uptime. A connected view-only Coinbase key makes the authenticated Advanced Trade candle route primary; a failed or unavailable authenticated request falls back to the public Coinbase Exchange candle route. Both routes retain completed-bar filtering and strict alignment. This change does not address an Alpaca API outage or automatically resume an experiment already paused for `alpaca_unavailable`.
+
 ## Setup
 
 1. Create a dedicated, empty Alpaca paper account and obtain its **paper** API key ID and secret. In Coqui Settings → Connections → Alpaca Paper, enter the pair. Coqui verifies it with `GET /v2/account` on the hardcoded `https://paper-api.alpaca.markets/v2` endpoint before storing it in the OS secret store. The fields are cleared after submission; the values necessarily pass through the form briefly. The app exposes no live Alpaca endpoint.
@@ -17,7 +19,14 @@ The legacy seven-day campaign exercise is only a research record. It does not st
 
 Paper Trading → Overview leads with **Alpaca paper activity**. It shows the most recent scheduler check and completed-bar decision, the TrendVol inputs and target weights, and up to 20 recent recorded events. Planned orders, submission attempts, Alpaca-reported order states, fills, and no-trade outcomes have distinct labels. Alpaca order IDs can be compared with the linked paper dashboard. A planned or submitted order is not presented as a fill. The status distinguishes waiting for a completed daily bar, an in-progress check, pending order activity, a reconciled daily pass, a user pause, and an attention state. A scheduler check more than three minutes old is marked overdue. The check timestamp is runtime-only and starts empty when Coqui opens; the decision and order history comes from the append-only experiment ledger.
 
-The daily scheduler runs while the Coqui desktop host is open and authoritative. A connected account alone does not mean the experiment is running. Coqui normally checks once per minute, but a new daily decision must pass the existing completed-bar and 15-minute UTC execution-window rules. A no-trade is a valid recorded outcome. A daily pass is called reconciled only when it had no Alpaca orders or recorded fill activity matches every completed Alpaca order; an order reported filled can remain pending while its activity record arrives. To verify actual paper execution, compare the Alpaca order ID and activity with the Alpaca paper dashboard; the Coqui timeline is a local readout of recorded evidence.
+The Overview also shows **Coinbase market context** for BTC-USD, ETH-USD, and
+LTC-USD: authenticated best bid/ask, spread, product state, and bounded book
+availability with separate timestamps. Markets shows up to ten bid and ask
+levels for the selected product. This context is informational only. It does
+not affect TrendVol targets or Alpaca paper orders and cannot verify an Alpaca
+fill.
+
+The daily scheduler runs while the Coqui desktop host is open and authoritative. A connected account alone does not mean the experiment is running. Coqui normally checks once per minute, but a new daily decision must pass the completed-bar and 00:00–00:15 UTC execution window. If the app starts after that window, it waits for the next UTC day’s window; it does not make a late decision. The activity panel shows the next window time so this wait is distinguishable from an order failure. A no-trade is a valid recorded outcome. A daily pass is called reconciled only when it had no Alpaca orders or recorded fill activity matches every completed Alpaca order; an order reported filled can remain pending while its activity record arrives. To verify actual paper execution, compare the Alpaca order ID and activity with the Alpaca paper dashboard; the Coqui timeline is a local readout of recorded evidence.
 
 Balances, current marked equity, percentage return, holdings, trades, and modeled costs remain under **Balances, returns, and paper fills**. Alpaca's records are **externally recorded paper fills** from its simulator, not live exchange executions. The local leg models a 0.60% fee plus 0.10% spread and 0.15% slippage in fill prices. The Alpaca cost envelope shown in Coqui is a comparison estimate; Alpaca account equity is the external account's actual paper value, and no additional modeled charge is deducted from it.
 

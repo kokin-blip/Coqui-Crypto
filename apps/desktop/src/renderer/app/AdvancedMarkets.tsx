@@ -9,10 +9,11 @@ import { ChartLinkController } from './chart-link-controller.js';
 import { ChartDrawingManager } from './ChartDrawingManager.js';
 import { MarketChartTileHeader } from './MarketChartTileHeader.js';
 import type { ChartDrawing, ChartTileConfiguration, DrawingTool, WorkstationBar, WorkstationChartStyle, WorkstationExtensionMarker, WorkstationIndicators, WorkstationInterval, WorkstationLayout } from './chart-workstation-types.js';
-import { MarketFactsPanel } from './MarketFactsPanel.js';
+import { MarketFactsPanel } from './MarketFactsPanel.js'; import { CoinbaseMarketContext } from './CoinbaseMarketContext.js';
 import { MarketDrawingTools, MarketPanelTriggers } from './MarketPanelControls.js';
 import { eventMatchesProduct, MarketEventsDisclosure } from './MarketEventsPanel.js';
 import { MarketFeedStatus } from './MarketFeedStatus.js';
+import { SurfaceState } from './SurfaceState.js';
 import { MarketWorkspaceToolbar } from './MarketWorkspaceToolbar.js';
 import { TradingWorkstationChart } from './TradingWorkstationChart.js';
 import { useChartExtensionSeries } from './use-chart-extension-series.js';
@@ -127,8 +128,7 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
   const [query, setQuery] = useState(''); const deferredQuery = useDeferredValue(query);
   const productSearch = useChannel(client, 'market-data.products', { query: deferredQuery, limit: 100 });
   const allProducts = useChannel(client, 'market-data.products', { query: '', limit: 100 });
-  const searchCatalog = productSearch.kind === 'ready' ? productSearch.value.products : [];
-  const catalog = allProducts.kind === 'ready' ? allProducts.value.products : searchCatalog;
+  const searchCatalog = productSearch.kind === 'ready' ? productSearch.value.products : []; const catalog = allProducts.kind === 'ready' ? allProducts.value.products : searchCatalog;
   const [selected, setSelected] = useState('BTC-USD');
   const [recentProducts, setRecentProducts] = useState<readonly string[]>([]);
   const [sortAscending, setSortAscending] = useState(true);
@@ -154,8 +154,7 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
   const portfolioProductIds = portfolio.kind === 'ready' && portfolio.value !== null ? portfolio.value.exposures
     .filter((item) => item.exposureKey !== 'USD' && Number(item.quantity) > 0)
     .sort((a, b) => Number(b.valueUsd ?? 0) - Number(a.valueUsd ?? 0)).map((item) => `${item.exposureKey}-USD`) : [];
-  const portfolioWatchlist = activeWatchlistId === undefined && portfolioProductIds.length > 0;
-  const effectiveWatchlistId = activeWatchlistId === undefined ? portfolioWatchlist ? null : defaultWatchlist?.id ?? null : activeWatchlistId;
+  const portfolioWatchlist = activeWatchlistId === undefined && portfolioProductIds.length > 0; const effectiveWatchlistId = activeWatchlistId === undefined ? portfolioWatchlist ? null : defaultWatchlist?.id ?? null : activeWatchlistId;
   const activeWatchlist = stored.watchlists.find((item) => item.id === effectiveWatchlistId);
   const watchlistProducts = new Set(portfolioWatchlist ? portfolioProductIds : activeWatchlist?.productIds ?? []);
   const visibleProducts = [...searchCatalog
@@ -192,7 +191,6 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
   });
   const factsBars: readonly WorkstationBar[] = completed.kind === 'ready' ? completed.value.bars : [];
   const activeProfileId = profiles.kind === 'ready' ? profiles.value.activeProfile.id : null;
-
   useEffect(()=>setRecentProducts([]),[activeProfileId]);
 
   useEffect(()=>{const selection=takeAdvisorSelection();if(selection?.productId!==null&&selection?.productId!==undefined) {setSelected(selection.productId);setDraftTiles(null);}if(selection?.openAdvisor===true) setAnalystOpen(true);},[]);
@@ -257,7 +255,6 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
       productIds: visibleProducts.map((item) => item.instrument.productId), isDefault: existing?.isDefault ?? stored.watchlists.length === 0,
     } });
   };
-
   return <div className="advanced-markets-workstation">
     <header className="market-command-bar">
       <div className="market-symbol"><CircleDot size={15} /><div><strong>{selected}</strong><span>Coinbase spot · {defaultInterval}</span></div></div>
@@ -296,16 +293,19 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
       })}</section>
       <aside className={`advanced-watchlist${watchlistOpen ? ' panel-open' : ''}`}>
         <header><strong>Watchlist</strong><label className="watchlist-picker"><span className="sr-only">Saved watchlist</span><select value={portfolioWatchlist ? '__portfolio__' : effectiveWatchlistId ?? ''} onChange={(event) => setActiveWatchlistId(event.target.value === '__portfolio__' ? undefined : event.target.value === '' ? null : event.target.value)}>{portfolioProductIds.length > 0 && <option value="__portfolio__">Portfolio</option>}<option value="">All products</option>{stored.watchlists.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><button type="button" className="icon-button" aria-label="Save current watchlist" disabled={visibleProducts.length === 0 || portfolioWatchlist} onClick={saveWatchlist}><Save size={14} /></button><button type="button" className="market-panel-close" aria-label="Close watchlist" onClick={() => setWatchlistOpen(false)}><X size={16} /></button></header>
-        <label><Search size={15} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search Coinbase USD" /></label>
-        <div className="recent-products" aria-label="Recent products">{recentProducts.map((productId) => <button key={productId} type="button" onClick={() => chooseProduct(productId)}>{productId.replace('-USD', '')}</button>)}</div>
+        <label><Search size={15} /><input value={query} onChange={(event) => setQuery(event.target.value)} aria-label="Search Coinbase USD products" placeholder="Search Coinbase USD" /></label>
+        <div className="recent-products" aria-label="Current and recent products">{[selected, ...recentProducts.filter((productId) => productId !== selected)].map((productId) => <button key={productId} type="button" aria-pressed={productId === selected} onClick={() => chooseProduct(productId)}>{productId.replace('-USD', '')}</button>)}</div>
         <div className="watchlist-columns"><button type="button" aria-label={`Sort symbols ${sortAscending ? 'descending' : 'ascending'}`} onClick={() => setSortAscending((value) => !value)}>Symbol <ArrowDownAZ className={sortAscending ? '' : 'sort-descending'} size={11} /></button><span>Venue</span></div>
-        <ul>{visibleProducts.map((product: Product) => <li key={product.instrument.productId}><button type="button" aria-pressed={product.instrument.productId === selected} onClick={() => chooseProduct(product.instrument.productId)}><span><strong>{product.symbol}</strong><small>{product.name}</small></span><span>USD</span></button></li>)}</ul>
+        {productSearch.kind === 'loading' && <SurfaceState kind="loading" title="Loading USD products" compact />}
+        {productSearch.kind !== 'loading' && productSearch.kind !== 'ready' && <SurfaceState kind="error" title="Product search unavailable" detail="The selected chart remains available. Retry the search when market data returns." compact />}
+        {productSearch.kind === 'ready' && visibleProducts.length === 0 && <SurfaceState kind="empty" title="No matching USD products" detail="Try another symbol or choose a different watchlist." compact />}
+        {productSearch.kind === 'ready' && visibleProducts.length > 0 && <ul>{visibleProducts.map((product: Product) => <li key={product.instrument.productId}><button type="button" aria-pressed={product.instrument.productId === selected} onClick={() => chooseProduct(product.instrument.productId)}><span><strong>{product.symbol}</strong><small>{product.name}</small></span><span>USD</span></button></li>)}</ul>}
       </aside>
       <MarketFactsPanel className={factsOpen ? 'panel-open' : ''} productId={selected} bars={factsBars} freshness={productSearch.kind === 'ready' ? new Date(productSearch.value.asOfMs).toLocaleString() : 'Unavailable'} onClose={() => setFactsOpen(false)} onOpenAnalyst={() => setAnalystOpen(true)} />
     </div>
     <footer className="market-workstation-footer"><span>Coinbase display data · informational only</span><label><input type="checkbox" checked={workspace.preferences?.marketLiveCandle ?? false} onChange={(event) => void workspace.update({ marketLiveCandle: event.target.checked })} /> Show provisional candle</label><span>UTC</span></footer>
     <MarketEventsDisclosure client={client} productId={selected} events={eventTimeline.kind === 'ready' ? eventTimeline.value.events : []} state={eventTimeline.kind === 'ready' ? 'ready' : eventTimeline.kind === 'loading' ? 'loading' : 'unavailable'} />
     {analystOpen && <AdvisorSheet client={client} productId={selected} bars={factsBars} onClose={() => setAnalystOpen(false)} />}
-    {extensionsOpen && <ChartExtensionManager client={client} onClose={() => setExtensionsOpen(false)} />}
+    <CoinbaseMarketContext client={client} productId={selected} />{extensionsOpen && <ChartExtensionManager client={client} onClose={() => setExtensionsOpen(false)} />}
   </div>;
 }

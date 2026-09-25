@@ -41,6 +41,8 @@ export function ResearchRuns({ client }: { readonly client: CoquiClient }): Reac
     if(candidateId===null||candidateId===undefined||lineage.kind!=='ready') return;
     document.getElementById(`candidate-${candidateId}`)?.scrollIntoView({block:'center'});
   },[lineage.kind]);
+  const emptyResearch = runs.kind === 'ready' && runs.value.length === 0 &&
+    lineage.kind === 'ready' && lineage.value.candidates.length === 0;
 
   return (
     <section aria-labelledby="runs-heading" className="panel space-y-3">
@@ -49,9 +51,7 @@ export function ResearchRuns({ client }: { readonly client: CoquiClient }): Reac
       </div>
 
       {runs.kind === 'loading' && <p aria-live="polite">Loading registered runs…</p>}
-      {runs.kind === 'ready' && runs.value.length === 0 && (
-        <p className="empty-state">No study has been run against this profile yet.</p>
-      )}
+      {emptyResearch && <p className="empty-state">No registered run or champion/challenger lineage has been recorded. The host begins durable research jobs after a registered study is started; this view does not create placeholder evidence.</p>}
       {runs.kind === 'ready' && runs.value.length > 0 && (
         <ul className="evidence-list">
           {runs.value.map((run) => (
@@ -68,10 +68,10 @@ export function ResearchRuns({ client }: { readonly client: CoquiClient }): Reac
           {runs.issues.map((issue) => issue.code).join(', ')}
         </p>
       )}
-      <div className="lineage-heading"><h3>Champion and challenger lineage</h3>
-        <span>{lineage.kind === 'ready' ? `as of ${new Date(lineage.value.asOfMs).toISOString().slice(0, 10)} · global` : 'Persisted evidence only'}</span></div>
+      {!emptyResearch && <div className="lineage-heading"><h3>Champion and challenger lineage</h3>
+        <span>{lineage.kind === 'ready' ? `as of ${new Date(lineage.value.asOfMs).toISOString().slice(0, 10)} · global` : 'Persisted evidence only'}</span></div>}
       {lineage.kind === 'loading' && <p aria-live="polite">Reading immutable lineage…</p>}
-      {lineage.kind === 'ready' && lineage.value.candidates.length === 0 &&
+      {lineage.kind === 'ready' && lineage.value.candidates.length === 0 && !emptyResearch &&
         <p className="empty-state">No champion or challenger candidate has been recorded.</p>}
       {lineage.kind === 'ready' && lineage.value.candidates.length > 0 && <ol className="lineage-list">
         {lineage.value.candidates.map((candidate) => <li key={candidate.candidateId} id={`candidate-${candidate.candidateId}`}

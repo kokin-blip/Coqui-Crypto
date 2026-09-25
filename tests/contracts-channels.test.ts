@@ -57,7 +57,7 @@ describe('channel registry', () => {
       'connections.robinhood.keypair.begin', 'connections.robinhood.keypair.cancel', 'connections.robinhood.keypair.complete',
       'connections.robinhood.keypair.status',
       'connections.status', 'connections.sync',
-      'decision.detail', 'decision.timeline', 'market-data.candles',
+      'decision.detail', 'decision.timeline', 'market-data.candles', 'market-data.coinbase-diagnostics',
       'market-data.display-bars',
       'market-data.fear-greed',
       'market-data.live',

@@ -1,6 +1,4 @@
 import {
-  fetchCoinbaseDailyBars,
-  fetchCoinbaseDisplayBars,
   createCoinbaseAssetCatalog,
   fetchCoinGeckoMarketSnapshots,
   fetchFearGreed,
@@ -14,7 +12,8 @@ import {
   type ReferenceResult,
 } from '@coqui/adapters';
 import type { AssetRef, InstrumentIdentity, InstrumentKey, MarketBar } from '@coqui/core';
-import { CoinbaseDisplayDataService, type CandleSource, type DisplayBarSource, type ReferenceSources } from '@coqui/services';
+import { CoinbaseDisplayDataService, type CandleSource, type DisplayBarSource,
+  type DisplayBarSourceRow, type ReferenceSources } from '@coqui/services';
 import type { Db } from '@coqui/storage';
 
 /**
@@ -104,38 +103,35 @@ export function createReferenceSources(
   };
 }
 
-export function createCandleSource(http: HttpClient): CandleSource {
+export function createCandleSource(source: { readonly dailyBars: (
+  instrument: InstrumentIdentity, lookbackDays: number, nowMs: number,
+) => Promise<{ readonly ok: true; readonly bars: readonly MarketBar[] } | { readonly ok: false }> }): CandleSource {
   return {
     async dailyBars(
       instrument: InstrumentIdentity,
       lookbackDays: number,
       nowMs: number,
     ): Promise<{ readonly ok: true; readonly bars: readonly MarketBar[] } | { readonly ok: false }> {
-      const result = await fetchCoinbaseDailyBars(http, instrument, {
-        maxDays: lookbackDays,
-        nowMs,
-      });
-      return result.ok ? { ok: true, bars: result.data } : { ok: false };
+      return source.dailyBars(instrument, lookbackDays, nowMs);
     },
   };
 }
 
-export function createDisplayBarSource(http: HttpClient): DisplayBarSource {
+export function createDisplayBarSource(source: { readonly displayBars: (
+  instrument: InstrumentIdentity, interval: Parameters<DisplayBarSource['fetch']>[0]['interval'],
+  startTimeMs: number, endTimeMs: number, nowMs: number,
+) => Promise<{ readonly ok: true; readonly bars: readonly DisplayBarSourceRow[] } | { readonly ok: false }> }): DisplayBarSource {
   return {
     async fetch(input) {
-      const result = await fetchCoinbaseDisplayBars(http, input.instrument, {
-        interval: input.interval,
-        startTimeMs: input.startTimeMs,
-        endTimeMs: input.endTimeMs,
-        nowMs: input.nowMs,
-      });
-      return result.ok ? { ok: true, bars: result.data } : { ok: false };
+      return source.displayBars(input.instrument, input.interval,
+        input.startTimeMs, input.endTimeMs, input.nowMs);
     },
   };
 }
 
 export function createDisplayDataService(input: {
   readonly http: HttpClient;
+  readonly candleSource: Parameters<typeof createDisplayBarSource>[0];
   readonly database: Db;
   readonly profileId: string;
   readonly nowMs: () => number;
@@ -144,7 +140,7 @@ export function createDisplayDataService(input: {
     profileId: input.profileId,
     database: input.database,
     catalog: createCoinbaseAssetCatalog(input.http),
-    source: createDisplayBarSource(input.http),
+    source: createDisplayBarSource(input.candleSource),
     nowMs: input.nowMs,
   });
 }

@@ -73,13 +73,13 @@ export function Settings({ client }: { readonly client: CoquiClient }): React.JS
   };
 
   return <section aria-labelledby="settings-heading" className="screen-stack settings-screen">
-    <header className="route-heading"><div><p className="eyebrow">Profile configuration</p><h2 id="settings-heading">Settings</h2></div></header>
+    <header className="route-heading"><h2 id="settings-heading">Profile configuration</h2></header>
     <label className="settings-category-select">Category<select value={category} onChange={(event) => selectCategory(event.target.value as SettingsCategory)}>{CATEGORIES.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}</select></label>
     <div className="settings-layout">
       <nav className="settings-category-tabs" role="tablist" aria-label="Settings categories" aria-orientation="vertical">
         {CATEGORIES.map((item, index) => <button key={item.id} ref={(node) => { tabRefs.current[index] = node; }} type="button" role="tab" id={`settings-tab-${item.id}`} aria-selected={category === item.id} aria-controls={`settings-panel-${item.id}`} tabIndex={category === item.id ? 0 : -1} onClick={() => selectCategory(item.id)} onKeyDown={(event) => moveTabFocus(event, index)}>{item.label}</button>)}
       </nav>
-      <div className="settings-category-panel" role="tabpanel" id={`settings-panel-${category}`} aria-labelledby={`settings-tab-${category}`} tabIndex={0}>
+      <div className="settings-category-panel" role="tabpanel" id={`settings-panel-${category}`} aria-labelledby={`settings-tab-${category}`} tabIndex={-1}>
         {category === 'connections' && <ConnectionManager key={view.profileId} client={client} />}
         {category === 'appearance' && <section className="settings-section" aria-labelledby="appearance-settings-heading"><div><p className="section-label">Profile presentation</p><h3 id="appearance-settings-heading">Appearance and accessibility</h3></div><DisplaySettings client={client} preferences={view.preferences} /><p className="opacity-70">{view.source === 'default' ? 'Using verified workstation defaults for this profile.' : 'Saved for this profile.'}</p></section>}
         {category === 'workspace' && <section className="settings-section" aria-labelledby="workspace-settings-heading"><div><p className="section-label">Workspace</p><h3 id="workspace-settings-heading">Mode and chart defaults</h3></div><WorkspaceSettings client={client} preferences={view.preferences} /></section>}

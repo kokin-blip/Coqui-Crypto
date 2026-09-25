@@ -3,8 +3,11 @@ import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { useChannel } from '../query/use-channel.js';
 import { SurfaceState } from './SurfaceState.js';
 import { exactUtcTimestamp, formatLocalTimestamp } from './time-format.js';
+import { CoinbaseMarketContext } from './CoinbaseMarketContext.js';
 
 type Status = ChannelResponse<'parallel.paper.status'>;
+const DAY_MS = 86_400_000;
+const DECISION_WINDOW_MS = 15 * 60_000;
 
 function usd(value: string | null): string {
   return value === null ? 'Awaiting daily mark' : '$' + Number(value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -14,10 +17,12 @@ function pct(value: string | null): string {
   return value === null ? 'Awaiting daily mark' : (Number(value) >= 0 ? '+' : '') + value + '%';
 }
 
-function stateLabel(data: Status): string {
+function stateLabel(data: Status, dailyWindowOpen: boolean): string {
   switch (data.runtimeState) {
     case 'none': return 'Not started';
-    case 'awaiting': return data.lastCheckAtMs === null ? 'Awaiting first scheduler check' : 'Awaiting next completed daily bar';
+    case 'awaiting': return data.lastCheckAtMs === null ? 'Awaiting first scheduler check'
+      : data.lastDecisionAtMs === null ? dailyWindowOpen ? 'Daily decision window is open' : 'Waiting for the daily decision window'
+        : 'Awaiting next completed daily bar';
     case 'evaluating': return 'Checking market data and Alpaca';
     case 'order_pending': return 'Alpaca order activity pending';
     case 'reconciled': return 'Daily Alpaca pass reconciled';
@@ -25,6 +30,14 @@ function stateLabel(data: Status): string {
     case 'attention': return data.state === 'paused' ? 'Needs attention' : 'Scheduler check overdue';
     case 'stopped': return 'Stopped';
   }
+}
+
+function decisionWindowStatus(nowMs: number): { readonly open: boolean; readonly nextAtMs: number } {
+  const date = new Date(nowMs);
+  const todayUtc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+  const elapsed = nowMs - todayUtc;
+  const open = elapsed < DECISION_WINDOW_MS;
+  return { open, nextAtMs: open ? todayUtc : todayUtc + DAY_MS };
 }
 
 function timestamp(atMs: number | null): React.JSX.Element | string {
@@ -45,14 +58,19 @@ export function ParallelPaperComparison({ client }: { readonly client: CoquiClie
       detail="Connect a dedicated Alpaca paper account, then start the parallel experiment in Settings → Paper."
       action={{ label: 'Open Settings', href: '#/settings' }} compact />}
     {status.kind === 'ready' && status.value.state !== 'none' && <ActivityContent data={status.value} />}
+    <section className="coinbase-paper-context" aria-label="Coinbase market context"><div className="panel-heading"><div><h3>Coinbase market context</h3><p className="muted">Current venue snapshots · informational only · separate from Alpaca orders</p></div><a href="#/markets">Open Markets for book depth</a></div>
+      <div className="coinbase-paper-context-grid">{['BTC-USD', 'ETH-USD', 'LTC-USD'].map((productId) =>
+        <CoinbaseMarketContext key={productId} client={client} productId={productId} compact />)}</div>
+    </section>
   </section>;
 }
 
 function ActivityContent({ data }: { readonly data: Status }): React.JSX.Element {
   const decision = data.latestDecision;
+  const window = decisionWindowStatus(Date.now());
   return <>
     <div className="parallel-paper-current" role="status">
-      <strong>{stateLabel(data)}</strong>
+      <strong>{stateLabel(data, window.open)}</strong>
       <span>Last scheduler check: {timestamp(data.lastCheckAtMs)}</span>
       <span>Last daily decision: {timestamp(data.lastDecisionAtMs)}</span>
     </div>
@@ -66,7 +84,10 @@ function ActivityContent({ data }: { readonly data: Status }): React.JSX.Element
       <ul>{decision.targets.map((target) => <li key={target.symbol}>{target.symbol} <strong>{target.weightPct}%</strong></li>)}</ul>
     </div>}
     <div className="parallel-paper-timeline"><h3>Recorded activity</h3>
-      {data.activity.length === 0 ? <p className="muted">No daily decision recorded yet. Coqui evaluates after a completed UTC daily bar.</p>
+      {data.activity.length === 0 ? <p className="muted">No daily decision recorded yet. Coqui evaluates completed Coinbase bars during the 00:00–00:15 UTC window.
+        {data.lastCheckAtMs !== null && (window.open
+          ? ' This window is open; the next scheduler check can evaluate today’s bar.'
+          : <> Today’s window has passed. The next attempt is <time dateTime={exactUtcTimestamp(window.nextAtMs)} title={exactUtcTimestamp(window.nextAtMs)}>{formatLocalTimestamp(window.nextAtMs)}</time>.</>)}</p>
         : <ol>{data.activity.map((item) => <li key={item.id} data-kind={item.kind}>
           <div><strong>{item.title}</strong>{timestamp(item.atMs)}</div>
           <p>{item.detail}</p>

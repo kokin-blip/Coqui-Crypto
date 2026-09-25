@@ -89,6 +89,7 @@ export function Risk({ client }: { readonly client: CoquiClient }): React.JSX.El
           enough paper-equity history exists.
         </p>
       )}
+      <p className="metric-note">Guardrail history: {view.sampleCount} portfolio equity snapshot{view.sampleCount === 1 ? '' : 's'} (20 required for assessment). Paper Performance uses a separate series of verified daily paper valuations; its count does not enter this guardrail.</p>
 
       {view.blockReason !== null && (
         <p role="alert" className="risk-callout danger">

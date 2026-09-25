@@ -100,6 +100,18 @@ export function formatUsd(value: string, options: { readonly signed?: boolean } 
   return { text: `${sign}$${grouped}`, figure };
 }
 
+/** Rounded headline display only. Callers must keep the exact source available nearby. */
+export function formatApproxUsd(value: string): string | null {
+  const figure = signedFigure(value);
+  if (figure === null) return null;
+  const [whole = '0', fraction = ''] = figure.magnitude.split('.');
+  const cents = BigInt(whole) * 100n + BigInt(fraction.slice(0, 2).padEnd(2, '0')) +
+    (Number(fraction[2] ?? '0') >= 5 ? 1n : 0n);
+  const rounded = `${figure.direction === 'down' && cents !== 0n ? '-' : ''}${cents / 100n}.${String(cents % 100n).padStart(2, '0')}`;
+  const displayed = formatUsd(rounded);
+  return displayed === null ? null : `≈${displayed.text}`;
+}
+
 /**
  * Percent to one decimal, always signed — an unsigned change is ambiguous.
  *

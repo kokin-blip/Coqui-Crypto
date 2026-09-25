@@ -55,19 +55,13 @@ function Provenance({ gate }: { readonly gate: GateView }): React.JSX.Element {
   );
 }
 
-function Leader({ gate }: { readonly gate: GateView }): React.JSX.Element {
+function Leader({ gate }: { readonly gate: GateView }): React.JSX.Element | null {
   const { facts } = gate;
   // The trial count is a conservative upper bound, so the badge states the
   // direction rather than showing a bare DSR that would overstate the claim.
   const validation = validationBadge('upper-bound', 215);
 
-  if (facts === null) {
-    return (
-      <p>
-        No leader yet — {BLOCKED_REASONS[gate.status].toLowerCase()}
-      </p>
-    );
-  }
+  if (facts === null) return null;
 
   const excess =
     facts.leaderSortino !== null && facts.holdSortino !== null
@@ -131,11 +125,13 @@ export function Scoreboard({
         Above the numbers, not below. A caveat placed under the data lets the
         data be read first and the caveat never.
       */}
-      <p role="note" className="border-l-2 pl-3">
+      <div role="note" className="scoreboard-decision">
         <span aria-hidden="true">{unvalidated.marker} </span>
-        <span className="font-semibold">NOT VALIDATED</span> — {unvalidated.label}. Trading is
-        blocked because the evidence gate is not met, not because of an error.
-      </p>
+        <span className="font-semibold">NOT VALIDATED</span> — {unvalidated.label}.{' '}
+        {view.status === 'eligible_for_review'
+          ? 'Evidence is eligible for human review; this does not authorize live trading.'
+          : 'The evidence gate does not permit a paper proposal.'}
+      </div>
 
       <Leader gate={view} />
 
@@ -164,6 +160,7 @@ export function Scoreboard({
         <p className="mt-2 opacity-70">
           Live execution is not available in this build, and meeting the gate would not enable it.
         </p>
+        <a className="scoreboard-evidence-link" href="#/research">Inspect registered research and negative findings</a>
       </div>
 
       {detail === 'full' && <div>

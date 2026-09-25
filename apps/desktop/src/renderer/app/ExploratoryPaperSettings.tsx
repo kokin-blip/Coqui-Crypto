@@ -25,12 +25,6 @@ export function ExploratoryPaperSettings({ client }: { readonly client: CoquiCli
       <h3 id="exploratory-paper-heading">Run the current strategy in paper</h3>
       <p className="muted">Copies the latest connected Coinbase and Robinhood holdings into one isolated simulation. Supported assets use Coinbase completed bars and reference venue rules.</p>
     </div>
-    <ul className="exploratory-safety-list">
-      <li>Real accounts remain read-only; live order submission is compile-time disabled.</li>
-      <li>Research validation and profitability admission are observed, not enforced.</li>
-      <li>Kill switch, product rules, sizing limits, host fencing, and next-open settlement remain enforced.</li>
-      <li>Results cannot validate, promote, or activate a strategy.</li>
-    </ul>
     {status.kind === 'loading' && <SurfaceState kind="loading" title="Reading exploratory campaign" compact />}
     {status.kind !== 'loading' && status.kind !== 'ready' && <SurfaceState kind="error" title="Campaign status unavailable" detail={status.issues.map((issue) => issue.code).join(', ')} compact />}
     {status.kind === 'ready' && current === null && <>
@@ -64,6 +58,12 @@ export function ExploratoryPaperSettings({ client }: { readonly client: CoquiCli
             explicitConfirmation: true })}>Stop campaign</button>
       </>}
     </div>}
+    <ul className="exploratory-safety-list">
+      <li>Real accounts remain read-only; live order submission is compile-time disabled.</li>
+      <li>Research validation and profitability admission are observed, not enforced.</li>
+      <li>Kill switch, product rules, sizing limits, host fencing, and next-open settlement remain enforced.</li>
+      <li>Results cannot validate, promote, or activate a strategy.</li>
+    </ul>
     {[start, pause, resume, stop].some((command) => command.state.kind === 'failed' || command.state.kind === 'blocked') &&
       <p className="action-error" role="alert">{[start, pause, resume, stop].flatMap((command) =>
         'codes' in command.state ? command.state.codes : []).join(', ')}</p>}

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { CHART_COLORS } from '@coqui/ui-kit';
@@ -17,6 +17,9 @@ import {
 import { bollinger, ema, macd, rsi, sma } from './chart-indicators.js';
 import { createChartLifecycle } from './chart-lifecycle.js';
 import { ChartFrame } from './ChartFrame.js';
+import { ChartEvidenceList } from './ChartEvidenceList.js';
+import { groupChartEvidence } from './chart-evidence-groups.js';
+import { exactUtcTimestamp, formatLocalTimestamp } from './time-format.js';
 
 type MarketBar = ChannelResponse<'market-data.candles'>['bars'][number];
 export interface EvidenceChartMarker {
@@ -42,6 +45,8 @@ export function MarketHistoryChart({ bars, mode, productId, volumeVisible = true
   const container = useRef<HTMLDivElement>(null);
   const chartApi = useRef<IChartApi | null>(null);
   const [cursorLabel, setCursorLabel] = useState<string | null>(null);
+  const evidenceItems = useMemo(() => decisionMarkers.map((item) => ({ timeMs: item.atMs, label: item.label, tone: item.tone })), [decisionMarkers]);
+  const groupedMarkers = useMemo(() => groupChartEvidence(bars, evidenceItems), [bars, evidenceItems]);
 
   useEffect(() => {
     if (container.current === null) return;
@@ -108,23 +113,23 @@ export function MarketHistoryChart({ bars, mode, productId, volumeVisible = true
       addLine(values, CHART_COLORS.primary, 'MACD', pane);
       addLine(values.map(({ day, signal }) => ({ day, value: signal })), '#f2b84b', 'Signal', pane);
     }
-    if (decisionMarkers.length > 0) {
+    if (groupedMarkers.length > 0) {
       const colors = { neutral: CHART_COLORS.supportingText, positive: CHART_COLORS.primary,
         negative: CHART_COLORS.negative, warning: '#f2b84b' } as const;
-      createSeriesMarkers(price, decisionMarkers.map((marker): SeriesMarker<Time> => ({
-        time: new Date(marker.atMs).toISOString().slice(0, 10) as Time,
-        position: 'aboveBar', shape: marker.tone === 'positive' ? 'arrowUp' : marker.tone === 'negative' ? 'arrowDown' : 'circle',
-        color: colors[marker.tone], text: marker.label,
+      createSeriesMarkers(price, groupedMarkers.map((group): SeriesMarker<Time> => ({
+        time: new Date(group.timeMs).toISOString().slice(0, 10) as Time,
+        position: 'aboveBar', shape: group.tone === 'positive' ? 'arrowUp' : group.tone === 'negative' ? 'arrowDown' : 'circle',
+        color: colors[group.tone], text: `${group.items.length} event${group.items.length === 1 ? '' : 's'}`,
       })));
     }
     chart.subscribeCrosshairMove((parameter) => {
       if (parameter.time === undefined) { setCursorLabel(null); return; }
       const bar = bars.find((item) => new Date(item.startTimeMs).toISOString().slice(0, 10) === String(parameter.time));
-      setCursorLabel(bar === undefined ? String(parameter.time) : `${String(parameter.time)} · O ${bar.open} H ${bar.high} L ${bar.low} C ${bar.close}`);
+      setCursorLabel(bar === undefined ? String(parameter.time) : `${formatLocalTimestamp(bar.startTimeMs)} · UTC ${exactUtcTimestamp(bar.startTimeMs)} · O ${bar.open} H ${bar.high} L ${bar.low} C ${bar.close}`);
     });
     chart.timeScale().fitContent();
     return () => { lifecycle.destroy(); chartApi.current = null; };
-  }, [bars, decisionMarkers, indicators, mode, volumeVisible]);
+  }, [bars, groupedMarkers, indicators, mode, volumeVisible]);
 
   const summary = `${bars.length} completed Coinbase daily ${mode === 'candles' ? 'candles' : 'closing prices'} for ${productId}, with recorded volume where available.`;
   const observations = bars.map((bar) => ({ day: new Date(bar.startTimeMs).toISOString().slice(0, 10), label: `${new Date(bar.startTimeMs).toISOString().slice(0, 10)}: close ${bar.close}` }));
@@ -133,5 +138,5 @@ export function MarketHistoryChart({ bars, mode, productId, volumeVisible = true
     if (png === undefined) return;
     await client.query('app.chart.snapshot.save', { commandId: crypto.randomUUID(), filenameStem: `coqui-${productId.toLowerCase()}`, pngBase64: png });
   };
-  return <ChartFrame className="market-history-chart" containerRef={container} observations={observations} summary={summary} cursorLabel={cursorLabel} {...(snapshot === undefined ? {} : { onSnapshot: snapshot })} />;
+  return <><ChartFrame className="market-history-chart" containerRef={container} observations={observations} summary={summary} cursorLabel={cursorLabel} {...(snapshot === undefined ? {} : { onSnapshot: snapshot })} /><ChartEvidenceList bars={bars} items={evidenceItems} /></>;
 }

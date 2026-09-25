@@ -123,7 +123,7 @@ export function StatusRail({ client }: { readonly client: CoquiClient }): React.
         <Freshness client={client} />
         <StatusEmphasis stateKey={`${summary.tone}:${summary.text}`}><span className={`rail-decision rail-${summary.tone}`}><ShieldCheck size={14} aria-hidden="true" /><span><small>Safety</small><strong>{summary.text}</strong></span></span></StatusEmphasis>
         <details className="status-details">
-          <summary aria-label="Open system status" title="System status"><Activity size={14} aria-hidden="true" /> System status</summary>
+          <summary aria-label={`Reconciliation status: ${reconciliationText(view.reconciliation)}. Open system status`} title="System status"><Database size={14} aria-hidden="true" /> <span className="rail-reconciliation">{reconciliationText(view.reconciliation)}</span><span className="rail-reconciliation-short">{view.reconciliation.neverRun ? 'Not reconciled' : view.reconciliation.unresolvedCount === 0 ? 'Reconciled' : `${view.reconciliation.unresolvedCount} unresolved`}</span></summary>
           <div className="status-details-panel">
             <StrategyDecision client={client} />
             <span><Database size={13} aria-hidden="true" /> {reconciliationText(view.reconciliation)}</span>

@@ -120,6 +120,15 @@ const displayProductSchema = z.strictObject({
   quoteAsset: z.literal('USD'),
 }).readonly();
 
+const diagnosticObservation = <T extends z.ZodType>(data: T) => z.strictObject({
+  state: z.enum(['fresh', 'stale', 'unavailable']),
+  data: data.nullable(),
+  observedAtMs: epochMillisecondsSchema.nullable(),
+}).readonly();
+const diagnosticLevelSchema = z.strictObject({
+  price: decimalStringSchema, size: decimalStringSchema,
+}).readonly();
+
 const displayBarSchema = z.strictObject({
   productId: productIdSchema,
   interval: displayIntervalSchema,
@@ -225,6 +234,26 @@ export const marketDataChannelSchemas = {
       source: z.literal('coinbase_exchange_rest'),
       informationalOnly: z.literal(true),
       decisionEligible: z.literal(false),
+      asOfMs: epochMillisecondsSchema,
+    }).readonly(),
+  },
+  'market-data.coinbase-diagnostics': {
+    request: z.strictObject({ productId: productIdSchema }).readonly(),
+    response: z.strictObject({
+      productId: productIdSchema,
+      quote: diagnosticObservation(z.strictObject({ bid: decimalStringSchema,
+        ask: decimalStringSchema, observedAtMs: epochMillisecondsSchema }).readonly()),
+      product: diagnosticObservation(z.strictObject({ status: z.string().min(1).max(64),
+        tradingDisabled: z.boolean(), cancelOnly: z.boolean(), limitOnly: z.boolean(),
+        postOnly: z.boolean(), baseIncrement: decimalStringSchema,
+        quoteIncrement: decimalStringSchema, quoteMinSize: decimalStringSchema }).readonly()),
+      book: diagnosticObservation(z.strictObject({
+        bids: z.array(diagnosticLevelSchema).max(10).readonly(),
+        asks: z.array(diagnosticLevelSchema).max(10).readonly(),
+        observedAtMs: epochMillisecondsSchema,
+      }).readonly()),
+      source: z.literal('coinbase_advanced_trade_rest'),
+      informationalOnly: z.literal(true), decisionEligible: z.literal(false),
       asOfMs: epochMillisecondsSchema,
     }).readonly(),
   },

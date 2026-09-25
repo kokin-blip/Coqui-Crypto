@@ -21,6 +21,18 @@ export function ResearchEvidenceDashboard({client}:{readonly client:CoquiClient}
   const curves:FinancialChartSeries[]=performance.kind==='ready'?performance.value.flatMap((run,index)=>
     run.status==='available'&&run.curve.length>0?[{id:run.runHash,label:run.runId,color:COLORS[index%COLORS.length]!,
       values:run.curve.map((point)=>({day:new Date(point.atMs).toISOString().slice(0,10),value:Number(point.equityUsd)}))}]:[]):[];
+  const sourcesSettled = scoreboard.kind !== 'loading' && performance.kind !== 'loading' && jobs.kind !== 'loading';
+  const noRecordedArtifacts = tracks.length === 0 && curves.length === 0 &&
+    (jobs.kind !== 'ready' || jobs.value.length === 0);
+  if (sourcesSettled && noRecordedArtifacts) {
+    const comparisonUnavailable = scoreboard.kind !== 'ready' && !(scoreboard.kind === 'failed' && scoreboard.issues.some((issue) => issue.code === 'no_verified_run'));
+    const sourcesUnavailable = comparisonUnavailable || performance.kind !== 'ready' || jobs.kind !== 'ready';
+    return <section className="panel research-empty-summary" aria-label="Research evidence availability">
+      <h2>Research artifacts</h2><SurfaceState kind={sourcesUnavailable ? 'error' : 'empty'} title={sourcesUnavailable ? 'Research evidence sources unavailable' : 'No verified study artifacts'} detail={sourcesUnavailable ? 'One or more research read models could not be loaded. Comparisons and curves are shown only when persisted evidence is available.' : 'Comparisons, equity curves, and worker attempts appear after a durable registered study records them. Missing evidence is not reconstructed.'} compact />
+      <p className="metric-note">Sources: comparison {comparisonUnavailable ? 'unavailable' : tracks.length > 0 ? 'recorded' : 'no verified run'} · performance {performance.kind} · workers {jobs.kind}.</p>
+      <p className="metric-note">Gate status: {gate.kind === 'ready' ? gate.value.status.replaceAll('_', ' ') : 'unavailable'}.</p>
+    </section>;
+  }
   return <div className="research-visual-grid">
     <section className="panel research-comparison" aria-labelledby="research-comparison-heading">
       <div className="panel-heading"><div><p className="eyebrow">After-cost comparison</p><h2 id="research-comparison-heading">Candidate versus benchmarks</h2></div></div>

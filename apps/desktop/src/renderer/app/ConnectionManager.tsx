@@ -17,7 +17,7 @@ function ConnectionRow({ client, connection }: { readonly client: CoquiClient; r
   return (
     <article className="coinbase-connected-actions" aria-label={`${connection.label} connection`}>
       <div className="connection-card-heading">
-        <div className="coinbase-sync-copy"><Database aria-hidden="true" size={18} /><span><strong>{connection.label}</strong><small>{connection.provider === 'coinbase' ? 'Coinbase' : 'Robinhood Crypto'} · Last sync {connection.lastSuccessfulSyncAtMs === null ? 'never' : new Date(connection.lastSuccessfulSyncAtMs).toLocaleString()}</small></span></div>
+        <div className="coinbase-sync-copy"><Database aria-hidden="true" size={18} /><span><strong>{connection.label} {connection.accountSuffixes.length > 0 ? `· ${connection.accountSuffixes.map((suffix) => `••••${suffix}`).join(', ')}` : `· ${connection.id.slice(0, 8)}…`}</strong><small>{connection.provider === 'coinbase' ? 'Coinbase' : 'Robinhood Crypto'} · Last sync {connection.lastSuccessfulSyncAtMs === null ? 'never' : new Date(connection.lastSuccessfulSyncAtMs).toLocaleString()}</small></span></div>
         <span className={`connection-badge connection-${connection.status === 'active' ? 'connected' : connection.status}`}>{connection.status.replaceAll('_', ' ')}</span>
       </div>
       {connection.failureReason !== null && <SurfaceState kind="blocked" title="Connection needs attention" detail={connection.failureReason.replaceAll('_', ' ')} compact />}

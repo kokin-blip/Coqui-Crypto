@@ -18,7 +18,7 @@ import { assertNoTextClipping } from './visual-overflow-audit.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const repository = dirname(dirname(root));
-const output = join(repository, 'docs/design/screenshots/review-2026-09-09-responsive');
+const output = process.env['COQUI_VISUAL_OUTPUT'] ?? join(repository, 'docs/design/screenshots/review-2026-09-09-responsive');
 const entry = join(root, 'dist/renderer/index.html');
 
 if (!existsSync(entry)) {
@@ -33,6 +33,8 @@ const { applyWindowHardening, WEB_PREFERENCES } = await import(join(root, 'dist/
 const capturePlan = [
   { name: 'overview-compact-960x640', route: 'overview', mode: 'simple', theme: 'dark', density: 'comfortable', zoom: 1, width: 960, height: 640 },
   { name: 'markets-standard-1280x800', route: 'markets', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1, width: 1280, height: 800 },
+  { name: 'markets-simple-1280x800', route: 'markets', mode: 'simple', theme: 'dark', density: 'comfortable', zoom: 1, width: 1280, height: 800 },
+  { name: 'markets-diagnostics', route: 'markets', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1, width: 1280, height: 800, scrollTarget: '.coinbase-market-context' },
   { name: 'settings-standard-1440x900', route: 'settings', mode: 'advanced', theme: 'light', density: 'comfortable', zoom: 1, width: 1440, height: 900 },
   { name: 'research-wide-1728x1117-inspector', route: 'research', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1, width: 1728, height: 1117, inspectorOpen: true },
   { name: 'risk-200-percent', route: 'risk', mode: 'advanced', theme: 'high-contrast', density: 'compact', zoom: 2, width: 1280, height: 800 },
@@ -204,6 +206,12 @@ async function run() {
     }
     await window.webContents.setZoomFactor(capture.zoom);
     await waitForReady(window);
+    if (process.env['COQUI_VISUAL_DISMISS_ONBOARDING'] === '1') {
+      await window.webContents.executeJavaScript(`
+        [...document.querySelectorAll('button')].find((button) => button.textContent?.trim() === 'Not now')?.click()
+      `);
+      await delay(100);
+    }
     const layout = await window.webContents.executeJavaScript(`({ shell: document.querySelector('.app-shell')?.className, viewport: [innerWidth, innerHeight], workspace: document.querySelector('.app-workspace')?.getBoundingClientRect().width, route: document.querySelector('.route-content')?.getBoundingClientRect().width })`);
     console.log(`LAYOUT    ${capture.name} ${JSON.stringify(layout)}`);
     await window.webContents.executeJavaScript(`

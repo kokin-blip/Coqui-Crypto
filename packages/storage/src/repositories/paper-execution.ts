@@ -60,6 +60,32 @@ export function getPaperProposalPendingContext(
   });
 }
 
+/** Read-only pointers into the immutable proposal record; never reconstruct a missing reason. */
+export function getPaperProposalEvidence(proposalId: string, database: Db): {
+  readonly reasonCode: string | null;
+  readonly decisionId: string | null;
+  readonly evidenceId: string | null;
+} {
+  const events = database.prepare(`SELECT id, detail_json FROM paper_execution_events_v1
+    WHERE proposal_id = ? ORDER BY sequence DESC`).all(proposalId) as
+    { id: string; detail_json: string }[];
+  let reasonCode: string | null = null;
+  let reasonEventId: string | null = null;
+  for (const event of events) {
+    const detail = JSON.parse(event.detail_json) as { reasonCode?: unknown };
+    if (typeof detail.reasonCode === 'string' && detail.reasonCode.length > 0) {
+      reasonCode = detail.reasonCode;
+      reasonEventId = event.id;
+      break;
+    }
+  }
+  return {
+    reasonCode,
+    decisionId: getPaperProposalPendingContext(proposalId, database)?.decisionId ?? null,
+    evidenceId: reasonEventId ?? events[0]?.id ?? null,
+  };
+}
+
 export interface PaperExecutionPolicyRecord {
   readonly profileId: string;
   readonly mode: PaperExecutionPolicyMode;

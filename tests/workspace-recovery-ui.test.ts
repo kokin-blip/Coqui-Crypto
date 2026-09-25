@@ -6,11 +6,12 @@ import { describe, expect, it } from 'vitest';
 const read = (path: string): string => readFileSync(resolve(path), 'utf8');
 
 describe('workspace hierarchy and recovery', () => {
-  it('places connected portfolio content before strategy detail on Overview', () => {
+  it('places the decision before portfolio and strategy detail on Overview', () => {
     const overview = read('apps/desktop/src/renderer/app/Overview.tsx');
     const simple = overview.slice(overview.indexOf("workspace.mode === 'simple'"));
-    expect(simple.indexOf('{health}{chartPanel}{connectedReference}{decision}')).toBeGreaterThanOrEqual(0);
+    expect(simple.indexOf('{decision}{health}{chartPanel}{connectedReference}')).toBeGreaterThanOrEqual(0);
     const advanced = overview.slice(overview.indexOf('return <OverviewStrategyProvider'));
+    expect(advanced.indexOf('{decision}')).toBeLessThan(advanced.indexOf('{panels.healthStrip && health}'));
     expect(advanced.indexOf('{panels.healthStrip && health}')).toBeLessThan(advanced.indexOf('research-grid-primary'));
   });
 

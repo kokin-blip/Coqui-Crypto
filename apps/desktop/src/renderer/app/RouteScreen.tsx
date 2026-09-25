@@ -83,8 +83,7 @@ export function RouteScreen({
   return (
     <section className="route-screen" data-route={route}>
       <header className={`screen-heading${integrated ? ' screen-heading-integrated' : ''}`}>
-        <div className={integrated ? 'sr-only' : undefined}><p className="eyebrow">Coqui workstation</p><h1 data-route-heading tabIndex={-1}>{definition.title}</h1></div>
-        {!integrated && <span className="screen-mode">PAPER ONLY</span>}
+        <div className={integrated ? 'sr-only' : undefined}><h1 data-route-heading tabIndex={-1}>{definition.title}</h1></div>
       </header>
       {mode === 'advanced' && <RouteTabs route={route} />}
       <Suspense fallback={<div className="panel"><span className="muted">Loading workspace…</span></div>}>

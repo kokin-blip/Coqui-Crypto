@@ -69,6 +69,8 @@ import { createAdvisorHandlers } from './advisor-handlers.js';
 import { createChartExtensionHandlers, createChartSnapshotHandlers, createChartWorkspaceHandlers } from './chart-handler-factories.js';
 import { createAccountPreferenceHandlers } from './account-preference-handlers.js';
 import { CoinbaseMarketStreamService } from './coinbase-market-stream.js';
+import { createHistoricalCoinbaseCandleSource } from './coinbase-candle-source.js';
+import { createCoinbaseMarketDiagnostics } from './coinbase-market-diagnostics.js';
 import { createCoinbaseSyncHandlers, lastCoinbaseSyncAtMs } from './coinbase-handlers.js';
 import { createConnectionHandlers, type ConnectionFileSelection } from './connection-handlers.js';
 import { createAlpacaPaperHandlers } from './alpaca-paper-handlers.js';
@@ -177,28 +179,25 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   // CoinGecko fills only what Coinbase does not price. The order matters —
   // reversing it would let a reference price shadow a venue-reported one.
   const trackedAssets = () => listDisplayUniverse(options.profileId, database);
+  const historicalCandles = createHistoricalCoinbaseCandleSource({ database, profileId: options.profileId, publicHttp: http, rateLimiters, nowMs: () => clock.nowMs(),
+    ...(options.secrets === undefined ? {} : { secrets: options.secrets }), onSource: (source, productId, interval) =>
+      diagnostics.logger.info('coinbase_candles.source', { source, productId, interval }) });
   const priceSource = withPriceFallback(
-    createCoinbasePriceSource(http),
+    createCoinbasePriceSource(http, historicalCandles.recentCandles),
     createCoinGeckoPriceSource(coinGeckoHttp, trackedAssets()),
   );
   const portfolio = new PortfolioReadModelService({ database, clock, priceSource });
-  const candles = createCandleSource(http);
+  const candles = createCandleSource(historicalCandles);
   const marketData = new MarketDisplayQueryService({
     clock,
-    sources: createReferenceSources({
-      coingecko: coinGeckoHttp,
-      coinbase: http,
-      fearGreed: http,
-      yields: http,
-      news: http,
-      trackedAssets,
-    }),
+    sources: createReferenceSources({ coingecko: coinGeckoHttp, coinbase: http,
+      fearGreed: http, yields: http, news: http, trackedAssets }),
     candles,
   });
-  const displayData = createDisplayDataService({
-    http, database, profileId: options.profileId, nowMs: () => clock.nowMs(),
-  });
+  const displayData = createDisplayDataService({ http, candleSource: historicalCandles,
+    database, profileId: options.profileId, nowMs: () => clock.nowMs() });
   const liveMarket = new CoinbaseMarketStreamService({ nowMs: () => clock.nowMs(), onUnexpectedError: report });
+  const marketDiagnostics = createCoinbaseMarketDiagnostics({ client: historicalCandles.authenticatedClient, nowMs: () => clock.nowMs() });
 
   // PortfolioAllocationPolicyService is deliberately not wired: it only offers
   // savePolicy/clearPolicy, and there are no write channels before P6.
@@ -451,7 +450,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       paperHoldings = (await portfolio.portfolioView()).holdings;
       return { ok: true, value: paperExecution().review(payload) };
     },
-    ...createMarketHandlers(marketData, displayData, liveMarket),
+    ...createMarketHandlers(marketData, displayData, liveMarket, marketDiagnostics),
     'research.runs': () => research.runs(),
     'research.performance': () => research.performance(),
     'research.edge-study': () => ({ ok: true,

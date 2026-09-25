@@ -302,8 +302,43 @@
 }
 
 .decision-banner {
-  background: var(--coqui-accent-soft) !important;
-  border-color: color-mix(in srgb, var(--coqui-accent) 60%, var(--coqui-border)) !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: var(--coqui-surface-2) !important;
+  border-color: var(--coqui-border-strong) !important;
+}
+.decision-banner h2 { margin: 2px 0 3px; font-size: 17px; }
+.decision-banner p:last-child { margin: 0; }
+.decision-banner .button-secondary { flex: 0 0 auto; }
+.proposal-time { display: block; margin-top: 4px; color: var(--coqui-text-muted); font-size: 11px; }
+.route-screen table { width: 100%; font-variant-numeric: tabular-nums; }
+.route-screen table :is(th, td) { padding-inline: 10px; border-bottom: 1px solid var(--coqui-border); vertical-align: middle; }
+.route-screen table :is(th, td):first-child { padding-left: 0; }
+.route-screen table :is(th, td):last-child { padding-right: 0; }
+.route-screen table tbody tr:hover { background: var(--coqui-surface-2); }
+.route-screen table thead th { white-space: nowrap; }
+.route-screen table .text-right { font-variant-numeric: tabular-nums; }
+.scoreboard-decision { padding: 12px 14px; color: var(--coqui-text); background: var(--coqui-warning-soft); border: 1px solid color-mix(in srgb, var(--coqui-warning) 45%, var(--coqui-border)); border-radius: var(--coqui-radius-sm); }
+.scoreboard-evidence-link { display: inline-block; margin-top: 10px; color: var(--coqui-accent); font-weight: 600; text-underline-offset: 3px; }
+.route-local-tabs { overflow-x: auto; scrollbar-width: thin; }
+.route-local-tabs a { flex: 0 0 auto; white-space: nowrap; }
+.status-details > summary .rail-reconciliation { font-size: 11px; }
+.rail-reconciliation-short { display: none; }
+.status-details > summary { color: var(--coqui-text); }
+.status-details > summary:hover { background: var(--coqui-surface-2); }
+.status-details[open] > summary { border-color: var(--coqui-accent); }
+@container route (max-width: 760px) {
+  .decision-banner { align-items: flex-start; flex-direction: column; gap: 12px; }
+}
+@media (max-width: 1100px) {
+  .workspace-simple .rail-reconciliation { display: none; }
+  .workspace-simple .rail-reconciliation-short { display: inline; font-size: 11px; white-space: nowrap; }
+  .workspace-simple .notification-center > summary > span { display: none; }
+  .workspace-simple .notification-center > summary { width: 36px; min-width: 36px; padding-inline: 9px; }
+  .workspace-simple .command-menu-trigger { width: 36px; min-width: 36px; padding-inline: 9px; overflow: hidden; }
+  .workspace-simple .command-menu-trigger span { display: none; }
 }
 
 .overview-health {
@@ -877,6 +912,7 @@
 .recent-products:empty { display: none; }
 .recent-products button { flex: 0 0 auto; padding: 3px 6px; color: var(--coqui-text-muted); background: transparent; border: 1px solid var(--coqui-border); border-radius: 999px; font-size: 9px; }
 .recent-products button:hover { color: var(--coqui-accent); border-color: var(--coqui-border-strong); }
+.recent-products button[aria-pressed='true'] { color: var(--coqui-accent); background: var(--coqui-accent-soft); border-color: var(--coqui-border-strong); }
 .advanced-watchlist ul { min-height: 0; padding: 0; margin: 0; overflow-y: auto; list-style: none; }
 .advanced-watchlist li { border-bottom: 1px solid color-mix(in srgb, var(--coqui-border) 65%, transparent); }
 .advanced-watchlist li button { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 48px; padding: 7px 11px; color: var(--coqui-text-muted); text-align: left; cursor: pointer; background: transparent; border: 0; }
@@ -1099,6 +1135,13 @@
 .holding-detail dl > div { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--coqui-border); }
 .holding-detail dt { color: var(--coqui-text-subtle); }
 .holding-detail dd { margin: 0; text-align: right; }
+.connected-contributions { display: grid; gap: 0; max-height: 240px; margin: 16px 0 0; padding: 0; overflow-y: auto; list-style: none; border-top: 1px solid var(--coqui-border); }
+.connected-contributions li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 8px; padding: 9px 0; border-bottom: 1px solid var(--coqui-border); }
+.connected-contributions strong { min-width: 0; overflow: hidden; font-size: 12px; font-weight: 620; text-overflow: ellipsis; white-space: nowrap; }
+.connected-contributions span { color: var(--coqui-text-subtle); font-size: 11px; }
+.connected-contributions small { grid-column: 1 / -1; color: var(--coqui-text-muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.connected-allocation { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--coqui-border); }
+.connected-allocation .section-label { margin-bottom: 10px; }
 
 .feed-filters {
   display: flex;
@@ -1206,6 +1249,21 @@
 .coinbase-key-control { display: grid; gap: 12px; padding: 14px; background: var(--coqui-surface-1); border: 1px solid var(--coqui-border); border-radius: var(--coqui-radius-md); }
 .parallel-paper-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-block: 16px; }
 .parallel-paper-activity { display: grid; gap: 16px; }
+.coinbase-market-context { min-width: 0; padding: 16px; border: 1px solid var(--coqui-border); border-radius: 12px; background: var(--coqui-canvas-raised); }
+.coinbase-market-context header, .coinbase-paper-context .panel-heading { display: flex; justify-content: space-between; gap: 12px; align-items: start; }
+.coinbase-market-context h3, .coinbase-paper-context h3 { margin: 0; }
+.coinbase-market-context small, .coinbase-product-flags { color: var(--coqui-text-muted); }
+.coinbase-context-facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 14px 0; }
+.coinbase-context-facts > div { min-width: 0; }
+.coinbase-context-facts dt { color: var(--coqui-text-muted); font-size: 12px; }
+.coinbase-context-facts dd { margin: 4px 0; overflow-wrap: anywhere; font-weight: 600; }
+.coinbase-context-facts small { display: block; overflow-wrap: anywhere; font-size: 11px; }
+.coinbase-book-grid, .coinbase-paper-context-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.coinbase-book-grid table { width: 100%; text-align: left; }
+.coinbase-paper-context { border-top: 1px solid var(--coqui-border); padding-top: 16px; }
+.coinbase-paper-context-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 12px; }
+.coinbase-market-context.compact .coinbase-context-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 900px) { .coinbase-context-facts, .coinbase-paper-context-grid { grid-template-columns: 1fr; } }
 .parallel-paper-activity .panel-heading { align-items: start; }
 .parallel-paper-activity .panel-heading p { margin: 6px 0 0; }
 .parallel-paper-activity .panel-heading a { flex: 0 0 auto; }
@@ -1323,6 +1381,8 @@
   }
 
   .shell-standard .command-menu-trigger span { display: none; }
+  .shell-standard .rail-reconciliation { display: none; }
+  .shell-standard .rail-reconciliation-short { display: none; }
   .shell-standard .profile-status-module { min-width: 0; }
   .shell-standard .profile-status-module .profile-switcher select { max-width: 130px; }
   .shell-standard .rail-decision small { display: none; }
@@ -1369,6 +1429,8 @@
   white-space: nowrap;
   font-size: 0;
 }
+.shell-compact .rail-reconciliation { display: none; }
+.shell-compact .rail-reconciliation-short { display: none; }
 
 .shell-compact .command-menu-trigger { width: 36px; min-width: 36px; padding-inline: 9px; overflow: hidden; }
 .shell-compact .command-menu-trigger span { display: none; }

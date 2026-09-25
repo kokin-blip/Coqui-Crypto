@@ -10,10 +10,8 @@ export function Research({ client }: { readonly client: CoquiClient }): React.JS
   const edgeStudy = useChannel(client, 'research.edge-study', {});
   return (
     <div className="screen-stack">
-      <ResearchRuns client={client} />
-      <ResearchEvidenceDashboard client={client} />
       <section className="panel" aria-labelledby="forward-edge-heading">
-        <div className="panel-heading"><div><p className="eyebrow">Prospective evidence only</p><h2 id="forward-edge-heading">Forward edge study</h2></div></div>
+        <div className="panel-heading"><div><h2 id="forward-edge-heading">Forward edge study</h2></div><span className="section-label">Prospective evidence only</span></div>
         {edgeStudy.kind === 'loading' && <SurfaceState kind="loading" title="Reading the registered study" compact />}
         {edgeStudy.kind === 'ready' && <>
           <p><strong>{edgeStudy.value.status.replaceAll('_', ' ')}</strong> · {edgeStudy.value.completedDays}/365 completed forward days · {edgeStudy.value.costBearingRebalances}/30 cost-bearing rebalances.</p>
@@ -23,6 +21,8 @@ export function Research({ client }: { readonly client: CoquiClient }): React.JS
         </>}
         {edgeStudy.kind !== 'loading' && edgeStudy.kind !== 'ready' && <SurfaceState kind="error" title="Forward study unavailable" detail={edgeStudy.issues.map((issue) => issue.code).join(', ')} compact />}
       </section>
+      <ResearchRuns client={client} />
+      <ResearchEvidenceDashboard client={client} />
       <NegativeFindings client={client} />
     </div>
   );

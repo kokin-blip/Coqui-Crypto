@@ -26,9 +26,21 @@ smoke test before its limits or response shape become a runtime dependency.
 
 ## Sources to use
 
-### Coinbase Exchange REST
+### Coinbase historical candles
 
-Coinbase is already integrated as the daily decision-dataset source.
+An active view-only Coinbase connection makes the authenticated Advanced Trade
+`GET /api/v3/brokerage/products/{product_id}/candles` route the primary source
+for historical charts and daily decision data. Coqui signs each GET in the main
+process with the stored connection key. The API returns OHLCV decimal strings,
+uses UNIX-second bounds and named granularities, and caps pages at 350 buckets.
+Coqui validates each complete response and excludes unfinished buckets. If the
+key is absent or an authenticated window fails, that whole window is fetched
+from the public Coinbase Exchange endpoint instead. The chosen endpoint is
+logged without credentials or tokens. Neither endpoint changes the canonical
+Coinbase spot identity or the strict multi-asset gap policy.
+
+The older Coinbase Exchange REST endpoint remains the public fallback and the
+research archive source.
 
 - Public candle requests support exactly 60, 300, 900, 3,600, 21,600, and
   86,400-second buckets.
@@ -42,6 +54,24 @@ Coinbase is already integrated as the daily decision-dataset source.
   product, and prepares the longest shared continuous multi-asset span.
 
 Source: [Coinbase Get product candles](https://docs.cdp.coinbase.com/api-reference/exchange-api/rest-api/products/get-product-candles)
+and [Advanced Trade Get Product Candles](https://docs.cdp.coinbase.com/api-reference/advanced-trade-api/rest-api/products/get-product-candles).
+
+### Coinbase market context
+
+Markets and Paper Trading display authenticated Advanced Trade snapshots from
+Get Best Bid/Ask, Get Product, and Get Product Book. The active profile's
+view-only key signs GET requests in the desktop main process. Each endpoint has
+its own availability and observation time; quotes and ten-level books refresh
+on screen at most every 30 seconds, while product metadata is cached for five
+minutes. Old provider timestamps and failed refreshes appear as stale. A
+missing key or failed response does not replace the existing public live quote
+stream or product catalog. These snapshots are informational only and never
+enter TrendVol, paper order gates, or Alpaca fill reconciliation. Coinbase
+order-book depth describes Coinbase liquidity, not Alpaca execution.
+
+Sources: [Best Bid/Ask](https://docs.cdp.coinbase.com/api-reference/advanced-trade-api/rest-api/products/get-best-bid-ask),
+[Get Product](https://docs.cdp.coinbase.com/api-reference/advanced-trade-api/rest-api/products/get-product),
+and [Get Product Book](https://docs.cdp.coinbase.com/api-reference/advanced-trade-api/rest-api/products/get-product-book).
 
 ### Coinbase authenticated account evidence
 

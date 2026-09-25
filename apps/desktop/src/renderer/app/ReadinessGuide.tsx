@@ -1,5 +1,5 @@
 import type { CoquiClient } from '@coqui/contracts';
-import { Check, Circle, ExternalLink } from 'lucide-react';
+import { Check, Circle } from 'lucide-react';
 
 import { useChannel } from '../query/use-channel.js';
 import { SurfaceState } from './SurfaceState.js';
@@ -17,22 +17,26 @@ export function ReadinessGuide({ client }: { readonly client: CoquiClient }): Re
   const hostTask = status.kind !== 'ready' ? 'Host status unavailable' : status.value.activeJobCount > 0
     ? `${status.value.activeJobCount} host task${status.value.activeJobCount === 1 ? '' : 's'} running`
     : status.value.scheduledJobCount > 0 ? 'Waiting for the next scheduled task' : 'No host task is scheduled';
+  const complete = readiness.value.steps.filter((step) => step.status === 'complete').length;
   return <section className="readiness-guide" aria-labelledby="readiness-title">
-    <header><div><p className="eyebrow">Getting ready</p><h2 id="readiness-title">Your path to the first paper decision</h2></div>
-      <span>{readiness.value.steps.filter((step) => step.status === 'complete').length} of {readiness.value.steps.length}</span></header>
-    <ol>{readiness.value.steps.map((step) => <li key={step.id} className={`readiness-${step.status}`}>
-      {step.status === 'complete' ? <Check size={16} aria-hidden="true" /> : <Circle size={14} aria-hidden="true" />}
-      <span><strong>{step.title}</strong><small>{step.detail}</small></span>
-    </li>)}</ol>
-    <section className="readiness-now" aria-labelledby="readiness-now-title">
-      <div><p className="eyebrow">What Coqui is doing now</p><h3 id="readiness-now-title">{hostTask}</h3></div>
-      <dl>
-        <div><dt>Last completed action</dt><dd>{lastEvent === undefined ? 'No durable action recorded yet' : <>{lastEvent.title}<small><time dateTime={exactUtcTimestamp(lastEvent.occurredAt)} title={exactUtcTimestamp(lastEvent.occurredAt)}>{formatLocalTimestamp(lastEvent.occurredAt)}</time></small></>}</dd></div>
-        <div><dt>Current blocker</dt><dd>{current?.detail ?? 'No readiness blocker recorded'}</dd></div>
-        <div><dt>Next action</dt><dd>{current?.actionLabel ?? 'Inspect the latest decision evidence'}</dd></div>
-      </dl>
-      {lastEvent?.decisionId !== null && lastEvent?.decisionId !== undefined && <a className="button-secondary" href="#/activity">Open latest evidence</a>}
-    </section>
-    {current !== undefined && <a className="button-primary readiness-action" href={current.route}>{current.actionLabel}<ExternalLink size={14} aria-hidden="true" /></a>}
+    <div className="readiness-summary">
+      <div><p className="section-label">Setup · {complete} of {readiness.value.steps.length} complete</p>
+        <h2 id="readiness-title">{current?.title ?? 'Review your first decision'}</h2>
+        <p>{current?.detail ?? 'The next paper decision is ready to inspect.'}</p></div>
+      {current !== undefined && <a className="button-primary readiness-action" href={current.route}>{current.actionLabel}</a>}
+    </div>
+    <details className="readiness-details"><summary>View setup steps and host activity</summary>
+      <ol>{readiness.value.steps.map((step) => <li key={step.id} className={`readiness-${step.status}`}>
+        {step.status === 'complete' ? <Check size={16} aria-hidden="true" /> : <Circle size={14} aria-hidden="true" />}
+        <span><strong>{step.title}</strong><small>{step.detail}</small></span>
+      </li>)}</ol>
+      <section className="readiness-now" aria-label="Host activity and evidence">
+        <div><p className="section-label">Host activity</p><h3>{hostTask}</h3></div>
+        <dl><div><dt>Last completed action</dt><dd>{lastEvent === undefined ? 'No durable action recorded yet' : <>{lastEvent.title}<small><time dateTime={exactUtcTimestamp(lastEvent.occurredAt)} title={exactUtcTimestamp(lastEvent.occurredAt)}>{formatLocalTimestamp(lastEvent.occurredAt)}</time></small></>}</dd></div>
+          <div><dt>Current blocker</dt><dd>{current?.detail ?? 'No readiness blocker recorded'}</dd></div>
+          <div><dt>Next action</dt><dd>{current?.actionLabel ?? 'Inspect the latest decision evidence'}</dd></div></dl>
+        {lastEvent?.decisionId !== null && lastEvent?.decisionId !== undefined && <a className="button-secondary" href="#/activity">Open latest evidence</a>}
+      </section>
+    </details>
   </section>;
 }

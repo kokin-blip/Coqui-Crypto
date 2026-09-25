@@ -1,4 +1,5 @@
 import type { CoquiClient } from '@coqui/contracts';
+import { formatApproxUsd, formatUsd } from '@coqui/ui-kit';
 import { useState } from 'react';
 
 import { useChannel } from '../query/use-channel.js';
@@ -26,12 +27,6 @@ export function ParallelPaperSettings({ client }: { readonly client: CoquiClient
       <h3 id="parallel-paper-heading">Parallel TrendVol experiment</h3>
       <p className="muted">One frozen v4.2 decision stream, two separate paper accounts: a Coinbase-sized Coqui simulation and your dedicated Alpaca paper wallet.</p>
     </div>
-    <ul className="exploratory-safety-list">
-      <li>Coinbase remains read-only; Coqui copies only its current portfolio value as opening cash.</li>
-      <li>Alpaca paper orders are submitted to Alpaca’s external simulator, not a live exchange.</li>
-      <li>Use a fresh, empty Alpaca paper account. Coqui will not reset or liquidate it.</li>
-      <li>Results remain exploratory and cannot promote the strategy to real trading.</li>
-    </ul>
     {status.kind === 'loading' && <SurfaceState kind="loading" title="Reading parallel experiment" compact />}
     {status.kind !== 'loading' && status.kind !== 'ready' && <SurfaceState kind="error" title="Experiment status unavailable" detail={status.issues.map((item) => item.code).join(', ')} compact />}
     {(current?.state === 'none' || current?.state === 'stopped') && <>
@@ -44,10 +39,11 @@ export function ParallelPaperSettings({ client }: { readonly client: CoquiClient
     {current !== null && current.state !== 'none' && <div className="exploratory-campaign-state">
       <dl className="settings-readout">
         <div><dt>Status</dt><dd>{current.state}</dd></div>
-        <div><dt>Coqui opening value</dt><dd>{current.coquiOpeningUsd === null ? 'Unavailable' : `$${current.coquiOpeningUsd}`}</dd></div>
-        <div><dt>Alpaca opening value</dt><dd>{current.alpacaOpeningUsd === null ? 'Unavailable' : `$${current.alpacaOpeningUsd}`}</dd></div>
+        <div><dt>Coqui opening value</dt><dd>{current.coquiOpeningUsd === null ? 'Unavailable' : formatApproxUsd(current.coquiOpeningUsd)}</dd></div>
+        <div><dt>Alpaca opening value</dt><dd>{current.alpacaOpeningUsd === null ? 'Unavailable' : formatApproxUsd(current.alpacaOpeningUsd)}</dd></div>
         <div><dt>Decisions</dt><dd>{current.decisionCount}</dd></div>
       </dl>
+      <details className="exact-value-detail"><summary>Exact opening values</summary><p>Coqui: {current.coquiOpeningUsd === null ? 'Unavailable' : formatUsd(current.coquiOpeningUsd)?.text} · Alpaca: {current.alpacaOpeningUsd === null ? 'Unavailable' : formatUsd(current.alpacaOpeningUsd)?.text}</p></details>
       {current.lastReason !== null && <SurfaceState kind="blocked" title="Experiment paused" detail={current.lastReason.replaceAll('_', ' ')} compact />}
       {current.state === 'active' && <button type="button" className="button-secondary" disabled={pause.state.kind === 'pending'} onClick={() => void pause.run({ commandId: crypto.randomUUID() })}>Pause new paper orders</button>}
       {current.state === 'paused' && <button type="button" className="button-primary" disabled={resume.state.kind === 'pending'} onClick={() => void resume.run({ commandId: crypto.randomUUID() })}>Resume</button>}
@@ -56,6 +52,12 @@ export function ParallelPaperSettings({ client }: { readonly client: CoquiClient
         <button type="button" className="button-danger" disabled={!stopConfirmed || stop.state.kind === 'pending'} onClick={() => void stop.run({ commandId: crypto.randomUUID() })}>Stop experiment</button>
       </>}
     </div>}
+    <ul className="exploratory-safety-list">
+      <li>Coinbase remains read-only; Coqui copies only its current portfolio value as opening cash.</li>
+      <li>Alpaca paper orders are submitted to Alpaca’s external simulator, not a live exchange.</li>
+      <li>Use a fresh, empty Alpaca paper account. Coqui will not reset or liquidate it.</li>
+      <li>Results remain exploratory and cannot promote the strategy to real trading.</li>
+    </ul>
     {issue !== undefined && <p className="action-error" role="alert">{issueCodes.length > 0 ? issueCodes.join(', ').replaceAll('_', ' ') : 'Action failed'}</p>}
   </section>;
 }

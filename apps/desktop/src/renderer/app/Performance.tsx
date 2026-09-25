@@ -130,6 +130,7 @@ export function Performance({ client }: { readonly client: CoquiClient }): React
         {view.benchmarkStatus !== 'available' && (
           <p className="metric-note">Benchmark unavailable: no immutable starting-portfolio evidence exists. Coqui will not reconstruct it.</p>
         )}
+        <p className="metric-note">Source: {view.points.length} verified daily paper valuation{view.points.length === 1 ? '' : 's'}. Risk uses separate portfolio equity snapshots for its guardrail assessment.</p>
       </section>
 
       <section className="panel" aria-labelledby="metrics-heading">

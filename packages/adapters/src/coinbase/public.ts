@@ -161,7 +161,8 @@ function sameCandle(left: MarketBar, right: MarketBar): boolean {
 }
 
 /** Coinbase spot and recent-candle implementation of the core PriceSource seam. */
-export function createCoinbasePriceSource(http: HttpClient): PriceSource {
+export function createCoinbasePriceSource(http: HttpClient,
+  recentCandles?: NonNullable<PriceSource['candles']>): PriceSource {
   return {
     name: 'coinbase',
     async spot(instruments) {
@@ -185,6 +186,7 @@ export function createCoinbasePriceSource(http: HttpClient): PriceSource {
       return prices;
     },
     async candles(instrument, timeframe) {
+      if (recentCandles !== undefined) return recentCandles(instrument, timeframe);
       const granularity = GRANULARITY[timeframe];
       if (granularity === undefined) return [];
       const result = await http.getJson<unknown>(

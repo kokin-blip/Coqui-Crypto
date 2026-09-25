@@ -37,7 +37,7 @@ export const ROUTES: readonly RouteDefinition[] = [
   { route: 'paper/performance', label: 'Performance', title: 'Paper performance', group: 'paper' },
   { route: 'strategies', label: 'Strategies', title: 'Strategies', group: 'workspace' },
   { route: 'research', label: 'Research', title: 'Research', group: 'workspace' },
-  { route: 'activity', label: 'Activity', title: 'Activity', group: 'workspace' },
+  { route: 'activity', label: 'Operations', title: 'Operations', group: 'workspace' },
   { route: 'risk', label: 'Risk', title: 'Risk', group: 'workspace' },
   { route: 'settings', label: 'Settings', title: 'Settings', group: 'system' },
 ] as const;

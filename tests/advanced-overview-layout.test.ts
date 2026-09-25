@@ -16,7 +16,8 @@ describe('advanced overview composition', () => {
 
     expect(simpleStart).toBeGreaterThan(-1);
     expect(overview.slice(simpleStart, advancedStart))
-      .toContain('{health}{chartPanel}{connectedReference}{decision}');
+      .toContain('{decision}{health}{chartPanel}{connectedReference}');
+    expect(overview.lastIndexOf('{decision}', advancedStart)).toBeLessThan(health);
     expect(health).toBeLessThan(primary);
     expect(primary).toBeGreaterThan(advancedStart);
     expect(secondary).toBeGreaterThan(primary);

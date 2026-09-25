@@ -26,7 +26,8 @@ export function OperationsFloor({ client }: { readonly client: CoquiClient }): R
     {floor.kind !== 'loading' && floor.kind !== 'ready' && <SurfaceState kind="error"
       title="Operations evidence unavailable" detail={floor.issues.map((issue) => issue.code).join(', ')} compact />}
     {floor.kind === 'ready' && <ul className="operations-floor-grid">
-      {floor.value.subsystems.map((item) => <li key={item.subsystem} data-state={item.state}>
+      {[...floor.value.subsystems].sort((left, right) => Number(right.state === 'attention') - Number(left.state === 'attention'))
+        .map((item) => <li key={item.subsystem} data-state={item.state}>
         <CrewRobot role={item.subsystem} state={item.state}
           {...(item.subsystem === 'research' ? { accessoryVariant: 0 as const } : {})} className="operations-avatar" />
         <header><span className="operations-state" aria-hidden="true" /><strong>{CHARACTERS[item.subsystem].name}</strong>
