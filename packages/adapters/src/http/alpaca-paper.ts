@@ -1,5 +1,6 @@
 /** Alpaca Trading API client. The host is intentionally not configurable: paper only. */
 export const ALPACA_PAPER_ORIGIN = 'https://paper-api.alpaca.markets/v2' as const;
+const ALPACA_CRYPTO_DATA_ORIGIN = 'https://data.alpaca.markets' as const;
 
 export interface AlpacaPaperCredentials {
   readonly keyId: string;
@@ -67,12 +68,12 @@ export function createAlpacaPaperClient(credentials: AlpacaPaperCredentials, fet
     throw new AlpacaPaperError('unauthorized');
   }
 
-  async function request<T>(path: string, options: { method?: 'GET' | 'POST' | 'DELETE'; body?: unknown } = {}): Promise<T> {
+  async function request<T>(path: string, options: { method?: 'GET' | 'POST' | 'DELETE'; body?: unknown; data?: boolean } = {}): Promise<T> {
     // Callers supply only relative paths assembled in this module.
     if (!path.startsWith('/') || path.startsWith('//')) throw new AlpacaPaperError('invalid_response');
     let response: Response;
     try {
-      response = await fetcher(`${ALPACA_PAPER_ORIGIN}${path}`, {
+      response = await fetcher(`${options.data ? ALPACA_CRYPTO_DATA_ORIGIN : ALPACA_PAPER_ORIGIN}${path}`, {
         method: options.method ?? 'GET',
         headers: {
           'APCA-API-KEY-ID': credentials.keyId,
@@ -100,6 +101,7 @@ export function createAlpacaPaperClient(credentials: AlpacaPaperCredentials, fet
     orders: (status: 'open' | 'all' = 'open') => request<AlpacaPaperOrder[]>(`/orders?status=${status}&limit=500`),
     orderByClientId: (clientOrderId: string) => request<AlpacaPaperOrder>(`/orders:by_client_order_id?client_order_id=${encodeURIComponent(clientOrderId)}`),
     asset: (symbol: string) => request<AlpacaPaperAsset>(`/assets/${encodeURIComponent(symbol)}`),
+    latestCryptoQuotes: () => request<unknown>('/v1beta3/crypto/us/latest/quotes?symbols=BTC%2FUSD%2CETH%2FUSD%2CLTC%2FUSD', { data: true }),
     activities: (after: string, pageToken?: string) => request<AlpacaPaperActivity[]>(`/account/activities/FILL?direction=asc&page_size=100&after=${encodeURIComponent(after)}${pageToken === undefined ? '' : `&page_token=${encodeURIComponent(pageToken)}`}`),
     submit: (order: { readonly symbol: string; readonly side: 'buy' | 'sell'; readonly qty: string; readonly client_order_id: string }) =>
       request<AlpacaPaperOrder>('/orders', { method: 'POST', body: { ...order, type: 'market', time_in_force: 'gtc' } }),

@@ -1,6 +1,6 @@
 import { Decimal } from 'decimal.js';
 
-import { createAlpacaPaperClient, AlpacaPaperError, type AlpacaPaperAsset, type AlpacaPaperCredentials, type SecretStore } from '@coqui/adapters';
+import { createAlpacaPaperClient, AlpacaPaperError, type AlpacaPaperCredentials, type SecretStore } from '@coqui/adapters';
 import { instrumentKey, sha256Hex, type Clock } from '@coqui/core';
 import {
   appendParallelEvent, getLatestConnectionAccountSnapshotV2, getSetting,
@@ -11,7 +11,9 @@ import {
 
 import { PARALLEL_COSTS, PARALLEL_INSTRUMENTS, PARALLEL_TRENDVOL_VERSION,
   parallelAnchor, parallelDecision } from './parallel-signal.js';
-import { dayAfter, parallelDayReconciled, parallelRuntimeState, projectParallelPaperActivity, shouldResumeParallelMarketPause } from './parallel-paper-activity.js';
+import { dayAfter, parallelDayReconciled, parallelRuntimeState, projectParallelPaperActivity, shouldResumeParallelTransientPause } from './parallel-paper-activity.js';
+import { executeParallelIntraday } from './parallel-paper-intraday.js';
+import { alpacaQuantity, eventFor, money, quantity, symbolFor } from './parallel-paper-utils.js';
 import type { PaperDecisionPreparation } from './runtime-model.js';
 
 const DAY_MS = 86_400_000;
@@ -20,36 +22,6 @@ const MIN_TRADE = new Decimal(25);
 const BAND = new Decimal('0.05');
 const ASSET_IDS = PARALLEL_INSTRUMENTS.map(instrumentKey);
 type Client = ReturnType<typeof createAlpacaPaperClient>;
-
-function money(value: string | number | Decimal): Decimal {
-  const result = new Decimal(value);
-  if (!result.isFinite()) throw new Error('invalid_amount');
-  return result;
-}
-
-function quantity(value: Decimal): string {
-  return value.toDecimalPlaces(8, Decimal.ROUND_HALF_EVEN).toFixed(8);
-}
-
-function alpacaQuantity(value: Decimal, asset: AlpacaPaperAsset): Decimal {
-  const increment = money(asset.min_trade_increment ?? '0');
-  const minimum = money(asset.min_order_size ?? '0');
-  if (!increment.isPositive() || !minimum.isPositive() || !asset.tradable || asset.status !== 'active') {
-    throw new Error('alpaca_asset_rules_unavailable');
-  }
-  const rounded = value.abs().div(increment).floor().mul(increment);
-  return rounded.lessThan(minimum) ? new Decimal(0) : rounded;
-}
-
-function symbolFor(id: string): string {
-  const found = PARALLEL_INSTRUMENTS.find((item) => instrumentKey(item) === id);
-  if (found === undefined) throw new Error('unknown_asset');
-  return found.productId.replace('-', '');
-}
-
-function eventFor(events: readonly ParallelPaperEvent[], kind: string, day: string): ParallelPaperEvent | undefined {
-  return events.find((event) => event.kind === kind && event.detail['day'] === day);
-}
 
 export interface ParallelPaperDependencies {
   readonly profileId: string;
@@ -157,10 +129,14 @@ export class ParallelPaperService {
     const current = this.status(), experiment = current.experiment, events = current.events;
     const mark = [...events].reverse().find((event) => event.kind === 'account_mark');
     const latestState = [...events].reverse().find((event) => ['paused', 'resumed', 'stopped', 'started'].includes(event.kind));
-    const { latestDecision, lastDecisionAtMs, decisionDay, activity } = projectParallelPaperActivity(events), completed = parallelDayReconciled(events, decisionDay);
+    const { latestDecision, lastDecisionAtMs, decisionDay, activity, filterSummary } = projectParallelPaperActivity(events), completed = parallelDayReconciled(events, decisionDay);
     const runtimeState = parallelRuntimeState({ exists: experiment !== null, status: current.status,
       pauseReason: latestState?.detail['reason'], lastCheckAtMs: this.#lastCheckAtMs, checking: this.#checking,
-      nowMs: this.#input.clock.nowMs(), decisionDay, completed });
+      nowMs: this.#input.clock.nowMs(), decisionDay, completed,
+      dailyWindowMissed: events.some((event) => event.kind === 'daily_window_missed' && event.detail['day'] === decisionDay),
+      intradayPending: events.some((event) => event.kind === 'external_intent' && event.detail['slot'] !== undefined &&
+        !events.some((other) => other.kind === 'external_order' &&
+          other.detail['clientOrderId'] === event.detail['clientOrderId'] && other.detail['status'] === 'filled')) });
     const coquiEquity = mark === undefined ? null : String(mark.detail['coquiEquityUsd']),
       alpacaEquity = mark === undefined ? null : String(mark.detail['alpacaEquityUsd']);
     const percent = (currentValue: string | null, opening: string): string | null => currentValue === null
@@ -173,10 +149,10 @@ export class ParallelPaperService {
       coquiEquityUsd: coquiEquity, alpacaEquityUsd: alpacaEquity,
       coquiReturnPct: experiment === null ? null : percent(coquiEquity, experiment.openingCoquiCash),
       alpacaReturnPct: experiment === null ? null : percent(alpacaEquity, experiment.openingAlpacaEquity),
-      lastMarkDay: mark === undefined ? null : String(mark.detail['day']),
+      lastMarkDay: mark === undefined ? null : String(mark.detail['markKey'] ?? mark.detail['day']),
       decisionCount: events.filter((event) => event.kind === 'decision').length,
       runtimeState, lastCheckAtMs: this.#lastCheckAtMs,
-      lastDecisionAtMs, latestDecision, activity,
+      lastDecisionAtMs, latestDecision, activity, filterSummary,
       coquiFillCount: events.filter((event) => event.kind === 'local_fill').length,
       alpacaFillCount: events.filter((event) => event.kind === 'external_fill').length,
       alpacaOrderCount: events.filter((event) => event.kind === 'external_intent').length,
@@ -253,7 +229,7 @@ export class ParallelPaperService {
       try {
         const client = await this.#client(); await this.#reconcile(experiment, client);
         if (preparation.ok) this.#recordMark(experiment, preparation, await client.account(), await client.positions());
-        if (shouldResumeParallelMarketPause(current.events, preparation, this.#input.clock.nowMs()) &&
+        if (shouldResumeParallelTransientPause(current.events, preparation, this.#input.clock.nowMs()) &&
             !this.#input.killSwitchEngaged()) {
           this.#append(experiment, 'resumed', `market-recovered:${this.#input.clock.nowMs()}`, { reason: 'market_data_recovered' });
           await this.#tick();
@@ -275,6 +251,15 @@ export class ParallelPaperService {
       return;
     }
     try {
+      const today = new Date(this.#input.clock.nowMs()).toISOString().slice(0, 10);
+      const day = preparation.dataset.dayKeys.at(-1);
+      if (day === undefined || dayAfter(day) !== today) throw new Error('stale_market_data');
+      let events = this.#events(experiment);
+      if (eventFor(events, 'decision', day) === undefined) {
+        const decision = parallelDecision(preparation.dataset, experiment.anchor);
+        this.#append(experiment, 'decision', `decision:${day}`, decision);
+        events = this.#events(experiment);
+      }
       const client = await this.#client();
       const account = await client.account();
       if (account.id !== experiment.alpacaAccountId || !['ACTIVE', 'PAPER_ONLY'].includes(account.status) ||
@@ -283,19 +268,18 @@ export class ParallelPaperService {
       }
       await this.#reconcile(experiment, client);
       this.#settleLocal(experiment, preparation);
-      const today = new Date(this.#input.clock.nowMs()).toISOString().slice(0, 10);
-      const day = preparation.dataset.dayKeys.at(-1);
-      if (day === undefined || dayAfter(day) !== today) throw new Error('stale_market_data');
-      let events = this.#events(experiment);
-      if (eventFor(events, 'decision', day) === undefined &&
-          this.#input.clock.nowMs() - Date.parse(`${today}T00:00:00Z`) <= CUTOFF_MS) {
-        const decision = parallelDecision(preparation.dataset, experiment.anchor);
-        this.#append(experiment, 'decision', `decision:${day}`, decision);
-        events = this.#events(experiment);
-      }
-      if (eventFor(events, 'decision', day) !== undefined) {
+      if (this.#input.clock.nowMs() - Date.parse(`${today}T00:00:00Z`) <= CUTOFF_MS) {
         await this.#executeExternal(experiment, client, preparation, day, today);
+      } else if (eventFor(events, 'external_complete', day) === undefined &&
+          eventFor(events, 'daily_window_missed', day) === undefined) {
+        if (events.some((event) => event.kind === 'external_intent' && event.detail['day'] === day)) {
+          throw new Error('execution_window_missed');
+        }
+        this.#append(experiment, 'daily_window_missed', `daily-window-missed:${day}`, { day });
       }
+      await executeParallelIntraday({ nowMs: this.#input.clock.nowMs(), experimentId: experiment.id,
+        decision: eventFor(events, 'decision', day)!, events: () => this.#events(experiment),
+        append: (kind, key, detail) => this.#append(experiment, kind, key, detail), client });
       this.#recordMark(experiment, preparation, await client.account(), await client.positions());
     } catch (error) {
       const reason = error instanceof AlpacaPaperError ? `alpaca_${error.code}`
@@ -310,7 +294,10 @@ export class ParallelPaperService {
     positions: readonly { readonly symbol: string; readonly qty: string; readonly market_value: string }[]): void {
     const day = preparation.dataset.dayKeys.at(-1)!;
     const events = this.#events(experiment);
-    if (eventFor(events, 'account_mark', day) !== undefined) return;
+    const latestIntraday = [...events].reverse().find((event) => event.kind === 'intraday_complete' &&
+      String(event.detail['slot']).startsWith(dayAfter(day)));
+    const markKey = latestIntraday === undefined ? day : String(latestIntraday.detail['slot']);
+    if (events.some((event) => event.kind === 'account_mark' && (event.detail['markKey'] ?? event.detail['day']) === markKey)) return;
     const nextOpenMs = Date.parse(`${dayAfter(day)}T00:00:00Z`);
     if (eventFor(events, 'external_complete', day) === undefined &&
         this.#input.clock.nowMs() - nextOpenMs < CUTOFF_MS) return;
@@ -325,7 +312,7 @@ export class ParallelPaperService {
       String(preparation.dataset.closesById[id]?.at(-1)))), cash);
     const decision = [...events].reverse().find((event) => event.kind === 'decision');
     const weights = (decision?.detail['weights'] ?? {}) as Record<string, number>;
-    const detail = { day, coquiEquityUsd: local.toFixed(2), coquiCashUsd: cash.toFixed(2),
+    const detail = { day, markKey, coquiEquityUsd: local.toFixed(2), coquiCashUsd: cash.toFixed(2),
       alpacaEquityUsd: money(account.equity).toFixed(2), alpacaCashUsd: money(account.cash).toFixed(2),
       positions: ASSET_IDS.map((id) => {
         const symbol = symbolFor(id);
@@ -337,7 +324,7 @@ export class ParallelPaperService {
       }),
       targets: ASSET_IDS.map((id) => ({ symbol: symbolFor(id), weightPct: String(money(String(weights[id] ?? 0)).mul(100)) })),
     };
-    this.#append(experiment, 'account_mark', `mark:${day}`, detail);
+    this.#append(experiment, 'account_mark', `mark:${markKey}`, detail);
   }
 
   async #reconcile(experiment: ParallelPaperExperiment, client: Client): Promise<void> {
@@ -405,6 +392,10 @@ export class ParallelPaperService {
       const day = String(decision.detail['day']);
       const executionDay = dayAfter(day);
       if (!dataset.dayKeys.includes(executionDay) || eventFor(events, 'local_settled', day) !== undefined) continue;
+      if (decision.at - Date.parse(`${executionDay}T00:00:00Z`) > CUTOFF_MS) {
+        this.#append(experiment, 'local_settled', `local-settled:${day}`, { day, executionDay, skipped: 'late_decision' });
+        continue;
+      }
       const index = dataset.dayKeys.indexOf(executionDay);
       const opens = new Map(ASSET_IDS.map((id) => [id, money(String(dataset.opensById[id]?.[index]))]));
       const equity = ASSET_IDS.reduce((sum, id) => sum.plus(held.get(id)!.mul(opens.get(id)!)), cash);

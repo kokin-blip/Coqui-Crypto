@@ -34,6 +34,28 @@ describe('Alpaca paper activity panel', () => {
     expect(render()).toContain('transport_unavailable');
   });
 
+  it('shows intraday monitoring and recorded defensive filter counts', () => {
+    mocked.channels['parallel.paper.status'] = { kind: 'ready', value: {
+      state: 'active', runtimeState: 'intraday', lastCheckAtMs: Date.now(), lastDecisionAtMs: Date.now(),
+      lastReason: null, lastMarkDay: null, coquiOpeningUsd: '1000', alpacaOpeningUsd: '100000',
+      coquiEquityUsd: null, alpacaEquityUsd: null, coquiReturnPct: null, alpacaReturnPct: null,
+      coquiFeesUsd: '0', alpacaBookedFeesUsd: null, alpacaModeledFrictionUsd: '0',
+      coquiFillCount: 0, alpacaFillCount: 0, alpacaOrderCount: 0, positions: [], targets: [], recentTrades: [],
+      latestDecision: { day: '2026-09-23', exposurePct: '70', cashPct: '30', mixVolPct: '42',
+        belowTrend: true, filters: { negativeMomentumAssets: 1, assetVolScaledAssets: 2,
+          portfolioVolScaled: true, trendCapApplied: true }, targets: [] },
+      filterSummary: { observedDecisions: 3, negativeMomentumDays: 2, assetVolScaledDays: 3,
+        portfolioVolScaledDays: 2, trendCapDays: 1 },
+      activity: [{ id: 'a'.repeat(64), atMs: Date.now(), kind: 'no_trade',
+        title: 'No intraday order needed', detail: '0 paper orders', alpacaOrderId: null }],
+    } };
+    const html = render();
+    expect(html).toContain('Monitoring intraday paper rebalances');
+    expect(html).toContain('Across 3 recorded daily decisions');
+    expect(html).toContain('No intraday order needed');
+    expect(html).toContain('not execution-matched');
+  });
+
   it('does not present the legacy campaign exercise as an Alpaca start gate', () => {
     mocked.channels['parallel.paper.status'] = { kind: 'ready', value: { state: 'none' } };
     mocked.commandState = { kind: 'idle' };

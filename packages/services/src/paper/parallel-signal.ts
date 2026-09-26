@@ -1,4 +1,5 @@
-import { instrumentKey, trendVolTargets, type DecisionMarketDataset, type InstrumentIdentity } from '@coqui/core';
+import { DEFAULT_MOMENTUM_CONFIG, DEFAULT_VOL_TARGET_CONFIG, instrumentKey, trendVolTargets,
+  type DecisionMarketDataset, type InstrumentIdentity } from '@coqui/core';
 
 export const PARALLEL_TRENDVOL_VERSION = 'trendvol-qc-v4.2-paper' as const;
 export const PARALLEL_INSTRUMENTS: readonly InstrumentIdentity[] = Object.freeze(
@@ -42,7 +43,19 @@ export function parallelDecision(dataset: DecisionMarketDataset, anchor: Paralle
   const base = PARALLEL_INSTRUMENTS.map((instrument) => ({ assetId: instrumentKey(instrument), weight: 1 / 3 }));
   const result = trendVolTargets(base, dataset.closesById, mix);
   if (result.historyStatus !== 'complete') throw new Error('insufficient_history');
+  const realized = result.volatility.realizedVolPct;
+  const volatilityOnlyExposure = realized === null || realized <= 0 ? 1 :
+    Math.max(DEFAULT_VOL_TARGET_CONFIG.minExposure,
+      Math.min(DEFAULT_VOL_TARGET_CONFIG.maxExposure, DEFAULT_VOL_TARGET_CONFIG.targetVolPct / realized));
+  const filters = {
+    negativeMomentumAssets: result.momentum.stats.filter((stat) => stat.returnPct < 0).map((stat) => stat.assetId),
+    assetVolScaledAssets: result.momentum.stats.filter((stat) =>
+      stat.volatilityPct > DEFAULT_MOMENTUM_CONFIG.targetVolatilityPct).map((stat) => stat.assetId),
+    portfolioVolScaled: volatilityOnlyExposure < 1,
+    trendCapApplied: result.volatility.belowTrend &&
+      volatilityOnlyExposure > DEFAULT_VOL_TARGET_CONFIG.belowTrendMaxExposure,
+  };
   return Object.freeze({ day: keys.at(-1)!, weights: Object.fromEntries(result.targets.map((item) => [item.assetId, item.weight])),
     exposure: result.exposure, cashWeight: result.cashWeight,
-    mixVolPct: result.volatility.realizedVolPct, belowTrend: result.volatility.belowTrend });
+    mixVolPct: result.volatility.realizedVolPct, belowTrend: result.volatility.belowTrend, filters });
 }

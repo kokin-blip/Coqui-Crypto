@@ -24,6 +24,10 @@ describe('Alpaca paper boundary', () => {
       }) }));
     await client.orderByClientId('abc-123');
     expect(fetcher.mock.calls[1]?.[0]).toBe('https://paper-api.alpaca.markets/v2/orders:by_client_order_id?client_order_id=abc-123');
+    await client.latestCryptoQuotes();
+    expect(fetcher.mock.calls[2]?.[0]).toBe('https://data.alpaca.markets/v1beta3/crypto/us/latest/quotes?symbols=BTC%2FUSD%2CETH%2FUSD%2CLTC%2FUSD');
+    expect(fetcher.mock.calls[2]?.[1]).toMatchObject({ method: 'GET', headers: {
+      'APCA-API-KEY-ID': KEY_ID, 'APCA-API-SECRET-KEY': SECRET } });
     expect(fetcher.mock.calls.every((call) => !String(call[0]).includes('https://api.alpaca.markets/'))).toBe(true);
   });
 

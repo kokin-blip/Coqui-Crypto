@@ -189,7 +189,7 @@ describe('createCachedSecretStore', () => {
     expect(raw.readCount()).toBe(1);
   });
 
-  it('caches backend failures without exposing backend messages or secrets', async () => {
+  it('retries backend failures without exposing backend messages or secrets', async () => {
     const secret = 'private-material-from-backend';
     let reads = 0;
     const store = createCachedSecretStore({
@@ -214,7 +214,24 @@ describe('createCachedSecretStore', () => {
     });
     expect(second).toEqual(first);
     expect(JSON.stringify([first, second])).not.toContain(secret);
-    expect(reads).toBe(1);
+    expect(reads).toBe(2);
+  });
+
+  it('recovers on the next read after a temporary keychain failure', async () => {
+    let reads = 0;
+    const store = createCachedSecretStore({
+      async get() {
+        reads += 1;
+        if (reads === 1) throw new Error('keychain temporarily locked');
+        return 'paper-key';
+      },
+      async set() {},
+      async delete() {},
+    });
+    await expect(store.read('alpaca-paper-credentials')).resolves.toMatchObject({ ok: false, code: 'unavailable' });
+    await expect(store.read('alpaca-paper-credentials')).resolves.toEqual({ ok: true, value: 'paper-key' });
+    await expect(store.read('alpaca-paper-credentials')).resolves.toEqual({ ok: true, value: 'paper-key' });
+    expect(reads).toBe(2);
   });
 
   it('a successful write replaces a cached read failure', async () => {
@@ -282,6 +299,19 @@ describe('createOsKeyringSecretStore', () => {
     const result = await store.read('coinbase-credentials');
     expect(result).toMatchObject({ ok: false, code: 'unavailable' });
     expect(JSON.stringify(result)).not.toContain(secret);
+  });
+
+  it('retries a failed native loader on the next secret read', async () => {
+    let calls = 0;
+    const store = createOsKeyringSecretStore(async () => {
+      calls += 1;
+      if (calls === 1) throw new Error('temporary loader failure');
+      return { getPassword: async () => 'paper-key', setPassword: async () => {},
+        deletePassword: async () => true };
+    });
+    await expect(store.read('alpaca-paper-credentials')).resolves.toMatchObject({ ok: false, code: 'unavailable' });
+    await expect(store.read('alpaca-paper-credentials')).resolves.toEqual({ ok: true, value: 'paper-key' });
+    expect(calls).toBe(2);
   });
 });
 

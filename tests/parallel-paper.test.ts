@@ -51,7 +51,7 @@ async function setup(openingUsd = '1000') {
   return { database, clock, secrets };
 }
 
-function mockClient(submitFailure = false, fillStatus = 'filled') {
+function mockClient(submitFailure = false, fillStatus = 'filled', quoteAtMs: number | (() => number) = TODAY) {
   const orders = new Map<string, { id: string; client_order_id: string; symbol: string; side: 'buy' | 'sell';
     status: string; qty: string; filled_qty: string; filled_avg_price: string }>();
   const submit = vi.fn(async (input: { client_order_id: string; symbol: string; side: 'buy' | 'sell'; qty: string }) => {
@@ -67,6 +67,9 @@ function mockClient(submitFailure = false, fillStatus = 'filled') {
     orders: async () => [],
     asset: async (symbol: string) => ({ symbol, status: 'active', tradable: true,
       min_order_size: '0.0001', min_trade_increment: '0.0001' }),
+    latestCryptoQuotes: async () => ({ quotes: Object.fromEntries(['BTC', 'ETH', 'LTC'].map((symbol) =>
+      [`${symbol}/USD`, { bp: 100, ap: 101,
+        t: new Date(typeof quoteAtMs === 'function' ? quoteAtMs() : quoteAtMs).toISOString() }])) }),
     activities: async () => [],
     orderByClientId: async (id: string) => {
       const order = orders.get(id);
@@ -102,6 +105,33 @@ describe('parallel paper experiment', () => {
     await service.tick();
     expect(service.summary()).toMatchObject({ state: 'active', decisionCount: 1 });
     expect(mock.submit).toHaveBeenCalled();
+    service.transition('paused', 'manual-pause-test');
+    await service.tick();
+    expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'user_action' });
+    database.close();
+  });
+
+  it('resumes after temporary credential access returns without overriding a user pause', async () => {
+    const { database, clock, secrets } = await setup();
+    const prepared: PaperDecisionPreparation = { ok: true, dataset: dataset(),
+      datasetHash: sha256Hex('data'), latestCompletedStartMs: TODAY - DAY,
+      expectedCompletedStartMs: TODAY - DAY, ruleSnapshotHash: sha256Hex('rules') };
+    let failRead = false;
+    const store = { ...secrets, read: async (...args: Parameters<typeof secrets.read>) => {
+      if (failRead) { failRead = false; return { ok: false as const, code: 'unavailable' as const,
+        message: 'Secure credential storage is unavailable.' }; }
+      return secrets.read(...args);
+    } };
+    const mock = mockClient();
+    const service = new ParallelPaperService({ profileId: 'main', database, clock, secrets: store,
+      preparation: () => prepared, refreshFor: async () => prepared,
+      clientFactory: () => mock.client as never, killSwitchEngaged: () => false });
+    expect((await service.start('credential-recovery-test', true)).ok).toBe(true);
+    failRead = true;
+    await service.tick();
+    expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'credentials_unavailable' });
+    await service.tick();
+    expect(service.summary()).toMatchObject({ state: 'active', decisionCount: 1 });
     service.transition('paused', 'manual-pause-test');
     await service.tick();
     expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'user_action' });
@@ -155,6 +185,11 @@ describe('parallel paper experiment', () => {
     expect(mock.submit).toHaveBeenCalledTimes(submitted);
     expect(service.summary()).toMatchObject({ state: 'active', decisionCount: 1,
       coquiOpeningUsd: '1000', alpacaOpeningUsd: '100000', alpacaOrderCount: submitted });
+    expect(service.summary().filterSummary).toMatchObject({ observedDecisions: 1,
+      negativeMomentumDays: expect.any(Number), assetVolScaledDays: expect.any(Number),
+      portfolioVolScaledDays: expect.any(Number), trendCapDays: expect.any(Number) });
+    expect(service.summary().latestDecision?.filters).toMatchObject({
+      negativeMomentumAssets: expect.any(Number), assetVolScaledAssets: expect.any(Number) });
     expect(service.summary()).toMatchObject({ runtimeState: 'order_pending', lastCheckAtMs: TODAY,
       latestDecision: { day: '2026-09-23', targets: expect.arrayContaining([{ symbol: 'BTCUSD', weightPct: expect.any(String) }]) } });
     expect(service.summary().activity.some((item) => item.kind === 'order' && item.alpacaOrderId !== null)).toBe(true);
@@ -251,6 +286,95 @@ describe('parallel paper experiment', () => {
     expect(service.summary().activity[0]).toMatchObject({ kind: 'no_trade', title: 'No Alpaca order needed' });
     clock.set(TODAY + 240_000);
     expect(service.summary()).toMatchObject({ runtimeState: 'attention', lastCheckAtMs: TODAY });
+    database.close();
+  });
+
+  it('records a late daily decision and can place separate intraday paper rebalances', async () => {
+    const { database, clock, secrets } = await setup();
+    const firstSlot = Date.parse('2026-09-24T08:01:00Z');
+    clock.set(firstSlot);
+    const mock = mockClient(false, 'filled', () => clock.nowMs());
+    const prepared = { ok: true as const, dataset: dataset(), datasetHash: sha256Hex('data'),
+      latestCompletedStartMs: TODAY - DAY, expectedCompletedStartMs: TODAY - DAY,
+      ruleSnapshotHash: sha256Hex('rules') };
+    const service = new ParallelPaperService({ profileId: 'main', database, clock, secrets,
+      preparation: () => prepared, refreshFor: async () => prepared,
+      clientFactory: () => mock.client as never, killSwitchEngaged: () => false });
+    expect((await service.start('late-intraday', true)).ok).toBe(true);
+    await service.tick();
+    expect(service.summary().decisionCount).toBe(1);
+    expect(service.status().events.some((event) => event.kind === 'daily_window_missed')).toBe(true);
+    const firstOrders = mock.submit.mock.calls.length;
+    expect(firstOrders).toBeGreaterThan(0);
+    await service.tick();
+    expect(mock.submit).toHaveBeenCalledTimes(firstOrders);
+    clock.set(Date.parse('2026-09-24T12:01:00Z'));
+    await service.tick();
+    expect(mock.submit.mock.calls.length).toBeGreaterThan(firstOrders);
+    expect(service.status().events.filter((event) => event.kind === 'intraday_complete')).toHaveLength(2);
+    database.close();
+  });
+
+  it('does not trade an intraday slot using stale Alpaca quotes', async () => {
+    const { database, clock, secrets } = await setup();
+    clock.set(Date.parse('2026-09-24T08:01:00Z'));
+    const mock = mockClient(false, 'filled', TODAY);
+    const prepared = { ok: true as const, dataset: dataset(), datasetHash: sha256Hex('data'),
+      latestCompletedStartMs: TODAY - DAY, expectedCompletedStartMs: TODAY - DAY,
+      ruleSnapshotHash: sha256Hex('rules') };
+    const service = new ParallelPaperService({ profileId: 'main', database, clock, secrets,
+      preparation: () => prepared, refreshFor: async () => prepared,
+      clientFactory: () => mock.client as never, killSwitchEngaged: () => false });
+    expect((await service.start('stale-intraday', true)).ok).toBe(true);
+    await service.tick();
+    expect(mock.submit).not.toHaveBeenCalled();
+    expect(service.status().events.some((event) => event.kind === 'intraday_skipped' &&
+      event.detail['reason'] === 'stale_alpaca_quote')).toBe(true);
+    database.close();
+  });
+
+  it('does not open a later intraday slot while an earlier paper order is partial', async () => {
+    const { database, clock, secrets } = await setup();
+    clock.set(Date.parse('2026-09-24T08:01:00Z'));
+    const mock = mockClient(false, 'partially_filled', () => clock.nowMs());
+    const prepared = { ok: true as const, dataset: dataset(), datasetHash: sha256Hex('data'),
+      latestCompletedStartMs: TODAY - DAY, expectedCompletedStartMs: TODAY - DAY,
+      ruleSnapshotHash: sha256Hex('rules') };
+    const service = new ParallelPaperService({ profileId: 'main', database, clock, secrets,
+      preparation: () => prepared, refreshFor: async () => prepared,
+      clientFactory: () => mock.client as never, killSwitchEngaged: () => false });
+    expect((await service.start('partial-intraday', true)).ok).toBe(true);
+    await service.tick();
+    const firstOrders = mock.submit.mock.calls.length;
+    expect(firstOrders).toBeGreaterThan(0);
+    expect(service.summary().runtimeState).toBe('order_pending');
+    clock.set(Date.parse('2026-09-24T12:01:00Z'));
+    await service.tick();
+    expect(mock.submit).toHaveBeenCalledTimes(firstOrders);
+    expect(service.status().events.some((event) => event.kind === 'intraday_check' &&
+      event.detail['slot'] === '2026-09-24T12')).toBe(false);
+    database.close();
+  });
+
+  it('records an intraday no-trade when the daily target already matches holdings', async () => {
+    const { database, clock, secrets } = await setup();
+    clock.set(Date.parse('2026-09-24T08:01:00Z'));
+    const mock = mockClient(false, 'filled', () => clock.nowMs());
+    const prepared = { ok: true as const, dataset: dataset(), datasetHash: sha256Hex('data'),
+      latestCompletedStartMs: TODAY - DAY, expectedCompletedStartMs: TODAY - DAY,
+      ruleSnapshotHash: sha256Hex('rules') };
+    const service = new ParallelPaperService({ profileId: 'main', database, clock, secrets,
+      preparation: () => prepared, refreshFor: async () => prepared,
+      clientFactory: () => mock.client as never, killSwitchEngaged: () => false });
+    expect((await service.start('intraday-no-trade', true)).ok).toBe(true);
+    appendParallelEvent({ experimentId: service.status().experiment!.id, profileId: 'main',
+      kind: 'decision', key: 'decision:2026-09-23', at: clock.nowMs(),
+      detail: { day: '2026-09-23', weights: {}, exposure: 0, cashWeight: 1,
+        mixVolPct: 10, belowTrend: false } }, database);
+    await service.tick();
+    expect(mock.submit).not.toHaveBeenCalled();
+    expect(service.summary().activity.some((item) => item.title === 'No intraday order needed')).toBe(true);
+    expect(service.status().events.find((event) => event.kind === 'intraday_complete')?.detail['orderCount']).toBe(0);
     database.close();
   });
 });

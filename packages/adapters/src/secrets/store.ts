@@ -239,7 +239,8 @@ function validSecret(value: string): boolean {
 
 /**
  * Add scoped caching and a non-throwing, secret-safe result boundary around an
- * OS or test backend. Successful, missing, and failed reads are cached.
+ * OS or test backend. Successful and missing reads are cached; a transient
+ * backend failure must be retried on the next read.
  */
 export function createCachedSecretStore(backend: SecretBackend): SecretStore {
   const reads = new Map<string, SecretReadResult>();
@@ -270,7 +271,8 @@ export function createCachedSecretStore(backend: SecretBackend): SecretStore {
       );
       inflight.set(resolved, request);
       void request.then((result) => {
-        reads.set(resolved, result);
+        if (inflight.get(resolved) !== request) return;
+        if (result.ok) reads.set(resolved, result);
         inflight.delete(resolved);
       });
       return request;
@@ -316,7 +318,10 @@ export function createOsKeyringSecretStore(
 ): SecretStore {
   let module: Promise<KeyringModuleLike> | undefined;
   const keyring = () => {
-    module ??= loader();
+    module ??= loader().catch((error: unknown) => {
+      module = undefined;
+      throw error;
+    });
     return module;
   };
   return createCachedSecretStore({

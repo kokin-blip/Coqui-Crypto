@@ -25,7 +25,8 @@ function stateLabel(data: Status, dailyWindowOpen: boolean): string {
         : 'Awaiting next completed daily bar';
     case 'evaluating': return 'Checking market data and Alpaca';
     case 'order_pending': return 'Alpaca order activity pending';
-    case 'reconciled': return 'Daily Alpaca pass reconciled';
+    case 'reconciled': return 'Daily pass reconciled · monitoring intraday';
+    case 'intraday': return 'Monitoring intraday paper rebalances';
     case 'paused': return 'Paused by you';
     case 'attention': return data.state === 'paused' ? 'Needs attention' : 'Scheduler check overdue';
     case 'stopped': return 'Stopped';
@@ -48,7 +49,7 @@ export function ParallelPaperComparison({ client }: { readonly client: CoquiClie
   const status = useChannel(client, 'parallel.paper.status', {});
   return <section className="panel parallel-paper-activity" aria-labelledby="parallel-comparison-heading">
     <div className="panel-heading"><div><h2 id="parallel-comparison-heading">Alpaca paper activity</h2>
-      <p className="muted">TrendVol v4.2 · completed Coinbase daily bars · paper orders only</p></div>
+      <p className="muted">TrendVol v4.2 daily targets · Alpaca paper rebalance checks every four hours</p></div>
       <a href="https://app.alpaca.markets/paper/dashboard/overview" target="_blank" rel="noreferrer">Open Alpaca paper dashboard</a></div>
     {status.kind === 'loading' && <SurfaceState kind="loading" title="Reading Alpaca paper activity" compact />}
     {status.kind !== 'loading' && status.kind !== 'ready' && <SurfaceState kind="error"
@@ -74,6 +75,7 @@ function ActivityContent({ data }: { readonly data: Status }): React.JSX.Element
       <span>Last scheduler check: {timestamp(data.lastCheckAtMs)}</span>
       <span>Last daily decision: {timestamp(data.lastDecisionAtMs)}</span>
     </div>
+    <p className="muted">Daily targets update from completed Coinbase bars. At 04:00, 08:00, 12:00, 16:00, and 20:00 UTC, Coqui can rebalance the Alpaca paper account when fresh Alpaca quotes show at least 1% portfolio drift and a $25 trade. No price move means no order.</p>
     {data.lastReason !== null && <SurfaceState kind="blocked" title="New Alpaca orders paused"
       detail={data.lastReason.replaceAll('_', ' ')} compact />}
     {data.runtimeState === 'attention' && data.state === 'active' && <SurfaceState kind="blocked"
@@ -81,10 +83,12 @@ function ActivityContent({ data }: { readonly data: Status }): React.JSX.Element
     {decision !== null && <div className="parallel-paper-decision">
       <h3>Latest algorithm decision · {decision.day}</h3>
       <p>Trend {decision.belowTrend ? 'below' : 'above'} reference · realized mix volatility {decision.mixVolPct}% · target exposure {decision.exposurePct}% · target cash {decision.cashPct}%</p>
+      {decision.filters !== null && <p className="muted">Defensive reads today: negative momentum in {decision.filters.negativeMomentumAssets} assets; asset volatility scaling in {decision.filters.assetVolScaledAssets}; portfolio volatility target {decision.filters.portfolioVolScaled ? 'applied' : 'inactive'}; trend cap {decision.filters.trendCapApplied ? 'applied' : 'inactive'}.</p>}
       <ul>{decision.targets.map((target) => <li key={target.symbol}>{target.symbol} <strong>{target.weightPct}%</strong></li>)}</ul>
+      {data.filterSummary.observedDecisions > 0 && <p className="muted">Across {data.filterSummary.observedDecisions} recorded daily decisions: negative momentum {data.filterSummary.negativeMomentumDays} days · asset volatility scaling {data.filterSummary.assetVolScaledDays} days · portfolio volatility target {data.filterSummary.portfolioVolScaledDays} days · trend cap {data.filterSummary.trendCapDays} days.</p>}
     </div>}
     <div className="parallel-paper-timeline"><h3>Recorded activity</h3>
-      {data.activity.length === 0 ? <p className="muted">No daily decision recorded yet. Coqui evaluates completed Coinbase bars during the 00:00–00:15 UTC window.
+      {data.activity.length === 0 ? <p className="muted">No daily decision recorded yet. Coqui evaluates the latest completed Coinbase bar while open. Daily orders use the 00:00–00:15 UTC window; later intraday checks can use the same target.
         {data.lastCheckAtMs !== null && (window.open
           ? ' This window is open; the next scheduler check can evaluate today’s bar.'
           : <> Today’s window has passed. The next attempt is <time dateTime={exactUtcTimestamp(window.nextAtMs)} title={exactUtcTimestamp(window.nextAtMs)}>{formatLocalTimestamp(window.nextAtMs)}</time>.</>)}</p>
@@ -95,7 +99,7 @@ function ActivityContent({ data }: { readonly data: Status }): React.JSX.Element
         </li>)}</ol>}
     </div>
     <details className="parallel-paper-financials"><summary>Balances, returns, and paper fills</summary>
-      <p className="muted">Coqui fills are locally modeled. Alpaca fills are recorded by its external paper simulator; times and fees can differ. Last aligned mark: {data.lastMarkDay ?? 'pending'}.</p>
+      <p className="muted">Coqui is a daily-fill baseline. Alpaca can rebalance intraday, so these returns are not execution-matched. Alpaca fills come from its external paper simulator; times and fees can differ. Last recorded mark: {data.lastMarkDay ?? 'pending'}.</p>
       <div className="parallel-paper-grid">
         <article><h3>Coqui · Coinbase-sized simulator</h3><dl className="settings-readout">
           <div><dt>Opening</dt><dd>{usd(data.coquiOpeningUsd)}</dd></div>
