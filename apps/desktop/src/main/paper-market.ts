@@ -156,6 +156,7 @@ export function createPaperMarketFeed(
             instruments,
             maxDays: LOOKBACK_DAYS,
             minAlignedDays: trendVolMinimumHistory(),
+            allowFreshCacheOnFetchFailure: true,
             nowMs,
             fetchDailyBars: async (instrument) => {
               const result = await dependencies.bars(instrument, LOOKBACK_DAYS, nowMs);

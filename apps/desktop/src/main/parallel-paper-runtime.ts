@@ -1,6 +1,6 @@
 import type { HttpClient, SecretStore } from '@coqui/adapters';
 import type { Clock } from '@coqui/core';
-import { ParallelPaperService, PARALLEL_INSTRUMENTS, resolveKillSwitch } from '@coqui/services';
+import { isRecoverableParallelMarketPause, ParallelPaperService, PARALLEL_INSTRUMENTS, resolveKillSwitch } from '@coqui/services';
 import { latestParallelExperiment, listParallelEvents, parallelExperimentStatus, type Db } from '@coqui/storage';
 
 import { createPaperMarketFeed, type PaperMarketFeedDependencies } from './paper-market.js';
@@ -25,8 +25,12 @@ export function createParallelPaperRuntime(input: {
   return { service,
     async refreshIfActive(nowMs: number): Promise<void> {
       const experiment = latestParallelExperiment(input.profileId, input.database);
-      if (experiment !== null && parallelExperimentStatus(
-        listParallelEvents(experiment.id, input.profileId, input.database)) === 'active') {
+      const events = experiment === null ? [] : listParallelEvents(experiment.id, input.profileId, input.database);
+      const status = parallelExperimentStatus(events);
+      const latestState = [...events].reverse().find((event) =>
+        ['paused', 'resumed', 'stopped', 'started'].includes(event.kind));
+      if (experiment !== null && (status === 'active' ||
+          (status === 'paused' && isRecoverableParallelMarketPause(latestState?.detail['reason'])))) {
         await market.refresh(nowMs);
       }
     },

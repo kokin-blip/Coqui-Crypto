@@ -11,7 +11,7 @@ import {
 
 import { PARALLEL_COSTS, PARALLEL_INSTRUMENTS, PARALLEL_TRENDVOL_VERSION,
   parallelAnchor, parallelDecision } from './parallel-signal.js';
-import { parallelDayReconciled, parallelRuntimeState, projectParallelPaperActivity } from './parallel-paper-activity.js';
+import { dayAfter, parallelDayReconciled, parallelRuntimeState, projectParallelPaperActivity, shouldResumeParallelMarketPause } from './parallel-paper-activity.js';
 import type { PaperDecisionPreparation } from './runtime-model.js';
 
 const DAY_MS = 86_400_000;
@@ -45,10 +45,6 @@ function symbolFor(id: string): string {
   const found = PARALLEL_INSTRUMENTS.find((item) => instrumentKey(item) === id);
   if (found === undefined) throw new Error('unknown_asset');
   return found.productId.replace('-', '');
-}
-
-function dayAfter(day: string): string {
-  return new Date(Date.parse(`${day}T00:00:00Z`) + DAY_MS).toISOString().slice(0, 10);
 }
 
 function eventFor(events: readonly ParallelPaperEvent[], kind: string, day: string): ParallelPaperEvent | undefined {
@@ -253,11 +249,15 @@ export class ParallelPaperService {
     if (current.experiment === null || current.status === 'stopped') return;
     const experiment = current.experiment;
     if (current.status === 'paused') {
+      const preparation = this.#input.preparation();
       try {
-        const client = await this.#client();
-        await this.#reconcile(experiment, client);
-        const preparation = this.#input.preparation();
+        const client = await this.#client(); await this.#reconcile(experiment, client);
         if (preparation.ok) this.#recordMark(experiment, preparation, await client.account(), await client.positions());
+        if (shouldResumeParallelMarketPause(current.events, preparation, this.#input.clock.nowMs()) &&
+            !this.#input.killSwitchEngaged()) {
+          this.#append(experiment, 'resumed', `market-recovered:${this.#input.clock.nowMs()}`, { reason: 'market_data_recovered' });
+          await this.#tick();
+        }
       } catch (error) {
         const reason = error instanceof AlpacaPaperError ? `alpaca_${error.code}`
           : error instanceof Error && /^[a-z_]+$/u.test(error.message) ? error.message : 'reconciliation_unavailable';

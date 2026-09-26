@@ -180,8 +180,8 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   // reversing it would let a reference price shadow a venue-reported one.
   const trackedAssets = () => listDisplayUniverse(options.profileId, database);
   const historicalCandles = createHistoricalCoinbaseCandleSource({ database, profileId: options.profileId, publicHttp: http, rateLimiters, nowMs: () => clock.nowMs(),
-    ...(options.secrets === undefined ? {} : { secrets: options.secrets }), onSource: (source, productId, interval) =>
-      diagnostics.logger.info('coinbase_candles.source', { source, productId, interval }) });
+    ...(options.secrets === undefined ? {} : { secrets: options.secrets }), onSource: (source, productId, interval) => diagnostics.logger.info('coinbase_candles.source', { source, productId, interval }),
+    onFailure: (source, productId, interval, status, reason) => diagnostics.logger.warn('coinbase_candles.fetch_failed', { source, productId, interval, status, reason }) });
   const priceSource = withPriceFallback(
     createCoinbasePriceSource(http, historicalCandles.recentCandles),
     createCoinGeckoPriceSource(coinGeckoHttp, trackedAssets()),

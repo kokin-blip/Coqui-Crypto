@@ -3,7 +3,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { createMemorySecretStore, AlpacaPaperError } from '../packages/adapters/src/index.js';
 import { assetExposureKey, connectionAccountSnapshotV2Hash, FixedClock, instrumentKey, profileConnectionV2, sha256Hex,
   type ConnectionAccountSnapshotV2, type DecisionMarketDataset } from '../packages/core/src/index.js';
-import { ParallelPaperService, PARALLEL_INSTRUMENTS, parallelAnchor, parallelDecision } from '../packages/services/src/index.js';
+import { ParallelPaperService, PARALLEL_INSTRUMENTS, parallelAnchor, parallelDecision,
+  type PaperDecisionPreparation } from '../packages/services/src/index.js';
 import { appendParallelEvent, listParallelEvents, openDatabase, saveConnectionAccountSnapshotV2, saveProfileConnectionV2,
   setSetting } from '../packages/storage/src/index.js';
 
@@ -78,6 +79,35 @@ function mockClient(submitFailure = false, fillStatus = 'filled') {
 }
 
 describe('parallel paper experiment', () => {
+  it('retries a market-data pause and resumes only after the current bar is ready', async () => {
+    const { database, clock, secrets } = await setup();
+    const mock = mockClient();
+    const ready: PaperDecisionPreparation = { ok: true, dataset: dataset(),
+      datasetHash: sha256Hex('data'), latestCompletedStartMs: TODAY - DAY,
+      expectedCompletedStartMs: TODAY - DAY, ruleSnapshotHash: sha256Hex('rules') };
+    let preparation: PaperDecisionPreparation = ready;
+    const service = new ParallelPaperService({ profileId: 'main', database, clock, secrets,
+      preparation: () => preparation, refreshFor: async () => ready,
+      clientFactory: () => mock.client as never, killSwitchEngaged: () => false });
+    expect((await service.start('market-recovery-test', true)).ok).toBe(true);
+    preparation = { ok: false, code: 'market_fetch_failed' };
+    await service.tick();
+    expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'market_fetch_failed' });
+    expect(mock.submit).not.toHaveBeenCalled();
+
+    preparation = { ...ready, dataset: dataset(121, '2026-09-22') };
+    await service.tick();
+    expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'market_fetch_failed' });
+    preparation = ready;
+    await service.tick();
+    expect(service.summary()).toMatchObject({ state: 'active', decisionCount: 1 });
+    expect(mock.submit).toHaveBeenCalled();
+    service.transition('paused', 'manual-pause-test');
+    await service.tick();
+    expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'user_action' });
+    database.close();
+  });
+
   it('can start Alpaca with a small independent Coinbase comparison book', async () => {
     const { database, clock, secrets } = await setup('47');
     const prepared = { ok: true as const, dataset: dataset(), datasetHash: sha256Hex('data'),

@@ -4,6 +4,29 @@ import { instrumentKey } from '@coqui/core';
 import type { ParallelPaperEvent } from '@coqui/storage';
 
 import { PARALLEL_INSTRUMENTS } from './parallel-signal.js';
+import type { PaperDecisionPreparation } from './runtime-model.js';
+
+const RECOVERABLE_MARKET_REASONS = new Set([
+  'market_fetch_failed', 'invalid_market_data', 'market_alignment_failed',
+  'insufficient_history', 'stale_market_data', 'stale_product_rules',
+]);
+
+export function isRecoverableParallelMarketPause(reason: unknown): boolean {
+  return typeof reason === 'string' && RECOVERABLE_MARKET_REASONS.has(reason);
+}
+
+export function dayAfter(day: string): string {
+  return new Date(Date.parse(`${day}T00:00:00Z`) + 86_400_000).toISOString().slice(0, 10);
+}
+
+export function shouldResumeParallelMarketPause(events: readonly ParallelPaperEvent[],
+  preparation: PaperDecisionPreparation, nowMs: number): boolean {
+  const latestState = [...events].reverse().find((event) =>
+    ['paused', 'resumed', 'stopped', 'started'].includes(event.kind));
+  const latestDay = preparation.ok ? preparation.dataset.dayKeys.at(-1) : undefined;
+  return isRecoverableParallelMarketPause(latestState?.detail['reason']) && latestDay !== undefined &&
+    dayAfter(latestDay) === new Date(nowMs).toISOString().slice(0, 10);
+}
 
 export function projectParallelPaperActivity(events: readonly ParallelPaperEvent[]) {
   const latest = [...events].reverse().find((event) => event.kind === 'decision');

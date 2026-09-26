@@ -38,6 +38,8 @@ export interface DecisionDatasetSyncOptions {
   readonly maxDays: number;
   readonly nowMs: number;
   readonly minAlignedDays?: number;
+  /** Reuse only a complete, aligned, current cached dataset after a provider fetch fails. */
+  readonly allowFreshCacheOnFetchFailure?: boolean;
   readonly policy?: AlignmentPolicy;
   readonly logger?: StructuredLogger;
   readonly metrics?: OperationalMetrics;
@@ -55,6 +57,7 @@ export interface DecisionDatasetProvenance {
   readonly firstAlignedInterval: string | null;
   readonly lastAlignedInterval: string | null;
   readonly datasetHash: string;
+  readonly usedCachedBarsAfterFetchFailure: boolean;
 }
 
 export type DecisionDatasetSyncFailureCode =
@@ -210,8 +213,9 @@ export async function syncCoinbaseDecisionDataset(
     minAlignedDays: options.minAlignedDays ?? 1,
     policy: options.policy ?? 'reject-on-gap',
   });
-  const fetchedBarsByAsset: Record<InstrumentKey, number> = {};
-  const incompleteByAsset: Record<InstrumentKey, number> = {};
+  const emptyCounts = () => Object.fromEntries(instruments.map((instrument) => [instrumentKey(instrument), 0]));
+  const fetchedBarsByAsset: Record<InstrumentKey, number> = emptyCounts();
+  const incompleteByAsset: Record<InstrumentKey, number> = emptyCounts();
   const responses = await Promise.all(instruments.map(async (instrument) => {
     try {
       return { instrument, result: await options.fetchDailyBars(instrument, {
@@ -249,21 +253,31 @@ export async function syncCoinbaseDecisionDataset(
       });
     }
   }
+  const useCachedBars = failures.length > 0 && options.allowFreshCacheOnFetchFailure === true;
+  const fetchFailure = (): DecisionDatasetSyncResult => ({
+    ok: false, code: 'fetch_failed',
+    message: 'Coinbase daily-bar fetch failed; no fetched rows were persisted.', failures,
+  });
+  const rejectCache = (reason: string): DecisionDatasetSyncResult => {
+    logger.warn('market_dataset.cached_bars_unusable', { reason });
+    finish('failure', 'fetch_failed');
+    return fetchFailure();
+  };
   if (failures.length > 0) {
-    logger.error('market_dataset.fetch_failed', {
+    logger.warn('market_dataset.fetch_failed', {
       failures: failures.map(({ instrument, status, reason }) => ({
         assetId: instrumentKey(instrument), status, reason,
       })),
+      attemptingFreshCache: useCachedBars,
     });
-    finish('failure', 'fetch_failed');
-    return {
-      ok: false, code: 'fetch_failed',
-      message: 'Coinbase daily-bar fetch failed; no fetched rows were persisted.', failures,
-    };
+    if (!useCachedBars) {
+      finish('failure', 'fetch_failed');
+      return fetchFailure();
+    }
   }
 
   const records: MarketBarRecord[] = [];
-  for (const response of responses) {
+  for (const response of useCachedBars ? [] : responses) {
     if (!response.result?.ok) continue;
     const key = instrumentKey(response.instrument);
     fetchedBarsByAsset[key] = response.result.data.length;
@@ -319,6 +333,7 @@ export async function syncCoinbaseDecisionDataset(
     dataset.dayKeys.length === 0 ||
     (policy !== 'intersection' && dataset.report.issues.length > 0)
   ) {
+    if (useCachedBars) return rejectCache('alignment_failed');
     logger.warn('market_dataset.alignment_failed', {
       alignedDayCount: dataset.dayKeys.length,
       issueCount: dataset.report.issues.length,
@@ -336,6 +351,7 @@ export async function syncCoinbaseDecisionDataset(
   }
   const minimum = options.minAlignedDays ?? 1;
   if (dataset.dayKeys.length < minimum) {
+    if (useCachedBars) return rejectCache('insufficient_history');
     logger.warn('market_dataset.insufficient_history', {
       alignedDayCount: dataset.dayKeys.length, requiredDayCount: minimum,
     });
@@ -352,6 +368,7 @@ export async function syncCoinbaseDecisionDataset(
   }
   const expectedLatest = latestExpectedCoinbaseCompleteStart(options.nowMs);
   if (dataset.assets.some((assetId) => dataset.barsById[assetId]?.at(-1)?.startTimeMs !== expectedLatest)) {
+    if (useCachedBars) return rejectCache('stale_data');
     logger.warn('market_dataset.stale_data', {
       expectedLatestStartMs: expectedLatest,
       lastAlignedInterval: dataset.report.lastAlignedInterval,
@@ -377,6 +394,7 @@ export async function syncCoinbaseDecisionDataset(
     firstAlignedInterval: dataset.report.firstAlignedInterval,
     lastAlignedInterval: dataset.report.lastAlignedInterval,
     datasetHash: dataset.report.datasetHash,
+    usedCachedBarsAfterFetchFailure: useCachedBars,
   };
   logger.info('market_dataset.sync_succeeded', {
     assetCount: dataset.assets.length,
@@ -384,6 +402,7 @@ export async function syncCoinbaseDecisionDataset(
     firstAlignedInterval: provenance.firstAlignedInterval,
     lastAlignedInterval: provenance.lastAlignedInterval,
     datasetHash: provenance.datasetHash,
+    usedCachedBarsAfterFetchFailure: useCachedBars,
   });
   const latestEndMs = dataset.barsById[dataset.assets[0]!]?.at(-1)?.endTimeMs ?? options.nowMs;
   metrics.gauge('market_data_freshness_ms', Math.max(0, options.nowMs - latestEndMs), {

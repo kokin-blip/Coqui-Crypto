@@ -12,6 +12,7 @@ import {
   type CoinbaseCredentials,
   type CoinbaseReadHttpClient,
   type HttpClient,
+  type HttpFailure,
   type RateLimiterRegistry,
   type SecretStore,
 } from '@coqui/adapters';
@@ -29,6 +30,8 @@ export function createHistoricalCoinbaseCandleSource(input: {
   readonly secrets?: SecretStore;
   readonly clientFactory?: (credentials: CoinbaseCredentials) => CoinbaseReadHttpClient;
   readonly onSource?: (source: 'authenticated' | 'public', productId: string, interval: string) => void;
+  readonly onFailure?: (source: 'authenticated' | 'public', productId: string,
+    interval: string, status: number, reason: HttpFailure['reason'] | 'empty' | 'exception') => void;
 }) {
   async function authenticatedClient() {
     if (input.secrets === undefined) return null;
@@ -67,11 +70,14 @@ export function createHistoricalCoinbaseCandleSource(input: {
             input.onSource?.('authenticated', instrument.productId, '1d');
             return { ok: true as const, bars: result.data };
           }
-        } catch { /* A complete public request is the fallback. */ }
+          input.onFailure?.('authenticated', instrument.productId, '1d', result.status,
+            result.ok ? 'empty' : result.reason);
+        } catch { input.onFailure?.('authenticated', instrument.productId, '1d', 0, 'exception'); }
         finally { client.destroy(); }
       }
       const result = await fetchCoinbaseDailyBars(input.publicHttp, instrument, { maxDays: lookbackDays, nowMs });
       if (result.ok) input.onSource?.('public', instrument.productId, '1d');
+      else input.onFailure?.('public', instrument.productId, '1d', result.status, result.reason);
       return result.ok ? { ok: true as const, bars: result.data } : { ok: false as const };
     },
     async displayBars(instrument: InstrumentIdentity, interval: Interval,
@@ -85,12 +91,14 @@ export function createHistoricalCoinbaseCandleSource(input: {
             input.onSource?.('authenticated', instrument.productId, interval);
             return { ok: true as const, bars: result.data };
           }
-        } catch { /* A complete public request is the fallback. */ }
+          input.onFailure?.('authenticated', instrument.productId, interval, result.status, result.reason);
+        } catch { input.onFailure?.('authenticated', instrument.productId, interval, 0, 'exception'); }
         finally { client.destroy(); }
       }
       const result = await fetchCoinbaseDisplayBars(input.publicHttp, instrument,
         { interval, startTimeMs, endTimeMs, nowMs });
       if (result.ok) input.onSource?.('public', instrument.productId, interval);
+      else input.onFailure?.('public', instrument.productId, interval, result.status, result.reason);
       return result.ok ? { ok: true as const, bars: result.data } : { ok: false as const };
     },
   };

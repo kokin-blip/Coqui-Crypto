@@ -95,6 +95,35 @@ describe('Coinbase decision dataset service', () => {
     database.close();
   });
 
+  it('uses a current cached dataset after a fetch failure without persisting partial responses', async () => {
+    const database = openDatabase(':memory:');
+    const initial = await syncCoinbaseDecisionDataset({
+      database, instruments: [BTC, ETH], maxDays: 10, minAlignedDays: 3, nowMs: NOW,
+      fetchDailyBars: fetcher(new Map([
+        [BTC.productId, history(BTC)], [ETH.productId, history(ETH)],
+      ])),
+    });
+    expect(initial.ok).toBe(true);
+    const cached = await syncCoinbaseDecisionDataset({
+      database, instruments: [BTC, ETH], maxDays: 10, minAlignedDays: 3, nowMs: NOW,
+      allowFreshCacheOnFetchFailure: true,
+      fetchDailyBars: async (instrument) => instrument.productId === BTC.productId
+        ? { ok: true, status: 200, data: [bar(BTC, 4, 999)] }
+        : { ok: false, status: 503, reason: 'http', retried: 3 },
+    });
+    expect(cached).toMatchObject({ ok: true, provenance: { usedCachedBarsAfterFetchFailure: true } });
+    if (initial.ok && cached.ok) expect(cached.dataset.report.datasetHash).toBe(initial.dataset.report.datasetHash);
+    expect(listMarketBars(BTC, database).find((row) => row.startTimeMs === START + 4 * DAY)?.close).toBe('104');
+
+    const nextDay = await syncCoinbaseDecisionDataset({
+      database, instruments: [BTC, ETH], maxDays: 10, minAlignedDays: 3, nowMs: NOW + DAY,
+      allowFreshCacheOnFetchFailure: true,
+      fetchDailyBars: async () => ({ ok: false, status: 503, reason: 'http', retried: 3 }),
+    });
+    expect(nextDay).toEqual(expect.objectContaining({ ok: false, code: 'fetch_failed' }));
+    database.close();
+  });
+
   it('rejects wrong canonical identities and discontinuous provider rows before storage', async () => {
     const database = openDatabase(':memory:');
     const wrong = await syncCoinbaseDecisionDataset({

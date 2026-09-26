@@ -165,6 +165,7 @@ describe('authenticated Coinbase candles', () => {
     await writeConnectionSecret(secrets, { profileId: 'main', connectionId: connection.id,
       provider: 'coinbase', credentialType: 'api_credentials', schemaVersion: 2 }, JSON.stringify(credentials));
     const sourceEvents: string[] = [];
+    const failures: string[] = [];
     let publicCalls = 0;
     const publicGet = async <T>(): Promise<HttpResult<T>> => {
       publicCalls += 1;
@@ -176,12 +177,15 @@ describe('authenticated Coinbase candles', () => {
     const source = createHistoricalCoinbaseCandleSource({ database, profileId: 'main',
       publicHttp: publicHttp(publicGet), secrets, rateLimiters: createRateLimiterRegistry(), nowMs: () => NOW,
       clientFactory: () => auth(authorized),
-      onSource: (route) => sourceEvents.push(route) });
+      onSource: (route) => sourceEvents.push(route),
+      onFailure: (route, productId, interval, status, reason) =>
+        failures.push(`${route}:${productId}:${interval}:${status}:${reason}`) });
     const result = await source.dailyBars(BTC, 2, NOW);
     expect(result.ok).toBe(true);
     expect(authorized).toHaveBeenCalledOnce();
     expect(publicCalls).toBeGreaterThan(0);
     expect(sourceEvents).toEqual(['public']);
+    expect(failures).toEqual(['authenticated:BTC-USD:1d:503:http']);
     const display = await source.displayBars(BTC, '1d', NOW - DAY - 6 * 60_000,
       NOW - 6 * 60_000, NOW);
     expect(display.ok && display.bars).toHaveLength(1);
