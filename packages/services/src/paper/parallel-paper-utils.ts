@@ -1,6 +1,6 @@
 import { Decimal } from 'decimal.js';
 
-import type { AlpacaPaperAsset } from '@coqui/adapters';
+import { AlpacaPaperError, type AlpacaPaperAsset } from '@coqui/adapters';
 import { instrumentKey } from '@coqui/core';
 import type { ParallelPaperEvent } from '@coqui/storage';
 
@@ -10,6 +10,15 @@ export function money(value: string | number | Decimal): Decimal {
   const result = new Decimal(value);
   if (!result.isFinite()) throw new Error('invalid_amount');
   return result;
+}
+
+export function parallelPaperFailureDetail(error: unknown, fallback: string):
+  { reason: string; operation?: string; httpStatus?: number } {
+  if (error instanceof AlpacaPaperError) return {
+    reason: `alpaca_${error.code}`, operation: error.operation,
+    ...(error.httpStatus === null ? {} : { httpStatus: error.httpStatus }),
+  };
+  return { reason: error instanceof Error && /^[a-z_]+$/u.test(error.message) ? error.message : fallback };
 }
 
 export function quantity(value: Decimal): string {

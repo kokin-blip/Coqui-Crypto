@@ -10,6 +10,7 @@ import {
   readConnectionSecret,
   validateCoinbaseCredentials,
   type CoinbaseCredentials,
+  type CoinbaseDisplayBar,
   type CoinbaseReadHttpClient,
   type HttpClient,
   type HttpFailure,
@@ -103,6 +104,34 @@ export function createHistoricalCoinbaseCandleSource(input: {
     },
   };
   return { ...source, authenticatedClient,
+    async researchHourlyWindow(instrument: InstrumentIdentity, startTimeMs: number, endTimeMs: number,
+      nowMs: number): Promise<{ readonly ok: true; readonly bars: readonly CoinbaseDisplayBar[];
+        readonly source: 'authenticated' | 'public' } | { readonly ok: false }> {
+      // Both endpoints can serve 300 hours. Complete each window from exactly one source.
+      if (endTimeMs <= startTimeMs || endTimeMs - startTimeMs > 300 * 3_600_000) return { ok: false };
+      const options = { interval: '1h' as const, startTimeMs, endTimeMs, nowMs };
+      const client = await authenticatedClient();
+      if (client !== null) {
+        try {
+          const result = await fetchAuthenticatedCoinbaseDisplayBars(client, instrument, options);
+          if (result.ok && result.data.length > 0) {
+            input.onSource?.('authenticated', instrument.productId, '1h');
+            return { ok: true, bars: result.data, source: 'authenticated' };
+          }
+          input.onFailure?.('authenticated', instrument.productId, '1h', result.status,
+            result.ok ? 'empty' : result.reason);
+        } catch { input.onFailure?.('authenticated', instrument.productId, '1h', 0, 'exception'); }
+        finally { client.destroy(); }
+      }
+      const result = await fetchCoinbaseDisplayBars(input.publicHttp, instrument, options);
+      if (result.ok && result.data.length > 0) {
+        input.onSource?.('public', instrument.productId, '1h');
+        return { ok: true, bars: result.data, source: 'public' };
+      }
+      input.onFailure?.('public', instrument.productId, '1h', result.status,
+        result.ok ? 'empty' : result.reason);
+      return { ok: false };
+    },
     async recentCandles(instrument: InstrumentIdentity, timeframe: string) {
       const intervalMs: Record<string, number> = { '1m': 60_000, '5m': 300_000,
         '15m': 900_000, '1h': 3_600_000, '6h': 21_600_000, '1d': 86_400_000 };

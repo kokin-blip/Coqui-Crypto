@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "version": "coinbase-alpaca-usd-v1",
+  "historyDays": 180,
+  "freshnessMs": 60000,
+  "maxSpreadBps": 50,
+  "depthBandBps": 50,
+  "depthMultiple": 10,
+  "minimumTradeUsd": "25",
+  "maximumNativeMinimumUsd": "25"
+}

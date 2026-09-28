@@ -46,6 +46,10 @@ describe('Alpaca paper activity panel', () => {
           portfolioVolScaled: true, trendCapApplied: true }, targets: [] },
       filterSummary: { observedDecisions: 3, negativeMomentumDays: 2, assetVolScaledDays: 3,
         portfolioVolScaledDays: 2, trendCapDays: 1 },
+      mlSignal: { gate: 'collecting', reason: 'hourly_history_incomplete', version: null,
+        modelHash: null, datasetHash: null, predictedAtMs: null, evidence: null,
+        lastSlot: null, lastApplied: null, lastReason: null,
+        lastBaseline: [], lastProposed: [], lastCombined: [] },
       activity: [{ id: 'a'.repeat(64), atMs: Date.now(), kind: 'no_trade',
         title: 'No intraday order needed', detail: '0 paper orders', alpacaOrderId: null }],
     } };
@@ -54,6 +58,29 @@ describe('Alpaca paper activity panel', () => {
     expect(html).toContain('Across 3 recorded daily decisions');
     expect(html).toContain('No intraday order needed');
     expect(html).toContain('not execution-matched');
+    expect(html).toContain('ML signal worker');
+    expect(html).toContain('collecting hourly history');
+    const current = mocked.channels['parallel.paper.status'] as { kind: string; value: Record<string, unknown> };
+    const mlSignal = current.value['mlSignal'] as Record<string, unknown>;
+    mocked.channels['parallel.paper.status'] = { ...current, value: { ...current.value,
+      mlSignal: { ...mlSignal, gate: 'unqualified', reason: 'holdout_net_lift_nonpositive',
+        lastSlot: '2026-09-24T08', lastApplied: false, lastReason: 'holdout_net_lift_nonpositive',
+        lastBaseline: [{ symbol: 'BTCUSD', weightPct: '20.0' }],
+        lastProposed: [{ symbol: 'BTCUSD', weightPct: '30.0' }],
+        lastCombined: [{ symbol: 'BTCUSD', weightPct: '20.0' }] } } };
+    expect(render()).toContain('shadow only');
+    expect(render()).toContain('TrendVol target retained');
+    const updated = mocked.channels['parallel.paper.status'] as { kind: string; value: Record<string, unknown> };
+    mocked.channels['parallel.paper.status'] = { ...updated, value: { ...updated.value,
+      mlSignal: { ...(updated.value['mlSignal'] as Record<string, unknown>),
+        gate: 'qualified', reason: 'qualified', predictedAtMs: Date.now(), lastApplied: true } } };
+    expect(render()).toContain('research qualified · shadow only');
+    expect(render()).toContain('ML target applied');
+    const qualified = mocked.channels['parallel.paper.status'] as { kind: string; value: Record<string, unknown> };
+    mocked.channels['parallel.paper.status'] = { ...qualified, value: { ...qualified.value,
+      state: 'paused', runtimeState: 'attention', lastReason: 'alpaca_unavailable' } };
+    expect(render()).toContain('Retrying Alpaca connection');
+    expect(render()).toContain('Alpaca read failed · retrying on the next check');
   });
 
   it('does not present the legacy campaign exercise as an Alpaca start gate', () => {

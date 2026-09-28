@@ -1,5 +1,5 @@
+import { createWiderUniverseRuntime } from './wider-universe-runtime.js'; import { createBreakoutRuntime } from './breakout-runtime.js'; import { createRangeRotationRuntime } from './range-rotation-runtime.js'; import { createMarketSelectorRuntime } from './market-selector-runtime.js';
 import { randomUUID } from 'node:crypto';
-
 import {
   createCoinbasePriceSource,
   createCoinGeckoDemoHttpClient,
@@ -10,8 +10,7 @@ import {
   type HttpClient,
 } from '@coqui/adapters';
 import {
-  SystemClock,
-  NEGATIVE_FINDINGS,
+  SystemClock, NEGATIVE_FINDINGS,
   NEGATIVE_FINDING_LEDGER_NOTE,
   planAutoRebalance,
   calculatePaperPerformance,
@@ -70,6 +69,7 @@ import { createChartExtensionHandlers, createChartSnapshotHandlers, createChartW
 import { createAccountPreferenceHandlers } from './account-preference-handlers.js';
 import { CoinbaseMarketStreamService } from './coinbase-market-stream.js';
 import { createHistoricalCoinbaseCandleSource } from './coinbase-candle-source.js';
+import { createMlSignalRuntime } from './ml-signal-runtime.js';
 import { createCoinbaseMarketDiagnostics } from './coinbase-market-diagnostics.js';
 import { createCoinbaseSyncHandlers, lastCoinbaseSyncAtMs } from './coinbase-handlers.js';
 import { createConnectionHandlers, type ConnectionFileSelection } from './connection-handlers.js';
@@ -216,19 +216,18 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   const statusRail = new StatusRailService({ database, clock });
   const profileReadiness = new ProfileReadinessService(database, clock);
   const exploratoryCampaigns = new ExploratoryPaperCampaignService(database);
-  const paperInstruments = () => resolvePaperInstruments(options.profileId, database);
-
-  // Market data and holdings are refreshed before each synchronous paper tick.
-  const paperMarket = createPaperMarketFeed({
+  const paperInstruments = () => resolvePaperInstruments(options.profileId, database), paperMarket = createPaperMarketFeed({
     database,
     http,
     instruments: paperInstruments,
     bars: (instrument, lookbackDays, nowMs) => candles.dailyBars(instrument, lookbackDays, nowMs),
     onUnexpectedError: report,
   });
-  const parallel = createParallelPaperRuntime({ profileId: options.profileId, database, clock, http,
+  const widerUniverse = createWiderUniverseRuntime({ profileId: options.profileId, database, clock, http, candleSource: historicalCandles, onUnexpectedError: report, ...(options.secrets === undefined ? {} : { secrets: options.secrets }) });
+  const mlSignal = createMlSignalRuntime({ profileId: options.profileId, database, candleSource: historicalCandles, onUnexpectedError: report }), parallel = createParallelPaperRuntime({ profileId: options.profileId, database, clock, http,
     bars: (instrument, lookbackDays, nowMs) => candles.dailyBars(instrument, lookbackDays, nowMs),
-    onUnexpectedError: report, ...(options.secrets === undefined ? {} : { secrets: options.secrets }) });
+    onUnexpectedError: report, mlSignal, widerUniverse, breakout: createBreakoutRuntime({ profileId: options.profileId, database, clock, candleSource: historicalCandles, onUnexpectedError: report }),
+    rangeRotation: createRangeRotationRuntime({ profileId: options.profileId, database, clock, onUnexpectedError: report }), marketSelector: createMarketSelectorRuntime({ profileId: options.profileId, database, clock, onUnexpectedError: report }), ...(options.secrets === undefined ? {} : { secrets: options.secrets }) });
 
   const notifications = options.notifier === undefined
     ? null
@@ -280,14 +279,13 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
         profileId: options.profileId, hostId, onUnexpectedError: report, research: researchHost,
         async prepare(nowMs) {
           await paperMarket.refresh(nowMs);
-          await parallel.refreshIfActive(nowMs);
           liveMarket.configure(paperInstruments().map((instrument) => instrument.productId));
           paperHoldings = (await portfolio.portfolioView()).holdings;
           // Deliver alerts raised by this refresh in the same tick.
           notifications?.deliver(nowMs);
         },
         paper: paperRunDependencies,
-        parallelPaper: parallel.service,
+        parallelPaper: parallel,
       });
   };
   if (options.disableScheduler !== true) startScheduler();

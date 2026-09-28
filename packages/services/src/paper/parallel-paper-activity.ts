@@ -10,6 +10,8 @@ const RECOVERABLE_TRANSIENT_REASONS = new Set([
   'market_fetch_failed', 'invalid_market_data', 'market_alignment_failed',
   'insufficient_history', 'stale_market_data', 'stale_product_rules',
   'credentials_unavailable', 'secret_store_unavailable',
+  'stale_alpaca_quote', 'invalid_alpaca_quote', 'alpaca_invalid_response',
+  'alpaca_unavailable', 'alpaca_rate_limited',
 ]);
 
 export function isRecoverableParallelTransientPause(reason: unknown): boolean {
@@ -88,10 +90,19 @@ export function projectParallelPaperActivity(events: readonly ParallelPaperEvent
       case 'intraday_complete': return item(event.detail['orderCount'] === 0 ? 'no_trade' : 'complete',
         event.detail['orderCount'] === 0 ? 'No intraday order needed' : 'Intraday Alpaca pass complete',
         `${String(event.detail['orderCount'])} paper orders · slot ${String(event.detail['slot'])} UTC`);
+      case 'ml_target': return item('ml', event.detail['applied'] === true
+        ? 'ML target adjustment applied' : 'ML signal recorded in shadow',
+      `Slot ${String(event.detail['slot'])} UTC · gate ${String(event.detail['gate'])} · ${String(event.detail['reason']).replaceAll('_', ' ')}`);
+      case 'ml_wait': return item('ml', 'Waiting briefly for the closed-hour ML signal',
+        `Slot ${String(event.detail['slot'])} UTC · TrendVol will remain the target if the signal is still unavailable`);
       case 'external_intent': return item('intent', `Planned Alpaca paper ${side} · ${symbol}`, `${qty} units · client ID ${id}`);
       case 'submit_attempt': return item('submission', `Submitting Alpaca paper ${side} · ${symbol}`, `Client ID ${id}; Alpaca acknowledgement pending`);
       case 'external_order': return item('order', `Alpaca order ${String(event.detail['status']).replaceAll('_', ' ')} · ${symbol}`,
         `${side} ${qty} units · filled ${String(event.detail['filledQty'])} · client ID ${id}`, orderId);
+      case 'external_fee': return item('fee', 'Alpaca reported fee activity',
+        `${String(event.detail['activityType'])} · ${String(event.detail['symbol'] ?? 'USD')} · quantity ${String(event.detail['quantity'] ?? 'unreported')} · cash ${String(event.detail['netAmount'] ?? 'unreported')} · account-level attribution`, orderId);
+      case 'reconciliation_error': return item('retry', 'Alpaca reconciliation read failed',
+        `${String(event.detail['reason'])} · original pause retained`);
       case 'external_fill': {
         const related = orders.get(String(event.detail['orderId']));
         return item('fill', `Alpaca paper fill · ${String(event.detail['symbol'] ?? '')}`,
@@ -102,7 +113,11 @@ export function projectParallelPaperActivity(events: readonly ParallelPaperEvent
         return item(noTrade ? 'no_trade' : 'complete', noTrade ? 'No Alpaca order needed' : 'Alpaca order pass complete',
           noTrade ? `Targets held within the drift and minimum-trade rules for ${eventDay}` : `All planned Alpaca orders filled for ${eventDay}`);
       }
-      case 'paused': return item('paused', 'New Alpaca orders paused', String(event.detail['reason']).replaceAll('_', ' '));
+      case 'paused': return item('paused', 'New Alpaca orders paused', [
+        String(event.detail['reason']).replaceAll('_', ' '),
+        ...(event.detail['operation'] === undefined ? [] : [`Alpaca ${String(event.detail['operation']).replaceAll('_', ' ')}`]),
+        ...(event.detail['httpStatus'] === undefined ? [] : [`HTTP ${String(event.detail['httpStatus'])}`]),
+      ].join(' · '));
       case 'resumed': return item('resumed', 'Alpaca paper experiment resumed', 'Daily checks may submit new paper orders');
       case 'stopped': return item('stopped', 'Alpaca paper experiment stopped', 'Existing paper holdings remain in Alpaca');
       default: return [];

@@ -6,6 +6,7 @@ export type CoinbaseProductSnapshot = Readonly<{
   status: string; tradingDisabled: boolean; cancelOnly: boolean;
   limitOnly: boolean; postOnly: boolean; baseIncrement: string;
   quoteIncrement: string; quoteMinSize: string;
+  baseMinSize?: string; auctionMode?: boolean; isDisabled?: boolean;
 }>;
 export type CoinbaseBookSnapshot = Readonly<{
   bids: readonly CoinbaseBookLevel[]; asks: readonly CoinbaseBookLevel[]; observedAtMs: number;
@@ -68,9 +69,15 @@ export function parseCoinbaseProduct(value: unknown, productId: string): Coinbas
   const quoteIncrement = decimal(product['quote_increment']);
   const quoteMinSize = decimal(product['quote_min_size']);
   if (baseIncrement === null || quoteIncrement === null || quoteMinSize === null) return null;
+  const baseMinSize = product['base_min_size'] === undefined ? undefined : decimal(product['base_min_size']);
+  if (baseMinSize === null || ['auction_mode', 'is_disabled'].some((key) =>
+    product[key] !== undefined && typeof product[key] !== 'boolean')) return null;
   return { status: product['status'], tradingDisabled: product['trading_disabled'],
     cancelOnly: product['cancel_only'], limitOnly: product['limit_only'],
-    postOnly: product['post_only'], baseIncrement, quoteIncrement, quoteMinSize };
+    postOnly: product['post_only'], baseIncrement, quoteIncrement, quoteMinSize,
+    ...(baseMinSize === undefined ? {} : { baseMinSize }),
+    ...(product['auction_mode'] === undefined ? {} : { auctionMode: product['auction_mode'] as boolean }),
+    ...(product['is_disabled'] === undefined ? {} : { isDisabled: product['is_disabled'] as boolean }) };
 }
 
 export function parseCoinbaseBook(value: unknown, productId: string, nowMs: number): CoinbaseBookSnapshot | null {

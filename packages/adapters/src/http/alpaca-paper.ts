@@ -1,3 +1,4 @@
+import { alpacaUniverseSymbols, parseAlpacaUniverseAssets } from './alpaca-universe.js';
 /** Alpaca Trading API client. The host is intentionally not configurable: paper only. */
 export const ALPACA_PAPER_ORIGIN = 'https://paper-api.alpaca.markets/v2' as const;
 const ALPACA_CRYPTO_DATA_ORIGIN = 'https://data.alpaca.markets' as const;
@@ -44,6 +45,9 @@ export interface AlpacaPaperActivity {
   readonly qty?: string;
   readonly price?: string;
   readonly transaction_time?: string;
+  readonly date?: string;
+  readonly net_amount?: string;
+  readonly status?: string;
 }
 
 export interface AlpacaPaperAsset {
@@ -55,7 +59,8 @@ export interface AlpacaPaperAsset {
 }
 
 export class AlpacaPaperError extends Error {
-  constructor(readonly code: 'unauthorized' | 'forbidden' | 'not_found' | 'rate_limited' | 'unavailable' | 'invalid_response') {
+  constructor(readonly code: 'unauthorized' | 'forbidden' | 'not_found' | 'rate_limited' | 'unavailable' | 'invalid_response',
+    readonly operation: string = 'unknown', readonly httpStatus: number | null = null) {
     super(`Alpaca paper ${code}`);
   }
 }
@@ -68,7 +73,7 @@ export function createAlpacaPaperClient(credentials: AlpacaPaperCredentials, fet
     throw new AlpacaPaperError('unauthorized');
   }
 
-  async function request<T>(path: string, options: { method?: 'GET' | 'POST' | 'DELETE'; body?: unknown; data?: boolean } = {}): Promise<T> {
+  async function request<T>(path: string, options: { method?: 'GET' | 'POST' | 'DELETE'; body?: unknown; data?: boolean; operation: string }): Promise<T> {
     // Callers supply only relative paths assembled in this module.
     if (!path.startsWith('/') || path.startsWith('//')) throw new AlpacaPaperError('invalid_response');
     let response: Response;
@@ -82,29 +87,32 @@ export function createAlpacaPaperClient(credentials: AlpacaPaperCredentials, fet
         },
         ...(options.body === undefined ? {} : { body: JSON.stringify(options.body) }),
         cache: 'no-store',
+        signal: AbortSignal.timeout(15_000),
       });
     } catch {
-      throw new AlpacaPaperError('unavailable');
+      throw new AlpacaPaperError('unavailable', options.operation);
     }
     if (!response.ok) {
       const code = response.status === 401 ? 'unauthorized' : response.status === 403 ? 'forbidden'
         : response.status === 404 ? 'not_found' : response.status === 429 ? 'rate_limited' : 'unavailable';
-      throw new AlpacaPaperError(code);
+      throw new AlpacaPaperError(code, options.operation, response.status);
     }
     if (response.status === 204) return undefined as T;
-    try { return await response.json() as T; } catch { throw new AlpacaPaperError('invalid_response'); }
+    try { return await response.json() as T; } catch { throw new AlpacaPaperError('invalid_response', options.operation, response.status); }
   }
 
   return Object.freeze({
-    account: () => request<AlpacaPaperAccount>('/account'),
-    positions: () => request<AlpacaPaperPosition[]>('/positions'),
-    orders: (status: 'open' | 'all' = 'open') => request<AlpacaPaperOrder[]>(`/orders?status=${status}&limit=500`),
-    orderByClientId: (clientOrderId: string) => request<AlpacaPaperOrder>(`/orders:by_client_order_id?client_order_id=${encodeURIComponent(clientOrderId)}`),
-    asset: (symbol: string) => request<AlpacaPaperAsset>(`/assets/${encodeURIComponent(symbol)}`),
-    latestCryptoQuotes: () => request<unknown>('/v1beta3/crypto/us/latest/quotes?symbols=BTC%2FUSD%2CETH%2FUSD%2CLTC%2FUSD', { data: true }),
-    activities: (after: string, pageToken?: string) => request<AlpacaPaperActivity[]>(`/account/activities/FILL?direction=asc&page_size=100&after=${encodeURIComponent(after)}${pageToken === undefined ? '' : `&page_token=${encodeURIComponent(pageToken)}`}`),
+    account: () => request<AlpacaPaperAccount>('/account', { operation: 'account' }),
+    positions: () => request<AlpacaPaperPosition[]>('/positions', { operation: 'positions' }),
+    orders: (status: 'open' | 'all' = 'open') => request<AlpacaPaperOrder[]>(`/orders?status=${status}&limit=500`, { operation: 'orders' }),
+    orderByClientId: (clientOrderId: string) => request<AlpacaPaperOrder>(`/orders:by_client_order_id?client_order_id=${encodeURIComponent(clientOrderId)}`, { operation: 'order_lookup' }),
+    asset: (symbol: string) => request<AlpacaPaperAsset>(`/assets/${encodeURIComponent(symbol)}`, { operation: 'asset' }),
+    latestCryptoQuotes: (symbols: readonly string[] = ['BTC/USD', 'ETH/USD', 'LTC/USD']) => request<unknown>(`/v1beta3/crypto/us/latest/quotes?symbols=${alpacaUniverseSymbols(symbols)}`, { data: true, operation: 'quote' }),
+    cryptoAssets: async () => parseAlpacaUniverseAssets(await request<unknown>('/assets?asset_class=crypto', { operation: 'assets' })),
+    latestCryptoOrderbooks: (symbols: readonly string[]) => request<unknown>(`/v1beta3/crypto/us/latest/orderbooks?symbols=${alpacaUniverseSymbols(symbols)}`, { data: true, operation: 'orderbook' }),
+    activities: (after: string, pageToken?: string) => request<AlpacaPaperActivity[]>(`/account/activities?activity_types=FILL%2CCFEE%2CFEE&direction=asc&page_size=100&after=${encodeURIComponent(after)}${pageToken === undefined ? '' : `&page_token=${encodeURIComponent(pageToken)}`}`, { operation: 'activities' }),
     submit: (order: { readonly symbol: string; readonly side: 'buy' | 'sell'; readonly qty: string; readonly client_order_id: string }) =>
-      request<AlpacaPaperOrder>('/orders', { method: 'POST', body: { ...order, type: 'market', time_in_force: 'gtc' } }),
-    cancel: (orderId: string) => request<undefined>(`/orders/${encodeURIComponent(orderId)}`, { method: 'DELETE' }),
+      request<AlpacaPaperOrder>('/orders', { operation: 'submit', method: 'POST', body: { ...order, type: 'market', time_in_force: 'gtc' } }),
+    cancel: (orderId: string) => request<undefined>(`/orders/${encodeURIComponent(orderId)}`, { operation: 'cancel', method: 'DELETE' }),
   });
 }

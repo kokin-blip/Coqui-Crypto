@@ -190,6 +190,12 @@ describe('authenticated Coinbase candles', () => {
       NOW - 6 * 60_000, NOW);
     expect(display.ok && display.bars).toHaveLength(1);
     expect(sourceEvents).toEqual(['public', 'public']);
+    const research = await source.researchHourlyWindow(BTC, NOW - DAY - 6 * 60_000,
+      NOW - 6 * 60_000, NOW);
+    expect(research).toMatchObject({ ok: true, source: 'public' });
+    expect(sourceEvents).toEqual(['public', 'public', 'public']);
+    expect(await source.researchHourlyWindow(BTC, NOW - 301 * 3_600_000,
+      NOW, NOW)).toEqual({ ok: false });
     database.close();
   });
 });

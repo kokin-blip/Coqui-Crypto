@@ -77,6 +77,10 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
     if (running) return;
     running = true;
     try {
+      // The narrow Alpaca window must not wait behind local portfolio/research work.
+      if (options.parallelPaper !== undefined) {
+        try { await options.parallelPaper.tick(); } catch (error) { report('parallel_paper_tick', error); }
+      }
       if (options.prepare !== undefined) {
         try {
           await options.prepare(options.clock.nowMs());
@@ -87,7 +91,6 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
         }
       }
       await scheduler?.tick(tasks);
-      if (options.parallelPaper !== undefined) await options.parallelPaper.tick();
       if (options.research !== undefined) await options.research.tick();
     } catch (error) {
       report('scheduler_tick', error);

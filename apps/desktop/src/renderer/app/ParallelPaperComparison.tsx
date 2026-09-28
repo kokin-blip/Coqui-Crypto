@@ -28,7 +28,10 @@ function stateLabel(data: Status, dailyWindowOpen: boolean): string {
     case 'reconciled': return 'Daily pass reconciled · monitoring intraday';
     case 'intraday': return 'Monitoring intraday paper rebalances';
     case 'paused': return 'Paused by you';
-    case 'attention': return data.state === 'paused' ? 'Needs attention' : 'Scheduler check overdue';
+    case 'attention': return data.state === 'paused'
+      ? ['alpaca_unavailable', 'alpaca_rate_limited'].includes(data.lastReason ?? '')
+        ? 'Retrying Alpaca connection' : 'Needs attention'
+      : 'Scheduler check overdue';
     case 'stopped': return 'Stopped';
   }
 }
@@ -49,7 +52,7 @@ export function ParallelPaperComparison({ client }: { readonly client: CoquiClie
   const status = useChannel(client, 'parallel.paper.status', {});
   return <section className="panel parallel-paper-activity" aria-labelledby="parallel-comparison-heading">
     <div className="panel-heading"><div><h2 id="parallel-comparison-heading">Alpaca paper activity</h2>
-      <p className="muted">TrendVol v4.2 daily targets · Alpaca paper rebalance checks every four hours</p></div>
+      <p className="muted">TrendVol v4.2 daily targets · ML proposals remain in shadow during the execution study</p></div>
       <a href="https://app.alpaca.markets/paper/dashboard/overview" target="_blank" rel="noreferrer">Open Alpaca paper dashboard</a></div>
     {status.kind === 'loading' && <SurfaceState kind="loading" title="Reading Alpaca paper activity" compact />}
     {status.kind !== 'loading' && status.kind !== 'ready' && <SurfaceState kind="error"
@@ -76,7 +79,9 @@ function ActivityContent({ data }: { readonly data: Status }): React.JSX.Element
       <span>Last daily decision: {timestamp(data.lastDecisionAtMs)}</span>
     </div>
     <p className="muted">Daily targets update from completed Coinbase bars. At 04:00, 08:00, 12:00, 16:00, and 20:00 UTC, Coqui can rebalance the Alpaca paper account when fresh Alpaca quotes show at least 1% portfolio drift and a $25 trade. No price move means no order.</p>
-    {data.lastReason !== null && <SurfaceState kind="blocked" title="New Alpaca orders paused"
+    {data.lastReason !== null && <SurfaceState kind="blocked" title={
+      ['alpaca_unavailable', 'alpaca_rate_limited'].includes(data.lastReason)
+        ? 'Alpaca read failed · retrying on the next check' : 'New Alpaca orders paused'}
       detail={data.lastReason.replaceAll('_', ' ')} compact />}
     {data.runtimeState === 'attention' && data.state === 'active' && <SurfaceState kind="blocked"
       title="Scheduler has not checked recently" detail="Keep Coqui open and inspect the local scheduler before assuming another order will be sent." compact />}
@@ -87,6 +92,26 @@ function ActivityContent({ data }: { readonly data: Status }): React.JSX.Element
       <ul>{decision.targets.map((target) => <li key={target.symbol}>{target.symbol} <strong>{target.weightPct}%</strong></li>)}</ul>
       {data.filterSummary.observedDecisions > 0 && <p className="muted">Across {data.filterSummary.observedDecisions} recorded daily decisions: negative momentum {data.filterSummary.negativeMomentumDays} days · asset volatility scaling {data.filterSummary.assetVolScaledDays} days · portfolio volatility target {data.filterSummary.portfolioVolScaledDays} days · trend cap {data.filterSummary.trendCapDays} days.</p>}
     </div>}
+    <section className="parallel-paper-decision" aria-label="ML signal worker">
+      <h3>ML signal worker · {data.mlSignal.gate === 'qualified' ? data.mlSignal.predictedAtMs === null
+        ? 'qualified · awaiting fresh signal' : 'research qualified · shadow only'
+        : data.mlSignal.gate === 'unqualified' ? 'shadow only' : 'collecting hourly history'}</h3>
+      <p className="muted">Version {data.mlSignal.version ?? 'pending'} · {data.mlSignal.reason.replaceAll('_', ' ')}.
+        Predictions are proposals; only Alpaca order acknowledgments and fills confirm paper activity.</p>
+      {data.mlSignal.lastSlot !== null && <><p>Latest slot {data.mlSignal.lastSlot} UTC · {data.mlSignal.lastApplied
+        ? 'ML target applied' : 'TrendVol target retained'} · {data.mlSignal.lastReason?.replaceAll('_', ' ')}</p>
+        <table><thead><tr><th>Asset</th><th>TrendVol</th><th>ML proposal</th><th>Paper target</th></tr></thead>
+          <tbody>{data.mlSignal.lastBaseline.map((item, index) => <tr key={item.symbol}>
+            <td>{item.symbol}</td><td>{item.weightPct}%</td>
+            <td>{data.mlSignal.lastProposed[index]?.weightPct ?? item.weightPct}%</td>
+            <td>{data.mlSignal.lastCombined[index]?.weightPct ?? item.weightPct}%</td>
+          </tr>)}</tbody></table></>}
+      {data.mlSignal.evidence !== null && <p className="muted">Historical holdout: {data.mlSignal.evidence.holdoutSlots} four-hour checks ·
+        modeled net lift {data.mlSignal.evidence.liftPct.toFixed(2)} percentage points ·
+        2× cost stress lift {data.mlSignal.evidence.stressLiftPct.toFixed(2)} points ·
+        95% bootstrap interval {data.mlSignal.evidence.lift95LowPct.toFixed(2)} to {data.mlSignal.evidence.lift95HighPct.toFixed(2)} points.
+        These are backtest estimates, not Alpaca paper fills.</p>}
+    </section>
     <div className="parallel-paper-timeline"><h3>Recorded activity</h3>
       {data.activity.length === 0 ? <p className="muted">No daily decision recorded yet. Coqui evaluates the latest completed Coinbase bar while open. Daily orders use the 00:00–00:15 UTC window; later intraday checks can use the same target.
         {data.lastCheckAtMs !== null && (window.open

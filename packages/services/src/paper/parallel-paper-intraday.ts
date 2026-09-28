@@ -1,10 +1,11 @@
 import { Decimal } from 'decimal.js';
 
 import { AlpacaPaperError, type AlpacaPaperAsset, createAlpacaPaperClient } from '@coqui/adapters';
-import { instrumentKey } from '@coqui/core';
+import { instrumentKey, proposeMlTarget } from '@coqui/core';
 import type { ParallelPaperEvent } from '@coqui/storage';
 
 import { PARALLEL_INSTRUMENTS, PARALLEL_SYMBOLS } from './parallel-signal.js';
+import type { MlSignalSnapshot } from './parallel-ml-worker.js';
 
 type Client = ReturnType<typeof createAlpacaPaperClient>;
 type Append = (kind: string, key: string, detail: Record<string, unknown>) => void;
@@ -19,11 +20,13 @@ function amount(value: unknown, code = 'invalid_amount'): Decimal {
   return result;
 }
 
-function quotes(raw: unknown, nowMs: number): { prices: Record<string, Decimal>; observedAtMs: number } {
+export function parallelQuotes(raw: unknown, nowMs: number): { prices: Record<string, Decimal>;
+  sides: Record<string, { bid: string; ask: string; atMs: number }>; observedAtMs: number } {
   if (typeof raw !== 'object' || raw === null || !('quotes' in raw) ||
       typeof raw.quotes !== 'object' || raw.quotes === null) throw new Error('invalid_alpaca_quote');
   const source = raw.quotes as Record<string, unknown>;
   const observedAt: number[] = [];
+  const sides: Record<string, { bid: string; ask: string; atMs: number }> = {};
   const prices = Object.fromEntries(SYMBOLS.map((symbol) => {
     const quote = source[`${symbol.slice(0, -3)}/USD`];
     if (typeof quote !== 'object' || quote === null || !('bp' in quote) || !('ap' in quote) || !('t' in quote)) {
@@ -34,9 +37,10 @@ function quotes(raw: unknown, nowMs: number): { prices: Record<string, Decimal>;
     if (!bid.isPositive() || ask.lessThan(bid) || !Number.isFinite(atMs) ||
         nowMs - atMs > 60_000 || atMs - nowMs > 5_000) throw new Error('stale_alpaca_quote');
     observedAt.push(atMs);
+    sides[symbol] = { bid: bid.toString(), ask: ask.toString(), atMs };
     return [symbol, bid.plus(ask).div(2)];
   })) as Record<string, Decimal>;
-  return { prices, observedAtMs: Math.min(...observedAt) };
+  return { prices, sides, observedAtMs: Math.min(...observedAt) };
 }
 
 function slotAt(nowMs: number): string | null {
@@ -59,11 +63,13 @@ function sizedQuantity(value: Decimal, asset: AlpacaPaperAsset): Decimal {
 /** Rebalance the current completed-bar target at most once per four-hour paper slot. */
 export async function executeParallelIntraday(input: {
   readonly nowMs: number;
+  readonly now?: () => number;
   readonly experimentId: string;
   readonly decision: ParallelPaperEvent;
   readonly events: () => readonly ParallelPaperEvent[];
   readonly append: Append;
   readonly client: Client;
+  readonly mlSignal?: MlSignalSnapshot | null;
 }): Promise<void> {
   const slot = slotAt(input.nowMs);
   if (slot === null) return;
@@ -76,7 +82,37 @@ export async function executeParallelIntraday(input: {
       policy: 'daily-target-four-hour-rebalance-v1', driftBandPct: '1', minimumTradeUsd: '25',
       slotsUtc: ['04:00', '08:00', '12:00', '16:00', '20:00'] });
   }
-  const weights = input.decision.detail['weights'] as Record<string, number>;
+  const baseline = input.decision.detail['weights'] as Record<string, number>;
+  const existingTarget = events.find((event) => event.kind === 'ml_target' && event.detail['slot'] === slot);
+  if (existingTarget === undefined) {
+    const signal = input.mlSignal;
+    const orderedBaseline = PARALLEL_INSTRUMENTS.map((instrument) => Number(baseline[instrumentKey(instrument)] ?? 0));
+    const fresh = signal?.predictedAtMs === Date.parse(`${slot}:00:00Z`) &&
+      signal.prediction !== null && signal.prediction.length === 3 &&
+      signal.prediction.every(Number.isFinite);
+    let proposal: ReturnType<typeof proposeMlTarget> | null = null;
+    let invalidProposal = false;
+    if (fresh) {
+      try { proposal = proposeMlTarget(orderedBaseline, signal.prediction!); }
+      catch { invalidProposal = true; }
+    }
+    const applied = false; // Execution study: preserve all ML research in shadow.
+    const weights = Object.fromEntries(PARALLEL_INSTRUMENTS.map((instrument, index) =>
+      [instrumentKey(instrument), orderedBaseline[index]!]));
+    input.append('ml_target', `ml-target:${slot}`, { slot, modelVersion: signal?.version ?? null,
+      modelHash: signal?.modelHash ?? null, datasetHash: signal?.datasetHash ?? null,
+      predictedAtMs: fresh ? signal.predictedAtMs : null,
+      prediction: fresh ? signal.prediction : null,
+      gate: signal?.gate ?? 'collecting',
+      reason: signal?.gate === 'qualified' ? 'execution_study_shadow_only' : invalidProposal ? 'ml_prediction_invalid' : !fresh ? 'ml_prediction_unavailable_or_stale' :
+        signal!.reason,
+      baselineWeights: baseline, proposedWeights: proposal === null ? baseline :
+        Object.fromEntries(PARALLEL_INSTRUMENTS.map((instrument, index) =>
+          [instrumentKey(instrument), proposal.weights[index]!])),
+      combinedWeights: weights, expectedNetImprovement: proposal?.expectedNetImprovement ?? null,
+      applied });
+  }
+  const weights = baseline;
   const hasPending = events.some((event) => event.kind === 'external_intent' &&
     event.detail['slot'] !== slot &&
     !events.some((other) => other.kind === 'external_order' &&
@@ -86,16 +122,17 @@ export async function executeParallelIntraday(input: {
     .map((event) => event.detail['clientOrderId']));
   if (open.some((order) => !knownIds.has(order.client_order_id))) throw new Error('unexpected_alpaca_order');
   if (hasPending || open.length > 0) return;
-  let quoteRead: ReturnType<typeof quotes>;
-  try { quoteRead = quotes(await input.client.latestCryptoQuotes(), input.nowMs); }
+  let quoteRead: ReturnType<typeof parallelQuotes>;
+  try { quoteRead = parallelQuotes(await input.client.latestCryptoQuotes(), input.nowMs); }
   catch (error) {
     const reason = error instanceof AlpacaPaperError ? `alpaca_quote_${error.code}`
       : error instanceof Error && /^[a-z_]+$/u.test(error.message) ? error.message : 'alpaca_quote_unavailable';
     input.append('intraday_skipped', `intraday-skip:${slot}:${reason}`, { slot, reason });
     return;
   }
-  input.append('intraday_check', `intraday-check:${slot}`, { slot, decisionDay,
-    quoteSource: 'alpaca_crypto_us', quoteAtMs: quoteRead.observedAtMs, driftBandPct: '1' });
+  input.append('intraday_check', `intraday-check:${slot}:${input.nowMs}`, { slot, decisionDay,
+    quoteSource: 'alpaca_crypto_us', quoteAtMs: quoteRead.observedAtMs,
+    quotes: quoteRead.sides, targetWeights: weights, driftBandPct: '1' });
   const prices = quoteRead.prices;
   const planStage = async (stage: 'sell' | 'buy'): Promise<boolean> => {
     const existing = input.events().find((event) => event.kind === 'intraday_plan' &&
@@ -128,7 +165,25 @@ export async function executeParallelIntraday(input: {
         planned.push({ symbol, side: stage, qty: qty.toString(),
           clientOrderId: `coqui-${input.experimentId.slice(0, 12)}-${slot.replaceAll(/[^0-9]/gu, '')}-${stage}-${symbol}` });
       }
-      input.append('intraday_plan', `intraday-plan:${slot}:${stage}`, { slot, stage, count: planned.length, orders: planned });
+      const diagnostics = planned.map((order) => {
+        const midpoint = prices[order.symbol]!;
+        const { bid, ask } = quoteRead.sides[order.symbol]!;
+        const halfSpread = new Decimal(ask).minus(bid).div(2);
+        const notional = new Decimal(order.qty).mul(midpoint);
+        const entryCost = new Decimal(order.qty).mul(halfSpread).plus(notional.mul('0.0025'));
+        const entryCostPct = entryCost.div(notional).mul(100);
+        return { clientOrderId: order.clientOrderId, symbol: order.symbol,
+          bid, ask, midpoint: midpoint.toString(), targetWeight: weights[
+            instrumentKey(PARALLEL_INSTRUMENTS.find((item) => item.productId.replace('-', '') === order.symbol)!)] ?? 0,
+          expectedTakerFeeUsd: notional.mul('0.0025').toFixed(2),
+          expectedEntryCostUsd: entryCost.toFixed(2), expectedEntryCostPct: entryCostPct.toFixed(3),
+          shadowCostScreen: entryCostPct.greaterThan('0.5') ? 'skip' : 'allow' };
+      });
+      input.append('intraday_plan', `intraday-plan:${slot}:${stage}`, { slot, stage, count: planned.length,
+        orders: planned, diagnostics, accountBefore: { equityUsd: account.equity, cashUsd: account.cash,
+          positions: positions.map((position) => ({ symbol: position.symbol,
+            quantity: position.qty, marketValueUsd: position.market_value })) },
+        shadowCostScreenVersion: 'one_way_half_spread_plus_taker_fee_0.5pct_v1' });
     } else {
       planned = existing.detail['orders'] as typeof planned;
     }
@@ -140,6 +195,10 @@ export async function executeParallelIntraday(input: {
       const clientOrderId = String(intent.detail['clientOrderId']);
       if (input.events().some((event) => event.kind === 'submit_attempt' &&
           event.detail['clientOrderId'] === clientOrderId)) continue;
+      if (slotAt(input.now?.() ?? input.nowMs) !== slot) return false;
+      await recordParallelPreOrder(input.client, input.now ?? (() => input.nowMs), input.append,
+        { clientOrderId, symbol: String(intent.detail['symbol']), side: stage, qty: String(intent.detail['qty']) }, weights, slot);
+      if (slotAt(input.now?.() ?? input.nowMs) !== slot) return false;
       input.append('submit_attempt', `attempt:${clientOrderId}`, { clientOrderId, day: slot });
       const order = await input.client.submit({ client_order_id: clientOrderId,
         symbol: String(intent.detail['symbol']), side: stage, qty: String(intent.detail['qty']) });
@@ -157,4 +216,27 @@ export async function executeParallelIntraday(input: {
   if (!await planStage('sell') || !await planStage('buy')) return;
   input.append('intraday_complete', `intraday-complete:${slot}`, { slot, decisionDay,
     orderCount: input.events().filter((event) => event.kind === 'external_intent' && event.detail['slot'] === slot).length });
+}
+
+/** Fresh venue evidence immediately before each submission, including resumed plans. */
+export async function recordParallelPreOrder(client: Client, now: () => number, append: Append,
+  order: { clientOrderId: string; symbol: string; side: 'buy' | 'sell'; qty: string },
+  weights: Record<string, number>, decisionKey: string): Promise<void> {
+  const raw = await client.latestCryptoQuotes();
+  const quote = parallelQuotes(raw, now());
+  const sides = quote.sides[order.symbol]!;
+  const midpoint = quote.prices[order.symbol]!;
+  const notional = midpoint.mul(order.qty);
+  const halfSpread = new Decimal(sides.ask).minus(sides.bid).div(2).mul(order.qty);
+  append('pre_order_quote', `pre-order:${order.clientOrderId}:${now()}`, {
+    ...order, decisionKey, targetWeights: weights, quoteSource: 'alpaca_crypto_us',
+    quoteAtMs: sides.atMs, capturedAtMs: now(), ...sides,
+    midpoint: midpoint.toString(), notionalUsd: notional.toString(),
+    assumedTakerFeeRate: '0.0025', assumedSlippageRate: '0.0015',
+    expectedFeeUsd: notional.mul('0.0025').toString(),
+    expectedHalfSpreadUsd: halfSpread.toString(),
+    expectedSlippageUsd: notional.mul('0.0015').toString(),
+    expectedCostUsd: notional.mul('0.004').plus(halfSpread).toString(),
+    costEvidence: 'assumption_not_booked_fee',
+  });
 }

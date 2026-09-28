@@ -139,6 +139,17 @@ function paperDeps(db: Db, clock: Clock = new FixedClock(T0)): PaperRunLoopDepen
 }
 
 describe('the scheduler finally has a wake-up', () => {
+  it('checks Alpaca before unrelated local preparation and still runs local work after a read failure', async () => {
+    const db = seeded(), clock = new StepClock(T0), order: string[] = [];
+    const runtime = startSchedulerRuntime({ database: db, clock, profileId: PROFILE,
+      paper: paperDeps(db, clock), pollMs: 3_600_000,
+      parallelPaper: { tick: async () => { order.push('alpaca'); throw new Error('read_failed'); } },
+      prepare: async () => { order.push('local'); } });
+    await runtime.tick();
+    expect(order).toEqual(['alpaca', 'local']);
+    runtime.dispose(); db.close();
+  });
+
   it('runs a due paper decision on a driven tick', async () => {
     const db = seeded();
     const clock = new StepClock(T0);

@@ -1,0 +1,22 @@
+{
+  "study": "unchanged-trendvol-execution-v1",
+  "registeredOn": "2026-09-26",
+  "status": "prospective-shadow-only",
+  "developmentStart": "2026-09-27T00:00:00Z",
+  "foldBoundaries": ["2026-09-27T00:00:00Z", "2026-10-17T00:00:00Z", "2026-11-06T00:00:00Z", "2026-11-26T00:00:00Z"],
+  "holdoutStart": "2026-11-26T00:00:00Z",
+  "holdoutEndExclusive": "2026-12-26T00:00:00Z",
+  "candidateIds": ["daily-plus-four-hour", "daily-only", "intraday-band-3pct", "intraday-band-5pct", "entry-cost-screen-0.5pct", "passive-equal-weight", "passive-btc", "cash"],
+  "dailyDriftBand": 0.05,
+  "minimumTradeUsd": 25,
+  "takerFeeRate": 0.0025,
+  "slippageRatePerSide": 0.0015,
+  "spread": "observed Alpaca half-spread per side",
+  "costStressMultiplier": 2,
+  "signal": "unchanged Coqui TrendVol v4.2; identical prior completed Coinbase daily bar and anchor",
+  "selection": "Report every variant in all three chronological development folds. Freeze one winner before opening holdout; require positive net-return lift versus unchanged execution in every fold and drawdown no worse. Otherwise retain baseline.",
+  "holdoutGate": "No automatic adoption. Require positive net lift at base and doubled costs and no worse drawdown versus unchanged execution; report passive comparisons, turnover and missed favorable moves. Owner review plus independent forward evidence required.",
+  "missingData": "Any missing required slot invalidates the fold. Do not impute or extend dates after seeing results.",
+  "limitOrders": "Not evaluated: no historical executable depth/queue tape. Require a separately registered TTL, fill and partial-fill model before a limit trial.",
+  "trialAccounting": "Eight declared variants; synthetic functional tests only so far. All evaluated variants, including failures, must appear in reports. Signal parameters are never optimized."
+}

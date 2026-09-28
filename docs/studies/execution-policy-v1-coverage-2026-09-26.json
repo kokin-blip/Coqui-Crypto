@@ -1,0 +1,56 @@
+{
+  "planHash": "1347b25d1b1dea3abfabd747340d2d89911deaa4f37fd5ff38a652acb7b12b7c",
+  "datasetHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "holdout": "sealed_not_evaluated",
+  "collectedSlots": 0,
+  "folds": [
+    {
+      "start": "2026-09-27T00:00:00Z",
+      "end": "2026-10-17T00:00:00Z",
+      "expectedSlots": 120,
+      "observedSlots": 0,
+      "result": {
+        "status": "incomplete_fold",
+        "results": []
+      },
+      "stress": null
+    },
+    {
+      "start": "2026-10-17T00:00:00Z",
+      "end": "2026-11-06T00:00:00Z",
+      "expectedSlots": 120,
+      "observedSlots": 0,
+      "result": {
+        "status": "incomplete_fold",
+        "results": []
+      },
+      "stress": null
+    },
+    {
+      "start": "2026-11-06T00:00:00Z",
+      "end": "2026-11-26T00:00:00Z",
+      "expectedSlots": 120,
+      "observedSlots": 0,
+      "result": {
+        "status": "incomplete_fold",
+        "results": []
+      },
+      "stress": null
+    }
+  ],
+  "candidateIds": [
+    "daily-plus-four-hour",
+    "daily-only",
+    "intraday-band-3pct",
+    "intraday-band-5pct",
+    "entry-cost-screen-0.5pct",
+    "passive-equal-weight",
+    "passive-btc",
+    "cash"
+  ],
+  "limitations": [
+    "Modeled fills; no queue or depth evidence. Missed fills unknown.",
+    "No policy changes authorized by this report.",
+    "Synthetic tests are not market evidence."
+  ]
+}

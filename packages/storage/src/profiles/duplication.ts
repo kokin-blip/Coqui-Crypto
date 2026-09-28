@@ -198,7 +198,7 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
           DROP TRIGGER host_takeover_history_v1_no_update;
           DROP TRIGGER host_takeover_history_v1_no_delete;
         `);
-        dropResearchDuplicationTriggers(target);
+        const universeRows = dropResearchDuplicationTriggers(target, input.sourceProfileId);
         for (const tableName of tableNames as string[]) {
           const table = quoteIdentifier(tableName);
           const identities = target.prepare(
@@ -450,7 +450,7 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
         target.prepare(
           `DELETE FROM app_settings WHERE key IN (${credentialMetadataKeys.map(() => '?').join(', ')})`,
         ).run(...credentialMetadataKeys);
-        const excludedTransientRowCount = pendingImportRows + scheduleRows + privateAdvisorRows + robinhoodSetupRows + connectionRows;
+        const excludedTransientRowCount = pendingImportRows + scheduleRows + privateAdvisorRows + robinhoodSetupRows + connectionRows + universeRows;
         const excludedTransientRowCountWithRouting = excludedTransientRowCount + routingRows + campaignAuthorityRows + authorityRows;
         if (!Number.isSafeInteger(excludedTransientRowCountWithRouting)) throw new RangeError('Duplication exclusion count overflow.');
         target.exec('COMMIT');

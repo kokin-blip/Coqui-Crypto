@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { createAlpacaPaperHandlers } from '../apps/desktop/src/main/alpaca-paper-handlers.js';
-import { createAlpacaPaperClient, createMemorySecretStore } from '../packages/adapters/src/index.js';
+import { AlpacaPaperError, createAlpacaPaperClient, createMemorySecretStore } from '../packages/adapters/src/index.js';
 import { FixedClock } from '../packages/core/src/index.js';
 import { openDatabase } from '../packages/storage/src/index.js';
 
@@ -11,6 +11,16 @@ const ACCOUNT = { id: 'paper-account-1234', status: 'PAPER_ONLY', currency: 'USD
   cash: '100000', equity: '100000', trading_blocked: false, account_blocked: false };
 
 describe('Alpaca paper boundary', () => {
+  it('classifies provider failures by safe operation and status without exposing request secrets', async () => {
+    const client = createAlpacaPaperClient({ keyId: KEY_ID, secretKey: SECRET }, async () =>
+      new Response('', { status: 503 }));
+    await expect(client.positions()).rejects.toMatchObject({
+      code: 'unavailable', operation: 'positions', httpStatus: 503,
+    } satisfies Partial<AlpacaPaperError>);
+    try { await client.positions(); } catch (error) {
+      expect(JSON.stringify(error)).not.toContain(SECRET);
+    }
+  });
   it('always targets the paper host with the documented header pair', async () => {
     const fetcher = vi.fn(async (...args: Parameters<typeof fetch>) => {
       void args;
@@ -22,12 +32,16 @@ describe('Alpaca paper boundary', () => {
       expect.objectContaining({ headers: expect.objectContaining({
         'APCA-API-KEY-ID': KEY_ID, 'APCA-API-SECRET-KEY': SECRET,
       }) }));
+    expect(fetcher.mock.calls[0]?.[1]?.signal).toBeInstanceOf(AbortSignal);
     await client.orderByClientId('abc-123');
     expect(fetcher.mock.calls[1]?.[0]).toBe('https://paper-api.alpaca.markets/v2/orders:by_client_order_id?client_order_id=abc-123');
     await client.latestCryptoQuotes();
     expect(fetcher.mock.calls[2]?.[0]).toBe('https://data.alpaca.markets/v1beta3/crypto/us/latest/quotes?symbols=BTC%2FUSD%2CETH%2FUSD%2CLTC%2FUSD');
     expect(fetcher.mock.calls[2]?.[1]).toMatchObject({ method: 'GET', headers: {
       'APCA-API-KEY-ID': KEY_ID, 'APCA-API-SECRET-KEY': SECRET } });
+    await client.activities('2026-09-26T00:00:00Z', 'page-2');
+    expect(String(fetcher.mock.calls[3]?.[0])).toContain('activity_types=FILL%2CCFEE%2CFEE');
+    expect(String(fetcher.mock.calls[3]?.[0])).toContain('page_token=page-2');
     expect(fetcher.mock.calls.every((call) => !String(call[0]).includes('https://api.alpaca.markets/'))).toBe(true);
   });
 

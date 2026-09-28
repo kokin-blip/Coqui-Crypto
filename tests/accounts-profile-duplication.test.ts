@@ -23,6 +23,7 @@ import {
   createFileProfileDatabaseDuplicator,
   createFileProfileManifestStore,
   openDatabase,
+  appendUniverseRecord, listUniverseRecords,
   type ProfileDatabaseDuplicator,
   type ProfileManifestStore,
 } from '../packages/storage/src/index.js';
@@ -144,6 +145,28 @@ function createSource(root: string, profileId = 'main'): string {
 }
 
 describe('profile database duplication storage', { timeout: 20_000 }, () => {
+  it('copies universe policy but excludes account evidence, study qualification and shadow history', async () => {
+    const root = temporaryRoot('coqui-universe-duplicate-');
+    const sourcePath = createSource(root);
+    const db = openDatabase(sourcePath);
+    for (const kind of ['policy', 'study', 'observation', 'shadow'] as const) {
+      appendUniverseRecord('main', { kind, key: kind, atMs: 1, body: { kind } }, db);
+    }
+    db.close();
+    const result = await createFileProfileDatabaseDuplicator(root).duplicate({ sourceProfileId: 'main',
+      sourceDbFilename: 'kokintrader.db', targetProfileId: TARGET_ID, targetDbFilename: `wallet-${TARGET_ID}.db` });
+    expect(result.ok).toBe(true);
+    if (!result.ok) throw new Error('duplication failed');
+    expect(result.evidence.excludedTransientRowCount).toBe(14);
+    const target = openDatabase(join(root, `wallet-${TARGET_ID}.db`));
+    expect(listUniverseRecords(TARGET_ID, 'policy', target)).toHaveLength(1);
+    for (const kind of ['study', 'observation', 'shadow'] as const) expect(listUniverseRecords(TARGET_ID, kind, target)).toEqual([]);
+    expect(() => target.exec('DELETE FROM wider_universe_records_v1')).toThrow('immutable');
+    target.close();
+    const original = openDatabase(sourcePath);
+    expect(listUniverseRecords('main', 'study', original)).toHaveLength(1);
+    original.close();
+  });
   it('clones a consistent database and rewrites every discovered profile identity', async () => {
     const root = temporaryRoot('coqui-duplicate-store-');
     const sourcePath = createSource(root);
@@ -160,8 +183,8 @@ describe('profile database duplication storage', { timeout: 20_000 }, () => {
     expect(result).toEqual({
       ok: true,
       evidence: expect.objectContaining({
-        schemaVersion: 78,
-        profileScopedTableCount: 95,
+        schemaVersion: 83,
+        profileScopedTableCount: 102,
         rewrittenRowCount: 13,
         excludedTransientRowCount: 11,
         clearedCredentialMetadataCount: 4,
@@ -226,6 +249,31 @@ describe('profile database duplication storage', { timeout: 20_000 }, () => {
     source.close();
     target.close();
     expect(readdirSync(root).some((name) => name.startsWith('.tmp-duplicate-'))).toBe(false);
+  });
+
+  it('rewrites a registered ML study and its hourly bars without weakening study immutability', async () => {
+    const root = temporaryRoot('coqui-duplicate-ml-study-');
+    const sourcePath = createSource(root);
+    const source = openDatabase(sourcePath);
+    source.prepare(`INSERT INTO ml_signal_hourly_bars_v1
+      (profile_id,product_id,start_ms,open,high,low,close,volume,source,retrieved_at_ms)
+      VALUES ('main','BTC-USD',0,'100','101','99','100','1','authenticated',100)`).run();
+    source.prepare(`INSERT INTO ml_signal_studies_v1
+      (profile_id,candidate_version,registered_at_ms,study_end_ms,dataset_hash,plan_hash,plan_json,result_json)
+      VALUES ('main','trendvol-ml-ridge-v1',100,200,?,?,?,?)`).run(
+      'a'.repeat(64), 'b'.repeat(64), '{}', '{"gate":"unqualified"}');
+    source.close();
+    const result = await createFileProfileDatabaseDuplicator(root).duplicate({
+      sourceProfileId: 'main', sourceDbFilename: 'kokintrader.db',
+      targetProfileId: TARGET_ID, targetDbFilename: `wallet-${TARGET_ID}.db`,
+    });
+    expect(result.ok).toBe(true);
+    const clone = openDatabase(join(root, `wallet-${TARGET_ID}.db`));
+    expect(clone.prepare('SELECT profile_id FROM ml_signal_hourly_bars_v1').get()).toEqual({ profile_id: TARGET_ID });
+    expect(clone.prepare('SELECT profile_id FROM ml_signal_studies_v1').get()).toEqual({ profile_id: TARGET_ID });
+    expect(() => clone.prepare('UPDATE ml_signal_studies_v1 SET result_json=?')
+      .run('{"gate":"qualified"}')).toThrow('immutable');
+    clone.close();
   });
 
   it('rejects cross-profile contamination and never publishes a partial clone', async () => {
@@ -322,8 +370,8 @@ describe('accounts profile duplication service', { timeout: 20_000 }, () => {
           lastOpenedAtMs: 50,
           order: 1,
         },
-        schemaVersion: 78,
-        profileScopedTableCount: 95,
+        schemaVersion: 83,
+        profileScopedTableCount: 102,
         rewrittenRowCount: 13,
         excludedTransientRowCount: 11,
         clearedCredentialMetadataCount: 4,

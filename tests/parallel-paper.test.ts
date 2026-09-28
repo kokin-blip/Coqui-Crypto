@@ -4,7 +4,7 @@ import { createMemorySecretStore, AlpacaPaperError } from '../packages/adapters/
 import { assetExposureKey, connectionAccountSnapshotV2Hash, FixedClock, instrumentKey, profileConnectionV2, sha256Hex,
   type ConnectionAccountSnapshotV2, type DecisionMarketDataset } from '../packages/core/src/index.js';
 import { ParallelPaperService, PARALLEL_INSTRUMENTS, parallelAnchor, parallelDecision,
-  type PaperDecisionPreparation } from '../packages/services/src/index.js';
+  type MlSignalSnapshot, type PaperDecisionPreparation } from '../packages/services/src/index.js';
 import { appendParallelEvent, listParallelEvents, openDatabase, saveConnectionAccountSnapshotV2, saveProfileConnectionV2,
   setSetting } from '../packages/storage/src/index.js';
 
@@ -228,10 +228,38 @@ describe('parallel paper experiment', () => {
     expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'alpaca_unavailable' });
     const experimentId = service.status().experiment!.id;
     expect(listParallelEvents(experimentId, 'main', database).some((event) => event.kind === 'submit_attempt')).toBe(true);
-    service.transition('resumed', '00000000-0000-4000-8000-000000000003');
     await service.tick();
     expect(mock.submit).toHaveBeenCalledTimes(1);
     expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'submission_outcome_unknown' });
+    database.close();
+  });
+
+  it('automatically resumes after an Alpaca read outage and records the failing operation', async () => {
+    const { database, clock, secrets } = await setup();
+    const mock = mockClient();
+    const prepared = { ok: true as const, dataset: dataset(), datasetHash: sha256Hex('data'),
+      latestCompletedStartMs: TODAY - DAY, expectedCompletedStartMs: TODAY - DAY,
+      ruleSnapshotHash: sha256Hex('rules') };
+    let unavailable = true;
+    const service = new ParallelPaperService({ profileId: 'main', database, clock, secrets,
+      preparation: () => prepared, refreshFor: async () => prepared,
+      clientFactory: () => ({ ...mock.client, account: async () => {
+        if (unavailable) throw new AlpacaPaperError('unavailable', 'account', 503);
+        return ACCOUNT;
+      } }) as never, killSwitchEngaged: () => false });
+    unavailable = false;
+    expect((await service.start('alpaca-read-recovery', true)).ok).toBe(true);
+    unavailable = true;
+    await service.tick();
+    expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'alpaca_unavailable' });
+    expect(service.status().events.find((event) => event.kind === 'paused')?.detail).toMatchObject({
+      reason: 'alpaca_unavailable', operation: 'account', httpStatus: 503 });
+    expect(service.summary().activity[0]?.detail).toContain('Alpaca account · HTTP 503');
+    unavailable = false;
+    await service.tick();
+    expect(service.summary()).toMatchObject({ state: 'active', decisionCount: 1 });
+    expect(service.status().events.some((event) => event.kind === 'resumed' &&
+      event.detail['reason'] === 'dependencies_recovered')).toBe(true);
     database.close();
   });
 
@@ -306,6 +334,14 @@ describe('parallel paper experiment', () => {
     expect(service.status().events.some((event) => event.kind === 'daily_window_missed')).toBe(true);
     const firstOrders = mock.submit.mock.calls.length;
     expect(firstOrders).toBeGreaterThan(0);
+    const check = service.status().events.find((event) => event.kind === 'intraday_check');
+    expect(check?.detail['quotes']).toMatchObject({ BTCUSD: { bid: '100', ask: '101' } });
+    expect(check?.detail['targetWeights']).toBeTruthy();
+    const plan = service.status().events.find((event) => event.kind === 'intraday_plan' &&
+      event.detail['stage'] === 'buy');
+    expect(plan?.detail['diagnostics']).toEqual(expect.arrayContaining([expect.objectContaining({
+      symbol: 'BTCUSD', expectedEntryCostPct: '0.748', shadowCostScreen: 'skip',
+    })]));
     await service.tick();
     expect(mock.submit).toHaveBeenCalledTimes(firstOrders);
     clock.set(Date.parse('2026-09-24T12:01:00Z'));
@@ -375,6 +411,42 @@ describe('parallel paper experiment', () => {
     expect(mock.submit).not.toHaveBeenCalled();
     expect(service.summary().activity.some((item) => item.title === 'No intraday order needed')).toBe(true);
     expect(service.status().events.find((event) => event.kind === 'intraday_complete')?.detail['orderCount']).toBe(0);
+    database.close();
+  });
+
+  it('keeps even a qualified ML proposal in shadow and routes unchanged TrendVol targets', async () => {
+    const { database, clock, secrets } = await setup();
+    clock.set(Date.parse('2026-09-24T08:01:00Z'));
+    const mock = mockClient(false, 'filled', () => clock.nowMs());
+    const prepared = { ok: true as const, dataset: dataset(), datasetHash: sha256Hex('data'),
+      latestCompletedStartMs: TODAY - DAY, expectedCompletedStartMs: TODAY - DAY,
+      ruleSnapshotHash: sha256Hex('rules') };
+    const signal: MlSignalSnapshot = { version: 'trendvol-ml-ridge-v1', datasetHash: sha256Hex('hourly'),
+      modelHash: sha256Hex('model'), gate: 'qualified', reason: 'qualified',
+      predictedAtMs: Date.parse('2026-09-24T08:00:00Z'), prediction: [0.2, -0.2, 0.01],
+      proposedWeights: null, baselineWeights: null, expectedNetImprovement: null, evidence: null };
+    const dependencies = { profileId: 'main', database, clock, secrets,
+      preparation: () => prepared, refreshFor: async () => prepared,
+      clientFactory: () => mock.client as never, killSwitchEngaged: () => false,
+      mlSignal: () => signal };
+    const service = new ParallelPaperService(dependencies);
+    expect((await service.start('ml-paper-target', true)).ok).toBe(true);
+    await service.tick();
+    const target = service.status().events.find((event) => event.kind === 'ml_target');
+    expect(target?.detail['applied']).toBe(false);
+    expect(target?.detail['combinedWeights']).toEqual(target?.detail['baselineWeights']);
+    expect(service.summary().activity.some((item) => item.kind === 'ml')).toBe(true);
+    const count = mock.submit.mock.calls.length;
+    await new ParallelPaperService(dependencies).tick();
+    expect(mock.submit).toHaveBeenCalledTimes(count);
+    expect(service.status().events.filter((event) => event.kind === 'ml_target')).toHaveLength(1);
+    clock.set(Date.parse('2026-09-24T12:02:00Z'));
+    await new ParallelPaperService({ ...dependencies, mlSignal: () => {
+      throw new Error('model_unavailable');
+    } }).tick();
+    expect(service.status().status).toBe('active');
+    expect(service.status().events.filter((event) => event.kind === 'ml_target')).toHaveLength(2);
+    expect(service.status().events.at(-1)?.kind).not.toBe('paused');
     database.close();
   });
 });
