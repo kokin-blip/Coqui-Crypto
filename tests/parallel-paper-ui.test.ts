@@ -50,6 +50,9 @@ describe('Alpaca paper activity panel', () => {
         modelHash: null, datasetHash: null, predictedAtMs: null, evidence: null,
         lastSlot: null, lastApplied: null, lastReason: null,
         lastBaseline: [], lastProposed: [], lastCombined: [] },
+      hourlyShadow: { version: 'trendvol-hourly-execution-v1', mode: 'shadow', startMs: null,
+        lastSlotMs: null, observationCount: 0, completeDays: 0,
+        lastModeledOrderCount: 0, lastModeledOrders: [], lastBlockedReasons: [], lastFailureReason: null },
       activity: [{ id: 'a'.repeat(64), atMs: Date.now(), kind: 'no_trade',
         title: 'No intraday order needed', detail: '0 paper orders', alpacaOrderId: null }],
     } };
@@ -60,6 +63,19 @@ describe('Alpaca paper activity panel', () => {
     expect(html).toContain('not execution-matched');
     expect(html).toContain('ML signal worker');
     expect(html).toContain('collecting hourly history');
+    expect(html).toContain('Hourly execution candidate · shadow only');
+    expect(html).toContain('awaiting registration');
+    const shadowReady = mocked.channels['parallel.paper.status'] as { kind: string; value: Record<string, unknown> };
+    mocked.channels['parallel.paper.status'] = { ...shadowReady, value: { ...shadowReady.value,
+      hourlyShadow: { version: 'trendvol-hourly-execution-v1', mode: 'shadow',
+        startMs: Date.now() - 86_400_000, lastSlotMs: Date.now() - 3_600_000,
+        observationCount: 24, completeDays: 1, lastModeledOrderCount: 1,
+        lastModeledOrders: [{ symbol: 'BTCUSD', side: 'buy', quantity: '1', filledQuantity: '0.5', remainingQuantity: '0.5' }],
+        lastBlockedReasons: ['cooldown'], lastFailureReason: 'stale_alpaca_quote' } } };
+    expect(render()).toContain('1 complete 24-hour days');
+    expect(render()).toContain('1 modeled order');
+    expect(render()).toContain('Virtual buy BTCUSD');
+    expect(render()).toContain('Latest shadow read unavailable');
     const current = mocked.channels['parallel.paper.status'] as { kind: string; value: Record<string, unknown> };
     const mlSignal = current.value['mlSignal'] as Record<string, unknown>;
     mocked.channels['parallel.paper.status'] = { ...current, value: { ...current.value,

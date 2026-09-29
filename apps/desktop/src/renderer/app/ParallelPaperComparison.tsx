@@ -112,6 +112,21 @@ function ActivityContent({ data }: { readonly data: Status }): React.JSX.Element
         95% bootstrap interval {data.mlSignal.evidence.lift95LowPct.toFixed(2)} to {data.mlSignal.evidence.lift95HighPct.toFixed(2)} points.
         These are backtest estimates, not Alpaca paper fills.</p>}
     </section>
+    <section className="parallel-paper-decision" aria-label="Hourly execution research">
+      <h3>Hourly execution candidate · shadow only</h3>
+      <p className="muted">The live Alpaca paper policy still uses five four-hour slots. This candidate checks the same completed daily TrendVol target hourly in an independent modeled account; its orders are not sent to Alpaca.</p>
+      <p>Study {data.hourlyShadow.startMs === null ? 'awaiting registration' :
+        <>starts {timestamp(data.hourlyShadow.startMs)} · {data.hourlyShadow.completeDays} complete 24-hour days</>}
+        {' · '}{data.hourlyShadow.observationCount} hourly observations.</p>
+      {data.hourlyShadow.lastSlotMs !== null && <p>Latest shadow check {timestamp(data.hourlyShadow.lastSlotMs)} ·
+        {' '}{data.hourlyShadow.lastModeledOrderCount} modeled {data.hourlyShadow.lastModeledOrderCount === 1 ? 'order' : 'orders'}
+        {data.hourlyShadow.lastBlockedReasons.length > 0 ? ` · blocked: ${data.hourlyShadow.lastBlockedReasons.join(', ')}` : ''}.
+        Modeled fills and costs are research assumptions, not Alpaca activity.</p>}
+      {data.hourlyShadow.lastModeledOrders.length > 0 && <ul>{data.hourlyShadow.lastModeledOrders.map((order, index) =>
+        <li key={`${order.symbol}:${order.side}:${index}`}>Virtual {order.side} {order.symbol}: {order.filledQuantity} filled of {order.quantity} modeled units
+          {Number(order.remainingQuantity) > 0 ? ` · ${order.remainingQuantity} pending` : ''}</li>)}</ul>}
+      {data.hourlyShadow.lastFailureReason !== null && <p className="muted">Latest shadow read unavailable: {data.hourlyShadow.lastFailureReason.replaceAll('_', ' ')}. This does not pause the live TrendVol policy.</p>}
+    </section>
     <div className="parallel-paper-timeline"><h3>Recorded activity</h3>
       {data.activity.length === 0 ? <p className="muted">No daily decision recorded yet. Coqui evaluates the latest completed Coinbase bar while open. Daily orders use the 00:00–00:15 UTC window; later intraday checks can use the same target.
         {data.lastCheckAtMs !== null && (window.open

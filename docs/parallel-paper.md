@@ -19,6 +19,8 @@ The legacy seven-day campaign exercise is only a research record. It does not st
 
 Paper Trading → Overview leads with **Alpaca paper activity**. It shows the most recent scheduler check and completed-bar decision, the TrendVol inputs and target weights, and up to 20 recent recorded events. Planned orders, submission attempts, Alpaca-reported order states, fills, no-trade outcomes, daily window misses, intraday checks, and pauses have distinct labels. Alpaca order IDs can be compared with the linked paper dashboard. A planned or submitted order is not presented as a fill. The status distinguishes waiting for a completed daily bar, an in-progress check, pending order activity, an intraday monitoring state, a user pause, and an attention state. A scheduler check more than three minutes old is marked overdue. The check timestamp is runtime-only and starts empty when Coqui opens; the decision and order history comes from the append-only experiment ledger.
 
+The September 28 owner screenshot showed `Alpaca activity unavailable · invalid_response_payload` after reconciliation read failures had entered the ledger. The service projected those failures as `retry` activity, but the response contract omitted that activity kind; the same omission applied to `fee` rows. The local contract now accepts both and has service-to-contract regression tests. This was a display validation failure, not evidence that the existing Alpaca holdings or ledger were deleted. The installed beta.10 build still needs a replacement build to show the fix. Coinbase market context has a separate request and its unavailable cards in that screenshot do not establish why the Alpaca status failed.
+
 The Overview also shows **Coinbase market context** for BTC-USD, ETH-USD, and
 LTC-USD: authenticated best bid/ask, spread, product state, and bounded book
 availability with separate timestamps. Markets shows up to ten bid and ask
@@ -235,3 +237,26 @@ paper account and record eligibility, data coverage and proposed targets in
 shadow. It cannot submit orders or promote a strategy. See the
 [wider-universe study and operating notes](studies/wider-universe-2026-09-26.md)
 for the point-in-time rule, comparison design, report commands and owner checks.
+
+## Hourly TrendVol execution candidate
+
+The operational Alpaca paper schedule remains the 00:00 daily window and five
+four-hour intraday windows. A separate `trendvol-hourly-execution-v1` shadow
+candidate checks that **same stored completed-daily-bar target** every hour,
+with a two-hour per-asset modeled-order cooldown. It stores immutable quote,
+asset-rule, target-hash, virtual-intent, fill, and blocker evidence. Its virtual
+orders are not Alpaca orders. Paper Trading labels the candidate and its
+coverage separately from actual Alpaca activity.
+
+The [frozen hourly study](studies/trendvol-hourly-execution-v1-2026-09-28.md)
+starts on the next UTC day after registration and uses three 20-day development
+blocks followed by an untouched 30-day holdout. Run `pnpm build` and then
+`node scripts/research-hourly-execution.mjs /path/to/coqui.db` for the read-only
+development report. It requires all 24 hourly observations per comparable day
+and refuses an aggregate fold result when coverage is incomplete. The report
+uses identical starting account snapshots and observations for the current
+four-hour baseline and hourly candidate, including doubled modeled friction.
+It reports observed Alpaca partial-order IDs separately; immediate virtual
+fills are assumptions. The owner must check connected paper-account data and
+prospective coverage before interpreting any result. No automatic promotion
+to paper orders is available.

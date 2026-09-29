@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { createMemorySecretStore, AlpacaPaperError } from '../packages/adapters/src/index.js';
+import { CHANNEL_SCHEMAS } from '../packages/contracts/src/index.js';
 import { assetExposureKey, connectionAccountSnapshotV2Hash, FixedClock, instrumentKey, profileConnectionV2, sha256Hex,
   type ConnectionAccountSnapshotV2, type DecisionMarketDataset } from '../packages/core/src/index.js';
 import { ParallelPaperService, PARALLEL_INSTRUMENTS } from '../packages/services/src/index.js';
@@ -119,6 +120,8 @@ describe('paper execution diagnostics and recovery', () => {
     await service.tick();
     expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'user_action' });
     expect(service.status().events.some((event) => event.kind === 'reconciliation_error')).toBe(true);
+    expect(service.summary().activity.some((item) => item.kind === 'retry')).toBe(true);
+    expect(CHANNEL_SCHEMAS['parallel.paper.status'].response.safeParse(service.summary()).success).toBe(true);
     expect(mock.submit).not.toHaveBeenCalled();
     database.close();
   });
@@ -142,6 +145,8 @@ describe('paper execution diagnostics and recovery', () => {
     const events = service.status().events;
     expect(events.filter((e) => e.kind === 'pre_order_quote')).toHaveLength(3);
     expect(events.filter((e) => e.kind === 'external_fee')).toHaveLength(1);
+    expect(service.summary().activity.some((item) => item.kind === 'fee')).toBe(true);
+    expect(CHANNEL_SCHEMAS['parallel.paper.status'].response.safeParse(service.summary()).success).toBe(true);
     expect(JSON.stringify(events)).not.toContain('must-not-persist-secret');
     for (const intent of events.filter((e) => e.kind === 'external_intent')) {
       const quoteIndex = events.findIndex((e) => e.kind === 'pre_order_quote' && e.detail['clientOrderId'] === intent.detail['clientOrderId']);

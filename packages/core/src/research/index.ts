@@ -6,6 +6,7 @@ export * from './ml-signal.js';
 export * from './forward-edge.js';
 export * from './evolution.js';
 export * from './execution-replay.js';
+export * from './hourly-execution.js';
 export * from './wider-universe.js';
 export * from './wider-universe-dataset.js';
 export * from './wider-universe-replay.js';

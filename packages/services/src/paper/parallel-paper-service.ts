@@ -13,7 +13,9 @@ import { PARALLEL_COSTS, PARALLEL_INSTRUMENTS, PARALLEL_TRENDVOL_VERSION,
   parallelAnchor, parallelDecision } from './parallel-signal.js';
 import { dayAfter, parallelDayReconciled, parallelRuntimeState, projectParallelPaperActivity, isRecoverableParallelTransientPause, shouldResumeParallelTransientPause } from './parallel-paper-activity.js';
 import { reconcileParallelPaper } from './parallel-paper-reconciliation.js';
-import { executeParallelIntraday, recordParallelPreOrder, parallelQuotes } from './parallel-paper-intraday.js';
+import { collectParallelHourlyShadowSafely, hourlyShadowStatus } from './parallel-hourly-shadow.js';
+import { recordFourHourExecutionObservation } from './parallel-execution-observation.js';
+import { executeParallelIntraday, recordParallelPreOrder } from './parallel-paper-intraday.js';
 import type { MlSignalSnapshot } from './parallel-ml-worker.js';
 import { projectParallelMlStatus, readParallelMlSignal } from './parallel-ml-status.js';
 import { alpacaQuantity, eventFor, money, parallelPaperFailureDetail, quantity, symbolFor } from './parallel-paper-utils.js';
@@ -157,6 +159,7 @@ export class ParallelPaperService {
       runtimeState, lastCheckAtMs: this.#lastCheckAtMs,
       lastDecisionAtMs, latestDecision, activity, filterSummary,
       mlSignal: projectParallelMlStatus(events, readParallelMlSignal(this.#input.mlSignal)),
+      hourlyShadow: hourlyShadowStatus(this.#input.profileId, this.#input.database),
       coquiFillCount: events.filter((event) => event.kind === 'local_fill').length,
       alpacaFillCount: events.filter((event) => event.kind === 'external_fill').length,
       alpacaOrderCount: events.filter((event) => event.kind === 'external_intent').length,
@@ -281,24 +284,11 @@ export class ParallelPaperService {
         throw new Error('alpaca_account_changed');
       }
       await this.#reconcile(experiment, client);
-      const observedAt = this.#input.clock.nowMs();
-      const slot = new Date(observedAt).toISOString().slice(0, 13);
-      if (new Date(observedAt).getUTCHours() % 4 === 0 && new Date(observedAt).getUTCMinutes() < 15 &&
-          !this.#events(experiment).some((event) => event.kind === 'execution_observation' && event.detail['slot'] === slot)) {
-        try {
-          const read = parallelQuotes(await client.latestCryptoQuotes(), this.#input.clock.nowMs());
-          const weights = eventFor(events, 'decision', day)!.detail['weights'] as Record<string, number>;
-          this.#append(experiment, 'execution_observation', `observation:${slot}`, {
-            slot, decisionDay: day, datasetHash: preparation.datasetHash,
-            targets: ASSET_IDS.map((id) => weights[id] ?? 0), symbols: ASSET_IDS.map(symbolFor),
-            quotes: ASSET_IDS.map((id) => ({ bid: Number(read.sides[symbolFor(id)]!.bid), ask: Number(read.sides[symbolFor(id)]!.ask) })),
-            quoteAtMs: read.observedAtMs, capturedAtMs: this.#input.clock.nowMs(),
-          });
-        } catch (error) {
-          const detail = parallelPaperFailureDetail(error, 'observation_unavailable');
-          this.#append(experiment, 'observation_error', `observation-error:${slot}:${observedAt}`, detail);
-        }
-      }
+      await recordFourHourExecutionObservation({ now: () => this.#input.clock.nowMs(), day,
+        datasetHash: preparation.datasetHash,
+        weights: eventFor(events, 'decision', day)!.detail['weights'] as Record<string, number>,
+        events: () => this.#events(experiment), client,
+        append: (kind, key, detail) => this.#append(experiment, kind, key, detail) });
       this.#settleLocal(experiment, preparation);
       if (this.#input.clock.nowMs() - Date.parse(`${today}T00:00:00Z`) <= CUTOFF_MS) {
         await this.#executeExternal(experiment, client, preparation, day, today);
@@ -316,6 +306,11 @@ export class ParallelPaperService {
         append: (kind, key, detail) => this.#append(experiment, kind, key, detail), client,
         mlSignal: readParallelMlSignal(this.#input.mlSignal) });
       this.#recordMark(experiment, preparation, await client.account(), await client.positions());
+      const decision = eventFor(this.#events(experiment), 'decision', day)!;
+      await collectParallelHourlyShadowSafely({ profileId: this.#input.profileId,
+        experimentId: experiment.id, db: this.#input.database,
+        nowMs: this.#input.clock.nowMs(), datasetHash: preparation.datasetHash,
+        decision: { day, weights: decision.detail['weights'] as Record<string, number> }, read: client });
     } catch (error) {
       const detail = parallelPaperFailureDetail(error, 'paper_execution_unknown');
       this.#append(experiment, 'paused', `failure:${this.#input.clock.nowMs()}:${detail.reason}`, detail);

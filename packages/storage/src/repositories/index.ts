@@ -54,3 +54,4 @@ export * from './wider-universe.js';
 export * from './breakout-research.js';
 export * from './range-rotation.js';
 export * from './market-selector.js';
+export * from './hourly-execution.js';
