@@ -6,3 +6,5 @@
 - Advances the local database schema to version 84.
 
 The hourly candidate has no Alpaca order submission authority. Modeled fills and costs are research assumptions, not observed broker execution. Automated venue tests use mocks. A connected Coinbase data check and owner-controlled Alpaca paper order/dashboard reconciliation remain outstanding. The macOS build is ad-hoc signed; see `docs/INSTALL.md` for first-launch guidance.
+
+The packaged startup/migration smoke could not complete on the build host: Electron aborted with `SIGABRT` during AppKit application registration before Coqui's main-process smoke handler ran. The uploaded DMG and ZIP passed integrity checks, but packaged database startup remains unverified on that host.
