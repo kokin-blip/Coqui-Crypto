@@ -1,6 +1,6 @@
 import { Decimal } from 'decimal.js';
 
-import { createAlpacaPaperClient, AlpacaPaperError, type AlpacaPaperCredentials, type SecretStore } from '@coqui/adapters';
+import { createAlpacaPaperClient, AlpacaPaperError, withinDeadline, type AlpacaPaperCredentials, type SecretStore, type RequestDeadline } from '@coqui/adapters';
 import { instrumentKey, sha256Hex, type Clock } from '@coqui/core';
 import {
   appendParallelEvent, getLatestConnectionAccountSnapshotV2, getSetting,
@@ -9,15 +9,18 @@ import {
   type ParallelPaperExperiment,
 } from '@coqui/storage';
 
+import { collectExecutionRemediationShadow } from './execution-remediation-shadow.js';
+import { parallelPaperSummary } from './parallel-paper-summary.js';
+import { parallelExecutionClaim, observedParallelClient } from './parallel-execution-safety.js';
 import { PARALLEL_COSTS, PARALLEL_INSTRUMENTS, PARALLEL_TRENDVOL_VERSION,
   parallelAnchor, parallelDecision } from './parallel-signal.js';
-import { dayAfter, parallelDayReconciled, parallelRuntimeState, projectParallelPaperActivity, isRecoverableParallelTransientPause, shouldResumeParallelTransientPause } from './parallel-paper-activity.js';
+import { dayAfter, isRecoverableParallelTransientPause, shouldResumeParallelTransientPause } from './parallel-paper-activity.js';
 import { reconcileParallelPaper } from './parallel-paper-reconciliation.js';
-import { collectParallelHourlyShadowSafely, hourlyShadowStatus } from './parallel-hourly-shadow.js';
+import { collectParallelHourlyShadowSafely } from './parallel-hourly-shadow.js';
 import { recordFourHourExecutionObservation } from './parallel-execution-observation.js';
 import { executeParallelIntraday, recordParallelPreOrder } from './parallel-paper-intraday.js';
 import type { MlSignalSnapshot } from './parallel-ml-worker.js';
-import { projectParallelMlStatus, readParallelMlSignal } from './parallel-ml-status.js';
+import { readParallelMlSignal } from './parallel-ml-status.js';
 import { alpacaQuantity, eventFor, money, parallelPaperFailureDetail, quantity, symbolFor } from './parallel-paper-utils.js';
 import type { PaperDecisionPreparation } from './runtime-model.js';
 
@@ -29,6 +32,8 @@ type Client = ReturnType<typeof createAlpacaPaperClient>;
 
 export interface ParallelPaperDependencies {
   readonly profileId: string;
+  readonly hostId?: string;
+  readonly hostKind?: 'desktop' | 'headless';
   readonly database: Db;
   readonly clock: Clock;
   readonly secrets?: SecretStore;
@@ -44,6 +49,9 @@ export class ParallelPaperService {
   readonly #clientFactory: (credentials: AlpacaPaperCredentials) => Client;
   #lastCheckAtMs: number | null = null;
   #checking = false;
+  #suspended = false;
+  #deadline: RequestDeadline | undefined;
+  #claim: ReturnType<typeof parallelExecutionClaim> | undefined;
 
   constructor(input: ParallelPaperDependencies) {
     this.#input = input;
@@ -60,14 +68,34 @@ export class ParallelPaperService {
   }
 
   async #client(): Promise<Client> {
+    const startedAtMs = this.#input.clock.nowMs(), started = performance.now();
+    try { return await this.#readClient(); }
+    catch (error) {
+      const experiment = latestParallelExperiment(this.#input.profileId, this.#input.database);
+      if (experiment) this.#append(experiment, 'readiness', `credentials:${startedAtMs}:${this.#events(experiment).length}`,
+        { operation: 'credentials', status: 'unavailable', startedAtMs, observedAtMs: this.#input.clock.nowMs(),
+          durationMs: performance.now()-started, reason: error instanceof Error && /^[a-z_]+$/u.test(error.message) ? error.message : 'credentials_unavailable' });
+      throw error;
+    }
+  }
+
+  async #readClient(): Promise<Client> {
     if (this.#input.secrets === undefined) throw new Error('secret_store_unavailable');
-    const stored = await this.#input.secrets.read('alpaca-paper-credentials', this.#input.profileId);
-    if (!stored.ok || stored.value === null) throw new Error('credentials_unavailable');
+    const stored = await withinDeadline(this.#input.secrets.read('alpaca-paper-credentials', this.#input.profileId), this.#deadline);
+    if (!stored.ok) throw new Error(`secret_store_${stored.code}`);
+    if (stored.value === null) throw new Error('credentials_unavailable');
     let parsed: unknown;
-    try { parsed = JSON.parse(stored.value); } catch { throw new Error('credentials_unavailable'); }
+    try { parsed = JSON.parse(stored.value); } catch { throw new Error('credentials_corrupt'); }
     if (typeof parsed !== 'object' || parsed === null || !('keyId' in parsed) || !('secretKey' in parsed) ||
         typeof parsed.keyId !== 'string' || typeof parsed.secretKey !== 'string') throw new Error('credentials_unavailable');
-    return this.#clientFactory({ keyId: parsed.keyId, secretKey: parsed.secretKey });
+    const credentials = { keyId: parsed.keyId, secretKey: parsed.secretKey };
+    const client = this.#input.clientFactory ? this.#clientFactory(credentials) : createAlpacaPaperClient(credentials, undefined, this.#deadline);
+    const experiment = latestParallelExperiment(this.#input.profileId, this.#input.database);
+    if (experiment) this.#append(experiment, 'readiness', `credentials:${this.#input.clock.nowMs()}:${this.#events(experiment).length}`,
+      { operation: 'credentials', status: 'validated', observedAtMs: this.#input.clock.nowMs() });
+    return observedParallelClient(client, () => this.#input.clock.nowMs(), (kind, key, detail) => {
+      if (experiment) this.#append(experiment, kind, key, detail);
+    }, this.#deadline, String(experiment ? this.#events(experiment).length : 0));
   }
 
   async start(commandId: string, smokeVerified: boolean): Promise<{ ok: true; experiment: ParallelPaperExperiment } | { ok: false; code: string }> {
@@ -130,58 +158,7 @@ export class ParallelPaperService {
     return { experiment, status: parallelExperimentStatus(events), events };
   }
 
-  summary() {
-    const current = this.status(), experiment = current.experiment, events = current.events;
-    const mark = [...events].reverse().find((event) => event.kind === 'account_mark');
-    const latestState = [...events].reverse().find((event) => ['paused', 'resumed', 'stopped', 'started'].includes(event.kind));
-    const { latestDecision, lastDecisionAtMs, decisionDay, activity, filterSummary } = projectParallelPaperActivity(events), completed = parallelDayReconciled(events, decisionDay);
-    const runtimeState = parallelRuntimeState({ exists: experiment !== null, status: current.status,
-      pauseReason: latestState?.detail['reason'], lastCheckAtMs: this.#lastCheckAtMs, checking: this.#checking,
-      nowMs: this.#input.clock.nowMs(), decisionDay, completed,
-      dailyWindowMissed: events.some((event) => event.kind === 'daily_window_missed' && event.detail['day'] === decisionDay),
-      intradayPending: events.some((event) => event.kind === 'external_intent' && event.detail['slot'] !== undefined &&
-        !events.some((other) => other.kind === 'external_order' &&
-          other.detail['clientOrderId'] === event.detail['clientOrderId'] && other.detail['status'] === 'filled')) });
-    const coquiEquity = mark === undefined ? null : String(mark.detail['coquiEquityUsd']),
-      alpacaEquity = mark === undefined ? null : String(mark.detail['alpacaEquityUsd']);
-    const percent = (currentValue: string | null, opening: string): string | null => currentValue === null
-      ? null : money(currentValue).div(opening).minus(1).mul(100).toDecimalPlaces(2).toFixed(2);
-    return {
-      experimentId: experiment?.id ?? null, state: current.status,
-      startedAtMs: experiment?.startedAt ?? null,
-      coquiOpeningUsd: experiment?.openingCoquiCash ?? null,
-      alpacaOpeningUsd: experiment?.openingAlpacaEquity ?? null,
-      coquiEquityUsd: coquiEquity, alpacaEquityUsd: alpacaEquity,
-      coquiReturnPct: experiment === null ? null : percent(coquiEquity, experiment.openingCoquiCash),
-      alpacaReturnPct: experiment === null ? null : percent(alpacaEquity, experiment.openingAlpacaEquity),
-      lastMarkDay: mark === undefined ? null : String(mark.detail['markKey'] ?? mark.detail['day']),
-      decisionCount: events.filter((event) => event.kind === 'decision').length,
-      runtimeState, lastCheckAtMs: this.#lastCheckAtMs,
-      lastDecisionAtMs, latestDecision, activity, filterSummary,
-      mlSignal: projectParallelMlStatus(events, readParallelMlSignal(this.#input.mlSignal)),
-      hourlyShadow: hourlyShadowStatus(this.#input.profileId, this.#input.database),
-      coquiFillCount: events.filter((event) => event.kind === 'local_fill').length,
-      alpacaFillCount: events.filter((event) => event.kind === 'external_fill').length,
-      alpacaOrderCount: events.filter((event) => event.kind === 'external_intent').length,
-      coquiFeesUsd: events.filter((event) => event.kind === 'local_fill')
-        .reduce((sum, event) => sum.plus(String(event.detail['fee'])), new Decimal(0)).toFixed(2),
-      alpacaBookedFeesUsd: null,
-      alpacaModeledFrictionUsd: events.filter((event) => event.kind === 'external_fill')
-        .reduce((sum, event) => event.detail['quantity'] === null || event.detail['price'] === null
-          ? sum : sum.plus(money(String(event.detail['quantity'])).abs()
-            .mul(String(event.detail['price'])).mul('0.0085')), new Decimal(0)).toFixed(2),
-      positions: mark === undefined ? [] : mark.detail['positions'],
-      targets: mark === undefined ? [] : mark.detail['targets'],
-      recentTrades: events.filter((event) => ['local_fill', 'external_fill'].includes(event.kind))
-        .slice(-20).map((event) => ({ source: event.kind === 'local_fill' ? 'coqui' as const : 'alpaca_paper' as const,
-          atMs: event.at, symbol: String(event.detail['symbol'] ?? ''),
-          quantity: String(event.detail['qty'] ?? event.detail['quantity'] ?? ''),
-          price: String(event.detail['fillPrice'] ?? event.detail['price'] ?? ''),
-          feeUsd: event.kind === 'local_fill' ? String(event.detail['fee']) : null })),
-      lastReason: latestState?.kind === 'paused' ? String(latestState.detail['reason']) : null,
-      paperOnly: true as const,
-    };
-  }
+  summary() { return parallelPaperSummary(this.status(), this.#input, this.#lastCheckAtMs, this.#checking); }
 
   transition(kind: 'paused' | 'resumed' | 'stopped', commandId: string): boolean {
     const current = this.status();
@@ -222,10 +199,26 @@ export class ParallelPaperService {
     }
   }
 
-  async tick(): Promise<void> {
-    if (this.#checking) return;
+  suspend(): void { this.#suspended = true; this.#deadline?.dispose(); }
+  resume(): void { this.#suspended = false; }
+
+  async tick(deadline?: RequestDeadline): Promise<void> {
+    if (this.#checking || this.#suspended) return;
     this.#lastCheckAtMs = this.#input.clock.nowMs(); this.#checking = true;
-    try { await this.#tick(); } finally { this.#checking = false; }
+    this.#deadline = deadline;
+    try {
+      this.#claim = parallelExecutionClaim(this.#input.profileId, this.#input.hostId ?? 'desktop-main-test',
+        this.#input.database, () => this.#input.clock.nowMs(), deadline, this.#input.hostKind);
+      await this.#tick();
+    } finally { this.#claim?.release(); this.#claim = undefined; this.#deadline = undefined; this.#checking = false; }
+  }
+
+  #beforeSubmit(): void {
+    if (this.#suspended) throw new Error('host_unavailable');
+    this.#deadline?.check(); this.#claim?.check();
+    if (this.#input.killSwitchEngaged()) throw new Error('kill_switch_engaged');
+    if (this.status().status !== 'active') throw new Error('explicit_pause_preserved');
+    if (!this.#input.preparation().ok) throw new Error('stale_market_data');
   }
 
   async #tick(): Promise<void> {
@@ -304,9 +297,16 @@ export class ParallelPaperService {
       await executeParallelIntraday({ nowMs: this.#input.clock.nowMs(), now: () => this.#input.clock.nowMs(), experimentId: experiment.id,
         decision: eventFor(events, 'decision', day)!, events: () => this.#events(experiment),
         append: (kind, key, detail) => this.#append(experiment, kind, key, detail), client,
+        beforeSubmit: () => this.#beforeSubmit(), expectedAccountId: experiment.alpacaAccountId,
         mlSignal: readParallelMlSignal(this.#input.mlSignal) });
       this.#recordMark(experiment, preparation, await client.account(), await client.positions());
       const decision = eventFor(this.#events(experiment), 'decision', day)!;
+      const targetWeights = decision.detail['weights'] as Record<string,number>;
+      await collectExecutionRemediationShadow({ profileId: this.#input.profileId, experimentId: experiment.id,
+        db: this.#input.database, now: () => this.#input.clock.nowMs(), read: client,
+        target: { id: decision.id, completedDay: day, datasetHash: preparation.datasetHash,
+          weights: Object.fromEntries(Object.entries(targetWeights).map(([id,weight]) => [id,String(weight)])) },
+        completedCloses: Object.fromEntries(ASSET_IDS.map((id) => [id,String(preparation.dataset.closesById[id]?.at(-1))])) });
       await collectParallelHourlyShadowSafely({ profileId: this.#input.profileId,
         experimentId: experiment.id, db: this.#input.database,
         nowMs: this.#input.clock.nowMs(), datasetHash: preparation.datasetHash,
@@ -485,8 +485,9 @@ export class ParallelPaperService {
           if (this.#input.clock.nowMs() - Date.parse(`${today}T00:00:00Z`) > CUTOFF_MS) throw new Error('execution_window_missed');
           await recordParallelPreOrder(client, () => this.#input.clock.nowMs(),
             (kind, key, detail) => this.#append(experiment, kind, key, detail),
-            { clientOrderId, symbol: String(intent.detail['symbol']), side: stage, qty: String(intent.detail['qty']) }, weights, day);
+            { clientOrderId, symbol: String(intent.detail['symbol']), side: stage, qty: String(intent.detail['qty']) }, weights, day, experiment.alpacaAccountId);
           if (this.#input.clock.nowMs() - Date.parse(`${today}T00:00:00Z`) > CUTOFF_MS) throw new Error('execution_window_missed');
+          this.#beforeSubmit();
           this.#append(experiment, 'submit_attempt', `attempt:${clientOrderId}`, { clientOrderId, day });
           const order = await client.submit({ client_order_id: clientOrderId,
             symbol: String(intent.detail['symbol']), side: stage, qty: String(intent.detail['qty']) });

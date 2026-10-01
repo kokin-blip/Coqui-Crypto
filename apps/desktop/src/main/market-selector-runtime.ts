@@ -1,6 +1,7 @@
+import { studyCollection } from '@coqui/services';
 import type { Clock } from '@coqui/core';
-import { createMarketSelectorStudy, evaluateMarketSelectorSlot, evaluateUniverseAsset,
-  instrumentKey, markRangePortfolio, MARKET_SELECTOR_VERSION, planRangeRotationShadow,
+import { evaluateMarketSelectorSlot, evaluateUniverseAsset,
+  instrumentKey, markRangePortfolio, planRangeRotationShadow,
   planUniverseShadow, UNIVERSE_DAY, universeHash, universeStrategyInput,
   WIDER_UNIVERSE_POLICY, type DynamicUniverseSlot, type SelectorPrevious,
   type SelectorPendingOrder, type UniversePolicy, type UniversePortfolio } from '@coqui/core';
@@ -19,31 +20,41 @@ type ShadowBody = SelectorPrevious & { policyHash: string; portfolio: UniversePo
 export function createMarketSelectorRuntime(input: { profileId: string; database: Db; clock: Clock;
   onUnexpectedError: (context: string, error: unknown) => void; sourceContentHash?: string }) {
   let busy = false, sourceHash: string | null = null;
-  const record = (kind: 'study' | 'shadow' | 'failure', key: string, body: unknown) =>
+  const legacyRecord = (kind: 'study' | 'shadow' | 'failure', key: string, body: unknown) =>
     appendMarketSelectorRecord(input.profileId, { kind, key, atMs: input.clock.nowMs(), body }, input.database);
+  let failureRecord: (kind: 'study' | 'shadow' | 'failure', key: string, body: unknown) => unknown = legacyRecord;
   return { async refresh(): Promise<void> {
     if (busy) return;
     busy = true;
+    failureRecord = legacyRecord;
     try {
       const nowMs = input.clock.nowMs();
       const experiment = latestParallelExperiment(input.profileId, input.database);
       if (!experiment || parallelExperimentStatus(listParallelEvents(experiment.id,
         input.profileId, input.database)) === 'stopped') return;
+      sourceHash ??= input.sourceContentHash ?? widerUniverseRuntimeSourceHash();
+      const scoped = studyCollection({ profileId: input.profileId, experimentId: experiment.id,
+        candidateId: 'paper-market-selector-v1', db: input.database, nowMs, legacyHash: sourceHash,
+        legacyList: (kind) => listMarketSelectorRecords(input.profileId, kind as 'study' | 'shadow' | 'failure', input.database),
+        legacyAppend: (kind,key,body) => legacyRecord(kind as 'study' | 'shadow' | 'failure',key,body) });
+      if (!scoped.ready) return;
+      const record = scoped.append;
+      failureRecord = (kind,key,body) => scoped.append(kind,key,body);
+      const scopedRecords = (_profile: string, kind: 'study' | 'shadow' | 'failure', _db: Db,
+        beforeExclusiveMs = Number.MAX_SAFE_INTEGER) => scoped.list(kind).filter((r) => r.atMs < beforeExclusiveMs);
       const rawPolicy = getSetting('research.widerUniverse.policy', input.database);
       const policy: UniversePolicy = rawPolicy === null ? WIDER_UNIVERSE_POLICY : JSON.parse(rawPolicy) as UniversePolicy;
       const policyHash = universeHash(policy);
       sourceHash ??= input.sourceContentHash ?? widerUniverseRuntimeSourceHash();
-      const existingStudy = listMarketSelectorRecords(input.profileId, 'study', input.database)
+      const existingStudy = scopedRecords(input.profileId, 'study', input.database)
         .find((item) => (item.body as { policyHash?: string }).policyHash === policyHash);
-      if (!existingStudy) {
-        record('study', `${MARKET_SELECTOR_VERSION}:${policyHash}`,
-          createMarketSelectorStudy(nowMs, sourceHash, policy, experiment.anchor));
-      }
+      if (!existingStudy) { record('failure', `policy_changed:${Math.floor(nowMs/14_400_000)}`,
+        { reason: 'registered_policy_changed', executionEnabled: false }); return; }
       const slotMs = Math.floor(nowMs / (4 * HOUR)) * (4 * HOUR);
-      if (nowMs >= slotMs + 900_000 || listMarketSelectorRecords(input.profileId, 'shadow', input.database)
+      if (nowMs >= slotMs + 900_000 || scopedRecords(input.profileId, 'shadow', input.database)
         .some((item) => item.key === String(slotMs))) return;
-      if (existingStudy && (existingStudy.body as { sourceContentHash: string }).sourceContentHash !== sourceHash) {
-        if (!listMarketSelectorRecords(input.profileId, 'failure', input.database)
+      if (existingStudy && (existingStudy.body as { sourceContentHash: string }).sourceContentHash !== scoped.sourceHash) {
+        if (!scopedRecords(input.profileId, 'failure', input.database)
           .some((item) => item.key === `source_changed:${slotMs}`))
           record('failure', `source_changed:${slotMs}`,
             { slotMs, reason: 'registered_selector_source_changed', executionEnabled: false });
@@ -52,14 +63,14 @@ export function createMarketSelectorRuntime(input: { profileId: string; database
       const frame = listUniverseRecords(input.profileId, 'frame', input.database,
         Number.MAX_SAFE_INTEGER, slotMs).find((item) => item.key === String(slotMs));
       if (!frame) {
-        if (!listMarketSelectorRecords(input.profileId, 'failure', input.database)
+        if (!scopedRecords(input.profileId, 'failure', input.database)
           .some((item) => item.key === `missing_frame:${slotMs}`))
           record('failure', `missing_frame:${slotMs}`,
             { slotMs, reason: 'point_in_time_universe_missing', executionEnabled: false });
         return;
       }
       const slot = frame.body as DynamicUniverseSlot;
-      const previous = listMarketSelectorRecords(input.profileId, 'shadow', input.database, slotMs)
+      const previous = scopedRecords(input.profileId, 'shadow', input.database, slotMs)
         .filter((item) => (item.body as { policyHash?: string }).policyHash === policyHash).at(-1)?.body as
           ShadowBody | undefined;
       const portfolio: UniversePortfolio = previous?.portfolio ?? { cash: '100000', quantities: {} };
@@ -109,11 +120,11 @@ export function createMarketSelectorRuntime(input: { profileId: string; database
         } catch { planning = { status: 'blocked', reason: 'virtual_execution_evidence_unavailable' }; }
       }
       record('shadow', String(slotMs), { ...decision, policyHash, frameHash: frame.hash,
-        studyKey: `${MARKET_SELECTOR_VERSION}:${policyHash}`, portfolio: nextPortfolio,
+        studyInstanceId: scoped.namespace, studyKey: `paper-market-selector-v1:${policyHash}`, portfolio: nextPortfolio,
         pending, planning, dayStartEquity, dailyTurnoverUsd, immediateFillAssumption: true });
     } catch (error) {
       input.onUnexpectedError('market_selector_research', error);
-      try { record('failure', String(input.clock.nowMs()),
+      try { failureRecord('failure', String(input.clock.nowMs()),
         { reason: 'market_selector_shadow_failed', executionEnabled: false }); }
       catch { /* Original error already reported. */ }
     } finally { busy = false; }

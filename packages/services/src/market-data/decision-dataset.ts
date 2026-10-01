@@ -40,6 +40,7 @@ export interface DecisionDatasetSyncOptions {
   readonly minAlignedDays?: number;
   /** Reuse only a complete, aligned, current cached dataset after a provider fetch fails. */
   readonly allowFreshCacheOnFetchFailure?: boolean;
+  readonly preferCurrentCache?: boolean;
   readonly policy?: AlignmentPolicy;
   readonly logger?: StructuredLogger;
   readonly metrics?: OperationalMetrics;
@@ -190,6 +191,23 @@ export async function syncCoinbaseDecisionDataset(
 ): Promise<DecisionDatasetSyncResult> {
   validateOptions(options);
   const instruments = canonicalInstruments(options.instruments);
+  if (options.preferCurrentCache) {
+    const cutoff = Math.floor(options.nowMs / DAY_MS) * DAY_MS - options.maxDays * DAY_MS;
+    const input = Object.fromEntries(instruments.map((instrument) => [instrumentKey(instrument),
+      listMarketBars(instrument, options.database, 'coinbase')
+        .filter((bar) => bar.isComplete && bar.startTimeMs >= cutoff).map(coreBar)]));
+    const cached = buildDecisionMarketDataset(input, instruments.map(instrumentKey), {
+      policy: options.policy ?? 'reject-on-gap', nowMs: options.nowMs, expectedSource: 'coinbase' });
+    if (cached.report.issues.length === 0 && cached.dayKeys.length >= (options.minAlignedDays ?? 1) &&
+        cached.assets.every((id) => cached.barsById[id]?.at(-1)?.startTimeMs === latestExpectedCoinbaseCompleteStart(options.nowMs))) {
+      const counts = Object.fromEntries(instruments.map((instrument) => [instrumentKey(instrument), 0]));
+      return { ok: true, dataset: cached, provenance: { source: 'coinbase', interval: '1d',
+        generatedAtMs: options.nowMs, requestedMaxDays: options.maxDays, fetchedBarsByAsset: counts,
+        excludedIncompleteBarsByAsset: counts, retainedBarsByAsset: cached.report.retainedBarsByAsset,
+        firstAlignedInterval: cached.report.firstAlignedInterval, lastAlignedInterval: cached.report.lastAlignedInterval,
+        datasetHash: cached.report.datasetHash, usedCachedBarsAfterFetchFailure: false } };
+    }
+  }
   const logger = workflowLogger(options);
   const metrics = (options.metrics ?? NOOP_METRICS).child({
     component: 'market_data_dataset', provider: 'coinbase',

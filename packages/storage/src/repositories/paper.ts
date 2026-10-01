@@ -145,9 +145,11 @@ export function latestProductRuleSnapshot(
   database: Db,
 ): ProductRuleSnapshot | null {
   const row = database.prepare(`
-    SELECT * FROM paper_product_rule_snapshots_v3
+    SELECT * FROM paper_product_rule_snapshots_v3 AS snapshot
     WHERE product_id = ?
-    ORDER BY retrieved_at DESC, id
+    ORDER BY COALESCE((SELECT MAX(observation.at_ms) FROM remediation_evidence_v1 AS observation
+      WHERE observation.namespace='coinbase-rule-verification-v1' AND observation.kind='verification'
+      AND EXISTS(SELECT 1 FROM json_each(observation.body_json, '$.ruleIds') WHERE value=snapshot.id)), retrieved_at) DESC, id
     LIMIT 1
   `).get(productId) as unknown as ProductRuleRow | undefined;
   if (row === undefined) return null;

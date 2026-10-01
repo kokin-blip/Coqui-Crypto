@@ -10,6 +10,14 @@ import {
 afterEach(() => vi.useRealTimers());
 
 describe('createRateLimiter', () => {
+  it('admits waiting execution ahead of research without expanding venue capacity', async () => {
+    vi.useFakeTimers();const limiter=createRateLimiter({requests:1,windowMs:1000,clock:{nowMs:()=>Date.now(),sleep:async(ms)=>{await new Promise((resolve)=>setTimeout(resolve,ms));return 'elapsed';}}});await limiter.acquire();const order:string[]=[];
+    const research=limiter.acquire(undefined,'research').then(()=>order.push('research'));
+    const execution=limiter.acquire(undefined,'execution').then(()=>order.push('execution'));
+    await vi.advanceTimersByTimeAsync(1000);expect(order).toEqual(['execution']);
+    await vi.advanceTimersByTimeAsync(1000);await Promise.all([research,execution]);expect(order).toEqual(['execution','research']);limiter.destroy();
+  });
+
   it('grants tokens immediately and queues overflow in FIFO order', async () => {
     vi.useFakeTimers();
     const limiter = createRateLimiter({ requests: 2, windowMs: 1_000 });

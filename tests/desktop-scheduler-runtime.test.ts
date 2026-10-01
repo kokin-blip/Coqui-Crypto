@@ -18,6 +18,7 @@ import {
 import type { PaperRunLoopDependencies } from '../packages/services/src/index.js';
 import {
   countCompletedDecisionRuns,
+  listRemediationEvidence,
   getPaperOrder,
   openDatabase,
   savePaperOrder,
@@ -139,6 +140,22 @@ function paperDeps(db: Db, clock: Clock = new FixedClock(T0)): PaperRunLoopDepen
 }
 
 describe('the scheduler finally has a wake-up', () => {
+  it('records suspend/resume and restart gaps durably without inferring their cause', async () => {
+    const db = seeded(), clock = new StepClock(T0);
+    const options = { database: db, clock, profileId: PROFILE, hostId: 'fixture-host', paper: paperDeps(db,clock), pollMs: 3_600_000 };
+    const runtime = startSchedulerRuntime(options);
+    await runtime.tick(); runtime.suspend(); clock.advance(14_400_000);
+    await runtime.tick();
+    expect(listRemediationEvidence(PROFILE,'host-lifecycle-v1:fixture-host','tick_start',db)).toHaveLength(1);
+    runtime.resume(); await new Promise((resolve)=>setTimeout(resolve,10)); runtime.dispose();
+    clock.advance(2*14_400_000);
+    const restarted = startSchedulerRuntime(options);
+    expect(listRemediationEvidence(PROFILE,'host-lifecycle-v1:fixture-host','launch',db)).toHaveLength(2);
+    expect(listRemediationEvidence(PROFILE,'host-lifecycle-v1:fixture-host','slot_outcome',db).at(-1)?.body)
+      .toMatchObject({outcome:'host_unavailable',reason:'no_recorded_host_tick'});
+    restarted.dispose(); db.close();
+  });
+
   it('checks Alpaca before unrelated local preparation and still runs local work after a read failure', async () => {
     const db = seeded(), clock = new StepClock(T0), order: string[] = [];
     const runtime = startSchedulerRuntime({ database: db, clock, profileId: PROFILE,
@@ -270,6 +287,24 @@ describe('the scheduler finally has a wake-up', () => {
 });
 
 describe('the market feed reads locally and fetches beforehand', () => {
+  it('records unchanged rules with renewed verification, bounds reuse, and never attests a failed or halted read', async () => {
+    const db = seeded(); let now = T0+600_000, mode = 'online', calls = 0, barCalls = 0;
+    const feed = createPaperMarketFeed({database:db,now:()=>now,instruments:()=>[BTC],
+      http:{getJson:async()=>{calls++;return mode==='failed'?{ok:false,status:503}:{ok:true,status:200,data:[{
+        id:'BTC-USD',quote_currency:'USD',status:mode,base_increment:'0.00000001',quote_increment:'0.01',min_market_funds:'1',
+        trading_disabled:false,cancel_only:false,limit_only:false,post_only:false}]};}} as never,
+      bars:async()=>{barCalls++;return {ok:true,bars:bars(121)};}});
+    expect((await feed.refresh(now)).ok).toBe(true);
+    const ruleId = feed.view.rules(BTC_KEY)?.id;
+    now+=1000;expect((await feed.refresh(now)).ok).toBe(true);expect(calls).toBe(1);expect(barCalls).toBe(1);
+    now+=30_001;expect((await feed.refresh(now)).ok).toBe(true);expect(feed.view.rules(BTC_KEY)?.id).toBe(ruleId);
+    expect(listRemediationEvidence('market','coinbase-rule-verification-v1','verification',db)).toHaveLength(2);
+    now+=30_001;mode='failed';expect((await feed.refresh(now)).ok).toBe(false);
+    expect(listRemediationEvidence('market','coinbase-rule-verification-v1','verification',db)).toHaveLength(2);
+    mode='offline';now+=1;expect((await feed.refresh(now)).ok).toBe(false);
+    expect(listRemediationEvidence('market','coinbase-rule-verification-v1','verification',db).at(-1)?.body).toMatchObject({eligible:false});db.close();
+  });
+
   it('publishes a complete decision-grade preparation only after data and rules pass', async () => {
     const db = seeded();
     const feed = createPaperMarketFeed({

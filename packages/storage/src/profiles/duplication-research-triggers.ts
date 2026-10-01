@@ -17,13 +17,16 @@ export function dropResearchDuplicationTriggers(database:DatabaseSync, sourcePro
   if (database.prepare('SELECT 1 FROM hourly_execution_records_v1 WHERE profile_id<>? LIMIT 1').get(sourceProfileId)) {
     throw new RangeError('Foreign profile identity detected.');
   }
+  if (database.prepare("SELECT 1 FROM remediation_evidence_v1 WHERE profile_id NOT IN (?, 'market') LIMIT 1").get(sourceProfileId))
+    throw new RangeError('Foreign profile identity detected.');
   const excluded = Number((database.prepare(`SELECT
     (SELECT COUNT(*) FROM wider_universe_records_v1 WHERE kind!='policy') +
     (SELECT COUNT(*) FROM breakout_research_records_v1) +
     (SELECT COUNT(*) FROM breakout_hourly_bars_v1) +
     (SELECT COUNT(*) FROM range_rotation_records_v1) +
     (SELECT COUNT(*) FROM market_selector_records_v1) +
-    (SELECT COUNT(*) FROM hourly_execution_records_v1) AS count`).get() as { count: number }).count);
+    (SELECT COUNT(*) FROM hourly_execution_records_v1) +
+    (SELECT COUNT(*) FROM remediation_evidence_v1) AS count`).get() as { count: number }).count);
   if (!Number.isSafeInteger(excluded)) throw new RangeError('Invalid universe duplication count.');
   database.exec(`
     DROP TRIGGER research_trigger_job_links_v1_no_update;
@@ -51,6 +54,9 @@ export function dropResearchDuplicationTriggers(database:DatabaseSync, sourcePro
     DELETE FROM range_rotation_records_v1;
     DELETE FROM market_selector_records_v1;
     DELETE FROM hourly_execution_records_v1;
+    DROP TRIGGER remediation_evidence_no_update;
+    DROP TRIGGER remediation_evidence_no_delete;
+    DELETE FROM remediation_evidence_v1;
   `);
   return excluded;
 }
@@ -93,6 +99,10 @@ export function restoreResearchDuplicationTriggers(database:DatabaseSync):void {
       BEGIN SELECT RAISE(ABORT,'hourly execution evidence is immutable'); END;
     CREATE TRIGGER hourly_execution_no_delete BEFORE DELETE ON hourly_execution_records_v1
       BEGIN SELECT RAISE(ABORT,'hourly execution evidence is immutable'); END;
+    CREATE TRIGGER remediation_evidence_no_update BEFORE UPDATE ON remediation_evidence_v1
+      BEGIN SELECT RAISE(ABORT,'remediation evidence is immutable'); END;
+    CREATE TRIGGER remediation_evidence_no_delete BEFORE DELETE ON remediation_evidence_v1
+      BEGIN SELECT RAISE(ABORT,'remediation evidence is immutable'); END;
     CREATE TRIGGER ml_signal_study_guard BEFORE UPDATE ON ml_signal_studies_v1
       WHEN OLD.result_json IS NOT NULL OR NEW.profile_id != OLD.profile_id OR
         NEW.candidate_version != OLD.candidate_version OR NEW.registered_at_ms != OLD.registered_at_ms OR

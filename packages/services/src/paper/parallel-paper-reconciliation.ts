@@ -1,3 +1,5 @@
+import { parallelExecutionMeasurements } from './parallel-execution-measurement.js';
+import { canonicalJson, sha256Hex, type CanonicalJsonValue } from '@coqui/core';
 import { Decimal } from 'decimal.js';
 import { AlpacaPaperError, type createAlpacaPaperClient } from '@coqui/adapters';
 import type { ParallelPaperEvent, ParallelPaperExperiment } from '@coqui/storage';
@@ -72,5 +74,12 @@ export async function reconcileParallelPaper(input: {
     if (page === 19) throw new Error('alpaca_activity_page_limit');
     cursor = activities.at(-1)?.id;
     if (cursor === undefined) break;
+  }
+  input.append('readiness', `reconciled:${input.now()}:${input.events().length}`, { operation: 'broker_reconciliation',
+    status: 'validated', observedAtMs: input.now(), intentCount: intents.length });
+  for (const measurement of parallelExecutionMeasurements(input.events())) {
+    const key = sha256Hex(canonicalJson(measurement as unknown as CanonicalJsonValue));
+    if (!input.events().some((event) => event.kind === 'execution_measurement' && event.detail['measurementId'] === key))
+      input.append('execution_measurement', key, { ...measurement, measurementId: key });
   }
 }

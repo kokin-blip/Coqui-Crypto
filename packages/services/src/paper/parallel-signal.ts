@@ -1,3 +1,4 @@
+import { EXECUTION_COST_MODELS } from '@coqui/core';
 import { DEFAULT_MOMENTUM_CONFIG, DEFAULT_VOL_TARGET_CONFIG, instrumentKey, trendVolTargets,
   type DecisionMarketDataset, type InstrumentIdentity } from '@coqui/core';
 
@@ -8,7 +9,7 @@ export const PARALLEL_INSTRUMENTS: readonly InstrumentIdentity[] = Object.freeze
   })),
 );
 export const PARALLEL_SYMBOLS = ['BTCUSD', 'ETHUSD', 'LTCUSD'] as const;
-export const PARALLEL_COSTS = Object.freeze({ fee: '0.006', spread: '0.001', slippage: '0.0015' });
+export const PARALLEL_COSTS = Object.freeze({ fee: EXECUTION_COST_MODELS.legacyLocal.fee, spread: EXECUTION_COST_MODELS.legacyLocal.spread, slippage: EXECUTION_COST_MODELS.legacyLocal.slippage });
 
 export type ParallelAnchor = Readonly<Record<string, string>>;
 

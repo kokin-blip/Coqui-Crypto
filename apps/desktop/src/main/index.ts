@@ -2,7 +2,7 @@ import { basename, dirname, join } from 'node:path';
 import { readFile, stat, writeFile } from 'node:fs/promises';
 
 import { createOsKeyringSecretStore, type SecretStore } from '@coqui/adapters';
-import { app, BrowserWindow, clipboard, dialog, ipcMain, Notification, shell } from 'electron';
+import { app, BrowserWindow, clipboard, dialog, ipcMain, Notification, powerMonitor, shell } from 'electron';
 
 import { createDispatcher } from './dispatch.js';
 import { createRuntime, type CoquiRuntime } from './composition.js';
@@ -112,6 +112,8 @@ const osNotifier = {
 async function start(): Promise<void> {
   const path = databasePath();
   const secrets = createOsKeyringSecretStore();
+  powerMonitor.on('suspend', () => runtime?.suspend());
+  powerMonitor.on('resume', () => runtime?.resume());
   runtime = createRuntimeProfileController({
     dataDirectory: dirname(path),
     legacyDatabaseFilename: basename(path),

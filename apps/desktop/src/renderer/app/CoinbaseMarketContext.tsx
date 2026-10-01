@@ -31,7 +31,9 @@ export function CoinbaseMarketContext({ client, productId, compact = false }: {
   return <section className={`coinbase-market-context${compact ? ' compact' : ''}`} aria-label={`Coinbase market context for ${productId}`}>
     {!compact && <header><h3>Coinbase market context · {productId}</h3><small>Advanced Trade REST · informational only</small></header>}
     {result.kind === 'loading' && <p className="muted">Reading Coinbase market snapshots…</p>}
-    {result.kind !== 'loading' && result.kind !== 'ready' && <p className="muted">Coinbase market context unavailable.</p>}
+    {result.kind !== 'loading' && result.kind !== 'ready' && <p className="muted">
+      Coinbase market context unavailable · {result.issues.map((issue) => issue.code).join(', ')}
+    </p>}
     {result.kind === 'ready' && <ContextDetails snapshot={result.value} compact={compact} />}
   </section>;
 }

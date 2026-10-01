@@ -8,7 +8,7 @@ import {
 
 export type FetchLike = (
   url: string,
-  init?: RequestInit,
+  init?: HttpRequestInit,
 ) => Promise<FetchLikeResponse>;
 
 export interface FetchLikeResponse {
@@ -46,12 +46,17 @@ export interface HttpFailure {
 
 export type HttpResult<T> = HttpSuccess<T> | HttpFailure;
 
+export interface HttpRequestInit extends RequestInit {
+  readonly maxElapsedMs?: number;
+  readonly requestPriority?: 'execution' | 'research';
+}
+
 export interface HttpClient {
-  getJson<T>(url: string, init?: RequestInit): Promise<HttpResult<T>>;
-  postJson<T>(url: string, body: unknown, init?: RequestInit): Promise<HttpResult<T>>;
-  getText(url: string, init?: RequestInit): Promise<HttpResult<string>>;
+  getJson<T>(url: string, init?: HttpRequestInit): Promise<HttpResult<T>>;
+  postJson<T>(url: string, body: unknown, init?: HttpRequestInit): Promise<HttpResult<T>>;
+  getText(url: string, init?: HttpRequestInit): Promise<HttpResult<string>>;
   /** Optional for lightweight test doubles created before binary archives existed. */
-  getBytes?(url: string, init?: RequestInit): Promise<HttpResult<Uint8Array>>;
+  getBytes?(url: string, init?: HttpRequestInit): Promise<HttpResult<Uint8Array>>;
   /** Release rate-limiter timers owned by this client. */
   destroy(): void;
 }
@@ -87,7 +92,7 @@ export interface HttpClientOptions {
 
 interface RequestSpec<T> {
   url: string;
-  init: RequestInit;
+  init: HttpRequestInit;
   parse(response: FetchLikeResponse): Promise<T>;
   retryable: boolean;
 }
@@ -189,7 +194,7 @@ function retryDelay(
   return baseDelayMs * 2 ** attempt + random() * baseDelayMs;
 }
 
-function postInit(body: string, init?: RequestInit): RequestInit {
+function postInit(body: string, init?: HttpRequestInit): RequestInit {
   const headers = new Headers(init?.headers);
   if (!headers.has('content-type')) headers.set('content-type', 'application/json');
   return { ...init, method: 'POST', headers, body };
@@ -248,20 +253,15 @@ export function createHttpClient(options: HttpClientOptions = {}): HttpClient {
     if (destroyed) return SHUTDOWN;
     if (init.signal?.aborted) return CANCELED;
     if (remainingMs <= 0) return ELAPSED_BUDGET;
-    const admission = await rateLimiters
-      .forDomain(hostname)
-      .acquire(combinedSignal(init.signal));
-    if (admission === 'aborted') return abortOutcome(init.signal);
-    if (admission === 'destroyed') return SHUTDOWN;
     const controller = new AbortController();
     let timer: ReturnType<typeof setTimeout> | undefined;
     const controlSignal = combinedSignal(init.signal);
     const attemptSignal = combinedSignal(controlSignal, controller.signal);
     const operationTimeoutMs = Math.min(timeoutMs, remainingMs);
-    const timeout = new Promise<typeof TIMEOUT>((resolve) => {
+    const timeout = new Promise<typeof TIMEOUT | typeof ELAPSED_BUDGET>((resolve) => {
       timer = setTimeout(() => {
         controller.abort();
-        resolve(TIMEOUT);
+        resolve(remainingMs <= timeoutMs ? ELAPSED_BUDGET : TIMEOUT);
       }, operationTimeoutMs);
     });
     let removeControlAbort = (): void => {};
@@ -275,7 +275,11 @@ export function createHttpClient(options: HttpClientOptions = {}): HttpClient {
       removeControlAbort = () => controlSignal.removeEventListener('abort', onAbort);
     });
     try {
-      const operation = (async (): Promise<FetchLikeResponse> => {
+      const operation = (async (): Promise<FetchLikeResponse | ControlledOutcome> => {
+        const admission = await rateLimiters.forDomain(hostname).acquire(attemptSignal, (init as HttpRequestInit).requestPriority);
+        if (admission === 'aborted') return controlSignal.aborted ? abortOutcome(init.signal) : TIMEOUT;
+        if (admission === 'destroyed') return SHUTDOWN;
+        if (attemptSignal.aborted) return TIMEOUT;
         const prepared = prepareAttempt
           ? await prepareAttempt(url, init)
           : init;
@@ -308,7 +312,7 @@ export function createHttpClient(options: HttpClientOptions = {}): HttpClient {
 
     let retried = 0;
     const startedAt = elapsedNow();
-    const remaining = (): number => maxElapsedMs - (elapsedNow() - startedAt);
+    const remaining = (): number => Math.min(maxElapsedMs, spec.init.maxElapsedMs ?? maxElapsedMs) - (elapsedNow() - startedAt);
 
     const waitBeforeRetry = async (milliseconds: number): Promise<ControlledOutcome | null> => {
       if (destroyed) return SHUTDOWN;

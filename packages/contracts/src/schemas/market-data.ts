@@ -246,7 +246,9 @@ export const marketDataChannelSchemas = {
       product: diagnosticObservation(z.strictObject({ status: z.string().min(1).max(64),
         tradingDisabled: z.boolean(), cancelOnly: z.boolean(), limitOnly: z.boolean(),
         postOnly: z.boolean(), baseIncrement: decimalStringSchema,
-        quoteIncrement: decimalStringSchema, quoteMinSize: decimalStringSchema }).readonly()),
+        quoteIncrement: decimalStringSchema, quoteMinSize: decimalStringSchema,
+        baseMinSize: decimalStringSchema.optional(), auctionMode: z.boolean().optional(),
+        isDisabled: z.boolean().optional() }).readonly()),
       book: diagnosticObservation(z.strictObject({
         bids: z.array(diagnosticLevelSchema).max(10).readonly(),
         asks: z.array(diagnosticLevelSchema).max(10).readonly(),

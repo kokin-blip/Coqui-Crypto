@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { createAlpacaPaperHandlers } from '../apps/desktop/src/main/alpaca-paper-handlers.js';
-import { AlpacaPaperError, createAlpacaPaperClient, createMemorySecretStore } from '../packages/adapters/src/index.js';
+import { AlpacaPaperError, createAlpacaPaperClient, createMemorySecretStore, createRequestDeadline } from '../packages/adapters/src/index.js';
 import { FixedClock } from '../packages/core/src/index.js';
 import { openDatabase } from '../packages/storage/src/index.js';
 
@@ -11,6 +11,24 @@ const ACCOUNT = { id: 'paper-account-1234', status: 'PAPER_ONLY', currency: 'USD
   cash: '100000', equity: '100000', trading_blocked: false, account_blocked: false };
 
 describe('Alpaca paper boundary', () => {
+  it('rejects omitted, malformed, or mismatched requested asset rules and preserves explicit halts', async () => {
+    const valid={symbol:'BTC/USD',status:'active',tradable:true,min_order_size:'0.0001',min_trade_increment:'0.0001'};
+    for(const body of [{},{...valid,symbol:'ETH/USD'},{...valid,min_trade_increment:'NaN'},{...valid,tradable:'yes'}]) {
+      const client=createAlpacaPaperClient({keyId:KEY_ID,secretKey:SECRET},async()=>Response.json(body));
+      await expect(client.asset('BTCUSD')).rejects.toMatchObject({code:'invalid_response',operation:'asset'});
+    }
+    const halted=createAlpacaPaperClient({keyId:KEY_ID,secretKey:SECRET},async()=>Response.json({...valid,tradable:false,status:'inactive'}));
+    expect(await halted.asset('BTCUSD')).toMatchObject({tradable:false,status:'inactive'});
+  });
+  it('does not spend another retry or submit after the propagated deadline', async () => {
+    let wall=1000;const deadline=createRequestDeadline(()=>wall,1000);
+    const fetcher=vi.fn(async()=>{wall+=1001;throw new Error('network');});
+    const client=createAlpacaPaperClient({keyId:KEY_ID,secretKey:SECRET},fetcher,deadline);
+    await expect(client.account()).rejects.toThrow('deadline_exceeded');expect(fetcher).toHaveBeenCalledTimes(1);
+    await expect(client.submit({symbol:'BTCUSD',side:'buy',qty:'1',client_order_id:'id'})).rejects.toThrow('deadline_exceeded');
+    expect(fetcher).toHaveBeenCalledTimes(1);deadline.dispose();
+  });
+
   it('classifies provider failures by safe operation and status without exposing request secrets', async () => {
     const client = createAlpacaPaperClient({ keyId: KEY_ID, secretKey: SECRET }, async () =>
       new Response('', { status: 503 }));

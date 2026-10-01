@@ -50,7 +50,8 @@ describe('local authoritative host assignment', () => {
   it('keeps the headless entry point local, paper-only, and listener-free', () => {
     const source=readFileSync('apps/headless/src/index.ts','utf8');
     expect(source).toContain('paperOnly:true');
+    expect(source).toContain('secrets:createOsKeyringSecretStore()');
     expect(source).not.toMatch(/createServer|listen\(|WebSocketServer|liveExecution/iu);
-    expect(source).not.toMatch(/keytar|secretStore|SecretRef|profile_connections/iu);
+    expect(source).not.toMatch(/keytar|SecretRef|profile_connections/iu);
   });
 });

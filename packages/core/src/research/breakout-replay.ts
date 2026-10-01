@@ -1,3 +1,4 @@
+import { studySourceMatches } from './study-instance.js';
 import { Decimal } from 'decimal.js';
 import { instrumentKey } from '../types/index.js';
 import { evaluateBreakoutSlot, type BreakoutHourlyBar, type BreakoutStudy } from './breakout.js';
@@ -16,7 +17,7 @@ export function compareBreakoutStudy(study: BreakoutStudy, rawSlots: readonly Dy
   history: BreakoutHistoryRead) {
   const { planHash, ...material } = study;
   if (universeHash(material) !== planHash) throw new Error('breakout_study_integrity');
-  if (sourceContentHash !== study.sourceContentHash) return { status: 'source_changed' as const,
+  if (!studySourceMatches(study.sourceContentHash, sourceContentHash)) return { status: 'source_changed' as const,
     phase, planHash, results: null };
   const startMs = phase === 'development' ? study.startMs : study.holdoutStartMs;
   const endMs = phase === 'development' ? study.holdoutStartMs : study.endExclusiveMs;

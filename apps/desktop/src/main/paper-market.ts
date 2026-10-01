@@ -1,10 +1,9 @@
-import { fetchCoinbaseProductRules, type HttpClient } from '@coqui/adapters';
+import { fetchCoinbaseProductRules, deadlineHttp, type RequestDeadline, type HttpClient } from '@coqui/adapters';
 import {
   canonicalJson,
   instrumentKey,
   sha256Hex,
   trendVolMinimumHistory,
-  type CanonicalJsonValue,
   type InstrumentIdentity,
   type MarketBar,
 } from '@coqui/core';
@@ -16,6 +15,8 @@ import {
 } from '@coqui/services';
 import {
   latestProductRuleSnapshot,
+  appendRemediationEvidence,
+  listRemediationEvidence,
   listMarketBars,
   saveProductRuleSnapshot,
   type Db,
@@ -43,6 +44,7 @@ const LOOKBACK_DAYS = 400;
 
 export interface PaperMarketFeedDependencies {
   readonly database: Db;
+  readonly now?: () => number;
   readonly http: HttpClient;
   /** The instruments the engine may trade — the policy's targets. */
   readonly instruments: () => readonly InstrumentIdentity[];
@@ -50,6 +52,7 @@ export interface PaperMarketFeedDependencies {
     instrument: InstrumentIdentity,
     lookbackDays: number,
     nowMs: number,
+    deadline?: RequestDeadline,
   ) => Promise<{ readonly ok: true; readonly bars: readonly MarketBar[] } | { readonly ok: false }>;
   readonly onUnexpectedError?: (context: string, error: unknown) => void;
 }
@@ -59,9 +62,9 @@ export interface PaperMarketFeed {
   /** Last completed all-or-nothing refresh result consumed by the decision loop. */
   preparation(): PaperDecisionPreparation;
   /** Fetch and persist bars and venue rules. Returns a typed stand-down on failure. */
-  refresh(nowMs: number): Promise<PaperDecisionPreparation>;
+  refresh(nowMs: number, deadline?: RequestDeadline): Promise<PaperDecisionPreparation>;
   /** Explicit-universe refresh used only while validating a new campaign. */
-  refreshFor(instruments: readonly InstrumentIdentity[], nowMs: number): Promise<PaperDecisionPreparation>;
+  refreshFor(instruments: readonly InstrumentIdentity[], nowMs: number, deadline?: RequestDeadline): Promise<PaperDecisionPreparation>;
 }
 
 export function createPaperMarketFeed(
@@ -107,65 +110,78 @@ export function createPaperMarketFeed(
     },
   };
 
-  async function refreshRules(
-    nowMs: number,
-    instruments: readonly InstrumentIdentity[],
-  ): Promise<string | null> {
-    const result = await fetchCoinbaseProductRules(dependencies.http, {
-      nowMs, productIds: instruments.map((instrument) => instrument.productId),
-    });
-    if (!result.ok) return null;
-    const wanted = new Set(instruments.map((instrument) => instrument.productId));
-    for (const rule of result.rules) {
-      // Only the products the engine may trade. The venue lists hundreds; the
-      // rest are rows nothing would ever read.
-      if (!wanted.has(rule.instrument.productId)) continue;
-      // Insert-only and keyed by content hash, so an unchanged rule set is a
-      // no-op rather than a duplicate.
-      saveProductRuleSnapshot(rule, dependencies.database);
+  async function refreshRules(nowMs: number, instruments: readonly InstrumentIdentity[], deadline?: RequestDeadline): Promise<string | null> {
+    const namespace = 'coinbase-rule-verification-v1';
+    const wanted = instruments.map(instrumentKey).sort();
+    const latest = listRemediationEvidence('market', namespace, 'verification', dependencies.database).at(-1);
+    if (latest && nowMs >= latest.atMs && nowMs - latest.atMs <= 30_000) {
+      const body = latest.body as { identities: string[]; rulesHash: string; eligible: boolean };
+      if (body.eligible && canonicalJson(body.identities) === canonicalJson(wanted)) return body.rulesHash;
     }
-    const snapshots = instruments
-      .map((instrument) => latestProductRuleSnapshot(instrument.productId, dependencies.database))
-      .sort((left, right) => {
-        const leftId = left?.instrument.productId ?? '';
-        const rightId = right?.instrument.productId ?? '';
-        return leftId < rightId ? -1 : leftId > rightId ? 1 : 0;
-      });
-    // The snapshot id is the canonical venue response hash. An unchanged rule
-    // therefore reuses its immutable row; this successful fetch is the
-    // freshness evidence, not a reason to require a duplicate row timestamp.
-    if (snapshots.some((snapshot) => snapshot === null)) return null;
-    return sha256Hex(canonicalJson(snapshots.map((snapshot) => ({
-      id: snapshot!.id,
-      productId: snapshot!.instrument.productId,
-      retrievedAt: snapshot!.retrievedAt,
-    })) as unknown as CanonicalJsonValue));
+    const result = await fetchCoinbaseProductRules(deadline ? deadlineHttp(dependencies.http, deadline) : dependencies.http, {
+      nowMs, productIds: instruments.map((instrument) => instrument.productId),
+      ...(deadline ? { signal: deadline.signal } : {}) });
+    deadline?.check();
+    if (!result.ok || result.rules.length !== instruments.length ||
+        result.rules.some((rule) => !wanted.includes(instrumentKey(rule.instrument)))) return null;
+    const verifiedAtMs = dependencies.now?.() ?? nowMs;
+    for (const rule of result.rules) saveProductRuleSnapshot(rule, dependencies.database);
+    const rulesHash = sha256Hex(canonicalJson(result.rules.map((rule) => ({
+      id: rule.id, identity: instrumentKey(rule.instrument) })).sort((a,b) => a.identity.localeCompare(b.identity))));
+    const eligible = result.rules.every((rule) => rule.status === 'online' && !rule.tradingDisabled &&
+      !rule.cancelOnly && !rule.limitOnly && !rule.postOnly && !rule.viewOnly);
+    appendRemediationEvidence({ profileId: 'market', namespace, kind: 'verification',
+      key: `${verifiedAtMs}:${rulesHash}`, atMs: verifiedAtMs,
+      body: { identities: wanted, rulesHash, eligible, ruleIds: result.rules.map((rule) => rule.id) } }, dependencies.database);
+    return eligible ? rulesHash : null;
   }
+
+  let observationSequence = listRemediationEvidence('market', 'paper-readiness-v1', 'operation', dependencies.database).length;
+  const observe = async <T>(operation: string, promise: Promise<T>, valid: (result: T) => boolean, startedAtMs: number): Promise<T> => {
+    const started = performance.now();
+    try {
+      const result = await promise;
+      appendRemediationEvidence({ profileId: 'market', namespace: 'paper-readiness-v1', kind: 'operation',
+        key: `${startedAtMs}:${operation}:${observationSequence++}`, atMs: dependencies.now?.() ?? startedAtMs,
+        body: { operation, startedAtMs, observedAtMs: dependencies.now?.() ?? startedAtMs, durationMs: performance.now()-started,
+          status: valid(result) ? 'validated' : 'unavailable', reason: valid(result) ? null : 'invalid_stale_or_halted_evidence' } }, dependencies.database);
+      return result;
+    } catch (error) {
+      appendRemediationEvidence({ profileId: 'market', namespace: 'paper-readiness-v1', kind: 'operation',
+        key: `${startedAtMs}:${operation}:${observationSequence++}`, atMs: dependencies.now?.() ?? startedAtMs,
+        body: { operation, startedAtMs, observedAtMs: dependencies.now?.() ?? startedAtMs, durationMs: performance.now()-started,
+          status: 'unavailable', reason: error instanceof Error && /^[a-z_]+$/u.test(error.message) ? error.message : 'readiness_failed' } }, dependencies.database);
+      throw error;
+    }
+  };
 
   const refreshFor = async (
     instruments: readonly InstrumentIdentity[],
     nowMs: number,
+    deadline?: RequestDeadline,
   ): Promise<PaperDecisionPreparation> => {
       if (instruments.length === 0) return latestPreparation;
 
       try {
         const [rulesHash, dataset] = await Promise.all([
-          refreshRules(nowMs, instruments),
-          syncCoinbaseDecisionDataset({
+          observe('coinbase_rules', refreshRules(nowMs, instruments, deadline), (result) => result !== null, nowMs),
+          observe('completed_bars', syncCoinbaseDecisionDataset({
             database: dependencies.database,
             instruments,
             maxDays: LOOKBACK_DAYS,
             minAlignedDays: trendVolMinimumHistory(),
             allowFreshCacheOnFetchFailure: true,
+            preferCurrentCache: true,
             nowMs,
             fetchDailyBars: async (instrument) => {
-              const result = await dependencies.bars(instrument, LOOKBACK_DAYS, nowMs);
+              const result = await dependencies.bars(instrument, LOOKBACK_DAYS, nowMs, deadline);
               return result.ok
                 ? { ok: true, status: 200, data: [...result.bars] }
                 : { ok: false, status: 0, reason: 'network', retried: 0 };
             },
-          }),
+          }), (result) => result.ok, nowMs),
         ]);
+        deadline?.check();
         if (!dataset.ok) {
           const code: Extract<PaperDecisionPreparation, { ok: false }>['code'] = ({
             fetch_failed: 'market_fetch_failed',
@@ -220,7 +236,7 @@ export function createPaperMarketFeed(
     view,
     preparation: () => latestPreparation,
     refreshFor,
-    async refresh(nowMs) {
+    async refresh(nowMs, deadline) {
       let instruments: readonly InstrumentIdentity[];
       try {
         instruments = dependencies.instruments();
@@ -229,7 +245,7 @@ export function createPaperMarketFeed(
         latestPreparation = { ok: false, code: 'market_fetch_failed' };
         return latestPreparation;
       }
-      return refreshFor(instruments, nowMs);
+      return refreshFor(instruments, nowMs, deadline);
     },
   };
 }

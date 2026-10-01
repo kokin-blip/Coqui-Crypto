@@ -129,7 +129,7 @@ describe('parallel paper experiment', () => {
     expect((await service.start('credential-recovery-test', true)).ok).toBe(true);
     failRead = true;
     await service.tick();
-    expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'credentials_unavailable' });
+    expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'secret_store_unavailable' });
     await service.tick();
     expect(service.summary()).toMatchObject({ state: 'active', decisionCount: 1 });
     service.transition('paused', 'manual-pause-test');

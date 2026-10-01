@@ -55,3 +55,5 @@ export * from './breakout-research.js';
 export * from './range-rotation.js';
 export * from './market-selector.js';
 export * from './hourly-execution.js';
+export * from './remediation-evidence.js';
+export * from './study-instances.js';

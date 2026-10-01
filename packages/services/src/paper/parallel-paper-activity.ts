@@ -9,7 +9,7 @@ import type { PaperDecisionPreparation } from './runtime-model.js';
 const RECOVERABLE_TRANSIENT_REASONS = new Set([
   'market_fetch_failed', 'invalid_market_data', 'market_alignment_failed',
   'insufficient_history', 'stale_market_data', 'stale_product_rules',
-  'credentials_unavailable', 'secret_store_unavailable',
+  'credentials_unavailable', 'secret_store_unavailable', 'deadline_exceeded', 'host_unavailable',
   'stale_alpaca_quote', 'invalid_alpaca_quote', 'alpaca_invalid_response',
   'alpaca_unavailable', 'alpaca_rate_limited',
 ]);
@@ -101,8 +101,15 @@ export function projectParallelPaperActivity(events: readonly ParallelPaperEvent
         `${side} ${qty} units · filled ${String(event.detail['filledQty'])} · client ID ${id}`, orderId);
       case 'external_fee': return item('fee', 'Alpaca reported fee activity',
         `${String(event.detail['activityType'])} · ${String(event.detail['symbol'] ?? 'USD')} · quantity ${String(event.detail['quantity'] ?? 'unreported')} · cash ${String(event.detail['netAmount'] ?? 'unreported')} · account-level attribution`, orderId);
-      case 'reconciliation_error': return item('retry', 'Alpaca reconciliation read failed',
-        `${String(event.detail['reason'])} · original pause retained`);
+      case 'reconciliation_error': {
+        const operation = typeof event.detail['operation'] === 'string'
+          ? ` · ${String(event.detail['operation']).replaceAll('_', ' ')} request` : '';
+        const httpStatus = typeof event.detail['httpStatus'] === 'number'
+          ? ` · HTTP ${String(event.detail['httpStatus'])}`
+          : event.detail['reason'] === 'alpaca_unavailable' && operation.length > 0 ? ' · network or timeout' : '';
+        return item('retry', 'Alpaca reconciliation read failed',
+          `${String(event.detail['reason'])}${operation}${httpStatus} · original pause retained`);
+      }
       case 'external_fill': {
         const related = orders.get(String(event.detail['orderId']));
         return item('fill', `Alpaca paper fill · ${String(event.detail['symbol'] ?? '')}`,

@@ -1,3 +1,4 @@
+import { fullApplicationArtifactHash } from './research-provenance.js';
 import { clearInterval, setInterval } from 'node:timers';
 
 import type { Clock } from '@coqui/core';
@@ -10,7 +11,7 @@ import {
   type WalletSchedulerTask,
   type HostLifecycle,
 } from '@coqui/services';
-import type { Db } from '@coqui/storage';
+import { appendRemediationEvidence, getAuthoritativeHost, listRemediationEvidence, type Db } from '@coqui/storage';
 
 /**
  * The wake-up the scheduler has never had.
@@ -53,11 +54,13 @@ export interface SchedulerRuntimeOptions {
   readonly pollMs?: number;
   readonly onUnexpectedError?: (context: string, error: unknown) => void;
   readonly research?: { recover():unknown; tick():Promise<void> };
-  readonly parallelPaper?: { tick(): Promise<void> };
+  readonly parallelPaper?: { tick(): Promise<void>; suspend?(): void; resume?(): void };
 }
 
 export interface SchedulerRuntime extends HostLifecycle {
   dispose(): void;
+  suspend(): void;
+  resume(): void;
 }
 
 export function startSchedulerRuntime(options: SchedulerRuntimeOptions): SchedulerRuntime {
@@ -70,12 +73,36 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
   const tasks: readonly WalletSchedulerTask[] = [paperTask as WalletSchedulerTask];
 
   let scheduler: WalletSchedulerService | null = null;
-  let running = false;
+  let running = false, suspended = false, sequence = listRemediationEvidence(options.profileId, `host-lifecycle-v1:${hostId}`, 'launch', options.database).length * 1000000;
+  const namespace = `host-lifecycle-v1:${hostId}`;
+  const record = (kind: string, detail: Record<string, string | number | null> = {}) => {
+    const atMs = options.clock.nowMs();
+    appendRemediationEvidence({ profileId: options.profileId, namespace, kind,
+      key: `${atMs}:${sequence++}`, atMs, body: { ...detail, hostId,
+        generation: getAuthoritativeHost(options.profileId, options.database)?.fencingGeneration ?? 0 } }, options.database);
+  };
+  const prior = listRemediationEvidence(options.profileId, namespace, 'tick_finish', options.database).at(-1);
+  let lastFinishedAtMs = prior?.atMs ?? options.clock.nowMs();
+  const recordMissingSlots = () => {
+    const now=options.clock.nowMs(), step=14_400_000;
+    const recorded=new Set(listRemediationEvidence(options.profileId,namespace,'slot_outcome',options.database).map((row)=>row.key));
+    for(let slot=Math.floor(lastFinishedAtMs/step)*step+step;slot+900_000<=now;slot+=step) {
+      if(recorded.has(String(slot))) continue;
+      appendRemediationEvidence({profileId:options.profileId,namespace,kind:'slot_outcome',key:String(slot),atMs:now,
+        body:{slotMs:slot,outcome:'host_unavailable',reason:'no_recorded_host_tick',recoveredAtMs:now}},options.database);
+    }
+  };
+  recordMissingSlots();
+  try { record('launch', { artifactHash: fullApplicationArtifactHash() }); }
+  catch { record('launch', { artifactHash: null, artifactReason: 'artifact_unavailable' }); }
   const tick = async (): Promise<void> => {
     // Ticks never overlap. The scheduler bounds concurrency across profiles,
     // but nothing stops a slow tick from being re-entered by the timer.
-    if (running) return;
+    if (running || suspended) return;
     running = true;
+    const started = performance.now();
+    recordMissingSlots();
+    record('tick_start');
     try {
       // The narrow Alpaca window must not wait behind local portfolio/research work.
       if (options.parallelPaper !== undefined) {
@@ -95,6 +122,8 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
     } catch (error) {
       report('scheduler_tick', error);
     } finally {
+      record('tick_finish', { durationMs: performance.now() - started });
+      lastFinishedAtMs = options.clock.nowMs();
       running = false;
     }
   };
@@ -139,6 +168,8 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
     tick: () => host.tick(),
     stop: () => host.stop(),
     status: () => host.status(),
-    dispose: () => host.stop(),
+    dispose: () => { options.parallelPaper?.suspend?.(); record('shutdown'); host.stop(); },
+    suspend: () => { suspended = true; options.parallelPaper?.suspend?.(); record('suspend'); },
+    resume: () => { record('resume'); options.parallelPaper?.resume?.(); suspended = false; void host.tick(); },
   };
 }

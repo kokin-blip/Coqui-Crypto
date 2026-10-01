@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { createOsKeyringSecretStore } from '@coqui/adapters';
 import { resolve } from 'node:path';
 
 import { createRuntime, type CoquiRuntime } from '@coqui/desktop';
@@ -41,14 +42,14 @@ function reconcile(database:ReturnType<typeof openDatabase>):string {
 }
 async function oneShotTick():Promise<void> {
   const probe=openDatabase(databasePath); requireOwnership(probe); probe.close();
-  const runtime=createRuntime({databasePath,profileId,hostId,disableScheduler:true});
+  const runtime=createRuntime({hostKind:'headless',secrets:createOsKeyringSecretStore(),databasePath,profileId,hostId,disableScheduler:true});
   try { runtime.startScheduler(); if (runtime.scheduler===null) throw new Error('headless_scheduler_not_started');
     await runtime.scheduler.tick(); print({ok:true,command:'tick',hostId,profileId,status:runtime.scheduler.status()});
   } finally { runtime.dispose(); }
 }
 async function start():Promise<void> {
   const probe=openDatabase(databasePath), authority=requireOwnership(probe); probe.close();
-  const runtime:CoquiRuntime=createRuntime({databasePath,profileId,hostId});
+  const runtime:CoquiRuntime=createRuntime({hostKind:'headless',secrets:createOsKeyringSecretStore(),databasePath,profileId,hostId});
   if(runtime.scheduler===null){runtime.dispose();throw new Error('headless_scheduler_not_started');}
   let stopping=false;
   const stop=():void=>{ if(stopping)return; stopping=true; clearInterval(control); runtime.dispose(); };

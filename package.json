@@ -1,6 +1,6 @@
 {
   "name": "coqui-crypto",
-  "version": "0.1.0-beta.11",
+  "version": "0.1.0-beta.12",
   "description": "Evidence-first crypto research and paper-trading workstation with live execution disabled.",
   "author": "Coqui Crypto",
   "private": true,
@@ -13,7 +13,7 @@
     "typecheck": "tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.renderer.json --noEmit",
     "lint": "eslint .",
     "test": "vitest run --maxWorkers=1",
-    "build": "tsc -b",
+    "build": "node scripts/build-study-manifests.mjs && tsc -b",
     "app:dev": "pnpm --filter @coqui/desktop dev:electron",
     "smoke": "pnpm --filter @coqui/desktop smoke",
     "perf": "pnpm --filter @coqui/desktop perf",
@@ -42,7 +42,8 @@
     "providers:smoke": "node --env-file=.env scripts/provider-smoke.mjs",
     "coinbase:verify-view-only": "pnpm build && node scripts/verify-coinbase-view-only.mjs",
     "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm build",
-    "package": "pnpm --filter @coqui/desktop package"
+    "package": "pnpm --filter @coqui/desktop package",
+    "research:remediation-report": "pnpm build && node scripts/research-remediation-report.mjs"
   },
   "devDependencies": {
     "@emnapi/runtime": "2.0.0-alpha.3",

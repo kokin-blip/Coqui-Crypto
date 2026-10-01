@@ -12,7 +12,7 @@ export interface RateLimitClock {
 
 export interface RateLimiter {
   /** Acquire one request cell in FIFO order. */
-  acquire(signal?: AbortSignal): Promise<RateLimitAcquireOutcome>;
+  acquire(signal?: AbortSignal, priority?: 'execution' | 'research'): Promise<RateLimitAcquireOutcome>;
   available(): number;
   pending(): number;
   /** Stop admissions and resolve every waiter explicitly as destroyed. */
@@ -51,6 +51,7 @@ interface Waiter {
   readonly signal?: AbortSignal;
   abort?: () => void;
   settled: boolean;
+  priority?: 'execution' | 'research';
 }
 
 /**
@@ -116,7 +117,7 @@ export function createRateLimiter(options: RateLimiterOptions): RateLimiter {
   };
 
   return {
-    acquire(signal) {
+    acquire(signal, priority) {
       if (destroyed) return Promise.resolve('destroyed');
       if (signal?.aborted) return Promise.resolve('aborted');
       return new Promise<RateLimitAcquireOutcome>((resolve) => {
@@ -131,7 +132,9 @@ export function createRateLimiter(options: RateLimiterOptions): RateLimiter {
           };
           signal.addEventListener('abort', waiter.abort, { once: true });
         }
-        queue.push(waiter);
+        if (priority !== undefined) waiter.priority = priority;
+        const researchIndex = priority === 'execution' ? queue.findIndex((item) => item.priority !== 'execution') : -1;
+        if (researchIndex < 0) queue.push(waiter); else queue.splice(researchIndex, 0, waiter);
         void drain();
       });
     },

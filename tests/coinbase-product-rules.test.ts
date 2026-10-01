@@ -238,3 +238,16 @@ describe('authenticated enrichment', () => {
     expect(result.ok && result.rules[0]?.baseMinSize).toBe('0.00000001');
   });
 });
+
+describe('strict requested-rule identity', () => {
+  it('rejects an omitted or malformed requested product rather than attesting older rules', async () => {
+    for (const value of [[], product({base_increment:'0'}), product({id:'ETH-USD'}), null]) {
+      expect(await fetchCoinbaseProductRules(client(value), {nowMs:NOW,productIds:['BTC-USD']}))
+        .toEqual({ok:false,code:'invalid_response'});
+    }
+  });
+  it('rejects duplicate requests and mismatched canonical products', async () => {
+    expect(await fetchCoinbaseProductRules(client(product()), {nowMs:NOW,productIds:['BTC-USD','BTC-USD']}))
+      .toEqual({ok:false,code:'invalid_response'});
+  });
+});

@@ -9,6 +9,7 @@ import {
 import {
   createHttpClient,
   type HttpClientOptions,
+  type HttpRequestInit,
   type HttpResult,
 } from '../http/index.js';
 
@@ -61,7 +62,7 @@ export interface CoinbaseClockResult {
 }
 
 export interface CoinbaseReadHttpClient {
-  getJson<T>(url: string, init?: RequestInit): Promise<HttpResult<T>>;
+  getJson<T>(url: string, init?: HttpRequestInit): Promise<HttpResult<T>>;
   destroy(): void;
 }
 

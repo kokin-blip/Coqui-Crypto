@@ -5,9 +5,9 @@ import { createRangeRotationRuntime } from '../apps/desktop/src/main/range-rotat
 import { createMarketSelectorRuntime } from '../apps/desktop/src/main/market-selector-runtime.js';
 import { createAlpacaPaperClient, createMemorySecretStore, parseAlpacaUniverseAssets,
   parseAlpacaUniverseLiquidity } from '../packages/adapters/src/index.js';
-import { universeHash, sha256Hex, UNIVERSE_DAY, profileConnectionV2, connectionAccountSnapshotV2Hash } from '../packages/core/src/index.js';
+import { createWiderUniverseStudy, createBreakoutStudy, createRangeRotationStudy, createMarketSelectorStudy, WIDER_UNIVERSE_POLICY, universeHash, sha256Hex, UNIVERSE_DAY, profileConnectionV2, connectionAccountSnapshotV2Hash } from '../packages/core/src/index.js';
 import { appendUniverseRecord, appendParallelEvent, listBreakoutHourlyBars, listBreakoutRecords,
-  appendMarketSelectorRecord, listRangeRotationRecords, listMarketSelectorRecords, listUniverseRecords, openDatabase, saveParallelExperiment, setSetting,
+  appendBreakoutRecord, appendRangeRotationRecord, appendMarketSelectorRecord, listRangeRotationRecords, listMarketSelectorRecords, listUniverseRecords, openDatabase, saveParallelExperiment, setSetting,
   saveProfileConnectionV2, saveConnectionAccountSnapshotV2, loadUniverseResearchFrames } from '../packages/storage/src/index.js';
 import { universeEvidence, universeSlot, UNIVERSE_NOW, UNIVERSE_ANCHOR } from './fixtures/wider-universe.js';
 
@@ -92,6 +92,8 @@ describe('credential-contained shadow collector', () => {
       clientFactory: (() => client) as never, sourceContentHash: universeHash('fixture'), onUnexpectedError: vi.fn(),
       candleSource: { authenticatedClient: async () => authenticated,
         dailyBars: async (instrument: { productId: string }) => ({ ok: true, bars: evidence(instrument.productId.split('-')[0]!).bars }) } as never };
+    appendUniverseRecord('main', { kind: 'study', key: universeHash(WIDER_UNIVERSE_POLICY), atMs: now,
+      body: createWiderUniverseStudy(now, universeHash('fixture'), UNIVERSE_ANCHOR, WIDER_UNIVERSE_POLICY) }, db);
     await createWiderUniverseRuntime(dependencies).refresh();
     expect(listUniverseRecords('main', 'study', db)).toHaveLength(1);
     expect(listUniverseRecords('main', 'frame', db)).toHaveLength(0);
@@ -116,6 +118,10 @@ describe('credential-contained shadow collector', () => {
         startTimeMs: fromMs + i * 3_600_000, endTimeMs: fromMs + (i + 1) * 3_600_000,
         open: '100', high: '100', low: '100', close: '100', volume: '10',
         retrievedAtMs: now, isComplete: true as const })) }) } as never };
+    appendBreakoutRecord('main', { kind: 'study', key: `wider-breakout-v1:${universeHash(WIDER_UNIVERSE_POLICY)}`, atMs: now - UNIVERSE_DAY,
+      body: createBreakoutStudy(now-UNIVERSE_DAY,universeHash('fixture'),WIDER_UNIVERSE_POLICY,UNIVERSE_ANCHOR) }, db);
+    appendRangeRotationRecord('main', { kind: 'study', key: `wider-range-rotation-v1:${universeHash(WIDER_UNIVERSE_POLICY)}`, atMs: now - UNIVERSE_DAY,
+      body: createRangeRotationStudy(now-UNIVERSE_DAY,universeHash('fixture'),WIDER_UNIVERSE_POLICY,UNIVERSE_ANCHOR) }, db);
     await createBreakoutRuntime(hourly).refresh();
     expect(listBreakoutRecords('main', 'study', db)).toHaveLength(1);
     expect(listBreakoutRecords('main', 'shadow', db)).toHaveLength(1);
@@ -134,6 +140,7 @@ describe('credential-contained shadow collector', () => {
     expect(listRangeRotationRecords('main', 'shadow', db)).toHaveLength(1);
     expect(listRangeRotationRecords('main', 'shadow', db)[0]!.body).toMatchObject({
       executionEnabled: false, portfolio: { cash: '100000' } });
+    appendMarketSelectorRecord('main', { kind: 'study', key: `paper-market-selector-v1:${universeHash(WIDER_UNIVERSE_POLICY)}`, atMs: now-UNIVERSE_DAY, body: createMarketSelectorStudy(now-UNIVERSE_DAY,universeHash('fixture'),WIDER_UNIVERSE_POLICY,UNIVERSE_ANCHOR) }, db);
     const selector = createMarketSelectorRuntime({ profileId: 'main', database: db,
       clock: { nowMs: () => now }, sourceContentHash: universeHash('fixture'),
       onUnexpectedError: vi.fn() });

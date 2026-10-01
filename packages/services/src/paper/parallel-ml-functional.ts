@@ -22,7 +22,7 @@ export async function verifyParallelMlExecutionPath(): Promise<boolean> {
           kind, at: first, detail });
       };
       const client = {
-        orders: async () => [], account: async () => ({ equity: '100000', cash: '100000' }),
+        orders: async () => [], account: async () => ({ id: 'functional-account', status: 'PAPER_ONLY', currency: 'USD', trading_blocked: false, account_blocked: false, equity: '100000', cash: '100000' }),
         positions: async () => [],
         asset: async (symbol: string) => ({ symbol, status: 'active', tradable: true,
           min_trade_increment: '0.0001', min_order_size: '0.0001' }),

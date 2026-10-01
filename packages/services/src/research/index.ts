@@ -9,3 +9,6 @@ export * from './worker-pool.js';
 export * from './evolution.js';
 export * from './triggers.js';
 export * from './host-coordinator.js';
+export * from './study-collection.js';
+export * from './remediation-report.js';
+export * from './registered-study.js';

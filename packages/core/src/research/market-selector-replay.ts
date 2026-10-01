@@ -1,3 +1,4 @@
+import { studySourceMatches } from './study-instance.js';
 import { Decimal } from 'decimal.js';
 import { instrumentKey } from '../types/index.js';
 import { breakoutFourHourBars, evaluateBreakoutSlot } from './breakout.js';
@@ -17,7 +18,7 @@ export function compareMarketSelectorStudy(study: MarketSelectorStudy,
   sourceContentHash: string, history: RangeHistoryRead) {
   const { planHash, ...material } = study;
   if (universeHash(material) !== planHash) throw new Error('selector_study_integrity');
-  if (sourceContentHash !== study.sourceContentHash) return { status: 'source_changed' as const,
+  if (!studySourceMatches(study.sourceContentHash, sourceContentHash)) return { status: 'source_changed' as const,
     phase, planHash, results: null };
   const startMs = phase === 'development' ? study.startMs : study.holdoutStartMs;
   const endMs = phase === 'development' ? study.holdoutStartMs : study.endExclusiveMs;

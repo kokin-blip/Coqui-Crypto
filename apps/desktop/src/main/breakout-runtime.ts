@@ -1,5 +1,6 @@
+import { studyCollection } from '@coqui/services';
 import type { Clock } from '@coqui/core';
-import { BREAKOUT_VERSION, createBreakoutStudy, evaluateBreakoutSlot, evaluateUniverseAsset,
+import { evaluateBreakoutSlot, evaluateUniverseAsset,
   instrumentKey, mapUniverseProducts, planUniverseShadow, UNIVERSE_DAY, universeHash,
   WIDER_UNIVERSE_POLICY, type DynamicUniverseSlot, type UniversePolicy } from '@coqui/core';
 import { appendBreakoutRecord, getSetting, latestParallelExperiment, listBreakoutHourlyBars,
@@ -18,24 +19,30 @@ export function createBreakoutRuntime(input: { profileId: string; database: Db; 
   onUnexpectedError: (context: string, error: unknown) => void;
   sourceContentHash?: string }) {
   let busy = false, cursor = 0, sourceHash: string | null = null;
-  const record = (kind: 'study' | 'shadow' | 'failure', key: string, body: unknown) =>
+  const legacyRecord = (kind: 'study' | 'shadow' | 'failure', key: string, body: unknown) =>
     appendBreakoutRecord(input.profileId, { kind, key, atMs: input.clock.nowMs(), body }, input.database);
+  let failureRecord: (kind: 'study' | 'shadow' | 'failure', key: string, body: unknown) => unknown = legacyRecord;
   return { async refresh(): Promise<void> {
     if (busy) return;
     busy = true;
+    failureRecord = legacyRecord;
     try {
       const nowMs = input.clock.nowMs();
       const experiment = latestParallelExperiment(input.profileId, input.database);
       if (!experiment || parallelExperimentStatus(listParallelEvents(experiment.id, input.profileId, input.database)) === 'stopped') return;
+      sourceHash ??= input.sourceContentHash ?? widerUniverseRuntimeSourceHash();
+      const scoped = studyCollection({ profileId: input.profileId, experimentId: experiment.id,
+        candidateId: 'wider-breakout-v1', db: input.database, nowMs, legacyHash: sourceHash,
+        legacyList: (kind) => listBreakoutRecords(input.profileId, kind as 'study' | 'shadow' | 'failure', input.database),
+        legacyAppend: (kind,key,body) => legacyRecord(kind as 'study' | 'shadow' | 'failure',key,body) });
+      if (!scoped.ready) return;
+      const record = scoped.append;
+      failureRecord = (kind,key,body) => scoped.append(kind,key,body);
+      const scopedRecords = (_profile: string, kind: 'study' | 'shadow' | 'failure', _db: Db,
+        beforeExclusiveMs = Number.MAX_SAFE_INTEGER) => scoped.list(kind).filter((r) => r.atMs < beforeExclusiveMs);
       const rawPolicy = getSetting('research.widerUniverse.policy', input.database);
       const policy: UniversePolicy = rawPolicy === null ? WIDER_UNIVERSE_POLICY : JSON.parse(rawPolicy) as UniversePolicy;
       const policyHash = universeHash(policy);
-      const studies = listBreakoutRecords(input.profileId, 'study', input.database);
-      if (!studies.some((s) => (s.body as { policyHash?: string }).policyHash === policyHash)) {
-        sourceHash ??= input.sourceContentHash ?? widerUniverseRuntimeSourceHash();
-        const study = createBreakoutStudy(nowMs, sourceHash, policy, experiment.anchor);
-        record('study', `${BREAKOUT_VERSION}:${policyHash}`, study);
-      }
       const catalogs = listUniverseRecords(input.profileId, 'catalog', input.database,
         Number.MAX_SAFE_INTEGER, (Math.floor(nowMs / UNIVERSE_DAY) - 1) * UNIVERSE_DAY);
       const catalog = catalogs.at(-1);
@@ -79,14 +86,18 @@ export function createBreakoutRuntime(input: { profileId: string; database: Db; 
           }));
         }
       }
+      const existingStudy = scopedRecords(input.profileId, 'study', input.database)
+        .find((row) => (row.body as { policyHash?: string }).policyHash === policyHash);
+      if (!existingStudy) { record('failure', `policy_changed:${Math.floor(nowMs/14_400_000)}`,
+        { reason: 'registered_policy_changed', executionEnabled: false }); return; }
       const slotMs = Math.floor(nowMs / (4 * HOUR)) * (4 * HOUR);
       if (![4, 8, 12, 16, 20].includes(new Date(slotMs).getUTCHours()) || nowMs >= slotMs + 900_000 ||
-          listBreakoutRecords(input.profileId, 'shadow', input.database).some((r) => r.key === String(slotMs))) return;
+          scopedRecords(input.profileId, 'shadow', input.database).some((r) => r.key === String(slotMs))) return;
       const frame = listUniverseRecords(input.profileId, 'frame', input.database,
         Number.MAX_SAFE_INTEGER, slotMs).find((r) => r.key === String(slotMs));
       if (!frame) return;
       const slot = frame.body as DynamicUniverseSlot;
-      const previous = listBreakoutRecords(input.profileId, 'shadow', input.database, slotMs)
+      const previous = scopedRecords(input.profileId, 'shadow', input.database, slotMs)
         .filter((r) => {
           const body = r.body as { portfolio?: unknown; policyHash?: string };
           return body.portfolio !== undefined && body.policyHash === policyHash;
@@ -107,18 +118,18 @@ export function createBreakoutRuntime(input: { profileId: string; database: Db; 
       try {
         const step = planUniverseShadow(slot, decision.weights, portfolio, policy);
         record('shadow', String(slotMs), { ...decision, policyHash, frameHash: frame.hash,
-          studyKey: `${BREAKOUT_VERSION}:${policyHash}`, portfolio: step.portfolio,
+          studyInstanceId: scoped.namespace, studyKey: `wider-breakout-v1:${policyHash}`, portfolio: step.portfolio,
           planning: step, desiredExits: decision.desiredExits,
           blockedExits: decision.desiredExits.filter((id) => !step.orders.some((o) => o.assetId === id && o.side === 'sell')) });
       } catch {
         record('shadow', String(slotMs), { ...decision, policyHash, frameHash: frame.hash,
-          studyKey: `${BREAKOUT_VERSION}:${policyHash}`, portfolio,
+          studyInstanceId: scoped.namespace, studyKey: `wider-breakout-v1:${policyHash}`, portfolio,
           planning: { status: 'blocked', reason: 'virtual_execution_evidence_unavailable' },
           blockedExits: decision.desiredExits });
       }
     } catch (error) {
       input.onUnexpectedError('breakout_research', error);
-      try { record('failure', String(Math.floor(input.clock.nowMs() / 60_000)),
+      try { failureRecord('failure', String(Math.floor(input.clock.nowMs() / 60_000)),
         { reason: 'breakout_collection_or_shadow_failed', executionEnabled: false }); }
       catch { /* The host error reporter received the original failure. */ }
     } finally { busy = false; }

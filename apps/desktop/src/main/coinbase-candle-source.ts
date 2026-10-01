@@ -1,5 +1,10 @@
 import {
   createCoinbaseReadHttpClient,
+  deadlineHttp,
+  deadlineReadHttp,
+  withinDeadline,
+  createResearchDeadline,
+  type RequestDeadline,
   fetchAuthenticatedCoinbaseDailyBars,
   fetchAuthenticatedCoinbaseDisplayBars,
   fetchCoinbaseDailyBars,
@@ -61,11 +66,11 @@ export function createHistoricalCoinbaseCandleSource(input: {
   }
 
   const source = {
-    async dailyBars(instrument: InstrumentIdentity, lookbackDays: number, nowMs: number) {
-      const client = await authenticatedClient();
+    async dailyBars(instrument: InstrumentIdentity, lookbackDays: number, nowMs: number, deadline?: RequestDeadline) {
+      const client = await withinDeadline(authenticatedClient(), deadline);
       if (client !== null) {
         try {
-          const result = await fetchAuthenticatedCoinbaseDailyBars(client, instrument,
+          const result = await fetchAuthenticatedCoinbaseDailyBars(deadline ? deadlineReadHttp(client, deadline) : client, instrument,
             { maxDays: lookbackDays, nowMs });
           if (result.ok && result.data.length > 0) {
             input.onSource?.('authenticated', instrument.productId, '1d');
@@ -76,7 +81,8 @@ export function createHistoricalCoinbaseCandleSource(input: {
         } catch { input.onFailure?.('authenticated', instrument.productId, '1d', 0, 'exception'); }
         finally { client.destroy(); }
       }
-      const result = await fetchCoinbaseDailyBars(input.publicHttp, instrument, { maxDays: lookbackDays, nowMs });
+      deadline?.check();
+      const result = await fetchCoinbaseDailyBars(deadline ? deadlineHttp(input.publicHttp, deadline) : input.publicHttp, instrument, { maxDays: lookbackDays, nowMs });
       if (result.ok) input.onSource?.('public', instrument.productId, '1d');
       else input.onFailure?.('public', instrument.productId, '1d', result.status, result.reason);
       return result.ok ? { ok: true as const, bars: result.data } : { ok: false as const };
@@ -107,13 +113,15 @@ export function createHistoricalCoinbaseCandleSource(input: {
     async researchHourlyWindow(instrument: InstrumentIdentity, startTimeMs: number, endTimeMs: number,
       nowMs: number): Promise<{ readonly ok: true; readonly bars: readonly CoinbaseDisplayBar[];
         readonly source: 'authenticated' | 'public' } | { readonly ok: false }> {
+      const deadline = createResearchDeadline(input.nowMs);
+      try {
       // Both endpoints can serve 300 hours. Complete each window from exactly one source.
       if (endTimeMs <= startTimeMs || endTimeMs - startTimeMs > 300 * 3_600_000) return { ok: false };
       const options = { interval: '1h' as const, startTimeMs, endTimeMs, nowMs };
-      const client = await authenticatedClient();
+      const client = await withinDeadline(authenticatedClient(), deadline);
       if (client !== null) {
         try {
-          const result = await fetchAuthenticatedCoinbaseDisplayBars(client, instrument, options);
+          const result = await fetchAuthenticatedCoinbaseDisplayBars(deadlineReadHttp(client, deadline, 'research'), instrument, options);
           if (result.ok && result.data.length > 0) {
             input.onSource?.('authenticated', instrument.productId, '1h');
             return { ok: true, bars: result.data, source: 'authenticated' };
@@ -123,7 +131,7 @@ export function createHistoricalCoinbaseCandleSource(input: {
         } catch { input.onFailure?.('authenticated', instrument.productId, '1h', 0, 'exception'); }
         finally { client.destroy(); }
       }
-      const result = await fetchCoinbaseDisplayBars(input.publicHttp, instrument, options);
+      const result = await fetchCoinbaseDisplayBars(deadlineHttp(input.publicHttp, deadline, 'research'), instrument, options);
       if (result.ok && result.data.length > 0) {
         input.onSource?.('public', instrument.productId, '1h');
         return { ok: true, bars: result.data, source: 'public' };
@@ -131,6 +139,7 @@ export function createHistoricalCoinbaseCandleSource(input: {
       input.onFailure?.('public', instrument.productId, '1h', result.status,
         result.ok ? 'empty' : result.reason);
       return { ok: false };
+      } finally { deadline.dispose(); }
     },
     async recentCandles(instrument: InstrumentIdentity, timeframe: string) {
       const intervalMs: Record<string, number> = { '1m': 60_000, '5m': 300_000,

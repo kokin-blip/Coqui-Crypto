@@ -35,6 +35,8 @@ export interface RuntimeProfileController {
   recordDeprecatedChannel(channel: string): void;
   activeProfile(): AccountProfileView;
   dispose(): void;
+  suspend(): void;
+  resume(): void;
 }
 
 function serviceFailure<T>(code: string): ServiceResult<T> {
@@ -244,6 +246,8 @@ export function createRuntimeProfileController(
   };
 
   return {
+    suspend: () => current?.scheduler?.suspend(),
+    resume: () => current?.scheduler?.resume(),
     handlers: () => ({ ...current?.handlers, ...globalHandlers }),
     report: (context, error) => current?.report(context, error),
     recordDeprecatedChannel: (channel) => current?.recordDeprecatedChannel(channel),

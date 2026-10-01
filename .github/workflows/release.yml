@@ -6,6 +6,7 @@ on:
   push:
     tags:
       - "v*"
+      - "experimental-v*"
 
 permissions:
   contents: read
@@ -123,10 +124,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          release_notes="docs/RELEASE-NOTES-${GITHUB_REF_NAME#experimental-v0.1.0-}.md"
+          if [[ ! -f "$release_notes" ]]; then release_notes=docs/RELEASE-NOTES-TEMPLATE.md; fi
           gh release create "${{ github.ref_name }}" \
             --repo "${{ github.repository }}" \
             --title "${{ github.ref_name }}" \
-            --notes-file docs/RELEASE-NOTES-TEMPLATE.md \
+            --notes-file "$release_notes" \
             --draft \
             artifacts/*
 

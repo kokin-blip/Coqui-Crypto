@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { advanceHourlyExecution, hourlySlotAt, openingHourlyState, replayHourlyExecution,
+import { HOURLY_EXECUTION_V1, advanceHourlyExecution, hourlySlotAt, openingHourlyState, replayHourlyExecution,
   type HourlyExecutionObservation } from '../packages/core/src/research/hourly-execution.js';
-import { instrumentKey, sha256Hex } from '../packages/core/src/index.js';
-import { collectParallelHourlyShadow, hourlyShadowStatus } from '../packages/services/src/paper/parallel-hourly-shadow.js';
+import { canonicalJson, instrumentKey, sha256Hex } from '../packages/core/src/index.js';
+import { collectParallelHourlyShadow, hourlyShadowStatus, hourlyExecutionSourceHash } from '../packages/services/src/paper/parallel-hourly-shadow.js';
 import { PARALLEL_INSTRUMENTS } from '../packages/services/src/paper/parallel-signal.js';
 import { appendHourlyExecutionRecord, listHourlyExecutionRecords, openDatabase } from '../packages/storage/src/index.js';
 
@@ -78,7 +78,7 @@ describe('hourly TrendVol execution candidate', () => {
       .toEqual(base.results[0]!.equityCurve.slice(0, 23));
   });
 
-  it('registers before collection, persists virtual slots, and resumes idempotently', async () => {
+  it('requires explicit registration before collection, persists virtual slots, and resumes idempotently', async () => {
     const db = openDatabase(':memory:');
     let nowMs = START - 86_400_000 + 60_000;
     const submit = vi.fn();
@@ -93,6 +93,10 @@ describe('hourly TrendVol execution candidate', () => {
       datasetHash: HASH, decision: { ...decision,
         day: new Date(nowMs - 86_400_000).toISOString().slice(0, 10) }, read: read as never });
     await collect();
+    expect(listHourlyExecutionRecords('main', 'study', db)).toHaveLength(0);
+    appendHourlyExecutionRecord('main', {kind:'study',key:HOURLY_EXECUTION_V1.id,atMs:nowMs,body:{version:HOURLY_EXECUTION_V1.id,
+      experimentId:HASH,startMs:START,foldEndsMs:[20,40,60].map(days=>START+days*86_400_000),holdoutEndMs:START+90*86_400_000,
+      planHash:sha256Hex(canonicalJson(HOURLY_EXECUTION_V1)),sourceHash:hourlyExecutionSourceHash()}},db);
     expect(hourlyShadowStatus('main', db).startMs).toBe(START);
     expect(listHourlyExecutionRecords('main', 'observation', db)).toHaveLength(0);
     nowMs = START + 60_000;

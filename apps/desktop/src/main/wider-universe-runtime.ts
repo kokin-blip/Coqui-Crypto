@@ -3,8 +3,8 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createAlpacaPaperClient, fetchCoinbaseUniverseProducts, fetchCoinbaseQuote,
   fetchCoinbaseBook, fetchCoinbaseProduct, parseAlpacaUniverseAssets, parseAlpacaUniverseLiquidity,
-  type HttpClient, type SecretStore } from '@coqui/adapters';
-import { createWiderUniverseStudy, evaluateUniverseAsset, instrumentKey, mapUniverseProducts,
+  createResearchDeadline, deadlineHttp, deadlineReadHttp, withinDeadline, type HttpClient, type SecretStore } from '@coqui/adapters';
+import { evaluateUniverseAsset, instrumentKey, mapUniverseProducts,
   planUniverseShadow, universeHash, universeStrategyInput, validateUniversePolicy,
   UNIVERSE_DAY, WIDER_UNIVERSE_POLICY, type Clock, type UniverseAssetEvidence,
   type UniverseObservation, type UniversePolicy, type UniverseProductObservation, type UniverseAlpacaAsset } from '@coqui/core';
@@ -34,18 +34,21 @@ export function createWiderUniverseRuntime(input: { profileId: string; database:
   http: HttpClient; candleSource: ReturnType<typeof createHistoricalCoinbaseCandleSource>;
   secrets?: SecretStore; onUnexpectedError: (context: string, error: unknown) => void;
   clientFactory?: typeof createAlpacaPaperClient; sourceContentHash?: string }) {
-  let busy = false, sourceHash: string | null = null;
+  let busy = false;
   const records = (kind: Parameters<typeof listUniverseRecords>[1]) => {
     const now = input.clock.nowMs();
     const from = kind === 'catalog' ? (Math.floor(now / UNIVERSE_DAY) - 1) * UNIVERSE_DAY
       : ['observation', 'frame', 'shadow', 'failure'].includes(kind) ? Math.floor(now / (UNIVERSE_DAY / 6)) * (UNIVERSE_DAY / 6) : 0;
     return listUniverseRecords(input.profileId, kind, input.database, Number.MAX_SAFE_INTEGER, from);
   };
-  const append = (kind: Parameters<typeof appendUniverseRecord>[1]['kind'], key: string, atMs: number, body: unknown) =>
-    appendUniverseRecord(input.profileId, { kind, key, atMs, body }, input.database);
   return { async refresh(): Promise<void> {
     if (busy) return;
     busy = true;
+    const deadline = createResearchDeadline(() => input.clock.nowMs());
+    const http = deadlineHttp(input.http, deadline, 'research');
+    const append = (kind: Parameters<typeof appendUniverseRecord>[1]['kind'], key: string, atMs: number, body: unknown) =>
+    { if (kind !== 'failure') deadline.check(); return appendUniverseRecord(input.profileId, { kind, key, atMs, body }, input.database); };
+
     try {
       const started = input.clock.nowMs(), dayMs = Math.floor(started / UNIVERSE_DAY) * UNIVERSE_DAY;
       const slotMs = Math.floor(started / (UNIVERSE_DAY / 6)) * (UNIVERSE_DAY / 6);
@@ -59,20 +62,17 @@ export function createWiderUniverseRuntime(input: { profileId: string; database:
       validateUniversePolicy(policy);
       const policyHash = universeHash(policy);
       if (!records('policy').some((r) => r.key === policyHash)) append('policy', policyHash, started, policy);
-      if (!records('study').some((r) => r.key === policyHash)) {
-        sourceHash ??= input.sourceContentHash ?? widerUniverseRuntimeSourceHash();
-        append('study', policyHash, started, createWiderUniverseStudy(started, sourceHash, experiment.anchor, policy));
-      }
-      const stored = await input.secrets.read('alpaca-paper-credentials', input.profileId);
+      if (!records('study').some((r) => r.key === policyHash)) return;
+      const stored = await withinDeadline(input.secrets.read('alpaca-paper-credentials', input.profileId), deadline);
       if (!stored.ok || stored.value === null) throw new Error('universe_credentials_unavailable');
       const credentials = JSON.parse(stored.value) as { keyId: string; secretKey: string };
-      const client = (input.clientFactory ?? createAlpacaPaperClient)(credentials);
+      const client = input.clientFactory ? input.clientFactory(credentials) : createAlpacaPaperClient(credentials, undefined, deadline);
       const account = await client.account();
       const accountAtMs = input.clock.nowMs();
       const accountReady = account.id === experiment.alpacaAccountId && account.id === getSetting('alpaca.paper.account.id', input.database) &&
         ['ACTIVE', 'PAPER_ONLY'].includes(account.status) && account.currency === 'USD' && !account.trading_blocked && !account.account_blocked;
       if (!records('catalog').some((r) => r.key === String(dayMs))) {
-        const [coinbase, assets] = await Promise.all([fetchCoinbaseUniverseProducts(input.http), client.cryptoAssets()]);
+        const [coinbase, assets] = await Promise.all([fetchCoinbaseUniverseProducts(http), client.cryptoAssets()]);
         if (!coinbase.ok) throw new Error('universe_catalog_unavailable');
         const atMs = input.clock.nowMs();
         if (Math.floor(atMs / UNIVERSE_DAY) * UNIVERSE_DAY !== dayMs) return;
@@ -98,11 +98,12 @@ export function createWiderUniverseRuntime(input: { profileId: string; database:
       }
       // Four products per scheduler pass; retries resume from durable per-slot records after restart.
       await Promise.all(pending.filter((m) => m.mapping !== null).slice(0, 4).map(async (m) => {
-        const authenticated = await input.candleSource.authenticatedClient();
+        const rawAuthenticated = await withinDeadline(input.candleSource.authenticatedClient(), deadline);
+        const authenticated = rawAuthenticated ? deadlineReadHttp(rawAuthenticated, deadline, 'research') : null;
         try {
           const symbol = m.mapping!.alpacaSymbol;
           const [bars, quotes, books, currentAssetRaw, quote, book, product] = await Promise.all([
-            input.candleSource.dailyBars(m.product.instrument, Math.max(200, policy.historyDays), input.clock.nowMs()),
+            input.candleSource.dailyBars(m.product.instrument, Math.max(200, policy.historyDays), input.clock.nowMs(), deadline),
             client.latestCryptoQuotes([symbol]), client.latestCryptoOrderbooks([symbol]), client.asset(symbol),
             authenticated ? fetchCoinbaseQuote(authenticated, m.product.instrument.productId, input.clock.nowMs()) : null,
             authenticated ? fetchCoinbaseBook(authenticated, m.product.instrument.productId, input.clock.nowMs()) : null,
@@ -146,7 +147,8 @@ export function createWiderUniverseRuntime(input: { profileId: string; database:
       const supported = observations.filter((o) => o.evidence.mapping !== null);
       for (let offset = 0; offset < supported.length; offset += 4) {
         await Promise.all(supported.slice(offset, offset + 4).map(async (o) => {
-          const e = o.evidence, auth = await input.candleSource.authenticatedClient();
+          const e = o.evidence, rawAuth = await withinDeadline(input.candleSource.authenticatedClient(), deadline);
+          const auth = rawAuth ? deadlineReadHttp(rawAuth, deadline, 'research') : null;
           try {
             const [q, b, p, a] = await Promise.all([
               auth ? fetchCoinbaseQuote(auth, e.product.instrument.productId, input.clock.nowMs()) : null,
@@ -207,6 +209,6 @@ export function createWiderUniverseRuntime(input: { profileId: string; database:
       try { if (!records('failure').some((r) => r.key === key)) append('failure', key, atMs,
         { reason: 'universe_collection_or_shadow_incomplete', executionEnabled: false }); }
       catch { input.onUnexpectedError('universe_persistence', new Error('universe_persistence_failed')); }
-    } finally { busy = false; }
+    } finally { deadline.dispose(); busy = false; }
   } };
 }

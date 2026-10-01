@@ -21,14 +21,19 @@ Paper Trading → Overview leads with **Alpaca paper activity**. It shows the mo
 
 The September 28 owner screenshot showed `Alpaca activity unavailable · invalid_response_payload` after reconciliation read failures had entered the ledger. The service projected those failures as `retry` activity, but the response contract omitted that activity kind; the same omission applied to `fee` rows. Beta.11 accepts both and has service-to-contract regression tests. This was a display validation failure, not evidence that the existing Alpaca holdings or ledger were deleted. Coinbase market context has a separate request and its unavailable cards in that screenshot do not establish why the Alpaca status failed.
 
-The experimental macOS Apple Silicon build is [beta.11](https://github.com/kokin-blip/Coqui-Crypto/releases/tag/experimental-v0.1.0-beta.11). Typecheck, lint, tests and build passed; the DMG and ZIP hashes were verified after upload. The packaged-process smoke did not complete on the packaging host: Electron aborted with `SIGABRT` during AppKit application registration, before Coqui's smoke handler ran. The packaged schema/startup check therefore remains unverified on this host. The release is ad-hoc signed, and an actual GUI launch and connected-account checks remain owner checks.
+The September 29 screenshot showed a later `Alpaca reconciliation read failed · alpaca_unavailable` entry. While Coqui remains open, the desktop scheduler retries reconciliation on its next one-minute tick. The current code also retries an idempotent Alpaca GET once immediately after a network failure or HTTP 5xx; it never automatically retries order writes. A successful read can clear a transient pause when its original cause is recoverable and current daily market data is valid. A non-transient or user pause stays in place. Retry activity now includes the safe Alpaca operation and HTTP status, or identifies a network/timeout failure, to distinguish account, order, quote, and activity reads. The screenshot's separate status-rail label `reconcile never run` refers to Coqui's portfolio reconciliation view; it is not the Alpaca broker reconciliation event shown in the activity list.
+
+The experimental beta.12 release is [building](https://github.com/kokin-blip/Coqui-Crypto/releases/tag/experimental-v0.1.0-beta.12). Release CI verifies code, packages macOS Apple Silicon and Windows x64, runs packaged smoke checks, and uploads checksums to a draft release. The packaged-process smoke did not complete on the packaging host: Electron aborted with `SIGABRT` during AppKit application registration, before Coqui's smoke handler ran. The packaged schema/startup check therefore remains unverified on this host. The release is ad-hoc signed, and an actual GUI launch and connected-account checks remain owner checks.
 
 The Overview also shows **Coinbase market context** for BTC-USD, ETH-USD, and
 LTC-USD: authenticated best bid/ask, spread, product state, and bounded book
 availability with separate timestamps. Markets shows up to ten bid and ask
 levels for the selected product. This context is informational only. It does
 not affect TrendVol targets or Alpaca paper orders and cannot verify an Alpaca
-fill.
+fill. The adapter includes optional Coinbase product fields (`baseMinSize`,
+`auctionMode`, and `isDisabled`); the strict IPC schema now accepts those fields,
+which previously could cause a valid snapshot to be rejected as a whole and
+render the generic unavailable message. The schema correction passes the compiled verification gates in beta.12; packaged runtime observation remains part of the release workflow.
 
 ### Wider-universe breakout research
 
@@ -262,3 +267,11 @@ It reports observed Alpaca partial-order IDs separately; immediate virtual
 fills are assumptions. The owner must check connected paper-account data and
 prospective coverage before interpreting any result. No automatic promotion
 to paper orders is available.
+
+## September 30 remediation implementation
+
+The [implementation record](studies/execution-remediation-implementation-2026-09-30.md) documents bounded readiness, lifecycle fencing, explicit study instances, fee denomination and observed execution measurement. Operational TrendVol retains legacy daily/intraday sizing and bands, with fresh safety checks that may block an unsafe legacy intent. ML target proposals remain shadow-only. Headless now supplies OS keyring wiring; connected unattended operation has not been verified.
+
+The shared Decimal planner and A/B/C/D plus three controls are shadow capabilities only. They require an explicitly registered instance; deployment does not register or restart them. The [prospective registration proposal](studies/execution-remediation-registration-proposal-v1.json) fixes dates, common $100,000 cash openings, complete coverage, cost stress and selection/uncertainty rules. It is a proposal, not a registration. Read-only development reporting is available with `pnpm research:remediation-report /path/to/backup.sqlite profile-id study-instance-id`; use an isolated migrated backup. The report keeps holdout books sealed and never promotes a candidate.
+
+Fee displays show observed cash fees, crypto quantities and reported-price values with partial coverage. Arrival/fill/latency measurements are journal evidence; neither modeled friction nor an immediate equity decline is charged again to broker equity or labeled automatically as slippage. Existing immutable activity and prior study failures remain intact.

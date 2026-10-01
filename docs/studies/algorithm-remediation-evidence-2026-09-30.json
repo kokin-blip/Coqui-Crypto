@@ -1,0 +1,80 @@
+{
+  "scope": "read-only local main-profile evidence; not independent broker reconciliation",
+  "latestRecordedEventUtc": "2026-09-30T19:14:10.722000+00:00",
+  "marketRefresh": {
+    "count": 1877,
+    "medianElapsedMs": 2190,
+    "p95ElapsedMs": 6740,
+    "maxElapsedMs": 1049503,
+    "over30Seconds": 14,
+    "caution": "Wall-clock intervals can include system sleep; they do not isolate network latency."
+  },
+  "scheduler": {
+    "recordedChecks": 1873,
+    "gapsOverFiveMinutes": 65,
+    "largestGaps": [
+      {
+        "durationHours": 20.9693,
+        "fromUtc": "2026-09-28T22:06:03.618000+00:00",
+        "toUtc": "2026-09-29T19:04:13.066000+00:00"
+      },
+      {
+        "durationHours": 0.6475,
+        "fromUtc": "2026-09-28T19:19:11.937000+00:00",
+        "toUtc": "2026-09-28T19:58:03.103000+00:00"
+      },
+      {
+        "durationHours": 0.4199,
+        "fromUtc": "2026-09-28T15:13:51.935000+00:00",
+        "toUtc": "2026-09-28T15:39:03.479000+00:00"
+      },
+      {
+        "durationHours": 0.361,
+        "fromUtc": "2026-09-28T16:14:32.214000+00:00",
+        "toUtc": "2026-09-28T16:36:11.829000+00:00"
+      },
+      {
+        "durationHours": 0.3098,
+        "fromUtc": "2026-09-28T19:58:03.103000+00:00",
+        "toUtc": "2026-09-28T20:16:38.214000+00:00"
+      },
+      {
+        "durationHours": 0.3086,
+        "fromUtc": "2026-09-28T14:29:38.835000+00:00",
+        "toUtc": "2026-09-28T14:48:09.756000+00:00"
+      }
+    ],
+    "caution": "Absence of ledger checks does not identify app closure, sleep, blocked ticks, or database-write failure."
+  },
+  "pauseReasons": {
+    "market_fetch_failed": 3,
+    "alpaca_unavailable": 2,
+    "credentials_unavailable": 4,
+    "execution_window_missed": 1,
+    "stale_product_rules": 13,
+    "stale_market_data": 2
+  },
+  "reconciliationErrors": {
+    "alpaca_unavailable": 136
+  },
+  "researchRecordCounts": {
+    "hourly_execution_records_v1": {
+      "failure": 5,
+      "observation": 17,
+      "shadow": 17,
+      "study": 1
+    },
+    "market_selector_records_v1": {
+      "failure": 10,
+      "study": 1
+    },
+    "range_rotation_records_v1": {
+      "shadow": 3,
+      "study": 1
+    },
+    "breakout_research_records_v1": {
+      "shadow": 3,
+      "study": 1
+    }
+  }
+}

@@ -56,6 +56,16 @@ function testClient(
 }
 
 describe('createHttpClient', () => {
+  it('includes rate-limit queueing in the per-request execution budget', async () => {
+    vi.useFakeTimers();
+    const fetch=vi.fn(async()=>response(true,200));
+    const client=testClient({fetch,maxRetries:3,rateLimiters:passThroughRegistry(vi.fn(async()=>await new Promise<'acquired'>(()=>{}))).registry});
+    const result=client.getJson('https://api.example/queued',{maxElapsedMs:30,requestPriority:'execution'});
+    await vi.advanceTimersByTimeAsync(30);
+    await expect(result).resolves.toMatchObject({ok:false,reason:'elapsed-budget',retried:0});expect(fetch).not.toHaveBeenCalled();
+    client.destroy();vi.useRealTimers();
+  });
+
   it('returns parsed JSON, raw text, and binary successes', async () => {
     const fetch = vi.fn()
       .mockResolvedValueOnce(response(true, 200, { value: 1 }))

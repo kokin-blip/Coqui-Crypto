@@ -69,6 +69,8 @@ export async function executeParallelIntraday(input: {
   readonly events: () => readonly ParallelPaperEvent[];
   readonly append: Append;
   readonly client: Client;
+  readonly beforeSubmit?: () => void;
+  readonly expectedAccountId?: string;
   readonly mlSignal?: MlSignalSnapshot | null;
 }): Promise<void> {
   const slot = slotAt(input.nowMs);
@@ -197,8 +199,9 @@ export async function executeParallelIntraday(input: {
           event.detail['clientOrderId'] === clientOrderId)) continue;
       if (slotAt(input.now?.() ?? input.nowMs) !== slot) return false;
       await recordParallelPreOrder(input.client, input.now ?? (() => input.nowMs), input.append,
-        { clientOrderId, symbol: String(intent.detail['symbol']), side: stage, qty: String(intent.detail['qty']) }, weights, slot);
+        { clientOrderId, symbol: String(intent.detail['symbol']), side: stage, qty: String(intent.detail['qty']) }, weights, slot, input.expectedAccountId);
       if (slotAt(input.now?.() ?? input.nowMs) !== slot) return false;
+      input.beforeSubmit?.();
       input.append('submit_attempt', `attempt:${clientOrderId}`, { clientOrderId, day: slot });
       const order = await input.client.submit({ client_order_id: clientOrderId,
         symbol: String(intent.detail['symbol']), side: stage, qty: String(intent.detail['qty']) });
@@ -221,12 +224,22 @@ export async function executeParallelIntraday(input: {
 /** Fresh venue evidence immediately before each submission, including resumed plans. */
 export async function recordParallelPreOrder(client: Client, now: () => number, append: Append,
   order: { clientOrderId: string; symbol: string; side: 'buy' | 'sell'; qty: string },
-  weights: Record<string, number>, decisionKey: string): Promise<void> {
+  weights: Record<string, number>, decisionKey: string, expectedAccountId?: string): Promise<void> {
+  const [asset, account, positions] = await Promise.all([client.asset(order.symbol), client.account(), client.positions()]);
+  if ((expectedAccountId !== undefined && account.id !== expectedAccountId) || asset.symbol.replace('/', '') !== order.symbol || !asset.tradable || asset.status !== 'active' ||
+      !['ACTIVE','PAPER_ONLY'].includes(account.status) || account.trading_blocked || account.account_blocked)
+    throw new Error('alpaca_asset_rules_unavailable');
+  const intended = amount(order.qty);
+  if (!intended.isPositive() || !sizedQuantity(intended, asset).eq(intended)) throw new Error('material_sizing_inputs_changed');
+  if (order.side === 'sell' && intended.gt(positions.find((item) => item.symbol.replace('/', '') === order.symbol)?.qty ?? '0'))
+    throw new Error('material_sizing_inputs_changed');
   const raw = await client.latestCryptoQuotes();
   const quote = parallelQuotes(raw, now());
   const sides = quote.sides[order.symbol]!;
   const midpoint = quote.prices[order.symbol]!;
   const notional = midpoint.mul(order.qty);
+  if (notional.lt(MIN_TRADE) || (order.side === 'buy' && intended.mul(sides.ask).mul('1.0015').gt(account.cash)))
+    throw new Error('material_sizing_inputs_changed');
   const halfSpread = new Decimal(sides.ask).minus(sides.bid).div(2).mul(order.qty);
   append('pre_order_quote', `pre-order:${order.clientOrderId}:${now()}`, {
     ...order, decisionKey, targetWeights: weights, quoteSource: 'alpaca_crypto_us',

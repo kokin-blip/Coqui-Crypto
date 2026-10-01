@@ -180,14 +180,17 @@ export async function fetchCoinbaseProductRules(
     }));
     const failed = responses.find((response) => !response.ok);
     if (failed !== undefined && !failed.ok) return { ok: false, code: failure(failed) };
+    if (new Set(options.productIds).size !== options.productIds.length) return { ok: false, code: 'invalid_response' };
     const rows = responses.map((response, index) => {
       if (!response.ok) return null;
       const data = Array.isArray(response.data)
         ? response.data.find((row) => record(row)?.['id'] === options.productIds![index])
         : response.data;
-      return parseProductRules(data, options.nowMs);
+      const parsed = parseProductRules(data, options.nowMs);
+      return parsed?.instrument.productId === options.productIds![index] ? parsed : null;
     });
-    return { ok: true, rules: Object.freeze(rows.filter((row): row is ProductRuleSnapshot => row !== null)) };
+    if (rows.some((row) => row === null)) return { ok: false, code: 'invalid_response' };
+    return { ok: true, rules: Object.freeze(rows as ProductRuleSnapshot[]) };
   }
   const response = await http.getJson<unknown>(
     PRODUCTS_URL,

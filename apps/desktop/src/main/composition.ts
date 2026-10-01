@@ -94,7 +94,7 @@ function paperGrossEdgeLowerBoundPct(profileId: string, database: Db): number | 
 
 export interface RuntimeOptions extends Partial<Pick<Parameters<typeof createAdvisorHandlers>[0], 'secrets' | 'saveHistory' |
   'readClipboardText' | 'clearClipboardIfMatches'>> {
-  readonly databasePath: string; readonly profileId: string; readonly hostId?: string;
+  readonly hostKind?: 'desktop' | 'headless'; readonly databasePath: string; readonly profileId: string; readonly hostId?: string;
   readonly readSystemTime?: () => number;
   readonly onUnexpectedError?: (context: string, error: unknown) => void;
   /** Leave the scheduler stopped for smoke tests. */
@@ -220,12 +220,12 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     database,
     http,
     instruments: paperInstruments,
-    bars: (instrument, lookbackDays, nowMs) => candles.dailyBars(instrument, lookbackDays, nowMs),
+    bars: (instrument, lookbackDays, nowMs, deadline) => historicalCandles.dailyBars(instrument, lookbackDays, nowMs, deadline),
     onUnexpectedError: report,
   });
   const widerUniverse = createWiderUniverseRuntime({ profileId: options.profileId, database, clock, http, candleSource: historicalCandles, onUnexpectedError: report, ...(options.secrets === undefined ? {} : { secrets: options.secrets }) });
-  const mlSignal = createMlSignalRuntime({ profileId: options.profileId, database, candleSource: historicalCandles, onUnexpectedError: report }), parallel = createParallelPaperRuntime({ profileId: options.profileId, database, clock, http,
-    bars: (instrument, lookbackDays, nowMs) => candles.dailyBars(instrument, lookbackDays, nowMs),
+  const mlSignal = createMlSignalRuntime({ profileId: options.profileId, database, candleSource: historicalCandles, onUnexpectedError: report }), parallel = createParallelPaperRuntime({ hostId, hostKind: options.hostKind ?? 'desktop', profileId: options.profileId, database, clock, http,
+    bars: (instrument, lookbackDays, nowMs, deadline) => historicalCandles.dailyBars(instrument, lookbackDays, nowMs, deadline),
     onUnexpectedError: report, mlSignal, widerUniverse, breakout: createBreakoutRuntime({ profileId: options.profileId, database, clock, candleSource: historicalCandles, onUnexpectedError: report }),
     rangeRotation: createRangeRotationRuntime({ profileId: options.profileId, database, clock, onUnexpectedError: report }), marketSelector: createMarketSelectorRuntime({ profileId: options.profileId, database, clock, onUnexpectedError: report }), ...(options.secrets === undefined ? {} : { secrets: options.secrets }) });
 

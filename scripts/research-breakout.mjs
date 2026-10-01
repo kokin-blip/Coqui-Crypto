@@ -1,3 +1,4 @@
+import { registeredStudyForReport } from '../packages/services/dist/research/registered-study.js';
 import { DatabaseSync } from 'node:sqlite';
 import { compareBreakoutStudy, universeHash } from '../packages/core/dist/index.js';
 import { listBreakoutHourlyBars, listBreakoutRecords, loadUniverseResearchFrames } from '../packages/storage/dist/index.js';
@@ -18,18 +19,18 @@ if (!path || !['development', 'holdout'].includes(phase)) {
       process.stdout.write(`${JSON.stringify({ status: 'not_registered', phase, results: null,
         executionEnabled: false })}\n`);
     } else {
-      const studies = listBreakoutRecords(profileId, 'study', db);
-      const study = studies.at(-1)?.body;
+      const registered = registeredStudyForReport({profileId,candidateId:'wider-breakout-v1',db,legacyHash:widerUniverseRuntimeSourceHash(),legacyList:(kind,cutoff)=>listBreakoutRecords(profileId,kind,db,cutoff)});
+      const study = registered.study;
       const nowMs = Date.now();
       const cutoff = !study ? 0 : phase === 'development' ? study.holdoutStartMs :
         nowMs < study.endExclusiveMs ? 0 : study.endExclusiveMs;
       const frames = cutoff === 0 ? [] : loadUniverseResearchFrames(profileId, db, cutoff);
-      const sourceHash = widerUniverseRuntimeSourceHash();
+      const sourceHash = registered.sourceHash;
       const comparison = study ? compareBreakoutStudy(study, frames, phase, nowMs, sourceHash,
         (assetId, fromMs, toMs, observedAtMs) => listBreakoutHourlyBars(profileId, assetId,
           fromMs, toMs, observedAtMs, db)) : { status: 'not_registered', phase, results: null };
-      const shadows = listBreakoutRecords(profileId, 'shadow', db, cutoff || Number.MAX_SAFE_INTEGER);
-      const report = { schemaVersion: 1, generatedAtMs: nowMs, phase, study: study ?? null,
+      const shadows = registered.records('shadow', cutoff);
+      const report = { schemaVersion: 1, generatedAtMs: nowMs, phase, studyInstanceId: registered.studyInstanceId, study: study ?? null,
         shadowSlots: shadows.length, latestShadow: shadows.at(-1)?.body ?? null, comparison,
         executionEnabled: false, limitations: [
           'Modeled results are not broker fills.',

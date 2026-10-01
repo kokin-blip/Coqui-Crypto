@@ -153,6 +153,11 @@ function ActivityContent({ data }: { readonly data: Status }): React.JSX.Element
           <div><dt>Equity</dt><dd>{usd(data.alpacaEquityUsd)}</dd></div>
           <div><dt>Return on Alpaca account</dt><dd>{pct(data.alpacaReturnPct)}</dd></div>
           <div><dt>Booked fees</dt><dd>{data.alpacaBookedFeesUsd === null ? 'Not reported separately' : usd(data.alpacaBookedFeesUsd)}</dd></div>
+          {data.feeAccounting && <>
+            <div><dt>Known cash fees</dt><dd>{data.feeAccounting.observedActivityCount ? usd(data.feeAccounting.knownCashFeesUsd) : 'Unknown'}</dd></div>
+            <div><dt>Crypto fee quantities</dt><dd>{Object.entries(data.feeAccounting.cryptoFeeQuantities).map(([symbol,qty]) => `${qty} ${symbol}`).join(' · ') || 'Unknown'}</dd></div>
+            <div><dt>Reported-price fee value</dt><dd>{data.feeAccounting.observedActivityCount ? usd(data.feeAccounting.reportedPriceEquivalentUsd) : 'Unknown'} · partial account activity coverage</dd></div>
+          </>}
           <div><dt>Cost-model envelope</dt><dd>{usd(data.alpacaModeledFrictionUsd)} · not deducted again</dd></div>
           <div><dt>Orders / paper fills</dt><dd>{data.alpacaOrderCount} / {data.alpacaFillCount}</dd></div>
         </dl></article>

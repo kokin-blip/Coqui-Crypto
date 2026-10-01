@@ -126,6 +126,9 @@ importers:
 
   apps/headless:
     dependencies:
+      '@coqui/adapters':
+        specifier: workspace:*
+        version: link:../../packages/adapters
       '@coqui/core':
         specifier: workspace:*
         version: link:../../packages/core

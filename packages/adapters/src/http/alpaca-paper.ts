@@ -1,3 +1,5 @@
+import { Decimal } from 'decimal.js';
+import type { RequestDeadline } from './deadline.js';
 import { alpacaUniverseSymbols, parseAlpacaUniverseAssets } from './alpaca-universe.js';
 /** Alpaca Trading API client. The host is intentionally not configurable: paper only. */
 export const ALPACA_PAPER_ORIGIN = 'https://paper-api.alpaca.markets/v2' as const;
@@ -67,7 +69,7 @@ export class AlpacaPaperError extends Error {
 
 type Fetcher = typeof fetch;
 
-export function createAlpacaPaperClient(credentials: AlpacaPaperCredentials, fetcher: Fetcher = fetch) {
+export function createAlpacaPaperClient(credentials: AlpacaPaperCredentials, fetcher: Fetcher = fetch, deadline?: RequestDeadline) {
   if (!credentials.keyId.trim() || !credentials.secretKey.trim() ||
       credentials.keyId.length > 256 || credentials.secretKey.length > 512) {
     throw new AlpacaPaperError('unauthorized');
@@ -76,29 +78,43 @@ export function createAlpacaPaperClient(credentials: AlpacaPaperCredentials, fet
   async function request<T>(path: string, options: { method?: 'GET' | 'POST' | 'DELETE'; body?: unknown; data?: boolean; operation: string }): Promise<T> {
     // Callers supply only relative paths assembled in this module.
     if (!path.startsWith('/') || path.startsWith('//')) throw new AlpacaPaperError('invalid_response');
-    let response: Response;
-    try {
-      response = await fetcher(`${options.data ? ALPACA_CRYPTO_DATA_ORIGIN : ALPACA_PAPER_ORIGIN}${path}`, {
-        method: options.method ?? 'GET',
-        headers: {
-          'APCA-API-KEY-ID': credentials.keyId,
-          'APCA-API-SECRET-KEY': credentials.secretKey,
-          ...(options.body === undefined ? {} : { 'Content-Type': 'application/json' }),
-        },
-        ...(options.body === undefined ? {} : { body: JSON.stringify(options.body) }),
-        cache: 'no-store',
-        signal: AbortSignal.timeout(15_000),
-      });
-    } catch {
-      throw new AlpacaPaperError('unavailable', options.operation);
+    deadline?.check();
+    const method = options.method ?? 'GET';
+    const retrySafeRead = method === 'GET';
+    let response: Response | undefined;
+    for (let attempt = 0; attempt < (retrySafeRead ? 2 : 1); attempt += 1) {
+      deadline?.check();
+      try {
+        response = await fetcher(`${options.data ? ALPACA_CRYPTO_DATA_ORIGIN : ALPACA_PAPER_ORIGIN}${path}`, {
+          method,
+          headers: {
+            'APCA-API-KEY-ID': credentials.keyId,
+            'APCA-API-SECRET-KEY': credentials.secretKey,
+            ...(options.body === undefined ? {} : { 'Content-Type': 'application/json' }),
+          },
+          ...(options.body === undefined ? {} : { body: JSON.stringify(options.body) }),
+          cache: 'no-store',
+          signal: deadline ? AbortSignal.any([deadline.signal, AbortSignal.timeout(Math.max(1, Math.floor(Math.min(15_000, deadline.remainingMs()))))]) : AbortSignal.timeout(15_000),
+        });
+      } catch {
+        deadline?.check();
+        if (retrySafeRead && attempt === 0) continue;
+        throw new AlpacaPaperError('unavailable', options.operation);
+      }
+      // Reads are safe to retry once after transient network or server errors.
+      // Never retry writes: a timed-out order submission has an ambiguous result.
+      if (retrySafeRead && attempt === 0 && response.status >= 500 && response.status < 600) continue;
+      break;
     }
+    deadline?.check();
+    if (response === undefined) throw new AlpacaPaperError('unavailable', options.operation);
     if (!response.ok) {
       const code = response.status === 401 ? 'unauthorized' : response.status === 403 ? 'forbidden'
         : response.status === 404 ? 'not_found' : response.status === 429 ? 'rate_limited' : 'unavailable';
       throw new AlpacaPaperError(code, options.operation, response.status);
     }
     if (response.status === 204) return undefined as T;
-    try { return await response.json() as T; } catch { throw new AlpacaPaperError('invalid_response', options.operation, response.status); }
+    try { const body = await response.json() as T; deadline?.check(); return body; } catch { deadline?.check(); throw new AlpacaPaperError('invalid_response', options.operation, response.status); }
   }
 
   return Object.freeze({
@@ -106,7 +122,16 @@ export function createAlpacaPaperClient(credentials: AlpacaPaperCredentials, fet
     positions: () => request<AlpacaPaperPosition[]>('/positions', { operation: 'positions' }),
     orders: (status: 'open' | 'all' = 'open') => request<AlpacaPaperOrder[]>(`/orders?status=${status}&limit=500`, { operation: 'orders' }),
     orderByClientId: (clientOrderId: string) => request<AlpacaPaperOrder>(`/orders:by_client_order_id?client_order_id=${encodeURIComponent(clientOrderId)}`, { operation: 'order_lookup' }),
-    asset: (symbol: string) => request<AlpacaPaperAsset>(`/assets/${encodeURIComponent(symbol)}`, { operation: 'asset' }),
+    asset: async (symbol: string): Promise<AlpacaPaperAsset> => {
+      const asset = await request<AlpacaPaperAsset>(`/assets/${encodeURIComponent(symbol)}`, { operation: 'asset' });
+      try {
+        if (!asset || typeof asset.symbol !== 'string' || asset.symbol.replace('/', '') !== symbol.replace('/', '') ||
+            typeof asset.tradable !== 'boolean' || typeof asset.status !== 'string' ||
+            ![asset.min_order_size,asset.min_trade_increment].every((value) => typeof value === 'string' &&
+              new Decimal(value).isFinite() && new Decimal(value).gt(0))) throw new Error('invalid_asset');
+      } catch { throw new AlpacaPaperError('invalid_response', 'asset', 200); }
+      return asset;
+    },
     latestCryptoQuotes: (symbols: readonly string[] = ['BTC/USD', 'ETH/USD', 'LTC/USD']) => request<unknown>(`/v1beta3/crypto/us/latest/quotes?symbols=${alpacaUniverseSymbols(symbols)}`, { data: true, operation: 'quote' }),
     cryptoAssets: async () => parseAlpacaUniverseAssets(await request<unknown>('/assets?asset_class=crypto', { operation: 'assets' })),
     latestCryptoOrderbooks: (symbols: readonly string[]) => request<unknown>(`/v1beta3/crypto/us/latest/orderbooks?symbols=${alpacaUniverseSymbols(symbols)}`, { data: true, operation: 'orderbook' }),
