@@ -79,19 +79,25 @@ jobs:
 
       - name: Hash the artifacts
         shell: bash
+        env:
+          ARTIFACT: ${{ matrix.artifact }}
         run: |
           cd apps/desktop/release
-          # Only distributable artifacts. The unpacked directories are build
-          # intermediates and hashing them would make the manifest unreadable.
-          files=()
-          for file in *.dmg *.zip *.exe; do
-            [[ -f "$file" ]] && files+=("$file")
-          done
-          if [[ ${#files[@]} -eq 0 ]]; then
-            echo "No distributable artifacts found" >&2
-            exit 1
-          fi
-          shasum -a 256 "${files[@]}" | tee "SHA256SUMS-${{ matrix.artifact }}.txt"
+          node <<'NODE'
+          const { createHash } = require('node:crypto');
+          const { readdirSync, readFileSync, writeFileSync } = require('node:fs');
+          const files = readdirSync('.')
+            .filter((file) => /\.(dmg|zip|exe)$/i.test(file))
+            .sort();
+          if (files.length === 0) throw new Error('No distributable artifacts found');
+          const lines = files.map((file) => {
+            const hash = createHash('sha256').update(readFileSync(file)).digest('hex');
+            return `${hash}  ${file}`;
+          });
+          const manifest = `SHA256SUMS-${process.env.ARTIFACT}.txt`;
+          writeFileSync(manifest, `${lines.join('\n')}\n`);
+          console.log(lines.join('\n'));
+          NODE
 
       - name: Upload artifacts
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
