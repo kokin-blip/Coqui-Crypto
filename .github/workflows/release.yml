@@ -83,7 +83,15 @@ jobs:
           cd apps/desktop/release
           # Only distributable artifacts. The unpacked directories are build
           # intermediates and hashing them would make the manifest unreadable.
-          shasum -a 256 *.dmg *.zip *.exe 2>/dev/null | tee "SHA256SUMS-${{ matrix.artifact }}.txt"
+          files=()
+          for file in *.dmg *.zip *.exe; do
+            [[ -f "$file" ]] && files+=("$file")
+          done
+          if [[ ${#files[@]} -eq 0 ]]; then
+            echo "No distributable artifacts found" >&2
+            exit 1
+          fi
+          shasum -a 256 "${files[@]}" | tee "SHA256SUMS-${{ matrix.artifact }}.txt"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
