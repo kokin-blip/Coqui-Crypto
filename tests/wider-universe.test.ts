@@ -142,5 +142,7 @@ describe('dynamic inputs and shadow accounting', () => {
     const missing = { ...slots[0]!, observations: slots[0]!.observations.map((o, i) => i === 3
       ? { ...o, evidence: { ...o.evidence, alpaca: null } } : o) };
     expect(compareWiderUniverse(study, [missing, ...slots.slice(1)], 'development', study.holdoutStartMs).status).toBe('invalid_evidence');
-  }, 30_000);
+  // This intentionally evaluates 360 slots × six candidate/cost combinations;
+  // slower hosted runners need more headroom than the local workstation.
+  }, 60_000);
 });

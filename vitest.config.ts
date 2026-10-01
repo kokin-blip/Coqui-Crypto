@@ -10,6 +10,9 @@ export default defineConfig({
       '@coqui/observability': fileURLToPath(new URL('./packages/observability/src/index.ts', import.meta.url)),
       '@coqui/services': fileURLToPath(new URL('./packages/services/src/index.ts', import.meta.url)),
       '@coqui/storage': fileURLToPath(new URL('./packages/storage/src/index.ts', import.meta.url)),
+      // Renderer tests run before `pnpm build`, so resolve the workspace source
+      // instead of requiring a generated `packages/ui-kit/dist` directory.
+      '@coqui/ui-kit': fileURLToPath(new URL('./packages/ui-kit/src/index.ts', import.meta.url)),
     },
   },
   test: {
