@@ -1,4 +1,4 @@
-import { withinDeadline, type RequestDeadline, type createAlpacaPaperClient } from '@coqui/adapters';
+import { AlpacaPaperError, withinDeadline, type RequestDeadline, type createAlpacaPaperClient } from '@coqui/adapters';
 import { acquireExecutionLease, getAuthoritativeHost, validateExecutionLease, releaseExecutionLease,
   type Db } from '@coqui/storage';
 
@@ -27,25 +27,33 @@ type Client = ReturnType<typeof createAlpacaPaperClient>;
 export function observedParallelClient(client: Client, now: () => number, append:
   (kind: string, key: string, detail: Record<string, unknown>) => void, deadline?: RequestDeadline, keyPrefix = 'read'): Client {
   let sequence = 0;
-  return new Proxy(client, { get(target, property) {
-    const method = Reflect.get(target, property) as unknown;
-    if (typeof method !== 'function') return method;
-    return async (...args: unknown[]) => {
-      deadline?.check();
-      const startedAtMs = now(), started = performance.now(), operation = String(property);
+  const wrap = <A extends unknown[], R>(operation: string, method: (...args: A) => Promise<R>) =>
+    async (...args: A): Promise<R> => {
+      const startedAtMs = now(), started = performance.now(), budgetMs = deadline?.remainingMs() ?? null;
       const key = `readiness:${keyPrefix}:${startedAtMs}:${operation}:${sequence++}`;
       try {
-        const result: unknown = await withinDeadline(Reflect.apply(method, target, args) as Promise<unknown>, deadline);
         deadline?.check();
+        const result = await withinDeadline(method(...args), deadline);
         append('readiness', key, { operation, status: 'received', startedAtMs, observedAtMs: now(),
-          durationMs: performance.now() - started });
+          durationMs: performance.now() - started, budgetMs, remainingMs: deadline?.remainingMs() ?? null });
         return result;
       } catch (error) {
+        const failure = error instanceof AlpacaPaperError ? error : new AlpacaPaperError(
+          error instanceof Error && error.message === 'deadline_exceeded' ? 'deadline_exceeded' :
+          error instanceof TypeError ? 'invalid_response' : 'unavailable', operation, null, 0, performance.now() - started,
+          budgetMs, deadline?.remainingMs() ?? null);
         append('readiness', key, { operation, status: 'unavailable', startedAtMs, observedAtMs: now(),
-          durationMs: performance.now() - started,
-          reason: error instanceof Error && /^[a-z_]+$/u.test(error.message) ? error.message : 'broker_read_failed' });
-        throw error;
+          durationMs: performance.now() - started, budgetMs, remainingMs: deadline?.remainingMs() ?? null,
+          reason: `alpaca_${failure.code}`, httpStatus: failure.httpStatus, attemptCount: failure.attemptCount });
+        throw failure;
       }
     };
-  } });
+  return Object.freeze({
+    account: wrap('account', client.account), positions: wrap('positions', client.positions),
+    orders: wrap('orders', client.orders), orderByClientId: wrap('order_lookup', client.orderByClientId),
+    asset: wrap('asset', client.asset), activities: wrap('activities', client.activities),
+    latestCryptoQuotes: wrap('quote', client.latestCryptoQuotes), cryptoAssets: wrap('assets', client.cryptoAssets),
+    latestCryptoOrderbooks: wrap('orderbook', client.latestCryptoOrderbooks),
+    submit: wrap('submit', client.submit), cancel: wrap('cancel', client.cancel),
+  });
 }

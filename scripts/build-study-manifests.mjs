@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 import ts from 'typescript';
 
 export const STUDY_ENTRIES = {
+  'trendvol-ml-ridge-shadow-v2': 'apps/desktop/src/main/ml-signal-runtime.ts',
   'wider-breakout-v1': 'apps/desktop/src/main/breakout-runtime.ts',
   'wider-range-rotation-v1': 'apps/desktop/src/main/range-rotation-runtime.ts',
   'paper-market-selector-v1': 'apps/desktop/src/main/market-selector-runtime.ts',

@@ -7,6 +7,7 @@ import { type createAlpacaPaperClient } from '@coqui/adapters';
 import { appendRemediationEvidence, listRemediationEvidence, listStudyInstances, appendHourlyExecutionRecord, getHourlyExecutionRecord, hourlyExecutionCoverage,
   latestHourlyExecutionRecord, listHourlyExecutionRecords, type Db } from '@coqui/storage';
 
+import { parallelSafeFailureReason } from './parallel-paper-utils.js';
 import { parallelQuotes } from './parallel-paper-intraday.js';
 import { PARALLEL_INSTRUMENTS, PARALLEL_SYMBOLS } from './parallel-signal.js';
 import { instrumentKey } from '@coqui/core';
@@ -118,8 +119,7 @@ export async function collectParallelHourlyShadow(input: {
 export async function collectParallelHourlyShadowSafely(input: Parameters<typeof collectParallelHourlyShadow>[0]): Promise<void> {
   try { await collectParallelHourlyShadow(input); }
   catch (error) {
-    const reason = error instanceof Error && /^[a-z_]+$/u.test(error.message)
-      ? error.message : 'hourly_shadow_unavailable';
+    const reason = parallelSafeFailureReason(error, 'hourly_shadow_unavailable');
     const slotMs = Math.floor(input.nowMs / 3_600_000) * 3_600_000;
     try {
       const instance = listStudyInstances(input.profileId, CANDIDATE, input.db).at(-1);

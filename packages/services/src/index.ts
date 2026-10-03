@@ -12,3 +12,5 @@ export * from './research/index.js';
 export * from './runtime/index.js';
 export * from './risk/index.js';
 export * from './scheduler/index.js';
+
+export * from './paper/parallel-ml-inference.js';

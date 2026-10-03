@@ -167,8 +167,15 @@ describe('authenticated Coinbase candles', () => {
     const sourceEvents: string[] = [];
     const failures: string[] = [];
     let publicCalls = 0;
-    const publicGet = async <T>(): Promise<HttpResult<T>> => {
+    const publicGet = async <T>(url: string): Promise<HttpResult<T>> => {
       publicCalls += 1;
+      const params = new URL(url).searchParams;
+      if (params.get('granularity') === '3600') {
+        const rows = [];
+        for (let at = Date.parse(params.get('start')!); at < Date.parse(params.get('end')!); at += 3_600_000)
+          rows.push([at / 1000, 90, 110, 100, 105, 20]);
+        return { ok: true, status: 200, data: rows as T };
+      }
       return { ok: true, status: 200,
         data: [[(NOW - DAY - 6 * 60_000) / 1_000, 90, 110, 100, 105, 20]] as T };
     };
@@ -194,6 +201,15 @@ describe('authenticated Coinbase candles', () => {
       NOW - 6 * 60_000, NOW);
     expect(research).toMatchObject({ ok: true, source: 'public' });
     expect(sourceEvents).toEqual(['public', 'public', 'public']);
+    // A nonempty but incomplete authenticated window must fall back as a whole.
+    const partial = createHistoricalCoinbaseCandleSource({ database, profileId: 'main',
+      publicHttp: publicHttp(publicGet), secrets, rateLimiters: createRateLimiterRegistry(), nowMs: () => NOW,
+      clientFactory: () => auth(async <T>() => ({ ok: true, status: 200,
+        data: { candles: [row(NOW - DAY - 6 * 60_000)] } as T })) });
+    const fallback = await partial.researchHourlyWindow(BTC, NOW - DAY - 6 * 60_000, NOW - 6 * 60_000, NOW);
+    expect(fallback).toMatchObject({ ok: true, source: 'public' });
+    expect(fallback.ok && fallback.bars).toHaveLength(24);
+
     expect(await source.researchHourlyWindow(BTC, NOW - 301 * 3_600_000,
       NOW, NOW)).toEqual({ ok: false });
     database.close();

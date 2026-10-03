@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { createMemorySecretStore, AlpacaPaperError } from '../packages/adapters/src/index.js';
+import { createMemorySecretStore, createRequestDeadline, AlpacaPaperError } from '../packages/adapters/src/index.js';
 import { CHANNEL_SCHEMAS } from '../packages/contracts/src/index.js';
 import { assetExposureKey, connectionAccountSnapshotV2Hash, FixedClock, instrumentKey, profileConnectionV2, sha256Hex,
   type ConnectionAccountSnapshotV2, type DecisionMarketDataset } from '../packages/core/src/index.js';
@@ -82,6 +82,52 @@ function mockClient(submitFailure = false, fillStatus = 'filled', quoteAtMs: num
 }
 
 describe('paper execution diagnostics and recovery', () => {
+  it('reconciles a frozen client before preparation and safely recovers the legacy wrapper pause', async () => {
+    const { database, clock, secrets } = await setup();
+    const mock = mockClient(false, 'filled', () => clock.nowMs());
+    const prepared = { ok: true as const, dataset: dataset(), datasetHash: sha256Hex('data'),
+      latestCompletedStartMs: TODAY - DAY, expectedCompletedStartMs: TODAY - DAY, ruleSnapshotHash: sha256Hex('rules') };
+    const calls: string[] = [];
+    const client = Object.freeze({ ...mock.client,
+      account: async () => { calls.push('account'); return ACCOUNT; },
+      activities: async () => { calls.push('activities'); return []; } });
+    const service = new ParallelPaperService({ profileId: 'main', database, clock, secrets,
+      preparation: () => prepared, refreshFor: async () => { calls.push('preparation'); return prepared; },
+      clientFactory: () => client as never, killSwitchEngaged: () => false });
+    expect((await service.start('frozen-client', true)).ok).toBe(true);
+    clock.set(Date.parse('2026-09-24T12:20:00Z'));
+    appendParallelEvent({ experimentId: service.status().experiment!.id, profileId: 'main', kind: 'paused',
+      key: 'legacy-wrapper-failure', at: clock.nowMs(), detail: { reason: 'paper_execution_unknown' } }, database);
+    calls.length = 0;
+    const deadline = createRequestDeadline(() => clock.nowMs());
+    await service.tick(deadline); deadline.dispose();
+    expect(calls.indexOf('activities')).toBeLessThan(calls.indexOf('preparation'));
+    expect(service.status().status).toBe('active'); expect(mock.submit).not.toHaveBeenCalled();
+    service.transition('paused', 'owner-pause'); await service.tick();
+    expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'user_action' });
+    database.close();
+  });
+
+  it('does not pause execution for an optional account-mark read failure', async () => {
+    const { database, clock, secrets } = await setup();
+    const mock = mockClient(false, 'filled', () => clock.nowMs());
+    const prepared = { ok: true as const, dataset: dataset(), datasetHash: sha256Hex('data'),
+      latestCompletedStartMs: TODAY - DAY, expectedCompletedStartMs: TODAY - DAY, ruleSnapshotHash: sha256Hex('rules') };
+    let positionsFail = false;
+    const client = { ...mock.client, positions: async () => {
+      if (positionsFail) throw new AlpacaPaperError('unavailable', 'positions', 503); return [];
+    } };
+    const service = new ParallelPaperService({ profileId: 'main', database, clock, secrets,
+      preparation: () => prepared, refreshFor: async () => prepared,
+      clientFactory: () => client as never, killSwitchEngaged: () => false });
+    expect((await service.start('optional-mark-failure', true)).ok).toBe(true);
+    clock.set(Date.parse('2026-09-24T12:20:00Z')); positionsFail = true;
+    await service.tick();
+    expect(service.status().status).toBe('active'); expect(mock.submit).not.toHaveBeenCalled();
+    expect(service.status().events.some((event) => event.kind === 'research_error' && event.detail['operation'] === 'positions')).toBe(true);
+    database.close();
+  });
+
   it('recovers a persisted daily plan interrupted before its intent was written', async () => {
     const { database, clock, secrets } = await setup();
     const mock = mockClient();

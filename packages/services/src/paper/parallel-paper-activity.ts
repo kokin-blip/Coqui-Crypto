@@ -11,7 +11,7 @@ const RECOVERABLE_TRANSIENT_REASONS = new Set([
   'insufficient_history', 'stale_market_data', 'stale_product_rules',
   'credentials_unavailable', 'secret_store_unavailable', 'deadline_exceeded', 'host_unavailable',
   'stale_alpaca_quote', 'invalid_alpaca_quote', 'alpaca_invalid_response',
-  'alpaca_unavailable', 'alpaca_rate_limited',
+  'alpaca_unavailable', 'alpaca_rate_limited', 'alpaca_timeout',
 ]);
 
 export function isRecoverableParallelTransientPause(reason: unknown): boolean {
@@ -90,6 +90,7 @@ export function projectParallelPaperActivity(events: readonly ParallelPaperEvent
       case 'intraday_complete': return item(event.detail['orderCount'] === 0 ? 'no_trade' : 'complete',
         event.detail['orderCount'] === 0 ? 'No intraday order needed' : 'Intraday Alpaca pass complete',
         `${String(event.detail['orderCount'])} paper orders · slot ${String(event.detail['slot'])} UTC`);
+      case 'ml_shadow_proposal':
       case 'ml_target': return item('ml', event.detail['applied'] === true
         ? 'ML target adjustment applied' : 'ML signal recorded in shadow',
       `Slot ${String(event.detail['slot'])} UTC · gate ${String(event.detail['gate'])} · ${String(event.detail['reason']).replaceAll('_', ' ')}`);

@@ -95,21 +95,30 @@ function ActivityContent({ data }: { readonly data: Status }): React.JSX.Element
     <section className="parallel-paper-decision" aria-label="ML signal worker">
       <h3>ML signal worker · {data.mlSignal.gate === 'qualified' ? data.mlSignal.predictedAtMs === null
         ? 'qualified · awaiting fresh signal' : 'research qualified · shadow only'
-        : data.mlSignal.gate === 'unqualified' ? 'shadow only' : 'collecting hourly history'}</h3>
+        : data.mlSignal.gate === 'unqualified' ? 'shadow only' : data.mlSignal.reason === 'outside_shadow_window'
+          ? 'awaiting shadow window' : data.mlSignal.reason.includes('incomplete') || data.mlSignal.reason === 'training_history_backfill'
+          ? 'collecting hourly history' : 'prediction unavailable'}</h3>
       <p className="muted">Version {data.mlSignal.version ?? 'pending'} · {data.mlSignal.reason.replaceAll('_', ' ')}.
         Predictions are proposals; only Alpaca order acknowledgments and fills confirm paper activity.</p>
+      {data.mlSignal.provenance && <p className="muted">Shadow model trained with {data.mlSignal.provenance.trainingRows} causal labels
+        {' · '}training cutoff {timestamp(data.mlSignal.provenance.trainingCutoffMs)}
+        {' · '}captured {timestamp(data.mlSignal.provenance.capturedAtMs)}.</p>}
       {data.mlSignal.lastSlot !== null && <><p>Latest slot {data.mlSignal.lastSlot} UTC · {data.mlSignal.lastApplied
         ? 'ML target applied' : 'TrendVol target retained'} · {data.mlSignal.lastReason?.replaceAll('_', ' ')}</p>
         <table><thead><tr><th>Asset</th><th>TrendVol</th><th>ML proposal</th><th>Paper target</th></tr></thead>
           <tbody>{data.mlSignal.lastBaseline.map((item, index) => <tr key={item.symbol}>
             <td>{item.symbol}</td><td>{item.weightPct}%</td>
-            <td>{data.mlSignal.lastProposed[index]?.weightPct ?? item.weightPct}%</td>
+            <td>{data.mlSignal.lastProposed[index] ? `${data.mlSignal.lastProposed[index].weightPct}%` : 'Unavailable'}</td>
             <td>{data.mlSignal.lastCombined[index]?.weightPct ?? item.weightPct}%</td>
           </tr>)}</tbody></table></>}
-      {data.mlSignal.evidence !== null && <p className="muted">Historical holdout: {data.mlSignal.evidence.holdoutSlots} four-hour checks ·
+      {data.mlSignal.evidence !== null && <p className="muted">Legacy historical holdout diagnostic (unqualified): {data.mlSignal.evidence.holdoutSlots} four-hour checks ·
         modeled net lift {data.mlSignal.evidence.liftPct.toFixed(2)} percentage points ·
         2× cost stress lift {data.mlSignal.evidence.stressLiftPct.toFixed(2)} points ·
-        95% bootstrap interval {data.mlSignal.evidence.lift95LowPct.toFixed(2)} to {data.mlSignal.evidence.lift95HighPct.toFixed(2)} points.
+        {data.mlSignal.uncertaintyStatus === 'degenerate' ?
+          'Uncertainty unavailable: the recorded interval is degenerate; identical baseline and overlay results do not establish predictive evidence.' :
+          data.mlSignal.uncertaintyStatus === 'legacy_recorded' ?
+          `Recorded 95% bootstrap interval ${data.mlSignal.evidence.lift95LowPct.toFixed(2)} to ${data.mlSignal.evidence.lift95HighPct.toFixed(2)} points; provenance has not been revalidated.` :
+          'Uncertainty unavailable.'}
         These are backtest estimates, not Alpaca paper fills.</p>}
     </section>
     <section className="parallel-paper-decision" aria-label="Hourly execution research">

@@ -5,6 +5,7 @@ import { instrumentKey, proposeMlTarget } from '@coqui/core';
 import type { ParallelPaperEvent } from '@coqui/storage';
 
 import { PARALLEL_INSTRUMENTS, PARALLEL_SYMBOLS } from './parallel-signal.js';
+import { parallelSafeFailureReason } from './parallel-paper-utils.js';
 import type { MlSignalSnapshot } from './parallel-ml-worker.js';
 
 type Client = ReturnType<typeof createAlpacaPaperClient>;
@@ -106,9 +107,9 @@ export async function executeParallelIntraday(input: {
       predictedAtMs: fresh ? signal.predictedAtMs : null,
       prediction: fresh ? signal.prediction : null,
       gate: signal?.gate ?? 'collecting',
-      reason: signal?.gate === 'qualified' ? 'execution_study_shadow_only' : invalidProposal ? 'ml_prediction_invalid' : !fresh ? 'ml_prediction_unavailable_or_stale' :
+      reason: invalidProposal ? 'ml_prediction_invalid' : !fresh ? 'ml_prediction_unavailable_or_stale' : signal?.gate === 'qualified' ? 'execution_study_shadow_only' :
         signal!.reason,
-      baselineWeights: baseline, proposedWeights: proposal === null ? baseline :
+      baselineWeights: baseline, proposedWeights: proposal === null ? null :
         Object.fromEntries(PARALLEL_INSTRUMENTS.map((instrument, index) =>
           [instrumentKey(instrument), proposal.weights[index]!])),
       combinedWeights: weights, expectedNetImprovement: proposal?.expectedNetImprovement ?? null,
@@ -128,7 +129,7 @@ export async function executeParallelIntraday(input: {
   try { quoteRead = parallelQuotes(await input.client.latestCryptoQuotes(), input.nowMs); }
   catch (error) {
     const reason = error instanceof AlpacaPaperError ? `alpaca_quote_${error.code}`
-      : error instanceof Error && /^[a-z_]+$/u.test(error.message) ? error.message : 'alpaca_quote_unavailable';
+      : parallelSafeFailureReason(error, 'alpaca_quote_unavailable');
     input.append('intraday_skipped', `intraday-skip:${slot}:${reason}`, { slot, reason });
     return;
   }

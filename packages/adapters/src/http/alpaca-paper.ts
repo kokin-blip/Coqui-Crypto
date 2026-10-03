@@ -61,8 +61,9 @@ export interface AlpacaPaperAsset {
 }
 
 export class AlpacaPaperError extends Error {
-  constructor(readonly code: 'unauthorized' | 'forbidden' | 'not_found' | 'rate_limited' | 'unavailable' | 'invalid_response',
-    readonly operation: string = 'unknown', readonly httpStatus: number | null = null) {
+  constructor(readonly code: 'unauthorized' | 'forbidden' | 'not_found' | 'rate_limited' | 'unavailable' | 'invalid_response' | 'timeout' | 'deadline_exceeded',
+    readonly operation: string = 'unknown', readonly httpStatus: number | null = null, readonly attemptCount = 0,
+    readonly elapsedMs = 0, readonly budgetMs: number | null = null, readonly remainingMs: number | null = null) {
     super(`Alpaca paper ${code}`);
   }
 }
@@ -78,43 +79,53 @@ export function createAlpacaPaperClient(credentials: AlpacaPaperCredentials, fet
   async function request<T>(path: string, options: { method?: 'GET' | 'POST' | 'DELETE'; body?: unknown; data?: boolean; operation: string }): Promise<T> {
     // Callers supply only relative paths assembled in this module.
     if (!path.startsWith('/') || path.startsWith('//')) throw new AlpacaPaperError('invalid_response');
-    deadline?.check();
+    const started = performance.now(), budgetMs = Math.min(10_000, deadline?.remainingMs() ?? 10_000);
     const method = options.method ?? 'GET';
-    const retrySafeRead = method === 'GET';
-    let response: Response | undefined;
-    for (let attempt = 0; attempt < (retrySafeRead ? 2 : 1); attempt += 1) {
-      deadline?.check();
+    let attemptCount = 0, status: number | null = null;
+    const remaining = () => Math.max(0, Math.min(budgetMs - (performance.now() - started), deadline?.remainingMs() ?? Infinity));
+    const fail = (code: AlpacaPaperError['code']) => new AlpacaPaperError(code, options.operation, status,
+      attemptCount, performance.now() - started, budgetMs, remaining());
+    for (let attempt = 0; attempt < (method === 'GET' ? 2 : 1); attempt += 1) {
+      if (deadline?.signal.aborted || (deadline && deadline.remainingMs() <= 0)) throw fail('deadline_exceeded');
+      if (remaining() <= 0) throw fail('timeout');
+      status = null; attemptCount += 1;
+      const controller = new AbortController();
+      const signal = deadline ? AbortSignal.any([controller.signal, deadline.signal]) : controller.signal;
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      let removeAbort = () => {};
       try {
-        response = await fetcher(`${options.data ? ALPACA_CRYPTO_DATA_ORIGIN : ALPACA_PAPER_ORIGIN}${path}`, {
-          method,
-          headers: {
-            'APCA-API-KEY-ID': credentials.keyId,
-            'APCA-API-SECRET-KEY': credentials.secretKey,
-            ...(options.body === undefined ? {} : { 'Content-Type': 'application/json' }),
-          },
-          ...(options.body === undefined ? {} : { body: JSON.stringify(options.body) }),
-          cache: 'no-store',
-          signal: deadline ? AbortSignal.any([deadline.signal, AbortSignal.timeout(Math.max(1, Math.floor(Math.min(15_000, deadline.remainingMs()))))]) : AbortSignal.timeout(15_000),
+        const expired = new Promise<never>((_resolve, reject) => {
+          const abort = () => reject(fail(deadline?.signal.aborted ? 'deadline_exceeded' : 'timeout'));
+          signal.addEventListener('abort', abort, { once: true });
+          removeAbort = () => signal.removeEventListener('abort', abort);
+          timer = setTimeout(() => controller.abort(), Math.max(1, Math.floor(Math.min(5_000, remaining()))));
         });
-      } catch {
-        deadline?.check();
-        if (retrySafeRead && attempt === 0) continue;
-        throw new AlpacaPaperError('unavailable', options.operation);
-      }
-      // Reads are safe to retry once after transient network or server errors.
-      // Never retry writes: a timed-out order submission has an ambiguous result.
-      if (retrySafeRead && attempt === 0 && response.status >= 500 && response.status < 600) continue;
-      break;
+        const operation = (async () => {
+          const response = await fetcher(`${options.data ? ALPACA_CRYPTO_DATA_ORIGIN : ALPACA_PAPER_ORIGIN}${path}`, {
+            method, headers: { 'APCA-API-KEY-ID': credentials.keyId, 'APCA-API-SECRET-KEY': credentials.secretKey,
+              ...(options.body === undefined ? {} : { 'Content-Type': 'application/json' }) },
+            ...(options.body === undefined ? {} : { body: JSON.stringify(options.body) }), cache: 'no-store', signal,
+          });
+          if (signal.aborted) throw fail(deadline?.signal.aborted ? 'deadline_exceeded' : 'timeout');
+          status = response.status;
+          if (!response.ok) throw fail(response.status === 401 ? 'unauthorized' : response.status === 403 ? 'forbidden'
+            : response.status === 404 ? 'not_found' : response.status === 429 ? 'rate_limited' : 'unavailable');
+          if (response.status === 204) return undefined as T;
+          try { return await response.json() as T; }
+          catch { throw fail('invalid_response'); }
+        })();
+        const result = await Promise.race([operation, expired]);
+        if (deadline?.signal.aborted || (deadline && deadline.remainingMs() <= 0)) throw fail('deadline_exceeded');
+        return result;
+      } catch (error) {
+        const failure = deadline && (deadline.signal.aborted || deadline.remainingMs() <= 0) ? fail('deadline_exceeded') :
+          error instanceof AlpacaPaperError ? error : fail('unavailable');
+        if (method === 'GET' && attempt === 0 && remaining() > 0 && !deadline?.signal.aborted &&
+            (failure.code === 'timeout' || (failure.code === 'unavailable' && (status === null || status >= 500)))) continue;
+        throw failure;
+      } finally { if (timer !== undefined) clearTimeout(timer); removeAbort(); controller.abort(); }
     }
-    deadline?.check();
-    if (response === undefined) throw new AlpacaPaperError('unavailable', options.operation);
-    if (!response.ok) {
-      const code = response.status === 401 ? 'unauthorized' : response.status === 403 ? 'forbidden'
-        : response.status === 404 ? 'not_found' : response.status === 429 ? 'rate_limited' : 'unavailable';
-      throw new AlpacaPaperError(code, options.operation, response.status);
-    }
-    if (response.status === 204) return undefined as T;
-    try { const body = await response.json() as T; deadline?.check(); return body; } catch { deadline?.check(); throw new AlpacaPaperError('invalid_response', options.operation, response.status); }
+    throw fail('unavailable');
   }
 
   return Object.freeze({

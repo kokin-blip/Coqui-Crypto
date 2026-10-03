@@ -73,6 +73,22 @@ describe('Alpaca paper activity panel', () => {
         lastModeledOrders: [{ symbol: 'BTCUSD', side: 'buy', quantity: '1', filledQuantity: '0.5', remainingQuantity: '0.5' }],
         lastBlockedReasons: ['cooldown'], lastFailureReason: 'stale_alpaca_quote' } } };
     expect(render()).toContain('1 complete 24-hour days');
+    const researchReady = mocked.channels['parallel.paper.status'] as typeof shadowReady;
+    mocked.channels['parallel.paper.status'] = { ...researchReady, value: { ...researchReady.value,
+      mlSignal: { gate: 'collecting', reason: 'awaiting_signal_refresh', version: 'trendvol-ml-ridge-shadow-v2',
+        modelHash: null, datasetHash: null, predictedAtMs: null, provenance: null,
+        evidenceStatus: 'legacy_historical_unqualified', uncertaintyStatus: 'degenerate',
+        evidence: { developmentSlots: 293, holdoutSlots: 450, baselineReturnPct: 1, mlReturnPct: 1,
+          liftPct: 0, stressLiftPct: 0, maxDrawdownPct: 0, turnover: 0, tradeCount: 0, lift95LowPct: 0, lift95HighPct: 0 },
+        lastSlot: '2026-10-01T04', lastApplied: false, lastReason: 'ml_prediction_unavailable_or_stale',
+        lastBaseline: [{ symbol: 'BTCUSD', weightPct: '20' }], lastProposed: [], lastCombined: [] } } };
+    const diagnostic = render();
+    expect(diagnostic).toContain('prediction unavailable');
+    expect(diagnostic).toContain('Legacy historical holdout diagnostic (unqualified): 450');
+    expect(diagnostic).toContain('Uncertainty unavailable: the recorded interval is degenerate');
+    expect(diagnostic).toContain('<td>Unavailable</td>');
+    expect(diagnostic).not.toContain('95% bootstrap interval 0.00 to 0.00');
+
     expect(render()).toContain('1 modeled order');
     expect(render()).toContain('Virtual buy BTCUSD');
     expect(render()).toContain('Latest shadow read unavailable');

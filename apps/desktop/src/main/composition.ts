@@ -224,7 +224,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     onUnexpectedError: report,
   });
   const widerUniverse = createWiderUniverseRuntime({ profileId: options.profileId, database, clock, http, candleSource: historicalCandles, onUnexpectedError: report, ...(options.secrets === undefined ? {} : { secrets: options.secrets }) });
-  const mlSignal = createMlSignalRuntime({ profileId: options.profileId, database, candleSource: historicalCandles, onUnexpectedError: report }), parallel = createParallelPaperRuntime({ hostId, hostKind: options.hostKind ?? 'desktop', profileId: options.profileId, database, clock, http,
+  const mlSignal = createMlSignalRuntime({ profileId: options.profileId, database, nowMs: () => clock.nowMs(), candleSource: historicalCandles, onUnexpectedError: report }), parallel = createParallelPaperRuntime({ hostId, hostKind: options.hostKind ?? 'desktop', profileId: options.profileId, database, clock, http,
     bars: (instrument, lookbackDays, nowMs, deadline) => historicalCandles.dailyBars(instrument, lookbackDays, nowMs, deadline),
     onUnexpectedError: report, mlSignal, widerUniverse, breakout: createBreakoutRuntime({ profileId: options.profileId, database, clock, candleSource: historicalCandles, onUnexpectedError: report }),
     rangeRotation: createRangeRotationRuntime({ profileId: options.profileId, database, clock, onUnexpectedError: report }), marketSelector: createMarketSelectorRuntime({ profileId: options.profileId, database, clock, onUnexpectedError: report }), ...(options.secrets === undefined ? {} : { secrets: options.secrets }) });

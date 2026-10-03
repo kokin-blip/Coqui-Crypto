@@ -4,6 +4,14 @@ import { resolve,relative } from 'node:path';
 import { dependencyManifest } from '../scripts/build-study-manifests.mjs';
 const root=resolve('.'),entry='packages/services/src/paper/execution-remediation-shadow.ts';
 describe('behavior dependency manifest',()=>{
+  it('binds the ML worker boundary and inference implementation to the shadow candidate',()=>{
+    const manifest=dependencyManifest(root,'apps/desktop/src/main/ml-signal-runtime.ts');
+    expect(manifest.members.map(([file])=>file)).toContain('apps/desktop/src/main/ml-signal-worker-thread.ts');
+    const changed=dependencyManifest(root,'apps/desktop/src/main/ml-signal-runtime.ts',(file,encoding)=>
+      String(readFileSync(file,encoding as 'utf8'))+(relative(root,file)==='apps/desktop/src/main/ml-signal-worker-thread.ts'?'\n// worker test change':''));
+    expect(changed.hash).not.toBe(manifest.hash);
+  });
+
   it('covers signal, sizing, timestamp validation, venue parsers, costs, storage, and locking dependencies',()=>{
     const manifest=dependencyManifest(root,entry),members=manifest.members.map(([file])=>file);
     for(const required of ['packages/core/src/execution/remediation-planner.ts','packages/core/src/execution/remediation-book.ts',

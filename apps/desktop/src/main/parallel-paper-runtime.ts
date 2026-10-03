@@ -1,6 +1,6 @@
-import { withinDeadline, createRequestDeadline, type RequestDeadline, type HttpClient, type SecretStore } from '@coqui/adapters';
+import { createRequestDeadline, type HttpClient, type SecretStore } from '@coqui/adapters';
 import type { Clock } from '@coqui/core';
-import { isRecoverableParallelTransientPause, ParallelPaperService, PARALLEL_INSTRUMENTS, resolveKillSwitch } from '@coqui/services';
+import { ParallelPaperService, PARALLEL_INSTRUMENTS, resolveKillSwitch } from '@coqui/services';
 import { appendParallelEvent, latestParallelExperiment, listParallelEvents, parallelExperimentStatus, type Db } from '@coqui/storage';
 
 import { createPaperMarketFeed, type PaperMarketFeedDependencies } from './paper-market.js';
@@ -30,7 +30,19 @@ export function createParallelPaperRuntime(input: {
     ...(input.hostId ? { hostId: input.hostId } : {}),
     ...(input.hostKind ? { hostKind: input.hostKind } : {}),
     ...(input.secrets === undefined ? {} : { secrets: input.secrets }),
-    preparation: market.preparation, refreshFor: market.refresh,
+    preparation: market.preparation, refreshFor: async (nowMs, deadline) => {
+      const experiment = latestParallelExperiment(input.profileId, input.database);
+      const started = performance.now(), budgetMs = deadline?.remainingMs() ?? null;
+      const record = (kind: string) => {
+        if (experiment) appendParallelEvent({ experimentId: experiment.id, profileId: input.profileId,
+          kind, key: `${kind}:${nowMs}:${listParallelEvents(experiment.id, input.profileId, input.database).length}`,
+          at: input.clock.nowMs(), detail: { operation: 'market_preparation', startedAtMs: nowMs,
+            elapsedMs: performance.now() - started, budgetMs, remainingMs: deadline?.remainingMs() ?? null } }, input.database);
+      };
+      record('market_refresh_started');
+      try { return await market.refresh(nowMs, deadline); }
+      finally { record('market_refresh_finished'); }
+    },
     killSwitchEngaged: () => resolveKillSwitch(input.profileId, input.database).engaged,
     ...(input.mlSignal === undefined ? {} : { mlSignal: input.mlSignal.current }) });
   return { service, suspend() { service.suspend(); }, resume() { service.resume(); },
@@ -40,8 +52,9 @@ export function createParallelPaperRuntime(input: {
         now < slot + 900_000 ? slot + 900_000 : Number.MAX_SAFE_INTEGER);
       const experiment = latestParallelExperiment(input.profileId, input.database);
       let reason: string | null = null;
-      try { await withinDeadline(this.refreshIfActive(now, deadline), deadline); await service.tick(deadline); }
-      catch (error) { reason = error instanceof Error && /^[a-z_]+$/u.test(error.message) ? error.message : 'paper_pass_unavailable'; }
+      try { await service.tick(deadline); }
+      catch (error) { reason = error instanceof Error && ['deadline_exceeded', 'stale_host_authority', 'execution_lease_unavailable', 'host_suspended'].includes(error.message)
+        ? error.message : 'paper_pass_unavailable'; }
       finally {
         if (experiment) {
           const events = listParallelEvents(experiment.id, input.profileId, input.database), status = parallelExperimentStatus(events);
@@ -61,30 +74,13 @@ export function createParallelPaperRuntime(input: {
         deadline.dispose();
       }
 
+      void input.mlSignal?.refresh(input.clock.nowMs());
       // Research acquisition cannot delay the authoritative paper pass.
       // Fetch the completed hour before the point-in-time frame timestamps the slot.
       void (async () => { await input.breakout?.refresh(); await input.widerUniverse?.refresh();
         await input.breakout?.refresh();
         await input.rangeRotation?.refresh(); await input.marketSelector?.refresh(); })()
         .catch((error: unknown) => input.onUnexpectedError('paper_research_refresh', error));
-    },
-    async refreshIfActive(nowMs: number, deadline?: RequestDeadline): Promise<void> {
-      const experiment = latestParallelExperiment(input.profileId, input.database);
-      const events = experiment === null ? [] : listParallelEvents(experiment.id, input.profileId, input.database);
-      const status = parallelExperimentStatus(events);
-      const latestState = [...events].reverse().find((event) =>
-        ['paused', 'resumed', 'stopped', 'started'].includes(event.kind));
-      if (experiment !== null && (status === 'active' ||
-          (status === 'paused' && isRecoverableParallelTransientPause(latestState?.detail['reason'])))) {
-        const record = (kind: string) => appendParallelEvent({ experimentId: experiment.id,
-          profileId: input.profileId, kind, key: `${kind}:${nowMs}`, at: input.clock.nowMs(),
-          detail: { startedAtMs: nowMs, elapsedMs: input.clock.nowMs() - nowMs } }, input.database);
-        record('market_refresh_started');
-        try { await market.refresh(nowMs, deadline); } finally { record('market_refresh_finished'); }
-
-        // Historical backfill and training never hold up the daily paper order window.
-        void input.mlSignal?.refresh(nowMs);
-      }
     },
   };
 }

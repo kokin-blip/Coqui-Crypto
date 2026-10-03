@@ -11,7 +11,9 @@ const TRAIN_DAYS = 120, DEVELOPMENT_DAYS = 60, HOLDOUT_DAYS = 90;
 const MIN_COVERAGE = 0.95;
 
 export interface MlSignalSnapshot {
-  readonly version: typeof ML_SIGNAL_VERSION;
+  readonly version: typeof ML_SIGNAL_VERSION | 'trendvol-ml-ridge-shadow-v2';
+  readonly provenance?: { readonly behaviorHash: string; readonly planHash: string; readonly trainingCutoffMs: number;
+    readonly slotMs: number; readonly capturedAtMs: number; readonly trainingRows: number };
   readonly datasetHash: string;
   readonly modelHash: string | null;
   readonly gate: 'qualified' | 'unqualified' | 'collecting';

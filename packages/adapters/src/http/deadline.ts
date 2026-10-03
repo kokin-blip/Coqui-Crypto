@@ -17,11 +17,22 @@ export function createRequestDeadline(now: () => number, durationMs = 30_000,
   researchDeadlines.clear();
   const started = elapsedNow(), expiresAtMs = Math.min(now() + durationMs, windowEndMs);
   const controller = new AbortController();
-  const remainingMs = () => Math.max(0, Math.min(expiresAtMs - now(), durationMs - (elapsedNow() - started)));
+  const remainingMs = () => controller.signal.aborted ? 0 : Math.max(0, Math.min(expiresAtMs - now(), durationMs - (elapsedNow() - started)));
   const timer = setTimeout(() => controller.abort(), remainingMs());
   timer.unref?.();
   return { signal: controller.signal, expiresAtMs, remainingMs,
     check() { if (controller.signal.aborted || remainingMs() <= 0) { controller.abort(); throw new Error('deadline_exceeded'); } },
+    dispose() { clearTimeout(timer); controller.abort(); } };
+}
+
+/** A child budget never preempts research or extends its parent's lifetime. */
+export function childRequestDeadline(parent: RequestDeadline, durationMs: number): RequestDeadline {
+  const started = performance.now(), controller = new AbortController();
+  const remainingMs = () => controller.signal.aborted || parent.signal.aborted ? 0 : Math.max(0, Math.min(parent.remainingMs(), durationMs - (performance.now() - started)));
+  const signal = AbortSignal.any([parent.signal, controller.signal]);
+  const timer = setTimeout(() => controller.abort(), remainingMs()); timer.unref?.();
+  return { signal, expiresAtMs: parent.expiresAtMs - Math.max(0, parent.remainingMs() - durationMs), remainingMs,
+    check() { if (signal.aborted || remainingMs() <= 0) { controller.abort(); throw new Error('deadline_exceeded'); } },
     dispose() { clearTimeout(timer); controller.abort(); } };
 }
 
@@ -41,10 +52,10 @@ export function deadlineHttp(http: HttpClient, deadline: RequestDeadline,
 
 export function createResearchDeadline(now: () => number): RequestDeadline {
   const controller = new AbortController(), expiresAtMs = now() + 10_000, started = performance.now();
-  const remainingMs = () => Math.max(0, Math.min(expiresAtMs - now(), 10_000 - (performance.now() - started)));
+  const remainingMs = () => controller.signal.aborted ? 0 : Math.max(0, Math.min(expiresAtMs - now(), 10_000 - (performance.now() - started)));
   const timer = setTimeout(() => controller.abort(), 10_000); timer.unref?.();
   const deadline: RequestDeadline = { expiresAtMs, signal: controller.signal, remainingMs,
-    check() { if (controller.signal.aborted || remainingMs() <= 0) throw new Error('research_budget_exhausted'); },
+    check() { if (controller.signal.aborted || remainingMs() <= 0) { controller.abort(); throw new Error('research_budget_exhausted'); } },
     dispose() { clearTimeout(timer); controller.abort(); researchDeadlines.delete(deadline); } };
   researchDeadlines.add(deadline); return deadline;
 }

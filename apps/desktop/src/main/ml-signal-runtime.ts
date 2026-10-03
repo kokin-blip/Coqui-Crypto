@@ -1,129 +1,164 @@
 import { Worker } from 'node:worker_threads';
-
-import { canonicalJson, ML_SIGNAL_VERSION, sha256Hex } from '@coqui/core';
-import { PARALLEL_INSTRUMENTS, verifyParallelMlExecutionPath, type MlSignalSnapshot } from '@coqui/services';
-import { finishMlSignalStudy, getMlSignalStudy, listMlHourlyBars, registerMlSignalStudy,
+import { createResearchDeadline, withinDeadline } from '@coqui/adapters';
+import { canonicalJson, instrumentKey, ML_SIGNAL_VERSION, sha256Hex, STUDY_BEHAVIOR_HASHES } from '@coqui/core';
+import { completeMlWindow, ML_INFERENCE_PLAN, ML_INFERENCE_VERSION, PARALLEL_INSTRUMENTS,
+  type MlSignalSnapshot } from '@coqui/services';
+import { appendParallelEvent, appendRemediationEvidence, getMlSignalStudy, latestParallelExperiment,
+  listMlHourlyBars, listParallelEvents, listRemediationEvidence, parallelExperimentStatus,
   saveMlHourlyBars, type Db, type MlHourlyBar } from '@coqui/storage';
-
+import type { MlSignalWorkerInput } from './ml-signal-worker-thread.js';
 import type { createHistoricalCoinbaseCandleSource } from './coinbase-candle-source.js';
 
-const HOUR = 3_600_000;
-const DAY = 24 * HOUR;
-const PAGE_HOURS = 300;
-const HISTORY_DAYS = 400;
-
-async function evaluateInWorker(bars: readonly MlHourlyBar[], nowMs: number,
-  studyEndMs: number, functionalChecksPassed: boolean): Promise<MlSignalSnapshot> {
+const HOUR = 3_600_000, DAY = 24 * HOUR, PAGE_HOURS = 300;
+type WorkerInput = MlSignalWorkerInput;
+export async function evaluateInWorker(input: WorkerInput, signal?: AbortSignal): Promise<MlSignalSnapshot> {
+  if (signal?.aborted) throw new Error('research_budget_exhausted');
   return new Promise((resolve, reject) => {
-    const worker = new Worker(new URL('./ml-signal-worker-thread.js', import.meta.url), {
-      workerData: { bars, nowMs, studyEndMs, functionalChecksPassed },
-    });
-    const timeout = setTimeout(() => { void worker.terminate(); reject(new Error('ml_worker_timeout')); }, 30_000);
-    worker.once('message', (result: { ok: boolean; snapshot?: MlSignalSnapshot; reason?: string }) => {
-      clearTimeout(timeout); void worker.terminate();
-      if (result.ok && result.snapshot !== undefined && result.snapshot.version === ML_SIGNAL_VERSION) resolve(result.snapshot);
-      else reject(new Error(result.reason ?? 'ml_worker_failed'));
-    });
-    worker.once('error', (error) => { clearTimeout(timeout); reject(error); });
-    worker.once('exit', (code) => { if (code !== 0) { clearTimeout(timeout); reject(new Error('ml_worker_exit')); } });
+    const worker = new Worker(new URL('./ml-signal-worker-thread.js', import.meta.url), { workerData: input });
+    let settled = false;
+    const finish = (result?: MlSignalSnapshot, reason = 'ml_worker_failed') => {
+      if (settled) return; settled = true; clearTimeout(timeout); signal?.removeEventListener('abort', abort); void worker.terminate();
+      if (result) resolve(result); else reject(new Error(reason));
+    };
+    const abort = () => finish(undefined, 'research_budget_exhausted');
+    signal?.addEventListener('abort', abort, { once: true });
+    const timeout = setTimeout(() => finish(undefined, 'ml_worker_timeout'), 30_000);
+    worker.once('message', (result: { ok: boolean; snapshot?: MlSignalSnapshot }) =>
+      finish(result.ok ? result.snapshot : undefined));
+    worker.once('error', () => finish());
+    worker.once('exit', () => finish(undefined, 'ml_worker_exit'));
   });
 }
 
-/** Main-process I/O boundary. The worker only receives immutable price bars. */
+/** Collection and inference are independent of broker execution and never evaluate a holdout. */
 export function createMlSignalRuntime(input: { readonly profileId: string; readonly database: Db;
-  readonly candleSource: ReturnType<typeof createHistoricalCoinbaseCandleSource>;
+  readonly candleSource: ReturnType<typeof createHistoricalCoinbaseCandleSource>; readonly nowMs?: () => number;
+  readonly worker?: typeof evaluateInWorker;
   readonly onUnexpectedError: (context: string, error: unknown) => void }) {
-  let startMs: number | null = null;
-  let windowIndex = 0;
-  let lastSlot: string | null = null;
-  const savedStudy = getMlSignalStudy(input.profileId, ML_SIGNAL_VERSION, input.database);
-  const savedResult = savedStudy?.result;
-  let snapshot: MlSignalSnapshot | null = savedStudy === null ? null : {
-    version: ML_SIGNAL_VERSION, datasetHash: savedStudy.datasetHash,
-    modelHash: typeof savedResult?.['modelHash'] === 'string' ? savedResult['modelHash'] : null,
-    gate: savedResult?.['gate'] === 'qualified' ? 'qualified' :
-      savedResult?.['gate'] === 'unqualified' ? 'unqualified' : 'collecting',
-    reason: 'awaiting_signal_refresh', predictedAtMs: null, prediction: null,
-    proposedWeights: null, baselineWeights: null, expectedNetImprovement: null,
-    evidence: savedResult?.['evidence'] as MlSignalSnapshot['evidence'] ?? null,
+  const study = getMlSignalStudy(input.profileId, ML_SIGNAL_VERSION, input.database);
+  const legacyEvidence = study?.result?.['evidence'] as MlSignalSnapshot['evidence'] ?? null;
+  let snapshot: MlSignalSnapshot | null = null, busy = false, lastSlot: number | null = null;
+  let sequence = listRemediationEvidence(input.profileId, ML_INFERENCE_VERSION, 'status', input.database).length;
+  const now = input.nowMs ?? Date.now;
+  const unavailable = (reason: string, atMs: number, operation = 'shadow_refresh') => {
+    snapshot = { version: ML_INFERENCE_VERSION, datasetHash: study?.datasetHash ?? sha256Hex('unavailable'),
+      modelHash: null, gate: 'collecting', reason, predictedAtMs: null, prediction: null,
+      proposedWeights: null, baselineWeights: null, expectedNetImprovement: null, evidence: legacyEvidence };
+    appendRemediationEvidence({ profileId: input.profileId, namespace: ML_INFERENCE_VERSION, kind: 'status',
+      key: `${atMs}:${sequence++}`, atMs, body: { reason, operation, mode: 'shadow', legacyStudyPresent: study !== null } }, input.database);
   };
-  let busy = false;
-  let functionalChecks: Promise<boolean> | null = null;
-  const windowCount = Math.ceil(HISTORY_DAYS * 24 / PAGE_HOURS);
-  const fetchWindow = async (fromMs: number, toMs: number, nowMs: number) => {
-    const all: MlHourlyBar[] = [];
-    for (const instrument of PARALLEL_INSTRUMENTS) {
-      const result = await input.candleSource.researchHourlyWindow(instrument, fromMs, toMs, nowMs);
-      if (!result.ok) return false;
-      all.push(...result.bars.map((bar) => ({ productId: instrument.productId as MlHourlyBar['productId'],
-        startTimeMs: bar.startTimeMs, open: bar.open, high: bar.high, low: bar.low,
-        close: bar.close, volume: bar.volume, source: result.source, retrievedAtMs: bar.retrievedAtMs })));
-    }
-    saveMlHourlyBars(input.profileId, all, input.database);
-    return true;
-  };
+  unavailable('awaiting_signal_refresh', now());
   return {
     current: () => snapshot,
-    async refresh(nowMs: number): Promise<void> {
+    async refresh(_requestedAtMs: number): Promise<void> {
+      void _requestedAtMs;
       if (busy) return;
+      const experiment = latestParallelExperiment(input.profileId, input.database);
+      if (!experiment || parallelExperimentStatus(listParallelEvents(experiment.id, input.profileId, input.database)) === 'stopped') return;
       busy = true;
+      const deadline = createResearchDeadline(now);
+      let operation = 'recent_collection', requestedSlotMs: number | null = null;
       try {
-        const completeHour = Math.floor(nowMs / HOUR) * HOUR;
-        if (startMs === null) startMs = completeHour - HISTORY_DAYS * DAY;
-        while (windowIndex < windowCount) {
-          const from = startMs + windowIndex * PAGE_HOURS * HOUR;
-          const to = Math.min(completeHour, from + PAGE_HOURS * HOUR);
-          const stored = listMlHourlyBars(input.profileId, from, to, input.database);
-          if (stored.length >= Math.ceil((to - from) / HOUR) * 3 * 0.95) {
-            windowIndex += 1;
-            continue;
+        const captured = now(), completeHour = Math.floor(captured / HOUR) * HOUR;
+        const fetchWindow = async (fromMs: number, toMs: number): Promise<boolean> => {
+          for (const instrument of PARALLEL_INSTRUMENTS) {
+            deadline.check();
+            const cached = listMlHourlyBars(input.profileId, fromMs, toMs, input.database);
+            if (completeMlWindow(cached, fromMs, toMs)) return true;
+            const productId = instrument.productId as MlHourlyBar['productId'];
+            if (completeMlWindow(cached, fromMs, toMs, [productId])) continue;
+            const result = await withinDeadline(input.candleSource.researchHourlyWindow(instrument, fromMs, toMs, now(), deadline), deadline);
+            if (!result.ok) return false;
+            const assetBars = result.bars.filter((bar) => bar.startTimeMs >= fromMs && bar.startTimeMs < toMs).map((bar) => ({ productId,
+              startTimeMs: bar.startTimeMs, open: bar.open, high: bar.high, low: bar.low, close: bar.close,
+              volume: bar.volume, source: result.source, retrievedAtMs: bar.retrievedAtMs }));
+            if (!completeMlWindow(assetBars, fromMs, toMs, [productId])) return false;
+            deadline.check(); saveMlHourlyBars(input.profileId, assetBars, input.database);
           }
-          if (!await fetchWindow(from, to, nowMs)) return;
-          windowIndex += 1;
-          if (windowIndex < windowCount) return; // one network window per scheduler tick
+          return completeMlWindow(listMlHourlyBars(input.profileId, fromMs, toMs, input.database), fromMs, toMs);
+        };
+        // Current features get acquisition priority over background training-history gaps.
+        if (!await fetchWindow(completeHour - 48 * HOUR, completeHour)) {
+          unavailable('recent_hour_collection_incomplete', now()); return;
         }
-        const date = new Date(nowMs);
-        const hour = date.getUTCHours();
-        const slot = `${date.toISOString().slice(0, 10)}T${String(hour).padStart(2, '0')}`;
-        if (lastSlot === slot) return;
-        if (hour === 0 || hour % 4 !== 0 || date.getUTCMinutes() >= 15) return;
-        if (!await fetchWindow(completeHour - 48 * HOUR, completeHour, nowMs)) return;
-        const registered = getMlSignalStudy(input.profileId, ML_SIGNAL_VERSION, input.database);
-        const historyStart = registered === null ? startMs : Math.min(startMs, registered.studyEndMs - HISTORY_DAYS * DAY);
-        const bars = listMlHourlyBars(input.profileId, historyStart, completeHour, input.database);
-        const plan = { version: ML_SIGNAL_VERSION, candidateCount: 1, assets: ['BTC-USD', 'ETH-USD', 'LTC-USD'],
-          features: ['return4h', 'return24h', 'return7d', 'vol24h', 'relative24h'],
-          model: 'ridge-l2-10', trainDays: 120, developmentDays: 60, holdoutDays: 90,
-          minimumCoverage: 0.95, sideCost: 0.005, maximumDelta: 0.10 };
-        let study = registered;
-        if (study === null) {
-          registerMlSignalStudy({ profileId: input.profileId, candidateVersion: ML_SIGNAL_VERSION,
-            registeredAtMs: nowMs, studyEndMs: Math.floor(nowMs / DAY) * DAY,
-            datasetHash: sha256Hex(canonicalJson(bars.filter((bar) =>
-              bar.startTimeMs < Math.floor(nowMs / DAY) * DAY).map((bar) =>
-              [bar.productId, bar.startTimeMs, bar.open, bar.close, bar.source]) as never)),
-            planHash: sha256Hex(canonicalJson(plan as never)), plan }, input.database);
-          study = getMlSignalStudy(input.profileId, ML_SIGNAL_VERSION, input.database);
+        operation = 'training_collection';
+        const day = Math.floor(captured / DAY) * DAY;
+        const week = day - ((new Date(captured).getUTCDay() + 6) % 7) * DAY;
+        const historyStart = week - 120 * DAY - 169 * HOUR;
+        for (let from = historyStart; from < completeHour; from += PAGE_HOURS * HOUR) {
+          const to = Math.min(from + PAGE_HOURS * HOUR, completeHour);
+          if (completeMlWindow(listMlHourlyBars(input.profileId, from, to, input.database), from, to)) continue;
+          if (!await fetchWindow(from, to)) { unavailable('training_hour_collection_incomplete', now()); return; }
+          unavailable('training_history_backfill', now()); return;
         }
-        if (study === null) throw new Error('ml_study_registration_failed');
-        functionalChecks ??= verifyParallelMlExecutionPath();
-        const evaluated = await evaluateInWorker(bars, nowMs, study.studyEndMs, await functionalChecks);
-        if (study.result === null && evaluated.gate !== 'collecting') {
-          finishMlSignalStudy(input.profileId, ML_SIGNAL_VERSION,
-            { gate: evaluated.gate, reason: evaluated.reason, evidence: evaluated.evidence,
-              datasetHash: evaluated.datasetHash, modelHash: evaluated.modelHash }, input.database);
-          study = getMlSignalStudy(input.profileId, ML_SIGNAL_VERSION, input.database)!;
+        const currentMs = now(), slotMs = Math.floor(currentMs / (4 * HOUR)) * 4 * HOUR;
+        if (new Date(slotMs).getUTCHours() === 0 || currentMs >= slotMs + 900_000) {
+          unavailable('outside_shadow_window', currentMs); return;
         }
-        const recorded = study.result;
-        snapshot = recorded === null ? evaluated : { ...evaluated,
-          gate: recorded['gate'] === 'qualified' && recorded['datasetHash'] === evaluated.datasetHash
-            ? 'qualified' : 'unqualified',
-          reason: recorded['datasetHash'] === evaluated.datasetHash ? String(recorded['reason']) : 'study_dataset_changed',
-          evidence: recorded['evidence'] as MlSignalSnapshot['evidence'] };
-        if (snapshot.gate === 'collecting') windowIndex = 0;
-        lastSlot = slot;
-      } catch (error) { input.onUnexpectedError('ml_signal_refresh', error); }
-      finally { busy = false; }
+        if (lastSlot === slotMs) return;
+        const decision = [...listParallelEvents(experiment.id, input.profileId, input.database)].reverse()
+          .find((event) => event.kind === 'decision' && event.detail['day'] === new Date(currentMs - DAY).toISOString().slice(0, 10));
+        if (!decision) { unavailable('completed_daily_baseline_unavailable', currentMs); return; }
+        const behaviorHash = STUDY_BEHAVIOR_HASHES[ML_INFERENCE_VERSION];
+        if (!behaviorHash) { unavailable('inference_behavior_manifest_unavailable', currentMs); return; }
+        const baselineWeights = decision.detail['weights'] as Record<string, number>;
+        const baseline = PARALLEL_INSTRUMENTS.map((instrument) => baselineWeights[instrumentKey(instrument)] ?? 0);
+        const bars = listMlHourlyBars(input.profileId, historyStart, Math.floor(currentMs / HOUR) * HOUR, input.database);
+        const inputHash = sha256Hex(canonicalJson(bars as never));
+        const prior = listParallelEvents(experiment.id, input.profileId, input.database).find((event) =>
+          event.kind === 'ml_shadow_proposal' && event.detail['predictedAtMs'] === slotMs &&
+          event.detail['modelVersion'] === ML_INFERENCE_VERSION && event.detail['baselineDecisionId'] === decision.id &&
+          (event.detail['provenance'] as MlSignalSnapshot['provenance'])?.behaviorHash === behaviorHash);
+        if (prior) {
+          if (prior.detail['datasetHash'] !== inputHash) { unavailable('recorded_shadow_inputs_changed', currentMs); return; }
+          const detail = prior.detail;
+          snapshot = { version: ML_INFERENCE_VERSION, datasetHash: String(detail['datasetHash']),
+            modelHash: String(detail['modelHash']), gate: 'unqualified', reason: String(detail['reason']),
+            predictedAtMs: slotMs, prediction: detail['prediction'] as number[], baselineWeights: baseline,
+            proposedWeights: PARALLEL_INSTRUMENTS.map((instrument) =>
+              Number((detail['proposedWeights'] as Record<string, number>)[instrumentKey(instrument)])),
+            expectedNetImprovement: Number(detail['expectedNetImprovement']), evidence: legacyEvidence,
+            provenance: detail['provenance'] as NonNullable<MlSignalSnapshot['provenance']> };
+          lastSlot = slotMs; return;
+        }
+        const protectedPeriods = listRemediationEvidence(input.profileId, 'study-instances-v1', 'study', input.database)
+          .map((record) => record.body as unknown as { definition: { foldEndsMs: number[]; holdoutEndMs: number } })
+          .map(({ definition }) => ({ startMs: definition.foldEndsMs.at(-1)!, endMs: definition.holdoutEndMs }));
+        if (study && study.result === null) protectedPeriods.push({ startMs: study.studyEndMs - 90 * DAY, endMs: study.studyEndMs });
+        operation = 'inference'; requestedSlotMs = slotMs;
+        const evaluated = await withinDeadline((input.worker ?? evaluateInWorker)({ bars, nowMs: currentMs,
+          baseline, behaviorHash, protectedPeriods }, deadline.signal), deadline);
+        const finished = now();
+        if (finished >= slotMs + 900_000 || Math.floor(finished / (4 * HOUR)) * 4 * HOUR !== slotMs) {
+          unavailable('shadow_worker_completed_late', finished); return;
+        }
+        if (evaluated.version !== ML_INFERENCE_VERSION || evaluated.datasetHash !== inputHash ||
+            evaluated.provenance?.behaviorHash !== behaviorHash || evaluated.provenance.planHash !== sha256Hex(canonicalJson(ML_INFERENCE_PLAN as never)) ||
+            evaluated.provenance.slotMs !== slotMs || evaluated.provenance.trainingCutoffMs !== week) {
+          unavailable('shadow_worker_provenance_mismatch', finished); return;
+        }
+        snapshot = { ...evaluated, evidence: legacyEvidence };
+        if (evaluated.predictedAtMs !== slotMs || !evaluated.prediction || !evaluated.proposedWeights ||
+            evaluated.prediction.length !== 3 || !evaluated.prediction.every(Number.isFinite)) {
+          unavailable(evaluated.reason, finished); return;
+        }
+        const slot = new Date(slotMs).toISOString().slice(0, 13);
+        const proposedWeights = Object.fromEntries(PARALLEL_INSTRUMENTS.map((instrument, index) =>
+          [instrumentKey(instrument), evaluated.proposedWeights![index]!]));
+        appendParallelEvent({ experimentId: experiment.id, profileId: input.profileId, kind: 'ml_shadow_proposal',
+          key: `ml-shadow:${ML_INFERENCE_VERSION}:${slotMs}:${behaviorHash}`, at: finished,
+          detail: { slot, modelVersion: evaluated.version, modelHash: evaluated.modelHash, datasetHash: evaluated.datasetHash,
+            provenance: evaluated.provenance!, baselineDecisionId: decision.id, predictedAtMs: slotMs, prediction: evaluated.prediction,
+            baselineWeights, proposedWeights, combinedWeights: baselineWeights, applied: false, gate: 'unqualified',
+            reason: evaluated.reason, expectedNetImprovement: evaluated.expectedNetImprovement } }, input.database);
+        lastSlot = slotMs;
+      } catch (error) {
+        const late = requestedSlotMs !== null && now() >= requestedSlotMs + 900_000;
+        unavailable(late ? 'shadow_worker_completed_late' : deadline.signal.aborted || deadline.remainingMs() <= 0 ?
+          'research_budget_exhausted' : 'shadow_refresh_failed', now(), operation);
+        input.onUnexpectedError('ml_signal_refresh', new Error(snapshot?.reason ?? 'shadow_refresh_failed'));
+        void error;
+      } finally { deadline.dispose(); busy = false; }
     },
   };
 }
