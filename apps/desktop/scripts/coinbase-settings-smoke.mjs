@@ -87,7 +87,7 @@ export async function checkCoinbaseSettings(window, fixture, check) {
   const current = JSON.parse(await evaluate('window.coqui.query("portfolio.current", {}).then(JSON.stringify)'));
   check('portfolio.current is backed by connected accounts', current.status === 'ok' && current.value?.source === 'connected_accounts');
   await evaluate('window.location.hash = "/overview"');
-  await waitFor('document.body.innerText.includes("Connected portfolio") && document.body.innerText.includes("$250.00")');
+  await waitFor('document.querySelector("#terminal-data-panel")?.textContent.includes("Combined connected balances") && document.querySelector("#terminal-data-panel")?.textContent.includes("$250.00")');
   check('Overview renders connected balances without tax lots', true);
   await evaluate('window.location.hash = "/settings"');
   await waitFor('document.body.innerText.includes("Exchange connections")');

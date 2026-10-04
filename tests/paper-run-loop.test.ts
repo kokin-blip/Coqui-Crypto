@@ -25,6 +25,7 @@ import {
   countPaperFills,
   getStrategyDecision,
   listPaperBalances,
+  listSubmittedPaperExecutions,
   listDecisionEvidenceEvents,
   listWalletRunAudits,
   openDatabase,
@@ -246,6 +247,25 @@ describe('every run is recorded, including one that trades nothing', () => {
 });
 
 describe('a trading run', () => {
+  it('uses ledger cash when restoring TrendVol exposure from a cash reserve', () => {
+    const db = seeded();
+    try {
+      // Synthetic settled book: two $1,100 positions plus $220 cash.
+      db.prepare('UPDATE paper_balances_v3 SET quantity_text = ? WHERE profile_id = ? AND asset_id = ?')
+        .run('5', PROFILE, BTC_KEY);
+      db.prepare('UPDATE paper_balances_v3 SET quantity_text = ? WHERE profile_id = ? AND asset_id = ?')
+        .run('5', PROFILE, ETH_KEY);
+      db.prepare('UPDATE paper_balances_v3 SET quantity_text = ? WHERE profile_id = ? AND asset_id = ?')
+        .run('220', PROFILE, 'USD');
+      const summary = runPaperDecision(deps(db, new FixedClock(T0 + DAY)), T0 + DAY);
+      expect(summary.standDown).toBe('pending_settlement');
+      const orders = db.prepare('SELECT side, requested_notional_text AS amount FROM paper_orders_v3 ORDER BY rowid')
+        .all() as Array<{ side: string; amount: string }>;
+      expect(orders).toHaveLength(2);
+      expect(orders.every((order) => order.side === 'buy' && Number(order.amount) === 110)).toBe(true);
+    } finally { db.close(); }
+  });
+
   it('submits orders for the exact next open and journals them', () => {
     const db = seeded();
     const summary = runPaperDecision(deps(db, new FixedClock(T0 + DAY)), T0 + DAY);
@@ -255,9 +275,11 @@ describe('a trading run', () => {
     expect(summary.filledCount).toBe(0);
 
     const decisionId = strategyDecisionId(PROFILE, T0 + DAY);
+    expect(listSubmittedPaperExecutions(PROFILE, db).every((item) =>
+      item.requiredExecutionBarStartMs > item.submittedAtMs)).toBe(true);
     const stored = getStrategyDecision(decisionId, db);
     expect(stored?.decision).toMatchObject({
-      strategy: { id: 'trendvol', version: 'trendvol-paper-v1-unvalidated' },
+      strategy: { id: 'trendvol', version: 'trendvol-paper-v2-unvalidated' },
       portfolio: { source: 'paper_ledger' },
     });
     expect(listDecisionEvidenceEvents(decisionId, PROFILE, db).map((event) => event.kind))
@@ -273,8 +295,8 @@ describe('a trading run', () => {
     const first = runPaperDecision(deps(db, new FixedClock(T0 + DAY)), T0 + DAY);
     expect(countPaperFills(PROFILE, 0, db)).toBe(0);
 
-    runPaperDecision(deps(db, new FixedClock(T0 + 2 * DAY), {
-      preparation: () => paperPreparation([BTC, ETH], T0 + DAY),
+    runPaperDecision(deps(db, new FixedClock(T0 + 3 * DAY + 300_000), {
+      preparation: () => paperPreparation([BTC, ETH], T0 + 2 * DAY),
     }), T0 + 2 * DAY);
     const afterSettlement = (db.prepare(`
       SELECT COUNT(*) AS count FROM paper_fills_v3 AS fills
@@ -283,8 +305,8 @@ describe('a trading run', () => {
     `).get(first.runId) as { count: number }).count;
     expect(afterSettlement).toBeGreaterThan(0);
 
-    runPaperDecision(deps(db, new FixedClock(T0 + 2 * DAY), {
-      preparation: () => paperPreparation([BTC, ETH], T0 + DAY),
+    runPaperDecision(deps(db, new FixedClock(T0 + 3 * DAY + 300_000), {
+      preparation: () => paperPreparation([BTC, ETH], T0 + 2 * DAY),
     }), T0 + 2 * DAY);
     expect((db.prepare(`
       SELECT COUNT(*) AS count FROM paper_fills_v3 AS fills
@@ -300,34 +322,34 @@ describe('a trading run', () => {
     runPaperDecision(deps(incompleteDb, new FixedClock(T0 + DAY)), T0 + DAY);
     const incompleteMarket: PaperMarketData = {
       ...MARKET,
-      bars: (key) => bars(30, key).map((bar) => bar.startTimeMs === T0 + DAY
+      bars: (key) => bars(30, key).map((bar) => bar.startTimeMs === T0 + 2 * DAY
         ? { ...bar, isComplete: false }
         : bar),
     };
-    runPaperDecision(deps(incompleteDb, new FixedClock(T0 + 2 * DAY), {
+    runPaperDecision(deps(incompleteDb, new FixedClock(T0 + 3 * DAY + 300_000), {
       market: incompleteMarket,
-      preparation: () => paperPreparation([BTC, ETH], T0 + DAY),
+      preparation: () => paperPreparation([BTC, ETH], T0 + 2 * DAY),
     }), T0 + 2 * DAY);
     expect((incompleteDb.prepare(`
       SELECT COUNT(*) AS count FROM paper_pending_executions_v1
       WHERE required_bar_start = ? AND status = 'submitted'
-    `).get(T0 + DAY) as { count: number }).count).toBeGreaterThan(0);
+    `).get(T0 + 2 * DAY) as { count: number }).count).toBeGreaterThan(0);
     incompleteDb.close();
 
     const missingDb = seeded();
     runPaperDecision(deps(missingDb, new FixedClock(T0 + DAY)), T0 + DAY);
     const missingMarket: PaperMarketData = {
       ...MARKET,
-      bars: (key) => bars(30, key).filter((bar) => bar.startTimeMs !== T0 + DAY),
+      bars: (key) => bars(30, key).filter((bar) => bar.startTimeMs !== T0 + 2 * DAY),
     };
-    runPaperDecision(deps(missingDb, new FixedClock(T0 + 2 * DAY), {
+    runPaperDecision(deps(missingDb, new FixedClock(T0 + 4 * DAY + 300_000), {
       market: missingMarket,
-      preparation: () => paperPreparation([BTC, ETH], T0 + DAY),
+      preparation: () => paperPreparation([BTC, ETH], T0 + 2 * DAY),
     }), T0 + 2 * DAY);
     expect((missingDb.prepare(`
       SELECT COUNT(*) AS count FROM paper_pending_executions_v1
       WHERE required_bar_start = ? AND status = 'expired'
-    `).get(T0 + DAY) as { count: number }).count).toBeGreaterThan(0);
+    `).get(T0 + 2 * DAY) as { count: number }).count).toBeGreaterThan(0);
     missingDb.close();
   });
 
@@ -357,9 +379,9 @@ describe('a trading run', () => {
     expect((db.prepare(`SELECT side FROM paper_orders_v3 ORDER BY rowid`).all() as Array<{ side: string }>)
       .map(({ side }) => side)).toEqual(['sell', 'buy']);
 
-    runPaperDecision(deps(db, new FixedClock(T0 + 2 * DAY), {
+    runPaperDecision(deps(db, new FixedClock(T0 + 3 * DAY + 300_000), {
       ...shared,
-      preparation: () => paperPreparation([BTC, ETH], T0 + DAY),
+      preparation: () => paperPreparation([BTC, ETH], T0 + 2 * DAY),
     }), T0 + 2 * DAY);
     const balances = listPaperBalances(PROFILE, db);
     expect(Number(balances.find((balance) => balance.assetId === ETH_KEY)?.quantity ?? '0'))
@@ -412,7 +434,7 @@ describe('the 7-day unattended run', () => {
 
     const recovered = recoverPaperOrdersAtStartup({
       database: db,
-      clock: new FixedClock(T0 + 2 * DAY),
+      clock: new FixedClock(T0 + 3 * DAY + 300_000),
       profileId: PROFILE,
     });
     // Recognized simulator-pending orders survive restart and are not ambiguous.

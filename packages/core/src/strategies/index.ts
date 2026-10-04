@@ -1,6 +1,7 @@
 export {
   DEFAULT_MOMENTUM_CONFIG,
   momentumStat,
+  momentumMinimumHistory,
   momentumTargets,
   type MomentumConfig,
   type MomentumStat,
@@ -9,6 +10,7 @@ export {
 export {
   DEFAULT_VOL_TARGET_CONFIG,
   realizedPortfolioVolPct,
+  volTargetMinimumHistory,
   volTargetExposure,
   volTargetTargets,
   type VolTargetConfig,

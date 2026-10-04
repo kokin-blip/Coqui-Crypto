@@ -31,6 +31,12 @@ const { createDispatcher } = await import(join(root, 'dist/main/dispatch.js'));
 const { applyWindowHardening, WEB_PREFERENCES } = await import(join(root, 'dist/main/security.js'));
 
 const capturePlan = [
+  ...['Assets', 'Paper Positions', 'Paper Proposals', 'Decisions', 'Performance', 'Research Runs', 'Depth Chart', 'Recent Trades'].map((tab) => ({ name: `terminal-${tab.toLowerCase().replaceAll(' ', '-')}-1920x1080`, route: 'overview', mode: 'advanced', theme: 'dark', density: 'compact', zoom: 1, width: 1920, height: 1080, action: `tab:${tab}` })),
+  { name: 'terminal-drawer-1440x900', route: 'overview', mode: 'simple', theme: 'dark', density: 'compact', zoom: 1, width: 1440, height: 900, action: 'terminal-drawer' },
+  { name: 'terminal-1280x800', route: 'overview', mode: 'advanced', theme: 'dark', density: 'compact', zoom: 1, width: 1280, height: 800 },
+  { name: 'terminal-960x640', route: 'overview', mode: 'simple', theme: 'dark', density: 'compact', zoom: 1, width: 960, height: 640 },
+  { name: 'terminal-light-1440x900', route: 'overview', mode: 'advanced', theme: 'light', density: 'compact', zoom: 1, width: 1440, height: 900 },
+  { name: 'terminal-high-contrast-1280x800', route: 'overview', mode: 'advanced', theme: 'high-contrast', density: 'compact', zoom: 1, width: 1280, height: 800 },
   { name: 'overview-compact-960x640', route: 'overview', mode: 'simple', theme: 'dark', density: 'comfortable', zoom: 1, width: 960, height: 640 },
   { name: 'markets-standard-1280x800', route: 'markets', mode: 'advanced', theme: 'dark', density: 'comfortable', zoom: 1, width: 1280, height: 800 },
   { name: 'markets-simple-1280x800', route: 'markets', mode: 'simple', theme: 'dark', density: 'comfortable', zoom: 1, width: 1280, height: 800 },
@@ -128,6 +134,10 @@ async function run() {
     },
   });
   const dispatch = createDispatcher({ handlers: () => runtime.handlers() });
+  if (process.env['COQUI_VISUAL_DISMISS_ONBOARDING'] === '1') {
+    const skipped = await dispatch('app.onboarding.skip', { commandId: randomUUID() });
+    if (skipped.status !== 'ok') throw new Error('Could not dismiss onboarding in the temporary visual profile.');
+  }
   ipcMain.handle('coqui:query', async (_event, channel, payload) => dispatch(channel, payload));
 
   const window = new BrowserWindow({
@@ -206,6 +216,13 @@ async function run() {
     }
     await window.webContents.setZoomFactor(capture.zoom);
     await waitForReady(window);
+    if (capture.name.startsWith('terminal-')) {
+      // Wait for the real history query to settle; never substitute chart data.
+      for (let attempt = 0; attempt < 100; attempt++) {
+        if (await window.webContents.executeJavaScript(`document.querySelector('.workstation-chart-loading') === null`)) break;
+        await delay(50);
+      }
+    }
     if (process.env['COQUI_VISUAL_DISMISS_ONBOARDING'] === '1') {
       await window.webContents.executeJavaScript(`
         [...document.querySelectorAll('button')].find((button) => button.textContent?.trim() === 'Not now')?.click()
@@ -229,6 +246,8 @@ async function run() {
         (() => {
           const action = ${JSON.stringify(capture.action)};
           const buttons = [...document.querySelectorAll('button')];
+          if (action.startsWith('tab:')) buttons.find((button) => button.getAttribute('role') === 'tab' && button.textContent?.trim() === action.slice(4))?.click();
+          if (action === 'terminal-drawer') buttons.find((button) => button.getAttribute('aria-label') === 'Open algorithm and evidence')?.click();
           if (action === 'grid') {
             const select = [...document.querySelectorAll('select')].find((item) => [...item.options].some((option) => option.value === 'grid'));
             if (select) { select.value = 'grid'; select.dispatchEvent(new Event('change', { bubbles: true })); }

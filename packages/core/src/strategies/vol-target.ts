@@ -59,6 +59,11 @@ export interface VolTargetResult {
   belowTrend: boolean;
 }
 
+/** Completed closes needed for the realized-volatility window and trend gate. */
+export function volTargetMinimumHistory(config: VolTargetConfig = DEFAULT_VOL_TARGET_CONFIG): number {
+  return Math.max(Math.max(2, config.volLookbackDays) + 1, config.trendGateDays);
+}
+
 function clamp(n: number, lo: number, hi: number): number {
   return Math.max(lo, Math.min(hi, n));
 }

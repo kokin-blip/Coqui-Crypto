@@ -2,6 +2,13 @@ export type WorkstationInterval = '1m' | '5m' | '15m' | '1h' | '6h' | '1d';
 export type WorkstationChartStyle = 'candles' | 'line' | 'area' | 'baseline';
 export type WorkstationScaleMode = 'linear' | 'percentage' | 'indexed' | 'logarithmic';
 export type WorkstationLayout = 'single' | 'horizontal' | 'vertical' | 'grid' | 'dominant';
+
+export function workstationChartHeight(layout: WorkstationLayout, index: number): number {
+  if (layout === 'single') return 520;
+  if (layout === 'horizontal') return 500;
+  if (layout === 'dominant' && index === 0) return 520;
+  return 280;
+}
 export type DrawingTool = 'cursor' | 'horizontal' | 'vertical' | 'trend' | 'ray' |
   'rectangle' | 'fibonacci' | 'text' | 'measure';
 

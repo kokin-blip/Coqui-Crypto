@@ -1,6 +1,7 @@
 import { Decimal } from 'decimal.js';
 
 import {
+  firstAttainableDailyOpen,
   canonicalJson,
   decimal,
   DEFAULT_MOMENTUM_CONFIG,
@@ -35,7 +36,7 @@ import {
   hashCanonical,
   journal,
   normalizedMix,
-  planExploratoryRebalance,
+  planPaperRebalance,
   type PaperRunLoopDependencies,
   type PaperRunStandDown,
   type PaperRunSummary,
@@ -228,7 +229,7 @@ export function runExploratoryPaperDecision(
     belowTrend: trend.volatility.belowTrend,
   });
   const cashUsd = balances.find((balance) => balance.exposureKey === 'USD')?.quantity ?? '0';
-  const intents = planExploratoryRebalance(executionHoldings, cashUsd, targetPolicy);
+  const intents = planPaperRebalance(executionHoldings, cashUsd, targetPolicy);
   if (intents.length === 0) return finish('no_intents');
 
   planned = { proposalId: sha256Hex(`exploratory-paper-proposal:${runId}:1`),
@@ -237,7 +238,7 @@ export function runExploratoryPaperDecision(
     kind: 'execution_planned', atMs: decidedAtMs,
     detail: { planId: planned.proposalId, planHash: planned.planHash, intentCount: intents.length } }, database);
   const outcome = execution.prepare({ proposalId: planned.proposalId, runId, revision: 1, intents,
-    pending: { decisionId, requiredExecutionBarStartMs: preparation.latestCompletedStartMs + 86_400_000,
+    pending: { decisionId, requiredExecutionBarStartMs: firstAttainableDailyOpen(preparation.latestCompletedStartMs, decidedAtMs),
       costModelHash: paperCostModelHash() } });
   planned.proposalHash = outcome.proposalHash;
   if (outcome.status === 'submitted') return finish('pending_settlement', 0, outcome.refusedCount,

@@ -13,7 +13,6 @@ import { routeDefinition, routeHash, type AppRoute } from './routes.js';
 import { Scoreboard } from './Scoreboard.js';
 import { Settings } from './Settings.js';
 import { Tax } from './Tax.js';
-import { useWorkspace } from './WorkspaceContext.js';
 
 const Markets = lazy(async () => ({ default: (await import('./Markets.js')).Markets }));
 const Overview = lazy(async () => ({ default: (await import('./Overview.js')).Overview }));
@@ -78,14 +77,13 @@ export function RouteScreen({
   readonly route: AppRoute;
 }): React.JSX.Element {
   const definition = routeDefinition(route);
-  const { mode } = useWorkspace();
-  const integrated = mode === 'advanced' && route === 'overview';
+  const integrated = route === 'overview';
   return (
     <section className="route-screen" data-route={route}>
       <header className={`screen-heading${integrated ? ' screen-heading-integrated' : ''}`}>
         <div className={integrated ? 'sr-only' : undefined}><h1 data-route-heading tabIndex={-1}>{definition.title}</h1></div>
       </header>
-      {mode === 'advanced' && <RouteTabs route={route} />}
+      <RouteTabs route={route} />
       <Suspense fallback={<div className="panel"><span className="muted">Loading workspace…</span></div>}>
         <ScreenBody client={client} route={route} />
       </Suspense>

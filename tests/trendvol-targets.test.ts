@@ -50,6 +50,16 @@ describe('shared TrendVol target composition', () => {
   it('derives the required history from the active configuration', () => {
     expect(trendVolMinimumHistory()).toBe(121);
     expect(trendVolMinimumHistory(MOMENTUM, VOL_TARGET)).toBe(11);
+    expect(trendVolMinimumHistory({ ...MOMENTUM, volatilityDays: 40 }, VOL_TARGET)).toBe(41);
+  });
+
+  it('does not mark a short asset volatility window complete because the mix has more history', () => {
+    const btc = closes(100, 50, 0.01), eth = closes(80, 11, 0.005);
+    const options = { momentum: { ...MOMENTUM, volatilityDays: 40 }, volTarget: VOL_TARGET };
+    const current = trendVolTargets(BASE, { [BTC]: btc, [ETH]: eth }, btc, options);
+    const indexed = trendVolTargetsAt(BASE, new Map([[BTC, btc], [ETH, eth]]), btc, 50, options);
+    expect(current.historyStatus).toBe('partial');
+    expect(indexed.historyStatus).toBe('partial');
   });
 
   it('keeps indexed and current evaluation identical at the same endpoint', () => {

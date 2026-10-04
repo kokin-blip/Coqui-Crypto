@@ -1,3 +1,4 @@
+import { money } from '../packages/services/src/paper/parallel-paper-utils.js';
 import { describe, expect, it, vi } from 'vitest';
 
 import { createMemorySecretStore, createRequestDeadline, AlpacaPaperError } from '../packages/adapters/src/index.js';
@@ -63,14 +64,20 @@ function mockClient(submitFailure = false, fillStatus = 'filled', quoteAtMs: num
   });
   return { client: {
     account: async () => ACCOUNT,
-    positions: async () => [],
+    positions: async () => {
+      const quantities = new Map<string, ReturnType<typeof money>>();
+      for (const order of orders.values()) quantities.set(order.symbol, (quantities.get(order.symbol) ?? money(0))
+        .plus(money(order.filled_qty).mul(order.side === 'buy' ? 1 : -1)));
+      return [...quantities].map(([symbol, qty]) => ({ symbol, qty: qty.toString(), market_value: qty.mul(100).toString() }));
+    },
     orders: async () => [],
     asset: async (symbol: string) => ({ symbol, status: 'active', tradable: true,
       min_order_size: '0.0001', min_trade_increment: '0.0001' }),
     latestCryptoQuotes: async () => ({ quotes: Object.fromEntries(['BTC', 'ETH', 'LTC'].map((symbol) =>
       [`${symbol}/USD`, { bp: 100, ap: 101,
         t: new Date(typeof quoteAtMs === 'function' ? quoteAtMs() : quoteAtMs).toISOString() }])) }),
-    activities: async () => [],
+    activities: async () => [...orders.values()].map((order) => ({ id: `fill-${order.id}`, activity_type: 'FILL', order_id: order.id,
+      symbol: order.symbol, qty: order.filled_qty, price: order.filled_avg_price, transaction_time: new Date(TODAY).toISOString() })),
     orderByClientId: async (id: string) => {
       const order = orders.get(id);
       if (order === undefined) throw new AlpacaPaperError('not_found');
@@ -113,9 +120,9 @@ describe('paper execution diagnostics and recovery', () => {
     const mock = mockClient(false, 'filled', () => clock.nowMs());
     const prepared = { ok: true as const, dataset: dataset(), datasetHash: sha256Hex('data'),
       latestCompletedStartMs: TODAY - DAY, expectedCompletedStartMs: TODAY - DAY, ruleSnapshotHash: sha256Hex('rules') };
-    let positionsFail = false;
+    let positionsFail = false, positionReads = 0;
     const client = { ...mock.client, positions: async () => {
-      if (positionsFail) throw new AlpacaPaperError('unavailable', 'positions', 503); return [];
+      if (++positionReads > 2 && positionsFail) throw new AlpacaPaperError('unavailable', 'positions', 503); return [];
     } };
     const service = new ParallelPaperService({ profileId: 'main', database, clock, secrets,
       preparation: () => prepared, refreshFor: async () => prepared,
@@ -128,7 +135,7 @@ describe('paper execution diagnostics and recovery', () => {
     database.close();
   });
 
-  it('recovers a persisted daily plan interrupted before its intent was written', async () => {
+  it('rebuilds a persisted unsubmitted daily plan instead of replaying its quantity', async () => {
     const { database, clock, secrets } = await setup();
     const mock = mockClient();
     const ready = { ok: true as const, dataset: dataset(), datasetHash: sha256Hex('data'),
@@ -143,8 +150,9 @@ describe('paper execution diagnostics and recovery', () => {
       detail: { day: '2026-09-23', orders: [{ clientOrderId: 'persisted-paper-id', symbol: 'BTCUSD', side: 'buy', qty: '1' }] } }, database);
     await service.tick();
     await service.tick();
-    expect(mock.submit).toHaveBeenCalledOnce();
-    expect(mock.submit.mock.calls[0]?.[0]).toMatchObject({ client_order_id: 'persisted-paper-id' });
+    expect(mock.submit).toHaveBeenCalledTimes(3);
+    expect(mock.submit.mock.calls.every(([order]) => order.client_order_id !== 'persisted-paper-id')).toBe(true);
+    expect(service.status().events.some((event) => event.kind === 'plan_superseded')).toBe(true);
     database.close();
   });
 
@@ -178,10 +186,12 @@ describe('paper execution diagnostics and recovery', () => {
     const ready = { ok: true as const, dataset: dataset(), datasetHash: sha256Hex('data'),
       latestCompletedStartMs: TODAY - DAY, expectedCompletedStartMs: TODAY - DAY,
       ruleSnapshotHash: sha256Hex('rules') };
-    const client = { ...mock.client, activities: async () => [
+    const client = { ...mock.client, positions: async () => (await mock.client.positions()).map((position) => ({ ...position,
+      qty: position.symbol === 'BTCUSD' ? money(position.qty).minus('0.002').toString() : position.qty })), activities: async () => [
+      ...await mock.client.activities(),
       { id: 'fee-1', activity_type: 'CFEE', qty: '-0.002', symbol: 'BTCUSD',
         net_amount: '0', price: '100', date: '2026-09-24', description: 'must-not-persist-secret' },
-    ] };
+    ].filter(() => mock.submit.mock.calls.length > 0) };
     const service = new ParallelPaperService({ profileId: 'main', database, clock, secrets,
       preparation: () => ready, refreshFor: async () => ready,
       clientFactory: () => client as never, killSwitchEngaged: () => false });
@@ -225,6 +235,96 @@ describe('paper execution diagnostics and recovery', () => {
     await service.tick();
     expect(service.summary().state).toBe('active');
     expect(mock.submit).toHaveBeenCalledTimes(3);
+    database.close();
+  });
+
+  it('reconciles a broker-accepted lost response after repeated read failures without duplicate submission', async () => {
+    const { database, clock, secrets } = await setup();
+    const mock = mockClient(false, 'filled', () => clock.nowMs());
+    const acceptedSubmit = mock.client.submit;
+    let lost = true, readsFail = true, fillsAvailable = false;
+    const fills = mock.client.activities;
+    const lookup = mock.client.orderByClientId;
+    mock.client.submit = vi.fn(async (order) => {
+      const result = await acceptedSubmit(order);
+      if (lost) { lost = false; throw new AlpacaPaperError('unavailable', 'submit'); }
+      return result;
+    });
+    mock.client.orderByClientId = async (id) => {
+      if (readsFail) throw new AlpacaPaperError('unavailable', 'order_lookup', 503);
+      return lookup(id);
+    };
+    mock.client.activities = async () => fillsAvailable ? fills() : [];
+    const ready = { ok: true as const, dataset: dataset(), datasetHash: sha256Hex('data'),
+      latestCompletedStartMs: TODAY - DAY, expectedCompletedStartMs: TODAY - DAY, ruleSnapshotHash: sha256Hex('rules') };
+    const service = new ParallelPaperService({ profileId: 'main', database, clock, secrets,
+      preparation: () => ready, refreshFor: async () => ready, clientFactory: () => mock.client as never, killSwitchEngaged: () => false });
+    await service.start('lost-accepted-response', true);
+    await service.tick();
+    for (let attempt = 0; attempt < 3; attempt++) { clock.set(clock.nowMs() + 60_000); await service.tick(); }
+    expect(acceptedSubmit).toHaveBeenCalledOnce();
+    expect(service.summary().reconciliationAttention).toMatchObject({ blocked: true,
+      latestFailure: { operation: 'order_lookup', httpStatus: 503 } });
+    readsFail = false; await service.tick();
+    expect(service.status().status).toBe('paused');
+    expect(service.summary().reconciliationAttention.unresolvedOrders).toHaveLength(1);
+    fillsAvailable = true;
+    await service.retryReconciliation();
+    expect(acceptedSubmit).toHaveBeenCalledOnce();
+    expect(service.status().status).toBe('paused');
+    await service.tick(); await service.tick();
+    expect(service.status().status).toBe('active');
+    const ids = acceptedSubmit.mock.calls.map(([order]) => order.client_order_id);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(ids).toHaveLength(3);
+    expect(service.summary().reconciliationAttention.blocked).toBe(false);
+    database.close();
+  });
+
+  it('operator retry preserves a user pause and late recovery never replays a daily plan', async () => {
+    const { database, clock, secrets } = await setup();
+    const mock = mockClient(false, 'filled', () => clock.nowMs());
+    const ready = { ok: true as const, dataset: dataset(), datasetHash: sha256Hex('data'),
+      latestCompletedStartMs: TODAY - DAY, expectedCompletedStartMs: TODAY - DAY, ruleSnapshotHash: sha256Hex('rules') };
+    const service = new ParallelPaperService({ profileId: 'main', database, clock, secrets,
+      preparation: () => ready, refreshFor: async () => ready, clientFactory: () => mock.client as never, killSwitchEngaged: () => false });
+    await service.start('late-recovery', true);
+    service.transition('paused', 'owner');
+    await service.retryReconciliation();
+    expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'user_action' });
+    expect(mock.submit).not.toHaveBeenCalled();
+    appendParallelEvent({ experimentId: service.status().experiment!.id, profileId: 'main', kind: 'paused',
+      key: 'unknown-late', at: clock.nowMs(), detail: { reason: 'paper_execution_unknown' } }, database);
+    appendParallelEvent({ experimentId: service.status().experiment!.id, profileId: 'main', kind: 'buy_plan',
+      key: 'unsubmitted-late', at: clock.nowMs(), detail: { day: '2026-09-23', orders: [{ clientOrderId: 'old', symbol: 'BTCUSD', side: 'buy', qty: '100' }] } }, database);
+    clock.set(Date.parse('2026-09-24T00:20:00Z'));
+    await service.tick();
+    expect(service.status().status).toBe('active');
+    expect(service.status().events.some((event) => event.kind === 'daily_window_missed')).toBe(true);
+    expect(service.status().events.some((event) => event.kind === 'slot_finalized')).toBe(true);
+    expect(mock.submit).not.toHaveBeenCalled();
+    database.close();
+  });
+
+  it('does not overwrite an operator pause issued while automatic recovery is preparing', async () => {
+    const { database, clock, secrets } = await setup();
+    const mock = mockClient();
+    const ready = { ok: true as const, dataset: dataset(), datasetHash: sha256Hex('data'),
+      latestCompletedStartMs: TODAY - DAY, expectedCompletedStartMs: TODAY - DAY, ruleSnapshotHash: sha256Hex('rules') };
+    let interrupt = false;
+    const service: ParallelPaperService = new ParallelPaperService({ profileId: 'main', database, clock, secrets,
+      preparation: () => ready, refreshFor: async () => {
+        if (interrupt) service.transition('paused', 'owner-during-recovery');
+        return ready;
+      }, clientFactory: () => mock.client as never, killSwitchEngaged: () => false });
+    await service.start('pause-during-recovery', true);
+    appendParallelEvent({ experimentId: service.status().experiment!.id, profileId: 'main', kind: 'paused',
+      key: 'unknown-before-preparation', at: clock.nowMs(), detail: { reason: 'paper_execution_unknown' } }, database);
+    const deadline = createRequestDeadline(() => clock.nowMs());
+    interrupt = true; await service.tick(deadline); deadline.dispose();
+    expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'user_action' });
+    expect(service.status().events.some((event) => event.kind === 'resumed')).toBe(false);
+    expect(mock.submit).not.toHaveBeenCalled();
     database.close();
   });
 

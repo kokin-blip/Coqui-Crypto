@@ -135,7 +135,15 @@ to have traded when a valid observation exists. It does not prove the exact
 listing or delisting time, continuous eligibility, or Coinbase availability.
 Missing observations must not be converted into invented candles.
 
+The market-data foundation adds multi-product monthly backfill with daily-file
+fallback, immutable versioned provenance, and verified Parquet outputs through
+`pnpm archive:market`. The initial configuration uses BTC/ETH but is extensible.
+The dataset-specific Vision Dataset Terms dated August 26, 2026 specify
+CC BY-NC-SA 4.0 and non-commercial research restrictions; the repository's MIT
+software label is not the dataset license. Each acquisition pins the actual terms.
+
 Source: [Binance public-data repository](https://github.com/binance/binance-public-data)
+and [dataset terms](https://github.com/binance/binance-public-data/blob/master/TERMS_AND_CONDITIONS.md).
 
 ### Kraken historical OHLCVT
 
@@ -143,6 +151,12 @@ Kraken publishes downloadable CSV history for each market from its inception,
 with 1, 5, 15, 30, 60, 240, 720, and 1,440-minute intervals and quarterly
 incremental archives. It is useful for a pre-Binance and independent-venue
 robustness dataset.
+
+The current official full archive is multipart, with published part and assembled
+SHA-256 checksums, and covers history through June 30, 2026. `archive:market`
+automates constrained official downloads, verifies those hashes, and streams the
+parts without storing another assembled archive. The existing local-file command
+remains available for older archives without published checksums.
 
 Kraken explicitly omits intervals in which no trades occurred. That absence is
 liquidity information, not automatically a feed failure. The importer must keep
@@ -308,3 +322,6 @@ Event replay is governed by `firstSeenAt`: an event is absent before that time,
 and a classification is absent before its own `classifiedAt`. Events are context
 for charts, Advisor evidence, and bounded research-trigger requests only. They
 cannot change operational targets or execution.
+
+The multi-venue acquisition workflow and alternative-data roadmap are documented
+in [market-data-foundation.md](studies/market-data-foundation.md).

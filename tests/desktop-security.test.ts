@@ -143,9 +143,9 @@ describe('applyWindowHardening wiring', () => {
     const openExternal = vi.fn(async () => {});
     let windowOpenHandler: ((details: { url: string }) => { action: 'deny' }) | null = null;
     let permissionRequestHandler:
-      | ((permission: string, callback: (granted: boolean) => void) => void)
+      | ((requester: HardenableWebContents, permission: string, callback: (granted: boolean) => void, details: { requestingUrl?: string; isMainFrame?: boolean }) => void)
       | null = null;
-    let permissionCheckHandler: (() => boolean) | null = null;
+    let permissionCheckHandler: ((requester: HardenableWebContents | null, permission: string, origin: string, details: { requestingUrl?: string; isMainFrame?: boolean }) => boolean) | null = null;
     let headersListener:
       | ((
           details: { responseHeaders?: Record<string, string[]> },
@@ -154,6 +154,7 @@ describe('applyWindowHardening wiring', () => {
       | null = null;
 
     const contents = {
+      getURL: () => APP_ORIGIN,
       setWindowOpenHandler(handler: (details: { url: string }) => { action: 'deny' }) {
         windowOpenHandler = handler;
       },
@@ -162,11 +163,11 @@ describe('applyWindowHardening wiring', () => {
       },
       session: {
         setPermissionRequestHandler(
-          handler: (permission: string, callback: (granted: boolean) => void) => void,
+          handler: NonNullable<typeof permissionRequestHandler>,
         ) {
           permissionRequestHandler = handler;
         },
-        setPermissionCheckHandler(handler: () => boolean) {
+        setPermissionCheckHandler(handler: NonNullable<typeof permissionCheckHandler>) {
           permissionCheckHandler = handler;
         },
         webRequest: {
@@ -185,6 +186,7 @@ describe('applyWindowHardening wiring', () => {
     const installed = applyWindowHardening(contents, APP_ORIGIN, { openExternal }, policy);
     return {
       installed,
+      contents,
       listeners,
       openExternal,
       get windowOpenHandler() {
@@ -254,9 +256,26 @@ describe('applyWindowHardening wiring', () => {
   it('denies a permission request through the installed handler', () => {
     const h = harness();
     const callback = vi.fn();
-    h.permissionRequestHandler?.('media', callback);
+    h.permissionRequestHandler?.(h.contents, 'media', callback, { isMainFrame: true });
     expect(callback).toHaveBeenCalledWith(false);
-    expect(h.permissionCheckHandler?.()).toBe(false);
+    expect(h.permissionCheckHandler?.(h.contents, 'media', APP_ORIGIN, {})).toBe(false);
+  });
+
+  it('allows fullscreen only from the trusted renderer and denies other frames and capabilities', () => {
+    const h = harness(), callback = vi.fn();
+    h.permissionRequestHandler?.(h.contents, 'fullscreen', callback, { isMainFrame: true, requestingUrl: APP_ORIGIN });
+    expect(callback).toHaveBeenLastCalledWith(true);
+    expect(h.permissionCheckHandler?.(h.contents, 'fullscreen', APP_ORIGIN, {})).toBe(true);
+    for (const details of [{ requestingUrl: 'https://evil.example', isMainFrame: true },
+      { requestingUrl: APP_ORIGIN, isMainFrame: false }]) {
+      h.permissionRequestHandler?.(h.contents, 'fullscreen', callback, details);
+      expect(callback).toHaveBeenLastCalledWith(false);
+    }
+    h.permissionRequestHandler?.({ ...h.contents }, 'fullscreen', callback, { requestingUrl: APP_ORIGIN });
+    expect(callback).toHaveBeenLastCalledWith(false);
+    for (const permission of ['media', 'clipboard-read', 'automatic-fullscreen', 'notifications']) {
+      expect(isPermissionGranted(permission, APP_ORIGIN, APP_ORIGIN)).toBe(false);
+    }
   });
 
   it('stamps the CSP header over anything the response supplied', () => {

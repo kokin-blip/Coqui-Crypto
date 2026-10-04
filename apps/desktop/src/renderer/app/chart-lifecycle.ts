@@ -41,38 +41,57 @@ export function createChartLifecycle(
   options: ChartLifecycleOptions,
 ): ChartLifecycle {
   const reducedMotion = motionIsReduced();
+  const colors = (): { text: string; grid: string; border: string } => {
+    const style = getComputedStyle(container);
+    return { text: style.getPropertyValue('--coqui-text-muted').trim() || CHART_COLORS.supportingText,
+      grid: style.getPropertyValue('--coqui-border').trim() || CHART_COLORS.grid,
+      border: style.getPropertyValue('--coqui-border').trim() || CHART_COLORS.border };
+  };
+  const palette = colors();
   const chart = createChart(container, {
     height: options.height,
     layout: {
       background: { type: ColorType.Solid, color: 'transparent' },
-      textColor: CHART_COLORS.supportingText,
+      textColor: palette.text,
       attributionLogo: false,
     },
     grid: {
-      vertLines: { color: CHART_COLORS.grid },
-      horzLines: { color: CHART_COLORS.grid },
+      vertLines: { color: palette.grid },
+      horzLines: { color: palette.grid },
     },
     timeScale: {
-      borderColor: CHART_COLORS.border,
+      borderColor: palette.border,
       timeVisible: options.timeVisible ?? false,
       secondsVisible: false,
     },
     rightPriceScale: {
-      borderColor: CHART_COLORS.border,
+      borderColor: palette.border,
       ...(options.priceScaleMode === undefined ? {} : { mode: options.priceScaleMode }),
     },
     crosshair: {
-      vertLine: { color: CHART_COLORS.supportingText },
-      horzLine: { color: CHART_COLORS.supportingText },
+      vertLine: { color: palette.text },
+      horzLine: { color: palette.text },
     },
     kineticScroll: { mouse: !reducedMotion, touch: !reducedMotion },
   });
+  const themeObserver = new MutationObserver(() => {
+    const next = colors();
+    chart.applyOptions({ layout: { textColor: next.text },
+      grid: { vertLines: { color: next.grid }, horzLines: { color: next.grid } },
+      timeScale: { borderColor: next.border }, rightPriceScale: { borderColor: next.border },
+      crosshair: { vertLine: { color: next.text }, horzLine: { color: next.text } } });
+  });
+  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   const cleanups: Array<() => void> = [];
   const resizeListeners = new Set<() => void>();
   let destroyed = false;
+  const fullscreenHeight = (): number => document.fullscreenElement?.contains(container) === true
+    ? Math.max(options.height, document.fullscreenElement.clientHeight - 200) : options.height;
+  const onFullscreen = (): void => { if (!destroyed) chart.applyOptions({ height: fullscreenHeight() }); };
+  document.addEventListener('fullscreenchange', onFullscreen);
   const observer = new ResizeObserver(([entry]) => {
     if (entry === undefined || destroyed) return;
-    chart.applyOptions({ width: Math.floor(entry.contentRect.width) });
+    chart.applyOptions({ width: Math.floor(entry.contentRect.width), height: fullscreenHeight() });
     options.onResize?.();
     for (const listener of resizeListeners) listener();
   });
@@ -86,6 +105,8 @@ export function createChartLifecycle(
       if (destroyed) return;
       destroyed = true;
       observer.disconnect();
+      themeObserver.disconnect();
+      document.removeEventListener('fullscreenchange', onFullscreen);
       resizeListeners.clear();
       for (const cleanup of cleanups.reverse()) cleanup();
       chart.remove();

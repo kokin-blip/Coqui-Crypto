@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  instrumentKey,
+  instrumentKey, modeledFill,
   DEFAULT_TRADE_COST_CONFIG,
   GUARD_TRADE_COST_CONFIG,
   type InstrumentIdentity,
@@ -78,6 +78,18 @@ function fill(overrides: Partial<Parameters<typeof simulateFill>[0]> = {}) {
 }
 
 describe('execution bar selection (invariant 6)', () => {
+  it('matches the corrected research fill convention for actual modeled quantities', () => {
+    for (const side of ['buy', 'sell'] as const) {
+      const result = fill({ side, costConfig: GUARD_TRADE_COST_CONFIG });
+      expect(isFilled(result)).toBe(true);
+      if (!isFilled(result)) continue;
+      const expected = modeledFill(side, result.quantity, result.referencePrice, GUARD_TRADE_COST_CONFIG);
+      for (const key of ['executionPrice', 'notional', 'venueFee', 'spreadCost', 'slippageCost', 'impactCost'] as const) {
+        expect(result[key]).toBe(expected[key]);
+      }
+    }
+  });
+
   it('never fills on a bar the signal could already see', () => {
     // Decision at the day-1 boundary: day 0 has closed and is visible, so the
     // earliest eligible bar is day 1 — the engine's opens[i] against

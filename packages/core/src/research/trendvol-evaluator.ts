@@ -1,3 +1,4 @@
+import { backtestIntegrityDataset } from '../backtest/integrity-engine.js';
 import {
   addBacktestCost,
   backtestBookValue,
@@ -72,7 +73,7 @@ function emptyTracks(dataset: DecisionMarketDataset): TrendVolResearchTracks {
  *
  * @internal The public nested-study result remains unchanged.
  */
-export function evaluateTrendVolResearch(
+export function evaluateLegacyTrendVolResearch(
   dataset: DecisionMarketDataset,
   baseTargets: { assetId: InstrumentKey; weight: number }[],
   options: TrendVolResearchOptions,
@@ -199,4 +200,16 @@ export function evaluateTrendVolResearch(
     executionModel: hasObservedOpens ? 'next_open' : 'next_close_conservative',
     datasetHash: dataset.report.datasetHash,
   };
+}
+
+export function evaluateTrendVolResearch(
+  dataset: DecisionMarketDataset,
+  baseTargets: { assetId: InstrumentKey; weight: number }[],
+  options: TrendVolResearchOptions,
+): TrendVolResearchTracks {
+  const result = backtestIntegrityDataset(dataset, baseTargets, {
+    ...options, clock: { nowMs: () => dataset.generatedAtMs }, evalSignal: () => null,
+  });
+  return { hold: result.hold, passive: result.passive, trendvol: result.trendvol,
+    executionModel: result.executionModel, datasetHash: result.datasetHash };
 }

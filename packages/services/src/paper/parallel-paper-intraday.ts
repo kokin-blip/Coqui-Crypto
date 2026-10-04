@@ -5,6 +5,7 @@ import { instrumentKey, proposeMlTarget } from '@coqui/core';
 import type { ParallelPaperEvent } from '@coqui/storage';
 
 import { PARALLEL_INSTRUMENTS, PARALLEL_SYMBOLS } from './parallel-signal.js';
+import { activeParallelEvents } from './parallel-paper-plans.js';
 import { parallelSafeFailureReason } from './parallel-paper-utils.js';
 import type { MlSignalSnapshot } from './parallel-ml-worker.js';
 
@@ -76,7 +77,7 @@ export async function executeParallelIntraday(input: {
 }): Promise<void> {
   const slot = slotAt(input.nowMs);
   if (slot === null) return;
-  const events = input.events();
+  const events = activeParallelEvents(input.events());
   if (events.some((event) => event.kind === 'intraday_complete' && event.detail['slot'] === slot)) return;
   const decisionDay = String(input.decision.detail['day']);
   if (decisionDay !== new Date(input.nowMs - 86_400_000).toISOString().slice(0, 10)) return;
@@ -138,7 +139,7 @@ export async function executeParallelIntraday(input: {
     quotes: quoteRead.sides, targetWeights: weights, driftBandPct: '1' });
   const prices = quoteRead.prices;
   const planStage = async (stage: 'sell' | 'buy'): Promise<boolean> => {
-    const existing = input.events().find((event) => event.kind === 'intraday_plan' &&
+    const existing = activeParallelEvents(input.events()).find((event) => event.kind === 'intraday_plan' &&
       event.detail['slot'] === slot && event.detail['stage'] === stage);
     let planned: { symbol: string; side: 'buy' | 'sell'; qty: string; clientOrderId: string }[];
     if (existing === undefined) {
@@ -149,7 +150,11 @@ export async function executeParallelIntraday(input: {
       let available = amount(account.cash);
       const bySymbol = new Map(assets.map((asset) => [asset.symbol.replace('/', ''), asset]));
       planned = [];
+      const revision = events.filter((event) => event.kind === 'plan_superseded' && event.detail['slot'] === slot && event.detail['stage'] === stage).length;
       for (const symbol of SYMBOLS) {
+        if (events.some((intent) => intent.kind === 'external_intent' && intent.detail['slot'] === slot &&
+            intent.detail['side'] === stage && intent.detail['symbol'] === symbol && events.some((attempt) =>
+              attempt.kind === 'submit_attempt' && attempt.detail['clientOrderId'] === intent.detail['clientOrderId']))) continue;
         const position = positions.find((item) => item.symbol.replace('/', '') === symbol);
         const held = amount(position?.qty ?? '0');
         const actual = held.mul(prices[symbol]!);
@@ -166,7 +171,7 @@ export async function executeParallelIntraday(input: {
         if (qty.mul(prices[symbol]!).lessThan(MIN_TRADE)) continue;
         if (stage === 'buy') available = available.minus(qty.mul(prices[symbol]!).mul('1.01'));
         planned.push({ symbol, side: stage, qty: qty.toString(),
-          clientOrderId: `coqui-${input.experimentId.slice(0, 12)}-${slot.replaceAll(/[^0-9]/gu, '')}-${stage}-${symbol}` });
+          clientOrderId: `coqui-${input.experimentId.slice(0, 12)}-${slot.replaceAll(/[^0-9]/gu, '')}-${stage}-${symbol}${revision ? `-r${revision}` : ''}` });
       }
       const diagnostics = planned.map((order) => {
         const midpoint = prices[order.symbol]!;
@@ -182,7 +187,7 @@ export async function executeParallelIntraday(input: {
           expectedEntryCostUsd: entryCost.toFixed(2), expectedEntryCostPct: entryCostPct.toFixed(3),
           shadowCostScreen: entryCostPct.greaterThan('0.5') ? 'skip' : 'allow' };
       });
-      input.append('intraday_plan', `intraday-plan:${slot}:${stage}`, { slot, stage, count: planned.length,
+      input.append('intraday_plan', `intraday-plan:${slot}:${stage}:${revision}`, { slot, stage, count: planned.length,
         orders: planned, diagnostics, accountBefore: { equityUsd: account.equity, cashUsd: account.cash,
           positions: positions.map((position) => ({ symbol: position.symbol,
             quantity: position.qty, marketValueUsd: position.market_value })) },
@@ -192,11 +197,11 @@ export async function executeParallelIntraday(input: {
     }
     for (const item of planned) input.append('external_intent', `intent:${item.clientOrderId}`,
       { day: slot, slot, ...item });
-    const intents = input.events().filter((event) => event.kind === 'external_intent' &&
+    const intents = activeParallelEvents(input.events()).filter((event) => event.kind === 'external_intent' &&
       event.detail['slot'] === slot && event.detail['side'] === stage);
     for (const intent of intents) {
       const clientOrderId = String(intent.detail['clientOrderId']);
-      if (input.events().some((event) => event.kind === 'submit_attempt' &&
+      if (activeParallelEvents(input.events()).some((event) => event.kind === 'submit_attempt' &&
           event.detail['clientOrderId'] === clientOrderId)) continue;
       if (slotAt(input.now?.() ?? input.nowMs) !== slot) return false;
       await recordParallelPreOrder(input.client, input.now ?? (() => input.nowMs), input.append,
@@ -219,7 +224,7 @@ export async function executeParallelIntraday(input: {
   };
   if (!await planStage('sell') || !await planStage('buy')) return;
   input.append('intraday_complete', `intraday-complete:${slot}`, { slot, decisionDay,
-    orderCount: input.events().filter((event) => event.kind === 'external_intent' && event.detail['slot'] === slot).length });
+    orderCount: activeParallelEvents(input.events()).filter((event) => event.kind === 'external_intent' && event.detail['slot'] === slot).length });
 }
 
 /** Fresh venue evidence immediately before each submission, including resumed plans. */

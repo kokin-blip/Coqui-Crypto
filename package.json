@@ -1,6 +1,6 @@
 {
   "name": "coqui-crypto",
-  "version": "0.1.0-beta.13",
+  "version": "0.1.0-beta.14",
   "description": "Evidence-first crypto research and paper-trading workstation with live execution disabled.",
   "author": "Coqui Crypto",
   "private": true,
@@ -26,6 +26,7 @@
     "research:hourly-execution-report": "pnpm build && node scripts/research-hourly-execution.mjs",
     "research:universe-config": "pnpm build && node scripts/configure-research-universe.mjs",
     "research:universe-audit": "pnpm build && pnpm --filter @coqui/desktop exec electron scripts/universe-audit.mjs",
+    "archive:market": "pnpm build && node scripts/acquire-market-archive.mjs",
     "archive:binance": "pnpm build && node scripts/import-binance-archive.mjs",
     "archive:kraken": "pnpm build && node scripts/import-kraken-archive.mjs",
     "archive:coinbase": "pnpm build && node scripts/acquire-coinbase-archive.mjs",
@@ -43,6 +44,8 @@
     "coinbase:verify-view-only": "pnpm build && node scripts/verify-coinbase-view-only.mjs",
     "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm build",
     "package": "pnpm --filter @coqui/desktop package",
+    "research:overlay": "pnpm build && node scripts/research-overlay.mjs",
+    "research:integrity": "pnpm build && node scripts/research-integrity.mjs",
     "research:remediation-report": "pnpm build && node scripts/research-remediation-report.mjs"
   },
   "devDependencies": {

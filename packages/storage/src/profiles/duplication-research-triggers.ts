@@ -26,7 +26,10 @@ export function dropResearchDuplicationTriggers(database:DatabaseSync, sourcePro
     (SELECT COUNT(*) FROM range_rotation_records_v1) +
     (SELECT COUNT(*) FROM market_selector_records_v1) +
     (SELECT COUNT(*) FROM hourly_execution_records_v1) +
-    (SELECT COUNT(*) FROM remediation_evidence_v1) AS count`).get() as { count: number }).count);
+    (SELECT COUNT(*) FROM remediation_evidence_v1) +
+    (SELECT COUNT(*) FROM research_integrity_events WHERE kind IN
+      ('binding','health_review','health_policy','health_requalification',
+       'shadow_refusal','shadow_binding','shadow_setting','shadow_pending','shadow_settlement','shadow_book')) AS count`).get() as { count: number }).count);
   if (!Number.isSafeInteger(excluded)) throw new RangeError('Invalid universe duplication count.');
   database.exec(`
     DROP TRIGGER research_trigger_job_links_v1_no_update;
@@ -57,6 +60,11 @@ export function dropResearchDuplicationTriggers(database:DatabaseSync, sourcePro
     DROP TRIGGER remediation_evidence_no_update;
     DROP TRIGGER remediation_evidence_no_delete;
     DELETE FROM remediation_evidence_v1;
+    DROP TRIGGER research_integrity_no_update;
+    DROP TRIGGER research_integrity_no_delete;
+    DELETE FROM research_integrity_events WHERE kind IN
+      ('binding','health_review','health_policy','health_requalification',
+       'shadow_refusal','shadow_binding','shadow_setting','shadow_pending','shadow_settlement','shadow_book');
   `);
   return excluded;
 }
@@ -99,6 +107,10 @@ export function restoreResearchDuplicationTriggers(database:DatabaseSync):void {
       BEGIN SELECT RAISE(ABORT,'hourly execution evidence is immutable'); END;
     CREATE TRIGGER hourly_execution_no_delete BEFORE DELETE ON hourly_execution_records_v1
       BEGIN SELECT RAISE(ABORT,'hourly execution evidence is immutable'); END;
+    CREATE TRIGGER research_integrity_no_update BEFORE UPDATE ON research_integrity_events
+      BEGIN SELECT RAISE(ABORT,'research integrity evidence is immutable'); END;
+    CREATE TRIGGER research_integrity_no_delete BEFORE DELETE ON research_integrity_events
+      BEGIN SELECT RAISE(ABORT,'research integrity evidence is immutable'); END;
     CREATE TRIGGER remediation_evidence_no_update BEFORE UPDATE ON remediation_evidence_v1
       BEGIN SELECT RAISE(ABORT,'remediation evidence is immutable'); END;
     CREATE TRIGGER remediation_evidence_no_delete BEFORE DELETE ON remediation_evidence_v1

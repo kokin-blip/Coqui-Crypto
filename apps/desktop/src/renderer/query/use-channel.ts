@@ -62,9 +62,8 @@ export function useChannel<TChannel extends ChannelName>(
     // re-run a call the main process already declined, and for a non-idempotent
     // channel it would be a duplicate command.
     retry: false,
-    // A refresh must not blank the screen: UI-UX §1 requires layout and focus
-    // to survive one, so the previous value stays mounted until the next lands.
-    placeholderData: (previous) => previous,
+    // TanStack keeps current-key data during refresh. Do not carry another
+    // payload's data across instruments or profiles while the new key loads.
   });
 
   return toState(query);

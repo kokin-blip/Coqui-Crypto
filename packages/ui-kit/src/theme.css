@@ -1,24 +1,24 @@
 :root {
   color-scheme: dark;
 
-  --coqui-canvas: #020b08;
-  --coqui-canvas-raised: #04110c;
-  --coqui-surface-1: #06150f;
-  --coqui-surface-2: #091d15;
-  --coqui-surface-3: #0e271c;
-  --coqui-border: #17382b;
-  --coqui-border-strong: #255844;
-  --coqui-text: #f4f8f6;
-  --coqui-text-muted: #8fa59a;
-  --coqui-text-subtle: #6f897d;
+  --coqui-canvas: #090a0b;
+  --coqui-canvas-raised: #0d0f11;
+  --coqui-surface-1: #0d0f11;
+  --coqui-surface-2: #17191d;
+  --coqui-surface-3: #24272c;
+  --coqui-border: #282b30;
+  --coqui-border-strong: #41464e;
+  --coqui-text: #f2f3f5;
+  --coqui-text-muted: #969da8;
+  --coqui-text-subtle: #737b86;
   --coqui-accent: #2ee98b;
   --coqui-accent-text: #020b08;
   --coqui-accent-strong: #62f2a8;
   --coqui-accent-soft: #0b3725;
-  --coqui-positive: #57e39b;
-  --coqui-positive-soft: #103a28;
-  --coqui-negative: #ff6b7a;
-  --coqui-negative-soft: #431d25;
+  --coqui-positive: #20b980;
+  --coqui-positive-soft: #10271f;
+  --coqui-negative: #f05265;
+  --coqui-negative-soft: #2c191e;
   --coqui-warning: #f2b84b;
   --coqui-warning-soft: #3d2e12;
   --coqui-info: #8b7cff;

@@ -24,6 +24,8 @@
  * market module — it stays trivially testable with a stub.
  */
 
+import { backtestIntegrityDataset } from './integrity-engine.js';
+
 import {
   rotationTargets,
   tiltTargets,
@@ -403,7 +405,7 @@ export function backtestStrategies(
  * Canonical decision entry point. It accepts only a completed, timestamp-aligned
  * dataset and never treats close-only compatibility rows as observed opens.
  */
-export function backtestDecisionDataset(
+export function backtestLegacyDecisionDataset(
   dataset: DecisionMarketDataset,
   baseTargets: { assetId: InstrumentKey; weight: number }[],
   opts: Omit<StrategyBacktestOptions, 'executionPricesById'>,
@@ -419,4 +421,13 @@ export function backtestDecisionDataset(
     ...(hasObservedOpens ? { executionPricesById: dataset.opensById } : {}),
   });
   return { ...result, executionModel, datasetHash: dataset.report.datasetHash };
+}
+
+/** Authoritative corrected timestamped replay; array-only replay remains legacy. */
+export function backtestDecisionDataset(
+  dataset: DecisionMarketDataset,
+  baseTargets: { assetId: InstrumentKey; weight: number }[],
+  opts: Omit<StrategyBacktestOptions, 'executionPricesById'>,
+): DecisionStrategyBacktestResult {
+  return backtestIntegrityDataset(dataset, baseTargets, opts);
 }

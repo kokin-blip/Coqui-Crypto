@@ -195,3 +195,10 @@ export function savePaperCampaignPlanV2(plan: PaperCampaignPlanV2, database: Db)
     plan.prospectiveStartMs, stored.json, stored.hash, plan.createdAtMs,
   ).changes === 1;
 }
+
+/** Immutable submitted context also remains available after settlement. */
+export function getPaperPendingExecutionForOrder(orderId: string, database: Db): PaperPendingExecutionV1 | null {
+  const row = database.prepare('SELECT id FROM paper_pending_executions_v1 WHERE order_id=?')
+    .get(orderId) as { id: string } | undefined;
+  return row ? getPaperPendingExecution(row.id, database) : null;
+}

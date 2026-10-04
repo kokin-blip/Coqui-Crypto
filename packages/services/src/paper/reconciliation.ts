@@ -1,5 +1,5 @@
 import {
-  estimateTradeCost,
+  modeledFill,
   instrumentKey,
   sha256Hex,
   DEFAULT_TRADE_COST_CONFIG,
@@ -11,11 +11,13 @@ import {
 import {
   appendRuntimeIncident,
   getPaperOrder,
+  getPaperPendingExecutionForOrder,
   listPaperFills,
   type Db,
 } from '@coqui/storage';
 
-import { executionModelFor, type PaperExecutionModel } from './venue.js';
+import { Decimal } from 'decimal.js';
+import { paperCostModelHash, executionModelFor, type PaperExecutionModel } from './venue.js';
 import type { PaperMarketData } from './oms.js';
 
 /**
@@ -166,10 +168,7 @@ function unverifiable(fill: PaperFill, productId: string): FillDivergence {
 }
 
 function totalCostOf(fill: PaperFill): string {
-  return String(
-    Number(fill.venueFee) + Number(fill.spreadCost) + Number(fill.slippageCost) +
-      Number(fill.impactCost),
-  );
+  return new Decimal(fill.venueFee).add(fill.spreadCost).add(fill.slippageCost).add(fill.impactCost).toFixed();
 }
 
 function assess(
@@ -185,7 +184,11 @@ function assess(
   const productId = order.instrument.productId;
   const key = instrumentKey(order.instrument);
   const bars = dependencies.market.bars(key);
-  const bar = barAt(bars, fill.filledAt);
+  const pending = getPaperPendingExecutionForOrder(fill.orderId, dependencies.database);
+  if (pending && pending.costModelHash !== paperCostModelHash(costConfig)) return unverifiable(fill, productId);
+  const requiredAt = pending?.requiredExecutionBarStartMs ?? selectExecutionBarForReconciliation(bars, order.createdAt);
+  if (requiredAt === null) return unverifiable(fill, productId);
+  const bar = barAt(bars, requiredAt);
 
   // The bar behind the fill is gone or was never retained. Reporting alignment
   // here would claim agreement with evidence that no longer exists.
@@ -196,22 +199,9 @@ function assess(
 
   // What the backtest assumes: the same reference price, moved by the same cost
   // model, through the same one-cost-model rule (invariant 14).
-  const costs = estimateTradeCost(
-    {
-      asset: { instrument: order.instrument, symbol: productId },
-      side: order.side,
-      amountUsd: Number(fill.notional),
-    },
-    costConfig,
-  );
-  const quantity = Number(fill.quantity);
-  const adjustmentPerUnit =
-    quantity > 0 ? (costs.spreadUsd + costs.slippageUsd + costs.impactUsd) / quantity : 0;
-  const expectedPrice =
-    order.side === 'buy' ? reference + adjustmentPerUnit : reference - adjustmentPerUnit;
-
-  const expectedCost =
-    costs.feeUsd + costs.spreadUsd + costs.slippageUsd + costs.impactUsd;
+  const modeled = modeledFill(order.side, fill.quantity, String(reference), costConfig);
+  const expectedPrice = Number(modeled.executionPrice);
+  const expectedCost = Number(modeled.totalCost);
   const actualCost = Number(totalCostOf(fill));
 
   const priceDivergenceBps = bpsBetween(expectedPrice, Number(fill.executionPrice));
@@ -219,7 +209,9 @@ function assess(
   const timingDivergenceBars = barsBetween(bars, bar.startTimeMs, fill.filledAt);
 
   const material =
-    priceDivergenceBps !== null && Math.abs(priceDivergenceBps) >= MATERIAL_DIVERGENCE_BPS;
+    (priceDivergenceBps !== null && Math.abs(priceDivergenceBps) >= MATERIAL_DIVERGENCE_BPS) ||
+    (costDivergenceBps !== null && Math.abs(costDivergenceBps) >= MATERIAL_DIVERGENCE_BPS) ||
+    (expectedCost === 0 && actualCost !== 0) || (timingDivergenceBars !== null && timingDivergenceBars !== 0);
 
   const divergence: FillDivergence = {
     fillId: fill.id,
@@ -247,7 +239,7 @@ function recordIncident(
   divergence: FillDivergence,
   asOfMs: number,
 ): void {
-  const bps = divergence.priceDivergenceBps ?? 0;
+  const bps = Math.max(Math.abs(divergence.priceDivergenceBps ?? 0), Math.abs(divergence.costDivergenceBps ?? 0));
   appendRuntimeIncident(
     {
       id: sha256Hex(`reconciliation:${divergence.fillId}`),
@@ -261,7 +253,7 @@ function recordIncident(
       detailJson: JSON.stringify({
         fillId: divergence.fillId,
         productId: divergence.productId,
-        priceDivergenceBps: bps,
+        priceDivergenceBps: divergence.priceDivergenceBps,
         costDivergenceBps: divergence.costDivergenceBps,
         timingDivergenceBars: divergence.timingDivergenceBars,
         executionModel: divergence.executionModel,
@@ -272,4 +264,8 @@ function recordIncident(
     },
     database,
   );
+}
+
+function selectExecutionBarForReconciliation(bars: readonly MarketBar[], atMs: number): number | null {
+  return [...bars].filter((bar) => bar.startTimeMs >= atMs).sort((a, b) => a.startTimeMs - b.startTimeMs)[0]?.startTimeMs ?? null;
 }

@@ -1413,3 +1413,19 @@ Everything else is supporting detail.
    deliberately.
 3. **Build the reconciliation harness** (P6). The only mechanism that can reveal
    a dishonest backtest before real money does.
+
+## 7. Research integrity and subsequent experiments
+
+The [research-integrity handoff](studies/research-integrity.md) records the supplied
+research reconciliation, corrected timing/accounting engine, versioned costs,
+V2 development/freeze/final workflow, bound abstention evidence and observation-only
+monthly strategy health. Legacy numerical artifacts stay under their original
+identities. No result or study is automatically promoted or registered.
+
+The [selective participation and bounded ML handoff](studies/selective-participation.md)
+adds versioned daily/14-day research arms, separate participation books, ridge and
+depth-two tree challengers, chronological calibration, bounded tilts, joint final
+claims and an explicit default-off daily research shadow. Artifact updates are
+explicit; registered rolling refits remain a later extension. The handoff records
+the finding → defect → change → test → acceptance matrix, operating assumptions,
+verification and remaining extensions. No candidate activates automatically.

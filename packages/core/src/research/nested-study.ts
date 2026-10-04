@@ -26,7 +26,7 @@ import {
 } from './cscv.js';
 import { analyzeHoldoutEvidence, type HoldoutAdoptionResult } from './holdout-evidence.js';
 import {
-  evaluateTrendVolResearch,
+  evaluateLegacyTrendVolResearch,
   type TrendVolResearchTracks,
 } from './trendvol-evaluator.js';
 
@@ -214,7 +214,7 @@ function runCandidate(
       options.volTarget.minExposure > options.volTarget.maxExposure) {
     throw new RangeError('Candidate volatility and exposure parameters are inconsistent.');
   }
-  return evaluateTrendVolResearch(
+  return evaluateLegacyTrendVolResearch(
     dataset,
     plan.execution.baseTargets.map((target) => ({
       assetId: target.assetId as InstrumentKey,

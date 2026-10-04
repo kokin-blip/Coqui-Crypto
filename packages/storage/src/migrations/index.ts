@@ -56,6 +56,7 @@ import { migrations80 } from './v80.js';
 import { migrations81 } from './v81.js';
 import { migrations82 } from './v82.js';
 import { migrations83 } from './v83.js';
+import { migrations86 } from './v86.js';
 import { migrations85 } from './v85.js';
 import { migrations84 } from './v84.js';
 import { migrations79 } from './v79.js';
@@ -125,4 +126,5 @@ export const migrations = [
   ...migrations83,
   ...migrations84,
   ...migrations85,
+  ...migrations86,
 ] as const;

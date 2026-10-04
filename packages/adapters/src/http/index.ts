@@ -7,3 +7,4 @@ export * from './alpaca-paper.js';
 export * from './rate-limiter.js';
 export * from './alpaca-universe.js';
 export * from './deadline.js';
+export * from './download.js';

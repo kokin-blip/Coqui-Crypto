@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import { fileURLToPath } from 'node:url';
+import { checkTerminal } from './terminal-smoke.mjs';
 import { coinbaseSmokeFixture, checkCoinbaseSettings, seedCoinbaseSmokeProfile } from './coinbase-settings-smoke.mjs';
 import { sha256Hex, strategyDecisionId } from '@coqui/core';
 import { appendDecisionEvidenceEvent, appendPaperExecutionEvent, openDatabase,
@@ -68,6 +69,23 @@ let runtime = null;
 
 async function run() {
   const coinbaseFixture = coinbaseSmokeFixture();
+  // Deterministic catalog fixture at the HTTP boundary; production adapters,
+  // contracts, dispatcher, and renderer still perform the complete round-trip.
+  const networkFetch = globalThis.fetch;
+  globalThis.fetch = async (url, init) => {
+    const endpoint = new globalThis.URL(String(url));
+    if (endpoint.hostname === 'api.exchange.coinbase.com' && endpoint.pathname === '/products') {
+      return new globalThis.Response(JSON.stringify(['BTC', 'ETH'].map((symbol) => ({
+        id: `${symbol}-USD`, base_currency: symbol, quote_currency: 'USD',
+        status: 'online', trading_disabled: false,
+      }))), { status: 200, headers: { 'content-type': 'application/json' } });
+    }
+    if (endpoint.hostname === 'api.exchange.coinbase.com' && endpoint.pathname === '/currencies') {
+      return new globalThis.Response(JSON.stringify([{ id: 'BTC', name: 'Bitcoin' }, { id: 'ETH', name: 'Ethereum' }]),
+        { status: 200, headers: { 'content-type': 'application/json' } });
+    }
+    return networkFetch(url, init);
+  };
   await seedCoinbaseSmokeProfile(dataDir);
   runtime = createRuntimeProfileController({
     dataDirectory: dataDir,
@@ -259,6 +277,8 @@ async function run() {
     ['portfolio.tax', '{}', (v) => `disposals=${v?.disposals?.length}`],
     ['accounts.settings', '{}', (v) => `density=${v?.preferences?.density}`],
     ['market-data.live', '{}', (v) => `connection=${v?.connection}`],
+    ['market-data.order-book', '{ productId: "BTC-USD", aggregation: "0.01", limit: 12 }', (v) => `state=${v?.state}, displayOnly=${v?.informationalOnly}`],
+    ['market-data.recent-trades', '{ productId: "BTC-USD", limit: 100 }', (v) => `trades=${v?.trades?.length}, displayOnly=${v?.informationalOnly}`],
     // The literal marker matters more than the number: a paper figure that
     // crossed IPC without it could be rendered as money.
     ['paper.portfolio', '{}', (v) => `simulation=${v?.simulation}`],
@@ -361,6 +381,7 @@ async function run() {
     proposalResult.blocked && proposalResult.unknown && proposalResult.evidence);
 
   await withTimeout('Coinbase Settings interactions', checkCoinbaseSettings(window, coinbaseFixture, check));
+  await withTimeout('terminal interactions', checkTerminal(window, check));
   window.destroy();
 }
 

@@ -23,6 +23,10 @@ export function createMarketHandlers(
       readonly lookbackDays: number;
     }) => marketData.candles(payload.instrument, payload.lookbackDays),
     'market-data.live': () => ({ ok: true, value: liveMarket.snapshot() }),
+    'market-data.order-book': (payload: { readonly productId: string; readonly aggregation: string; readonly limit: number }) =>
+      ({ ok: true, value: liveMarket.snapshotBook(payload.productId, payload.aggregation, payload.limit) }),
+    'market-data.recent-trades': (payload: { readonly productId: string; readonly limit: number }) =>
+      ({ ok: true, value: liveMarket.snapshotTrades(payload.productId, payload.limit) }),
     'market-data.coinbase-diagnostics': async (payload: { readonly productId: string }) =>
       ({ ok: true, value: await diagnostics.snapshot(payload.productId) }),
     'market-data.products': async (payload: { readonly query: string; readonly limit: number }) => {

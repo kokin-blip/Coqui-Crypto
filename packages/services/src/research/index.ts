@@ -12,3 +12,8 @@ export * from './host-coordinator.js';
 export * from './study-collection.js';
 export * from './remediation-report.js';
 export * from './registered-study.js';
+export * from './integrity-study.js';
+
+export * from "./overlay-study.js";
+
+export * from "./overlay-shadow.js";

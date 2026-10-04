@@ -10,6 +10,7 @@ export function createParallelPaperHandlers(service: ParallelPaperService): Chan
       return result.ok ? { ok: true, value: service.summary() }
         : { ok: false, issues: [{ path: [], code: result.code }] };
     },
+    'parallel.paper.reconcile': async () => { await service.retryReconciliation(); return { ok: true, value: service.summary() }; },
     'parallel.paper.pause': (payload: { readonly commandId: string }) => service.transition('paused', payload.commandId)
       ? { ok: true, value: service.summary() }
       : { ok: false, issues: [{ path: [], code: 'experiment_not_active' }] },

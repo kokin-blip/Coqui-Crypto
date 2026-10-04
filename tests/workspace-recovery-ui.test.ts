@@ -6,13 +6,13 @@ import { describe, expect, it } from 'vitest';
 const read = (path: string): string => readFileSync(resolve(path), 'utf8');
 
 describe('workspace hierarchy and recovery', () => {
-  it('places the decision before portfolio and strategy detail on Overview', () => {
-    const overview = read('apps/desktop/src/renderer/app/Overview.tsx');
-    const simple = overview.slice(overview.indexOf("workspace.mode === 'simple'"));
-    expect(simple.indexOf('{decision}{health}{chartPanel}{connectedReference}')).toBeGreaterThanOrEqual(0);
-    const advanced = overview.slice(overview.indexOf('return <OverviewStrategyProvider'));
-    expect(advanced.indexOf('{decision}')).toBeLessThan(advanced.indexOf('{panels.healthStrip && health}'));
-    expect(advanced.indexOf('{panels.healthStrip && health}')).toBeLessThan(advanced.indexOf('research-grid-primary'));
+  it('keeps recorded intent, risk evidence, and connected valuation available together', () => {
+    const algorithm = read('apps/desktop/src/renderer/app/TerminalAlgorithm.tsx');
+    expect(algorithm).toContain('Recorded intent');
+    expect(algorithm).toContain('Evidence & Risk');
+    expect(algorithm).toContain('Connected valuation');
+    expect(algorithm).toContain('No recorded evaluation');
+    expect(algorithm).toContain('useDialogFocus(ref, onClose)');
   });
 
   it('gives missing portfolio evidence a truthful next action', () => {

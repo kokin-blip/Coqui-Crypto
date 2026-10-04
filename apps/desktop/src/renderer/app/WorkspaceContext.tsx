@@ -5,16 +5,13 @@ import { useChannel } from '../query/use-channel.js';
 import { useCommand } from '../query/use-command.js';
 import { shellStateForWidth, type WorkspaceShellState } from './workspace-layout.js';
 
-export type WorkspaceMode = 'advanced' | 'simple';
 type WorkspaceView = ChannelResponse<'accounts.workspace'>;
 
 interface WorkspaceContextValue {
-  readonly mode: WorkspaceMode;
   readonly preferences: WorkspaceView['preferences'] | null;
   readonly pending: boolean;
   readonly shellState: WorkspaceShellState;
   readonly inspectorVisible: boolean;
-  setMode(mode: WorkspaceMode): Promise<void>;
   update(patch: Partial<WorkspaceView['preferences']>): Promise<void>;
   openInspector(): void;
   closeInspector(): void;
@@ -59,15 +56,10 @@ export function WorkspaceProvider({
       await command.run({ commandId: crypto.randomUUID(), patch });
     };
     return {
-      mode: preferences?.workspaceMode ?? 'advanced',
       preferences,
       pending: command.state.kind === 'pending',
       shellState,
       inspectorVisible: shellState === 'wide' ? (preferences?.inspectorOpen ?? false) : drawerOpen,
-      setMode: async (mode) => {
-        if (mode === (preferences?.workspaceMode ?? 'advanced')) return;
-        await update({ workspaceMode: mode });
-      },
       update,
       openInspector: () => {
         if (shellState === 'wide') void update({ inspectorOpen: true });

@@ -1,3 +1,5 @@
+import { activeParallelEvents } from './parallel-paper-plans.js';
+import { parallelReconciliationAttention } from './parallel-paper-attention.js';
 import { EXECUTION_COST_MODELS } from '@coqui/core';
 import { Decimal } from 'decimal.js';
 import type { ParallelPaperEvent, ParallelPaperExperiment } from '@coqui/storage';
@@ -16,7 +18,7 @@ export function parallelPaperSummary(current: {experiment: ParallelPaperExperime
       pauseReason: latestState?.detail['reason'], lastCheckAtMs: lastCheckAtMs, checking: checking,
       nowMs: input.clock.nowMs(), decisionDay, completed,
       dailyWindowMissed: events.some((event) => event.kind === 'daily_window_missed' && event.detail['day'] === decisionDay),
-      intradayPending: events.some((event) => event.kind === 'external_intent' && event.detail['slot'] !== undefined &&
+      intradayPending: activeParallelEvents(events).some((event) => event.kind === 'external_intent' && event.detail['slot'] !== undefined &&
         !events.some((other) => other.kind === 'external_order' &&
           other.detail['clientOrderId'] === event.detail['clientOrderId'] && other.detail['status'] === 'filled')) });
     const coquiEquity = mark === undefined ? null : String(mark.detail['coquiEquityUsd']),
@@ -33,6 +35,11 @@ export function parallelPaperSummary(current: {experiment: ParallelPaperExperime
       alpacaReturnPct: experiment === null ? null : percent(alpacaEquity, experiment.openingAlpacaEquity),
       lastMarkDay: mark === undefined ? null : String(mark.detail['markKey'] ?? mark.detail['day']),
       decisionCount: events.filter((event) => event.kind === 'decision').length,
+      reconciliationAttention: parallelReconciliationAttention(events, current.status),
+      slotOutcomes: events.filter((event) => event.kind === 'slot_finalized').slice(-18).reverse().map((event) => ({
+        slotMs: Number(event.detail['slotMs']), outcome: String(event.detail['outcome']),
+        reason: typeof event.detail['reason'] === 'string' ? event.detail['reason'] : null,
+        inferred: event.detail['inferred'] === true })),
       runtimeState, lastCheckAtMs: lastCheckAtMs,
       lastDecisionAtMs, latestDecision, activity, filterSummary,
       mlSignal: projectParallelMlStatus(events, readParallelMlSignal(input.mlSignal)),

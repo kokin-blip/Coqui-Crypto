@@ -2,7 +2,7 @@ import {
   canonicalJson,
   estimateTradeCost,
   normalizePaperOrder,
-  paperExecutionPrice,
+  modeledFill,
   sha256Hex,
   DEFAULT_TRADE_COST_CONFIG,
   type CanonicalJsonValue,
@@ -21,15 +21,10 @@ import { Decimal } from 'decimal.js';
  * assumed — a venue that fills differently would make the harness measure its
  * own inconsistency instead of a real divergence.
  *
- * The engine's mechanism is an **index offset, not a lookup**: signals read
- * `closes[0..i-1]` and execution reads `opens[i]`. Translated to a live daily
- * cadence, a decision taken from bars through yesterday's close fills at
- * today's open. That is invariant 6 — no same-bar fill, ever.
- *
- * The engine also degrades: `backtestDecisionDataset` uses opens only when every
- * bar is `reported_ohlc`, and otherwise falls back to closes under the label
- * `next_close_conservative`. This mirrors that, and records which model it used
- * so the harness can compare like with like.
+ * The corrected research engine uses provider publication availability and the
+ * first attainable open. Paper pending orders bind their expected execution bar.
+ * Legacy immediate orders retain their boundary-compatible timing; synthetic
+ * close-only fills remain explicitly exploratory.
  */
 
 export type PaperExecutionModel = 'next_open' | 'next_close_conservative';
@@ -103,7 +98,7 @@ export function selectExecutionBar(
 /**
  * Which model applies to this bar set.
  *
- * Matches `backtestDecisionDataset`: opens are used only when *every* bar is
+ * Matches the legacy compatibility model: opens are used only when *every* bar is
  * provider-reported. One synthetic or close-only bar downgrades the whole set,
  * because a mixed series would price some fills at an open and others at a
  * close without saying so.
@@ -173,35 +168,10 @@ export function simulateFill(input: SimulateFillInput): VenueOutcome {
   );
   if (!normalized.accepted) return refuse('rules_reject', normalized.reason);
 
-  const costs = estimateTradeCost(
-    {
-      asset: { instrument: input.instrument, symbol: input.symbol },
-      side: input.side,
-      amountUsd: normalized.notionalUsd,
-    },
-    costConfig,
-  );
-
-  const spreadCost = costs.spreadUsd.toFixed(8);
-  const slippageCost = costs.slippageUsd.toFixed(8);
-  const impactCost = costs.impactUsd.toFixed(8);
-
-  let executionPrice: string;
+  let fill;
   try {
-    executionPrice = paperExecutionPrice({
-      side: input.side,
-      referencePrice,
-      quantity: normalized.quantity,
-      spreadCost,
-      slippageCost,
-      impactCost,
-    });
-  } catch {
-    // Costs large enough to drive the price non-positive mean the trade is not
-    // executable at any size, which is a refusal rather than a clamped fill.
-    return refuse('non_positive_price');
-  }
-  const executedNotional = new Decimal(normalized.quantity).mul(executionPrice).toFixed();
+    fill = modeledFill(input.side, normalized.quantity, referencePrice, costConfig);
+  } catch { return refuse('non_positive_price'); }
 
   return {
     filled: true,
@@ -209,12 +179,12 @@ export function simulateFill(input: SimulateFillInput): VenueOutcome {
     side: input.side,
     quantity: normalized.quantity,
     referencePrice,
-    executionPrice,
-    notional: executedNotional,
-    venueFee: costs.feeUsd.toFixed(8),
-    spreadCost,
-    slippageCost,
-    impactCost,
+    executionPrice: fill.executionPrice,
+    notional: fill.notional,
+    venueFee: fill.venueFee,
+    spreadCost: fill.spreadCost,
+    slippageCost: fill.slippageCost,
+    impactCost: fill.impactCost,
     // The fill happens when the execution bar opens, not when the decision was
     // taken. Stamping the decision time would misreport fill latency to the
     // reconciliation harness.

@@ -13,6 +13,8 @@ export function MarketChartTileHeader({ tile, products, liveVisible, onChange, o
   readonly onChange: (patch: Partial<ChartTileConfiguration>) => void;
   readonly onToggleLink: () => void;
 }): React.JSX.Element {
+  const listedProducts = products.some((p) => p.productId === tile.productId) ? products
+    : [{ productId: tile.productId, label: tile.productId }, ...products];
   const availableComparisons = products.filter((item) => item.productId !== tile.productId &&
     !tile.compareProductIds.includes(item.productId));
   return <div className="chart-tile-label">
@@ -20,7 +22,7 @@ export function MarketChartTileHeader({ tile, products, liveVisible, onChange, o
       <label><span className="sr-only">Chart product</span><select value={tile.productId}
         onChange={(event) => onChange({ productId: event.target.value,
           compareProductIds: tile.compareProductIds.filter((id) => id !== event.target.value) })}>
-        {products.map((item) => <option key={item.productId} value={item.productId}>{item.label}</option>)}
+        {listedProducts.map((item) => <option key={item.productId} value={item.productId}>{item.label}</option>)}
       </select></label>
       <label><span className="sr-only">Chart interval</span><select value={tile.interval}
         onChange={(event) => onChange({ interval: event.target.value as WorkstationInterval })}>

@@ -68,9 +68,20 @@ export class AlpacaPaperError extends Error {
   }
 }
 
+export interface AlpacaPaperReadAttempt {
+  readonly operation: string;
+  readonly attemptCount: number;
+  readonly status: 'received' | 'unavailable';
+  readonly reason: string | null;
+  readonly httpStatus: number | null;
+  readonly elapsedMs: number;
+  readonly budgetMs: number;
+  readonly remainingMs: number;
+}
+
 type Fetcher = typeof fetch;
 
-export function createAlpacaPaperClient(credentials: AlpacaPaperCredentials, fetcher: Fetcher = fetch, deadline?: RequestDeadline) {
+export function createAlpacaPaperClient(credentials: AlpacaPaperCredentials, fetcher: Fetcher = fetch, deadline?: RequestDeadline, onReadAttempt?: (attempt: AlpacaPaperReadAttempt) => void) {
   if (!credentials.keyId.trim() || !credentials.secretKey.trim() ||
       credentials.keyId.length > 256 || credentials.secretKey.length > 512) {
     throw new AlpacaPaperError('unauthorized');
@@ -116,10 +127,15 @@ export function createAlpacaPaperClient(credentials: AlpacaPaperCredentials, fet
         })();
         const result = await Promise.race([operation, expired]);
         if (deadline?.signal.aborted || (deadline && deadline.remainingMs() <= 0)) throw fail('deadline_exceeded');
+        if (method === 'GET') onReadAttempt?.({ operation: options.operation, attemptCount, status: 'received',
+          reason: null, httpStatus: status, elapsedMs: performance.now() - started, budgetMs, remainingMs: remaining() });
         return result;
       } catch (error) {
         const failure = deadline && (deadline.signal.aborted || deadline.remainingMs() <= 0) ? fail('deadline_exceeded') :
           error instanceof AlpacaPaperError ? error : fail('unavailable');
+        if (method === 'GET') onReadAttempt?.({ operation: options.operation, attemptCount, status: 'unavailable',
+          reason: `alpaca_${failure.code}`, httpStatus: failure.httpStatus,
+          elapsedMs: performance.now() - started, budgetMs, remainingMs: remaining() });
         if (method === 'GET' && attempt === 0 && remaining() > 0 && !deadline?.signal.aborted &&
             (failure.code === 'timeout' || (failure.code === 'unavailable' && (status === null || status >= 500)))) continue;
         throw failure;

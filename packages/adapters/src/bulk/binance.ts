@@ -16,12 +16,14 @@ const SYMBOL_PATTERN = /^[A-Z0-9]{5,24}$/u;
 const INTEGER_PATTERN = /^(?:0|[1-9][0-9]*)$/u;
 const DECIMAL_PATTERN = /^(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$/u;
 const SHA256_PATTERN = /^[a-f0-9]{64}$/u;
-const BASE_URL = 'https://data.binance.vision/data/spot/monthly/klines';
+const BASE_URL = 'https://data.binance.vision/data';
 
 export interface BinanceMonthlyKlineRequest {
   readonly symbol: string;
   readonly year: number;
   readonly month: number;
+  /** Absent for a monthly file; present for a daily file containing one 1d bar. */
+  readonly day?: number;
   readonly retrievedAtMs: number;
 }
 
@@ -48,6 +50,7 @@ export interface BinanceArchiveManifest {
   readonly symbol: string;
   readonly year: number;
   readonly month: number;
+  readonly day?: number;
   readonly archivePath: string;
   readonly archiveSha256: string;
   readonly archiveByteLength: number;
@@ -100,6 +103,10 @@ function validateRequest(request: BinanceMonthlyKlineRequest): void {
   if (!Number.isSafeInteger(request.month) || request.month < 1 || request.month > 12) {
     throw new TypeError('Binance archive month must be between 1 and 12.');
   }
+  if (request.day !== undefined && (!Number.isSafeInteger(request.day) || request.day < 1 ||
+      request.day > new Date(Date.UTC(request.year, request.month, 0)).getUTCDate())) {
+    throw new TypeError('Binance archive day must be a valid day in the requested month.');
+  }
   if (!Number.isSafeInteger(request.retrievedAtMs) || request.retrievedAtMs < 0) {
     throw new TypeError('retrievedAtMs must be a non-negative safe integer.');
   }
@@ -107,9 +114,11 @@ function validateRequest(request: BinanceMonthlyKlineRequest): void {
 
 function names(request: BinanceMonthlyKlineRequest): ArchiveNames {
   const month = String(request.month).padStart(2, '0');
-  const stem = `${request.symbol}-1d-${request.year}-${month}`;
+  const period = request.day === undefined ? 'monthly' : 'daily';
+  const suffix = request.day === undefined ? '' : `-${String(request.day).padStart(2, '0')}`;
+  const stem = `${request.symbol}-1d-${request.year}-${month}${suffix}`;
   return {
-    archivePath: `spot/monthly/klines/${request.symbol}/1d/${stem}.zip`,
+    archivePath: `spot/${period}/klines/${request.symbol}/1d/${stem}.zip`,
     archiveName: `${stem}.zip`,
     csvName: `${stem}.csv`,
   };
@@ -133,10 +142,10 @@ function exactDecimal(value: string, positive: boolean): number | null {
   return number;
 }
 
-function timestampMilliseconds(value: string): number | null {
+function timestampMilliseconds(value: string, microseconds: boolean): number | null {
   if (!INTEGER_PATTERN.test(value)) return null;
   const raw = BigInt(value);
-  const milliseconds = raw >= 100_000_000_000_000n ? raw / 1_000n : raw;
+  const milliseconds = microseconds ? raw / 1_000n : raw;
   return milliseconds <= BigInt(Number.MAX_SAFE_INTEGER) ? Number(milliseconds) : null;
 }
 
@@ -147,8 +156,8 @@ function parseRecord(
 ): BinanceDailyKlineRecord | null {
   const values = line.split(',');
   if (values.length !== 12) return null;
-  const startTimeMs = timestampMilliseconds(values[0]!);
-  const closeTimeMs = timestampMilliseconds(values[6]!);
+  const startTimeMs = timestampMilliseconds(values[0]!, request.year >= 2025);
+  const closeTimeMs = timestampMilliseconds(values[6]!, request.year >= 2025);
   const open = exactDecimal(values[1]!, true);
   const high = exactDecimal(values[2]!, true);
   const low = exactDecimal(values[3]!, true);
@@ -163,6 +172,7 @@ function parseRecord(
   if (
     startTimeMs === null || closeTimeMs === null || startTimeMs % DAY_MS !== 0 ||
     startTimeMs < monthStart || startTimeMs >= monthEnd ||
+    (request.day !== undefined && startTimeMs !== Date.UTC(request.year, request.month - 1, request.day)) ||
     closeTimeMs !== startTimeMs + DAY_MS - 1 ||
     open === null || high === null || low === null || close === null ||
     volume === null || quoteVolume === null || takerBase === null || takerQuote === null ||
@@ -256,7 +266,12 @@ export function importBinanceMonthlyKlines(
   }
   let entries: Record<string, Uint8Array>;
   try {
-    entries = unzipSync(archiveBytes);
+    entries = unzipSync(archiveBytes, { filter: (entry) => {
+      if (entry.name !== archiveNames.csvName || entry.originalSize > MAX_CSV_BYTES) {
+        throw new TypeError('Unexpected or oversized ZIP entry.');
+      }
+      return true;
+    } });
   } catch {
     return { ok: false, code: 'invalid_archive', stage: 'archive', status: 0 };
   }
@@ -274,6 +289,7 @@ export function importBinanceMonthlyKlines(
     symbol: request.symbol,
     year: request.year,
     month: request.month,
+    ...(request.day === undefined ? {} : { day: request.day }),
     archivePath: archiveNames.archivePath,
     archiveSha256,
     archiveByteLength: archiveBytes.length,
@@ -306,7 +322,7 @@ export async function downloadBinanceMonthlyKlines(
 ): Promise<BinanceArchiveImportResult> {
   validateRequest(request);
   const archiveNames = names(request);
-  const url = `${BASE_URL}/${request.symbol}/1d/${archiveNames.archiveName}`;
+  const url = `${BASE_URL}/${archiveNames.archivePath}`;
   const checksumResult = await http.getText(`${url}.CHECKSUM`);
   if (!checksumResult.ok) return {
     ok: false, code: 'request_failed', stage: 'checksum', status: checksumResult.status,

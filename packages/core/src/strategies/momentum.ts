@@ -26,6 +26,8 @@ export interface MomentumConfig {
   volatilityDays: number;
   /** Max fraction of an asset's base weight that can rotate toward/away from it. */
   maxRelativeTilt: number;
+  /** Minimum score spread for full relative tilt; omitted/zero preserves legacy behavior. */
+  relativeScoreSpreadFloor?: number;
   /** Multiplier applied to negative-momentum assets before cash is raised. */
   defensiveScale: number;
   /** Annualized volatility target used to scale risky assets down. */
@@ -62,6 +64,12 @@ export interface MomentumTargetResult {
 }
 
 const YEAR = 365;
+
+/** Completed closes needed for every configured momentum and volatility window. */
+export function momentumMinimumHistory(config: MomentumConfig = DEFAULT_MOMENTUM_CONFIG): number {
+  const lookbacks = config.lookbackDaysEnsemble?.length ? config.lookbackDaysEnsemble : [config.lookbackDays];
+  return Math.max(2, config.volatilityDays, ...lookbacks) + 1;
+}
 
 function clamp(n: number, lo: number, hi: number): number {
   return Math.max(lo, Math.min(hi, n));
@@ -182,6 +190,10 @@ function targetsFromStats(
   stats: MomentumStat[],
   config: MomentumConfig,
 ): MomentumTargetResult {
+  const floor = config.relativeScoreSpreadFloor ?? 0;
+  if (!Number.isFinite(floor) || floor < 0) {
+    throw new RangeError('relativeScoreSpreadFloor must be finite and nonnegative');
+  }
   const byId = new Map(stats.map((stat) => [stat.assetId, stat]));
   if (base.length === 0 || stats.length === 0) return { targets: [], cashWeight: 1, stats };
   const scores = stats.map((stat) => stat.riskAdjustedMomentum);
@@ -192,7 +204,9 @@ function targetsFromStats(
     const stat = byId.get(target.assetId);
     if (!stat) return { assetId: target.assetId, weight: 0 };
     const relative = spread > 0 ? (stat.riskAdjustedMomentum - min) / spread : 0.5;
-    const relativeTilt = 1 + config.maxRelativeTilt * (relative * 2 - 1);
+    const relativeTilt = floor > spread
+      ? 1 + config.maxRelativeTilt * 2 * ((stat.riskAdjustedMomentum - min) - spread / 2) / floor
+      : 1 + config.maxRelativeTilt * (relative * 2 - 1);
     const defensive = stat.returnPct < 0 ? clamp(config.defensiveScale, 0, 1) : 1;
     const volScale = stat.volatilityPct > 0
       ? clamp(config.targetVolatilityPct / stat.volatilityPct, 0.15, 1)

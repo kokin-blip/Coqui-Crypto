@@ -25,15 +25,19 @@
       ],
       [
         "packages/adapters/src/bulk/binance.ts",
-        "4d7303f97c83a05d3e123a70b4a7a6fd0eaefc6d2e7e14f0484141706c9ecfa1"
+        "3d93b6497d26c022bd79b124608354b70b250745ebd484861f2360bdfed2aba2"
       ],
       [
         "packages/adapters/src/bulk/index.ts",
-        "42e85ca76c7db7e3f8cb3f0ff5698f7053dc1d857a5d63beda6cd636b623247b"
+        "ed153ad54c474761eb67290ebb61ded9786f694b2894b6104625d8d985c7ce0b"
+      ],
+      [
+        "packages/adapters/src/bulk/kraken-download.ts",
+        "40f0b21996bf4e0ead058044c0393f24d8740652c0a3fd8d8e2d6b8f7eae43a7"
       ],
       [
         "packages/adapters/src/bulk/kraken.ts",
-        "979955c5d2f80feab2958db754f34e55c9f511eb1a30f6a7c6c491091ccc85a1"
+        "de3ed26712f2121d121194217a0c248415d193e7a3906d2a064e5178a0febbf6"
       ],
       [
         "packages/adapters/src/coinbase/account-evidence.ts",
@@ -61,7 +65,7 @@
       ],
       [
         "packages/adapters/src/coinbase/index.ts",
-        "659054d578e69d0577bb060484bad588d7e43911a8ff4646b99db0814f6fe58e"
+        "e03109aa39f0db6104093fe4728371ab853fa5a8300a77b5a9be8f3af3598baf"
       ],
       [
         "packages/adapters/src/coinbase/market-diagnostics.ts",
@@ -78,6 +82,10 @@
       [
         "packages/adapters/src/coinbase/public.ts",
         "2523566062c766fd9a57152b49e751e0d5c0ed40ea93568f126c37c3345af9fe"
+      ],
+      [
+        "packages/adapters/src/coinbase/shadow-open.ts",
+        "55112cf70a9e84d796a332a1f4043e3093624f1173023dc4cd8d6aa631927bfd"
       ],
       [
         "packages/adapters/src/coinbase/transaction-evidence.ts",
@@ -125,7 +133,7 @@
       ],
       [
         "packages/adapters/src/http/alpaca-paper.ts",
-        "f2ed0c133f28e1dcd45cba06249b97e6ae38f0d58d993677981cb154cba913fc"
+        "8a17e364469982bbd83b88a59cf48a9b0a74018b9d2e5ea63cba9792aa6e9b0c"
       ],
       [
         "packages/adapters/src/http/alpaca-universe.ts",
@@ -137,15 +145,19 @@
       ],
       [
         "packages/adapters/src/http/client.ts",
-        "0f9e9e44308608a3f752ffd335c164094f17079596b6156c02681ee5d968c561"
+        "d7cefe1ea661f1ac58f1a812a0fe8ccf0c43c3251e96ea0f12cd3e00126d6bcf"
       ],
       [
         "packages/adapters/src/http/deadline.ts",
         "d873db18498585f56c5a87fcb91cd018d97a98c83d0cb232550f8afd38b6a127"
       ],
       [
+        "packages/adapters/src/http/download.ts",
+        "430acdd92c1da2507fef7611ebf7dda006da1431a88d3cfe5127ef24926247dd"
+      ],
+      [
         "packages/adapters/src/http/index.ts",
-        "149a2e9e22e822ba9b03a9812c5f002cdc4f5c63c8a9eb0ecbc85eaabae5d8dd"
+        "dc31e9a916ec7c6a2275ce3173a1059d80a9ae9c80cb46d02b2fbb407c08baa7"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -217,7 +229,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "aa43e7a7079a9e5228d5765edb1a2de5fd13c5e4c9896a2a8d274ac3895c4e63"
+        "a871e967dc7a9fb22d70fe2922f62f19a2c765f57f9d397b9a09eb88b1403e43"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -280,8 +292,16 @@
         "dfe85c72e8612784644fb8670c525b1853c81c689209378d2d1483bddbd50549"
       ],
       [
+        "packages/contracts/src/schemas/market-microstructure.ts",
+        "b72fb653811abebcb0ee178a9c93f43324f65f89afb35037ad1a46755539e083"
+      ],
+      [
         "packages/contracts/src/schemas/operations.ts",
         "59b3ffa21aca69b0615f47a28a78fc31373ea48c5a92cc3ea5561042389f71b8"
+      ],
+      [
+        "packages/contracts/src/schemas/overlay-shadow.ts",
+        "76758dc9325dfb1ec774cecec39f7b57ff6b682eae84dd5325aa646eaaf42f29"
       ],
       [
         "packages/contracts/src/schemas/paper-execution.ts",
@@ -293,7 +313,7 @@
       ],
       [
         "packages/contracts/src/schemas/parallel-paper.ts",
-        "ddf20453cf6ce9b4805fe4ffd9656c9d49c8341350aa0ad1def247e86fbaa694"
+        "ac204bdd123b54b32be0209b00a63ebf1550b247a55b906ba719e544a370db4f"
       ],
       [
         "packages/contracts/src/schemas/portfolio.ts",
@@ -317,11 +337,23 @@
       ],
       [
         "packages/core/src/backtest/engine.ts",
-        "0c992ce195d9749db5e0b63ae2405cb7c1013e7a67ad6da7c207336597aefe68"
+        "1796df1e11d21a45cef57bf77fd8ae2433b7d28dcacca491e61d0b00a281b95d"
+      ],
+      [
+        "packages/core/src/backtest/execution-timing.ts",
+        "49b8bfdc3aaa77ff92f03ad5703d5665cbd4cd6267b48052ef179fdcf991d8b8"
       ],
       [
         "packages/core/src/backtest/index.ts",
-        "ca0b8ed5638a97e25ab8ab5296a8a4b17f8e931944ab4043b4ce223ac093af30"
+        "7c8564061cd62432b8931cf4827a23b06e77c9c7bd7016fb6e354bb777a02aff"
+      ],
+      [
+        "packages/core/src/backtest/integrity-book.ts",
+        "3325b16420747237647ef30091b57316a6e8706dadd30109e2815b54f2dcd9d5"
+      ],
+      [
+        "packages/core/src/backtest/integrity-engine.ts",
+        "4dff5acbc762a7ddc2d150e98ae83301bbd6426c880114b265641e50024b5f8b"
       ],
       [
         "packages/core/src/backtest/types.ts",
@@ -345,7 +377,11 @@
       ],
       [
         "packages/core/src/costs/index.ts",
-        "b9715cf96bd0f30002c6f43c0d6db64afbb07f2efed32d67ee4fc5fdf456ebd8"
+        "780e721e494434b7a5042b005db501b93a1219539d13c106a93b5bfefa14366f"
+      ],
+      [
+        "packages/core/src/costs/scenarios.ts",
+        "65e61a457af3d3bd9443e6e40962bd684444ced808d5f396a69a003a40ed5c44"
       ],
       [
         "packages/core/src/crypto/sha256.ts",
@@ -425,7 +461,7 @@
       ],
       [
         "packages/core/src/market/market-bars.ts",
-        "e070e9aab42ef56173ff5ce44653e25f3abeaf4f3b19663ad7d27229de59d8f1"
+        "d0e5f33cae6f02c60cf76f6d54247191e613653814e98056dd8465aae6fc87a6"
       ],
       [
         "packages/core/src/market/universe.ts",
@@ -437,7 +473,7 @@
       ],
       [
         "packages/core/src/paper/evidence.ts",
-        "1c1d3ae7b2696151869fe56f0c31af4489694e600a4788afdc8d64e1e5712b54"
+        "c71cef08307f697ab18362a0d70e46fbccb987749ca3c35c920df4c87660e066"
       ],
       [
         "packages/core/src/paper/exploratory.ts",
@@ -445,7 +481,11 @@
       ],
       [
         "packages/core/src/paper/index.ts",
-        "9b1e00e618732ab06e76ab6cb6f15227be0aacd7d10d37f2606991a1fdbd0d23"
+        "bfbbc34f642c01bbbea66ae8323e9211bf5518fb7167dbc0e51c51234577bd07"
+      ],
+      [
+        "packages/core/src/paper/modeled-fill.ts",
+        "10bc553cda02c2e1fae2442726a85182f00d2f6120899078fbedf3ed26b51e2c"
       ],
       [
         "packages/core/src/portfolio/allocation.ts",
@@ -520,8 +560,12 @@
         "302044cc54e99b3abc0b41fa97273d05aabcc0bb7a451397c7df9e0adc01101f"
       ],
       [
+        "packages/core/src/realism/bound-edge.ts",
+        "b6b40f255e1f193961eb4f165497a5accb16eb39005e72b2d747262bf1032bbb"
+      ],
+      [
         "packages/core/src/realism/index.ts",
-        "4f03ccf87e284d55f1a5335f1062fb8c20385eacdee9daa4a11a7ed4a8a6e85a"
+        "da18b39d768c95aa4e0f86901200b90475932d2d101bf1ec366db25006f2a751"
       ],
       [
         "packages/core/src/research/benchmark-confidence.ts",
@@ -548,8 +592,16 @@
         "9092ec62aa2979d0bd48411fe48c1ea3517c3a51919c875b422dcde6111fbbcd"
       ],
       [
+        "packages/core/src/research/family-runner.ts",
+        "2a9eb9370fb941796d86e5945cfa81ef158c315ec8d6065bf1a139bdc0b6a646"
+      ],
+      [
         "packages/core/src/research/forward-edge.ts",
         "d687d4a11fa8a317f969b8c2077fb8dff0d555fa15d2dc0498a1303052f4af8d"
+      ],
+      [
+        "packages/core/src/research/generalized-study.ts",
+        "51cebafde2b484d3e23b824aa876f3ed6cf0c848fffa734a1563220c35af3f52"
       ],
       [
         "packages/core/src/research/holdout-evidence.ts",
@@ -561,7 +613,11 @@
       ],
       [
         "packages/core/src/research/index.ts",
-        "9cae5cbad62994217c5c1d242726896e0f43bb397fb7410710f8c8c32e026002"
+        "a140e62e064578ba93880b3cebf5f2dde44ba0e64db5f1d497a185e76a09363a"
+      ],
+      [
+        "packages/core/src/research/integrity-plan.ts",
+        "3822bb96e6d8fbcf367510eac946ebf0fa5ec25f41562f31698ae668b2b7b31a"
       ],
       [
         "packages/core/src/research/market-selector-execution.ts",
@@ -581,7 +637,59 @@
       ],
       [
         "packages/core/src/research/nested-study.ts",
-        "49ee4e309f8bef40ad161f47ce6de2580e5aa93aa6e473f4d3598b8fba484936"
+        "c98b6ffad46b595c9913b58a275b1b185205cfbee07f1c5cd3cf2bc187c3522a"
+      ],
+      [
+        "packages/core/src/research/overlay/artifacts.ts",
+        "ad963c565b46cad535b2c3ae12fc3dff5db609f8e570395f462fbaf8a381469e"
+      ],
+      [
+        "packages/core/src/research/overlay/calibration.ts",
+        "3b7c64923c031d2599af1a5716f5f5f213244dbf867d52341f97b95c56ab7c1c"
+      ],
+      [
+        "packages/core/src/research/overlay/decision.ts",
+        "27e5284d1e56366f8dfef495cf56b6040e2d566469394066a2781ed30a8d7148"
+      ],
+      [
+        "packages/core/src/research/overlay/development.ts",
+        "798bde7a3e8221bde463f19edb4851dd9979f2c6f31704db32e2c05b1c1db58e"
+      ],
+      [
+        "packages/core/src/research/overlay/features.ts",
+        "93fccc86e66bf72e70efb04de2cda32b413149a98f95ed5bc5640c213244e79f"
+      ],
+      [
+        "packages/core/src/research/overlay/final.ts",
+        "7284e44fb6024d6aa0ec7b309f88b33938b8fb14cb852b74905cbf9b27ca2198"
+      ],
+      [
+        "packages/core/src/research/overlay/index.ts",
+        "bbec707d52afae2006e68f10fb224faac0df7d61a99518043c62a7af5a288a9f"
+      ],
+      [
+        "packages/core/src/research/overlay/models.ts",
+        "faa4614fa04e2afec7058eb2a437c550bb1a3034af76bbb7b486e087c6b828d7"
+      ],
+      [
+        "packages/core/src/research/overlay/proposals.ts",
+        "014a1c44e90ab95b6639d4b372750fb52fe5392220c7e2a6eaf4ae91ac78a3f0"
+      ],
+      [
+        "packages/core/src/research/overlay/registration.ts",
+        "bce0aa33c46d31edfb2d030865ac6af90d70579d37f046e8ab463372fb57c576"
+      ],
+      [
+        "packages/core/src/research/overlay/replay.ts",
+        "204ae737bb8851048780eafba589b0e4785bf326a0f19fbc3eb64fe05c118619"
+      ],
+      [
+        "packages/core/src/research/overlay/rules.ts",
+        "5cbf8412ca96717e86d809a50e2eb9b24baf43280521bf4246db687a6a1d5980"
+      ],
+      [
+        "packages/core/src/research/overlay/types.ts",
+        "900a79608ddb0e65a37759d87b4be086802ff746a33e177e58468319fd7972f5"
       ],
       [
         "packages/core/src/research/range-rotation-replay.ts",
@@ -601,7 +709,7 @@
       ],
       [
         "packages/core/src/research/trendvol-evaluator.ts",
-        "101e314f7ea25fd92d047adb6eee09368056c7c9441cda5bc9961f5277fe9c98"
+        "48beb0afd94128cfd970bff44222bc385e5d97b8ed326c890284a47c5ef1a4e5"
       ],
       [
         "packages/core/src/research/wider-universe-dataset.ts",
@@ -625,7 +733,7 @@
       ],
       [
         "packages/core/src/risk/index.ts",
-        "76a3b3c0987f90e87c02db551281b535cd482791b0ba23c750c682482193e8e2"
+        "d35979857b7d1cb607b2bd54710cd493e73f7a984b8568291510c4e1ca1b55f8"
       ],
       [
         "packages/core/src/risk/portfolio-sizing.ts",
@@ -634,6 +742,10 @@
       [
         "packages/core/src/risk/risk-controls.ts",
         "7288541e8dc2aa0ea5913ae7346bd0225c9a8d93ac8ba7d81776877bbb5c2490"
+      ],
+      [
+        "packages/core/src/risk/strategy-health.ts",
+        "02c1f15a28daed495f7ca1adb401455458cca3a0bf60f43d5f111dd749f1ca7f"
       ],
       [
         "packages/core/src/significance/index.ts",
@@ -645,11 +757,11 @@
       ],
       [
         "packages/core/src/strategies/index.ts",
-        "96bb8c0ec51a6d8830ddfea41aa180d18ede4d0ee877c31abae85e061351802f"
+        "6be20ebc542764c850b0744d40f17e0ccc1fbc307a5033d5f25ef894769fba85"
       ],
       [
         "packages/core/src/strategies/momentum.ts",
-        "c7a40ad5072105c77eba741aaa76de1f97af53e417119aebccdb3e7208066390"
+        "d64804149791184b41064a3281a8eef4450b1bae20e2679041baa768ea54f8ae"
       ],
       [
         "packages/core/src/strategies/rotation.ts",
@@ -661,11 +773,11 @@
       ],
       [
         "packages/core/src/strategies/trend-vol.ts",
-        "e6acf336c39c26d9d11b4c47ce394065f9e45ecccc3fc17ff03ae8ea6863e69b"
+        "00e974c5654c0a80af9b44d70a09e8d54515f64bc705b629b4648b9ab7db2454"
       ],
       [
         "packages/core/src/strategies/vol-target.ts",
-        "c1f88588bdde8316549fadc8029db19aa5511b460d334a71654c0965ca9a9075"
+        "9068267a6ad6a1d4fc0f473a42c19e0ca7188520777cfae76229999cc01c42f3"
       ],
       [
         "packages/core/src/time/index.ts",
@@ -840,6 +952,30 @@
         "63fac34049f9b96679e740f05d36f0b43156e464a2850d3d516980f8fbdae161"
       ],
       [
+        "packages/services/src/market-data/acquisition/artifacts.ts",
+        "1358c8a4a3a53f54f8a9551d9842241fbd5c7f70fa13f386bca135d2adac8811"
+      ],
+      [
+        "packages/services/src/market-data/acquisition/config.ts",
+        "ea252076a931cdd963087e929b5e2bb69afebe13580092bb1ffd59d04e3be571"
+      ],
+      [
+        "packages/services/src/market-data/acquisition/kraken.ts",
+        "3961643123821981baaafb4928fc45cc23a136b69a2c01d62b28c44abeca3203"
+      ],
+      [
+        "packages/services/src/market-data/acquisition/providers.ts",
+        "4e54279cb2b6087f2e481e1fd60649ff197b7b97153f60b7edf8c54ab8000bb5"
+      ],
+      [
+        "packages/services/src/market-data/acquisition/records.ts",
+        "7669f7ebaa19e88656f58a57d0765ec39c187b13b01e968054adc15fadba6acb"
+      ],
+      [
+        "packages/services/src/market-data/acquisition/run.ts",
+        "317b35285743cbe442209f3132aeca98b1de3287cebbd3186710b8f8aec66336"
+      ],
+      [
         "packages/services/src/market-data/binance-archive.ts",
         "f3b3104f291e8a868aaab63d14dfadcee09544713ea1647375de00a752317b35"
       ],
@@ -869,7 +1005,7 @@
       ],
       [
         "packages/services/src/market-data/index.ts",
-        "98f8c50e53207678a8ebb84ab9f8d3e3897b7d8e02a1cac0ea75af204d441150"
+        "a448aa23e17fcce19ab1e90128372b61f19abd69133f45c6bcd7ab0fc827f17c"
       ],
       [
         "packages/services/src/market-data/kraken-archive.ts",
@@ -921,7 +1057,7 @@
       ],
       [
         "packages/services/src/paper/exploratory-run-loop.ts",
-        "55622b27692d4c09f98a7a0e5df583f922caf121c66838c7e80f195fe0ed9010"
+        "1e235ac7ffeaa5a3d5ece9f2a50e80fcfb94a644159acde1656abe1db284e9e1"
       ],
       [
         "packages/services/src/paper/forward-evidence.ts",
@@ -941,7 +1077,7 @@
       ],
       [
         "packages/services/src/paper/oms.ts",
-        "7a49d909de9e664f19839e19de0b010f922ed7223160cd37e32f5aaa527a48c2"
+        "6b3dec576e7dc4634ad4b1562b1c51f9dedae07ab82c53a94f8a4e815a4bb701"
       ],
       [
         "packages/services/src/paper/paper-portfolio.ts",
@@ -961,7 +1097,7 @@
       ],
       [
         "packages/services/src/paper/parallel-execution-safety.ts",
-        "19567aee167620a61b6c03bec16ef371f3375e1c5db72b27691fc0fffb0d9404"
+        "cac183ca4884b639e9500f84bfce5263bbba03e1ab5e38e9b2bd924622220485"
       ],
       [
         "packages/services/src/paper/parallel-fee-accounting.ts",
@@ -989,35 +1125,51 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-activity.ts",
-        "a705b277c87d81ff22948f4ca0dc2a3e7da634ca69dc7837e9730b069447d4fb"
+        "893a555ada11daea2adc31f5795ba3a98e88024378fd3fe37c65fca2129a493a"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-attention.ts",
+        "c916f22ed4ec9c3ecddea2c50dc02859f07ef77d70c2331a43175702f9853e73"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-daily.ts",
+        "8d27e75acf6671b01999b0e1e0bdf7816cee033ef5584812978df2527d10a5f0"
       ],
       [
         "packages/services/src/paper/parallel-paper-intraday.ts",
-        "9d61d651dc4b94f372be11887aa4f359aef18bc0963d89a31f24c7a0f23e3f1b"
+        "96315ff1977461f4b27ec150aeec3a1d8fab35e6a9c32c94c39fa82d8df80a02"
       ],
       [
         "packages/services/src/paper/parallel-paper-mark.ts",
         "b481b8b78e0a22918471787e13affb1d8c4a53f8983b7c0a9885d86dd320fec8"
       ],
       [
+        "packages/services/src/paper/parallel-paper-plans.ts",
+        "3c1922eb405017b8a35c89a1ca682b73107966fd1657d4038362175fa3224f1d"
+      ],
+      [
         "packages/services/src/paper/parallel-paper-reconciliation.ts",
-        "54013d15b889e56f1eaa1fc262e39adaaa97bc248b0c94e4fc24e0fdd6320406"
+        "1c69dfad59cdf9a4f006db3cee56f7caa046b0bcf012657a140d21eeab654008"
       ],
       [
         "packages/services/src/paper/parallel-paper-recovery.ts",
-        "2c096be8066099576e48e111abd64ba4bfe97f4bdfde8827a0922b322cd7b104"
+        "6254e892c2f0e3ea8a8fda2c03bc05aa95751d150b0fbb4ea08cd4265c66182c"
       ],
       [
         "packages/services/src/paper/parallel-paper-service.ts",
-        "bb4936cda4f300e167b81ef892dbc74c0d25b44d508d7df21bff5fa74c76c2d0"
+        "aae0e535fe680db045442fcc3ccd07196d1b66cf532ca8c2e9f3d596806baeb8"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-slots.ts",
+        "c21288d52d1032e223d078435756fed468e829b81fdf27905674bb7a084ee9c6"
       ],
       [
         "packages/services/src/paper/parallel-paper-summary.ts",
-        "5b72739588218e67b2bb5723b1ca209fd1f3a035f252f1137fafacffce1bf7ff"
+        "b3754dad831540b7d6970bf9f3d7e72bda2e30fc7059b40277b278eb6969ee7f"
       ],
       [
         "packages/services/src/paper/parallel-paper-utils.ts",
-        "02693ecdd51b761cd9680a6bc61e7478dc3b1e6b33848fd205d7a75b055224a6"
+        "b0eac7bd1419dc7ca0d14208ec3f9e3aab245707075b9910daaa359bb7488474"
       ],
       [
         "packages/services/src/paper/parallel-signal.ts",
@@ -1025,7 +1177,7 @@
       ],
       [
         "packages/services/src/paper/reconciliation.ts",
-        "93fc551318f387fdeb7fc17030256f89771cab408fdc2ff4fb2630978fc16017"
+        "84bab5867422c2f9a51e102968c9763afc0140aa73dd1d73618091eb9b2343b6"
       ],
       [
         "packages/services/src/paper/routing.ts",
@@ -1033,15 +1185,15 @@
       ],
       [
         "packages/services/src/paper/run-loop.ts",
-        "ceaffa8ca4758398cfb3043b14367c7617bf13cc01303be80030b4bb8b70e5c3"
+        "6a9515dce86df6fb6b8e66b3b92c920619d25f837f024bd9c00a4555b2b74ae0"
       ],
       [
         "packages/services/src/paper/runtime-model.ts",
-        "9fc1320da8df9d5312f60ef0f14b4fa9b103d73cddc9c52809b65be64cb2f1ad"
+        "3c64c8eea5c92fce139654db4bccfb45d761e426d38f85c825a9558fa8944a79"
       ],
       [
         "packages/services/src/paper/venue.ts",
-        "5d52094dc256caff599d3bcd1431135921dc7e81c5a02faf72e261d1b24223fb"
+        "859f693f9e122abd742fb42c9da356f89ba9a2e62e2cd53dcd94015881034792"
       ],
       [
         "packages/services/src/portfolio/allocation-policy.ts",
@@ -1093,11 +1245,23 @@
       ],
       [
         "packages/services/src/research/index.ts",
-        "b6d49f6e32d5a7730c168040692d9d6b14ca56defe2cd78eb6990372cb0901b3"
+        "950b81b91bdd684e822360d8bd3ecb70a9dc067110e0debacf7ff21e50ab15b4"
+      ],
+      [
+        "packages/services/src/research/integrity-study.ts",
+        "cc62beb7f19bcc3f28ec8ab80ffda59faee618bca44f9aca7275473f0e49ba85"
       ],
       [
         "packages/services/src/research/nested-study.ts",
-        "77030771a2fb1420327bc3bef207099a571bbb332ddb4b08ac73bc46455d8cda"
+        "2373b248b911ac83414b67c3354bfc0dd26d2a84b05d3d28e91e9432b0bfbb13"
+      ],
+      [
+        "packages/services/src/research/overlay-shadow.ts",
+        "79163aa7bbb0325996c594854536763ca62f59f8170162c0f90bdb2b495624c7"
+      ],
+      [
+        "packages/services/src/research/overlay-study.ts",
+        "6b283dde535ebb5e23b53255e953bc8afc7af06f5e280898facd34db1ac830a6"
       ],
       [
         "packages/services/src/research/pre-registration.ts",
@@ -1153,7 +1317,7 @@
       ],
       [
         "packages/services/src/risk/index.ts",
-        "3df74c864aef74d23111f1f4a5bd156215e65d1573fff1ae9a15dfdfb849b90a"
+        "217029c039a0e1c8d9faa64096484174ab5114604997e34085330d68613269ab"
       ],
       [
         "packages/services/src/risk/long-term.ts",
@@ -1162,6 +1326,10 @@
       [
         "packages/services/src/risk/reality-check.ts",
         "176921fdc4dc9b6566a5482e873a9ff6a770ec55ddface3fc7a14e0c7e054652"
+      ],
+      [
+        "packages/services/src/risk/strategy-health.ts",
+        "1474cfbd108f436cfe4a7cdecb731f2f581c411f7955bc91ba4c059ee58c7e35"
       ],
       [
         "packages/services/src/runtime/host.ts",
@@ -1217,7 +1385,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "8bd58706dd9d74efff240864bf09211a96bd8f40ced5b3da5ad001d77424445d"
+        "b4b1c0e93b86669afc6adfa1efa9f96a8379d9616dd2f2a9716c0cfe85520000"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -1464,6 +1632,10 @@
         "d0e99ab75f0ecd2e5964330521107073f7921c74b3df56491174d38fad1fab35"
       ],
       [
+        "packages/storage/src/migrations/v86.ts",
+        "aa1187fb06d366f0a83d88b4262486cd44f2d742a03033d8c28b4d8a61104d75"
+      ],
+      [
         "packages/storage/src/migrations/v9-v17.ts",
         "b393c4fd6bc1f10e8c9e9ef5af65713ae68f01c2823f337091793102639d0489"
       ],
@@ -1493,7 +1665,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "4ebbd027868c5c205818f7de94c8cf81056a664c2871cef436612eb617c818d7"
+        "4c10f76ea95b594d0c4495ce924a99207031e7cf6ebf7508240c36d94b045ee8"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -1542,6 +1714,10 @@
       [
         "packages/storage/src/repositories/alerts.ts",
         "f6be7da8ea3f78bee39f2171a4b139f51de444f3d905158f70e9c625d5c98d1b"
+      ],
+      [
+        "packages/storage/src/repositories/bound-profitability.ts",
+        "ab5e7a008be9bc711acd3ca9d0faf1336efa690ec2e90e0d725924e587efbde1"
       ],
       [
         "packages/storage/src/repositories/breakout-research.ts",
@@ -1605,7 +1781,7 @@
       ],
       [
         "packages/storage/src/repositories/forward-edge.ts",
-        "b8a1e7949f1cc554edab950fc42b5ed655a8d5b91a394cb33f419a0a23cfb824"
+        "d369f37ee2cd11afe12d26a95b50385e78e393f30f5ca02ce8ccc0605b91d7b5"
       ],
       [
         "packages/storage/src/repositories/host-authority.ts",
@@ -1617,7 +1793,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "34aeadae1c6f9f828e52e6dbcdf937a9a90100529742262ea682f7180d7855f3"
+        "5e158495144f610bb56cd017332f31b6501ed895cc7331a19d35c9cd3b533b8a"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -1661,7 +1837,7 @@
       ],
       [
         "packages/storage/src/repositories/paper-runtime.ts",
-        "4b119f9b2a7c7755e6f1aae9f4270c138e67ea29fde97ea3e03284ea1d7a0fa7"
+        "9773820c70f2e84b9b13d939a9728ac65522f0eb2eacb2b957efdab0869097bf"
       ],
       [
         "packages/storage/src/repositories/paper.ts",
@@ -1706,6 +1882,10 @@
       [
         "packages/storage/src/repositories/research-evolution.ts",
         "5db36ff2aebcd2401e744167897247c720c1d0a06e9a54cbcc730a4785037e0b"
+      ],
+      [
+        "packages/storage/src/repositories/research-integrity.ts",
+        "f3fc1950c929f8501dff023ecc8c10d747ba9e2cad3f7ec8de324e0a922f9d0d"
       ],
       [
         "packages/storage/src/repositories/research-orchestration.ts",
@@ -1772,7 +1952,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "827b90cc56563422d905b3850c12ecd3ec4aa69334ebd23f6b33200d40e3f488"
+    "hash": "0f3be5284d8fe48992a20ce7a3883f13c762698a4aa96ba28458c591c50cbfe7"
   },
   "wider-breakout-v1": {
     "version": 1,
@@ -1800,15 +1980,19 @@
       ],
       [
         "packages/adapters/src/bulk/binance.ts",
-        "4d7303f97c83a05d3e123a70b4a7a6fd0eaefc6d2e7e14f0484141706c9ecfa1"
+        "3d93b6497d26c022bd79b124608354b70b250745ebd484861f2360bdfed2aba2"
       ],
       [
         "packages/adapters/src/bulk/index.ts",
-        "42e85ca76c7db7e3f8cb3f0ff5698f7053dc1d857a5d63beda6cd636b623247b"
+        "ed153ad54c474761eb67290ebb61ded9786f694b2894b6104625d8d985c7ce0b"
+      ],
+      [
+        "packages/adapters/src/bulk/kraken-download.ts",
+        "40f0b21996bf4e0ead058044c0393f24d8740652c0a3fd8d8e2d6b8f7eae43a7"
       ],
       [
         "packages/adapters/src/bulk/kraken.ts",
-        "979955c5d2f80feab2958db754f34e55c9f511eb1a30f6a7c6c491091ccc85a1"
+        "de3ed26712f2121d121194217a0c248415d193e7a3906d2a064e5178a0febbf6"
       ],
       [
         "packages/adapters/src/coinbase/account-evidence.ts",
@@ -1836,7 +2020,7 @@
       ],
       [
         "packages/adapters/src/coinbase/index.ts",
-        "659054d578e69d0577bb060484bad588d7e43911a8ff4646b99db0814f6fe58e"
+        "e03109aa39f0db6104093fe4728371ab853fa5a8300a77b5a9be8f3af3598baf"
       ],
       [
         "packages/adapters/src/coinbase/market-diagnostics.ts",
@@ -1853,6 +2037,10 @@
       [
         "packages/adapters/src/coinbase/public.ts",
         "2523566062c766fd9a57152b49e751e0d5c0ed40ea93568f126c37c3345af9fe"
+      ],
+      [
+        "packages/adapters/src/coinbase/shadow-open.ts",
+        "55112cf70a9e84d796a332a1f4043e3093624f1173023dc4cd8d6aa631927bfd"
       ],
       [
         "packages/adapters/src/coinbase/transaction-evidence.ts",
@@ -1900,7 +2088,7 @@
       ],
       [
         "packages/adapters/src/http/alpaca-paper.ts",
-        "f2ed0c133f28e1dcd45cba06249b97e6ae38f0d58d993677981cb154cba913fc"
+        "8a17e364469982bbd83b88a59cf48a9b0a74018b9d2e5ea63cba9792aa6e9b0c"
       ],
       [
         "packages/adapters/src/http/alpaca-universe.ts",
@@ -1912,15 +2100,19 @@
       ],
       [
         "packages/adapters/src/http/client.ts",
-        "0f9e9e44308608a3f752ffd335c164094f17079596b6156c02681ee5d968c561"
+        "d7cefe1ea661f1ac58f1a812a0fe8ccf0c43c3251e96ea0f12cd3e00126d6bcf"
       ],
       [
         "packages/adapters/src/http/deadline.ts",
         "d873db18498585f56c5a87fcb91cd018d97a98c83d0cb232550f8afd38b6a127"
       ],
       [
+        "packages/adapters/src/http/download.ts",
+        "430acdd92c1da2507fef7611ebf7dda006da1431a88d3cfe5127ef24926247dd"
+      ],
+      [
         "packages/adapters/src/http/index.ts",
-        "149a2e9e22e822ba9b03a9812c5f002cdc4f5c63c8a9eb0ecbc85eaabae5d8dd"
+        "dc31e9a916ec7c6a2275ce3173a1059d80a9ae9c80cb46d02b2fbb407c08baa7"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -1992,7 +2184,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "aa43e7a7079a9e5228d5765edb1a2de5fd13c5e4c9896a2a8d274ac3895c4e63"
+        "a871e967dc7a9fb22d70fe2922f62f19a2c765f57f9d397b9a09eb88b1403e43"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -2055,8 +2247,16 @@
         "dfe85c72e8612784644fb8670c525b1853c81c689209378d2d1483bddbd50549"
       ],
       [
+        "packages/contracts/src/schemas/market-microstructure.ts",
+        "b72fb653811abebcb0ee178a9c93f43324f65f89afb35037ad1a46755539e083"
+      ],
+      [
         "packages/contracts/src/schemas/operations.ts",
         "59b3ffa21aca69b0615f47a28a78fc31373ea48c5a92cc3ea5561042389f71b8"
+      ],
+      [
+        "packages/contracts/src/schemas/overlay-shadow.ts",
+        "76758dc9325dfb1ec774cecec39f7b57ff6b682eae84dd5325aa646eaaf42f29"
       ],
       [
         "packages/contracts/src/schemas/paper-execution.ts",
@@ -2068,7 +2268,7 @@
       ],
       [
         "packages/contracts/src/schemas/parallel-paper.ts",
-        "ddf20453cf6ce9b4805fe4ffd9656c9d49c8341350aa0ad1def247e86fbaa694"
+        "ac204bdd123b54b32be0209b00a63ebf1550b247a55b906ba719e544a370db4f"
       ],
       [
         "packages/contracts/src/schemas/portfolio.ts",
@@ -2092,11 +2292,23 @@
       ],
       [
         "packages/core/src/backtest/engine.ts",
-        "0c992ce195d9749db5e0b63ae2405cb7c1013e7a67ad6da7c207336597aefe68"
+        "1796df1e11d21a45cef57bf77fd8ae2433b7d28dcacca491e61d0b00a281b95d"
+      ],
+      [
+        "packages/core/src/backtest/execution-timing.ts",
+        "49b8bfdc3aaa77ff92f03ad5703d5665cbd4cd6267b48052ef179fdcf991d8b8"
       ],
       [
         "packages/core/src/backtest/index.ts",
-        "ca0b8ed5638a97e25ab8ab5296a8a4b17f8e931944ab4043b4ce223ac093af30"
+        "7c8564061cd62432b8931cf4827a23b06e77c9c7bd7016fb6e354bb777a02aff"
+      ],
+      [
+        "packages/core/src/backtest/integrity-book.ts",
+        "3325b16420747237647ef30091b57316a6e8706dadd30109e2815b54f2dcd9d5"
+      ],
+      [
+        "packages/core/src/backtest/integrity-engine.ts",
+        "4dff5acbc762a7ddc2d150e98ae83301bbd6426c880114b265641e50024b5f8b"
       ],
       [
         "packages/core/src/backtest/types.ts",
@@ -2120,7 +2332,11 @@
       ],
       [
         "packages/core/src/costs/index.ts",
-        "b9715cf96bd0f30002c6f43c0d6db64afbb07f2efed32d67ee4fc5fdf456ebd8"
+        "780e721e494434b7a5042b005db501b93a1219539d13c106a93b5bfefa14366f"
+      ],
+      [
+        "packages/core/src/costs/scenarios.ts",
+        "65e61a457af3d3bd9443e6e40962bd684444ced808d5f396a69a003a40ed5c44"
       ],
       [
         "packages/core/src/crypto/sha256.ts",
@@ -2200,7 +2416,7 @@
       ],
       [
         "packages/core/src/market/market-bars.ts",
-        "e070e9aab42ef56173ff5ce44653e25f3abeaf4f3b19663ad7d27229de59d8f1"
+        "d0e5f33cae6f02c60cf76f6d54247191e613653814e98056dd8465aae6fc87a6"
       ],
       [
         "packages/core/src/market/universe.ts",
@@ -2212,7 +2428,7 @@
       ],
       [
         "packages/core/src/paper/evidence.ts",
-        "1c1d3ae7b2696151869fe56f0c31af4489694e600a4788afdc8d64e1e5712b54"
+        "c71cef08307f697ab18362a0d70e46fbccb987749ca3c35c920df4c87660e066"
       ],
       [
         "packages/core/src/paper/exploratory.ts",
@@ -2220,7 +2436,11 @@
       ],
       [
         "packages/core/src/paper/index.ts",
-        "9b1e00e618732ab06e76ab6cb6f15227be0aacd7d10d37f2606991a1fdbd0d23"
+        "bfbbc34f642c01bbbea66ae8323e9211bf5518fb7167dbc0e51c51234577bd07"
+      ],
+      [
+        "packages/core/src/paper/modeled-fill.ts",
+        "10bc553cda02c2e1fae2442726a85182f00d2f6120899078fbedf3ed26b51e2c"
       ],
       [
         "packages/core/src/portfolio/allocation.ts",
@@ -2295,8 +2515,12 @@
         "302044cc54e99b3abc0b41fa97273d05aabcc0bb7a451397c7df9e0adc01101f"
       ],
       [
+        "packages/core/src/realism/bound-edge.ts",
+        "b6b40f255e1f193961eb4f165497a5accb16eb39005e72b2d747262bf1032bbb"
+      ],
+      [
         "packages/core/src/realism/index.ts",
-        "4f03ccf87e284d55f1a5335f1062fb8c20385eacdee9daa4a11a7ed4a8a6e85a"
+        "da18b39d768c95aa4e0f86901200b90475932d2d101bf1ec366db25006f2a751"
       ],
       [
         "packages/core/src/research/benchmark-confidence.ts",
@@ -2323,8 +2547,16 @@
         "9092ec62aa2979d0bd48411fe48c1ea3517c3a51919c875b422dcde6111fbbcd"
       ],
       [
+        "packages/core/src/research/family-runner.ts",
+        "2a9eb9370fb941796d86e5945cfa81ef158c315ec8d6065bf1a139bdc0b6a646"
+      ],
+      [
         "packages/core/src/research/forward-edge.ts",
         "d687d4a11fa8a317f969b8c2077fb8dff0d555fa15d2dc0498a1303052f4af8d"
+      ],
+      [
+        "packages/core/src/research/generalized-study.ts",
+        "51cebafde2b484d3e23b824aa876f3ed6cf0c848fffa734a1563220c35af3f52"
       ],
       [
         "packages/core/src/research/holdout-evidence.ts",
@@ -2336,7 +2568,11 @@
       ],
       [
         "packages/core/src/research/index.ts",
-        "9cae5cbad62994217c5c1d242726896e0f43bb397fb7410710f8c8c32e026002"
+        "a140e62e064578ba93880b3cebf5f2dde44ba0e64db5f1d497a185e76a09363a"
+      ],
+      [
+        "packages/core/src/research/integrity-plan.ts",
+        "3822bb96e6d8fbcf367510eac946ebf0fa5ec25f41562f31698ae668b2b7b31a"
       ],
       [
         "packages/core/src/research/market-selector-execution.ts",
@@ -2356,7 +2592,59 @@
       ],
       [
         "packages/core/src/research/nested-study.ts",
-        "49ee4e309f8bef40ad161f47ce6de2580e5aa93aa6e473f4d3598b8fba484936"
+        "c98b6ffad46b595c9913b58a275b1b185205cfbee07f1c5cd3cf2bc187c3522a"
+      ],
+      [
+        "packages/core/src/research/overlay/artifacts.ts",
+        "ad963c565b46cad535b2c3ae12fc3dff5db609f8e570395f462fbaf8a381469e"
+      ],
+      [
+        "packages/core/src/research/overlay/calibration.ts",
+        "3b7c64923c031d2599af1a5716f5f5f213244dbf867d52341f97b95c56ab7c1c"
+      ],
+      [
+        "packages/core/src/research/overlay/decision.ts",
+        "27e5284d1e56366f8dfef495cf56b6040e2d566469394066a2781ed30a8d7148"
+      ],
+      [
+        "packages/core/src/research/overlay/development.ts",
+        "798bde7a3e8221bde463f19edb4851dd9979f2c6f31704db32e2c05b1c1db58e"
+      ],
+      [
+        "packages/core/src/research/overlay/features.ts",
+        "93fccc86e66bf72e70efb04de2cda32b413149a98f95ed5bc5640c213244e79f"
+      ],
+      [
+        "packages/core/src/research/overlay/final.ts",
+        "7284e44fb6024d6aa0ec7b309f88b33938b8fb14cb852b74905cbf9b27ca2198"
+      ],
+      [
+        "packages/core/src/research/overlay/index.ts",
+        "bbec707d52afae2006e68f10fb224faac0df7d61a99518043c62a7af5a288a9f"
+      ],
+      [
+        "packages/core/src/research/overlay/models.ts",
+        "faa4614fa04e2afec7058eb2a437c550bb1a3034af76bbb7b486e087c6b828d7"
+      ],
+      [
+        "packages/core/src/research/overlay/proposals.ts",
+        "014a1c44e90ab95b6639d4b372750fb52fe5392220c7e2a6eaf4ae91ac78a3f0"
+      ],
+      [
+        "packages/core/src/research/overlay/registration.ts",
+        "bce0aa33c46d31edfb2d030865ac6af90d70579d37f046e8ab463372fb57c576"
+      ],
+      [
+        "packages/core/src/research/overlay/replay.ts",
+        "204ae737bb8851048780eafba589b0e4785bf326a0f19fbc3eb64fe05c118619"
+      ],
+      [
+        "packages/core/src/research/overlay/rules.ts",
+        "5cbf8412ca96717e86d809a50e2eb9b24baf43280521bf4246db687a6a1d5980"
+      ],
+      [
+        "packages/core/src/research/overlay/types.ts",
+        "900a79608ddb0e65a37759d87b4be086802ff746a33e177e58468319fd7972f5"
       ],
       [
         "packages/core/src/research/range-rotation-replay.ts",
@@ -2376,7 +2664,7 @@
       ],
       [
         "packages/core/src/research/trendvol-evaluator.ts",
-        "101e314f7ea25fd92d047adb6eee09368056c7c9441cda5bc9961f5277fe9c98"
+        "48beb0afd94128cfd970bff44222bc385e5d97b8ed326c890284a47c5ef1a4e5"
       ],
       [
         "packages/core/src/research/wider-universe-dataset.ts",
@@ -2400,7 +2688,7 @@
       ],
       [
         "packages/core/src/risk/index.ts",
-        "76a3b3c0987f90e87c02db551281b535cd482791b0ba23c750c682482193e8e2"
+        "d35979857b7d1cb607b2bd54710cd493e73f7a984b8568291510c4e1ca1b55f8"
       ],
       [
         "packages/core/src/risk/portfolio-sizing.ts",
@@ -2409,6 +2697,10 @@
       [
         "packages/core/src/risk/risk-controls.ts",
         "7288541e8dc2aa0ea5913ae7346bd0225c9a8d93ac8ba7d81776877bbb5c2490"
+      ],
+      [
+        "packages/core/src/risk/strategy-health.ts",
+        "02c1f15a28daed495f7ca1adb401455458cca3a0bf60f43d5f111dd749f1ca7f"
       ],
       [
         "packages/core/src/significance/index.ts",
@@ -2420,11 +2712,11 @@
       ],
       [
         "packages/core/src/strategies/index.ts",
-        "96bb8c0ec51a6d8830ddfea41aa180d18ede4d0ee877c31abae85e061351802f"
+        "6be20ebc542764c850b0744d40f17e0ccc1fbc307a5033d5f25ef894769fba85"
       ],
       [
         "packages/core/src/strategies/momentum.ts",
-        "c7a40ad5072105c77eba741aaa76de1f97af53e417119aebccdb3e7208066390"
+        "d64804149791184b41064a3281a8eef4450b1bae20e2679041baa768ea54f8ae"
       ],
       [
         "packages/core/src/strategies/rotation.ts",
@@ -2436,11 +2728,11 @@
       ],
       [
         "packages/core/src/strategies/trend-vol.ts",
-        "e6acf336c39c26d9d11b4c47ce394065f9e45ecccc3fc17ff03ae8ea6863e69b"
+        "00e974c5654c0a80af9b44d70a09e8d54515f64bc705b629b4648b9ab7db2454"
       ],
       [
         "packages/core/src/strategies/vol-target.ts",
-        "c1f88588bdde8316549fadc8029db19aa5511b460d334a71654c0965ca9a9075"
+        "9068267a6ad6a1d4fc0f473a42c19e0ca7188520777cfae76229999cc01c42f3"
       ],
       [
         "packages/core/src/time/index.ts",
@@ -2615,6 +2907,30 @@
         "63fac34049f9b96679e740f05d36f0b43156e464a2850d3d516980f8fbdae161"
       ],
       [
+        "packages/services/src/market-data/acquisition/artifacts.ts",
+        "1358c8a4a3a53f54f8a9551d9842241fbd5c7f70fa13f386bca135d2adac8811"
+      ],
+      [
+        "packages/services/src/market-data/acquisition/config.ts",
+        "ea252076a931cdd963087e929b5e2bb69afebe13580092bb1ffd59d04e3be571"
+      ],
+      [
+        "packages/services/src/market-data/acquisition/kraken.ts",
+        "3961643123821981baaafb4928fc45cc23a136b69a2c01d62b28c44abeca3203"
+      ],
+      [
+        "packages/services/src/market-data/acquisition/providers.ts",
+        "4e54279cb2b6087f2e481e1fd60649ff197b7b97153f60b7edf8c54ab8000bb5"
+      ],
+      [
+        "packages/services/src/market-data/acquisition/records.ts",
+        "7669f7ebaa19e88656f58a57d0765ec39c187b13b01e968054adc15fadba6acb"
+      ],
+      [
+        "packages/services/src/market-data/acquisition/run.ts",
+        "317b35285743cbe442209f3132aeca98b1de3287cebbd3186710b8f8aec66336"
+      ],
+      [
         "packages/services/src/market-data/binance-archive.ts",
         "f3b3104f291e8a868aaab63d14dfadcee09544713ea1647375de00a752317b35"
       ],
@@ -2644,7 +2960,7 @@
       ],
       [
         "packages/services/src/market-data/index.ts",
-        "98f8c50e53207678a8ebb84ab9f8d3e3897b7d8e02a1cac0ea75af204d441150"
+        "a448aa23e17fcce19ab1e90128372b61f19abd69133f45c6bcd7ab0fc827f17c"
       ],
       [
         "packages/services/src/market-data/kraken-archive.ts",
@@ -2696,7 +3012,7 @@
       ],
       [
         "packages/services/src/paper/exploratory-run-loop.ts",
-        "55622b27692d4c09f98a7a0e5df583f922caf121c66838c7e80f195fe0ed9010"
+        "1e235ac7ffeaa5a3d5ece9f2a50e80fcfb94a644159acde1656abe1db284e9e1"
       ],
       [
         "packages/services/src/paper/forward-evidence.ts",
@@ -2716,7 +3032,7 @@
       ],
       [
         "packages/services/src/paper/oms.ts",
-        "7a49d909de9e664f19839e19de0b010f922ed7223160cd37e32f5aaa527a48c2"
+        "6b3dec576e7dc4634ad4b1562b1c51f9dedae07ab82c53a94f8a4e815a4bb701"
       ],
       [
         "packages/services/src/paper/paper-portfolio.ts",
@@ -2736,7 +3052,7 @@
       ],
       [
         "packages/services/src/paper/parallel-execution-safety.ts",
-        "19567aee167620a61b6c03bec16ef371f3375e1c5db72b27691fc0fffb0d9404"
+        "cac183ca4884b639e9500f84bfce5263bbba03e1ab5e38e9b2bd924622220485"
       ],
       [
         "packages/services/src/paper/parallel-fee-accounting.ts",
@@ -2764,35 +3080,51 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-activity.ts",
-        "a705b277c87d81ff22948f4ca0dc2a3e7da634ca69dc7837e9730b069447d4fb"
+        "893a555ada11daea2adc31f5795ba3a98e88024378fd3fe37c65fca2129a493a"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-attention.ts",
+        "c916f22ed4ec9c3ecddea2c50dc02859f07ef77d70c2331a43175702f9853e73"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-daily.ts",
+        "8d27e75acf6671b01999b0e1e0bdf7816cee033ef5584812978df2527d10a5f0"
       ],
       [
         "packages/services/src/paper/parallel-paper-intraday.ts",
-        "9d61d651dc4b94f372be11887aa4f359aef18bc0963d89a31f24c7a0f23e3f1b"
+        "96315ff1977461f4b27ec150aeec3a1d8fab35e6a9c32c94c39fa82d8df80a02"
       ],
       [
         "packages/services/src/paper/parallel-paper-mark.ts",
         "b481b8b78e0a22918471787e13affb1d8c4a53f8983b7c0a9885d86dd320fec8"
       ],
       [
+        "packages/services/src/paper/parallel-paper-plans.ts",
+        "3c1922eb405017b8a35c89a1ca682b73107966fd1657d4038362175fa3224f1d"
+      ],
+      [
         "packages/services/src/paper/parallel-paper-reconciliation.ts",
-        "54013d15b889e56f1eaa1fc262e39adaaa97bc248b0c94e4fc24e0fdd6320406"
+        "1c69dfad59cdf9a4f006db3cee56f7caa046b0bcf012657a140d21eeab654008"
       ],
       [
         "packages/services/src/paper/parallel-paper-recovery.ts",
-        "2c096be8066099576e48e111abd64ba4bfe97f4bdfde8827a0922b322cd7b104"
+        "6254e892c2f0e3ea8a8fda2c03bc05aa95751d150b0fbb4ea08cd4265c66182c"
       ],
       [
         "packages/services/src/paper/parallel-paper-service.ts",
-        "bb4936cda4f300e167b81ef892dbc74c0d25b44d508d7df21bff5fa74c76c2d0"
+        "aae0e535fe680db045442fcc3ccd07196d1b66cf532ca8c2e9f3d596806baeb8"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-slots.ts",
+        "c21288d52d1032e223d078435756fed468e829b81fdf27905674bb7a084ee9c6"
       ],
       [
         "packages/services/src/paper/parallel-paper-summary.ts",
-        "5b72739588218e67b2bb5723b1ca209fd1f3a035f252f1137fafacffce1bf7ff"
+        "b3754dad831540b7d6970bf9f3d7e72bda2e30fc7059b40277b278eb6969ee7f"
       ],
       [
         "packages/services/src/paper/parallel-paper-utils.ts",
-        "02693ecdd51b761cd9680a6bc61e7478dc3b1e6b33848fd205d7a75b055224a6"
+        "b0eac7bd1419dc7ca0d14208ec3f9e3aab245707075b9910daaa359bb7488474"
       ],
       [
         "packages/services/src/paper/parallel-signal.ts",
@@ -2800,7 +3132,7 @@
       ],
       [
         "packages/services/src/paper/reconciliation.ts",
-        "93fc551318f387fdeb7fc17030256f89771cab408fdc2ff4fb2630978fc16017"
+        "84bab5867422c2f9a51e102968c9763afc0140aa73dd1d73618091eb9b2343b6"
       ],
       [
         "packages/services/src/paper/routing.ts",
@@ -2808,15 +3140,15 @@
       ],
       [
         "packages/services/src/paper/run-loop.ts",
-        "ceaffa8ca4758398cfb3043b14367c7617bf13cc01303be80030b4bb8b70e5c3"
+        "6a9515dce86df6fb6b8e66b3b92c920619d25f837f024bd9c00a4555b2b74ae0"
       ],
       [
         "packages/services/src/paper/runtime-model.ts",
-        "9fc1320da8df9d5312f60ef0f14b4fa9b103d73cddc9c52809b65be64cb2f1ad"
+        "3c64c8eea5c92fce139654db4bccfb45d761e426d38f85c825a9558fa8944a79"
       ],
       [
         "packages/services/src/paper/venue.ts",
-        "5d52094dc256caff599d3bcd1431135921dc7e81c5a02faf72e261d1b24223fb"
+        "859f693f9e122abd742fb42c9da356f89ba9a2e62e2cd53dcd94015881034792"
       ],
       [
         "packages/services/src/portfolio/allocation-policy.ts",
@@ -2868,11 +3200,23 @@
       ],
       [
         "packages/services/src/research/index.ts",
-        "b6d49f6e32d5a7730c168040692d9d6b14ca56defe2cd78eb6990372cb0901b3"
+        "950b81b91bdd684e822360d8bd3ecb70a9dc067110e0debacf7ff21e50ab15b4"
+      ],
+      [
+        "packages/services/src/research/integrity-study.ts",
+        "cc62beb7f19bcc3f28ec8ab80ffda59faee618bca44f9aca7275473f0e49ba85"
       ],
       [
         "packages/services/src/research/nested-study.ts",
-        "77030771a2fb1420327bc3bef207099a571bbb332ddb4b08ac73bc46455d8cda"
+        "2373b248b911ac83414b67c3354bfc0dd26d2a84b05d3d28e91e9432b0bfbb13"
+      ],
+      [
+        "packages/services/src/research/overlay-shadow.ts",
+        "79163aa7bbb0325996c594854536763ca62f59f8170162c0f90bdb2b495624c7"
+      ],
+      [
+        "packages/services/src/research/overlay-study.ts",
+        "6b283dde535ebb5e23b53255e953bc8afc7af06f5e280898facd34db1ac830a6"
       ],
       [
         "packages/services/src/research/pre-registration.ts",
@@ -2928,7 +3272,7 @@
       ],
       [
         "packages/services/src/risk/index.ts",
-        "3df74c864aef74d23111f1f4a5bd156215e65d1573fff1ae9a15dfdfb849b90a"
+        "217029c039a0e1c8d9faa64096484174ab5114604997e34085330d68613269ab"
       ],
       [
         "packages/services/src/risk/long-term.ts",
@@ -2937,6 +3281,10 @@
       [
         "packages/services/src/risk/reality-check.ts",
         "176921fdc4dc9b6566a5482e873a9ff6a770ec55ddface3fc7a14e0c7e054652"
+      ],
+      [
+        "packages/services/src/risk/strategy-health.ts",
+        "1474cfbd108f436cfe4a7cdecb731f2f581c411f7955bc91ba4c059ee58c7e35"
       ],
       [
         "packages/services/src/runtime/host.ts",
@@ -2992,7 +3340,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "8bd58706dd9d74efff240864bf09211a96bd8f40ced5b3da5ad001d77424445d"
+        "b4b1c0e93b86669afc6adfa1efa9f96a8379d9616dd2f2a9716c0cfe85520000"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -3239,6 +3587,10 @@
         "d0e99ab75f0ecd2e5964330521107073f7921c74b3df56491174d38fad1fab35"
       ],
       [
+        "packages/storage/src/migrations/v86.ts",
+        "aa1187fb06d366f0a83d88b4262486cd44f2d742a03033d8c28b4d8a61104d75"
+      ],
+      [
         "packages/storage/src/migrations/v9-v17.ts",
         "b393c4fd6bc1f10e8c9e9ef5af65713ae68f01c2823f337091793102639d0489"
       ],
@@ -3268,7 +3620,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "4ebbd027868c5c205818f7de94c8cf81056a664c2871cef436612eb617c818d7"
+        "4c10f76ea95b594d0c4495ce924a99207031e7cf6ebf7508240c36d94b045ee8"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -3317,6 +3669,10 @@
       [
         "packages/storage/src/repositories/alerts.ts",
         "f6be7da8ea3f78bee39f2171a4b139f51de444f3d905158f70e9c625d5c98d1b"
+      ],
+      [
+        "packages/storage/src/repositories/bound-profitability.ts",
+        "ab5e7a008be9bc711acd3ca9d0faf1336efa690ec2e90e0d725924e587efbde1"
       ],
       [
         "packages/storage/src/repositories/breakout-research.ts",
@@ -3380,7 +3736,7 @@
       ],
       [
         "packages/storage/src/repositories/forward-edge.ts",
-        "b8a1e7949f1cc554edab950fc42b5ed655a8d5b91a394cb33f419a0a23cfb824"
+        "d369f37ee2cd11afe12d26a95b50385e78e393f30f5ca02ce8ccc0605b91d7b5"
       ],
       [
         "packages/storage/src/repositories/host-authority.ts",
@@ -3392,7 +3748,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "34aeadae1c6f9f828e52e6dbcdf937a9a90100529742262ea682f7180d7855f3"
+        "5e158495144f610bb56cd017332f31b6501ed895cc7331a19d35c9cd3b533b8a"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -3436,7 +3792,7 @@
       ],
       [
         "packages/storage/src/repositories/paper-runtime.ts",
-        "4b119f9b2a7c7755e6f1aae9f4270c138e67ea29fde97ea3e03284ea1d7a0fa7"
+        "9773820c70f2e84b9b13d939a9728ac65522f0eb2eacb2b957efdab0869097bf"
       ],
       [
         "packages/storage/src/repositories/paper.ts",
@@ -3481,6 +3837,10 @@
       [
         "packages/storage/src/repositories/research-evolution.ts",
         "5db36ff2aebcd2401e744167897247c720c1d0a06e9a54cbcc730a4785037e0b"
+      ],
+      [
+        "packages/storage/src/repositories/research-integrity.ts",
+        "f3fc1950c929f8501dff023ecc8c10d747ba9e2cad3f7ec8de324e0a922f9d0d"
       ],
       [
         "packages/storage/src/repositories/research-orchestration.ts",
@@ -3547,7 +3907,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "a0242ad3a2c9fa349cb02d66bbbe1dbfa1b809f3aa01c084853594ea53d0d956"
+    "hash": "e94578d82290e1bc3f9d23fef1e2bd6e5dcec5546e7a87234371a763c3428f68"
   },
   "wider-range-rotation-v1": {
     "version": 1,
@@ -3575,15 +3935,19 @@
       ],
       [
         "packages/adapters/src/bulk/binance.ts",
-        "4d7303f97c83a05d3e123a70b4a7a6fd0eaefc6d2e7e14f0484141706c9ecfa1"
+        "3d93b6497d26c022bd79b124608354b70b250745ebd484861f2360bdfed2aba2"
       ],
       [
         "packages/adapters/src/bulk/index.ts",
-        "42e85ca76c7db7e3f8cb3f0ff5698f7053dc1d857a5d63beda6cd636b623247b"
+        "ed153ad54c474761eb67290ebb61ded9786f694b2894b6104625d8d985c7ce0b"
+      ],
+      [
+        "packages/adapters/src/bulk/kraken-download.ts",
+        "40f0b21996bf4e0ead058044c0393f24d8740652c0a3fd8d8e2d6b8f7eae43a7"
       ],
       [
         "packages/adapters/src/bulk/kraken.ts",
-        "979955c5d2f80feab2958db754f34e55c9f511eb1a30f6a7c6c491091ccc85a1"
+        "de3ed26712f2121d121194217a0c248415d193e7a3906d2a064e5178a0febbf6"
       ],
       [
         "packages/adapters/src/coinbase/account-evidence.ts",
@@ -3611,7 +3975,7 @@
       ],
       [
         "packages/adapters/src/coinbase/index.ts",
-        "659054d578e69d0577bb060484bad588d7e43911a8ff4646b99db0814f6fe58e"
+        "e03109aa39f0db6104093fe4728371ab853fa5a8300a77b5a9be8f3af3598baf"
       ],
       [
         "packages/adapters/src/coinbase/market-diagnostics.ts",
@@ -3628,6 +3992,10 @@
       [
         "packages/adapters/src/coinbase/public.ts",
         "2523566062c766fd9a57152b49e751e0d5c0ed40ea93568f126c37c3345af9fe"
+      ],
+      [
+        "packages/adapters/src/coinbase/shadow-open.ts",
+        "55112cf70a9e84d796a332a1f4043e3093624f1173023dc4cd8d6aa631927bfd"
       ],
       [
         "packages/adapters/src/coinbase/transaction-evidence.ts",
@@ -3675,7 +4043,7 @@
       ],
       [
         "packages/adapters/src/http/alpaca-paper.ts",
-        "f2ed0c133f28e1dcd45cba06249b97e6ae38f0d58d993677981cb154cba913fc"
+        "8a17e364469982bbd83b88a59cf48a9b0a74018b9d2e5ea63cba9792aa6e9b0c"
       ],
       [
         "packages/adapters/src/http/alpaca-universe.ts",
@@ -3687,15 +4055,19 @@
       ],
       [
         "packages/adapters/src/http/client.ts",
-        "0f9e9e44308608a3f752ffd335c164094f17079596b6156c02681ee5d968c561"
+        "d7cefe1ea661f1ac58f1a812a0fe8ccf0c43c3251e96ea0f12cd3e00126d6bcf"
       ],
       [
         "packages/adapters/src/http/deadline.ts",
         "d873db18498585f56c5a87fcb91cd018d97a98c83d0cb232550f8afd38b6a127"
       ],
       [
+        "packages/adapters/src/http/download.ts",
+        "430acdd92c1da2507fef7611ebf7dda006da1431a88d3cfe5127ef24926247dd"
+      ],
+      [
         "packages/adapters/src/http/index.ts",
-        "149a2e9e22e822ba9b03a9812c5f002cdc4f5c63c8a9eb0ecbc85eaabae5d8dd"
+        "dc31e9a916ec7c6a2275ce3173a1059d80a9ae9c80cb46d02b2fbb407c08baa7"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -3767,7 +4139,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "aa43e7a7079a9e5228d5765edb1a2de5fd13c5e4c9896a2a8d274ac3895c4e63"
+        "a871e967dc7a9fb22d70fe2922f62f19a2c765f57f9d397b9a09eb88b1403e43"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -3830,8 +4202,16 @@
         "dfe85c72e8612784644fb8670c525b1853c81c689209378d2d1483bddbd50549"
       ],
       [
+        "packages/contracts/src/schemas/market-microstructure.ts",
+        "b72fb653811abebcb0ee178a9c93f43324f65f89afb35037ad1a46755539e083"
+      ],
+      [
         "packages/contracts/src/schemas/operations.ts",
         "59b3ffa21aca69b0615f47a28a78fc31373ea48c5a92cc3ea5561042389f71b8"
+      ],
+      [
+        "packages/contracts/src/schemas/overlay-shadow.ts",
+        "76758dc9325dfb1ec774cecec39f7b57ff6b682eae84dd5325aa646eaaf42f29"
       ],
       [
         "packages/contracts/src/schemas/paper-execution.ts",
@@ -3843,7 +4223,7 @@
       ],
       [
         "packages/contracts/src/schemas/parallel-paper.ts",
-        "ddf20453cf6ce9b4805fe4ffd9656c9d49c8341350aa0ad1def247e86fbaa694"
+        "ac204bdd123b54b32be0209b00a63ebf1550b247a55b906ba719e544a370db4f"
       ],
       [
         "packages/contracts/src/schemas/portfolio.ts",
@@ -3867,11 +4247,23 @@
       ],
       [
         "packages/core/src/backtest/engine.ts",
-        "0c992ce195d9749db5e0b63ae2405cb7c1013e7a67ad6da7c207336597aefe68"
+        "1796df1e11d21a45cef57bf77fd8ae2433b7d28dcacca491e61d0b00a281b95d"
+      ],
+      [
+        "packages/core/src/backtest/execution-timing.ts",
+        "49b8bfdc3aaa77ff92f03ad5703d5665cbd4cd6267b48052ef179fdcf991d8b8"
       ],
       [
         "packages/core/src/backtest/index.ts",
-        "ca0b8ed5638a97e25ab8ab5296a8a4b17f8e931944ab4043b4ce223ac093af30"
+        "7c8564061cd62432b8931cf4827a23b06e77c9c7bd7016fb6e354bb777a02aff"
+      ],
+      [
+        "packages/core/src/backtest/integrity-book.ts",
+        "3325b16420747237647ef30091b57316a6e8706dadd30109e2815b54f2dcd9d5"
+      ],
+      [
+        "packages/core/src/backtest/integrity-engine.ts",
+        "4dff5acbc762a7ddc2d150e98ae83301bbd6426c880114b265641e50024b5f8b"
       ],
       [
         "packages/core/src/backtest/types.ts",
@@ -3895,7 +4287,11 @@
       ],
       [
         "packages/core/src/costs/index.ts",
-        "b9715cf96bd0f30002c6f43c0d6db64afbb07f2efed32d67ee4fc5fdf456ebd8"
+        "780e721e494434b7a5042b005db501b93a1219539d13c106a93b5bfefa14366f"
+      ],
+      [
+        "packages/core/src/costs/scenarios.ts",
+        "65e61a457af3d3bd9443e6e40962bd684444ced808d5f396a69a003a40ed5c44"
       ],
       [
         "packages/core/src/crypto/sha256.ts",
@@ -3975,7 +4371,7 @@
       ],
       [
         "packages/core/src/market/market-bars.ts",
-        "e070e9aab42ef56173ff5ce44653e25f3abeaf4f3b19663ad7d27229de59d8f1"
+        "d0e5f33cae6f02c60cf76f6d54247191e613653814e98056dd8465aae6fc87a6"
       ],
       [
         "packages/core/src/market/universe.ts",
@@ -3987,7 +4383,7 @@
       ],
       [
         "packages/core/src/paper/evidence.ts",
-        "1c1d3ae7b2696151869fe56f0c31af4489694e600a4788afdc8d64e1e5712b54"
+        "c71cef08307f697ab18362a0d70e46fbccb987749ca3c35c920df4c87660e066"
       ],
       [
         "packages/core/src/paper/exploratory.ts",
@@ -3995,7 +4391,11 @@
       ],
       [
         "packages/core/src/paper/index.ts",
-        "9b1e00e618732ab06e76ab6cb6f15227be0aacd7d10d37f2606991a1fdbd0d23"
+        "bfbbc34f642c01bbbea66ae8323e9211bf5518fb7167dbc0e51c51234577bd07"
+      ],
+      [
+        "packages/core/src/paper/modeled-fill.ts",
+        "10bc553cda02c2e1fae2442726a85182f00d2f6120899078fbedf3ed26b51e2c"
       ],
       [
         "packages/core/src/portfolio/allocation.ts",
@@ -4070,8 +4470,12 @@
         "302044cc54e99b3abc0b41fa97273d05aabcc0bb7a451397c7df9e0adc01101f"
       ],
       [
+        "packages/core/src/realism/bound-edge.ts",
+        "b6b40f255e1f193961eb4f165497a5accb16eb39005e72b2d747262bf1032bbb"
+      ],
+      [
         "packages/core/src/realism/index.ts",
-        "4f03ccf87e284d55f1a5335f1062fb8c20385eacdee9daa4a11a7ed4a8a6e85a"
+        "da18b39d768c95aa4e0f86901200b90475932d2d101bf1ec366db25006f2a751"
       ],
       [
         "packages/core/src/research/benchmark-confidence.ts",
@@ -4098,8 +4502,16 @@
         "9092ec62aa2979d0bd48411fe48c1ea3517c3a51919c875b422dcde6111fbbcd"
       ],
       [
+        "packages/core/src/research/family-runner.ts",
+        "2a9eb9370fb941796d86e5945cfa81ef158c315ec8d6065bf1a139bdc0b6a646"
+      ],
+      [
         "packages/core/src/research/forward-edge.ts",
         "d687d4a11fa8a317f969b8c2077fb8dff0d555fa15d2dc0498a1303052f4af8d"
+      ],
+      [
+        "packages/core/src/research/generalized-study.ts",
+        "51cebafde2b484d3e23b824aa876f3ed6cf0c848fffa734a1563220c35af3f52"
       ],
       [
         "packages/core/src/research/holdout-evidence.ts",
@@ -4111,7 +4523,11 @@
       ],
       [
         "packages/core/src/research/index.ts",
-        "9cae5cbad62994217c5c1d242726896e0f43bb397fb7410710f8c8c32e026002"
+        "a140e62e064578ba93880b3cebf5f2dde44ba0e64db5f1d497a185e76a09363a"
+      ],
+      [
+        "packages/core/src/research/integrity-plan.ts",
+        "3822bb96e6d8fbcf367510eac946ebf0fa5ec25f41562f31698ae668b2b7b31a"
       ],
       [
         "packages/core/src/research/market-selector-execution.ts",
@@ -4131,7 +4547,59 @@
       ],
       [
         "packages/core/src/research/nested-study.ts",
-        "49ee4e309f8bef40ad161f47ce6de2580e5aa93aa6e473f4d3598b8fba484936"
+        "c98b6ffad46b595c9913b58a275b1b185205cfbee07f1c5cd3cf2bc187c3522a"
+      ],
+      [
+        "packages/core/src/research/overlay/artifacts.ts",
+        "ad963c565b46cad535b2c3ae12fc3dff5db609f8e570395f462fbaf8a381469e"
+      ],
+      [
+        "packages/core/src/research/overlay/calibration.ts",
+        "3b7c64923c031d2599af1a5716f5f5f213244dbf867d52341f97b95c56ab7c1c"
+      ],
+      [
+        "packages/core/src/research/overlay/decision.ts",
+        "27e5284d1e56366f8dfef495cf56b6040e2d566469394066a2781ed30a8d7148"
+      ],
+      [
+        "packages/core/src/research/overlay/development.ts",
+        "798bde7a3e8221bde463f19edb4851dd9979f2c6f31704db32e2c05b1c1db58e"
+      ],
+      [
+        "packages/core/src/research/overlay/features.ts",
+        "93fccc86e66bf72e70efb04de2cda32b413149a98f95ed5bc5640c213244e79f"
+      ],
+      [
+        "packages/core/src/research/overlay/final.ts",
+        "7284e44fb6024d6aa0ec7b309f88b33938b8fb14cb852b74905cbf9b27ca2198"
+      ],
+      [
+        "packages/core/src/research/overlay/index.ts",
+        "bbec707d52afae2006e68f10fb224faac0df7d61a99518043c62a7af5a288a9f"
+      ],
+      [
+        "packages/core/src/research/overlay/models.ts",
+        "faa4614fa04e2afec7058eb2a437c550bb1a3034af76bbb7b486e087c6b828d7"
+      ],
+      [
+        "packages/core/src/research/overlay/proposals.ts",
+        "014a1c44e90ab95b6639d4b372750fb52fe5392220c7e2a6eaf4ae91ac78a3f0"
+      ],
+      [
+        "packages/core/src/research/overlay/registration.ts",
+        "bce0aa33c46d31edfb2d030865ac6af90d70579d37f046e8ab463372fb57c576"
+      ],
+      [
+        "packages/core/src/research/overlay/replay.ts",
+        "204ae737bb8851048780eafba589b0e4785bf326a0f19fbc3eb64fe05c118619"
+      ],
+      [
+        "packages/core/src/research/overlay/rules.ts",
+        "5cbf8412ca96717e86d809a50e2eb9b24baf43280521bf4246db687a6a1d5980"
+      ],
+      [
+        "packages/core/src/research/overlay/types.ts",
+        "900a79608ddb0e65a37759d87b4be086802ff746a33e177e58468319fd7972f5"
       ],
       [
         "packages/core/src/research/range-rotation-replay.ts",
@@ -4151,7 +4619,7 @@
       ],
       [
         "packages/core/src/research/trendvol-evaluator.ts",
-        "101e314f7ea25fd92d047adb6eee09368056c7c9441cda5bc9961f5277fe9c98"
+        "48beb0afd94128cfd970bff44222bc385e5d97b8ed326c890284a47c5ef1a4e5"
       ],
       [
         "packages/core/src/research/wider-universe-dataset.ts",
@@ -4175,7 +4643,7 @@
       ],
       [
         "packages/core/src/risk/index.ts",
-        "76a3b3c0987f90e87c02db551281b535cd482791b0ba23c750c682482193e8e2"
+        "d35979857b7d1cb607b2bd54710cd493e73f7a984b8568291510c4e1ca1b55f8"
       ],
       [
         "packages/core/src/risk/portfolio-sizing.ts",
@@ -4184,6 +4652,10 @@
       [
         "packages/core/src/risk/risk-controls.ts",
         "7288541e8dc2aa0ea5913ae7346bd0225c9a8d93ac8ba7d81776877bbb5c2490"
+      ],
+      [
+        "packages/core/src/risk/strategy-health.ts",
+        "02c1f15a28daed495f7ca1adb401455458cca3a0bf60f43d5f111dd749f1ca7f"
       ],
       [
         "packages/core/src/significance/index.ts",
@@ -4195,11 +4667,11 @@
       ],
       [
         "packages/core/src/strategies/index.ts",
-        "96bb8c0ec51a6d8830ddfea41aa180d18ede4d0ee877c31abae85e061351802f"
+        "6be20ebc542764c850b0744d40f17e0ccc1fbc307a5033d5f25ef894769fba85"
       ],
       [
         "packages/core/src/strategies/momentum.ts",
-        "c7a40ad5072105c77eba741aaa76de1f97af53e417119aebccdb3e7208066390"
+        "d64804149791184b41064a3281a8eef4450b1bae20e2679041baa768ea54f8ae"
       ],
       [
         "packages/core/src/strategies/rotation.ts",
@@ -4211,11 +4683,11 @@
       ],
       [
         "packages/core/src/strategies/trend-vol.ts",
-        "e6acf336c39c26d9d11b4c47ce394065f9e45ecccc3fc17ff03ae8ea6863e69b"
+        "00e974c5654c0a80af9b44d70a09e8d54515f64bc705b629b4648b9ab7db2454"
       ],
       [
         "packages/core/src/strategies/vol-target.ts",
-        "c1f88588bdde8316549fadc8029db19aa5511b460d334a71654c0965ca9a9075"
+        "9068267a6ad6a1d4fc0f473a42c19e0ca7188520777cfae76229999cc01c42f3"
       ],
       [
         "packages/core/src/time/index.ts",
@@ -4390,6 +4862,30 @@
         "63fac34049f9b96679e740f05d36f0b43156e464a2850d3d516980f8fbdae161"
       ],
       [
+        "packages/services/src/market-data/acquisition/artifacts.ts",
+        "1358c8a4a3a53f54f8a9551d9842241fbd5c7f70fa13f386bca135d2adac8811"
+      ],
+      [
+        "packages/services/src/market-data/acquisition/config.ts",
+        "ea252076a931cdd963087e929b5e2bb69afebe13580092bb1ffd59d04e3be571"
+      ],
+      [
+        "packages/services/src/market-data/acquisition/kraken.ts",
+        "3961643123821981baaafb4928fc45cc23a136b69a2c01d62b28c44abeca3203"
+      ],
+      [
+        "packages/services/src/market-data/acquisition/providers.ts",
+        "4e54279cb2b6087f2e481e1fd60649ff197b7b97153f60b7edf8c54ab8000bb5"
+      ],
+      [
+        "packages/services/src/market-data/acquisition/records.ts",
+        "7669f7ebaa19e88656f58a57d0765ec39c187b13b01e968054adc15fadba6acb"
+      ],
+      [
+        "packages/services/src/market-data/acquisition/run.ts",
+        "317b35285743cbe442209f3132aeca98b1de3287cebbd3186710b8f8aec66336"
+      ],
+      [
         "packages/services/src/market-data/binance-archive.ts",
         "f3b3104f291e8a868aaab63d14dfadcee09544713ea1647375de00a752317b35"
       ],
@@ -4419,7 +4915,7 @@
       ],
       [
         "packages/services/src/market-data/index.ts",
-        "98f8c50e53207678a8ebb84ab9f8d3e3897b7d8e02a1cac0ea75af204d441150"
+        "a448aa23e17fcce19ab1e90128372b61f19abd69133f45c6bcd7ab0fc827f17c"
       ],
       [
         "packages/services/src/market-data/kraken-archive.ts",
@@ -4471,7 +4967,7 @@
       ],
       [
         "packages/services/src/paper/exploratory-run-loop.ts",
-        "55622b27692d4c09f98a7a0e5df583f922caf121c66838c7e80f195fe0ed9010"
+        "1e235ac7ffeaa5a3d5ece9f2a50e80fcfb94a644159acde1656abe1db284e9e1"
       ],
       [
         "packages/services/src/paper/forward-evidence.ts",
@@ -4491,7 +4987,7 @@
       ],
       [
         "packages/services/src/paper/oms.ts",
-        "7a49d909de9e664f19839e19de0b010f922ed7223160cd37e32f5aaa527a48c2"
+        "6b3dec576e7dc4634ad4b1562b1c51f9dedae07ab82c53a94f8a4e815a4bb701"
       ],
       [
         "packages/services/src/paper/paper-portfolio.ts",
@@ -4511,7 +5007,7 @@
       ],
       [
         "packages/services/src/paper/parallel-execution-safety.ts",
-        "19567aee167620a61b6c03bec16ef371f3375e1c5db72b27691fc0fffb0d9404"
+        "cac183ca4884b639e9500f84bfce5263bbba03e1ab5e38e9b2bd924622220485"
       ],
       [
         "packages/services/src/paper/parallel-fee-accounting.ts",
@@ -4539,35 +5035,51 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-activity.ts",
-        "a705b277c87d81ff22948f4ca0dc2a3e7da634ca69dc7837e9730b069447d4fb"
+        "893a555ada11daea2adc31f5795ba3a98e88024378fd3fe37c65fca2129a493a"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-attention.ts",
+        "c916f22ed4ec9c3ecddea2c50dc02859f07ef77d70c2331a43175702f9853e73"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-daily.ts",
+        "8d27e75acf6671b01999b0e1e0bdf7816cee033ef5584812978df2527d10a5f0"
       ],
       [
         "packages/services/src/paper/parallel-paper-intraday.ts",
-        "9d61d651dc4b94f372be11887aa4f359aef18bc0963d89a31f24c7a0f23e3f1b"
+        "96315ff1977461f4b27ec150aeec3a1d8fab35e6a9c32c94c39fa82d8df80a02"
       ],
       [
         "packages/services/src/paper/parallel-paper-mark.ts",
         "b481b8b78e0a22918471787e13affb1d8c4a53f8983b7c0a9885d86dd320fec8"
       ],
       [
+        "packages/services/src/paper/parallel-paper-plans.ts",
+        "3c1922eb405017b8a35c89a1ca682b73107966fd1657d4038362175fa3224f1d"
+      ],
+      [
         "packages/services/src/paper/parallel-paper-reconciliation.ts",
-        "54013d15b889e56f1eaa1fc262e39adaaa97bc248b0c94e4fc24e0fdd6320406"
+        "1c69dfad59cdf9a4f006db3cee56f7caa046b0bcf012657a140d21eeab654008"
       ],
       [
         "packages/services/src/paper/parallel-paper-recovery.ts",
-        "2c096be8066099576e48e111abd64ba4bfe97f4bdfde8827a0922b322cd7b104"
+        "6254e892c2f0e3ea8a8fda2c03bc05aa95751d150b0fbb4ea08cd4265c66182c"
       ],
       [
         "packages/services/src/paper/parallel-paper-service.ts",
-        "bb4936cda4f300e167b81ef892dbc74c0d25b44d508d7df21bff5fa74c76c2d0"
+        "aae0e535fe680db045442fcc3ccd07196d1b66cf532ca8c2e9f3d596806baeb8"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-slots.ts",
+        "c21288d52d1032e223d078435756fed468e829b81fdf27905674bb7a084ee9c6"
       ],
       [
         "packages/services/src/paper/parallel-paper-summary.ts",
-        "5b72739588218e67b2bb5723b1ca209fd1f3a035f252f1137fafacffce1bf7ff"
+        "b3754dad831540b7d6970bf9f3d7e72bda2e30fc7059b40277b278eb6969ee7f"
       ],
       [
         "packages/services/src/paper/parallel-paper-utils.ts",
-        "02693ecdd51b761cd9680a6bc61e7478dc3b1e6b33848fd205d7a75b055224a6"
+        "b0eac7bd1419dc7ca0d14208ec3f9e3aab245707075b9910daaa359bb7488474"
       ],
       [
         "packages/services/src/paper/parallel-signal.ts",
@@ -4575,7 +5087,7 @@
       ],
       [
         "packages/services/src/paper/reconciliation.ts",
-        "93fc551318f387fdeb7fc17030256f89771cab408fdc2ff4fb2630978fc16017"
+        "84bab5867422c2f9a51e102968c9763afc0140aa73dd1d73618091eb9b2343b6"
       ],
       [
         "packages/services/src/paper/routing.ts",
@@ -4583,15 +5095,15 @@
       ],
       [
         "packages/services/src/paper/run-loop.ts",
-        "ceaffa8ca4758398cfb3043b14367c7617bf13cc01303be80030b4bb8b70e5c3"
+        "6a9515dce86df6fb6b8e66b3b92c920619d25f837f024bd9c00a4555b2b74ae0"
       ],
       [
         "packages/services/src/paper/runtime-model.ts",
-        "9fc1320da8df9d5312f60ef0f14b4fa9b103d73cddc9c52809b65be64cb2f1ad"
+        "3c64c8eea5c92fce139654db4bccfb45d761e426d38f85c825a9558fa8944a79"
       ],
       [
         "packages/services/src/paper/venue.ts",
-        "5d52094dc256caff599d3bcd1431135921dc7e81c5a02faf72e261d1b24223fb"
+        "859f693f9e122abd742fb42c9da356f89ba9a2e62e2cd53dcd94015881034792"
       ],
       [
         "packages/services/src/portfolio/allocation-policy.ts",
@@ -4643,11 +5155,23 @@
       ],
       [
         "packages/services/src/research/index.ts",
-        "b6d49f6e32d5a7730c168040692d9d6b14ca56defe2cd78eb6990372cb0901b3"
+        "950b81b91bdd684e822360d8bd3ecb70a9dc067110e0debacf7ff21e50ab15b4"
+      ],
+      [
+        "packages/services/src/research/integrity-study.ts",
+        "cc62beb7f19bcc3f28ec8ab80ffda59faee618bca44f9aca7275473f0e49ba85"
       ],
       [
         "packages/services/src/research/nested-study.ts",
-        "77030771a2fb1420327bc3bef207099a571bbb332ddb4b08ac73bc46455d8cda"
+        "2373b248b911ac83414b67c3354bfc0dd26d2a84b05d3d28e91e9432b0bfbb13"
+      ],
+      [
+        "packages/services/src/research/overlay-shadow.ts",
+        "79163aa7bbb0325996c594854536763ca62f59f8170162c0f90bdb2b495624c7"
+      ],
+      [
+        "packages/services/src/research/overlay-study.ts",
+        "6b283dde535ebb5e23b53255e953bc8afc7af06f5e280898facd34db1ac830a6"
       ],
       [
         "packages/services/src/research/pre-registration.ts",
@@ -4703,7 +5227,7 @@
       ],
       [
         "packages/services/src/risk/index.ts",
-        "3df74c864aef74d23111f1f4a5bd156215e65d1573fff1ae9a15dfdfb849b90a"
+        "217029c039a0e1c8d9faa64096484174ab5114604997e34085330d68613269ab"
       ],
       [
         "packages/services/src/risk/long-term.ts",
@@ -4712,6 +5236,10 @@
       [
         "packages/services/src/risk/reality-check.ts",
         "176921fdc4dc9b6566a5482e873a9ff6a770ec55ddface3fc7a14e0c7e054652"
+      ],
+      [
+        "packages/services/src/risk/strategy-health.ts",
+        "1474cfbd108f436cfe4a7cdecb731f2f581c411f7955bc91ba4c059ee58c7e35"
       ],
       [
         "packages/services/src/runtime/host.ts",
@@ -4767,7 +5295,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "8bd58706dd9d74efff240864bf09211a96bd8f40ced5b3da5ad001d77424445d"
+        "b4b1c0e93b86669afc6adfa1efa9f96a8379d9616dd2f2a9716c0cfe85520000"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -5014,6 +5542,10 @@
         "d0e99ab75f0ecd2e5964330521107073f7921c74b3df56491174d38fad1fab35"
       ],
       [
+        "packages/storage/src/migrations/v86.ts",
+        "aa1187fb06d366f0a83d88b4262486cd44f2d742a03033d8c28b4d8a61104d75"
+      ],
+      [
         "packages/storage/src/migrations/v9-v17.ts",
         "b393c4fd6bc1f10e8c9e9ef5af65713ae68f01c2823f337091793102639d0489"
       ],
@@ -5043,7 +5575,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "4ebbd027868c5c205818f7de94c8cf81056a664c2871cef436612eb617c818d7"
+        "4c10f76ea95b594d0c4495ce924a99207031e7cf6ebf7508240c36d94b045ee8"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -5092,6 +5624,10 @@
       [
         "packages/storage/src/repositories/alerts.ts",
         "f6be7da8ea3f78bee39f2171a4b139f51de444f3d905158f70e9c625d5c98d1b"
+      ],
+      [
+        "packages/storage/src/repositories/bound-profitability.ts",
+        "ab5e7a008be9bc711acd3ca9d0faf1336efa690ec2e90e0d725924e587efbde1"
       ],
       [
         "packages/storage/src/repositories/breakout-research.ts",
@@ -5155,7 +5691,7 @@
       ],
       [
         "packages/storage/src/repositories/forward-edge.ts",
-        "b8a1e7949f1cc554edab950fc42b5ed655a8d5b91a394cb33f419a0a23cfb824"
+        "d369f37ee2cd11afe12d26a95b50385e78e393f30f5ca02ce8ccc0605b91d7b5"
       ],
       [
         "packages/storage/src/repositories/host-authority.ts",
@@ -5167,7 +5703,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "34aeadae1c6f9f828e52e6dbcdf937a9a90100529742262ea682f7180d7855f3"
+        "5e158495144f610bb56cd017332f31b6501ed895cc7331a19d35c9cd3b533b8a"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -5211,7 +5747,7 @@
       ],
       [
         "packages/storage/src/repositories/paper-runtime.ts",
-        "4b119f9b2a7c7755e6f1aae9f4270c138e67ea29fde97ea3e03284ea1d7a0fa7"
+        "9773820c70f2e84b9b13d939a9728ac65522f0eb2eacb2b957efdab0869097bf"
       ],
       [
         "packages/storage/src/repositories/paper.ts",
@@ -5256,6 +5792,10 @@
       [
         "packages/storage/src/repositories/research-evolution.ts",
         "5db36ff2aebcd2401e744167897247c720c1d0a06e9a54cbcc730a4785037e0b"
+      ],
+      [
+        "packages/storage/src/repositories/research-integrity.ts",
+        "f3fc1950c929f8501dff023ecc8c10d747ba9e2cad3f7ec8de324e0a922f9d0d"
       ],
       [
         "packages/storage/src/repositories/research-orchestration.ts",
@@ -5322,7 +5862,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "0974dddaf750ff6443674960d22b4dcec9752e3426cf0ac5f76ecfda56bd6b9d"
+    "hash": "6fc59ba1c1569d505472235db1d0164ba27c140723f88251679dbada72edc2f2"
   },
   "paper-market-selector-v1": {
     "version": 1,
@@ -5350,15 +5890,19 @@
       ],
       [
         "packages/adapters/src/bulk/binance.ts",
-        "4d7303f97c83a05d3e123a70b4a7a6fd0eaefc6d2e7e14f0484141706c9ecfa1"
+        "3d93b6497d26c022bd79b124608354b70b250745ebd484861f2360bdfed2aba2"
       ],
       [
         "packages/adapters/src/bulk/index.ts",
-        "42e85ca76c7db7e3f8cb3f0ff5698f7053dc1d857a5d63beda6cd636b623247b"
+        "ed153ad54c474761eb67290ebb61ded9786f694b2894b6104625d8d985c7ce0b"
+      ],
+      [
+        "packages/adapters/src/bulk/kraken-download.ts",
+        "40f0b21996bf4e0ead058044c0393f24d8740652c0a3fd8d8e2d6b8f7eae43a7"
       ],
       [
         "packages/adapters/src/bulk/kraken.ts",
-        "979955c5d2f80feab2958db754f34e55c9f511eb1a30f6a7c6c491091ccc85a1"
+        "de3ed26712f2121d121194217a0c248415d193e7a3906d2a064e5178a0febbf6"
       ],
       [
         "packages/adapters/src/coinbase/account-evidence.ts",
@@ -5386,7 +5930,7 @@
       ],
       [
         "packages/adapters/src/coinbase/index.ts",
-        "659054d578e69d0577bb060484bad588d7e43911a8ff4646b99db0814f6fe58e"
+        "e03109aa39f0db6104093fe4728371ab853fa5a8300a77b5a9be8f3af3598baf"
       ],
       [
         "packages/adapters/src/coinbase/market-diagnostics.ts",
@@ -5403,6 +5947,10 @@
       [
         "packages/adapters/src/coinbase/public.ts",
         "2523566062c766fd9a57152b49e751e0d5c0ed40ea93568f126c37c3345af9fe"
+      ],
+      [
+        "packages/adapters/src/coinbase/shadow-open.ts",
+        "55112cf70a9e84d796a332a1f4043e3093624f1173023dc4cd8d6aa631927bfd"
       ],
       [
         "packages/adapters/src/coinbase/transaction-evidence.ts",
@@ -5450,7 +5998,7 @@
       ],
       [
         "packages/adapters/src/http/alpaca-paper.ts",
-        "f2ed0c133f28e1dcd45cba06249b97e6ae38f0d58d993677981cb154cba913fc"
+        "8a17e364469982bbd83b88a59cf48a9b0a74018b9d2e5ea63cba9792aa6e9b0c"
       ],
       [
         "packages/adapters/src/http/alpaca-universe.ts",
@@ -5462,15 +6010,19 @@
       ],
       [
         "packages/adapters/src/http/client.ts",
-        "0f9e9e44308608a3f752ffd335c164094f17079596b6156c02681ee5d968c561"
+        "d7cefe1ea661f1ac58f1a812a0fe8ccf0c43c3251e96ea0f12cd3e00126d6bcf"
       ],
       [
         "packages/adapters/src/http/deadline.ts",
         "d873db18498585f56c5a87fcb91cd018d97a98c83d0cb232550f8afd38b6a127"
       ],
       [
+        "packages/adapters/src/http/download.ts",
+        "430acdd92c1da2507fef7611ebf7dda006da1431a88d3cfe5127ef24926247dd"
+      ],
+      [
         "packages/adapters/src/http/index.ts",
-        "149a2e9e22e822ba9b03a9812c5f002cdc4f5c63c8a9eb0ecbc85eaabae5d8dd"
+        "dc31e9a916ec7c6a2275ce3173a1059d80a9ae9c80cb46d02b2fbb407c08baa7"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -5542,7 +6094,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "aa43e7a7079a9e5228d5765edb1a2de5fd13c5e4c9896a2a8d274ac3895c4e63"
+        "a871e967dc7a9fb22d70fe2922f62f19a2c765f57f9d397b9a09eb88b1403e43"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -5605,8 +6157,16 @@
         "dfe85c72e8612784644fb8670c525b1853c81c689209378d2d1483bddbd50549"
       ],
       [
+        "packages/contracts/src/schemas/market-microstructure.ts",
+        "b72fb653811abebcb0ee178a9c93f43324f65f89afb35037ad1a46755539e083"
+      ],
+      [
         "packages/contracts/src/schemas/operations.ts",
         "59b3ffa21aca69b0615f47a28a78fc31373ea48c5a92cc3ea5561042389f71b8"
+      ],
+      [
+        "packages/contracts/src/schemas/overlay-shadow.ts",
+        "76758dc9325dfb1ec774cecec39f7b57ff6b682eae84dd5325aa646eaaf42f29"
       ],
       [
         "packages/contracts/src/schemas/paper-execution.ts",
@@ -5618,7 +6178,7 @@
       ],
       [
         "packages/contracts/src/schemas/parallel-paper.ts",
-        "ddf20453cf6ce9b4805fe4ffd9656c9d49c8341350aa0ad1def247e86fbaa694"
+        "ac204bdd123b54b32be0209b00a63ebf1550b247a55b906ba719e544a370db4f"
       ],
       [
         "packages/contracts/src/schemas/portfolio.ts",
@@ -5642,11 +6202,23 @@
       ],
       [
         "packages/core/src/backtest/engine.ts",
-        "0c992ce195d9749db5e0b63ae2405cb7c1013e7a67ad6da7c207336597aefe68"
+        "1796df1e11d21a45cef57bf77fd8ae2433b7d28dcacca491e61d0b00a281b95d"
+      ],
+      [
+        "packages/core/src/backtest/execution-timing.ts",
+        "49b8bfdc3aaa77ff92f03ad5703d5665cbd4cd6267b48052ef179fdcf991d8b8"
       ],
       [
         "packages/core/src/backtest/index.ts",
-        "ca0b8ed5638a97e25ab8ab5296a8a4b17f8e931944ab4043b4ce223ac093af30"
+        "7c8564061cd62432b8931cf4827a23b06e77c9c7bd7016fb6e354bb777a02aff"
+      ],
+      [
+        "packages/core/src/backtest/integrity-book.ts",
+        "3325b16420747237647ef30091b57316a6e8706dadd30109e2815b54f2dcd9d5"
+      ],
+      [
+        "packages/core/src/backtest/integrity-engine.ts",
+        "4dff5acbc762a7ddc2d150e98ae83301bbd6426c880114b265641e50024b5f8b"
       ],
       [
         "packages/core/src/backtest/types.ts",
@@ -5670,7 +6242,11 @@
       ],
       [
         "packages/core/src/costs/index.ts",
-        "b9715cf96bd0f30002c6f43c0d6db64afbb07f2efed32d67ee4fc5fdf456ebd8"
+        "780e721e494434b7a5042b005db501b93a1219539d13c106a93b5bfefa14366f"
+      ],
+      [
+        "packages/core/src/costs/scenarios.ts",
+        "65e61a457af3d3bd9443e6e40962bd684444ced808d5f396a69a003a40ed5c44"
       ],
       [
         "packages/core/src/crypto/sha256.ts",
@@ -5750,7 +6326,7 @@
       ],
       [
         "packages/core/src/market/market-bars.ts",
-        "e070e9aab42ef56173ff5ce44653e25f3abeaf4f3b19663ad7d27229de59d8f1"
+        "d0e5f33cae6f02c60cf76f6d54247191e613653814e98056dd8465aae6fc87a6"
       ],
       [
         "packages/core/src/market/universe.ts",
@@ -5762,7 +6338,7 @@
       ],
       [
         "packages/core/src/paper/evidence.ts",
-        "1c1d3ae7b2696151869fe56f0c31af4489694e600a4788afdc8d64e1e5712b54"
+        "c71cef08307f697ab18362a0d70e46fbccb987749ca3c35c920df4c87660e066"
       ],
       [
         "packages/core/src/paper/exploratory.ts",
@@ -5770,7 +6346,11 @@
       ],
       [
         "packages/core/src/paper/index.ts",
-        "9b1e00e618732ab06e76ab6cb6f15227be0aacd7d10d37f2606991a1fdbd0d23"
+        "bfbbc34f642c01bbbea66ae8323e9211bf5518fb7167dbc0e51c51234577bd07"
+      ],
+      [
+        "packages/core/src/paper/modeled-fill.ts",
+        "10bc553cda02c2e1fae2442726a85182f00d2f6120899078fbedf3ed26b51e2c"
       ],
       [
         "packages/core/src/portfolio/allocation.ts",
@@ -5845,8 +6425,12 @@
         "302044cc54e99b3abc0b41fa97273d05aabcc0bb7a451397c7df9e0adc01101f"
       ],
       [
+        "packages/core/src/realism/bound-edge.ts",
+        "b6b40f255e1f193961eb4f165497a5accb16eb39005e72b2d747262bf1032bbb"
+      ],
+      [
         "packages/core/src/realism/index.ts",
-        "4f03ccf87e284d55f1a5335f1062fb8c20385eacdee9daa4a11a7ed4a8a6e85a"
+        "da18b39d768c95aa4e0f86901200b90475932d2d101bf1ec366db25006f2a751"
       ],
       [
         "packages/core/src/research/benchmark-confidence.ts",
@@ -5873,8 +6457,16 @@
         "9092ec62aa2979d0bd48411fe48c1ea3517c3a51919c875b422dcde6111fbbcd"
       ],
       [
+        "packages/core/src/research/family-runner.ts",
+        "2a9eb9370fb941796d86e5945cfa81ef158c315ec8d6065bf1a139bdc0b6a646"
+      ],
+      [
         "packages/core/src/research/forward-edge.ts",
         "d687d4a11fa8a317f969b8c2077fb8dff0d555fa15d2dc0498a1303052f4af8d"
+      ],
+      [
+        "packages/core/src/research/generalized-study.ts",
+        "51cebafde2b484d3e23b824aa876f3ed6cf0c848fffa734a1563220c35af3f52"
       ],
       [
         "packages/core/src/research/holdout-evidence.ts",
@@ -5886,7 +6478,11 @@
       ],
       [
         "packages/core/src/research/index.ts",
-        "9cae5cbad62994217c5c1d242726896e0f43bb397fb7410710f8c8c32e026002"
+        "a140e62e064578ba93880b3cebf5f2dde44ba0e64db5f1d497a185e76a09363a"
+      ],
+      [
+        "packages/core/src/research/integrity-plan.ts",
+        "3822bb96e6d8fbcf367510eac946ebf0fa5ec25f41562f31698ae668b2b7b31a"
       ],
       [
         "packages/core/src/research/market-selector-execution.ts",
@@ -5906,7 +6502,59 @@
       ],
       [
         "packages/core/src/research/nested-study.ts",
-        "49ee4e309f8bef40ad161f47ce6de2580e5aa93aa6e473f4d3598b8fba484936"
+        "c98b6ffad46b595c9913b58a275b1b185205cfbee07f1c5cd3cf2bc187c3522a"
+      ],
+      [
+        "packages/core/src/research/overlay/artifacts.ts",
+        "ad963c565b46cad535b2c3ae12fc3dff5db609f8e570395f462fbaf8a381469e"
+      ],
+      [
+        "packages/core/src/research/overlay/calibration.ts",
+        "3b7c64923c031d2599af1a5716f5f5f213244dbf867d52341f97b95c56ab7c1c"
+      ],
+      [
+        "packages/core/src/research/overlay/decision.ts",
+        "27e5284d1e56366f8dfef495cf56b6040e2d566469394066a2781ed30a8d7148"
+      ],
+      [
+        "packages/core/src/research/overlay/development.ts",
+        "798bde7a3e8221bde463f19edb4851dd9979f2c6f31704db32e2c05b1c1db58e"
+      ],
+      [
+        "packages/core/src/research/overlay/features.ts",
+        "93fccc86e66bf72e70efb04de2cda32b413149a98f95ed5bc5640c213244e79f"
+      ],
+      [
+        "packages/core/src/research/overlay/final.ts",
+        "7284e44fb6024d6aa0ec7b309f88b33938b8fb14cb852b74905cbf9b27ca2198"
+      ],
+      [
+        "packages/core/src/research/overlay/index.ts",
+        "bbec707d52afae2006e68f10fb224faac0df7d61a99518043c62a7af5a288a9f"
+      ],
+      [
+        "packages/core/src/research/overlay/models.ts",
+        "faa4614fa04e2afec7058eb2a437c550bb1a3034af76bbb7b486e087c6b828d7"
+      ],
+      [
+        "packages/core/src/research/overlay/proposals.ts",
+        "014a1c44e90ab95b6639d4b372750fb52fe5392220c7e2a6eaf4ae91ac78a3f0"
+      ],
+      [
+        "packages/core/src/research/overlay/registration.ts",
+        "bce0aa33c46d31edfb2d030865ac6af90d70579d37f046e8ab463372fb57c576"
+      ],
+      [
+        "packages/core/src/research/overlay/replay.ts",
+        "204ae737bb8851048780eafba589b0e4785bf326a0f19fbc3eb64fe05c118619"
+      ],
+      [
+        "packages/core/src/research/overlay/rules.ts",
+        "5cbf8412ca96717e86d809a50e2eb9b24baf43280521bf4246db687a6a1d5980"
+      ],
+      [
+        "packages/core/src/research/overlay/types.ts",
+        "900a79608ddb0e65a37759d87b4be086802ff746a33e177e58468319fd7972f5"
       ],
       [
         "packages/core/src/research/range-rotation-replay.ts",
@@ -5926,7 +6574,7 @@
       ],
       [
         "packages/core/src/research/trendvol-evaluator.ts",
-        "101e314f7ea25fd92d047adb6eee09368056c7c9441cda5bc9961f5277fe9c98"
+        "48beb0afd94128cfd970bff44222bc385e5d97b8ed326c890284a47c5ef1a4e5"
       ],
       [
         "packages/core/src/research/wider-universe-dataset.ts",
@@ -5950,7 +6598,7 @@
       ],
       [
         "packages/core/src/risk/index.ts",
-        "76a3b3c0987f90e87c02db551281b535cd482791b0ba23c750c682482193e8e2"
+        "d35979857b7d1cb607b2bd54710cd493e73f7a984b8568291510c4e1ca1b55f8"
       ],
       [
         "packages/core/src/risk/portfolio-sizing.ts",
@@ -5959,6 +6607,10 @@
       [
         "packages/core/src/risk/risk-controls.ts",
         "7288541e8dc2aa0ea5913ae7346bd0225c9a8d93ac8ba7d81776877bbb5c2490"
+      ],
+      [
+        "packages/core/src/risk/strategy-health.ts",
+        "02c1f15a28daed495f7ca1adb401455458cca3a0bf60f43d5f111dd749f1ca7f"
       ],
       [
         "packages/core/src/significance/index.ts",
@@ -5970,11 +6622,11 @@
       ],
       [
         "packages/core/src/strategies/index.ts",
-        "96bb8c0ec51a6d8830ddfea41aa180d18ede4d0ee877c31abae85e061351802f"
+        "6be20ebc542764c850b0744d40f17e0ccc1fbc307a5033d5f25ef894769fba85"
       ],
       [
         "packages/core/src/strategies/momentum.ts",
-        "c7a40ad5072105c77eba741aaa76de1f97af53e417119aebccdb3e7208066390"
+        "d64804149791184b41064a3281a8eef4450b1bae20e2679041baa768ea54f8ae"
       ],
       [
         "packages/core/src/strategies/rotation.ts",
@@ -5986,11 +6638,11 @@
       ],
       [
         "packages/core/src/strategies/trend-vol.ts",
-        "e6acf336c39c26d9d11b4c47ce394065f9e45ecccc3fc17ff03ae8ea6863e69b"
+        "00e974c5654c0a80af9b44d70a09e8d54515f64bc705b629b4648b9ab7db2454"
       ],
       [
         "packages/core/src/strategies/vol-target.ts",
-        "c1f88588bdde8316549fadc8029db19aa5511b460d334a71654c0965ca9a9075"
+        "9068267a6ad6a1d4fc0f473a42c19e0ca7188520777cfae76229999cc01c42f3"
       ],
       [
         "packages/core/src/time/index.ts",
@@ -6165,6 +6817,30 @@
         "63fac34049f9b96679e740f05d36f0b43156e464a2850d3d516980f8fbdae161"
       ],
       [
+        "packages/services/src/market-data/acquisition/artifacts.ts",
+        "1358c8a4a3a53f54f8a9551d9842241fbd5c7f70fa13f386bca135d2adac8811"
+      ],
+      [
+        "packages/services/src/market-data/acquisition/config.ts",
+        "ea252076a931cdd963087e929b5e2bb69afebe13580092bb1ffd59d04e3be571"
+      ],
+      [
+        "packages/services/src/market-data/acquisition/kraken.ts",
+        "3961643123821981baaafb4928fc45cc23a136b69a2c01d62b28c44abeca3203"
+      ],
+      [
+        "packages/services/src/market-data/acquisition/providers.ts",
+        "4e54279cb2b6087f2e481e1fd60649ff197b7b97153f60b7edf8c54ab8000bb5"
+      ],
+      [
+        "packages/services/src/market-data/acquisition/records.ts",
+        "7669f7ebaa19e88656f58a57d0765ec39c187b13b01e968054adc15fadba6acb"
+      ],
+      [
+        "packages/services/src/market-data/acquisition/run.ts",
+        "317b35285743cbe442209f3132aeca98b1de3287cebbd3186710b8f8aec66336"
+      ],
+      [
         "packages/services/src/market-data/binance-archive.ts",
         "f3b3104f291e8a868aaab63d14dfadcee09544713ea1647375de00a752317b35"
       ],
@@ -6194,7 +6870,7 @@
       ],
       [
         "packages/services/src/market-data/index.ts",
-        "98f8c50e53207678a8ebb84ab9f8d3e3897b7d8e02a1cac0ea75af204d441150"
+        "a448aa23e17fcce19ab1e90128372b61f19abd69133f45c6bcd7ab0fc827f17c"
       ],
       [
         "packages/services/src/market-data/kraken-archive.ts",
@@ -6246,7 +6922,7 @@
       ],
       [
         "packages/services/src/paper/exploratory-run-loop.ts",
-        "55622b27692d4c09f98a7a0e5df583f922caf121c66838c7e80f195fe0ed9010"
+        "1e235ac7ffeaa5a3d5ece9f2a50e80fcfb94a644159acde1656abe1db284e9e1"
       ],
       [
         "packages/services/src/paper/forward-evidence.ts",
@@ -6266,7 +6942,7 @@
       ],
       [
         "packages/services/src/paper/oms.ts",
-        "7a49d909de9e664f19839e19de0b010f922ed7223160cd37e32f5aaa527a48c2"
+        "6b3dec576e7dc4634ad4b1562b1c51f9dedae07ab82c53a94f8a4e815a4bb701"
       ],
       [
         "packages/services/src/paper/paper-portfolio.ts",
@@ -6286,7 +6962,7 @@
       ],
       [
         "packages/services/src/paper/parallel-execution-safety.ts",
-        "19567aee167620a61b6c03bec16ef371f3375e1c5db72b27691fc0fffb0d9404"
+        "cac183ca4884b639e9500f84bfce5263bbba03e1ab5e38e9b2bd924622220485"
       ],
       [
         "packages/services/src/paper/parallel-fee-accounting.ts",
@@ -6314,35 +6990,51 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-activity.ts",
-        "a705b277c87d81ff22948f4ca0dc2a3e7da634ca69dc7837e9730b069447d4fb"
+        "893a555ada11daea2adc31f5795ba3a98e88024378fd3fe37c65fca2129a493a"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-attention.ts",
+        "c916f22ed4ec9c3ecddea2c50dc02859f07ef77d70c2331a43175702f9853e73"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-daily.ts",
+        "8d27e75acf6671b01999b0e1e0bdf7816cee033ef5584812978df2527d10a5f0"
       ],
       [
         "packages/services/src/paper/parallel-paper-intraday.ts",
-        "9d61d651dc4b94f372be11887aa4f359aef18bc0963d89a31f24c7a0f23e3f1b"
+        "96315ff1977461f4b27ec150aeec3a1d8fab35e6a9c32c94c39fa82d8df80a02"
       ],
       [
         "packages/services/src/paper/parallel-paper-mark.ts",
         "b481b8b78e0a22918471787e13affb1d8c4a53f8983b7c0a9885d86dd320fec8"
       ],
       [
+        "packages/services/src/paper/parallel-paper-plans.ts",
+        "3c1922eb405017b8a35c89a1ca682b73107966fd1657d4038362175fa3224f1d"
+      ],
+      [
         "packages/services/src/paper/parallel-paper-reconciliation.ts",
-        "54013d15b889e56f1eaa1fc262e39adaaa97bc248b0c94e4fc24e0fdd6320406"
+        "1c69dfad59cdf9a4f006db3cee56f7caa046b0bcf012657a140d21eeab654008"
       ],
       [
         "packages/services/src/paper/parallel-paper-recovery.ts",
-        "2c096be8066099576e48e111abd64ba4bfe97f4bdfde8827a0922b322cd7b104"
+        "6254e892c2f0e3ea8a8fda2c03bc05aa95751d150b0fbb4ea08cd4265c66182c"
       ],
       [
         "packages/services/src/paper/parallel-paper-service.ts",
-        "bb4936cda4f300e167b81ef892dbc74c0d25b44d508d7df21bff5fa74c76c2d0"
+        "aae0e535fe680db045442fcc3ccd07196d1b66cf532ca8c2e9f3d596806baeb8"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-slots.ts",
+        "c21288d52d1032e223d078435756fed468e829b81fdf27905674bb7a084ee9c6"
       ],
       [
         "packages/services/src/paper/parallel-paper-summary.ts",
-        "5b72739588218e67b2bb5723b1ca209fd1f3a035f252f1137fafacffce1bf7ff"
+        "b3754dad831540b7d6970bf9f3d7e72bda2e30fc7059b40277b278eb6969ee7f"
       ],
       [
         "packages/services/src/paper/parallel-paper-utils.ts",
-        "02693ecdd51b761cd9680a6bc61e7478dc3b1e6b33848fd205d7a75b055224a6"
+        "b0eac7bd1419dc7ca0d14208ec3f9e3aab245707075b9910daaa359bb7488474"
       ],
       [
         "packages/services/src/paper/parallel-signal.ts",
@@ -6350,7 +7042,7 @@
       ],
       [
         "packages/services/src/paper/reconciliation.ts",
-        "93fc551318f387fdeb7fc17030256f89771cab408fdc2ff4fb2630978fc16017"
+        "84bab5867422c2f9a51e102968c9763afc0140aa73dd1d73618091eb9b2343b6"
       ],
       [
         "packages/services/src/paper/routing.ts",
@@ -6358,15 +7050,15 @@
       ],
       [
         "packages/services/src/paper/run-loop.ts",
-        "ceaffa8ca4758398cfb3043b14367c7617bf13cc01303be80030b4bb8b70e5c3"
+        "6a9515dce86df6fb6b8e66b3b92c920619d25f837f024bd9c00a4555b2b74ae0"
       ],
       [
         "packages/services/src/paper/runtime-model.ts",
-        "9fc1320da8df9d5312f60ef0f14b4fa9b103d73cddc9c52809b65be64cb2f1ad"
+        "3c64c8eea5c92fce139654db4bccfb45d761e426d38f85c825a9558fa8944a79"
       ],
       [
         "packages/services/src/paper/venue.ts",
-        "5d52094dc256caff599d3bcd1431135921dc7e81c5a02faf72e261d1b24223fb"
+        "859f693f9e122abd742fb42c9da356f89ba9a2e62e2cd53dcd94015881034792"
       ],
       [
         "packages/services/src/portfolio/allocation-policy.ts",
@@ -6418,11 +7110,23 @@
       ],
       [
         "packages/services/src/research/index.ts",
-        "b6d49f6e32d5a7730c168040692d9d6b14ca56defe2cd78eb6990372cb0901b3"
+        "950b81b91bdd684e822360d8bd3ecb70a9dc067110e0debacf7ff21e50ab15b4"
+      ],
+      [
+        "packages/services/src/research/integrity-study.ts",
+        "cc62beb7f19bcc3f28ec8ab80ffda59faee618bca44f9aca7275473f0e49ba85"
       ],
       [
         "packages/services/src/research/nested-study.ts",
-        "77030771a2fb1420327bc3bef207099a571bbb332ddb4b08ac73bc46455d8cda"
+        "2373b248b911ac83414b67c3354bfc0dd26d2a84b05d3d28e91e9432b0bfbb13"
+      ],
+      [
+        "packages/services/src/research/overlay-shadow.ts",
+        "79163aa7bbb0325996c594854536763ca62f59f8170162c0f90bdb2b495624c7"
+      ],
+      [
+        "packages/services/src/research/overlay-study.ts",
+        "6b283dde535ebb5e23b53255e953bc8afc7af06f5e280898facd34db1ac830a6"
       ],
       [
         "packages/services/src/research/pre-registration.ts",
@@ -6478,7 +7182,7 @@
       ],
       [
         "packages/services/src/risk/index.ts",
-        "3df74c864aef74d23111f1f4a5bd156215e65d1573fff1ae9a15dfdfb849b90a"
+        "217029c039a0e1c8d9faa64096484174ab5114604997e34085330d68613269ab"
       ],
       [
         "packages/services/src/risk/long-term.ts",
@@ -6487,6 +7191,10 @@
       [
         "packages/services/src/risk/reality-check.ts",
         "176921fdc4dc9b6566a5482e873a9ff6a770ec55ddface3fc7a14e0c7e054652"
+      ],
+      [
+        "packages/services/src/risk/strategy-health.ts",
+        "1474cfbd108f436cfe4a7cdecb731f2f581c411f7955bc91ba4c059ee58c7e35"
       ],
       [
         "packages/services/src/runtime/host.ts",
@@ -6542,7 +7250,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "8bd58706dd9d74efff240864bf09211a96bd8f40ced5b3da5ad001d77424445d"
+        "b4b1c0e93b86669afc6adfa1efa9f96a8379d9616dd2f2a9716c0cfe85520000"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -6789,6 +7497,10 @@
         "d0e99ab75f0ecd2e5964330521107073f7921c74b3df56491174d38fad1fab35"
       ],
       [
+        "packages/storage/src/migrations/v86.ts",
+        "aa1187fb06d366f0a83d88b4262486cd44f2d742a03033d8c28b4d8a61104d75"
+      ],
+      [
         "packages/storage/src/migrations/v9-v17.ts",
         "b393c4fd6bc1f10e8c9e9ef5af65713ae68f01c2823f337091793102639d0489"
       ],
@@ -6818,7 +7530,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "4ebbd027868c5c205818f7de94c8cf81056a664c2871cef436612eb617c818d7"
+        "4c10f76ea95b594d0c4495ce924a99207031e7cf6ebf7508240c36d94b045ee8"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -6867,6 +7579,10 @@
       [
         "packages/storage/src/repositories/alerts.ts",
         "f6be7da8ea3f78bee39f2171a4b139f51de444f3d905158f70e9c625d5c98d1b"
+      ],
+      [
+        "packages/storage/src/repositories/bound-profitability.ts",
+        "ab5e7a008be9bc711acd3ca9d0faf1336efa690ec2e90e0d725924e587efbde1"
       ],
       [
         "packages/storage/src/repositories/breakout-research.ts",
@@ -6930,7 +7646,7 @@
       ],
       [
         "packages/storage/src/repositories/forward-edge.ts",
-        "b8a1e7949f1cc554edab950fc42b5ed655a8d5b91a394cb33f419a0a23cfb824"
+        "d369f37ee2cd11afe12d26a95b50385e78e393f30f5ca02ce8ccc0605b91d7b5"
       ],
       [
         "packages/storage/src/repositories/host-authority.ts",
@@ -6942,7 +7658,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "34aeadae1c6f9f828e52e6dbcdf937a9a90100529742262ea682f7180d7855f3"
+        "5e158495144f610bb56cd017332f31b6501ed895cc7331a19d35c9cd3b533b8a"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -6986,7 +7702,7 @@
       ],
       [
         "packages/storage/src/repositories/paper-runtime.ts",
-        "4b119f9b2a7c7755e6f1aae9f4270c138e67ea29fde97ea3e03284ea1d7a0fa7"
+        "9773820c70f2e84b9b13d939a9728ac65522f0eb2eacb2b957efdab0869097bf"
       ],
       [
         "packages/storage/src/repositories/paper.ts",
@@ -7031,6 +7747,10 @@
       [
         "packages/storage/src/repositories/research-evolution.ts",
         "5db36ff2aebcd2401e744167897247c720c1d0a06e9a54cbcc730a4785037e0b"
+      ],
+      [
+        "packages/storage/src/repositories/research-integrity.ts",
+        "f3fc1950c929f8501dff023ecc8c10d747ba9e2cad3f7ec8de324e0a922f9d0d"
       ],
       [
         "packages/storage/src/repositories/research-orchestration.ts",
@@ -7097,7 +7817,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "70db6046c42947c7808fe9989f087aa4ff477bc66958e2d05f70654a61503efd"
+    "hash": "a18837ef370d60f114e8e12c8a2d764f5944f46b25f974fa5574b9da6eb1dae3"
   },
   "trendvol-hourly-execution-v1": {
     "version": 1,
@@ -7113,15 +7833,19 @@
       ],
       [
         "packages/adapters/src/bulk/binance.ts",
-        "4d7303f97c83a05d3e123a70b4a7a6fd0eaefc6d2e7e14f0484141706c9ecfa1"
+        "3d93b6497d26c022bd79b124608354b70b250745ebd484861f2360bdfed2aba2"
       ],
       [
         "packages/adapters/src/bulk/index.ts",
-        "42e85ca76c7db7e3f8cb3f0ff5698f7053dc1d857a5d63beda6cd636b623247b"
+        "ed153ad54c474761eb67290ebb61ded9786f694b2894b6104625d8d985c7ce0b"
+      ],
+      [
+        "packages/adapters/src/bulk/kraken-download.ts",
+        "40f0b21996bf4e0ead058044c0393f24d8740652c0a3fd8d8e2d6b8f7eae43a7"
       ],
       [
         "packages/adapters/src/bulk/kraken.ts",
-        "979955c5d2f80feab2958db754f34e55c9f511eb1a30f6a7c6c491091ccc85a1"
+        "de3ed26712f2121d121194217a0c248415d193e7a3906d2a064e5178a0febbf6"
       ],
       [
         "packages/adapters/src/coinbase/account-evidence.ts",
@@ -7149,7 +7873,7 @@
       ],
       [
         "packages/adapters/src/coinbase/index.ts",
-        "659054d578e69d0577bb060484bad588d7e43911a8ff4646b99db0814f6fe58e"
+        "e03109aa39f0db6104093fe4728371ab853fa5a8300a77b5a9be8f3af3598baf"
       ],
       [
         "packages/adapters/src/coinbase/market-diagnostics.ts",
@@ -7166,6 +7890,10 @@
       [
         "packages/adapters/src/coinbase/public.ts",
         "2523566062c766fd9a57152b49e751e0d5c0ed40ea93568f126c37c3345af9fe"
+      ],
+      [
+        "packages/adapters/src/coinbase/shadow-open.ts",
+        "55112cf70a9e84d796a332a1f4043e3093624f1173023dc4cd8d6aa631927bfd"
       ],
       [
         "packages/adapters/src/coinbase/transaction-evidence.ts",
@@ -7213,7 +7941,7 @@
       ],
       [
         "packages/adapters/src/http/alpaca-paper.ts",
-        "f2ed0c133f28e1dcd45cba06249b97e6ae38f0d58d993677981cb154cba913fc"
+        "8a17e364469982bbd83b88a59cf48a9b0a74018b9d2e5ea63cba9792aa6e9b0c"
       ],
       [
         "packages/adapters/src/http/alpaca-universe.ts",
@@ -7225,15 +7953,19 @@
       ],
       [
         "packages/adapters/src/http/client.ts",
-        "0f9e9e44308608a3f752ffd335c164094f17079596b6156c02681ee5d968c561"
+        "d7cefe1ea661f1ac58f1a812a0fe8ccf0c43c3251e96ea0f12cd3e00126d6bcf"
       ],
       [
         "packages/adapters/src/http/deadline.ts",
         "d873db18498585f56c5a87fcb91cd018d97a98c83d0cb232550f8afd38b6a127"
       ],
       [
+        "packages/adapters/src/http/download.ts",
+        "430acdd92c1da2507fef7611ebf7dda006da1431a88d3cfe5127ef24926247dd"
+      ],
+      [
         "packages/adapters/src/http/index.ts",
-        "149a2e9e22e822ba9b03a9812c5f002cdc4f5c63c8a9eb0ecbc85eaabae5d8dd"
+        "dc31e9a916ec7c6a2275ce3173a1059d80a9ae9c80cb46d02b2fbb407c08baa7"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -7309,11 +8041,23 @@
       ],
       [
         "packages/core/src/backtest/engine.ts",
-        "0c992ce195d9749db5e0b63ae2405cb7c1013e7a67ad6da7c207336597aefe68"
+        "1796df1e11d21a45cef57bf77fd8ae2433b7d28dcacca491e61d0b00a281b95d"
+      ],
+      [
+        "packages/core/src/backtest/execution-timing.ts",
+        "49b8bfdc3aaa77ff92f03ad5703d5665cbd4cd6267b48052ef179fdcf991d8b8"
       ],
       [
         "packages/core/src/backtest/index.ts",
-        "ca0b8ed5638a97e25ab8ab5296a8a4b17f8e931944ab4043b4ce223ac093af30"
+        "7c8564061cd62432b8931cf4827a23b06e77c9c7bd7016fb6e354bb777a02aff"
+      ],
+      [
+        "packages/core/src/backtest/integrity-book.ts",
+        "3325b16420747237647ef30091b57316a6e8706dadd30109e2815b54f2dcd9d5"
+      ],
+      [
+        "packages/core/src/backtest/integrity-engine.ts",
+        "4dff5acbc762a7ddc2d150e98ae83301bbd6426c880114b265641e50024b5f8b"
       ],
       [
         "packages/core/src/backtest/types.ts",
@@ -7337,7 +8081,11 @@
       ],
       [
         "packages/core/src/costs/index.ts",
-        "b9715cf96bd0f30002c6f43c0d6db64afbb07f2efed32d67ee4fc5fdf456ebd8"
+        "780e721e494434b7a5042b005db501b93a1219539d13c106a93b5bfefa14366f"
+      ],
+      [
+        "packages/core/src/costs/scenarios.ts",
+        "65e61a457af3d3bd9443e6e40962bd684444ced808d5f396a69a003a40ed5c44"
       ],
       [
         "packages/core/src/crypto/sha256.ts",
@@ -7417,7 +8165,7 @@
       ],
       [
         "packages/core/src/market/market-bars.ts",
-        "e070e9aab42ef56173ff5ce44653e25f3abeaf4f3b19663ad7d27229de59d8f1"
+        "d0e5f33cae6f02c60cf76f6d54247191e613653814e98056dd8465aae6fc87a6"
       ],
       [
         "packages/core/src/market/universe.ts",
@@ -7429,7 +8177,7 @@
       ],
       [
         "packages/core/src/paper/evidence.ts",
-        "1c1d3ae7b2696151869fe56f0c31af4489694e600a4788afdc8d64e1e5712b54"
+        "c71cef08307f697ab18362a0d70e46fbccb987749ca3c35c920df4c87660e066"
       ],
       [
         "packages/core/src/paper/exploratory.ts",
@@ -7437,7 +8185,11 @@
       ],
       [
         "packages/core/src/paper/index.ts",
-        "9b1e00e618732ab06e76ab6cb6f15227be0aacd7d10d37f2606991a1fdbd0d23"
+        "bfbbc34f642c01bbbea66ae8323e9211bf5518fb7167dbc0e51c51234577bd07"
+      ],
+      [
+        "packages/core/src/paper/modeled-fill.ts",
+        "10bc553cda02c2e1fae2442726a85182f00d2f6120899078fbedf3ed26b51e2c"
       ],
       [
         "packages/core/src/portfolio/allocation.ts",
@@ -7512,8 +8264,12 @@
         "302044cc54e99b3abc0b41fa97273d05aabcc0bb7a451397c7df9e0adc01101f"
       ],
       [
+        "packages/core/src/realism/bound-edge.ts",
+        "b6b40f255e1f193961eb4f165497a5accb16eb39005e72b2d747262bf1032bbb"
+      ],
+      [
         "packages/core/src/realism/index.ts",
-        "4f03ccf87e284d55f1a5335f1062fb8c20385eacdee9daa4a11a7ed4a8a6e85a"
+        "da18b39d768c95aa4e0f86901200b90475932d2d101bf1ec366db25006f2a751"
       ],
       [
         "packages/core/src/research/benchmark-confidence.ts",
@@ -7540,8 +8296,16 @@
         "9092ec62aa2979d0bd48411fe48c1ea3517c3a51919c875b422dcde6111fbbcd"
       ],
       [
+        "packages/core/src/research/family-runner.ts",
+        "2a9eb9370fb941796d86e5945cfa81ef158c315ec8d6065bf1a139bdc0b6a646"
+      ],
+      [
         "packages/core/src/research/forward-edge.ts",
         "d687d4a11fa8a317f969b8c2077fb8dff0d555fa15d2dc0498a1303052f4af8d"
+      ],
+      [
+        "packages/core/src/research/generalized-study.ts",
+        "51cebafde2b484d3e23b824aa876f3ed6cf0c848fffa734a1563220c35af3f52"
       ],
       [
         "packages/core/src/research/holdout-evidence.ts",
@@ -7553,7 +8317,11 @@
       ],
       [
         "packages/core/src/research/index.ts",
-        "9cae5cbad62994217c5c1d242726896e0f43bb397fb7410710f8c8c32e026002"
+        "a140e62e064578ba93880b3cebf5f2dde44ba0e64db5f1d497a185e76a09363a"
+      ],
+      [
+        "packages/core/src/research/integrity-plan.ts",
+        "3822bb96e6d8fbcf367510eac946ebf0fa5ec25f41562f31698ae668b2b7b31a"
       ],
       [
         "packages/core/src/research/market-selector-execution.ts",
@@ -7573,7 +8341,59 @@
       ],
       [
         "packages/core/src/research/nested-study.ts",
-        "49ee4e309f8bef40ad161f47ce6de2580e5aa93aa6e473f4d3598b8fba484936"
+        "c98b6ffad46b595c9913b58a275b1b185205cfbee07f1c5cd3cf2bc187c3522a"
+      ],
+      [
+        "packages/core/src/research/overlay/artifacts.ts",
+        "ad963c565b46cad535b2c3ae12fc3dff5db609f8e570395f462fbaf8a381469e"
+      ],
+      [
+        "packages/core/src/research/overlay/calibration.ts",
+        "3b7c64923c031d2599af1a5716f5f5f213244dbf867d52341f97b95c56ab7c1c"
+      ],
+      [
+        "packages/core/src/research/overlay/decision.ts",
+        "27e5284d1e56366f8dfef495cf56b6040e2d566469394066a2781ed30a8d7148"
+      ],
+      [
+        "packages/core/src/research/overlay/development.ts",
+        "798bde7a3e8221bde463f19edb4851dd9979f2c6f31704db32e2c05b1c1db58e"
+      ],
+      [
+        "packages/core/src/research/overlay/features.ts",
+        "93fccc86e66bf72e70efb04de2cda32b413149a98f95ed5bc5640c213244e79f"
+      ],
+      [
+        "packages/core/src/research/overlay/final.ts",
+        "7284e44fb6024d6aa0ec7b309f88b33938b8fb14cb852b74905cbf9b27ca2198"
+      ],
+      [
+        "packages/core/src/research/overlay/index.ts",
+        "bbec707d52afae2006e68f10fb224faac0df7d61a99518043c62a7af5a288a9f"
+      ],
+      [
+        "packages/core/src/research/overlay/models.ts",
+        "faa4614fa04e2afec7058eb2a437c550bb1a3034af76bbb7b486e087c6b828d7"
+      ],
+      [
+        "packages/core/src/research/overlay/proposals.ts",
+        "014a1c44e90ab95b6639d4b372750fb52fe5392220c7e2a6eaf4ae91ac78a3f0"
+      ],
+      [
+        "packages/core/src/research/overlay/registration.ts",
+        "bce0aa33c46d31edfb2d030865ac6af90d70579d37f046e8ab463372fb57c576"
+      ],
+      [
+        "packages/core/src/research/overlay/replay.ts",
+        "204ae737bb8851048780eafba589b0e4785bf326a0f19fbc3eb64fe05c118619"
+      ],
+      [
+        "packages/core/src/research/overlay/rules.ts",
+        "5cbf8412ca96717e86d809a50e2eb9b24baf43280521bf4246db687a6a1d5980"
+      ],
+      [
+        "packages/core/src/research/overlay/types.ts",
+        "900a79608ddb0e65a37759d87b4be086802ff746a33e177e58468319fd7972f5"
       ],
       [
         "packages/core/src/research/range-rotation-replay.ts",
@@ -7593,7 +8413,7 @@
       ],
       [
         "packages/core/src/research/trendvol-evaluator.ts",
-        "101e314f7ea25fd92d047adb6eee09368056c7c9441cda5bc9961f5277fe9c98"
+        "48beb0afd94128cfd970bff44222bc385e5d97b8ed326c890284a47c5ef1a4e5"
       ],
       [
         "packages/core/src/research/wider-universe-dataset.ts",
@@ -7617,7 +8437,7 @@
       ],
       [
         "packages/core/src/risk/index.ts",
-        "76a3b3c0987f90e87c02db551281b535cd482791b0ba23c750c682482193e8e2"
+        "d35979857b7d1cb607b2bd54710cd493e73f7a984b8568291510c4e1ca1b55f8"
       ],
       [
         "packages/core/src/risk/portfolio-sizing.ts",
@@ -7626,6 +8446,10 @@
       [
         "packages/core/src/risk/risk-controls.ts",
         "7288541e8dc2aa0ea5913ae7346bd0225c9a8d93ac8ba7d81776877bbb5c2490"
+      ],
+      [
+        "packages/core/src/risk/strategy-health.ts",
+        "02c1f15a28daed495f7ca1adb401455458cca3a0bf60f43d5f111dd749f1ca7f"
       ],
       [
         "packages/core/src/significance/index.ts",
@@ -7637,11 +8461,11 @@
       ],
       [
         "packages/core/src/strategies/index.ts",
-        "96bb8c0ec51a6d8830ddfea41aa180d18ede4d0ee877c31abae85e061351802f"
+        "6be20ebc542764c850b0744d40f17e0ccc1fbc307a5033d5f25ef894769fba85"
       ],
       [
         "packages/core/src/strategies/momentum.ts",
-        "c7a40ad5072105c77eba741aaa76de1f97af53e417119aebccdb3e7208066390"
+        "d64804149791184b41064a3281a8eef4450b1bae20e2679041baa768ea54f8ae"
       ],
       [
         "packages/core/src/strategies/rotation.ts",
@@ -7653,11 +8477,11 @@
       ],
       [
         "packages/core/src/strategies/trend-vol.ts",
-        "e6acf336c39c26d9d11b4c47ce394065f9e45ecccc3fc17ff03ae8ea6863e69b"
+        "00e974c5654c0a80af9b44d70a09e8d54515f64bc705b629b4648b9ab7db2454"
       ],
       [
         "packages/core/src/strategies/vol-target.ts",
-        "c1f88588bdde8316549fadc8029db19aa5511b460d334a71654c0965ca9a9075"
+        "9068267a6ad6a1d4fc0f473a42c19e0ca7188520777cfae76229999cc01c42f3"
       ],
       [
         "packages/core/src/time/index.ts",
@@ -7713,11 +8537,15 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-intraday.ts",
-        "9d61d651dc4b94f372be11887aa4f359aef18bc0963d89a31f24c7a0f23e3f1b"
+        "96315ff1977461f4b27ec150aeec3a1d8fab35e6a9c32c94c39fa82d8df80a02"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-plans.ts",
+        "3c1922eb405017b8a35c89a1ca682b73107966fd1657d4038362175fa3224f1d"
       ],
       [
         "packages/services/src/paper/parallel-paper-utils.ts",
-        "02693ecdd51b761cd9680a6bc61e7478dc3b1e6b33848fd205d7a75b055224a6"
+        "b0eac7bd1419dc7ca0d14208ec3f9e3aab245707075b9910daaa359bb7488474"
       ],
       [
         "packages/services/src/paper/parallel-signal.ts",
@@ -7761,7 +8589,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "8bd58706dd9d74efff240864bf09211a96bd8f40ced5b3da5ad001d77424445d"
+        "b4b1c0e93b86669afc6adfa1efa9f96a8379d9616dd2f2a9716c0cfe85520000"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -8008,6 +8836,10 @@
         "d0e99ab75f0ecd2e5964330521107073f7921c74b3df56491174d38fad1fab35"
       ],
       [
+        "packages/storage/src/migrations/v86.ts",
+        "aa1187fb06d366f0a83d88b4262486cd44f2d742a03033d8c28b4d8a61104d75"
+      ],
+      [
         "packages/storage/src/migrations/v9-v17.ts",
         "b393c4fd6bc1f10e8c9e9ef5af65713ae68f01c2823f337091793102639d0489"
       ],
@@ -8037,7 +8869,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "4ebbd027868c5c205818f7de94c8cf81056a664c2871cef436612eb617c818d7"
+        "4c10f76ea95b594d0c4495ce924a99207031e7cf6ebf7508240c36d94b045ee8"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -8086,6 +8918,10 @@
       [
         "packages/storage/src/repositories/alerts.ts",
         "f6be7da8ea3f78bee39f2171a4b139f51de444f3d905158f70e9c625d5c98d1b"
+      ],
+      [
+        "packages/storage/src/repositories/bound-profitability.ts",
+        "ab5e7a008be9bc711acd3ca9d0faf1336efa690ec2e90e0d725924e587efbde1"
       ],
       [
         "packages/storage/src/repositories/breakout-research.ts",
@@ -8149,7 +8985,7 @@
       ],
       [
         "packages/storage/src/repositories/forward-edge.ts",
-        "b8a1e7949f1cc554edab950fc42b5ed655a8d5b91a394cb33f419a0a23cfb824"
+        "d369f37ee2cd11afe12d26a95b50385e78e393f30f5ca02ce8ccc0605b91d7b5"
       ],
       [
         "packages/storage/src/repositories/host-authority.ts",
@@ -8161,7 +8997,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "34aeadae1c6f9f828e52e6dbcdf937a9a90100529742262ea682f7180d7855f3"
+        "5e158495144f610bb56cd017332f31b6501ed895cc7331a19d35c9cd3b533b8a"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -8205,7 +9041,7 @@
       ],
       [
         "packages/storage/src/repositories/paper-runtime.ts",
-        "4b119f9b2a7c7755e6f1aae9f4270c138e67ea29fde97ea3e03284ea1d7a0fa7"
+        "9773820c70f2e84b9b13d939a9728ac65522f0eb2eacb2b957efdab0869097bf"
       ],
       [
         "packages/storage/src/repositories/paper.ts",
@@ -8250,6 +9086,10 @@
       [
         "packages/storage/src/repositories/research-evolution.ts",
         "5db36ff2aebcd2401e744167897247c720c1d0a06e9a54cbcc730a4785037e0b"
+      ],
+      [
+        "packages/storage/src/repositories/research-integrity.ts",
+        "f3fc1950c929f8501dff023ecc8c10d747ba9e2cad3f7ec8de324e0a922f9d0d"
       ],
       [
         "packages/storage/src/repositories/research-orchestration.ts",
@@ -8316,7 +9156,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "1c039e7ed4e090fccc0d9c2eb0622a3d968ab0b251ad4c590c4813d9a46bbd05"
+    "hash": "d7d476af7572963b0be48dec8ac4a6cd7e9225c9567d0b636f973c69a01d4888"
   },
   "trendvol-execution-remediation-v1": {
     "version": 1,
@@ -8332,15 +9172,19 @@
       ],
       [
         "packages/adapters/src/bulk/binance.ts",
-        "4d7303f97c83a05d3e123a70b4a7a6fd0eaefc6d2e7e14f0484141706c9ecfa1"
+        "3d93b6497d26c022bd79b124608354b70b250745ebd484861f2360bdfed2aba2"
       ],
       [
         "packages/adapters/src/bulk/index.ts",
-        "42e85ca76c7db7e3f8cb3f0ff5698f7053dc1d857a5d63beda6cd636b623247b"
+        "ed153ad54c474761eb67290ebb61ded9786f694b2894b6104625d8d985c7ce0b"
+      ],
+      [
+        "packages/adapters/src/bulk/kraken-download.ts",
+        "40f0b21996bf4e0ead058044c0393f24d8740652c0a3fd8d8e2d6b8f7eae43a7"
       ],
       [
         "packages/adapters/src/bulk/kraken.ts",
-        "979955c5d2f80feab2958db754f34e55c9f511eb1a30f6a7c6c491091ccc85a1"
+        "de3ed26712f2121d121194217a0c248415d193e7a3906d2a064e5178a0febbf6"
       ],
       [
         "packages/adapters/src/coinbase/account-evidence.ts",
@@ -8368,7 +9212,7 @@
       ],
       [
         "packages/adapters/src/coinbase/index.ts",
-        "659054d578e69d0577bb060484bad588d7e43911a8ff4646b99db0814f6fe58e"
+        "e03109aa39f0db6104093fe4728371ab853fa5a8300a77b5a9be8f3af3598baf"
       ],
       [
         "packages/adapters/src/coinbase/market-diagnostics.ts",
@@ -8385,6 +9229,10 @@
       [
         "packages/adapters/src/coinbase/public.ts",
         "2523566062c766fd9a57152b49e751e0d5c0ed40ea93568f126c37c3345af9fe"
+      ],
+      [
+        "packages/adapters/src/coinbase/shadow-open.ts",
+        "55112cf70a9e84d796a332a1f4043e3093624f1173023dc4cd8d6aa631927bfd"
       ],
       [
         "packages/adapters/src/coinbase/transaction-evidence.ts",
@@ -8432,7 +9280,7 @@
       ],
       [
         "packages/adapters/src/http/alpaca-paper.ts",
-        "f2ed0c133f28e1dcd45cba06249b97e6ae38f0d58d993677981cb154cba913fc"
+        "8a17e364469982bbd83b88a59cf48a9b0a74018b9d2e5ea63cba9792aa6e9b0c"
       ],
       [
         "packages/adapters/src/http/alpaca-universe.ts",
@@ -8444,15 +9292,19 @@
       ],
       [
         "packages/adapters/src/http/client.ts",
-        "0f9e9e44308608a3f752ffd335c164094f17079596b6156c02681ee5d968c561"
+        "d7cefe1ea661f1ac58f1a812a0fe8ccf0c43c3251e96ea0f12cd3e00126d6bcf"
       ],
       [
         "packages/adapters/src/http/deadline.ts",
         "d873db18498585f56c5a87fcb91cd018d97a98c83d0cb232550f8afd38b6a127"
       ],
       [
+        "packages/adapters/src/http/download.ts",
+        "430acdd92c1da2507fef7611ebf7dda006da1431a88d3cfe5127ef24926247dd"
+      ],
+      [
         "packages/adapters/src/http/index.ts",
-        "149a2e9e22e822ba9b03a9812c5f002cdc4f5c63c8a9eb0ecbc85eaabae5d8dd"
+        "dc31e9a916ec7c6a2275ce3173a1059d80a9ae9c80cb46d02b2fbb407c08baa7"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -8528,11 +9380,23 @@
       ],
       [
         "packages/core/src/backtest/engine.ts",
-        "0c992ce195d9749db5e0b63ae2405cb7c1013e7a67ad6da7c207336597aefe68"
+        "1796df1e11d21a45cef57bf77fd8ae2433b7d28dcacca491e61d0b00a281b95d"
+      ],
+      [
+        "packages/core/src/backtest/execution-timing.ts",
+        "49b8bfdc3aaa77ff92f03ad5703d5665cbd4cd6267b48052ef179fdcf991d8b8"
       ],
       [
         "packages/core/src/backtest/index.ts",
-        "ca0b8ed5638a97e25ab8ab5296a8a4b17f8e931944ab4043b4ce223ac093af30"
+        "7c8564061cd62432b8931cf4827a23b06e77c9c7bd7016fb6e354bb777a02aff"
+      ],
+      [
+        "packages/core/src/backtest/integrity-book.ts",
+        "3325b16420747237647ef30091b57316a6e8706dadd30109e2815b54f2dcd9d5"
+      ],
+      [
+        "packages/core/src/backtest/integrity-engine.ts",
+        "4dff5acbc762a7ddc2d150e98ae83301bbd6426c880114b265641e50024b5f8b"
       ],
       [
         "packages/core/src/backtest/types.ts",
@@ -8556,7 +9420,11 @@
       ],
       [
         "packages/core/src/costs/index.ts",
-        "b9715cf96bd0f30002c6f43c0d6db64afbb07f2efed32d67ee4fc5fdf456ebd8"
+        "780e721e494434b7a5042b005db501b93a1219539d13c106a93b5bfefa14366f"
+      ],
+      [
+        "packages/core/src/costs/scenarios.ts",
+        "65e61a457af3d3bd9443e6e40962bd684444ced808d5f396a69a003a40ed5c44"
       ],
       [
         "packages/core/src/crypto/sha256.ts",
@@ -8636,7 +9504,7 @@
       ],
       [
         "packages/core/src/market/market-bars.ts",
-        "e070e9aab42ef56173ff5ce44653e25f3abeaf4f3b19663ad7d27229de59d8f1"
+        "d0e5f33cae6f02c60cf76f6d54247191e613653814e98056dd8465aae6fc87a6"
       ],
       [
         "packages/core/src/market/universe.ts",
@@ -8648,7 +9516,7 @@
       ],
       [
         "packages/core/src/paper/evidence.ts",
-        "1c1d3ae7b2696151869fe56f0c31af4489694e600a4788afdc8d64e1e5712b54"
+        "c71cef08307f697ab18362a0d70e46fbccb987749ca3c35c920df4c87660e066"
       ],
       [
         "packages/core/src/paper/exploratory.ts",
@@ -8656,7 +9524,11 @@
       ],
       [
         "packages/core/src/paper/index.ts",
-        "9b1e00e618732ab06e76ab6cb6f15227be0aacd7d10d37f2606991a1fdbd0d23"
+        "bfbbc34f642c01bbbea66ae8323e9211bf5518fb7167dbc0e51c51234577bd07"
+      ],
+      [
+        "packages/core/src/paper/modeled-fill.ts",
+        "10bc553cda02c2e1fae2442726a85182f00d2f6120899078fbedf3ed26b51e2c"
       ],
       [
         "packages/core/src/portfolio/allocation.ts",
@@ -8731,8 +9603,12 @@
         "302044cc54e99b3abc0b41fa97273d05aabcc0bb7a451397c7df9e0adc01101f"
       ],
       [
+        "packages/core/src/realism/bound-edge.ts",
+        "b6b40f255e1f193961eb4f165497a5accb16eb39005e72b2d747262bf1032bbb"
+      ],
+      [
         "packages/core/src/realism/index.ts",
-        "4f03ccf87e284d55f1a5335f1062fb8c20385eacdee9daa4a11a7ed4a8a6e85a"
+        "da18b39d768c95aa4e0f86901200b90475932d2d101bf1ec366db25006f2a751"
       ],
       [
         "packages/core/src/research/benchmark-confidence.ts",
@@ -8759,8 +9635,16 @@
         "9092ec62aa2979d0bd48411fe48c1ea3517c3a51919c875b422dcde6111fbbcd"
       ],
       [
+        "packages/core/src/research/family-runner.ts",
+        "2a9eb9370fb941796d86e5945cfa81ef158c315ec8d6065bf1a139bdc0b6a646"
+      ],
+      [
         "packages/core/src/research/forward-edge.ts",
         "d687d4a11fa8a317f969b8c2077fb8dff0d555fa15d2dc0498a1303052f4af8d"
+      ],
+      [
+        "packages/core/src/research/generalized-study.ts",
+        "51cebafde2b484d3e23b824aa876f3ed6cf0c848fffa734a1563220c35af3f52"
       ],
       [
         "packages/core/src/research/holdout-evidence.ts",
@@ -8772,7 +9656,11 @@
       ],
       [
         "packages/core/src/research/index.ts",
-        "9cae5cbad62994217c5c1d242726896e0f43bb397fb7410710f8c8c32e026002"
+        "a140e62e064578ba93880b3cebf5f2dde44ba0e64db5f1d497a185e76a09363a"
+      ],
+      [
+        "packages/core/src/research/integrity-plan.ts",
+        "3822bb96e6d8fbcf367510eac946ebf0fa5ec25f41562f31698ae668b2b7b31a"
       ],
       [
         "packages/core/src/research/market-selector-execution.ts",
@@ -8792,7 +9680,59 @@
       ],
       [
         "packages/core/src/research/nested-study.ts",
-        "49ee4e309f8bef40ad161f47ce6de2580e5aa93aa6e473f4d3598b8fba484936"
+        "c98b6ffad46b595c9913b58a275b1b185205cfbee07f1c5cd3cf2bc187c3522a"
+      ],
+      [
+        "packages/core/src/research/overlay/artifacts.ts",
+        "ad963c565b46cad535b2c3ae12fc3dff5db609f8e570395f462fbaf8a381469e"
+      ],
+      [
+        "packages/core/src/research/overlay/calibration.ts",
+        "3b7c64923c031d2599af1a5716f5f5f213244dbf867d52341f97b95c56ab7c1c"
+      ],
+      [
+        "packages/core/src/research/overlay/decision.ts",
+        "27e5284d1e56366f8dfef495cf56b6040e2d566469394066a2781ed30a8d7148"
+      ],
+      [
+        "packages/core/src/research/overlay/development.ts",
+        "798bde7a3e8221bde463f19edb4851dd9979f2c6f31704db32e2c05b1c1db58e"
+      ],
+      [
+        "packages/core/src/research/overlay/features.ts",
+        "93fccc86e66bf72e70efb04de2cda32b413149a98f95ed5bc5640c213244e79f"
+      ],
+      [
+        "packages/core/src/research/overlay/final.ts",
+        "7284e44fb6024d6aa0ec7b309f88b33938b8fb14cb852b74905cbf9b27ca2198"
+      ],
+      [
+        "packages/core/src/research/overlay/index.ts",
+        "bbec707d52afae2006e68f10fb224faac0df7d61a99518043c62a7af5a288a9f"
+      ],
+      [
+        "packages/core/src/research/overlay/models.ts",
+        "faa4614fa04e2afec7058eb2a437c550bb1a3034af76bbb7b486e087c6b828d7"
+      ],
+      [
+        "packages/core/src/research/overlay/proposals.ts",
+        "014a1c44e90ab95b6639d4b372750fb52fe5392220c7e2a6eaf4ae91ac78a3f0"
+      ],
+      [
+        "packages/core/src/research/overlay/registration.ts",
+        "bce0aa33c46d31edfb2d030865ac6af90d70579d37f046e8ab463372fb57c576"
+      ],
+      [
+        "packages/core/src/research/overlay/replay.ts",
+        "204ae737bb8851048780eafba589b0e4785bf326a0f19fbc3eb64fe05c118619"
+      ],
+      [
+        "packages/core/src/research/overlay/rules.ts",
+        "5cbf8412ca96717e86d809a50e2eb9b24baf43280521bf4246db687a6a1d5980"
+      ],
+      [
+        "packages/core/src/research/overlay/types.ts",
+        "900a79608ddb0e65a37759d87b4be086802ff746a33e177e58468319fd7972f5"
       ],
       [
         "packages/core/src/research/range-rotation-replay.ts",
@@ -8812,7 +9752,7 @@
       ],
       [
         "packages/core/src/research/trendvol-evaluator.ts",
-        "101e314f7ea25fd92d047adb6eee09368056c7c9441cda5bc9961f5277fe9c98"
+        "48beb0afd94128cfd970bff44222bc385e5d97b8ed326c890284a47c5ef1a4e5"
       ],
       [
         "packages/core/src/research/wider-universe-dataset.ts",
@@ -8836,7 +9776,7 @@
       ],
       [
         "packages/core/src/risk/index.ts",
-        "76a3b3c0987f90e87c02db551281b535cd482791b0ba23c750c682482193e8e2"
+        "d35979857b7d1cb607b2bd54710cd493e73f7a984b8568291510c4e1ca1b55f8"
       ],
       [
         "packages/core/src/risk/portfolio-sizing.ts",
@@ -8845,6 +9785,10 @@
       [
         "packages/core/src/risk/risk-controls.ts",
         "7288541e8dc2aa0ea5913ae7346bd0225c9a8d93ac8ba7d81776877bbb5c2490"
+      ],
+      [
+        "packages/core/src/risk/strategy-health.ts",
+        "02c1f15a28daed495f7ca1adb401455458cca3a0bf60f43d5f111dd749f1ca7f"
       ],
       [
         "packages/core/src/significance/index.ts",
@@ -8856,11 +9800,11 @@
       ],
       [
         "packages/core/src/strategies/index.ts",
-        "96bb8c0ec51a6d8830ddfea41aa180d18ede4d0ee877c31abae85e061351802f"
+        "6be20ebc542764c850b0744d40f17e0ccc1fbc307a5033d5f25ef894769fba85"
       ],
       [
         "packages/core/src/strategies/momentum.ts",
-        "c7a40ad5072105c77eba741aaa76de1f97af53e417119aebccdb3e7208066390"
+        "d64804149791184b41064a3281a8eef4450b1bae20e2679041baa768ea54f8ae"
       ],
       [
         "packages/core/src/strategies/rotation.ts",
@@ -8872,11 +9816,11 @@
       ],
       [
         "packages/core/src/strategies/trend-vol.ts",
-        "e6acf336c39c26d9d11b4c47ce394065f9e45ecccc3fc17ff03ae8ea6863e69b"
+        "00e974c5654c0a80af9b44d70a09e8d54515f64bc705b629b4648b9ab7db2454"
       ],
       [
         "packages/core/src/strategies/vol-target.ts",
-        "c1f88588bdde8316549fadc8029db19aa5511b460d334a71654c0965ca9a9075"
+        "9068267a6ad6a1d4fc0f473a42c19e0ca7188520777cfae76229999cc01c42f3"
       ],
       [
         "packages/core/src/time/index.ts",
@@ -8932,11 +9876,15 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-intraday.ts",
-        "9d61d651dc4b94f372be11887aa4f359aef18bc0963d89a31f24c7a0f23e3f1b"
+        "96315ff1977461f4b27ec150aeec3a1d8fab35e6a9c32c94c39fa82d8df80a02"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-plans.ts",
+        "3c1922eb405017b8a35c89a1ca682b73107966fd1657d4038362175fa3224f1d"
       ],
       [
         "packages/services/src/paper/parallel-paper-utils.ts",
-        "02693ecdd51b761cd9680a6bc61e7478dc3b1e6b33848fd205d7a75b055224a6"
+        "b0eac7bd1419dc7ca0d14208ec3f9e3aab245707075b9910daaa359bb7488474"
       ],
       [
         "packages/services/src/paper/parallel-signal.ts",
@@ -8972,7 +9920,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "8bd58706dd9d74efff240864bf09211a96bd8f40ced5b3da5ad001d77424445d"
+        "b4b1c0e93b86669afc6adfa1efa9f96a8379d9616dd2f2a9716c0cfe85520000"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -9219,6 +10167,10 @@
         "d0e99ab75f0ecd2e5964330521107073f7921c74b3df56491174d38fad1fab35"
       ],
       [
+        "packages/storage/src/migrations/v86.ts",
+        "aa1187fb06d366f0a83d88b4262486cd44f2d742a03033d8c28b4d8a61104d75"
+      ],
+      [
         "packages/storage/src/migrations/v9-v17.ts",
         "b393c4fd6bc1f10e8c9e9ef5af65713ae68f01c2823f337091793102639d0489"
       ],
@@ -9248,7 +10200,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "4ebbd027868c5c205818f7de94c8cf81056a664c2871cef436612eb617c818d7"
+        "4c10f76ea95b594d0c4495ce924a99207031e7cf6ebf7508240c36d94b045ee8"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -9297,6 +10249,10 @@
       [
         "packages/storage/src/repositories/alerts.ts",
         "f6be7da8ea3f78bee39f2171a4b139f51de444f3d905158f70e9c625d5c98d1b"
+      ],
+      [
+        "packages/storage/src/repositories/bound-profitability.ts",
+        "ab5e7a008be9bc711acd3ca9d0faf1336efa690ec2e90e0d725924e587efbde1"
       ],
       [
         "packages/storage/src/repositories/breakout-research.ts",
@@ -9360,7 +10316,7 @@
       ],
       [
         "packages/storage/src/repositories/forward-edge.ts",
-        "b8a1e7949f1cc554edab950fc42b5ed655a8d5b91a394cb33f419a0a23cfb824"
+        "d369f37ee2cd11afe12d26a95b50385e78e393f30f5ca02ce8ccc0605b91d7b5"
       ],
       [
         "packages/storage/src/repositories/host-authority.ts",
@@ -9372,7 +10328,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "34aeadae1c6f9f828e52e6dbcdf937a9a90100529742262ea682f7180d7855f3"
+        "5e158495144f610bb56cd017332f31b6501ed895cc7331a19d35c9cd3b533b8a"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -9416,7 +10372,7 @@
       ],
       [
         "packages/storage/src/repositories/paper-runtime.ts",
-        "4b119f9b2a7c7755e6f1aae9f4270c138e67ea29fde97ea3e03284ea1d7a0fa7"
+        "9773820c70f2e84b9b13d939a9728ac65522f0eb2eacb2b957efdab0869097bf"
       ],
       [
         "packages/storage/src/repositories/paper.ts",
@@ -9461,6 +10417,10 @@
       [
         "packages/storage/src/repositories/research-evolution.ts",
         "5db36ff2aebcd2401e744167897247c720c1d0a06e9a54cbcc730a4785037e0b"
+      ],
+      [
+        "packages/storage/src/repositories/research-integrity.ts",
+        "f3fc1950c929f8501dff023ecc8c10d747ba9e2cad3f7ec8de324e0a922f9d0d"
       ],
       [
         "packages/storage/src/repositories/research-orchestration.ts",
@@ -9527,6 +10487,6 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "fe0d749fb44f60df738dab066044135b2e05f7d4cbdd037d8aa750d40f8c081e"
+    "hash": "065ed5320f7ace9f6fd55ca90ae9f17f9f5c54b2cb6a4c7a350b1141562f5565"
   }
 }

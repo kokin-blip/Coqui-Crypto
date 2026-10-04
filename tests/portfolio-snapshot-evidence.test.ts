@@ -155,7 +155,7 @@ describe('append-only portfolio snapshot storage', () => {
       costUsd: nonNegativeDecimal('20'),
       realizedPnlUsd: nonNegativeDecimal('1'),
     }, database);
-    expect(runMigrations(database)).toBe(85);
+    expect(runMigrations(database)).toBe(86);
     expect(listPortfolioEvidenceSnapshots(database)).toEqual([
       createPortfolioEvidenceSnapshot(input({
         scheduledForMs: DAY,

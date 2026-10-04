@@ -103,3 +103,19 @@ Start with [the plan](./docs/PLAN.md), [architecture](./docs/ARCHITECTURE.md), [
 - Daily paper valuation evidence begins when the scheduler records it; missing historical days are never fabricated or backfilled.
 - Strategy curves appear only when an immutable artifact explicitly contains them. Existing artifacts without curves show an unavailable state.
 - Live execution remains hard-disabled.
+
+## Historical research acquisition
+
+Acquire verified daily spot history from explicitly configured Coinbase, Binance,
+and Kraken products:
+
+```sh
+pnpm archive:market -- --config=config/market-acquisition.json \
+  --code-revision=<git-commit-or-explicit-working-tree-label>
+```
+
+The initial configuration contains BTC and ETH, with extensible venue/product and
+base/quote mappings. The workflow preserves raw provenance, resumes verified
+captures, and writes separate Parquet datasets plus JSON/Markdown coverage reports.
+See [market-data foundation](docs/studies/market-data-foundation.md) for configuration,
+source terms, failure handling, and the alternative-data roadmap.

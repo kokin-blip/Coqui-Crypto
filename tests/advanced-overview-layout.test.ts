@@ -6,22 +6,15 @@ const overview = readFileSync(resolve('apps/desktop/src/renderer/app/Overview.ts
 const chartFrame = readFileSync(resolve('apps/desktop/src/renderer/app/ChartFrame.tsx'), 'utf8');
 
 describe('advanced overview composition', () => {
-  it('keeps portfolio health ahead of strategy detail in both workspace modes', () => {
-    const simpleStart = overview.indexOf("workspace.mode === 'simple'");
-    const advancedStart = overview.indexOf('research-grid-primary');
-    const primary = overview.indexOf('{chartPanel}{connectedReference}<EvidenceStack');
-    const secondary = overview.indexOf('research-grid-secondary');
-    const health = overview.lastIndexOf('{panels.healthStrip && health}');
-    const negative = overview.lastIndexOf('{panels.negativeFindings &&');
-
-    expect(simpleStart).toBeGreaterThan(-1);
-    expect(overview.slice(simpleStart, advancedStart))
-      .toContain('{decision}{health}{chartPanel}{connectedReference}');
-    expect(overview.lastIndexOf('{decision}', advancedStart)).toBeLessThan(health);
-    expect(health).toBeLessThan(primary);
-    expect(primary).toBeGreaterThan(advancedStart);
-    expect(secondary).toBeGreaterThan(primary);
-    expect(negative).toBeGreaterThan(secondary);
+  it('composes one terminal with market panels, data tabs, and algorithm evidence', () => {
+    const terminal = readFileSync(resolve('apps/desktop/src/renderer/app/TerminalWorkspace.tsx'), 'utf8');
+    expect(overview).toContain('TerminalWorkspace');
+    expect(terminal).toContain('<AdvancedMarkets client={client} embedded');
+    expect(terminal).toContain('<TerminalOrderBook');
+    expect(terminal).toContain('<TerminalAlgorithm');
+    expect(terminal).toContain('<TerminalAlgorithmDrawer');
+    expect(terminal).toContain('requestFullscreen()');
+    expect(terminal).not.toContain('workspace.mode');
   });
 
   it('keeps chart inspection keyboard accessible and exposes fullscreen and snapshot controls', () => {

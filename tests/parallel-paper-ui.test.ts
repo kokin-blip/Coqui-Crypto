@@ -37,6 +37,7 @@ describe('Alpaca paper activity panel', () => {
   it('shows intraday monitoring and recorded defensive filter counts', () => {
     mocked.channels['parallel.paper.status'] = { kind: 'ready', value: {
       state: 'active', runtimeState: 'intraday', lastCheckAtMs: Date.now(), lastDecisionAtMs: Date.now(),
+      reconciliationAttention: { blocked: false, lastSuccessfulAtMs: null, latestFailure: null, unresolvedOrders: [] }, slotOutcomes: [],
       lastReason: null, lastMarkDay: null, coquiOpeningUsd: '1000', alpacaOpeningUsd: '100000',
       coquiEquityUsd: null, alpacaEquityUsd: null, coquiReturnPct: null, alpacaReturnPct: null,
       coquiFeesUsd: '0', alpacaBookedFeesUsd: null, alpacaModeledFrictionUsd: '0',
@@ -113,6 +114,25 @@ describe('Alpaca paper activity panel', () => {
       state: 'paused', runtimeState: 'attention', lastReason: 'alpaca_unavailable' } };
     expect(render()).toContain('Retrying Alpaca connection');
     expect(render()).toContain('Alpaca read failed · retrying on the next check');
+  });
+
+  it('shows persistent recovery guidance and slot gaps when the activity feed is empty', () => {
+    const existing = (mocked.channels['parallel.paper.status'] as { value: Record<string, unknown> }).value;
+    mocked.channels['parallel.paper.status'] = { kind: 'ready', value: { ...existing,
+      state: 'paused', runtimeState: 'attention', lastReason: 'paper_execution_unknown', activity: [],
+      reconciliationAttention: { blocked: true, lastSuccessfulAtMs: null,
+        latestFailure: { atMs: 1000, operation: 'activities', reason: 'alpaca_rate_limited', httpStatus: 429, attemptCount: 1, remainingMs: 0 },
+        unresolvedOrders: [{ clientOrderId: 'unresolved-client-id', orderId: 'unresolved-broker-id' }] },
+      slotOutcomes: [{ slotMs: 1000, outcome: 'host_unavailable', reason: 'no_scheduler_observation', inferred: true }] } };
+    const html = render();
+    expect(html).toContain('New paper orders blocked until reconciliation completes');
+    expect(html).toContain('Retry reconciliation');
+    expect(html).toContain('Check Alpaca paper dashboard');
+    expect(html).toContain('unresolved-client-id');
+    expect(html).toContain('unresolved-broker-id');
+    expect(html).toContain('HTTP 429');
+    expect(html).toContain('inferred from absent scheduler observations');
+    expect(render(ParallelPaperSettings)).toContain('disabled="">Resume');
   });
 
   it('does not present the legacy campaign exercise as an Alpaca start gate', () => {

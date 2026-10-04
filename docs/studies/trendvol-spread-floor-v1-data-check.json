@@ -1,0 +1,43 @@
+{
+  "studyId": "trendvol-spread-floor-v1",
+  "status": "blocked_data_validation",
+  "label": "Kraken-price proxy research with Coinbase costs",
+  "development": {
+    "start": "2016-01-01T00:00:00.000Z",
+    "endExclusive": "2026-07-01T00:00:00.000Z"
+  },
+  "sources": [
+    {
+      "assetId": "kraken|spot|XBTUSD",
+      "datasetHash": "58fa1bead01ab7f3b0fd4e7da71c37fccb24c0d5a532d602e183b29653681b2b",
+      "manifestHash": "07f80340380182dc7d14fbe16cc57c5c2c96364ee51596cc68db0459b37c0ee2",
+      "verified": true,
+      "expectedBars": 3834,
+      "observedBars": 3834,
+      "missingDays": []
+    },
+    {
+      "assetId": "kraken|spot|ETHUSD",
+      "datasetHash": "e0daf1ebeed234c173e809ce332334d8c7b65471267401bf349513c73b796e5f",
+      "manifestHash": "3af6787be8fd668af60db3bedc8f82f932487e298d325c50bfca1a276b822177",
+      "verified": true,
+      "expectedBars": 3834,
+      "observedBars": 3833,
+      "missingDays": [
+        "2018-01-12"
+      ]
+    }
+  ],
+  "unexpectedQuality": 0,
+  "alignmentIssues": [
+    {
+      "assetId": "kraken|spot|ETHUSD",
+      "dayKey": "2018-01-12",
+      "code": "gap",
+      "message": "Asset is missing a required aligned interval."
+    }
+  ],
+  "retainedAlignedDays": 0,
+  "registrationPerformed": false,
+  "marketEvaluationsPerformed": 0
+}

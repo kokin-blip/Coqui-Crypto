@@ -167,18 +167,20 @@ export function isAllowedNavigation(candidate: string, rendererOrigin: string): 
 }
 
 /**
- * Permissions are denied as a policy, not case by case.
+ * Web capabilities are denied except explicit fullscreen from Coqui's renderer.
  *
  * A local-first portfolio tracker needs no camera, microphone, geolocation,
  * notifications-via-web, MIDI, USB, serial, or clipboard read. OS notifications
  * for alerts (R9) are raised from the main process, which does not route
  * through this handler.
  */
-export function isPermissionGranted(): boolean {
-  return false;
+export function isPermissionGranted(permission?: string, requestingUrl?: string, rendererOrigin?: string): boolean {
+  return permission === 'fullscreen' && requestingUrl !== undefined && rendererOrigin !== undefined &&
+    isAllowedNavigation(requestingUrl, rendererOrigin);
 }
 
 export interface HardenableWebContents {
+  getURL(): string;
   setWindowOpenHandler(handler: (details: { url: string }) => { action: 'deny' }): void;
   on(event: 'will-navigate', listener: (event: { preventDefault(): void }, url: string) => void): void;
   on(
@@ -187,9 +189,11 @@ export interface HardenableWebContents {
   ): void;
   readonly session: {
     setPermissionRequestHandler(
-      handler: ((permission: string, callback: (granted: boolean) => void) => void) | null,
+      handler: ((requester: HardenableWebContents, permission: string, callback: (granted: boolean) => void,
+        details: { readonly requestingUrl?: string; readonly isMainFrame?: boolean }) => void) | null,
     ): void;
-    setPermissionCheckHandler(handler: (() => boolean) | null): void;
+    setPermissionCheckHandler(handler: ((requester: HardenableWebContents | null, permission: string,
+      requestingOrigin: string, details: { readonly requestingUrl?: string; readonly isMainFrame?: boolean }) => boolean) | null): void;
     webRequest: {
       onHeadersReceived(
         listener: (
@@ -230,10 +234,13 @@ export function applyWindowHardening(
     event.preventDefault();
   });
 
-  contents.session.setPermissionRequestHandler((_permission, callback) => {
-    callback(isPermissionGranted());
+  contents.session.setPermissionRequestHandler((requester, permission, callback, details) => {
+    callback(requester === contents && details.isMainFrame !== false &&
+      isPermissionGranted(permission, details.requestingUrl ?? requester.getURL(), rendererOrigin));
   });
-  contents.session.setPermissionCheckHandler(() => isPermissionGranted());
+  contents.session.setPermissionCheckHandler((requester, permission, _origin, details) =>
+    requester === contents && details.isMainFrame !== false &&
+      isPermissionGranted(permission, details.requestingUrl ?? requester.getURL(), rendererOrigin));
 
   // Sent as a header as well as the document meta tag: a header cannot be
   // stripped by anything that manages to influence the HTML.

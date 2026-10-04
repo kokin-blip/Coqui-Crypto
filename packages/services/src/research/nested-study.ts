@@ -51,6 +51,21 @@ export function runRegisteredNestedStudy(
   if (registryBeforeRun.records.some((record) => record.id === `pre-registration:${plan.id}`)) {
     throw new Error('This pre-registered study has already been executed.');
   }
+  // Reserve before evaluation: an interrupted legacy run cannot reopen its holdout.
+  appendTrialRecord({
+    id: `pre-registration:${plan.id}`,
+    family: plan.family,
+    searchKind: 'grid',
+    evidenceStatus: 'verified',
+    parameterSpace: plan.parameterSpace,
+    trialCount: plan.candidateCount,
+    searchedAt: new Date(input.completedAtMs).toISOString(),
+    datasetHash: plan.datasetHash,
+    costProfileHash: plan.costProfileHash,
+    codeRevision: plan.codeRevision,
+    producedDefaults: {},
+    studyRef: plan.studyRef,
+  }, database);
   const result = runNestedChronologicalStudy(
     plan,
     input.dataset,
@@ -70,20 +85,6 @@ export function runRegisteredNestedStudy(
     resultJson,
   };
   inTransaction(database, () => {
-    appendTrialRecord({
-      id: `pre-registration:${plan.id}`,
-      family: plan.family,
-      searchKind: 'grid',
-      evidenceStatus: 'verified',
-      parameterSpace: plan.parameterSpace,
-      trialCount: plan.candidateCount,
-      searchedAt: new Date(input.completedAtMs).toISOString(),
-      datasetHash: plan.datasetHash,
-      costProfileHash: plan.costProfileHash,
-      codeRevision: plan.codeRevision,
-      producedDefaults: result.selectedCandidate.parameters,
-      studyRef: plan.studyRef,
-    }, database);
     saveResearchStudyRun({
       ...runWithoutHash,
       runHash: researchStudyRunHash(runWithoutHash),

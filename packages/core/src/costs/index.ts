@@ -94,7 +94,7 @@ export function tradeCostConfigHash(config: TradeCostConfig): string {
     config.feeBps, config.spreadBps, config.slippageBps, config.minUsefulTradeUsd,
     config.impactCoefBps ?? 0, config.impactRefUsd ?? 25_000,
   ];
-  if (values.some((value) => !Number.isFinite(value) || value < 0)) {
+  if ((config.impactRefUsd ?? 25_000) <= 0 || values.some((value) => !Number.isFinite(value) || value < 0)) {
     throw new TypeError('Trade-cost profiles require finite non-negative values');
   }
   return sha256Hex(JSON.stringify({
@@ -197,3 +197,5 @@ export function estimatePlanCosts(
     warnings: estimates.flatMap((trade) => (trade.warning ? [trade.warning] : [])),
   };
 }
+
+export * from './scenarios.js';

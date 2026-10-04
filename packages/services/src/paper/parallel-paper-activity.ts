@@ -1,3 +1,4 @@
+import { activeParallelEvents } from './parallel-paper-plans.js';
 import { Decimal } from 'decimal.js';
 
 import { instrumentKey } from '@coqui/core';
@@ -159,7 +160,8 @@ export function parallelRuntimeState(input: {
   return input.completed ? 'reconciled' as const : 'order_pending' as const;
 }
 
-export function parallelDayReconciled(events: readonly ParallelPaperEvent[], day: string | null): boolean {
+export function parallelDayReconciled(history: readonly ParallelPaperEvent[], day: string | null): boolean {
+  const events = activeParallelEvents(history);
   if (day === null || !events.some((event) => event.kind === 'external_complete' && event.detail['day'] === day)) return false;
   const intents = events.filter((event) => event.kind === 'external_intent' && event.detail['day'] === day);
   return intents.every((intent) => {
@@ -168,6 +170,6 @@ export function parallelDayReconciled(events: readonly ParallelPaperEvent[], day
     if (order === undefined || order.detail['status'] !== 'filled') return false;
     const filled = events.filter((event) => event.kind === 'external_fill' && event.detail['orderId'] === order.detail['orderId'])
       .reduce((sum, event) => sum.plus(String(event.detail['quantity'] ?? '0')), new Decimal(0));
-    return filled.greaterThanOrEqualTo(String(order.detail['filledQty']));
+    return filled.equals(String(order.detail['filledQty']));
   });
 }

@@ -11,6 +11,7 @@ import './styles/data-visualization.css';
 import './styles/features.css';
 import './styles/motion.css';
 import './styles/workstation.css';
+import './styles/terminal.css';
 
 const client = createIpcClient();
 

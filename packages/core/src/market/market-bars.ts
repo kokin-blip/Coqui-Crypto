@@ -94,6 +94,12 @@ const SOURCE_COMPLETION_DELAY_MS: Record<MarketBarSource, number> = {
   kraken: 0,
 };
 
+export function sourceCompletionDelayMs(source: MarketBarSource): number {
+  const delay = SOURCE_COMPLETION_DELAY_MS[source];
+  if (delay === undefined) throw new TypeError('Unknown bar source');
+  return delay;
+}
+
 export function utcDayKey(timestampMs: number): string {
   return new Date(Math.floor(timestampMs / DAY_MS) * DAY_MS).toISOString().slice(0, 10);
 }

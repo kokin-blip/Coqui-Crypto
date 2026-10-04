@@ -195,7 +195,7 @@ export function TradingWorkstationChart({ bars, productId, style, scaleMode,
         `${formatLocalTimestamp(match.startTimeMs)} · UTC ${exactUtcTimestamp(match.startTimeMs)} · O ${match.open} H ${match.high} L ${match.low} C ${match.close}${match.isComplete ? '' : ' · LIVE'}`);
       if (!suppressSync.current) publishLink({ kind: 'crosshair', timeMs: Number(parameter.time) * 1_000 });
     });
-    chart.timeScale().fitContent();
+    chart.timeScale().setVisibleLogicalRange({ from: Math.max(0, bars.length - 120), to: bars.length + 4 });
     updateDrawingShapes();
     chart.timeScale().subscribeVisibleLogicalRangeChange(updateDrawingShapes);
     const publishRange = (range: { readonly from: Time; readonly to: Time } | null): void => {

@@ -8,3 +8,5 @@ export * from './display-universe.js';
 export * from './display-workstation.js';
 export * from './point-in-time-universe.js';
 export * from './provider-comparison.js';
+export * from './acquisition/config.js';
+export * from './acquisition/run.js';

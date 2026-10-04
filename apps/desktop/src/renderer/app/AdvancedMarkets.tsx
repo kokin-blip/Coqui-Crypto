@@ -8,6 +8,7 @@ import { ChartExtensionManager } from './ChartExtensionManager.js';
 import { ChartLinkController } from './chart-link-controller.js';
 import { ChartDrawingManager } from './ChartDrawingManager.js';
 import { MarketChartTileHeader } from './MarketChartTileHeader.js';
+import { workstationChartHeight } from './chart-workstation-types.js';
 import type { ChartDrawing, ChartTileConfiguration, DrawingTool, WorkstationBar, WorkstationChartStyle, WorkstationExtensionMarker, WorkstationIndicators, WorkstationInterval, WorkstationLayout } from './chart-workstation-types.js';
 import { MarketFactsPanel } from './MarketFactsPanel.js'; import { CoinbaseMarketContext } from './CoinbaseMarketContext.js';
 import { MarketDrawingTools, MarketPanelTriggers } from './MarketPanelControls.js';
@@ -62,13 +63,6 @@ function resizeTiles(current: readonly ChartTileConfiguration[], layout: Worksta
     current[index] ?? { ...fallback, productId: products[index] ?? products[0] ?? 'BTC-USD' });
 }
 
-function chartHeight(layout: WorkstationLayout, index: number): number {
-  if (layout === 'single') return 520;
-  if (layout === 'horizontal') return 500;
-  if (layout === 'dominant' && index === 0) return 520;
-  return 280;
-}
-
 function ChartTile({ client, tile, tileId, layoutId, style, activeTool, height,
   indicators, scaleMode, volumeVisible, liveVisible, extensionIds, linkController,
   decisionMarkers, onDrawing, onDeleteDrawing }: {
@@ -102,7 +96,7 @@ function ChartTile({ client, tile, tileId, layoutId, style, activeTool, height,
     ? chartWorkspace.value.drawings.filter((drawing) => drawing.layoutId === null || drawing.layoutId === layoutId)
       .map((drawing) => ({ id: drawing.id, kind: drawing.kind, points: drawing.points, label: drawing.label }))
     : [];
-  if (history.kind === 'loading') return <div className="workstation-chart-loading workstation-chart-empty" role="status"><strong>Loading completed candles</strong><span>Reading decision-eligible Coinbase history for {tile.productId}.</span></div>;
+  if (history.kind === 'loading') return <div className="workstation-chart-loading workstation-chart-empty" role="status"><strong>Loading completed candles</strong><span>Reading completed Coinbase display history for {tile.productId}.</span></div>;
   const retry = (): void => { void queryClient.invalidateQueries({ queryKey: ['market-data.display-bars'] }); };
   if (history.kind !== 'ready') return <div className="workstation-chart-empty"><strong>Chart unavailable</strong><span>Coinbase history could not be loaded. No substitute source was used.</span><div><button type="button" onClick={retry}>Refresh history</button><a href={routeHash('settings')}>Open connections</a></div></div>;
   if (bars.length === 0) return <div className="workstation-chart-empty"><strong>No completed candles</strong><span>Try a longer interval or refresh the completed-bar history.</span><div><button type="button" onClick={retry}>Refresh history</button><a href={routeHash('settings')}>Open connections</a></div></div>;
@@ -121,15 +115,20 @@ function ChartTile({ client, tile, tileId, layoutId, style, activeTool, height,
   </div>;
 }
 
-export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): React.JSX.Element {
+export function AdvancedMarkets({ client, embedded = false, productId, onProductChange }: {
+  readonly client: CoquiClient; readonly embedded?: boolean;
+  readonly productId?: string; readonly onProductChange?: (productId: string) => void;
+}): React.JSX.Element {
   const workspace = useWorkspace();
   const profiles = useChannel(client, 'accounts.profiles', {});
   const portfolio = useChannel(client, 'portfolio.current', {});
   const [query, setQuery] = useState(''); const deferredQuery = useDeferredValue(query);
   const productSearch = useChannel(client, 'market-data.products', { query: deferredQuery, limit: 100 });
-  const allProducts = useChannel(client, 'market-data.products', { query: '', limit: 100 });
+  const allProducts = useChannel(client, 'market-data.products', { query: '', limit: 500 });
   const searchCatalog = productSearch.kind === 'ready' ? productSearch.value.products : []; const catalog = allProducts.kind === 'ready' ? allProducts.value.products : searchCatalog;
-  const [selected, setSelected] = useState('BTC-USD');
+  const [localSelected, setLocalSelected] = useState('BTC-USD');
+  const selected = productId ?? localSelected;
+  const setSelected = (next: string): void => { setLocalSelected(next); onProductChange?.(next); };
   const [recentProducts, setRecentProducts] = useState<readonly string[]>([]);
   const [sortAscending, setSortAscending] = useState(true);
   const [activeTool, setActiveTool] = useState<DrawingTool>('cursor');
@@ -166,7 +165,7 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
     workspace.preferences?.marketScaleMode ?? 'linear', workspace.preferences?.marketIndicators ?? EMPTY_INDICATORS);
   const defaultTiles = resizeTiles([fallbackTile], layout,
     catalog.map((item) => item.instrument.productId), fallbackTile);
-  const tiles = draftTiles ?? defaultTiles;
+  const tiles = (draftTiles ?? defaultTiles).map((tile, index) => index === 0 && productId !== undefined ? { ...tile, productId } : tile);
   const primaryTile = tiles[0] ?? fallbackTile;
   const style = primaryTile.chartStyle;
   const indicators = primaryTile.indicators;
@@ -196,7 +195,7 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
   useEffect(()=>{const selection=takeAdvisorSelection();if(selection?.productId!==null&&selection?.productId!==undefined) {setSelected(selection.productId);setDraftTiles(null);}if(selection?.openAdvisor===true) setAnalystOpen(true);},[]);
 
   useEffect(()=>{const first=portfolioProductIds[0];
-    if (first !== undefined && selected === 'BTC-USD' && !portfolioProductIds.includes(selected)) {
+    if (productId === undefined && first !== undefined && selected === 'BTC-USD' && !portfolioProductIds.includes(selected)) {
       setSelected(first); setDraftTiles(null);
     }
   }, [portfolioProductIds, selected]);
@@ -255,7 +254,7 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
       productIds: visibleProducts.map((item) => item.instrument.productId), isDefault: existing?.isDefault ?? stored.watchlists.length === 0,
     } });
   };
-  return <div className="advanced-markets-workstation">
+  return <div className={`advanced-markets-workstation${embedded ? ' terminal-chart-workspace' : ''}`}>
     <header className="market-command-bar">
       <div className="market-symbol"><CircleDot size={15} /><div><strong>{selected}</strong><span>Coinbase spot · {defaultInterval}</span></div></div>
       <MarketFeedStatus client={client} productId={selected} interval={defaultInterval} />
@@ -283,7 +282,7 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
           }))} liveVisible={workspace.preferences?.marketLiveCandle ?? false}
             onChange={(patch) => updateTile(index, patch)} onToggleLink={() => toggleLink(index)} />
           <ChartTile client={client} tile={tile} tileId={tileId} layoutId={activeLayoutId}
-            style={tile.chartStyle} activeTool={activeTool} height={chartHeight(layout, index)} indicators={tile.indicators}
+            style={tile.chartStyle} activeTool={activeTool} height={embedded && layout === 'single' ? 410 : workstationChartHeight(layout, index)} indicators={tile.indicators}
             scaleMode={tile.scaleMode} volumeVisible={workspace.preferences?.marketVolumeVisible ?? true}
             liveVisible={workspace.preferences?.marketLiveCandle ?? false} extensionIds={enabledExtensionIds}
             decisionMarkers={[...decisionMarkers(tile.productId), ...eventMarkers(tile.productId)]}
@@ -304,8 +303,8 @@ export function AdvancedMarkets({ client }: { readonly client: CoquiClient }): R
       <MarketFactsPanel className={factsOpen ? 'panel-open' : ''} productId={selected} bars={factsBars} freshness={productSearch.kind === 'ready' ? new Date(productSearch.value.asOfMs).toLocaleString() : 'Unavailable'} onClose={() => setFactsOpen(false)} onOpenAnalyst={() => setAnalystOpen(true)} />
     </div>
     <footer className="market-workstation-footer"><span>Coinbase display data · informational only</span><label><input type="checkbox" checked={workspace.preferences?.marketLiveCandle ?? false} onChange={(event) => void workspace.update({ marketLiveCandle: event.target.checked })} /> Show provisional candle</label><span>UTC</span></footer>
-    <MarketEventsDisclosure client={client} productId={selected} events={eventTimeline.kind === 'ready' ? eventTimeline.value.events : []} state={eventTimeline.kind === 'ready' ? 'ready' : eventTimeline.kind === 'loading' ? 'loading' : 'unavailable'} />
+    {!embedded && <MarketEventsDisclosure client={client} productId={selected} events={eventTimeline.kind === 'ready' ? eventTimeline.value.events : []} state={eventTimeline.kind === 'ready' ? 'ready' : eventTimeline.kind === 'loading' ? 'loading' : 'unavailable'} />}
     {analystOpen && <AdvisorSheet client={client} productId={selected} bars={factsBars} onClose={() => setAnalystOpen(false)} />}
-    <CoinbaseMarketContext client={client} productId={selected} />{extensionsOpen && <ChartExtensionManager client={client} onClose={() => setExtensionsOpen(false)} />}
+    {!embedded && <CoinbaseMarketContext client={client} productId={selected} />}{extensionsOpen && <ChartExtensionManager client={client} onClose={() => setExtensionsOpen(false)} />}
   </div>;
 }

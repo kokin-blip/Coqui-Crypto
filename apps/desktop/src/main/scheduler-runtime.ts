@@ -54,6 +54,7 @@ export interface SchedulerRuntimeOptions {
   readonly pollMs?: number;
   readonly onUnexpectedError?: (context: string, error: unknown) => void;
   readonly research?: { recover():unknown; tick():Promise<void> };
+  readonly overlayShadow?: { tick(): Promise<void> };
   readonly parallelPaper?: { tick(): Promise<void>; suspend?(): void; resume?(): void };
 }
 
@@ -117,6 +118,7 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
           report('scheduler_prepare', error);
         }
       }
+      if (options.overlayShadow) { try { await options.overlayShadow.tick(); } catch (error) { report('overlay_shadow_tick', error); } }
       await scheduler?.tick(tasks);
       if (options.research !== undefined) await options.research.tick();
     } catch (error) {

@@ -1,6 +1,7 @@
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 
 import { useChannel } from '../query/use-channel.js';
+import { ParallelPaperRecovery } from './ParallelPaperRecovery.js';
 import { SurfaceState } from './SurfaceState.js';
 import { exactUtcTimestamp, formatLocalTimestamp } from './time-format.js';
 import { CoinbaseMarketContext } from './CoinbaseMarketContext.js';
@@ -61,7 +62,7 @@ export function ParallelPaperComparison({ client }: { readonly client: CoquiClie
       title="No Alpaca paper experiment yet"
       detail="Connect a dedicated Alpaca paper account, then start the parallel experiment in Settings → Paper."
       action={{ label: 'Open Settings', href: '#/settings' }} compact />}
-    {status.kind === 'ready' && status.value.state !== 'none' && <ActivityContent data={status.value} />}
+    {status.kind === 'ready' && status.value.state !== 'none' && <ActivityContent client={client} data={status.value} />}
     <section className="coinbase-paper-context" aria-label="Coinbase market context"><div className="panel-heading"><div><h3>Coinbase market context</h3><p className="muted">Current venue snapshots · informational only · separate from Alpaca orders</p></div><a href="#/markets">Open Markets for book depth</a></div>
       <div className="coinbase-paper-context-grid">{['BTC-USD', 'ETH-USD', 'LTC-USD'].map((productId) =>
         <CoinbaseMarketContext key={productId} client={client} productId={productId} compact />)}</div>
@@ -69,7 +70,7 @@ export function ParallelPaperComparison({ client }: { readonly client: CoquiClie
   </section>;
 }
 
-function ActivityContent({ data }: { readonly data: Status }): React.JSX.Element {
+function ActivityContent({ data, client }: { readonly data: Status; readonly client: CoquiClient }): React.JSX.Element {
   const decision = data.latestDecision;
   const window = decisionWindowStatus(Date.now());
   return <>
@@ -79,12 +80,19 @@ function ActivityContent({ data }: { readonly data: Status }): React.JSX.Element
       <span>Last daily decision: {timestamp(data.lastDecisionAtMs)}</span>
     </div>
     <p className="muted">Daily targets update from completed Coinbase bars. At 04:00, 08:00, 12:00, 16:00, and 20:00 UTC, Coqui can rebalance the Alpaca paper account when fresh Alpaca quotes show at least 1% portfolio drift and a $25 trade. No price move means no order.</p>
+    <ParallelPaperRecovery client={client} data={data} />
     {data.lastReason !== null && <SurfaceState kind="blocked" title={
       ['alpaca_unavailable', 'alpaca_rate_limited'].includes(data.lastReason)
         ? 'Alpaca read failed · retrying on the next check' : 'New Alpaca orders paused'}
       detail={data.lastReason.replaceAll('_', ' ')} compact />}
     {data.runtimeState === 'attention' && data.state === 'active' && <SurfaceState kind="blocked"
       title="Scheduler has not checked recently" detail="Keep Coqui open and inspect the local scheduler before assuming another order will be sent." compact />}
+    {data.slotOutcomes.length > 0 && <details className="parallel-paper-positions"><summary>Recent scheduled check outcomes</summary>
+      <table><thead><tr><th>Scheduled slot</th><th>Outcome</th><th>Reason</th></tr></thead><tbody>
+        {data.slotOutcomes.map((slot) => <tr key={slot.slotMs}><td>{timestamp(slot.slotMs)}</td>
+          <td>{slot.outcome.replaceAll('_', ' ')}</td><td>{slot.reason?.replaceAll('_', ' ') ?? '—'}{slot.inferred && ' · inferred from absent scheduler observations'}</td></tr>)}
+      </tbody></table>
+    </details>}
     {decision !== null && <div className="parallel-paper-decision">
       <h3>Latest algorithm decision · {decision.day}</h3>
       <p>Trend {decision.belowTrend ? 'below' : 'above'} reference · realized mix volatility {decision.mixVolPct}% · target exposure {decision.exposurePct}% · target cash {decision.cashPct}%</p>

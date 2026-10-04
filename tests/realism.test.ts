@@ -132,6 +132,18 @@ describe('trade profitability gate', () => {
     expect(check.reason).toContain('historical gross-edge lower bound');
   });
 
+  it('requires a finite strict lower bound and charges tax once outside the cost buffer', () => {
+    for (const edge of [NaN, Infinity, -Infinity, 0, 1.7]) {
+      expect(checkTradeProfitability(intent('BTC', 'buy', 100), DEFAULT_VENUE_COST_PROFILE, edge, { asOfMs: 0 }).ok).toBe(false);
+    }
+    const taxed = checkTradeProfitability(intent('ETH', 'sell', 100), DEFAULT_VENUE_COST_PROFILE, 4, { asOfMs: 0 }, 1);
+    expect(taxed.requiredEdgeUsd).toBeCloseTo(2.7, 8);
+    expect(taxed.netEdgeUsd).toBeCloseTo(2.15, 8);
+    expect(taxed.ok).toBe(true);
+    const expensive = { ...DEFAULT_VENUE_COST_PROFILE, preset: 'custom' as const, takerFeeBps: 300 };
+    expect(checkTradeProfitability(intent('ETH', 'sell', 100), expensive, 4, { asOfMs: 0 }, 1).ok).toBe(false);
+  });
+
   it('adds tax drag to sell suppression and allows loss-harvest credit to help', () => {
     const taxed = checkTradeProfitability(intent('ETH', 'sell', 100), DEFAULT_VENUE_COST_PROFILE, 3, { asOfMs: 0 }, 4);
     const harvest = checkTradeProfitability(intent('ETH', 'sell', 100), DEFAULT_VENUE_COST_PROFILE, 1, { asOfMs: 0 }, -1);

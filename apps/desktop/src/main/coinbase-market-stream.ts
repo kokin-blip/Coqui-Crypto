@@ -1,4 +1,5 @@
 import type { InstrumentIdentity } from '@coqui/core';
+import { CoinbaseMicrostructure } from './coinbase-microstructure.js';
 
 const PUBLIC_FEED = 'wss://ws-feed.exchange.coinbase.com';
 const PRODUCT_ID = /^[A-Z0-9][A-Z0-9._-]{0,31}-USD$/u;
@@ -133,6 +134,8 @@ export class CoinbaseMarketStreamService {
   readonly #quotes = new Map<string, LiveMarketQuote>();
   readonly #sequences = new Map<string, number>();
   readonly #candles = new Map<string, ProvisionalMarketCandle>();
+  readonly #microstructure = new CoinbaseMicrostructure();
+  #depthProduct: string | null = null;
   #products: readonly string[] = [];
   #socket: MarketSocket | null = null;
   #reconnect: ReturnType<typeof setTimeout> | null = null;
@@ -218,6 +221,31 @@ export class CoinbaseMarketStreamService {
     });
   }
 
+  snapshotBook(productId: string, aggregation: string, limit: number) {
+    this.#ensureProduct(productId);
+    if (this.#depthProduct !== productId) {
+      const prior = this.#depthProduct;
+      this.#depthProduct = productId;
+      this.#microstructure.clearBooks();
+      if (this.#socket?.readyState === 1) {
+        if (prior !== null) this.#socket.send(JSON.stringify({ type: 'unsubscribe', product_ids: [prior], channels: ['level2_batch'] }));
+        this.#socket.send(JSON.stringify({ type: 'subscribe', product_ids: [productId], channels: ['level2_batch'] }));
+      }
+    }
+    const view = this.snapshot();
+    return this.#microstructure.book(productId, aggregation, limit, view.connection, view.asOfMs);
+  }
+
+  snapshotTrades(productId: string, limit: number) {
+    this.#ensureProduct(productId);
+    const view = this.snapshot();
+    return this.#microstructure.trades(productId, limit, view.connection, view.asOfMs);
+  }
+
+  #ensureProduct(productId: string): void {
+    if (!this.#products.includes(productId)) this.configure([...this.#products.slice(0, 99), productId]);
+  }
+
   dispose(): void {
     if (this.#disposed) return;
     this.#disposed = true;
@@ -246,16 +274,21 @@ export class CoinbaseMarketStreamService {
           product_ids: this.#products,
           channels: ['ticker_batch', 'matches', 'heartbeat'],
         }));
+        if (this.#depthProduct !== null) socket.send(JSON.stringify({
+          type: 'subscribe', product_ids: [this.#depthProduct], channels: ['level2_batch'],
+        }));
       } catch (error) {
         this.#onUnexpectedError('market_stream_subscribe', error);
         socket.close();
       }
     };
-    socket.onmessage = (event) => this.#receive(event.data);
+    socket.onmessage = (event) => { if (socket === this.#socket) this.#receive(event.data); };
     socket.onerror = () => this.#onUnexpectedError('market_stream_socket', new Error('socket_error'));
     socket.onclose = () => {
       if (socket !== this.#socket) return;
       this.#socket = null;
+      this.#microstructure.reset();
+      this.#sequences.clear();
       this.#scheduleReconnect();
     };
   }
@@ -272,6 +305,20 @@ export class CoinbaseMarketStreamService {
     }
     const now = this.#nowMs();
     if (!validTime(now)) return;
+    if ((message['type'] === 'snapshot' || message['type'] === 'l2update') && message['product_id'] !== this.#depthProduct) return;
+    if (typeof message['product_id'] === 'string' && this.#products.includes(message['product_id'])) {
+      if (!this.#microstructure.receive(message, now)) {
+        if (message['type'] === 'snapshot' || message['type'] === 'l2update') {
+          this.#disconnect(); this.#scheduleReconnect();
+        }
+        return;
+      }
+      if (message['type'] === 'snapshot' || message['type'] === 'l2update') {
+        this.#lastMessageAtMs = now;
+        this.#state = 'live';
+        return;
+      }
+    }
     if (message['type'] === 'heartbeat') {
       this.#lastMessageAtMs = now;
       this.#state = 'live';
@@ -353,6 +400,8 @@ export class CoinbaseMarketStreamService {
   }
 
   #disconnect(): void {
+    this.#microstructure.reset();
+    this.#sequences.clear();
     if (this.#reconnect !== null) {
       this.#cancel(this.#reconnect);
       this.#reconnect = null;

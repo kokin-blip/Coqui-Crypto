@@ -1,3 +1,4 @@
+import { money } from '../packages/services/src/paper/parallel-paper-utils.js';
 import { describe, expect, it, vi } from 'vitest';
 
 import { createMemorySecretStore, AlpacaPaperError } from '../packages/adapters/src/index.js';
@@ -63,14 +64,20 @@ function mockClient(submitFailure = false, fillStatus = 'filled', quoteAtMs: num
   });
   return { client: {
     account: async () => ACCOUNT,
-    positions: async () => [],
+    positions: async () => {
+      const quantities = new Map<string, ReturnType<typeof money>>();
+      for (const order of orders.values()) quantities.set(order.symbol, (quantities.get(order.symbol) ?? money(0))
+        .plus(money(order.filled_qty).mul(order.side === 'buy' ? 1 : -1)));
+      return [...quantities].map(([symbol, qty]) => ({ symbol, qty: qty.toString(), market_value: qty.mul(100).toString() }));
+    },
     orders: async () => [],
     asset: async (symbol: string) => ({ symbol, status: 'active', tradable: true,
       min_order_size: '0.0001', min_trade_increment: '0.0001' }),
     latestCryptoQuotes: async () => ({ quotes: Object.fromEntries(['BTC', 'ETH', 'LTC'].map((symbol) =>
       [`${symbol}/USD`, { bp: 100, ap: 101,
         t: new Date(typeof quoteAtMs === 'function' ? quoteAtMs() : quoteAtMs).toISOString() }])) }),
-    activities: async () => [],
+    activities: async () => [...orders.values()].map((order) => ({ id: `fill-${order.id}`, activity_type: 'FILL', order_id: order.id,
+      symbol: order.symbol, qty: order.filled_qty, price: order.filled_avg_price, transaction_time: new Date(TODAY).toISOString() })),
     orderByClientId: async (id: string) => {
       const order = orders.get(id);
       if (order === undefined) throw new AlpacaPaperError('not_found');
@@ -190,25 +197,10 @@ describe('parallel paper experiment', () => {
       portfolioVolScaledDays: expect.any(Number), trendCapDays: expect.any(Number) });
     expect(service.summary().latestDecision?.filters).toMatchObject({
       negativeMomentumAssets: expect.any(Number), assetVolScaledAssets: expect.any(Number) });
-    expect(service.summary()).toMatchObject({ runtimeState: 'order_pending', lastCheckAtMs: TODAY,
+    expect(service.summary()).toMatchObject({ runtimeState: 'reconciled', lastCheckAtMs: TODAY,
       latestDecision: { day: '2026-09-23', targets: expect.arrayContaining([{ symbol: 'BTCUSD', weightPct: expect.any(String) }]) } });
     expect(service.summary().activity.some((item) => item.kind === 'order' && item.alpacaOrderId !== null)).toBe(true);
-    const experimentId = service.status().experiment!.id;
-    const recordedOrder = service.status().events.find((event) => event.kind === 'external_order')!;
-    appendParallelEvent({ experimentId, profileId: 'main', kind: 'external_fill',
-      key: 'fill:paper-activity-test', at: TODAY, detail: { activityId: 'paper-activity-test',
-        orderId: recordedOrder.detail['orderId'], symbol: recordedOrder.detail['symbol'],
-        quantity: '0.01', price: '100', at: new Date(TODAY).toISOString() } }, database);
-    expect(service.summary().alpacaFillCount).toBe(1);
-    expect(service.summary().activity[0]).toMatchObject({ kind: 'fill', alpacaOrderId: recordedOrder.detail['orderId'] });
-    expect(service.summary().runtimeState).toBe('order_pending');
-    for (const order of service.status().events.filter((event) => event.kind === 'external_order')) {
-      appendParallelEvent({ experimentId, profileId: 'main', kind: 'external_fill',
-        key: `fill:full:${String(order.detail['orderId'])}`, at: TODAY,
-        detail: { activityId: `full:${String(order.detail['orderId'])}`,
-          orderId: order.detail['orderId'], symbol: order.detail['symbol'],
-          quantity: order.detail['filledQty'], price: '100', at: new Date(TODAY).toISOString() } }, database);
-    }
+    expect(service.summary().alpacaFillCount).toBe(submitted);
     expect(service.summary().runtimeState).toBe('reconciled');
     database.close();
   });
@@ -225,7 +217,7 @@ describe('parallel paper experiment', () => {
     const result = await service.start('00000000-0000-4000-8000-000000000002', true);
     expect(result.ok).toBe(true);
     await service.tick();
-    expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'alpaca_unavailable' });
+    expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'submission_outcome_unknown' });
     const experimentId = service.status().experiment!.id;
     expect(listParallelEvents(experimentId, 'main', database).some((event) => event.kind === 'submit_attempt')).toBe(true);
     await service.tick();
@@ -345,6 +337,8 @@ describe('parallel paper experiment', () => {
     await service.tick();
     expect(mock.submit).toHaveBeenCalledTimes(firstOrders);
     clock.set(Date.parse('2026-09-24T12:01:00Z'));
+    mock.client.latestCryptoQuotes = async () => ({ quotes: Object.fromEntries(['BTC', 'ETH', 'LTC'].map((symbol) =>
+      [`${symbol}/USD`, { bp: 200, ap: 201, t: new Date(clock.nowMs()).toISOString() }])) });
     await service.tick();
     expect(mock.submit.mock.calls.length).toBeGreaterThan(firstOrders);
     expect(service.status().events.filter((event) => event.kind === 'intraday_complete')).toHaveLength(2);

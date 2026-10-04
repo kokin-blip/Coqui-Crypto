@@ -184,7 +184,13 @@ export function readProfitabilityEstimateEvidence(
       passed: number; integrity_verified: number;
     } | undefined;
   if (row === undefined || row.passed !== 1 || row.integrity_verified !== 1) return null;
+  const persisted = db.prepare('SELECT result_json FROM forward_edge_study_results_v1 WHERE result_hash=?')
+    .get(row.result_hash) as { result_json: string } | undefined;
+  if (!persisted || sha256Hex(persisted.result_json) !== row.result_hash) return null;
+  const result = JSON.parse(persisted.result_json) as ForwardEdgeStudyResult;
   const value = Number(row.gross_edge_lower_bound_pct_text);
+  if (result.outcome !== 'passed' || result.grossEdgeLowerConfidenceBoundPct !== value ||
+      JSON.stringify(result.sourceHashes) !== row.source_hashes_json) return null;
   if (!Number.isFinite(value) || value <= 0) return null;
   return Object.freeze({
     grossEdgeLowerBoundPct: value,

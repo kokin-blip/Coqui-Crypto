@@ -57,3 +57,5 @@ export * from './market-selector.js';
 export * from './hourly-execution.js';
 export * from './remediation-evidence.js';
 export * from './study-instances.js';
+export * from './research-integrity.js';
+export * from './bound-profitability.js';

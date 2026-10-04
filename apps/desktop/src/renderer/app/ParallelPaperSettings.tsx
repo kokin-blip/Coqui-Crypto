@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import { useChannel } from '../query/use-channel.js';
 import { useCommand } from '../query/use-command.js';
+import { ParallelPaperRecovery } from './ParallelPaperRecovery.js';
 import { SurfaceState } from './SurfaceState.js';
 
 const INVALIDATES = ['parallel.paper.status'] as const;
@@ -44,9 +45,10 @@ export function ParallelPaperSettings({ client }: { readonly client: CoquiClient
         <div><dt>Decisions</dt><dd>{current.decisionCount}</dd></div>
       </dl>
       <details className="exact-value-detail"><summary>Exact opening values</summary><p>Coqui: {current.coquiOpeningUsd === null ? 'Unavailable' : formatUsd(current.coquiOpeningUsd)?.text} · Alpaca: {current.alpacaOpeningUsd === null ? 'Unavailable' : formatUsd(current.alpacaOpeningUsd)?.text}</p></details>
+      <ParallelPaperRecovery client={client} data={current} />
       {current.lastReason !== null && <SurfaceState kind="blocked" title="Experiment paused" detail={current.lastReason.replaceAll('_', ' ')} compact />}
       {current.state === 'active' && <button type="button" className="button-secondary" disabled={pause.state.kind === 'pending'} onClick={() => void pause.run({ commandId: crypto.randomUUID() })}>Pause new paper orders</button>}
-      {current.state === 'paused' && <button type="button" className="button-primary" disabled={resume.state.kind === 'pending'} onClick={() => void resume.run({ commandId: crypto.randomUUID() })}>Resume</button>}
+      {current.state === 'paused' && <button type="button" className="button-primary" disabled={resume.state.kind === 'pending' || current.reconciliationAttention.blocked} onClick={() => void resume.run({ commandId: crypto.randomUUID() })}>Resume</button>}
       {current.state !== 'stopped' && <>
         <label className="confirmation-check"><input type="checkbox" checked={stopConfirmed} onChange={(event) => setStopConfirmed(event.target.checked)} />Cancel outstanding experiment orders and stop; keep existing paper holdings.</label>
         <button type="button" className="button-danger" disabled={!stopConfirmed || stop.state.kind === 'pending'} onClick={() => void stop.run({ commandId: crypto.randomUUID() })}>Stop experiment</button>

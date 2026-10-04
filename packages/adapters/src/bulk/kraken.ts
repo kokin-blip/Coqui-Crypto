@@ -6,6 +6,7 @@ import {
   type MarketBar,
 } from '@coqui/core';
 import { Unzip, UnzipInflate, UnzipPassThrough, type UnzipFile } from 'fflate';
+import { Decimal } from 'decimal.js';
 
 const DAY_MS = 86_400_000;
 const MAX_CSV_BYTES = 50_000_000;
@@ -19,6 +20,7 @@ export interface KrakenArchiveRequest {
   readonly archiveName: string;
   readonly origin: 'complete' | 'quarterly';
   readonly retrievedAtMs: number;
+  readonly upstreamChecksumAvailable?: boolean;
 }
 
 export interface KrakenDailyKlineRecord {
@@ -44,7 +46,7 @@ export interface KrakenArchiveManifest {
   readonly archiveName: string;
   readonly archiveSha256: string;
   readonly archiveByteLength: number;
-  readonly upstreamChecksumAvailable: false;
+  readonly upstreamChecksumAvailable: boolean;
   readonly csvEntryName: string;
   readonly csvSha256: string;
   readonly csvByteLength: number;
@@ -116,6 +118,15 @@ function parseRecord(
 ): KrakenDailyKlineRecord | null {
   const values = line.split(',');
   if (values.length !== 7 && values.length !== 8) return null;
+  // Current official releases use scientific notation for some small volumes.
+  // Expand from decimal text, without converting through a binary float.
+  for (let index = 1; index < values.length - 1; index += 1) {
+    const value = values[index]!;
+    if (DECIMAL_PATTERN.test(value)) continue;
+    const scientific = /^(?:0|[1-9][0-9]*)(?:\.[0-9]+)?[eE]([+-]?[0-9]{1,3})$/u.exec(value);
+    if (!scientific || Math.abs(Number(scientific[1])) > 100) return null;
+    values[index] = new Decimal(value).toFixed();
+  }
   const timestamp = values[0]!;
   if (!INTEGER_PATTERN.test(timestamp)) return null;
   const seconds = Number(timestamp);
@@ -235,7 +246,12 @@ export function createKrakenDailyArchiveImporter(
       failure = 'invalid_archive';
       return;
     }
-    if (basename(file.name) !== targetName) return;
+    if (basename(file.name) !== targetName) {
+      // Starting a discard decoder prevents fflate retaining unselected entry bytes.
+      file.ondata = () => {};
+      file.start();
+      return;
+    }
     targetCount += 1;
     if (targetCount > 1) {
       failure = 'duplicate_pair';
@@ -264,7 +280,20 @@ export function createKrakenDailyArchiveImporter(
   };
 
   const unzip = new Unzip(selectFile);
-  unzip.register(UnzipInflate);
+  class SelectedInflate {
+    static compression = 8;
+    ondata!: UnzipInflate['ondata'];
+    private readonly inflate: UnzipInflate | null;
+    constructor(name: string) {
+      this.inflate = basename(name) === targetName ? new UnzipInflate() : null;
+      if (this.inflate) this.inflate.ondata = (error, data, final) => this.ondata(error, data, final);
+    }
+    push(data: Uint8Array, final: boolean): void {
+      if (this.inflate) this.inflate.push(data, final);
+      else this.ondata(null, new Uint8Array(), final);
+    }
+  }
+  unzip.register(SelectedInflate);
   unzip.register(UnzipPassThrough);
 
   return Object.freeze({
@@ -272,10 +301,12 @@ export function createKrakenDailyArchiveImporter(
       if (finalPushed) throw new Error('The Kraken archive stream has already ended.');
       archiveHash.update(chunk);
       archiveByteLength += chunk.length;
-      try {
-        unzip.push(chunk, final);
-      } catch {
-        failure = 'invalid_archive';
+      if (failure === null) {
+        try {
+          unzip.push(chunk, final);
+        } catch {
+          failure = 'invalid_archive';
+        }
       }
       if (final) finalPushed = true;
     },
@@ -303,7 +334,7 @@ export function createKrakenDailyArchiveImporter(
         archiveName: request.archiveName,
         archiveSha256: archiveHash.digest('hex'),
         archiveByteLength,
-        upstreamChecksumAvailable: false as const,
+        upstreamChecksumAvailable: request.upstreamChecksumAvailable ?? false,
         csvEntryName: targetEntryName,
         csvSha256: hashBytes(csvBytes),
         csvByteLength,

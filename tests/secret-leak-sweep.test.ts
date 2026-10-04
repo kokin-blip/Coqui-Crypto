@@ -42,6 +42,7 @@ afterEach(() => {
 
 /** Channels that answer from local state. The rest would reach the network. */
 const LOCAL_CHANNELS: readonly ChannelName[] = [
+  'research.overlay-shadow.status', 'research.overlay-shadow.set',
   'activity.feed',
   'decision.timeline',
   'operations.floor',
@@ -71,6 +72,7 @@ const LOCAL_CHANNELS: readonly ChannelName[] = [
 ];
 
 const PAYLOADS: Partial<Record<ChannelName, unknown>> = {
+  'research.overlay-shadow.set': { commandId: 'shadow-fixture-disable', enabled: false },
   'activity.feed': { limit: 40, cursor: null },
   'research.jobs': { limit: 10 },
   'research.job': { id: 'a'.repeat(64) },

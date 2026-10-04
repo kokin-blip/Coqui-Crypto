@@ -166,7 +166,7 @@ The scheduler runs while the Coqui desktop host is open and authoritative. A con
 
 Balances, current marked equity, percentage return, holdings, trades, and modeled costs remain under **Balances, returns, and paper fills**. The local leg is a daily-fill baseline and is not a paired execution simulation for Alpaca's intraday rebalances. Alpaca's records are **externally recorded paper fills** from its simulator, not live exchange executions. The local leg models a 0.60% fee plus 0.10% spread and 0.15% slippage in fill prices. The Alpaca cost envelope shown in Coqui is a comparison estimate; Alpaca account equity is the external account's actual paper value, and no additional modeled charge is deducted from it.
 
-Order intent and a deterministic client order ID are persisted before each Alpaca submission. A lost or ambiguous response is reconciled by client ID, never blindly retried. Intraday slots cannot submit while an earlier experiment order is unresolved or any Alpaca order remains open. Missing market data, changed account, unexpected orders, rejected/partial daily orders that cannot finish in the daily execution window, or unresolved outcomes pause new submissions. A pause caused by missing or stale market data, a transient OS credential-read failure, or an Alpaca `unavailable`/`rate_limited` response is retried on later scheduler checks. It automatically resumes only after the current completed bar is available and Alpaca reconciliation succeeds. The pause record includes a fixed operation name and HTTP status when available, without the request URL, body, headers, or credentials. An ambiguous order outcome or explicit user pause does not auto-resume. Failed OS secret-store reads are no longer cached indefinitely. The first five minutes after 00:00 UTC may still be waiting for Coinbase to finalize the new daily bar; checks continue within the 00:00–00:15 UTC window. Pausing does not cancel existing Alpaca orders; stopping requests cancellation and requires terminal order confirmation before the experiment is marked stopped.
+Order intent and a deterministic client order ID are persisted before each Alpaca submission. A lost or ambiguous response is reconciled by client ID, never blindly retried. Intraday slots cannot submit while an earlier experiment order is unresolved or any Alpaca order remains open. Missing market data, changed account, unexpected orders, rejected/partial daily orders that cannot finish in the daily execution window, or unresolved outcomes pause new submissions. A pause caused by missing or stale market data, a transient OS credential-read failure, or an Alpaca `unavailable`/`rate_limited` response is retried on later scheduler checks. It automatically resumes only after the current completed bar is available and Alpaca reconciliation succeeds. The pause record includes a fixed operation name and HTTP status when available, without the request URL, body, headers, or credentials. An ambiguous order outcome can auto-resume only after the complete broker recovery gate below passes. Explicit user pauses do not auto-resume. Failed OS secret-store reads are no longer cached indefinitely. The first five minutes after 00:00 UTC may still be waiting for Coinbase to finalize the new daily bar; checks continue within the 00:00–00:15 UTC window. Pausing does not cancel existing Alpaca orders; stopping requests cancellation and requires terminal order confirmation before the experiment is marked stopped.
 
 ## Execution cost observations
 
@@ -281,3 +281,70 @@ Fee displays show observed cash fees, crypto quantities and reported-price value
 See [the repair diagnosis and operating record](studies/ml-shadow-reliability-v2-2026-10-02.md). The frozen-client diagnostics failure is repaired; reconciliation now precedes bounded preparation, and optional research cannot turn a completed execution pass into a pause. Transport attempts and body reads retain safe operation/budget diagnostics. Legacy generic pauses require conclusive attempted-order reconciliation; user pauses remain preserved.
 
 The `trendvol-ml-ridge-shadow-v2` worker collects completed hourly inputs even while execution is paused and records independent in-window shadow proposals. Scheduler refresh no longer registers ML studies or evaluates holdouts. The old v1 result remains a labeled legacy diagnostic; missing proposals and degenerate uncertainty display as unavailable. This section supersedes the earlier description of automatic ML study registration and holdout gating. Operational TrendVol remains unchanged and ML has no order authority. Connected-account checks remain outstanding.
+
+
+## Unknown-execution recovery and scheduled outcomes
+
+Read-only inspection of the October 2 owner ledger confirmed repeated generic
+`reconciliation_unavailable` entries while the experiment remained paused. The
+Beta.12 diagnosis identified a JavaScript Proxy invariant violation when wrapping
+the frozen Alpaca client; the current explicit method wrapper preserves that
+repair. The historical records omit broker operations and cannot establish API
+health or explain every earlier outage. See the October 2 reliability record.
+
+Broker GETs retain their ten-second total budget and at most two attempts. Each
+attempt now appends its fixed operation, observation timestamp, attempt number,
+HTTP status if received, safe error category, elapsed time and remaining budget.
+POST/DELETE retain one attempt. Diagnostics exclude raw errors, request URLs,
+headers, bodies and credentials. Lookup, pagination and position-validation
+failures retain their operation names. A recovery check performs a full activity
+audit from the experiment's opening day, within the existing page and time caps;
+incomplete pagination never counts as complete reconciliation.
+
+New submissions remain blocked until account identity and permissions are valid,
+no open or unexpected orders remain, every attempted client ID has a conclusively
+filled order with exactly matching recorded fills, and current broker quantities
+match the fill ledger after observed crypto fees. The dedicated experiment starts
+with zero positions. Quantities use Decimal and unexplained residuals block
+recovery; missing fees are not assumed to be zero. Rejected, canceled, expired or
+partial orders are not automatically converted into a new submission. Cash fee
+coverage remains partial; this gate does not assert complete cash accounting.
+
+Original pauses remain intact through failed reconciliation checks. Transient
+pauses, `paper_execution_unknown`, `submission_outcome_unknown`, and `broker_positions_mismatch` can recover
+only after this gate and current completed-bar preparation succeed. User pauses,
+disconnects, kill switches and host authority controls remain effective. The Paper
+Trading overview and Paper settings show a persistent recovery panel independently
+of the latest twenty timeline rows: failed operation and diagnostic, last complete
+reconciliation, unresolved client/broker IDs, and an Alpaca paper dashboard link.
+**Retry reconciliation** obtains the same execution lease and a thirty-second
+read deadline, queries the broker, and records the result. It never submits or
+cancels an order, never resumes a user pause, and leaves new decisions to the
+scheduler. A manual Resume cannot bypass outstanding reconciliation uncertainty.
+
+A fresh scheduler pass supersedes persisted unsubmitted plan portions with new
+append-only records, then sizes the remaining unattempted assets from fresh
+account/position evidence and the current decision's sizing inputs. Intraday
+plans use fresh bid/ask quotes; all submissions retain fresh pre-order quotes and
+guard checks. Already attempted IDs remain immutable and are never retried.
+Replacement intents have deterministic revision IDs; superseded intents cannot
+execute. No daily or intraday order window, target, sell rule, cost or band changes.
+Recovery outside a window refreshes evidence and records missed execution rather
+than replaying that slot's plan.
+
+When a window expires, the scheduler appends one definitive `slot_finalized`
+record for each expected window since experiment start, alongside the existing
+per-check observations. Outcomes distinguish observed orders, no order needed,
+pending orders, stale quotes, unavailable evidence, pauses and host unavailability.
+Restart catches up missing outcome records, not orders. A window without a
+scheduler observation is explicitly labeled **inferred host unavailability**;
+it does not prove whether the process slept, exited or lacked authority. Repeated
+checks preserve the first definitive outcome. Recent outcomes are available in
+the Paper Trading overview. Existing historical events are never rewritten.
+
+Regression tests use synthetic accounts and mocked transport, including an accepted
+order whose response is lost, repeated read failures, delayed fills/fees, quantity
+mismatches, truncated activity pages, restart gaps and cutoff recovery. They verify
+that operator reconciliation performs no broker writes and that each attempted
+client ID is submitted at most once. No connected account was changed or broker
+order submitted during this implementation.

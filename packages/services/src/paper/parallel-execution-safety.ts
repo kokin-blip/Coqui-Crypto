@@ -38,7 +38,8 @@ export function observedParallelClient(client: Client, now: () => number, append
           durationMs: performance.now() - started, budgetMs, remainingMs: deadline?.remainingMs() ?? null });
         return result;
       } catch (error) {
-        const failure = error instanceof AlpacaPaperError ? error : new AlpacaPaperError(
+        const failure = error instanceof AlpacaPaperError ? new AlpacaPaperError(error.code, operation,
+          error.httpStatus, error.attemptCount, error.elapsedMs, error.budgetMs, error.remainingMs) : new AlpacaPaperError(
           error instanceof Error && error.message === 'deadline_exceeded' ? 'deadline_exceeded' :
           error instanceof TypeError ? 'invalid_response' : 'unavailable', operation, null, 0, performance.now() - started,
           budgetMs, deadline?.remainingMs() ?? null);

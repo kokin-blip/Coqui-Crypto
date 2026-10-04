@@ -2,8 +2,8 @@ import {
   canonicalJson,
   DEFAULT_MOMENTUM_CONFIG,
   DEFAULT_VOL_TARGET_CONFIG,
+  firstAttainableDailyOpen,
   instrumentKey,
-  planAutoRebalance,
   sha256Hex,
   strategyDecisionId,
   trendVolTargets,
@@ -35,6 +35,7 @@ import {
   normalizedMix,
   openingSnapshot,
   paperHoldings,
+  planPaperRebalance,
   PAPER_ALLOCATION_REBALANCER_VERSION,
   PAPER_TRENDVOL_VERSION,
   runIdFor,
@@ -67,9 +68,8 @@ export {
  */
 
 /**
- * This loop currently rebalances a saved allocation policy. It does not invoke
- * the Momentum + VolTarget implementation, so its durable identity must not
- * claim that it does.
+ * Completed strategy decisions use the shared Momentum + VolTarget targets.
+ * Pre-strategy stand-downs retain the legacy allocation identity.
  */
 /**
  * Run one paper decision.
@@ -231,9 +231,9 @@ export function runPaperDecision(
       : { executionOwnerId: dependencies.executionOwnerId }),
     state: () => ({
       holdings: executionHoldings,
-      killSwitchEngaged: resolveKillSwitch(profileId, database).engaged,
+      killSwitchEngaged: resolveKillSwitch(profileId, database).engaged || (dependencies.eligibility?.().strategyPaused ?? false),
       evidenceVerified: dependencies.evidenceVerified?.() ?? false,
-      historicalGrossEdgeLowerBoundPct: dependencies.historicalGrossEdgeLowerBoundPct,
+      historicalGrossEdgeLowerBoundPct: dependencies.eligibility ? dependencies.eligibility().grossEdgeLowerBoundPct : dependencies.historicalGrossEdgeLowerBoundPct,
     }),
     ...(dependencies.onUnexpectedError === undefined
       ? {}
@@ -318,11 +318,11 @@ export function runPaperDecision(
   }
 
   const killSwitch = resolveKillSwitch(profileId, database);
-  if (killSwitch.engaged) {
+  if (killSwitch.engaged || dependencies.eligibility?.().strategyPaused) {
     // Invariant 5: the kill switch halts paper too. Recorded as a completed
     // observation, because the engine did run and correctly declined to act.
     journal(database, profileId, runId, decidedAtMs, 'kill_switch', 'halted', {
-      reason: killSwitch.reason,
+      reason: killSwitch.reason ?? 'strategy_health_paused',
     });
     persistDecision(null, null, preparation);
     return finish('kill_switch_engaged');
@@ -400,7 +400,8 @@ export function runPaperDecision(
     },
   });
   runtimeStrategyVersion = PAPER_TRENDVOL_VERSION;
-  const codeHash = sha256Hex('trendvol-paper-v1:shared-core-targets:pending-next-open');
+  if (trend.historyStatus !== 'complete') return finish('insufficient_history');
+  const codeHash = sha256Hex('trendvol-paper-v2:shared-core-targets:cash-inclusive-sizing:complete-history:first-attainable-open');
   const costModelHash = paperCostModelHash();
   savePaperCampaignPlanV2({
     schemaVersion: 2,
@@ -415,10 +416,8 @@ export function runPaperDecision(
     prospectiveStartMs: scheduledForMs,
     createdAtMs: decisionCreatedAtMs,
   }, database);
-  const intents = planAutoRebalance(holdings, targetPolicy, decidedAtMs)
-    .sort((left, right) => left.side !== right.side
-      ? left.side === 'sell' ? -1 : 1
-      : instrumentKey(left.asset.instrument) < instrumentKey(right.asset.instrument) ? -1 : 1);
+  const cashUsd = listPaperBalances(profileId, database).find((balance) => balance.assetId === 'USD')?.quantity ?? '0';
+  const intents = planPaperRebalance(holdings, cashUsd, targetPolicy);
   if (intents.length === 0) return finish('no_intents');
 
   planned = {
@@ -449,7 +448,7 @@ export function runPaperDecision(
     intents,
     pending: {
       decisionId,
-      requiredExecutionBarStartMs: preparation.latestCompletedStartMs + 86_400_000,
+      requiredExecutionBarStartMs: firstAttainableDailyOpen(preparation.latestCompletedStartMs, decidedAtMs),
       costModelHash,
     },
   });

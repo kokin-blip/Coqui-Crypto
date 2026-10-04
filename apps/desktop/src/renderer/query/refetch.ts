@@ -25,12 +25,15 @@ export interface ChannelPolicy {
 }
 
 export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
+  'research.overlay-shadow.status': { refetchIntervalMs: MINUTE, staleTimeMs: 30 * SECOND },
+  'research.overlay-shadow.set': { refetchIntervalMs: false, staleTimeMs: 0 },
   'alpaca.paper.status': { refetchIntervalMs: false, staleTimeMs: 30 * SECOND },
   'alpaca.paper.connect': { refetchIntervalMs: false, staleTimeMs: 0 },
   'alpaca.paper.refresh': { refetchIntervalMs: false, staleTimeMs: 0 },
   'alpaca.paper.disconnect': { refetchIntervalMs: false, staleTimeMs: 0 },
   'parallel.paper.status': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
   'parallel.paper.start': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'parallel.paper.reconcile': { refetchIntervalMs: false, staleTimeMs: 0 },
   'parallel.paper.pause': { refetchIntervalMs: false, staleTimeMs: 0 },
   'parallel.paper.resume': { refetchIntervalMs: false, staleTimeMs: 0 },
   'parallel.paper.stop': { refetchIntervalMs: false, staleTimeMs: 0 },
@@ -109,6 +112,8 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'market-data.candles': { refetchIntervalMs: false, staleTimeMs: 60 * MINUTE },
   // The renderer reads a bounded main-process cache. It never owns the socket.
   'market-data.live': { refetchIntervalMs: SECOND, staleTimeMs: SECOND },
+  'market-data.order-book': { refetchIntervalMs: SECOND, staleTimeMs: SECOND },
+  'market-data.recent-trades': { refetchIntervalMs: SECOND, staleTimeMs: SECOND },
   'market-data.products': { refetchIntervalMs: false, staleTimeMs: 30 * MINUTE },
   'market-data.coinbase-diagnostics': { refetchIntervalMs: 30 * SECOND, staleTimeMs: 30 * SECOND },
   'market-data.display-bars': { refetchIntervalMs: false, staleTimeMs: MINUTE },

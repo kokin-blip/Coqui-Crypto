@@ -18,6 +18,7 @@ export interface FetchLikeResponse {
   json(): Promise<unknown>;
   text(): Promise<string>;
   arrayBuffer?(): Promise<ArrayBuffer>;
+  body?: ReadableStream<Uint8Array> | null;
 }
 
 export interface HttpSuccess<T> {
@@ -57,6 +58,9 @@ export interface HttpClient {
   getText(url: string, init?: HttpRequestInit): Promise<HttpResult<string>>;
   /** Optional for lightweight test doubles created before binary archives existed. */
   getBytes?(url: string, init?: HttpRequestInit): Promise<HttpResult<Uint8Array>>;
+  /** Consumes a body inside the shared cancellation, retry, and elapsed budget. */
+  consumeStream?<T>(url: string, consume: (response: FetchLikeResponse) => Promise<T>,
+    init?: HttpRequestInit): Promise<HttpResult<T>>;
   /** Release rate-limiter timers owned by this client. */
   destroy(): void;
 }
@@ -492,5 +496,9 @@ export function createHttpClient(options: HttpClientOptions = {}): HttpClient {
       shutdown.abort();
       ownedRateLimiters?.destroyAll();
     },
+    consumeStream: <T>(url: string, consume: (response: FetchLikeResponse) => Promise<T>,
+      init: HttpRequestInit = {}) => request<T>({
+      url, init: { ...init, method: 'GET' }, parse: consume, retryable: true,
+    }),
   };
 }

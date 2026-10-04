@@ -22,7 +22,7 @@ import {
 import type { PaperMarketData } from './oms.js';
 
 export const PAPER_ALLOCATION_REBALANCER_VERSION = 'allocation-policy-rebalancer-v1';
-export const PAPER_TRENDVOL_VERSION = 'trendvol-paper-v1-unvalidated';
+export const PAPER_TRENDVOL_VERSION = 'trendvol-paper-v2-unvalidated';
 
 export type PaperRunStandDown =
   | 'kill_switch_engaged'
@@ -91,6 +91,7 @@ export interface PaperRunLoopDependencies {
   readonly preparation: () => PaperDecisionPreparation;
   readonly historicalGrossEdgeLowerBoundPct: number | null;
   readonly evidenceVerified?: () => boolean;
+  readonly eligibility?: () => { readonly strategyPaused: boolean; readonly grossEdgeLowerBoundPct: number | null };
   readonly executionOwnerId?: string;
   readonly captureEvidence?: (summary: PaperRunSummary) => Promise<void>;
   readonly onUnexpectedError?: (context: string, error: unknown) => void;
@@ -183,7 +184,7 @@ export function normalizedMix(policy: AllocationPolicy, dataset: DecisionMarketD
 }
 
 /** Plan against a cash-inclusive campaign sleeve without representing cash as a fake instrument. */
-export function planExploratoryRebalance(
+export function planPaperRebalance(
   holdings: readonly Holding[],
   cashUsd: string,
   policy: AllocationPolicy,

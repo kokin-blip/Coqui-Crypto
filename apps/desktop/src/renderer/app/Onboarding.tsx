@@ -6,7 +6,6 @@ import { useChannel } from '../query/use-channel.js';
 import { useCommand } from '../query/use-command.js';
 import { SurfaceState } from './SurfaceState.js';
 import { useDialogFocus } from './use-dialog-focus.js';
-import { useWorkspace } from './WorkspaceContext.js';
 
 type Step = 'name' | 'safety' | 'exchange' | 'portfolio' | 'advisor' | 'done';
 type Provider = 'coinbase' | 'robinhood_crypto';
@@ -24,7 +23,6 @@ function GuideLink({ href, children }: { readonly href: string; readonly childre
 }
 
 export function Onboarding({ client }: { readonly client: CoquiClient }): React.JSX.Element | null {
-  const workspace = useWorkspace();
   const person = useChannel(client, 'app.onboarding.status', {});
   const readiness = useChannel(client, 'app.profile-readiness', {});
   const providers = useChannel(client, 'advisor.providers', {});
@@ -77,7 +75,6 @@ export function Onboarding({ client }: { readonly client: CoquiClient }): React.
     (settings.kind === 'ready' && settings.value.source === 'saved');
   const saveName = async (): Promise<void> => {
     await setPerson.run({ commandId: crypto.randomUUID(), displayName });
-    if (!returning) await workspace.setMode('simple');
     setStep(returning ? 'done' : 'safety');
   };
   const connectionError = connectFile.state.kind === 'failed' ? connectFile.state.codes : completeRobinhood.state.kind === 'failed' ? completeRobinhood.state.codes : null;

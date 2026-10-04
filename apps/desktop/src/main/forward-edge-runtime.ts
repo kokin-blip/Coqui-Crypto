@@ -1,3 +1,4 @@
+import { SHIPPED_FORWARD_EDGE_PLAN } from './forward-edge-plan.js';
 import {
   deriveForwardCounterfactual,
   materializeForwardEdgeResult,
@@ -5,12 +6,14 @@ import {
   type ForwardEdgeStudyPlan,
 } from '@coqui/core';
 import {
+  capturePersistedStrategyHealth, PAPER_TRENDVOL_VERSION,
   reconcilePaperFills,
   ResearchScoreboardService,
   type PaperMarketData,
   type PaperRunSummary,
 } from '@coqui/services';
 import {
+  readBoundProfitabilityEvidence,
   acknowledgeWalletSafetyStop,
   appendPaperCampaignEvent,
   ensurePaperCampaign,
@@ -257,6 +260,9 @@ export async function captureScheduledForwardEvidence(input: {
   readonly priceSource: Parameters<typeof capturePaperPerformanceEvidence>[0]['priceSource'];
   readonly market: PaperMarketData;
 }): Promise<void> {
+  capturePersistedStrategyHealth(input.profileId, input.summary.strategyVersion,
+    input.summary.strategyVersion === input.plan.strategyId ? input.planHash : `unregistered:${input.summary.strategyVersion}`,
+    input.clock.nowMs(), input.database);
   // Exploratory campaigns are intentionally observational and must not retire,
   // extend, or otherwise alter the registered validation campaign.
   if (input.summary.strategyVersion === 'trendvol-exploratory-paper-v1') return;
@@ -350,4 +356,17 @@ export function handlePaperCampaignKillSwitch(input: {
     detail: { explicitConfirmation: input.explicitConfirmation },
   }, input.database);
   return latestPaperCampaign(input.profileId, input.database);
+}
+
+/** Runtime eligibility requires bound units, horizon, costs and freshness; legacy scalar evidence is read-only. */
+export function paperGrossEdgeLowerBoundPct(profileId: string, database: Db, nowMs: number): number | null {
+  // The preserved shipped study describes a retired strategy. A binding cannot
+  // make that evidence applicable to the current executable strategy.
+  if (String(SHIPPED_FORWARD_EDGE_PLAN.strategyId) !== PAPER_TRENDVOL_VERSION) return null;
+  return readBoundProfitabilityEvidence(profileId, database, {
+    profileId, strategyId: SHIPPED_FORWARD_EDGE_PLAN.strategyId,
+    codeRevision: SHIPPED_FORWARD_EDGE_PLAN.codeRevision,
+    costProfileHash: SHIPPED_FORWARD_EDGE_PLAN.costProfileHash,
+    horizonMs: 86_400_000, normalization: 'gross_pct_per_turnover',
+  }, nowMs)?.grossEdgeLowerBoundPct ?? null;
 }

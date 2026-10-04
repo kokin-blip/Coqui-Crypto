@@ -10,6 +10,7 @@ const credentials = { keyId: 'test-key', secretKey: 'test-secret' };
 describe('paper read reliability', () => {
   it('never treats an arbitrary lowercase secret as a safe error code', () => {
     expect(parallelPaperFailureDetail(new Error('sensitive_secret'), 'broker_read_failed')).toEqual({ reason: 'broker_read_failed' });
+    expect(parallelPaperFailureDetail(new AlpacaPaperError('unavailable', 'sensitive_secret'), 'broker_read_failed').operation).toBe('unknown');
     expect(parallelPaperFailureDetail(new Error('deadline_exceeded'), 'broker_read_failed')).toEqual({ reason: 'deadline_exceeded' });
   });
   it('wraps the actual frozen adapter, receives account and activity reads, and exposes no secrets', async () => {
@@ -92,4 +93,19 @@ describe('paper read reliability', () => {
       expect(JSON.stringify(error)).not.toContain('test-secret');
     }
   });
+  it('journals each bounded read attempt, including an eventual success, without request data', async () => {
+    const attempts: unknown[] = [];
+    let called = 0;
+    const client = createAlpacaPaperClient(credentials, async () => {
+      called++;
+      if (called === 1) throw new Error('test-secret raw request');
+      return Response.json({ id: 'paper' });
+    }, undefined, (attempt) => attempts.push(attempt));
+    await client.account();
+    expect(attempts).toMatchObject([{ operation: 'account', attemptCount: 1, status: 'unavailable', reason: 'alpaca_unavailable' },
+      { operation: 'account', attemptCount: 2, status: 'received', httpStatus: 200 }]);
+    expect(JSON.stringify(attempts)).not.toContain('test-secret');
+    expect(JSON.stringify(attempts)).not.toContain('paper-api');
+  });
+
 });

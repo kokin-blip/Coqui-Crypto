@@ -155,7 +155,7 @@ describe('exploratory paper campaign', () => {
     const pending = listSubmittedExploratoryPaperExecutions(
       started.campaign.campaignId, PROFILE, database,
     );
-    expect(pending.every((item) => item.requiredExecutionBarStartMs === AT + DAY)).toBe(true);
+    expect(pending.every((item) => item.requiredExecutionBarStartMs === AT + 2 * DAY)).toBe(true);
     const submissionEvents = listDecisionEvidenceEvents(pending[0]!.decisionId, PROFILE, database);
     expect(submissionEvents.map((event) => event.kind)).toContain('execution_submitted');
     const proposed = database.prepare(`SELECT detail_json FROM paper_order_events_v3
@@ -167,11 +167,11 @@ describe('exploratory paper campaign', () => {
       evidenceEligibility: { validation: false, promotion: false, liveExecution: false },
     });
 
-    const laterMarket: PaperMarketData = { bars: () => bars(AT + DAY), rules: () => RULES };
+    const laterMarket: PaperMarketData = { bars: () => bars(AT + 2 * DAY), rules: () => RULES };
     runExploratoryPaperDecision({
-      ...makeDependencies(new FixedClock(AT + 2 * DAY + 10 * 60_000), paperPreparation([BTC], AT + DAY)),
+      ...makeDependencies(new FixedClock(AT + 3 * DAY + 10 * 60_000), paperPreparation([BTC], AT + 2 * DAY)),
       market: laterMarket,
-      preparation: () => paperPreparation([BTC], AT + DAY),
+      preparation: () => paperPreparation([BTC], AT + 2 * DAY),
     }, AT + DAY);
     expect(listExploratoryPaperBalances(started.campaign.campaignId, PROFILE, database)
       .every((balance) => Number(balance.quantity) >= 0)).toBe(true);

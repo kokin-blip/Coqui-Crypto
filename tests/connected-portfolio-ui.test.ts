@@ -6,23 +6,26 @@ import { describe, expect, it } from 'vitest';
 const read = (path: string) => readFileSync(resolve(path), 'utf8');
 
 describe('connected portfolio product surfaces', () => {
-  it('uses connected evidence for the Overview headline and both primary visuals', () => {
-    const overview = read('apps/desktop/src/renderer/app/Overview.tsx');
-    expect(overview).toContain("useChannel(client, 'portfolio.current'");
-    expect(overview).not.toContain("useChannel(client, 'portfolio.view'");
-    expect(overview).toContain('<AllocationRing data={allocation} />');
-    expect(overview).toContain('<HeldCoinPerformance');
+  it('keeps connected assets separate from simulated portfolio value', () => {
+    const summary = read('apps/desktop/src/renderer/app/TerminalAlgorithm.tsx');
+    const tables = read('apps/desktop/src/renderer/app/TerminalDataTables.tsx');
+    for (const source of [summary, tables]) {
+      expect(source).toContain("useChannel(client, 'portfolio.current'");
+      expect(source).not.toContain("useChannel(client, 'portfolio.view'");
+      expect(source).toContain("useChannel(client, 'paper.portfolio'");
+    }
+    expect(summary).toContain('Connected value');
+    expect(summary).toContain('Connected valuation');
+    expect(summary).toContain('Paper equity');
   });
 
-  it('derives simple and advanced Markets defaults from nonzero connected exposures', () => {
-    for (const file of ['apps/desktop/src/renderer/app/Markets.tsx',
-      'apps/desktop/src/renderer/app/AdvancedMarkets.tsx']) {
-      const source = read(file);
-      expect(source).toContain("useChannel(client, 'portfolio.current'");
-      expect(source).toContain("item.exposureKey !== 'USD'");
-      expect(source).toContain('Number(item.quantity) > 0');
-    }
-    expect(read('apps/desktop/src/renderer/app/AdvancedMarkets.tsx')).toContain('>Portfolio</option>');
+  it('uses the existing connected-exposure defaults in the unified Markets workspace', () => {
+    expect(read('apps/desktop/src/renderer/app/Markets.tsx')).toContain('AdvancedMarkets');
+    const source = read('apps/desktop/src/renderer/app/AdvancedMarkets.tsx');
+    expect(source).toContain("useChannel(client, 'portfolio.current'");
+    expect(source).toContain("item.exposureKey !== 'USD'");
+    expect(source).toContain('Number(item.quantity) > 0');
+    expect(source).toContain('>Portfolio</option>');
   });
 
   it('labels imported tax lots as accounting instead of current connected balances', () => {

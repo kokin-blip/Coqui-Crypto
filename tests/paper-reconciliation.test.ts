@@ -141,7 +141,7 @@ function runOnce(db: Db, market: PaperMarketData): void {
   runPaperDecision(deps, T0 + DAY);
   new PaperOmsService({
     database: db,
-    clock: new FixedClock(T0 + 2 * DAY),
+    clock: new FixedClock(T0 + 3 * DAY + 300_000),
     market,
   }).settlePending(PROFILE);
 }
@@ -153,7 +153,7 @@ describe('a venue that matches the engine reconciles clean', () => {
     runOnce(db, market);
 
     const report = reconcilePaperFills(
-      { database: db, clock: new FixedClock(T0 + 2 * DAY), market },
+      { database: db, clock: new FixedClock(T0 + 3 * DAY + 300_000), market },
       PROFILE,
       0,
     );
@@ -171,7 +171,7 @@ describe('a venue that matches the engine reconciles clean', () => {
     const db = seeded();
     const market = marketData();
     runOnce(db, market);
-    reconcilePaperFills({ database: db, clock: new FixedClock(T0 + 2 * DAY), market }, PROFILE, 0);
+    reconcilePaperFills({ database: db, clock: new FixedClock(T0 + 3 * DAY + 300_000), market }, PROFILE, 0);
 
     expect(listRuntimeIncidents(PROFILE, false, 50, db)).toHaveLength(0);
     db.close();
@@ -188,7 +188,7 @@ describe('a moved bar is reported, not absorbed', () => {
     // correcting itself. The harness must notice rather than quietly agree.
     const restated = marketData(20);
     const report = reconcilePaperFills(
-      { database: db, clock: new FixedClock(T0 + 2 * DAY), market: restated },
+      { database: db, clock: new FixedClock(T0 + 3 * DAY + 300_000), market: restated },
       PROFILE,
       0,
     );
@@ -209,7 +209,7 @@ describe('a moved bar is reported, not absorbed', () => {
 
     const wildlyRestated = marketData(500);
     reconcilePaperFills(
-      { database: db, clock: new FixedClock(T0 + 2 * DAY), market: wildlyRestated },
+      { database: db, clock: new FixedClock(T0 + 3 * DAY + 300_000), market: wildlyRestated },
       PROFILE,
       0,
     );
@@ -224,7 +224,7 @@ describe('a moved bar is reported, not absorbed', () => {
     const db = seeded();
     runOnce(db, marketData());
     const report = reconcilePaperFills(
-      { database: db, clock: new FixedClock(T0 + 2 * DAY), market: marketData(20) },
+      { database: db, clock: new FixedClock(T0 + 3 * DAY + 300_000), market: marketData(20) },
       PROFILE,
       0,
     );
@@ -236,6 +236,38 @@ describe('a moved bar is reported, not absorbed', () => {
   });
 });
 
+describe('fresh runtime eligibility', () => {
+  it('a persisted strategy pause blocks decisions before orders can be generated', () => {
+    const db = seeded();
+    const result = runPaperDecision({ database: db, profileId: PROFILE,
+      clock: new FixedClock(T0 + DAY), market: marketData(), holdings: () => [], policy: () => POLICY,
+      preparation: () => PREPARATION, historicalGrossEdgeLowerBoundPct: 12,
+      eligibility: () => ({ strategyPaused: true, grossEdgeLowerBoundPct: null }),
+      evidenceVerified: () => true }, T0 + DAY);
+    expect(result.standDown).toBe('kill_switch_engaged');
+    expect(result.submittedCount).toBe(0);
+    db.close();
+  });
+});
+
+describe('cost version and component reconciliation', () => {
+  it('detects a cost-only discrepancy with an unchanged execution price', () => {
+    const db = seeded(), market = marketData();
+    runOnce(db, market);
+    // Append a synthetic erroneous fill; no persisted evidence is rewritten.
+    db.exec(`INSERT INTO paper_fills_v3
+      SELECT id || ':cost-error', order_id, profile_id, quantity_text, execution_price_text, notional_text,
+        CAST(CAST(venue_fee_text AS REAL) + 1 AS TEXT), spread_cost_text, slippage_cost_text, impact_cost_text,
+        filled_at, market_snapshot_hash FROM paper_fills_v3 LIMIT 1`);
+    const report = reconcilePaperFills({ database: db, clock: new FixedClock(T0 + 3 * DAY + 300_000), market }, PROFILE, 0);
+    const erroneous = report.divergences.find((fill) => fill.fillId.endsWith(':cost-error'))!;
+    expect(erroneous.status).toBe('diverged');
+    expect(Math.abs(erroneous.priceDivergenceBps!)).toBeLessThan(1e-8);
+    expect(Math.abs(erroneous.costDivergenceBps!)).toBeGreaterThan(5);
+    db.close();
+  });
+});
+
 describe('missing evidence is unverifiable, never aligned', () => {
   it('refuses to claim agreement when the bar is gone', () => {
     const db = seeded();
@@ -243,7 +275,7 @@ describe('missing evidence is unverifiable, never aligned', () => {
 
     const forgotten: PaperMarketData = { bars: () => [], rules: () => RULES };
     const report = reconcilePaperFills(
-      { database: db, clock: new FixedClock(T0 + 2 * DAY), market: forgotten },
+      { database: db, clock: new FixedClock(T0 + 3 * DAY + 300_000), market: forgotten },
       PROFILE,
       0,
     );
@@ -273,7 +305,7 @@ describe('missing evidence is unverifiable, never aligned', () => {
     const db = seeded();
     runOnce(db, marketData());
     const restated = marketData(20);
-    const deps = { database: db, clock: new FixedClock(T0 + 2 * DAY), market: restated };
+    const deps = { database: db, clock: new FixedClock(T0 + 3 * DAY + 300_000), market: restated };
 
     reconcilePaperFills(deps, PROFILE, 0);
     const first = listRuntimeIncidents(PROFILE, false, 50, db).length;

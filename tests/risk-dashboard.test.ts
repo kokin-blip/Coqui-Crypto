@@ -115,10 +115,12 @@ describe('the gate cannot be edited from the UI', () => {
     // stronger guarantee than a disabled control, and this test is what keeps
     // one from being added without the reasoning being revisited.
     expect(CHANNEL_KINDS.write).toEqual([
+      'research.overlay-shadow.set',
       'alpaca.paper.connect',
       'alpaca.paper.refresh',
       'alpaca.paper.disconnect',
       'parallel.paper.start',
+      'parallel.paper.reconcile',
       'parallel.paper.pause',
       'parallel.paper.resume',
       'parallel.paper.stop',

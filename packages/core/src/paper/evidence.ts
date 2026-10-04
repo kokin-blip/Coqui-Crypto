@@ -39,7 +39,7 @@ export interface PaperCampaignPlanV2 {
   readonly id: string;
   readonly profileId: string;
   readonly strategyId: 'trendvol';
-  readonly strategyVersion: 'trendvol-paper-v1-unvalidated';
+  readonly strategyVersion: 'trendvol-paper-v1-unvalidated' | 'trendvol-paper-v2-unvalidated';
   readonly configHash: string;
   readonly codeHash: string;
   readonly evidenceSchemaVersion: 1;

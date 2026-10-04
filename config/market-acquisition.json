@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "products": [
+    { "venue": "coinbase", "productId": "BTC-USD", "productType": "spot", "baseAsset": "BTC", "quoteAsset": "USD" },
+    { "venue": "coinbase", "productId": "ETH-USD", "productType": "spot", "baseAsset": "ETH", "quoteAsset": "USD" },
+    { "venue": "binance", "productId": "BTCUSDT", "productType": "spot", "baseAsset": "BTC", "quoteAsset": "USDT" },
+    { "venue": "binance", "productId": "ETHUSDT", "productType": "spot", "baseAsset": "ETH", "quoteAsset": "USDT" },
+    { "venue": "kraken", "productId": "XBTUSD", "productType": "spot", "baseAsset": "BTC", "quoteAsset": "USD" },
+    { "venue": "kraken", "productId": "ETHUSD", "productType": "spot", "baseAsset": "ETH", "quoteAsset": "USD" }
+  ],
+  "sourceDir": "data/archive/market",
+  "archiveDir": "data/research-archive",
+  "reportDir": "data/market-acquisition-reports"
+}

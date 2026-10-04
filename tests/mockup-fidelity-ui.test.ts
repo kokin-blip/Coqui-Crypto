@@ -31,13 +31,14 @@ describe('mockup-fidelity advanced workspace', () => {
 
   it('locks the selected dark workstation palette and compact geometry', () => {
     const theme = read('packages/ui-kit/src/theme.css');
-    const shell = read('apps/desktop/src/renderer/styles/shell.css');
+    const shell = read('apps/desktop/src/renderer/styles/terminal.css');
     const workstation = read('apps/desktop/src/renderer/styles/workstation.css');
 
-    for (const token of ['#020b08', '#04110c', '#06150f', '#091d15', '#17382b', '#2ee98b', '#8fa59a']) {
+    for (const token of ['#090a0b', '#0d0f11', '#17191d', '#282b30', '#f2f3f5', '#969da8', '#20b980', '#f05265']) {
       expect(theme).toContain(token);
     }
-    expect(shell).toContain('grid-template-columns: 164px minmax(0, 1fr)');
+    expect(shell).toContain('grid-template-columns: minmax(0, 1fr) 336px');
+    expect(shell).toContain('grid-template-columns: minmax(0, 1fr) 340px');
     expect(workstation).toContain('grid-template-columns: minmax(520px, 58fr) minmax(235px, 18fr) minmax(270px, 24fr)');
     expect(workstation).toContain('.panel-empty-body');
     expect(workstation).toContain('.screen-heading-integrated');
@@ -49,7 +50,8 @@ describe('mockup-fidelity advanced workspace', () => {
     const rail = read('apps/desktop/src/renderer/app/StatusRail.tsx');
     const readyRail = rail.slice(rail.lastIndexOf('<div className="status-primary">'));
 
-    expect(sidebar).toContain('<span><strong>coqui</strong></span>');
+    expect(sidebar).toContain('COQUI');
+    expect(sidebar).toContain('aria-label="Primary navigation"');
     expect(sidebar).not.toContain('research workstation</small>');
     expect(sidebar).not.toContain('sidebar-sub-list');
     expect(readyRail.indexOf('<Freshness client={client} />')).toBeLessThan(readyRail.indexOf('Safety'));

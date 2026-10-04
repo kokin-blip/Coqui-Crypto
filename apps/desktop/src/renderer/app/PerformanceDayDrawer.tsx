@@ -1,13 +1,9 @@
 import { useEffect, useRef } from 'react';
-import { lazy, Suspense } from 'react';
 
 import type { CoquiClient } from '@coqui/contracts';
 import { formatUsd } from '@coqui/ui-kit';
 
 import { useChannel } from '../query/use-channel.js';
-import { useWorkspace } from './WorkspaceContext.js';
-
-const IonicDetailSheet = lazy(() => import('./IonicDetailSheet.js'));
 
 function DayEvidence({
   client,
@@ -49,15 +45,10 @@ export function PerformanceDayDrawer({
   readonly onClose: () => void;
 }): React.JSX.Element {
   const dialog = useRef<HTMLDialogElement>(null);
-  const workspace = useWorkspace();
 
   useEffect(() => {
-    if (workspace.mode === 'advanced') dialog.current?.showModal();
-  }, [workspace.mode]);
-
-  if (workspace.mode === 'simple') {
-    return <Suspense fallback={<p aria-live="polite">Opening day detail…</p>}><IonicDetailSheet onClose={onClose}><DayEvidence client={client} dayUtc={dayUtc} close={onClose} /></IonicDetailSheet></Suspense>;
-  }
+    dialog.current?.showModal();
+  }, []);
 
   return (
     <dialog ref={dialog} className="day-drawer" onClose={onClose} aria-labelledby="day-drawer-heading">

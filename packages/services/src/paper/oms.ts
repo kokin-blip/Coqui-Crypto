@@ -2,6 +2,7 @@ import {
   instrumentKey,
   paperFillLedgerEntries,
   sha256Hex,
+  sourceCompletionDelayMs,
   type Clock,
   type MarketBar,
   type PaperFill,
@@ -220,6 +221,10 @@ export class PaperOmsService {
             }
             return;
           }
+          const submittedAtMs = this.#clock.nowMs();
+          if (!Number.isSafeInteger(context.requiredExecutionBarStartMs) || context.requiredExecutionBarStartMs <= submittedAtMs) {
+            throw new Error('execution_open_not_attainable');
+          }
           saveProductRuleSnapshot(rules, this.#database);
           const order: PaperOrder = {
             id: orderId, profileId: approval.profileId, runId: approval.runId,
@@ -228,7 +233,7 @@ export class PaperOmsService {
             requestedNotional: String(intent.amountUsd) as PaperOrder['requestedNotional'],
             state: 'proposed', productRuleSnapshotId: rules.id,
             decisionSnapshotHash: context.decisionId, reason: null,
-            createdAt: this.#clock.nowMs(), updatedAt: this.#clock.nowMs(),
+            createdAt: submittedAtMs, updatedAt: submittedAtMs,
           };
           savePaperOrder(order, this.#database);
           this.#event(order, 'proposed', 0, order.createdAt, {
@@ -288,35 +293,36 @@ export class PaperOmsService {
       ? listSubmittedPaperExecutions(profileId, this.#database)
       : listSubmittedExploratoryPaperExecutions(campaignId, profileId, this.#database))].sort((left, right) =>
       left.side !== right.side ? left.side === 'sell' ? -1 : 1 : left.id < right.id ? -1 : 1);
+    const expire = (item: typeof pending[number], reason: string): void => {
+      const order = getPaperOrder(item.orderId, this.#database);
+      if (order === null) throw new Error('Pending execution order is missing.');
+      const atMs = this.#clock.nowMs();
+      this.#advance(order, 'expired', 4, atMs, reason);
+      settlePaperPendingExecution(item.id, 'expired', atMs, this.#database);
+      expiredCount += 1;
+      decisionIds.add(item.decisionId);
+      outcomes.push({ decisionId: item.decisionId, orderId: item.orderId, disposition: 'expired', atMs });
+    };
     inTransaction(this.#database, () => { for (const item of pending) {
+      if (item.requiredExecutionBarStartMs <= item.submittedAtMs) {
+        expire(item, 'execution_open_not_attainable');
+        continue;
+      }
       const bars = this.#market.bars(instrumentKey(item.instrument));
       const exact = bars.find((bar) => bar.startTimeMs === item.requiredExecutionBarStartMs);
       if (exact === undefined) {
-        if (bars.some((bar) => bar.isComplete && bar.startTimeMs > item.requiredExecutionBarStartMs)) {
-          const order = getPaperOrder(item.orderId, this.#database);
-          if (order === null) throw new Error('Pending execution order is missing.');
-          const atMs = this.#clock.nowMs();
-          this.#advance(order, 'expired', 4, atMs, 'required_execution_bar_missing');
-          settlePaperPendingExecution(item.id, 'expired', atMs, this.#database);
-          expiredCount += 1;
-          decisionIds.add(item.decisionId);
-          outcomes.push({ decisionId: item.decisionId, orderId: item.orderId,
-            disposition: 'expired', atMs });
+        if (bars.some((bar) => bar.isComplete && bar.startTimeMs > item.requiredExecutionBarStartMs &&
+            bar.endTimeMs + sourceCompletionDelayMs(bar.source) <= this.#clock.nowMs())) {
+          expire(item, 'required_execution_bar_missing');
         } else pendingCount += 1;
         continue;
       }
-      if (!exact.isComplete) { pendingCount += 1; continue; }
+      if (!exact.isComplete || exact.endTimeMs + sourceCompletionDelayMs(exact.source) > this.#clock.nowMs()) {
+        pendingCount += 1; continue;
+      }
       const rules = getProductRuleSnapshot(item.productRuleSnapshotId, this.#database);
       if (rules === null || item.costModelHash !== paperCostModelHash()) {
-        const order = getPaperOrder(item.orderId, this.#database);
-        if (order === null) throw new Error('Pending execution order is missing.');
-        const atMs = this.#clock.nowMs();
-        this.#advance(order, 'expired', 4, atMs, 'bound_snapshot_unavailable');
-        settlePaperPendingExecution(item.id, 'expired', atMs, this.#database);
-        expiredCount += 1;
-        decisionIds.add(item.decisionId);
-        outcomes.push({ decisionId: item.decisionId, orderId: item.orderId,
-          disposition: 'expired', atMs });
+        expire(item, 'bound_snapshot_unavailable');
         continue;
       }
       const outcome = simulateFill({

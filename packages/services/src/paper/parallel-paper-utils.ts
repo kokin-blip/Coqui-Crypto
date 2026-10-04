@@ -13,12 +13,13 @@ export function money(value: string | number | Decimal): Decimal {
 }
 
 const SAFE_FAILURE_REASONS = new Set([
+  ...['unauthorized', 'forbidden', 'not_found', 'rate_limited', 'unavailable', 'invalid_response', 'timeout', 'deadline_exceeded'].map((code) => `alpaca_${code}`),
   'deadline_exceeded', 'research_budget_exhausted', 'execution_window_missed', 'execution_lease_unavailable',
   'stale_host_authority', 'host_unavailable', 'host_suspended', 'explicit_pause_preserved', 'kill_switch_engaged',
   'credentials_unavailable', 'credentials_corrupt', 'secret_store_unavailable', 'secret_store_invalid_value', 'secret_store_corrupt',
   'stale_market_data', 'stale_product_rules', 'market_fetch_failed', 'invalid_market_data', 'market_alignment_failed',
-  'insufficient_history', 'invalid_amount', 'unknown_asset', 'local_wallet_unavailable', 'invalid_activity_timestamp',
-  'unexpected_alpaca_order', 'alpaca_account_changed', 'alpaca_order_failed', 'submission_outcome_unknown',
+  'insufficient_history', 'invalid_amount', 'unknown_asset', 'local_wallet_unavailable', 'invalid_activity_timestamp', 'invalid_alpaca_activity',
+  'broker_positions_mismatch', 'broker_fills_pending', 'broker_orders_pending', 'broker_order_identity_mismatch', 'invalid_broker_position', 'unexpected_alpaca_order', 'alpaca_account_changed', 'alpaca_order_failed', 'submission_outcome_unknown',
   'alpaca_activity_page_limit', 'alpaca_equity_unavailable', 'alpaca_asset_rules_unavailable',
   'stale_alpaca_quote', 'invalid_alpaca_quote', 'material_sizing_inputs_changed', 'asset_identity_mismatch',
   'missing_prospective_predecessor', 'hourly_candidate_version_changed', 'hourly_experiment_changed', 'hourly_opening_unavailable',
@@ -28,14 +29,26 @@ export function parallelSafeFailureReason(error: unknown, fallback: string): str
   return error instanceof Error && SAFE_FAILURE_REASONS.has(error.message) ? error.message : fallback;
 }
 
+const SAFE_OPERATIONS = new Set(['unknown', 'credentials', 'account', 'positions', 'orders', 'order_lookup',
+  'asset', 'activities', 'quote', 'assets', 'orderbook', 'submit', 'cancel', 'broker_reconciliation', 'activity_reconciliation']);
+export function parallelSafeOperation(operation: unknown): string {
+  return typeof operation === 'string' && SAFE_OPERATIONS.has(operation) ? operation : 'unknown';
+}
+
+export class ParallelReconciliationError extends Error {
+  constructor(reason: string, readonly operation: string, readonly failure?: AlpacaPaperError) { super(reason); }
+}
+
 export function parallelPaperFailureDetail(error: unknown, fallback: string):
   { reason: string; operation?: string; httpStatus?: number; attemptCount?: number; elapsedMs?: number; budgetMs?: number | null; remainingMs?: number | null } {
   if (error instanceof AlpacaPaperError) return {
-    reason: error.code === 'deadline_exceeded' ? 'deadline_exceeded' : `alpaca_${error.code}`, operation: error.operation,
+    reason: error.code === 'deadline_exceeded' ? 'deadline_exceeded' : `alpaca_${error.code}`, operation: parallelSafeOperation(error.operation),
     attemptCount: error.attemptCount, elapsedMs: error.elapsedMs, budgetMs: error.budgetMs, remainingMs: error.remainingMs,
     ...(error.httpStatus === null ? {} : { httpStatus: error.httpStatus }),
   };
-  return { reason: parallelSafeFailureReason(error, fallback) };
+  return { ...(error instanceof ParallelReconciliationError && error.failure ? parallelPaperFailureDetail(error.failure, fallback) : {}),
+    reason: parallelSafeFailureReason(error, fallback),
+    ...(error instanceof ParallelReconciliationError ? { operation: parallelSafeOperation(error.operation) } : {}) };
 }
 
 export function quantity(value: Decimal): string {

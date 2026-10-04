@@ -58,14 +58,15 @@ export function createParallelPaperRuntime(input: {
       finally {
         if (experiment) {
           const events = listParallelEvents(experiment.id, input.profileId, input.database), status = parallelExperimentStatus(events);
-          const pending = events.some((event) => event.kind === 'external_intent' &&
-            !events.some((other) => other.kind === 'external_order' && other.detail['clientOrderId'] === event.detail['clientOrderId'] && other.detail['status'] === 'filled'));
+          const pending = service.summary().reconciliationAttention.unresolvedOrders.length > 0;
           const completed = events.find((event) => (event.kind === 'external_complete' || event.kind === 'intraday_complete') &&
             event.at >= slot && event.at < slot+900_000);
           const orders = events.filter((event) => event.kind === 'submit_attempt' && event.at >= slot && event.at < slot+900_000).length;
           const pauseReason = [...events].reverse().find((event) => event.kind === 'paused')?.detail['reason'];
+          const skipped = [...events].reverse().find((event) => event.kind === 'intraday_skipped' && event.at >= slot && event.at < slot + 900_000);
+          reason ??= typeof skipped?.detail['reason'] === 'string' ? skipped.detail['reason'] : null;
           reason ??= status === 'paused' && typeof pauseReason === 'string' ? pauseReason : null;
-          const outcome = ['stale_host_authority','execution_lease_unavailable','host_suspended'].includes(reason ?? '') ? 'host_unavailable' : reason === 'deadline_exceeded' ? 'deadline_exceeded' : status === 'paused' ? 'paused' : pending ? 'pending_order'
+          const outcome = ['stale_host_authority','execution_lease_unavailable','host_suspended'].includes(reason ?? '') ? 'host_unavailable' : reason === 'deadline_exceeded' ? 'deadline_exceeded' : reason === 'stale_alpaca_quote' ? 'stale_quote' : status === 'paused' ? 'paused' : pending ? 'pending_order'
             : !market.preparation().ok ? 'stale_evidence' : completed ? (orders ? 'observed' : 'no_order') : 'stale_evidence';
           appendParallelEvent({ experimentId: experiment.id, profileId: input.profileId, kind: now < slot+900_000 ? 'slot_outcome' : 'readiness_check',
             key: `slot-outcome:${slot}:${now}`, at: input.clock.nowMs(), detail: {slotMs:slot,outcome,reason,

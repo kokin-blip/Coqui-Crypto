@@ -1,3 +1,4 @@
+import { overlayShadowChannelSchemas } from './schemas/overlay-shadow.js';
 import * as z from 'zod';
 
 import { activityChannelSchemas } from './schemas/activity.js';
@@ -8,6 +9,7 @@ import { accountsChannelSchemas } from './schemas/accounts.js';
 import { connectionChannelSchemas } from './schemas/connections.js';
 import { advisorAnalystChannelSchemas } from './schemas/advisor-analyst.js';
 import { marketDataChannelSchemas } from './schemas/market-data.js';
+import { marketMicrostructureChannelSchemas } from './schemas/market-microstructure.js';
 import { marketEventChannelSchemas } from './schemas/market-events.js';
 import { operationsChannelSchemas } from './schemas/operations.js';
 import { paperExecutionChannelSchemas } from './schemas/paper-execution.js';
@@ -34,6 +36,7 @@ import type { ContractSchema, DeepReadonly } from './messages.js';
  * more than the services can honour.
  */
 export const CHANNEL_SCHEMAS = {
+  ...overlayShadowChannelSchemas,
   ...activityChannelSchemas,
   ...alpacaPaperChannelSchemas,
   ...appChannelSchemas,
@@ -42,6 +45,7 @@ export const CHANNEL_SCHEMAS = {
   ...connectionChannelSchemas,
   ...advisorAnalystChannelSchemas,
   ...marketDataChannelSchemas,
+  ...marketMicrostructureChannelSchemas,
   ...marketEventChannelSchemas,
   ...operationsChannelSchemas,
   ...paperExecutionChannelSchemas,
@@ -89,10 +93,12 @@ export function isChannelName(value: unknown): value is ChannelName {
  * which changes no balance and no tax lot.
  */
 const WRITE_CHANNELS = [
+  'research.overlay-shadow.set',
   'alpaca.paper.connect',
   'alpaca.paper.refresh',
   'alpaca.paper.disconnect',
   'parallel.paper.start',
+  'parallel.paper.reconcile',
   'parallel.paper.pause',
   'parallel.paper.resume',
   'parallel.paper.stop',

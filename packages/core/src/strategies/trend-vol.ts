@@ -4,6 +4,7 @@ import {
   DEFAULT_MOMENTUM_CONFIG,
   momentumTargets,
   momentumTargetsAt,
+  momentumMinimumHistory,
   type MomentumConfig,
   type MomentumTargetResult,
 } from './momentum.js';
@@ -11,6 +12,7 @@ import {
   DEFAULT_VOL_TARGET_CONFIG,
   volTargetExposure,
   volTargetExposureAt,
+  volTargetMinimumHistory,
   type VolTargetConfig,
 } from './vol-target.js';
 
@@ -49,15 +51,7 @@ export function trendVolMinimumHistory(
   momentum: MomentumConfig = DEFAULT_MOMENTUM_CONFIG,
   volatility: VolTargetConfig = DEFAULT_VOL_TARGET_CONFIG,
 ): number {
-  const momentumLookback = Math.max(
-    momentum.lookbackDays,
-    ...(momentum.lookbackDaysEnsemble ?? []),
-  ) + 1;
-  return Math.max(
-    momentumLookback,
-    volatility.volLookbackDays + 1,
-    volatility.trendGateDays,
-  );
+  return Math.max(momentumMinimumHistory(momentum), volTargetMinimumHistory(volatility));
 }
 
 function normalizedBaseTargets(
@@ -147,7 +141,8 @@ export function trendVolTargets(
     momentumTargets([...baseTargets], closesById, momentumConfig),
     volTargetExposure(mixCloses, volTargetConfig),
     options.exposureScale,
-    mixCloses.length,
+    Math.min(mixCloses.length, ...baseTargets.filter((target) => target.weight > 0)
+      .map((target) => closesById[target.assetId]?.length ?? 0)),
     momentumConfig,
     volTargetConfig,
   );
@@ -172,7 +167,8 @@ export function trendVolTargetsAt(
     momentumTargetsAt([...baseTargets], closesById, endExclusive, momentumConfig),
     volTargetExposureAt(mixCloses, endExclusive, volTargetConfig),
     options.exposureScale,
-    Math.min(Math.max(0, endExclusive), mixCloses.length),
+    Math.min(Math.max(0, endExclusive), mixCloses.length, ...baseTargets.filter((target) => target.weight > 0)
+      .map((target) => closesById.get(target.assetId)?.length ?? 0)),
     momentumConfig,
     volTargetConfig,
   );

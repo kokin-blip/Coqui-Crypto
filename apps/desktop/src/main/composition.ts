@@ -1,4 +1,5 @@
-import { createWiderUniverseRuntime } from './wider-universe-runtime.js'; import { createBreakoutRuntime } from './breakout-runtime.js'; import { createRangeRotationRuntime } from './range-rotation-runtime.js'; import { createMarketSelectorRuntime } from './market-selector-runtime.js';
+import { createOverlayShadowRuntime } from './overlay-shadow-runtime.js'; import { createWiderUniverseRuntime } from './wider-universe-runtime.js'; import { createBreakoutRuntime } from './breakout-runtime.js'; import { createRangeRotationRuntime } from './range-rotation-runtime.js'; import { createMarketSelectorRuntime } from './market-selector-runtime.js';
+import { readStrategyHealth, PAPER_TRENDVOL_VERSION } from '@coqui/services';
 import { randomUUID } from 'node:crypto';
 import {
   createCoinbasePriceSource,
@@ -55,7 +56,7 @@ import {
   listPaperFillPerformanceFacts,
   listPaperPerformanceDayFacts,
   openDatabase,
-  readProfitabilityEstimateEvidence, readOperationsFloor, listResearchLineage,
+  readOperationsFloor, listResearchLineage,
   registerForwardEdgeStudy,
   setPaperExecutionPolicy,
   type Db,
@@ -79,7 +80,7 @@ import { createParallelPaperRuntime } from './parallel-paper-runtime.js';
 import { createMarketHandlers } from './market-handlers.js'; import { createMarketEventHandlers } from './market-event-handlers.js';
 import { createResearchOrchestrationHandlers } from './research-handlers.js';
 import { SHIPPED_FORWARD_EDGE_PLAN } from './forward-edge-plan.js';
-import { captureScheduledForwardEvidence, readForwardEdgeStatus } from './forward-edge-runtime.js';
+import { paperGrossEdgeLowerBoundPct, captureScheduledForwardEvidence, readForwardEdgeStatus } from './forward-edge-runtime.js';
 import { createAlertNotificationPump } from './notifications.js';
 import { createPaperMarketFeed } from './paper-market.js';
 import { paperInstruments as resolvePaperInstruments } from './paper-instruments.js';
@@ -88,9 +89,6 @@ import { paperProposalView } from './paper-proposal-view.js';
 import { createCandleSource, createDisplayDataService, createReferenceSources } from './reference-sources.js';
 import { startSchedulerRuntime, type SchedulerRuntime } from './scheduler-runtime.js';
 import type { ChannelHandlers } from './dispatch.js';
-function paperGrossEdgeLowerBoundPct(profileId: string, database: Db): number | null {
-  return readProfitabilityEstimateEvidence(profileId, database)?.grossEdgeLowerBoundPct ?? null;
-}
 
 export interface RuntimeOptions extends Partial<Pick<Parameters<typeof createAdvisorHandlers>[0], 'secrets' | 'saveHistory' |
   'readClipboardText' | 'clearClipboardIfMatches'>> {
@@ -229,7 +227,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     onUnexpectedError: report, mlSignal, widerUniverse, breakout: createBreakoutRuntime({ profileId: options.profileId, database, clock, candleSource: historicalCandles, onUnexpectedError: report }),
     rangeRotation: createRangeRotationRuntime({ profileId: options.profileId, database, clock, onUnexpectedError: report }), marketSelector: createMarketSelectorRuntime({ profileId: options.profileId, database, clock, onUnexpectedError: report }), ...(options.secrets === undefined ? {} : { secrets: options.secrets }) });
 
-  const notifications = options.notifier === undefined
+  const overlayShadow = createOverlayShadowRuntime({ profileId: options.profileId, database, clock, http }); const notifications = options.notifier === undefined
     ? null
     : createAlertNotificationPump({
         alerts,
@@ -246,9 +244,10 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     market: paperMarket.view,
     state: () => ({
       holdings: paperHoldings,
-      killSwitchEngaged: resolveKillSwitch(options.profileId, database).engaged,
+      killSwitchEngaged: resolveKillSwitch(options.profileId, database).engaged ||
+        readStrategyHealth(options.profileId, PAPER_TRENDVOL_VERSION, database)?.state === 'paused',
       evidenceVerified: evidence.track().conversationEligible,
-      historicalGrossEdgeLowerBoundPct: paperGrossEdgeLowerBoundPct(options.profileId, database),
+      historicalGrossEdgeLowerBoundPct: paperGrossEdgeLowerBoundPct(options.profileId, database, clock.nowMs()),
     }),
     onUnexpectedError: report, executionOwnerId: hostId,
   });
@@ -259,7 +258,8 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       const policy = getAllocationPolicy(database);
       return policy.targets.length === 0 ? null : policy;
     },
-    historicalGrossEdgeLowerBoundPct: paperGrossEdgeLowerBoundPct(options.profileId, database),
+    historicalGrossEdgeLowerBoundPct: null,
+    eligibility: () => ({ strategyPaused: readStrategyHealth(options.profileId, PAPER_TRENDVOL_VERSION, database)?.state === 'paused', grossEdgeLowerBoundPct: paperGrossEdgeLowerBoundPct(options.profileId, database, clock.nowMs()) }),
     evidenceVerified: () => evidence.track().conversationEligible, executionOwnerId: hostId,
     captureEvidence: async (summary: Parameters<typeof captureScheduledForwardEvidence>[0]['summary']) => {
       await captureScheduledForwardEvidence({ profileId: options.profileId,
@@ -273,7 +273,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     if (disposed || scheduler !== null) return;
     if (!isAuthoritativeHost(options.profileId, hostId, database)) return;
     liveMarket.start(paperInstruments().map((instrument) => instrument.productId));
-    scheduler = startSchedulerRuntime({
+    scheduler = startSchedulerRuntime({ overlayShadow,
         database,
         clock,
         profileId: options.profileId, hostId, onUnexpectedError: report, research: researchHost,
@@ -291,7 +291,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   if (options.disableScheduler !== true) startScheduler();
   const exploratoryRuntime = createExploratoryPaperRuntime({ profileId: options.profileId,
     database, clock, market: paperMarket, campaigns: exploratoryCampaigns, run: paperRunDependencies });
-  const handlers: ChannelHandlers = {
+  const handlers: ChannelHandlers = { ...overlayShadow.handlers,
     ...createAlpacaPaperHandlers({ profileId: options.profileId, database, clock,
       onDisconnect: () => parallel.service.pauseForDisconnect(),
       ...(options.secrets === undefined ? {} : { secrets: options.secrets }) }),
