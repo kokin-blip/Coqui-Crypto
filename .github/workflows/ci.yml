@@ -66,6 +66,18 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # Electron downloads its binary lazily. Configure the shipped helper before
+      # launching Chromium so Ubuntu CI keeps sandboxing enabled.
+      - name: Configure Electron sandbox helper on Linux
+        if: runner.os == 'Linux'
+        working-directory: apps/desktop
+        shell: bash
+        run: |
+          node -e "require('electron')"
+          sandbox_helper="$(node -p 'require("node:path").join(require("node:path").dirname(require("electron")), "chrome-sandbox")')"
+          sudo chown root:root "$sandbox_helper"
+          sudo chmod 4755 "$sandbox_helper"
+
       - name: Boot Electron and round-trip a channel
         if: runner.os != 'Linux'
         run: pnpm smoke
