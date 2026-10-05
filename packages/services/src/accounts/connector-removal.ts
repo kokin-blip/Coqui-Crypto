@@ -1,4 +1,4 @@
-import { parseStoredCoinbaseCredentials, readConnectionSecret, removeConnectionSecret, type SecretStore } from '@coqui/adapters';
+import { parseStoredCoinbaseCredentials, parseStoredRobinhoodCryptoCredentials, readConnectionSecret, removeConnectionSecret, type SecretStore } from '@coqui/adapters';
 import { sha256Hex, type Clock } from '@coqui/core';
 import {
   connectionRemoval, getLatestConnectionAccountSnapshotV2, getLegacyProfileConnectionId,
@@ -18,9 +18,11 @@ export function connectorRemovalPreview(profileId: string, connectionId: string,
   if (busy) blockers.push('connection_operation_in_progress');
   if (db.prepare('SELECT 1 FROM wallet_schedule_lease WHERE profile_id=? AND leased_until>?').get(profileId,now) ||
     db.prepare('SELECT 1 FROM execution_leases_v1 WHERE profile_id=? AND leased_until>?').get(profileId,now)) blockers.push('execution_in_progress');
-  // These legacy executions do not always record an account. Fail closed at profile scope.
-  if (exists("SELECT 1 FROM paper_pending_executions_v1 WHERE profile_id=? AND status='submitted' LIMIT 1") ||
-    exists("SELECT 1 FROM paper_execution_proposals_v1 WHERE profile_id=? AND status IN ('approved','executing','unknown') LIMIT 1")) blockers.push('pending_or_unknown_execution');
+  // Legacy executions can omit account attribution. Keep their profile-wide
+  // guard, except for disconnected connectors that never supplied a snapshot.
+  const unusedDisconnected = connection.status === 'disconnected' && snapshot === null;
+  if (!unusedDisconnected && (exists("SELECT 1 FROM paper_pending_executions_v1 WHERE profile_id=? AND status='submitted' LIMIT 1") ||
+    exists("SELECT 1 FROM paper_execution_proposals_v1 WHERE profile_id=? AND status IN ('approved','executing','unknown') LIMIT 1"))) blockers.push('pending_or_unknown_execution');
   const exploratory = db.prepare(`SELECT state.status, campaign.source_portfolio_snapshot_id AS source
     FROM exploratory_paper_campaign_state_v1 state JOIN exploratory_paper_campaigns_v1 campaign
     ON campaign.campaign_id=state.campaign_id AND campaign.profile_id=state.profile_id
@@ -50,7 +52,6 @@ export class ConnectorRemovalService {
     const {profileId,database:db,clock,secrets,manifestStore}=this.input;
     const connection=getProfileConnectionV2(profileId,connectionId,db);
     if(connection===null)return failure('connection_not_found');
-    if(retire&&connection.provider!=='coinbase')return failure('removal_provider_unsupported');
     const prior=connectionRemoval(profileId,connectionId,db);
     if(retire&&prior?.state==='removed')return {ok:true as const,value:{connectionId,outcome:'removed' as const,historyPreserved:true as const}};
     if(!confirmed)return failure('confirmation_required');
@@ -89,6 +90,12 @@ export class ConnectorRemovalService {
           if(!saved.ok)return failure('removal_recovery_required');
         }
       }
+    } else {
+      const legacy = await secrets.read('robinhood-crypto-credentials',profileId);
+      if(!legacy.ok)return failure('removal_recovery_required');
+      const parsed=legacy.value===null?null:parseStoredRobinhoodCryptoCredentials(legacy.value);
+      if(parsed!==null&&sha256Hex(parsed.apiKey)===connection.credentialFingerprint &&
+        !(await secrets.remove('robinhood-crypto-credentials',profileId)).ok)return failure('removal_recovery_required');
     }
     saveProfileConnectionV2({...connection,status:'disconnected',updatedAtMs:clock.nowMs()},db);
     setConnectionRemoval(connection,commandId,retire?'removed':'reactivated',clock.nowMs(),db);

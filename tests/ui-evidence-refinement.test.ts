@@ -13,7 +13,7 @@ describe('evidence-first UI read models', () => {
     const proposal = savePaperExecutionProposal({ id: 'proposal-1', profileId: 'main', runId: 'run-1',
       revision: 1, proposalHash: 'a'.repeat(64), intentsJson: '[]', status: 'blocked',
       createdAt: 100, updatedAt: 100 }, database);
-    expect(getPaperProposalEvidence(proposal.id, database)).toEqual({ reasonCode: null, decisionId: null, evidenceId: null });
+    expect(getPaperProposalEvidence(proposal.id, database)).toEqual({ reasonCode: null, decisionId: null, evidenceId: null, waitingForBarCloseAtMs: null });
     const decisionId = strategyDecisionId('main', 100);
     saveStrategyDecision({ schemaVersion: 1, decisionId, profileId: 'main', runId: 'run-1', scheduledForMs: 100,
       strategy: { id: 'trendvol', version: 'paper-v1', configHash: sha256Hex('config') },
@@ -26,7 +26,7 @@ describe('evidence-first UI read models', () => {
     appendPaperExecutionEvent(proposal.id, 'main', 'prepared', 100, { reasonCode: 'risk_unassessed' }, database);
     appendPaperExecutionEvent(proposal.id, 'main', 'blocked', 101, { reasonCode: null }, database);
     expect(getPaperProposalEvidence(proposal.id, database)).toEqual({
-      reasonCode: 'risk_unassessed', decisionId, evidenceId: expect.stringMatching(/^[a-f0-9]{64}$/u),
+      reasonCode: 'risk_unassessed', decisionId, evidenceId: expect.stringMatching(/^[a-f0-9]{64}$/u), waitingForBarCloseAtMs: null,
     });
     database.close();
   });

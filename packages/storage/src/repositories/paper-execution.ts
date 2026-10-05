@@ -65,6 +65,7 @@ export function getPaperProposalEvidence(proposalId: string, database: Db): {
   readonly reasonCode: string | null;
   readonly decisionId: string | null;
   readonly evidenceId: string | null;
+  readonly waitingForBarCloseAtMs: number | null;
 } {
   const events = database.prepare(`SELECT id, detail_json FROM paper_execution_events_v1
     WHERE proposal_id = ? ORDER BY sequence DESC`).all(proposalId) as
@@ -79,10 +80,18 @@ export function getPaperProposalEvidence(proposalId: string, database: Db): {
       break;
     }
   }
+  const pending = database.prepare(`SELECT pending.required_bar_start
+    FROM paper_proposal_pending_context_v1 context
+    JOIN paper_execution_proposals_v1 proposal ON proposal.id=context.proposal_id
+    JOIN paper_pending_executions_v1 pending ON pending.decision_id=context.decision_id
+      AND pending.profile_id=proposal.profile_id
+    WHERE proposal.id=? AND pending.status='submitted'
+    ORDER BY pending.required_bar_start DESC LIMIT 1`).get(proposalId) as {required_bar_start:number}|undefined;
   return {
     reasonCode,
     decisionId: getPaperProposalPendingContext(proposalId, database)?.decisionId ?? null,
     evidenceId: reasonEventId ?? events[0]?.id ?? null,
+    waitingForBarCloseAtMs: pending === undefined ? null : pending.required_bar_start + 86_400_000,
   };
 }
 

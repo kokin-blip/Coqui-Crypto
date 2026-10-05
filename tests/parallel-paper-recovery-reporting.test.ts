@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { ParallelPaperEvent, ParallelPaperExperiment } from '../packages/storage/src/index.js';
 import { validateParallelPositions, parallelAttemptsResolved } from '../packages/services/src/paper/parallel-paper-recovery.js';
 import { reconcileParallelPaper } from '../packages/services/src/paper/parallel-paper-reconciliation.js';
+import { parallelPaperFailureDetail } from '../packages/services/src/paper/parallel-paper-utils.js';
 import { finalizeParallelSlots } from '../packages/services/src/paper/parallel-paper-slots.js';
 import { activeParallelEvents, supersedeUnsubmittedParallelPlans } from '../packages/services/src/paper/parallel-paper-plans.js';
 import { parallelReconciliationAttention } from '../packages/services/src/paper/parallel-paper-attention.js';
@@ -110,4 +111,15 @@ describe('definitive slot outcomes', () => {
     expect(history.filter((item) => item.kind === 'slot_finalized').map((item) => item.detail['outcome']))
       .toEqual(['paused', 'stale_quote', 'no_order']);
   });
+});
+
+it('retains exact position differences without granting order authority', async () => {
+  const history=filledHistory();
+  try { await validateParallelPositions({positions:async()=>[{symbol:'BTCUSD',qty:'0.999'}]} as never,history); throw new Error('expected mismatch'); }
+  catch(error){
+    const detail=parallelPaperFailureDetail(error,'unavailable');
+    expect(detail).toMatchObject({reason:'broker_positions_mismatch',operation:'positions',positionDifferences:[{symbol:'BTCUSD',expectedQty:'1',observedQty:'0.999',differenceQty:'-0.001'}]});
+    history.push(event('paused',{reason:'broker_positions_mismatch'}),event('reconciliation_error',detail));
+    expect(parallelReconciliationAttention(history,'paused')).toMatchObject({blocked:true,latestFailure:{positionDifferences:detail.positionDifferences}});
+  }
 });

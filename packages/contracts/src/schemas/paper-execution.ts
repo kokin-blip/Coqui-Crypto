@@ -35,6 +35,7 @@ const proposalSchema = z.strictObject({
   reasonCode: z.string().min(1).max(80).nullable(),
   decisionId: sha256HexSchema.nullable(),
   evidenceId: sha256HexSchema.nullable(),
+  waitingForBarCloseAtMs: epochMillisecondsSchema.nullable().optional(),
   actions: z.array(z.strictObject({
     productId: z.string().min(1).max(64),
     side: z.enum(['buy', 'sell']),

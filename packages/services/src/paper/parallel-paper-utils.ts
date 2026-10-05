@@ -35,12 +35,20 @@ export function parallelSafeOperation(operation: unknown): string {
   return typeof operation === 'string' && SAFE_OPERATIONS.has(operation) ? operation : 'unknown';
 }
 
+export interface PaperPositionDifference {
+  readonly symbol: string;
+  readonly expectedQty: string;
+  readonly observedQty: string;
+  readonly differenceQty: string;
+}
+
 export class ParallelReconciliationError extends Error {
-  constructor(reason: string, readonly operation: string, readonly failure?: AlpacaPaperError) { super(reason); }
+  constructor(reason: string, readonly operation: string, readonly failure?: AlpacaPaperError,
+    readonly positionDifferences: readonly PaperPositionDifference[] = []) { super(reason); }
 }
 
 export function parallelPaperFailureDetail(error: unknown, fallback: string):
-  { reason: string; operation?: string; httpStatus?: number; attemptCount?: number; elapsedMs?: number; budgetMs?: number | null; remainingMs?: number | null } {
+  { reason: string; operation?: string; httpStatus?: number; attemptCount?: number; elapsedMs?: number; budgetMs?: number | null; remainingMs?: number | null; positionDifferences?: readonly PaperPositionDifference[] } {
   if (error instanceof AlpacaPaperError) return {
     reason: error.code === 'deadline_exceeded' ? 'deadline_exceeded' : `alpaca_${error.code}`, operation: parallelSafeOperation(error.operation),
     attemptCount: error.attemptCount, elapsedMs: error.elapsedMs, budgetMs: error.budgetMs, remainingMs: error.remainingMs,
@@ -48,7 +56,8 @@ export function parallelPaperFailureDetail(error: unknown, fallback: string):
   };
   return { ...(error instanceof ParallelReconciliationError && error.failure ? parallelPaperFailureDetail(error.failure, fallback) : {}),
     reason: parallelSafeFailureReason(error, fallback),
-    ...(error instanceof ParallelReconciliationError ? { operation: parallelSafeOperation(error.operation) } : {}) };
+    ...(error instanceof ParallelReconciliationError ? { operation: parallelSafeOperation(error.operation),
+      ...(error.positionDifferences.length > 0 ? { positionDifferences: error.positionDifferences } : {}) } : {}) };
 }
 
 export function quantity(value: Decimal): string {

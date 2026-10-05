@@ -348,3 +348,25 @@ mismatches, truncated activity pages, restart gaps and cutoff recovery. They ver
 that operator reconciliation performs no broker writes and that each attempted
 client ID is submitted at most once. No connected account was changed or broker
 order submitted during this implementation.
+
+## Connector cleanup and execution diagnostics
+
+Removal is available for both Coinbase and Robinhood Crypto connectors. A
+never-synced, disconnected connector is not blocked by unrelated legacy paper
+proposals. Previously synced connectors retain the conservative execution guard;
+active synchronization, execution leases, and dependent campaigns still block
+cleanup. Removal excludes the connector from current holdings and Settings while
+preserving historical snapshots and evidence. Reconnecting the verified identity
+can restore it. Matching legacy credentials are cleaned up locally too.
+
+Local daily-simulation proposals now show the recorded execution bar's closing
+time instead of only “Executing.” Settlement still requires the completed bar,
+its source completion delay, and a successful refresh. No synthetic early fills
+are introduced.
+
+Alpaca position reconciliation reports exact recorded quantities, current broker
+quantities, and their differences. A complete activity read can still leave a
+residual when the broker has not reported enough fill/fee evidence to explain its
+positions. Such a residual remains blocked; retries do not invent fees, rewrite
+balances, or grant order authority. The displayed differences come from the
+latest reconciliation failure, not an older account valuation mark.

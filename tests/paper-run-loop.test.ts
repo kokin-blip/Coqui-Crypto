@@ -25,7 +25,7 @@ import {
   countPaperFills,
   getStrategyDecision,
   listPaperBalances,
-  listSubmittedPaperExecutions,
+  listSubmittedPaperExecutions, getPaperProposalEvidence,
   listDecisionEvidenceEvents,
   listWalletRunAudits,
   openDatabase,
@@ -277,6 +277,10 @@ describe('a trading run', () => {
     const decisionId = strategyDecisionId(PROFILE, T0 + DAY);
     expect(listSubmittedPaperExecutions(PROFILE, db).every((item) =>
       item.requiredExecutionBarStartMs > item.submittedAtMs)).toBe(true);
+    const proposal = db.prepare('SELECT id FROM paper_execution_proposals_v1 WHERE profile_id=? ORDER BY rowid DESC LIMIT 1').get(PROFILE) as {id:string};
+    const pending = listSubmittedPaperExecutions(PROFILE, db);
+    expect(getPaperProposalEvidence(proposal.id, db).waitingForBarCloseAtMs)
+      .toBe(Math.max(...pending.map(item=>item.requiredExecutionBarStartMs)) + DAY);
     const stored = getStrategyDecision(decisionId, db);
     expect(stored?.decision).toMatchObject({
       strategy: { id: 'trendvol', version: 'trendvol-paper-v2-unvalidated' },

@@ -22,6 +22,14 @@ export function ParallelPaperRecovery({ client, data }: {
       <div><dt>Last complete reconciliation</dt><dd>{attention.lastSuccessfulAtMs === null ? 'Not yet recorded' :
         <time dateTime={exactUtcTimestamp(attention.lastSuccessfulAtMs)}>{formatLocalTimestamp(attention.lastSuccessfulAtMs)}</time>}</dd></div>
     </dl>
+    {(failure?.positionDifferences?.length ?? 0) > 0 && <>
+      <p>Alpaca quantities differ from recorded fills minus reported crypto fees. Missing or delayed broker activities may explain a difference; Coqui keeps orders paused until the quantities match.</p>
+      <div className="table-scroll"><table aria-label="Paper position differences"><thead><tr>
+        <th>Asset</th><th>Recorded quantity</th><th>Alpaca quantity</th><th>Difference</th>
+      </tr></thead><tbody>{failure!.positionDifferences!.map(row => <tr key={row.symbol}>
+        <td>{row.symbol}</td><td>{row.expectedQty}</td><td>{row.observedQty}</td><td>{row.differenceQty}</td>
+      </tr>)}</tbody></table></div>
+    </>}
     {attention.unresolvedOrders.length > 0 && <details open><summary>Orders requiring reconciliation</summary>
       <ul>{attention.unresolvedOrders.map((order) => <li key={order.clientOrderId}>Client order ID <code>{order.clientOrderId}</code>
         {order.orderId !== null && <> · Alpaca order ID <code>{order.orderId}</code></>}</li>)}</ul>

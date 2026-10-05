@@ -39,7 +39,7 @@ function ConnectionRow({ client, connection }: { readonly client: CoquiClient; r
           <Unplug aria-hidden="true" size={15} />Disconnect
         </button>
       </div>
-      {(connection.provider === 'coinbase' || connection.removalState === 'pending') && <button type="button" className="button-quiet button-disconnect" disabled={sync.state.kind === 'pending'} onClick={event => { opener.current = event.currentTarget; setAction(connection.provider === 'coinbase' ? 'remove' : 'disconnect'); }}>{connection.removalState === 'pending' ? 'Recover removal' : 'Remove connector'}</button>}
+      <button type="button" className="button-quiet button-disconnect" disabled={sync.state.kind === 'pending'} onClick={event => { opener.current = event.currentTarget; setAction('remove'); }}>{connection.removalState === 'pending' ? 'Recover removal' : 'Remove connector'}</button>
       {connection.removalState === 'pending' && <SurfaceState kind="blocked" title="Removal needs recovery" detail="Balances and routing are excluded. Recover removal to finish local credential cleanup." compact />}
       <WalletNicknames client={client} connectionId={connection.id} />
       {action !== null && <ConnectorRemovalDialog client={client} connectionId={connection.id} action={action} returnFocus={opener.current} onClose={() => setAction(null)} />}

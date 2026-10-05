@@ -125,3 +125,41 @@ it('persists interrupted cleanup across closing and reopening the profile databa
     const recovery=new ConnectorRemovalService({profileId:'main',database:reopened,clock,secrets});expect(await recovery.remove(a.id,'restart-recovery',connectorRemovalPreview('main',a.id,100,reopened)!.revision,true)).toMatchObject({ok:true});
   }finally{reopened.close();rmSync(root,{recursive:true,force:true});}
 });
+
+ it('retires unused disconnected connectors for both providers despite unrelated pending proposals', async () => {
+  const db=openDatabase(':memory:'); const secrets=createMemorySecretStore();
+  const {savePaperExecutionProposal}=await import('../packages/storage/src/index.js');
+  savePaperExecutionProposal({id:'unrelated',profileId:'main',runId:'run',revision:1,proposalHash:sha256Hex('proposal'),intentsJson:'[]',status:'unknown',createdAt:1,updatedAt:1},db);
+  const service=new ConnectorRemovalService({profileId:'main',database:db,clock:new FixedClock(20),secrets});
+  for(const provider of ['coinbase','robinhood_crypto'] as const){
+    const c={...profileConnectionV2('main',provider,sha256Hex(provider),10),status:'disconnected' as const};
+    saveProfileConnectionV2(c,db);
+    await writeConnectionSecret(secrets,{profileId:'main',connectionId:c.id,provider,credentialType:'api_credentials',schemaVersion:2},'fixture-only');
+    const preview=connectorRemovalPreview('main',c.id,20,db)!;
+    expect(preview).toMatchObject({eligible:true,retainedSnapshots:0});
+    expect(await service.remove(c.id,'remove-'+provider,preview.revision,true)).toMatchObject({ok:true,value:{outcome:'removed'}});
+    expect(connectionRemoval('main',c.id,db)?.state).toBe('removed');
+    expect(await readConnectionSecret(secrets,{profileId:'main',connectionId:c.id,provider,credentialType:'api_credentials',schemaVersion:2})).toEqual({ok:true,value:null});
+  }
+  db.close();
+ });
+ it('keeps pending execution blocking previously synced disconnected connectors', async () => {
+   const {db,a}=await fixture();
+   const {savePaperExecutionProposal}=await import('../packages/storage/src/index.js');
+   saveProfileConnectionV2({...a,status:'disconnected'},db);
+   savePaperExecutionProposal({id:'pending',profileId:'main',runId:'run',revision:1,proposalHash:sha256Hex('pending'),intentsJson:'[]',status:'unknown',createdAt:1,updatedAt:1},db);
+   expect(connectorRemovalPreview('main',a.id,100,db)!.blockers).toContain('pending_or_unknown_execution');
+   db.close();
+ });
+
+it('removes only matching legacy Robinhood credentials', async () => {
+  const db=openDatabase(':memory:'); const secrets=createMemorySecretStore();
+  const key='synthetic-robinhood-key';
+  const c={...profileConnectionV2('main','robinhood_crypto',sha256Hex(key),10),status:'disconnected' as const};
+  saveProfileConnectionV2(c,db);
+  const service=new ConnectorRemovalService({profileId:'main',database:db,clock:new FixedClock(20),secrets});
+  await secrets.write('robinhood-crypto-credentials',JSON.stringify({apiKey:key,privateKeyBase64:Buffer.alloc(32,1).toString('base64')}),'main');
+  expect(await service.remove(c.id,'legacy-robinhood',connectorRemovalPreview('main',c.id,20,db)!.revision,true)).toMatchObject({ok:true});
+  expect(await secrets.read('robinhood-crypto-credentials','main')).toEqual({ok:true,value:null});
+  db.close();
+});

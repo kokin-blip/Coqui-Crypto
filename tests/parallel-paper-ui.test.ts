@@ -172,3 +172,30 @@ describe('Alpaca paper activity panel', () => {
     expect(populated).toContain('1 bid / 1 ask levels');
   });
 });
+
+it('shows exact broker quantity differences in recovery while retaining the pause', async () => {
+  // @ts-expect-error TS6142: the root test compiler intentionally omits JSX support.
+  const {ParallelPaperRecovery}=await import('../apps/desktop/src/renderer/app/ParallelPaperRecovery.js');
+  const html=server.renderToStaticMarkup(react.createElement(ParallelPaperRecovery,{client:{},data:{
+    reconciliationAttention:{blocked:true,lastSuccessfulAtMs:null,unresolvedOrders:[],latestFailure:{atMs:Date.now(),operation:'positions',reason:'broker_positions_mismatch',httpStatus:null,attemptCount:null,remainingMs:null,
+      positionDifferences:[{symbol:'BTCUSD',expectedQty:'1',observedQty:'0.999',differenceQty:'-0.001'}]}}
+  }}));
+  expect(html).toContain('Paper position differences');
+  expect(html).toContain('0.999');expect(html).toContain('-0.001');
+  expect(html).toContain('Coqui keeps orders paused until the quantities match');
+});
+
+it('labels a submitted local simulation as waiting for its execution bar rather than executing', async () => {
+  // @ts-expect-error TS6142: the root test compiler intentionally omits JSX support.
+  const {PaperTrading}=await import('../apps/desktop/src/renderer/app/PaperTrading.js');
+  mocked.commandState={kind:'idle'};
+  mocked.channels['paper.execution.proposals']={kind:'ready',value:{proposals:[{
+    id:'waiting',runId:'run',revision:1,proposalHash:'a'.repeat(64),status:'executing',createdAt:1,updatedAt:1,
+    reasonCode:null,decisionId:null,evidenceId:null,review:null,actions:[],waitingForBarCloseAtMs:Date.parse('2026-10-07T00:00:00Z')
+  }]}};
+  const html=server.renderToStaticMarkup(react.createElement(PaperTrading,{client:{},route:'paper/orders'}));
+  expect(html).toContain('Waiting for daily bar');
+  expect(html).toContain('Local daily simulation');
+  expect(html).toContain('2026-10-07T00:00:00.000Z');
+  expect(html).toContain('Coqui must refresh that bar before recording a fill');
+});

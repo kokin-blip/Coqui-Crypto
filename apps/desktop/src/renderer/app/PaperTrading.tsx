@@ -83,8 +83,11 @@ export function PaperTrading({
             `${action.side.toUpperCase()} ${action.productId} · ${formatUsd(action.amountUsd)?.text ?? `${action.amountUsd} USD`}`).join('  |  ')}</span>}
           {proposal.status === 'blocked' && <span className="proposal-block-reason">Reason: {proposal.reasonCode?.replaceAll('_', ' ') ?? 'not recorded for this proposal'}</span>}
           {proposal.status === 'unknown' && <span className="proposal-unknown-note">Outcome unknown · reconcile before retrying.</span>}
+          {proposal.status === 'executing' && proposal.waitingForBarCloseAtMs != null && <span className="proposal-unknown-note">
+            Local daily simulation · waiting for a completed execution bar after <time dateTime={exactUtcTimestamp(proposal.waitingForBarCloseAtMs)} title={exactUtcTimestamp(proposal.waitingForBarCloseAtMs)}>{formatLocalTimestamp(proposal.waitingForBarCloseAtMs)}</time>. Coqui must refresh that bar before recording a fill.
+          </span>}
         </div>
-        <span className={`status-text status-${proposal.status}`}>{statusLabel(proposal.status)}</span>
+        <span className={`status-text status-${proposal.status}`}>{proposal.status === 'executing' && proposal.waitingForBarCloseAtMs != null ? 'Waiting for daily bar' : statusLabel(proposal.status)}</span>
         {proposal.status === 'pending_review' && <PaperProposalReview client={client} proposal={proposal} />}
         {(proposal.status === 'blocked' || proposal.status === 'failed' || proposal.status === 'unknown') &&
           <details className="proposal-evidence"><summary>Inspect proposal evidence</summary>

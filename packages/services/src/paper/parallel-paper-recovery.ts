@@ -2,7 +2,7 @@ import { childRequestDeadline, withinDeadline, type RequestDeadline, type create
 import { Decimal } from 'decimal.js';
 import type { ParallelPaperEvent, ParallelPaperExperiment } from '@coqui/storage';
 import type { ParallelPaperDependencies } from './parallel-paper-service.js';
-import { ParallelReconciliationError } from './parallel-paper-utils.js';
+import { ParallelReconciliationError, type PaperPositionDifference } from './parallel-paper-utils.js';
 import type { PaperDecisionPreparation } from './runtime-model.js';
 
 export function parallelAttemptsResolved(events: readonly ParallelPaperEvent[]): boolean {
@@ -58,15 +58,21 @@ export async function validateParallelPositions(client: ReturnType<typeof create
     }
   } catch { throw new ParallelReconciliationError('broker_positions_mismatch', 'positions'); }
   const positions = await client.positions();
+  const differences: PaperPositionDifference[] = [];
+  const compare = (symbol: string, observed: Decimal, recorded: Decimal) => {
+    if (!observed.eq(recorded)) differences.push({ symbol, expectedQty: recorded.toString(),
+      observedQty: observed.toString(), differenceQty: observed.minus(recorded).toString() });
+  };
   try {
     const seen = new Set<string>();
     for (const position of positions) {
       const symbol = symbolKey(position.symbol), qty = new Decimal(position.qty);
-      if (seen.has(symbol) || !qty.isFinite() || qty.lt(0)) throw new Error('invalid_position');
+      if (!symbol || symbol.length > 128 || seen.has(symbol) || !qty.isFinite() || qty.lt(0)) throw new Error('invalid_position');
       seen.add(symbol);
-      if (!qty.eq(expected.get(symbol) ?? 0)) throw new Error('residual');
+      compare(symbol, qty, expected.get(symbol) ?? new Decimal(0));
       expected.delete(symbol);
     }
-    if ([...expected.values()].some((qty) => !qty.isZero())) throw new Error('missing_position');
+    for (const [symbol, qty] of expected) compare(symbol, new Decimal(0), qty);
   } catch { throw new ParallelReconciliationError('broker_positions_mismatch', 'positions'); }
+  if (differences.length > 0) throw new ParallelReconciliationError('broker_positions_mismatch', 'positions', undefined, differences.slice(0, 100));
 }
