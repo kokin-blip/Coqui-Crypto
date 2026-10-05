@@ -8,4 +8,3 @@ export function nearestBar(bars: readonly WorkstationBar[], timeMs: number): Wor
   return next === undefined ? previous ?? null : previous === undefined ||
     Math.abs(next.startTimeMs - timeMs) < Math.abs(previous.startTimeMs - timeMs) ? next : previous;
 }
-
