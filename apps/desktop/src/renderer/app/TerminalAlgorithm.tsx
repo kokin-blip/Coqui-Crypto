@@ -1,3 +1,4 @@
+import { CurrentlyWatching, SharedEvaluations, type TerminalActivityState } from './TerminalActivity.js';
 import { useRef } from 'react';
 import { X } from 'lucide-react';
 import type { CoquiClient } from '@coqui/contracts';
@@ -27,9 +28,9 @@ function Decision({ client, id, asset }: { readonly client: CoquiClient; readonl
   </dl><details className="terminal-decision-detail"><summary>Targets & recorded evidence</summary><ul>{decision.targets.map((target) => <li key={target.assetId}>{target.assetId} · {(target.weight * 100).toFixed(2)}%</li>)}</ul><small>Decision {decision.decisionId}<br />Market as of {decision.market.asOfMs === null ? 'Unavailable' : formatLocalTimestamp(decision.market.asOfMs)} · {decision.market.freshness}</small></details></>;
 }
 
-export function TerminalAlgorithm({ client, productId }: { readonly client: CoquiClient; readonly productId: string }): React.JSX.Element {
+export function TerminalAlgorithm({ client, productId, activity }: { readonly client: CoquiClient; readonly productId: string; readonly activity?: TerminalActivityState | undefined }): React.JSX.Element {
   const asset = productId.split('-')[0]!;
-  const timeline = useChannel(client, 'decision.timeline', { assetScope: asset, asOfMs: null, limit: 1 });
+  const timeline = useChannel(client, 'decision.timeline', { assetScope: asset, asOfMs: null, limit: 1 }, activity === undefined);
   const risk = useChannel(client, 'risk.dashboard', {});
   const gate = useChannel(client, 'risk.evidence-gate', {});
   const portfolio = useChannel(client, 'portfolio.current', {});
@@ -40,10 +41,11 @@ export function TerminalAlgorithm({ client, productId }: { readonly client: Coqu
   const primary = exploratory.kind === 'ready' && exploratory.value?.primary === true ? exploratory.value : null;
   const money = (v: string | null | undefined): string => v === null || v === undefined ? 'Unavailable' : formatUsd(v)?.text ?? v;
   return <div className="terminal-algorithm-content">
-    <section className="terminal-panel"><header>Algorithm <span className="terminal-secondary">{asset} / recorded evidence</span></header>
+    <section className="terminal-panel"><header>Currently Watching <span className="terminal-secondary">{asset} / recorded evidence</span></header>
       {primary !== null && <dl><TerminalMetric label="Primary simulation">{primary.campaign.strategyId}</TerminalMetric><TerminalMetric label="Campaign status">{primary.status} · exploratory / unvalidated</TerminalMetric><TerminalMetric label="Valuation">{primary.valuationStatus}</TerminalMetric></dl>}
+      {activity !== undefined ? <><CurrentlyWatching state={activity.summary} /><SharedEvaluations client={client} productId={productId} enabled={activity.shared} /></> : <>
       <ChannelNotice state={timeline} label="Decision timeline" />
-      {latestId !== undefined ? <Decision key={latestId} client={client} id={latestId} asset={asset} /> : timeline.kind === 'ready' && <p className="terminal-empty">No recorded evaluation for {asset}.</p>}
+      {latestId !== undefined ? <Decision key={latestId} client={client} id={latestId} asset={asset} /> : timeline.kind === 'ready' && <p className="terminal-empty">No recorded evaluation for {asset}.</p>}</>}
     </section>
     <section className="terminal-panel"><header>Evidence & Risk <a href="#/risk">Inspect →</a></header>
       <ChannelNotice state={risk} label="Risk" /><ChannelNotice state={gate} label="Evidence gate" />
@@ -62,18 +64,19 @@ export function TerminalAlgorithm({ client, productId }: { readonly client: Coqu
         <TerminalMetric label="Paper cash">{money(primary === null ? paper.kind === 'ready' ? paper.value.cashUsd : null : primary.balances.find((balance) => balance.exposureKey === 'USD')?.valueUsd)}</TerminalMetric>
         {primary !== null && <TerminalMetric label="After-cost return">{primary.paperReturnPct === null ? 'Unavailable' : `${primary.paperReturnPct.toFixed(2)}%`}</TerminalMetric>}
         <TerminalMetric label={primary === null ? "Max paper drawdown" : "Paper drawdown"}>{primary !== null ? primary.drawdownPct === null ? 'Unavailable' : `${primary.drawdownPct.toFixed(2)}%` : performance.kind === 'ready' ? `${performance.value.metrics.maxDrawdownPct}%` : 'Unavailable'}</TerminalMetric>
-      </dl><p className="terminal-footnote">Connected accounts: read-only · Paper: simulated · Performance after costs</p>
+      </dl><p className="terminal-footnote">Active profile totals · Connected accounts: read-only · Paper: simulated · Performance after costs</p>
     </section>
   </div>;
 }
 
-export function TerminalAlgorithmDrawer({ client, productId, onClose }: {
+export function TerminalAlgorithmDrawer({ client, productId, onClose, activity }: {
+  readonly activity?: TerminalActivityState | undefined;
   readonly client: CoquiClient; readonly productId: string; readonly onClose: () => void;
 }): React.JSX.Element {
   const ref = useRef<HTMLDivElement>(null);
   useDialogFocus(ref, onClose);
   return <div className="terminal-drawer-backdrop" onClick={onClose}><div ref={ref} className="terminal-drawer" role="dialog" aria-modal="true" aria-labelledby="terminal-drawer-title" tabIndex={-1} onClick={(event) => event.stopPropagation()}>
     <header><h2 id="terminal-drawer-title">Algorithm & evidence</h2><button type="button" aria-label="Close algorithm drawer" onClick={onClose}><X size={18} /></button></header>
-    <TerminalAlgorithm client={client} productId={productId} />
+    <TerminalAlgorithm client={client} productId={productId} activity={activity} />
   </div></div>;
 }

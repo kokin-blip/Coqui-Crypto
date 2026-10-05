@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { join } from 'node:path';
 
-import { SystemClock } from '@coqui/core';
+import { profileConnectionV2, sha256Hex, SystemClock } from '@coqui/core';
 import {
   AccountsProfileService,
   CoinbaseConnectionService,
@@ -13,8 +13,9 @@ import {
   type AccountProfileView,
   type PreparedProfileContext,
 } from '@coqui/services';
-import { createFilePersonIdentityStore, createFileProfileManifestStore } from '@coqui/storage';
+import { createFileWalletNicknameStore, saveVerifiedWalletIdentity, listVerifiedWalletIdentities, getProfileConnectionV2, saveProfileConnectionV2, connectionRemoval, setConnectionRemoval, readDetachedProfileDecision, createFilePersonIdentityStore, createFileProfileManifestStore } from '@coqui/storage';
 
+import { activityWatching } from './trading-activity-handlers.js';
 import { createRuntime, type CoquiRuntime, type RuntimeOptions } from './composition.js';
 import type { ChannelHandlers, ServiceResult } from './dispatch.js';
 import { createProfileDatabaseProvisioner } from './profile-contexts.js';
@@ -63,11 +64,15 @@ export function createRuntimeProfileController(
     clock,
   );
   const profileOperationGate = createProfileOperationGate();
+  const nicknameStore=createFileWalletNicknameStore(join(options.dataDirectory,'wallet-nicknames.json'));
+  const accountMetadata={operationGate:profileOperationGate,nicknameStore,manifestStore};
   let current: CoquiRuntime | null = null;
+  let legacyVerifiedIdentity: {profileId:string;fingerprint:string;portfolioUuid:string}|null=null;
 
   const createCandidate = (profileId: string, databaseFilename: string): CoquiRuntime =>
     createRuntime({
       ...options.runtime,
+      ...accountMetadata,
       ...(options.coinbaseVerifier === undefined ? {} : { coinbaseVerifier: options.coinbaseVerifier }),
       databasePath: join(options.dataDirectory, databaseFilename),
       profileId,
@@ -122,7 +127,15 @@ export function createRuntimeProfileController(
         clock,
         manifestStore,
         secretStore: options.runtime.secrets,
-        verifier: options.coinbaseVerifier ?? createCoinbaseViewOnlyVerifier(),
+        verifier: {async verify(credentials,signal) {
+          const result=await (options.coinbaseVerifier??createCoinbaseViewOnlyVerifier()).verify(credentials,signal);
+          if(!result.ok||current===null)return result;
+          const loaded=manifestStore.read();if(!loaded.ok||loaded.value===null)return {ok:false as const,reasonCode:'unexpected_failure' as const};
+          const id=profileConnectionV2(loaded.value.manifest.activeProfileId,'coinbase',sha256Hex(credentials.keyName),clock.nowMs()).id;
+          if(listVerifiedWalletIdentities(loaded.value.manifest.activeProfileId,current.database).some(w=>w.connection_id===id&&w.identity_hash!==sha256Hex(result.portfolioUuid.trim().toLowerCase())))return {ok:false as const,reasonCode:'invalid_portfolio_identity' as const};
+          legacyVerifiedIdentity={profileId:loaded.value.manifest.activeProfileId,fingerprint:sha256Hex(credentials.keyName),portfolioUuid:result.portfolioUuid};
+          return result;
+        }},
         operationGate: profileOperationGate,
       });
 
@@ -136,6 +149,7 @@ export function createRuntimeProfileController(
   if (initial === undefined) throw new Error('Active profile is absent from manifest.');
   current = createRuntime({
     ...options.runtime,
+    ...accountMetadata,
     ...(options.coinbaseVerifier === undefined ? {} : { coinbaseVerifier: options.coinbaseVerifier }),
     databasePath: join(options.dataDirectory, initial.dbFilename),
     profileId: initial.id,
@@ -154,7 +168,36 @@ export function createRuntimeProfileController(
     personOutcomes.set(commandId, result);
     return result;
   };
+  function publishLegacyConnection():void {
+    if(current===null)return;
+    const snapshot=manifestStore.read();if(!snapshot.ok||snapshot.value===null)return;
+    const record=snapshot.value.manifest.profiles.find(p=>p.id===snapshot.value!.manifest.activeProfileId);
+    if(record?.coinbaseKeyFingerprint===undefined)return;
+    const candidate=profileConnectionV2(record.id,'coinbase',record.coinbaseKeyFingerprint,clock.nowMs());
+    const prior=getProfileConnectionV2(record.id,candidate.id,current.database);
+    const connection=prior===null?candidate:{...prior,status:'active' as const,updatedAtMs:clock.nowMs()};
+    saveProfileConnectionV2(connection,current.database);
+    if(legacyVerifiedIdentity?.profileId===record.id&&legacyVerifiedIdentity.fingerprint===record.coinbaseKeyFingerprint)saveVerifiedWalletIdentity(connection,'portfolio',legacyVerifiedIdentity.portfolioUuid,clock.nowMs(),current.database);
+    legacyVerifiedIdentity=null;
+    if(connectionRemoval(record.id,connection.id,current.database)!==null)setConnectionRemoval(connection,'legacy-connect','reactivated',clock.nowMs(),current.database);
+  }
   const globalHandlers: ChannelHandlers = {
+    'trading.activity.shared': (payload: { readonly productId: string; readonly limit: number }) => {
+      if (!profileOperationGate.begin()) return serviceFailure('profile_operation_in_progress');
+      try {
+        const loaded = manifestStore.read();
+        if (!loaded.ok || loaded.value === null) return serviceFailure('profile_store_unavailable');
+        const items = []; const unavailableProfiles: string[] = [];
+        for (const record of loaded.value.manifest.profiles.filter(p => p.id !== loaded.value?.manifest.activeProfileId).slice(0, payload.limit)) {
+          try {
+            const detail = readDetachedProfileDecision(options.dataDirectory, record.id, record.dbFilename, payload.productId.replace(/-USD$/, ''));
+            const watching = activityWatching(detail, payload.productId, true);
+            if (watching !== null) items.push({ profileId: record.id, profileName: record.name, watching, contextOnly: true as const });
+          } catch { unavailableProfiles.push(record.id); }
+        }
+        return { ok: true, value: { items, unavailableProfiles, asOfMs: clock.nowMs() } };
+      } finally { profileOperationGate.end(); }
+    },
     'app.person': () => person.status(),
     'app.person.set': (payload: { readonly commandId: string; readonly displayName: string }) =>
       personCommand(payload.commandId, () => person.setDisplayName(payload.displayName)),
@@ -194,6 +237,7 @@ export function createRuntimeProfileController(
             privateKey: payload.privateKey,
           })
         : serviceFailure('profile_store_unavailable');
+      if(result.ok)publishLegacyConnection();
       coinbaseOutcomes.set(payload.commandId, result);
       return result;
     },
@@ -208,19 +252,24 @@ export function createRuntimeProfileController(
       const result = active.ok && active.value !== null
         ? await coinbaseConnection.connectJson(active.value.id, payload.contents)
         : serviceFailure('profile_store_unavailable');
+      if(result.ok)publishLegacyConnection();
       coinbaseOutcomes.set(payload.commandId, result);
       return result;
     },
-    'accounts.coinbase.disconnect': async (payload: { readonly commandId: string }) => {
-      if (coinbaseConnection === null) return serviceFailure('secret_store_unavailable');
-      const active = profiles.active();
-      const prior = coinbaseOutcomes.get(payload.commandId);
-      if (prior !== undefined) return prior;
-      const result = active.ok && active.value !== null
-        ? await coinbaseConnection.disconnect(active.value.id)
-        : serviceFailure('profile_store_unavailable');
-      coinbaseOutcomes.set(payload.commandId, result);
-      return result;
+    'accounts.coinbase.disconnect': async (payload: {readonly commandId:string}) => {
+      if(coinbaseConnection===null||current===null)return serviceFailure('secret_store_unavailable');
+      const active=profiles.active();if(!active.ok||active.value===null)return serviceFailure('profile_store_unavailable');
+      const loaded=manifestStore.read();if(!loaded.ok||loaded.value===null)return serviceFailure('profile_store_unavailable');
+      const record=loaded.value.manifest.profiles.find(p=>p.id===active.value!.id);
+      if(record?.coinbaseKeyFingerprint!==undefined){
+        const candidate=profileConnectionV2(record.id,'coinbase',record.coinbaseKeyFingerprint,clock.nowMs());
+        if(getProfileConnectionV2(record.id,candidate.id,current.database)===null)saveProfileConnectionV2(candidate,current.database);
+        const disconnect=current.handlers['connections.disconnect'];
+        const result=await disconnect!({commandId:payload.commandId,connectionId:candidate.id} as never);
+        if(!result.ok)return result;
+        return coinbaseConnection.status(record.id);
+      }
+      return coinbaseConnection.disconnect(active.value.id);
     },
     'accounts.profiles': () => {
       const listed = profiles.list();

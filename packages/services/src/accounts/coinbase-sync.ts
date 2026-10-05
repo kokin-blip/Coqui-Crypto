@@ -1,3 +1,5 @@
+import { profileConnectionV2 } from '@coqui/core';
+import { connectionRemoval } from '@coqui/storage';
 import {
   createCoinbaseReadHttpClient,
   fetchCoinbaseAccountEvidence,
@@ -173,6 +175,9 @@ export class CoinbaseAccountSyncService {
     if (credentials === null || !validateCoinbaseCredentials(credentials).ok) {
       return freeze({ ok: false, code: 'credentials_invalid' });
     }
+    const connection=profileConnectionV2(profileId,'coinbase',sha256Hex(credentials.keyName),requested);
+    const retired=()=>{const r=connectionRemoval(profileId,connection.id,this.#database);return r!==null&&r.state!=='reactivated';};
+    if(retired())return freeze({ok:false,code:'credentials_unavailable'});
     let acquired: CoinbaseEvidenceAcquisitionResult;
     try {
       acquired = await this.#acquirer.acquire(credentials, signal);
@@ -181,6 +186,7 @@ export class CoinbaseAccountSyncService {
         ? 'cancelled' : 'unexpected_failure' });
     }
     if (!acquired.ok) return freeze({ ok: false, code: acquisitionFailure(acquired) });
+    if(retired())return freeze({ok:false,code:'credentials_unavailable'});
     const transactions = acquired.value.transactions ?? [];
     const transactionPageCount = acquired.value.transactionPageCount ?? 0;
     const feeTier = acquired.value.feeTier ?? null;

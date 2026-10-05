@@ -1,6 +1,7 @@
 import { overlayShadowChannelSchemas } from './schemas/overlay-shadow.js';
 import * as z from 'zod';
 
+import { tradingActivityChannelSchemas } from './schemas/trading-activity.js';
 import { activityChannelSchemas } from './schemas/activity.js';
 import { alpacaPaperChannelSchemas } from './schemas/alpaca-paper.js';
 import { appChannelSchemas } from './schemas/app.js';
@@ -38,6 +39,7 @@ import type { ContractSchema, DeepReadonly } from './messages.js';
 export const CHANNEL_SCHEMAS = {
   ...overlayShadowChannelSchemas,
   ...activityChannelSchemas,
+  ...tradingActivityChannelSchemas,
   ...alpacaPaperChannelSchemas,
   ...appChannelSchemas,
   ...chartExtensionChannelSchemas,
@@ -117,6 +119,8 @@ const WRITE_CHANNELS = [
   'connections.robinhood.keypair.begin',
   'connections.robinhood.keypair.complete',
   'connections.robinhood.keypair.cancel',
+  'connections.remove',
+  'wallets.nickname.set',
   'connections.rename',
   'connections.disconnect',
   'connections.sync',

@@ -4,6 +4,7 @@ import { formatApproxUsd, formatUsd } from '../packages/ui-kit/src/format.js';
 import { sha256Hex, strategyDecisionId } from '../packages/core/src/index.js';
 import { appendPaperExecutionEvent, getPaperProposalEvidence, openDatabase,
   savePaperExecutionProposal, savePaperProposalPendingContext, saveStrategyDecision } from '../packages/storage/src/index.js';
+import { chartPaperAnnotations } from '../apps/desktop/src/renderer/app/chart-paper-annotations.js';
 import { groupChartEvidence } from '../apps/desktop/src/renderer/app/chart-evidence-groups.js';
 
 describe('evidence-first UI read models', () => {
@@ -36,6 +37,18 @@ describe('evidence-first UI read models', () => {
     expect(formatApproxUsd('-1.005')).toBe('≈−$1.01');
     expect(formatApproxUsd('999.999')).toBe('≈$1,000.00');
     expect(formatApproxUsd('not-a-number')).toBeNull();
+  });
+
+  it('anchors pending paper intent to its recorded reference price and timestamp', () => {
+    const result = chartPaperAnnotations(undefined, [{ id: 'pending', atMs: 123, priceUsd: '84210.25', side: 'buy', amountUsd: '26.34', status: 'executing' }]);
+    expect(result.markers[0]).toMatchObject({ timeMs: 123, priceUsd: '84210.25', label: 'Buy intent · 26.34 USD · executing · reference price' });
+    expect(result.notes).toEqual([]);
+  });
+
+  it('does not invent plot coordinates for an unknown entry or unpriced pending action', () => {
+    const result = chartPaperAnnotations({ productId: 'BTC-USD', quantity: '0.1', entryAtMs: null, averageEntryUsd: null, unrealizedPnlUsd: null, valuation: 'partial', status: 'holding' }, [{ id: 'pending', atMs: 123, priceUsd: null, side: 'buy', amountUsd: '26.34', status: 'executing' }]);
+    expect(result.markers).toEqual([]);
+    expect(result.notes).toEqual([expect.stringContaining('no recorded reference price'), expect.stringContaining('entry coordinates unavailable')]);
   });
 
   it('renders one marker per bar without losing individual chart events', () => {

@@ -23,7 +23,7 @@ describe('responsive Markets workspace', () => {
   });
 
   it('offers recovery instead of leaving an inert empty chart', () => {
-    const markets = read('apps/desktop/src/renderer/app/AdvancedMarkets.tsx');
+    const markets = read('apps/desktop/src/renderer/app/MarketChartTile.tsx');
     expect(markets).toContain('Refresh history');
     expect(markets).toContain('Open connections');
     expect(markets).toContain("queryKey: ['market-data.display-bars']");

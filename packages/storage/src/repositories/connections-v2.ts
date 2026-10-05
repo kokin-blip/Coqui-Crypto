@@ -153,7 +153,7 @@ export function getConnectionAccountSnapshotV2(profileId: string, id: string, da
   return row === undefined ? null : snapshotFromJson(row.content_json);
 }
 
-export function saveUnifiedPortfolioSnapshotV2(value: UnifiedPortfolioSnapshotV2, database: Db): void {
+export function saveUnifiedPortfolioSnapshotV2(value: UnifiedPortfolioSnapshotV2, database: Db, recordValuation = true): void {
   if (unifiedPortfolioSnapshotV2Hash(value) !== value.contentHash ||
       value.id !== sha256Hex(`unified-portfolio-snapshot-v2:${value.contentHash}`)) throw new TypeError('Invalid unified snapshot v2.');
   const json = canonicalJson(value as unknown as CanonicalJsonValue);
@@ -170,7 +170,7 @@ export function saveUnifiedPortfolioSnapshotV2(value: UnifiedPortfolioSnapshotV2
     const link = database.prepare(`INSERT INTO unified_portfolio_snapshot_sources_v2
       (unified_snapshot_id, connection_snapshot_id) VALUES (?, ?)`);
     for (const id of value.connectionSnapshotIds) link.run(value.id, id);
-    if (value.complete && value.totalValueUsd !== null) {
+    if (recordValuation && value.complete && value.totalValueUsd !== null) {
       nonNegativeDecimal(value.totalValueUsd);
       const hash = connectionV2Hash({ profileId: value.profileId, unifiedSnapshotId: value.id,
         observedAtMs: value.asOfMs, totalValueUsd: value.totalValueUsd });

@@ -49,13 +49,15 @@ export function useChannel<TChannel extends ChannelName>(
   client: CoquiClient,
   channel: TChannel,
   payload: ChannelRequest<TChannel>,
+  enabled = true,
 ): ChannelState<ChannelResponse<TChannel>> {
   const policy = CHANNEL_POLICIES[channel];
   const key = useMemo(() => [channel, payload] as const, [channel, payload]);
 
   const query = useQuery<Outcome<ChannelResponse<TChannel>>, Error>({
     queryKey: key,
-    queryFn: () => client.query(channel, payload),
+    enabled,
+    queryFn: ({ signal }) => client.query(channel, payload, { signal }),
     refetchInterval: policy.refetchIntervalMs,
     staleTime: policy.staleTimeMs,
     // The transport never rejects; a failure is a value. Retrying here would
@@ -66,5 +68,5 @@ export function useChannel<TChannel extends ChannelName>(
     // payload's data across instruments or profiles while the new key loads.
   });
 
-  return toState(query);
+  return useMemo(() => toState(query), [query.data, query.isStale]);
 }

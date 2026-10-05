@@ -405,3 +405,9 @@ describe('Coinbase view-only verifier adapter', () => {
     });
   });
 });
+
+it('holds the shared lifecycle gate throughout legacy credential verification',async()=>{
+  const target=fixture();const gate=createProfileOperationGate();let resolve!:()=>void;const pending=new Promise<void>(done=>{resolve=done;});
+  const service=new CoinbaseConnectionService({clock:{nowMs:()=>100},manifestStore:target.fileStore,secretStore:target.secretStore,operationGate:gate,verifier:{async verify(){await pending;return {ok:true,portfolioUuid:PORTFOLIO_A};}}});
+  const connecting=service.connect('main',credentials('verification-race'));expect(gate.isBusy()).toBe(true);expect(gate.begin()).toBe(false);resolve();expect(await connecting).toMatchObject({ok:true});expect(gate.isBusy()).toBe(false);
+});

@@ -24,18 +24,20 @@ export function useChartExtensionSeries(
   extensionIds: readonly string[],
   bars: readonly WorkstationBar[],
 ): ExtensionSeriesState {
-  const completed = useMemo(() => bars.filter((bar) => bar.isComplete).slice(-2_000), [bars]);
-  const key = useMemo(() => `${extensionIds.join('|')}:${completed.map((bar) => `${bar.startTimeMs}:${bar.close}`).join('|')}`, [completed, extensionIds]);
+  const inputKey = JSON.stringify(bars.filter(bar => bar.isComplete).slice(-2_000).map(({productId,interval,startTimeMs,open,high,low,close,volume})=>({productId,interval,startTimeMs,open,high,low,close,volume})));
+  const completed = useMemo<readonly WorkstationBar[]>(() => JSON.parse(inputKey) as WorkstationBar[], [inputKey]);
+  const idsKey = [...new Set(extensionIds)].join('|');
+  const ids = useMemo(() => idsKey === '' ? [] : idsKey.split('|'), [idsKey]);
   const [state, setState] = useState<ExtensionSeriesState>(IDLE);
 
   useEffect(() => {
-    if (extensionIds.length === 0 || completed.length === 0) {
+    if (ids.length === 0 || completed.length === 0) {
       setState(IDLE);
       return;
     }
     const controller = new AbortController();
-    setState({ kind: 'loading', series: [], markers: [], failedCount: 0 });
-    void Promise.all(extensionIds.map(async (extensionId) => {
+    setState(previous => ({ ...previous, kind: 'loading' }));
+    void Promise.all(ids.map(async (extensionId) => {
       const outcome = await client.query('chart-extensions.evaluate', {
         extensionId,
         bars: completed.map((bar) => ({
@@ -66,7 +68,7 @@ export function useChartExtensionSeries(
       });
     });
     return () => controller.abort();
-  }, [client, completed, extensionIds, key]);
+  }, [client, completed, ids]);
 
   return state;
 }

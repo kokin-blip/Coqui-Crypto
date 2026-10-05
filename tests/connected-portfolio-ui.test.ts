@@ -12,8 +12,11 @@ describe('connected portfolio product surfaces', () => {
     for (const source of [summary, tables]) {
       expect(source).toContain("useChannel(client, 'portfolio.current'");
       expect(source).not.toContain("useChannel(client, 'portfolio.view'");
-      expect(source).toContain("useChannel(client, 'paper.portfolio'");
+
     }
+    expect(summary).toContain("useChannel(client, 'paper.portfolio'");
+    expect(read('apps/desktop/src/renderer/app/TerminalActivity.tsx')).toContain("useChannel(client,'trading.activity.summary'");
+    expect(tables).toContain('c.connectionId===connectionId');
     expect(summary).toContain('Connected value');
     expect(summary).toContain('Connected valuation');
     expect(summary).toContain('Paper equity');

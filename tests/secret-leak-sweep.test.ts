@@ -43,6 +43,7 @@ afterEach(() => {
 /** Channels that answer from local state. The rest would reach the network. */
 const LOCAL_CHANNELS: readonly ChannelName[] = [
   'research.overlay-shadow.status', 'research.overlay-shadow.set',
+  'trading.activity.scopes', 'trading.activity.summary', 'trading.activity.trail',
   'activity.feed',
   'decision.timeline',
   'operations.floor',
@@ -73,6 +74,8 @@ const LOCAL_CHANNELS: readonly ChannelName[] = [
 
 const PAYLOADS: Partial<Record<ChannelName, unknown>> = {
   'research.overlay-shadow.set': { commandId: 'shadow-fixture-disable', enabled: false },
+  'trading.activity.summary': {scopeId:'ledger',connectionId:null,productId:'BTC-USD'},
+  'trading.activity.trail': {scopeId:'ledger',connectionId:null,productId:'BTC-USD',cursor:null,limit:30},
   'activity.feed': { limit: 40, cursor: null },
   'research.jobs': { limit: 10 },
   'research.job': { id: 'a'.repeat(64) },
@@ -208,7 +211,8 @@ describe('the sweep covers the whole registry', () => {
     // would test the internet. They are swept by the packaged smoke gate
     // instead, which runs them against a live main process.
     expect(unexercised.every((channel) =>
-      channel.startsWith('market-data.')
+      channel === 'trading.activity.shared' // Detached profile controller context; covered by native smoke.
+      || channel.startsWith('market-data.')
       || channel === 'market-events.ingest-local'
       || channel === 'market-events.ingest-file'
       || channel === 'portfolio.view'
@@ -244,7 +248,9 @@ describe('the sweep covers the whole registry', () => {
       || channel === 'decision.detail'
       || channel === 'research.trigger-status'
       || channel === 'research.candidate.review'
-      || channel === 'research.candidate.rollback',
+      || channel === 'research.candidate.rollback'
+      || channel === 'connections.removal-preview' || channel === 'connections.remove'
+      || channel === 'wallets.list' || channel === 'wallets.nickname.set',
     )).toBe(true);
   });
 });

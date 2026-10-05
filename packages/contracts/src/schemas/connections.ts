@@ -24,6 +24,7 @@ const connection = z.strictObject({
     valuation: z.enum(['complete','incomplete','unavailable']),
     portfolioReadiness: z.enum(['ready','blocked']), reasonCode: z.string().max(80).nullable(),
   }).readonly(),
+  removalState: z.enum(['pending','removed','reactivated']).nullable(),
   readOnly: z.literal(true), liveExecutionAuthority: z.literal(false),
 }).readonly();
 
@@ -53,6 +54,31 @@ const currentPortfolio = z.strictObject({
 const commandId = z.string().uuid();
 
 export const connectionChannelSchemas = {
+  'connections.removal-preview': {
+    request: z.strictObject({ connectionId: sha256HexSchema }).readonly(),
+    response: z.strictObject({profileId:z.string(),connectionId:sha256HexSchema,label:z.string(),provider,
+      status:z.enum(['active','attention_required','disconnected']),updatedAtMs:epochMillisecondsSchema,
+      snapshotId:sha256HexSchema.nullable(),retainedSnapshots:z.number().int().nonnegative(),
+      affectedBalances:z.array(z.strictObject({asset:z.string(),quantity:decimalStringSchema}).readonly()).readonly(),
+      blockers:z.array(z.string()).readonly(),removalState:z.enum(['pending','removed','reactivated']).nullable(),
+      revision:sha256HexSchema,eligible:z.boolean(),historyPreserved:z.literal(true)}).readonly(),
+  },
+  'connections.remove': {
+    request:z.strictObject({commandId,connectionId:sha256HexSchema,revision:sha256HexSchema,confirmed:z.literal(true)}).readonly(),
+    response:z.strictObject({connectionId:sha256HexSchema,outcome:z.literal('removed'),historyPreserved:z.literal(true)}).readonly(),
+  },
+  'wallets.list': {
+    request:z.strictObject({}).readonly(),
+    response:z.strictObject({profileId:z.string(),revision:sha256HexSchema.nullable(),scope:z.literal('installation'),
+      wallets:z.array(z.strictObject({id:sha256HexSchema,connectionId:sha256HexSchema,provider,
+        identityKind:z.enum(['portfolio','account']),maskedSuffix:z.string(),accountRefIds:z.array(sha256HexSchema).readonly(),nickname:z.string().nullable(),
+        removed:z.boolean()}).readonly()).readonly()}).readonly(),
+  },
+  'wallets.nickname.set': {
+    request:z.strictObject({commandId,walletId:sha256HexSchema,nickname:z.string().max(80).nullable(),revision:sha256HexSchema.nullable()}).readonly(),
+    response:z.strictObject({walletId:sha256HexSchema,nickname:z.string().nullable(),revision:sha256HexSchema.nullable(),scope:z.literal('installation')}).readonly(),
+  },
+
   'connections.list': {
     request: z.strictObject({}).readonly(),
     response: z.strictObject({ asOfMs: epochMillisecondsSchema, connections: z.array(connection).max(100).readonly() }).readonly(),
@@ -85,7 +111,7 @@ export const connectionChannelSchemas = {
     request: z.strictObject({ commandId, connectionId: sha256HexSchema, label: z.string().min(1).max(80) }).readonly(), response: connection,
   },
   'connections.disconnect': {
-    request: z.strictObject({ commandId, connectionId: sha256HexSchema }).readonly(), response: connection,
+    request: z.strictObject({ commandId, connectionId: sha256HexSchema, revision: sha256HexSchema.optional(), confirmed: z.literal(true).optional() }).readonly(), response: connection,
   },
   'connections.sync': {
     request: z.strictObject({ commandId, connectionId: sha256HexSchema }).readonly(), response: connection,

@@ -19,6 +19,8 @@ import {
 } from '@coqui/adapters';
 import { profileConnectionV2, sha256Hex, type Clock, type PriceSource, type ProfileConnectionV2 } from '@coqui/core';
 import {
+  ConnectorRemovalService, connectorRemovalPreview, createProfileOperationGate,
+  type ProfileOperationGate,
   createCoinbaseViewOnlyVerifier,
   createDefaultCoinbaseEvidenceAcquirer,
   persistCoinbasePortfolioSnapshotV2,
@@ -28,7 +30,9 @@ import {
 } from '@coqui/services';
 import {
   getLatestConnectionAccountSnapshotV2,
-  getLatestUnifiedPortfolioSnapshotV2,
+  getCurrentUnifiedPortfolioSnapshotV2, connectionEligible, connectionRemoval, setConnectionRemoval,
+  listVerifiedWalletIdentities, saveVerifiedWalletIdentity, normalizeWalletNickname,
+  type WalletNicknameStore, type ProfileManifestStore,
   getLegacyProfileConnectionId,
   getProfileConnectionV2,
   linkProfileConnectionMigration,
@@ -77,9 +81,9 @@ function secretRef(connection: ProfileConnectionV2) {
 
 function view(connection: ProfileConnectionV2, database: Db) {
   const snapshot = getLatestConnectionAccountSnapshotV2(connection.profileId, connection.id, database);
-  const unified = getLatestUnifiedPortfolioSnapshotV2(connection.profileId, false, database);
+  const unified = getCurrentUnifiedPortfolioSnapshotV2(connection.profileId, database);
   const health = snapshot?.health ?? 'unknown' as const;
-  const connectionAvailable = connection.status !== 'disconnected';
+  const connectionAvailable = connectionEligible(connection,database);
   const lifecycle = Object.freeze({ schemaVersion: 2 as const,
     credentialVerification: connection.status === 'active' ? 'verified' as const : connection.status === 'disconnected' ? 'unavailable' as const : 'failed' as const,
     synchronization: snapshot === null ? 'never' as const : snapshot.health === 'unavailable' ? 'failed' as const : 'succeeded' as const,
@@ -91,6 +95,7 @@ function view(connection: ProfileConnectionV2, database: Db) {
       (snapshot === null ? 'sync_required' : snapshot.complete ? null : 'valuation_incomplete'),
   });
   return Object.freeze({
+    removalState: connectionRemoval(connection.profileId,connection.id,database)?.state??null,
     id: connection.id, profileId: connection.profileId, provider: connection.provider,
     label: connection.label, credentialFingerprint: connection.credentialFingerprint,
     capabilities: connection.capabilities, status: connection.status,
@@ -111,12 +116,18 @@ export function createConnectionHandlers(input: {
   readonly clock: Clock;
   readonly priceSource: PriceSource;
   readonly secrets?: SecretStore;
+  readonly operationGate?: ProfileOperationGate;
+  readonly manifestStore?: ProfileManifestStore;
+  readonly nicknameStore?: WalletNicknameStore;
   readonly pickConnectionFile?: (provider: 'coinbase' | 'robinhood_crypto') => Promise<ConnectionFileSelection | null>;
   readonly readClipboardText?: () => string;
   readonly coinbaseAcquirer?: CoinbaseEvidenceAcquirer;
   readonly coinbaseVerifier?: CoinbaseCredentialVerifier;
   readonly robinhoodClientFactory?: (credentials: Parameters<typeof createRobinhoodCryptoReadClient>[0]) => RobinhoodCryptoReadClient;
 }): ChannelHandlers {
+  const gate=input.operationGate??createProfileOperationGate();
+  let commandBusy=false;
+  const removal=new ConnectorRemovalService(input);
   const outcomes = new Map<string, Awaited<ReturnType<NonNullable<ChannelHandlers[keyof ChannelHandlers]>>>>();
   const acquirer = input.coinbaseAcquirer ?? createDefaultCoinbaseEvidenceAcquirer();
   const robinhoodClientFactory = input.robinhoodClientFactory ?? ((credentials) => createRobinhoodCryptoReadClient(credentials));
@@ -129,7 +140,7 @@ export function createConnectionHandlers(input: {
         ...candidate, capabilities: legacy.capabilities, status: legacy.status,
         updatedAtMs: legacy.updatedAtMs,
       };
-      saveProfileConnectionV2(connection, input.database);
+      if(connectionRemoval(input.profileId,connection.id,input.database)?.state!=='pending'&&connectionRemoval(input.profileId,connection.id,input.database)?.state!=='removed')saveProfileConnectionV2(connection, input.database);
       linkProfileConnectionMigration(legacy.id, connection.id, input.clock.nowMs(), input.database);
     }
     if (input.secrets === undefined) return;
@@ -138,12 +149,13 @@ export function createConnectionHandlers(input: {
     const credentials = parseStoredCoinbaseCredentials(legacy.value);
     if (credentials === null || !validateCoinbaseCredentials(credentials).ok) return;
     const candidate = profileConnectionV2(input.profileId, 'coinbase', sha256Hex(credentials.keyName), input.clock.nowMs());
-    if (getProfileConnectionV2(input.profileId, candidate.id, input.database) === null) {
+    if (connectionRemoval(input.profileId,candidate.id,input.database)===null&&getProfileConnectionV2(input.profileId, candidate.id, input.database) === null) {
       saveProfileConnectionV2(candidate, input.database);
     }
   }
 
   async function sync(connection: ProfileConnectionV2) {
+    if(!connectionEligible(connection,input.database))return {ok:false as const,issues:[{path:[],code:'connection_disconnected'}]};
     if (input.secrets === undefined) return { ok: false as const, issues: [{ path: [], code: 'secret_store_unavailable' }] };
     const legacyConnectionId = getLegacyProfileConnectionId(input.profileId, connection.id, input.database);
     let stored = legacyConnectionId === null ? { ok: true as const, value: null }
@@ -152,16 +164,25 @@ export function createConnectionHandlers(input: {
         provider: 'coinbase', credentialType: 'api_credentials',
       }, secretRef(connection));
     if (stored.ok && stored.value === null) {
-      stored = await migrateLegacyConnectionSecret(input.secrets, secretRef(connection));
+      const key=connection.provider==='coinbase'?'coinbase-credentials':'robinhood-crypto-credentials';
+      const legacy=await input.secrets.read(key,input.profileId);
+      const credentials=legacy.ok&&legacy.value!==null ? connection.provider==='coinbase'
+        ? parseStoredCoinbaseCredentials(legacy.value):parseStoredRobinhoodCryptoCredentials(legacy.value):null;
+      const fingerprint=credentials===null?null:sha256Hex('keyName' in credentials?credentials.keyName:credentials.apiKey);
+      if(fingerprint===connection.credentialFingerprint)stored = await migrateLegacyConnectionSecret(input.secrets, secretRef(connection));
+      else stored=await readConnectionSecret(input.secrets,secretRef(connection));
     }
     if (!stored.ok || stored.value === null) return { ok: false as const, issues: [{ path: [], code: 'credentials_unavailable' }] };
     if (connection.provider === 'robinhood_crypto') {
       const credentials = parseStoredRobinhoodCryptoCredentials(stored.value);
       if (credentials === null) return { ok: false as const, issues: [{ path: [], code: 'credentials_invalid' }] };
+      if(sha256Hex(credentials.apiKey)!==connection.credentialFingerprint)return {ok:false as const,issues:[{path:[],code:'credential_identity_mismatch'}]};
       const requestedAtMs = input.clock.nowMs(), client = robinhoodClientFactory(credentials);
       try {
         const acquired = await client.acquire();
         if (!acquired.ok) return { ok: false as const, issues: [{ path: [], code: `robinhood_${acquired.code}` }] };
+        if(!connectionEligible(getProfileConnectionV2(input.profileId,connection.id,input.database)!,input.database))return {ok:false as const,issues:[{path:[],code:'connection_disconnected'}]};
+        for(const account of acquired.value.accounts)saveVerifiedWalletIdentity(connection,'account',account.accountNumber,input.clock.nowMs(),input.database);
         await persistRobinhoodPortfolioSnapshotV2({ profileId: input.profileId,
           credentialFingerprint: connection.credentialFingerprint, requestedAtMs,
           receivedAtMs: input.clock.nowMs(), evidence: acquired.value }, input.database, input.priceSource);
@@ -172,9 +193,16 @@ export function createConnectionHandlers(input: {
     if (credentials === null || !validateCoinbaseCredentials(credentials).ok) {
       return { ok: false as const, issues: [{ path: [], code: 'credentials_invalid' }] };
     }
+    if(sha256Hex(credentials.keyName)!==connection.credentialFingerprint)return {ok:false as const,issues:[{path:[],code:'credential_identity_mismatch'}]};
+    if(!listVerifiedWalletIdentities(input.profileId,input.database).some(w=>w.connection_id===connection.id)){
+      const verified=await (input.coinbaseVerifier??createCoinbaseViewOnlyVerifier()).verify(credentials);
+      if(!verified.ok)return {ok:false as const,issues:[{path:[],code:'wallet_identity_unverified'}]};
+      saveVerifiedWalletIdentity(connection,'portfolio',verified.portfolioUuid,input.clock.nowMs(),input.database);
+    }
     const requestedAtMs = input.clock.nowMs();
     const acquired = await acquirer.acquire(credentials);
     if (!acquired.ok) return { ok: false as const, issues: [{ path: [], code: `coinbase_${acquired.code}` }] };
+    if(!connectionEligible(getProfileConnectionV2(input.profileId,connection.id,input.database)!,input.database))return {ok:false as const,issues:[{path:[],code:'connection_disconnected'}]};
     const receivedAtMs = input.clock.nowMs();
     await persistCoinbasePortfolioSnapshotV2({
       profileId: input.profileId, credentialFingerprint: connection.credentialFingerprint,
@@ -184,12 +212,28 @@ export function createConnectionHandlers(input: {
     return { ok: true as const, value: view(getProfileConnectionV2(input.profileId, connection.id, input.database)!, input.database) };
   }
 
+  const inFlight=new Map<string,Promise<{ok:boolean;value?:unknown;issues?:readonly {path:readonly string[];code:string}[]}>>();
   async function once(commandId: string, execute: () => Promise<{ ok: boolean; value?: unknown; issues?: readonly { path: readonly string[]; code: string }[] }>) {
-    const prior = outcomes.get(commandId);
-    if (prior !== undefined) return prior;
-    const result = await execute();
-    outcomes.set(commandId, result as never);
-    return result;
+    const prior=outcomes.get(commandId);if(prior!==undefined)return prior;
+    const pending=inFlight.get(commandId);if(pending)return pending;
+    if(!gate.begin())return {ok:false,issues:[{path:[],code:'connection_operation_in_progress'}]};
+    commandBusy=true;
+    const promise=execute().then(result=>{outcomes.set(commandId,result as never);return result;}).finally(()=>{commandBusy=false;gate.end();inFlight.delete(commandId);});
+    inFlight.set(commandId,promise);return promise;
+  }
+  function candidateConnection(provider: 'coinbase'|'robinhood_crypto',fingerprint:string,at:number,label?:string):ProfileConnectionV2 {
+    const candidate=profileConnectionV2(input.profileId,provider,fingerprint,at,label);
+    const existing=getProfileConnectionV2(input.profileId,candidate.id,input.database);
+    return existing===null?candidate:{...existing,status:'active',updatedAtMs:at,...(label===undefined?{}:{label})};
+  }
+  function walletView() {
+    const names=input.nicknameStore?.read();
+    if(names&&!names.ok)return {ok:false as const,issues:[{path:[],code:names.code}]};
+    return {ok:true as const,value:{profileId:input.profileId,revision:names?.value.revision??null,scope:'installation' as const,
+      wallets:listVerifiedWalletIdentities(input.profileId,input.database).map(w=>({id:w.id,connectionId:w.connection_id,
+        provider:w.provider,identityKind:w.identity_kind,maskedSuffix:w.masked_suffix,
+        accountRefIds:listProviderAccountRefs(input.profileId,w.connection_id,input.database).filter(a=>w.identity_kind==='portfolio'||a.providerIdentityHash===w.identity_hash).map(a=>a.id),
+        nickname:names?.value.names[w.canonical_key]??null,removed:connectionRemoval(input.profileId,w.connection_id,input.database)?.state==='removed'}))}};
   }
 
   async function expireRobinhoodSetups(): Promise<void> {
@@ -219,11 +263,25 @@ export function createConnectionHandlers(input: {
 
   return {
     'connections.list': async () => {
-      await expireRobinhoodSetups();
-      await ensureLegacyCoinbase();
+      if(!commandBusy){if(!gate.begin())return {ok:false,issues:[{path:[],code:'connection_operation_in_progress'}]};try{await expireRobinhoodSetups();await ensureLegacyCoinbase();}finally{gate.end();}}
       return { ok: true, value: { asOfMs: input.clock.nowMs(),
-        connections: listProfileConnectionsV2(input.profileId, input.database).map((item) => view(item, input.database)) } };
+        connections: listProfileConnectionsV2(input.profileId, input.database).filter(c=>connectionRemoval(input.profileId,c.id,input.database)?.state!=='removed').map((item) => view(item, input.database)) } };
     },
+    'connections.removal-preview': (payload:{readonly connectionId:string})=>{
+      const preview=connectorRemovalPreview(input.profileId,payload.connectionId,input.clock.nowMs(),input.database,gate.isBusy());
+      return preview===null?{ok:false,issues:[{path:[],code:'connection_not_found'}]}:{ok:true,value:preview};
+    },
+    'connections.remove': (payload:{readonly commandId:string;readonly connectionId:string;readonly revision:string;readonly confirmed:boolean})=>
+      once(payload.commandId,()=>removal.remove(payload.connectionId,payload.commandId,payload.revision,payload.confirmed)),
+    'wallets.list':()=>walletView(),
+    'wallets.nickname.set':(payload:{readonly commandId:string;readonly walletId:string;readonly nickname:string|null;readonly revision:string|null})=>once(payload.commandId,async()=>{
+      const wallet=listVerifiedWalletIdentities(input.profileId,input.database).find(w=>w.id===payload.walletId);
+      if(wallet===undefined)return {ok:false,issues:[{path:[],code:'wallet_not_found'}]};
+      if(input.nicknameStore===undefined)return {ok:false,issues:[{path:[],code:'nickname_store_unavailable'}]};
+      const result=input.nicknameStore.set(wallet.canonical_key,payload.nickname,payload.revision);
+      return result.ok?{ok:true,value:{walletId:wallet.id,nickname:payload.nickname===null?null:normalizeWalletNickname(payload.nickname),revision:result.value.revision,scope:'installation'}}:
+        {ok:false,issues:[{path:[],code:result.code}]};
+    }),
     'connections.status': (payload: { readonly connectionId: string }) => {
       const connection = getProfileConnectionV2(input.profileId, payload.connectionId, input.database);
       return connection === null ? { ok: false, issues: [{ path: ['connectionId'], code: 'connection_not_found' }] }
@@ -238,13 +296,14 @@ export function createConnectionHandlers(input: {
         const parsed = parseRobinhoodCryptoCredentialsJson(selected.contents);
         if (!parsed.ok) return { ok: false, issues: [{ path: [], code: `robinhood_${parsed.code}` }] };
         const atMs = input.clock.nowMs();
-        const connection = profileConnectionV2(input.profileId, payload.provider, sha256Hex(parsed.credentials.apiKey), atMs, payload.label);
+        const connection = candidateConnection(payload.provider,sha256Hex(parsed.credentials.apiKey),atMs,payload.label);
         const written = await writeConnectionSecret(input.secrets, secretRef(connection), serializeRobinhoodCryptoCredentials(parsed.credentials));
         if (!written.ok) return { ok: false, issues: [{ path: [], code: 'secret_store_unavailable' }] };
         try { saveProfileConnectionV2(connection, input.database); } catch {
           await removeConnectionSecret(input.secrets, secretRef(connection));
           return { ok: false, issues: [{ path: [], code: 'connection_storage_rejected' }] };
         }
+        if(connectionRemoval(input.profileId,connection.id,input.database)!==null)setConnectionRemoval(connection,payload.commandId,'reactivated',input.clock.nowMs(),input.database);
         const synced = await sync(connection);
         if (synced.ok) return synced;
         await removeConnectionSecret(input.secrets, secretRef(connection));
@@ -256,13 +315,16 @@ export function createConnectionHandlers(input: {
       const verified = await (input.coinbaseVerifier ?? createCoinbaseViewOnlyVerifier()).verify(parsed.credentials);
       if (!verified.ok) return { ok: false, issues: [{ path: [], code: `coinbase_${verified.reasonCode}` }] };
       const atMs = input.clock.nowMs();
-      const connection = profileConnectionV2(input.profileId, 'coinbase', sha256Hex(parsed.credentials.keyName), atMs, payload.label);
+      const connection = candidateConnection('coinbase',sha256Hex(parsed.credentials.keyName),atMs,payload.label);
+      if(listVerifiedWalletIdentities(input.profileId,input.database).some(w=>w.connection_id===connection.id&&w.identity_hash!==sha256Hex(verified.portfolioUuid.trim().toLowerCase())))return {ok:false,issues:[{path:[],code:'wallet_identity_changed'}]};
       const written = await writeConnectionSecret(input.secrets, secretRef(connection), serializeCoinbaseCredentials(parsed.credentials));
       if (!written.ok) return { ok: false, issues: [{ path: [], code: 'secret_store_unavailable' }] };
       try { saveProfileConnectionV2(connection, input.database); } catch {
         await removeConnectionSecret(input.secrets, secretRef(connection));
         return { ok: false, issues: [{ path: [], code: 'connection_storage_rejected' }] };
       }
+      saveVerifiedWalletIdentity(connection,'portfolio',verified.portfolioUuid,atMs,input.database);
+      if(connectionRemoval(input.profileId,connection.id,input.database)!==null)setConnectionRemoval(connection,payload.commandId,'reactivated',input.clock.nowMs(),input.database);
       const synced = await sync(connection);
       /* The credential is stored, but a failed first sync means no portfolio
          snapshot exists: reporting ok here would show “Credentials verified ·
@@ -302,8 +364,7 @@ export function createConnectionHandlers(input: {
       if (!pending.ok || pending.value === null) return { ok: false, issues: [{ path: [], code: 'robinhood_pending_key_unavailable' }] };
       const parsed = parseRobinhoodCryptoCredentialsJson(JSON.stringify({ apiKey: input.readClipboardText().trim(), privateKeyBase64: pending.value }));
       if (!parsed.ok) return { ok: false, issues: [{ path: [], code: `robinhood_${parsed.code}` }] };
-      const now = input.clock.nowMs(), connection = profileConnectionV2(input.profileId, 'robinhood_crypto',
-        sha256Hex(parsed.credentials.apiKey), now, payload.label);
+      const now = input.clock.nowMs(), connection = candidateConnection('robinhood_crypto',sha256Hex(parsed.credentials.apiKey),now,payload.label);
       const permanent = await writeConnectionSecret(input.secrets, secretRef(connection), serializeRobinhoodCryptoCredentials(parsed.credentials));
       if (!permanent.ok) return { ok: false, issues: [{ path: [], code: 'secret_store_unavailable' }] };
       const verified = await readConnectionSecret(input.secrets, secretRef(connection));
@@ -312,6 +373,7 @@ export function createConnectionHandlers(input: {
         return { ok: false, issues: [{ path: [], code: 'secret_verification_failed' }] };
       }
       saveProfileConnectionV2(connection, input.database);
+      if(connectionRemoval(input.profileId,connection.id,input.database)!==null)setConnectionRemoval(connection,payload.commandId,'reactivated',input.clock.nowMs(),input.database);
       const synced = await sync(connection);
       if (!synced.ok) {
         await removeConnectionSecret(input.secrets, secretRef(connection));
@@ -339,22 +401,19 @@ export function createConnectionHandlers(input: {
       saveProfileConnectionV2(updated, input.database);
       return { ok: true, value: view(updated, input.database) };
     }),
-    'connections.disconnect': async (payload: { readonly commandId: string; readonly connectionId: string }) => once(payload.commandId, async () => {
-      const connection = getProfileConnectionV2(input.profileId, payload.connectionId, input.database);
-      if (connection === null) return { ok: false, issues: [{ path: ['connectionId'], code: 'connection_not_found' }] };
-      if (input.secrets === undefined) return { ok: false, issues: [{ path: [], code: 'secret_store_unavailable' }] };
-      const removed = await removeConnectionSecret(input.secrets, secretRef(connection));
-      if (!removed.ok) return { ok: false, issues: [{ path: [], code: 'secret_store_unavailable' }] };
-      const updated = { ...connection, status: 'disconnected' as const, updatedAtMs: input.clock.nowMs() };
-      saveProfileConnectionV2(updated, input.database);
-      return { ok: true, value: view(updated, input.database) };
+    'connections.disconnect': async (payload: { readonly commandId: string; readonly connectionId: string; readonly revision?:string; readonly confirmed?:boolean }) => once(payload.commandId, async () => {
+      const preview=connectorRemovalPreview(input.profileId,payload.connectionId,input.clock.nowMs(),input.database);
+      if(preview===null)return {ok:false,issues:[{path:[],code:'connection_not_found'}]};
+      const result=await removal.remove(payload.connectionId,payload.commandId,payload.revision??preview.revision,payload.revision===undefined||payload.confirmed===true,false);
+      const connection=getProfileConnectionV2(input.profileId,payload.connectionId,input.database);
+      return result.ok&&connection!==null?{ok:true,value:view(connection,input.database)}:result;
     }),
     'connections.sync': async (payload: { readonly commandId: string; readonly connectionId: string }) => once(payload.commandId, async () => {
       const connection = getProfileConnectionV2(input.profileId, payload.connectionId, input.database);
       return connection === null ? { ok: false, issues: [{ path: ['connectionId'], code: 'connection_not_found' }] } : sync(connection);
     }),
     'portfolio.current': () => {
-      const snapshot = getLatestUnifiedPortfolioSnapshotV2(input.profileId, false, input.database);
+      const snapshot = getCurrentUnifiedPortfolioSnapshotV2(input.profileId,input.database);
       return { ok: true, value: snapshot === null ? null : {
         snapshotId: snapshot.id, profileId: snapshot.profileId, asOfMs: snapshot.asOfMs,
         connectionSnapshotIds: snapshot.connectionSnapshotIds, exposures: snapshot.exposures,

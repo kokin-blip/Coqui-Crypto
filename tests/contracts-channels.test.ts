@@ -53,7 +53,7 @@ describe('channel registry', () => {
       'app.status-rail',
       'chart-extensions.catalog', 'chart-extensions.evaluate', 'chart-extensions.install', 'chart-extensions.install.pick',
       'chart-extensions.remove', 'chart-extensions.set', 'chart-extensions.signer.remove', 'chart-extensions.signer.trust',
-      'connections.connect-file', 'connections.disconnect', 'connections.list', 'connections.rename',
+      'connections.connect-file', 'connections.disconnect', 'connections.list', 'connections.removal-preview', 'connections.remove', 'connections.rename',
       'connections.robinhood.keypair.begin', 'connections.robinhood.keypair.cancel', 'connections.robinhood.keypair.complete',
       'connections.robinhood.keypair.status',
       'connections.status', 'connections.sync',
@@ -103,7 +103,7 @@ describe('channel registry', () => {
       'research.performance',
       'research.runs',
       'research.scoreboard', 'research.trigger-status', 'risk.dashboard',
-      'risk.evidence-gate',
+      'risk.evidence-gate', 'trading.activity.scopes', 'trading.activity.shared', 'trading.activity.summary', 'trading.activity.trail', 'wallets.list', 'wallets.nickname.set',
     ]);
   });
 
@@ -127,7 +127,7 @@ describe('channel registry', () => {
       'app.person.set', 'app.onboarding.skip', 'app.onboarding.restart', 'app.onboarding.complete',
       'connections.connect-file',
       'connections.robinhood.keypair.begin', 'connections.robinhood.keypair.complete', 'connections.robinhood.keypair.cancel',
-      'connections.rename',
+      'connections.remove', 'wallets.nickname.set', 'connections.rename',
       'connections.disconnect',
       'connections.sync',
       'app.chart.snapshot.save',

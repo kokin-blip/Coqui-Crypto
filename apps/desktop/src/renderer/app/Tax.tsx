@@ -64,7 +64,7 @@ export function Tax({ client }: { readonly client: CoquiClient }): React.JSX.Ele
       {view.disposals.length === 0 ? (
         <SurfaceState kind="empty" title="No disposals recorded" detail="Coqui does not infer disposals without immutable lot evidence." compact />
       ) : (
-        <table className="w-full text-left">
+        <div className="terminal-route-table-scroll" tabIndex={0} role="region" aria-label="Scrollable evidence table"><table className="w-full text-left">
           <caption className="sr-only">Recorded disposals with cost basis and realised P&amp;L</caption>
           <thead>
             <tr className="border-b">
@@ -94,7 +94,7 @@ export function Tax({ client }: { readonly client: CoquiClient }): React.JSX.Ele
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
       )}
 
       <DeferredPanel

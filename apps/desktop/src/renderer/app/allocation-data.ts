@@ -30,3 +30,14 @@ export function allocationPercentages(
     percent: Number((units * 1_000_000n) / total) / 10_000,
   }));
 }
+
+/** Asset identity, rather than row position, keeps colors stable across views. */
+export function allocationColor(id: string): string {
+  const symbol = id.trim().toUpperCase();
+  if (symbol === 'BTC') return 'var(--coqui-positive)';
+  if (symbol === 'USD') return 'var(--coqui-info)';
+  const colors = ['var(--coqui-warning)', 'var(--coqui-info)', 'var(--coqui-positive)', 'var(--coqui-negative)', 'var(--coqui-advisory)'];
+  let hash = 0;
+  for (const character of symbol) hash = (Math.imul(hash, 31) + character.charCodeAt(0)) >>> 0;
+  return colors[hash % colors.length]!;
+}

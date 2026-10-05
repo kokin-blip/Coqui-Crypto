@@ -6,6 +6,7 @@ import { dirname, join } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
 import { createMemorySecretStore } from '@coqui/adapters';
+import { openDatabase, getProfileConnectionV2, setConnectionRemoval } from '@coqui/storage';
 import { coinbaseEvidenceDatasetHash } from '@coqui/core';
 import { assertNoTextClipping } from './visual-overflow-audit.mjs';
 
@@ -30,7 +31,21 @@ const { createRuntimeProfileController } = await import(join(root, 'dist/main/pr
 const { createDispatcher } = await import(join(root, 'dist/main/dispatch.js'));
 const { applyWindowHardening, WEB_PREFERENCES } = await import(join(root, 'dist/main/security.js'));
 
+const remainingRoutes = ['settings','portfolio/holdings','portfolio/allocation','portfolio/tax','portfolio/reconciliation','paper/overview','paper/orders','paper/performance','strategies','research','events','activity','risk'];
 const capturePlan = [
+  ...remainingRoutes.flatMap(route=>[
+    {name:`remaining-${route.replaceAll('/','-')}-desktop`,route,mode:'advanced',theme:'dark',density:'compact',zoom:1,width:1440,height:900},
+    {name:`remaining-${route.replaceAll('/','-')}-light`,route,mode:'advanced',theme:'light',density:'compact',zoom:1,width:1280,height:800},
+    {name:`remaining-${route.replaceAll('/','-')}-contrast`,route,mode:'advanced',theme:'high-contrast',density:'compact',zoom:1,width:960,height:640,motion:'reduced'},
+    {name:`remaining-${route.replaceAll('/','-')}-zoom`,route,mode:'advanced',theme:'high-contrast',density:'compact',zoom:2,width:1280,height:800,motion:'reduced'},
+  ]),
+  ...['dark','light','high-contrast'].flatMap(theme=>[
+    {name:`remaining-removal-${theme}`,route:'settings',mode:'advanced',theme,density:'compact',zoom:theme==='high-contrast'?2:1,width:1280,height:800,coinbaseState:'connected',action:'remove-connector'},
+    {name:`remaining-nickname-${theme}`,route:'settings',mode:'advanced',theme,density:'compact',zoom:theme==='high-contrast'?2:1,width:1280,height:800,coinbaseState:'connected'},
+  ]),
+  {name:'remaining-removal-blocked',route:'settings',mode:'advanced',theme:'dark',density:'compact',zoom:1,width:1280,height:800,coinbaseState:'connected',action:'remove-connector',lifecycleState:'blocked'},
+  {name:'remaining-removal-recovery',route:'settings',mode:'advanced',theme:'light',density:'compact',zoom:1,width:1280,height:800,coinbaseState:'connected',action:'remove-connector',lifecycleState:'pending'},
+  {name:'remaining-nickname-add',route:'settings',mode:'advanced',theme:'light',density:'compact',zoom:1,width:1280,height:800,coinbaseState:'connected',clearNickname:true},
   ...['Assets', 'Paper Positions', 'Paper Proposals', 'Decisions', 'Performance', 'Research Runs', 'Depth Chart', 'Recent Trades'].map((tab) => ({ name: `terminal-${tab.toLowerCase().replaceAll(' ', '-')}-1920x1080`, route: 'overview', mode: 'advanced', theme: 'dark', density: 'compact', zoom: 1, width: 1920, height: 1080, action: `tab:${tab}` })),
   { name: 'terminal-drawer-1440x900', route: 'overview', mode: 'simple', theme: 'dark', density: 'compact', zoom: 1, width: 1440, height: 900, action: 'terminal-drawer' },
   { name: 'terminal-1280x800', route: 'overview', mode: 'advanced', theme: 'dark', density: 'compact', zoom: 1, width: 1280, height: 800 },
@@ -201,6 +216,27 @@ async function run() {
         if (connected.status !== 'ok') throw new Error(`Could not prepare Coinbase connection for ${capture.name}.`);
       }
     }
+    if(capture.coinbaseState === 'connected' && capture.name.startsWith('remaining-')) {
+      const connections=await dispatch('connections.list',{});
+      if(connections.status!=='ok'||!connections.value.connections[0])throw new Error('Visual connector missing');
+      // Reset a prior disposable recovery fixture before the next verified sync.
+      const resetDb=openDatabase(join(dataDirectory,'coqui.db'));
+      resetDb.prepare('DELETE FROM execution_leases_v1 WHERE profile_id=?').run('main');
+      setConnectionRemoval(getProfileConnectionV2('main',connections.value.connections[0].id,resetDb),'visual-reset','reactivated',Date.now(),resetDb);resetDb.close();
+      const synced=await dispatch('connections.sync',{commandId:randomUUID(),connectionId:connections.value.connections[0].id});
+      if(synced.status!=='ok')throw new Error('Visual identity verification failed');
+      const wallets=await dispatch('wallets.list',{});
+      if(wallets.status!=='ok'||!wallets.value.wallets[0])throw new Error('Visual wallet mapping missing');
+      const named=await dispatch('wallets.nickname.set',{commandId:randomUUID(),walletId:wallets.value.wallets[0].id,nickname:capture.clearNickname?null:'Illustrative local wallet',revision:wallets.value.revision});
+      if(named.status!=='ok')throw new Error('Visual nickname persistence failed');
+      // State fixtures live only in this disposable visual database.
+      const fixtureDb=openDatabase(join(dataDirectory,'coqui.db'));
+      fixtureDb.prepare('DELETE FROM execution_leases_v1 WHERE profile_id=?').run('main');
+      const connection=getProfileConnectionV2('main',connections.value.connections[0].id,fixtureDb);
+      setConnectionRemoval(connection,'visual-fixture',capture.lifecycleState==='pending'?'pending':'reactivated',Date.now(),fixtureDb);
+      if(capture.lifecycleState==='blocked')fixtureDb.prepare('INSERT INTO execution_leases_v1 VALUES(?,?,?,?,?)').run('main','visual-fixture',Date.now()+3600000,1,Date.now());
+      fixtureDb.close();
+    }
     if (capture.coinbaseState === 'attention') {
       await secrets.remove('coinbase-credentials', runtime.activeProfile().id);
     }
@@ -257,15 +293,17 @@ async function run() {
           if (action === 'extensions') buttons.find((button) => button.textContent?.includes('Extensions'))?.click();
           if (action === 'analyst' || action === 'local-facts') buttons.find((button) => button.textContent?.includes('Ask Coqui analyst'))?.click();
           if (action === 'local-facts') setTimeout(() => [...document.querySelectorAll('button')].find((button) => button.textContent?.includes('Generate local facts'))?.click(), 25);
-          if (action === 'coinbase-sync') buttons.find((button) => button.textContent?.includes('Sync immutable evidence'))?.click();
+          if (action === 'remove-connector') buttons.find((button)=>['Remove connector','Recover removal'].includes(button.textContent?.trim()))?.click();
+          if (action === 'coinbase-sync') buttons.find((button) => button.textContent?.includes('Sync now'))?.click();
         })()
       `);
-      await delay(capture.action === 'local-facts' || capture.action === 'coinbase-sync' ? 250 : 80);
+      await delay(capture.action === 'local-facts' || capture.action === 'coinbase-sync' || capture.action === 'remove-connector' ? 250 : 80);
+      if(capture.action==='remove-connector'&&!await window.webContents.executeJavaScript('document.querySelector("dialog[open]") !== null'))throw new Error('Removal dialog missing from visual capture');
     }
     await delay(50);
     const appearanceMatches = await window.webContents.executeJavaScript(`document.documentElement.dataset.theme === ${JSON.stringify(capture.theme)} && document.documentElement.dataset.density === ${JSON.stringify(capture.density)}`);
     if (!appearanceMatches) throw new Error(`Renderer appearance did not settle for ${capture.name}.`);
-    if (capture.name.startsWith('coinbase-')) {
+    if (capture.name.startsWith('coinbase-') || capture.name.startsWith('remaining-nickname-')) {
       await window.webContents.executeJavaScript(`document.querySelector('.coinbase-settings')?.scrollIntoView({block: 'end'})`);
       await delay(80);
     }

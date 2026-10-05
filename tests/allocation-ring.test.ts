@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { allocationPercentages } from '../apps/desktop/src/renderer/app/allocation-data.js';
+import { allocationColor, allocationPercentages } from '../apps/desktop/src/renderer/app/allocation-data.js';
 
 describe('allocation ring percentages', () => {
   it('derives percentages from exact decimal units without binary-float allocation drift', () => {
@@ -28,5 +28,15 @@ describe('allocation ring percentages', () => {
     expect(allocationPercentages([])).toEqual([]);
     expect(allocationPercentages([{ id: 'unknown', label: 'Unknown', valueUsd: 'n/a' }]))
       .toEqual([]);
+  });
+});
+
+describe('allocation asset colors', () => {
+  it('keeps asset colors stable across reorderings and symbol capitalization', () => {
+    const data = [{ id: 'BTC', label: 'BTC', valueUsd: '4480' }, { id: 'USD', label: 'USD', valueUsd: '5520' }, { id: 'ETH', label: 'ETH', valueUsd: '800' }];
+    const colors = (rows: typeof data) => Object.fromEntries(allocationPercentages(rows).map((entry) => [entry.id, allocationColor(entry.id)]));
+    expect(colors([...data].reverse())).toEqual(colors(data));
+    expect(allocationColor(' btc ')).toBe(allocationColor('BTC'));
+    expect(allocationColor('BTC')).not.toBe(allocationColor('USD'));
   });
 });

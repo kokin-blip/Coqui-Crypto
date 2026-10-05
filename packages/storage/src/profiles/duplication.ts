@@ -16,8 +16,7 @@ export interface DuplicateProfileDatabaseInput {
 
 export interface ProfileDatabaseDuplicationEvidence {
   readonly schemaVersion: number;
-  readonly databaseSha256: string;
-  readonly profileScopedTableCount: number;
+  readonly databaseSha256: string; readonly profileScopedTableCount: number;
   readonly rewrittenRowCount: number;
   readonly excludedTransientRowCount: number;
   readonly clearedCredentialMetadataCount: number;
@@ -348,6 +347,7 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
           DELETE FROM connection_account_snapshots_v2;
           DELETE FROM provider_account_refs_v1;
           DELETE FROM profile_connection_migration_links_v1;
+          DELETE FROM connection_wallet_identities_v1; DELETE FROM connection_removals_v1;
           DELETE FROM profile_connections_v2;
           DELETE FROM unified_portfolio_snapshot_connections_v1;
           DELETE FROM unified_portfolio_snapshots_v1;

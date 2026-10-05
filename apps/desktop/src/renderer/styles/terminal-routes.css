@@ -1,0 +1,101 @@
+/* Remaining screen families share the terminal's semantic theme and compact rhythm. */
+.remaining-terminal-route { min-width: 0; font-size: 13px; }
+.remaining-terminal-route > .screen-heading { margin-bottom: 8px; }
+.remaining-terminal-route > .screen-heading h1 { font-size: 18px; font-weight: 600; letter-spacing: 0; }
+.remaining-terminal-route .route-local-tabs { gap: 4px; margin: 0 0 8px; border-bottom: 1px solid var(--coqui-border); overflow-x: auto; }
+.remaining-terminal-route .route-local-tabs a { padding: 7px 12px; border-radius: 4px 4px 0 0; font-size: 13px; white-space: nowrap; }
+.route-evidence-boundary { padding: 8px 12px; margin-bottom: 8px; border: 1px solid var(--coqui-border); border-radius: 4px; background: var(--coqui-surface-1); color: var(--coqui-text-muted); font-size: 12px; }
+.route-evidence-boundary summary { width: fit-content; cursor: pointer; color: var(--coqui-text); }
+.route-evidence-boundary p { margin: 8px 0 0; max-width: 100ch; }
+.remaining-terminal-route .screen-stack, .remaining-terminal-route .settings-panel-stack { gap: 8px; }
+.remaining-terminal-route :is(.panel,.settings-section,.holding-detail,.risk-visuals,.risk-decision-history) { border-radius: 4px; border: 1px solid var(--coqui-border); background: var(--coqui-surface-1); box-shadow: none; padding: 12px; min-width: 0; }
+.remaining-terminal-route :is(.panel-heading,.route-heading) { margin-bottom: 10px; gap: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--coqui-border); flex-wrap: wrap; }
+.remaining-terminal-route :is(h2,h3) { font-size: 14px; font-weight: 600; line-height: 1.4; }
+.remaining-terminal-route :is(.eyebrow,.section-label) { font-size: 11px; letter-spacing: .02em; color: var(--coqui-text-muted); }
+.remaining-terminal-route :is(.button-primary,.button-secondary,.button-quiet,select,input:not([type=checkbox]):not([type=radio])) { min-height: 32px; border-radius: 4px; font-size: 12px; }
+.remaining-terminal-route table { border-collapse: collapse; width: 100%; font-size: 12px; }
+.remaining-terminal-route :is(th,td) { padding: 8px 10px; border-bottom: 1px solid var(--coqui-border); vertical-align: top; }
+.remaining-terminal-route thead th { background: var(--coqui-surface-2); color: var(--coqui-text-muted); font-weight: 400; }
+.remaining-terminal-route tbody tr:hover { background: var(--coqui-surface-2); }
+.remaining-terminal-route tbody tr[aria-selected=true] { background: var(--coqui-accent-soft); }
+.remaining-terminal-route :is(.portfolio-table-scroll,.terminal-route-table-scroll) { overflow: auto; min-width: 0; scrollbar-width: thin; }
+.terminal-route-table-scroll { max-width: 100%; }
+.terminal-route-table-scroll table { min-width: 600px; }
+.remaining-terminal-route :is(.settings-readout,.risk-summary) { gap: 8px; }
+.remaining-terminal-route :is(.surface-state,.empty-state) { border-radius: 4px; padding: 12px; }
+/* Settings: account actions and metadata stay inside their verified connection. */
+.remaining-terminal-route .settings-layout { grid-template-columns: 220px minmax(0,1fr); gap: 8px; }
+.remaining-terminal-route .settings-category-tabs { padding: 6px; border: 1px solid var(--coqui-border); border-radius: 4px; background: var(--coqui-surface-1); }
+.remaining-terminal-route .settings-category-tabs button { border-radius: 4px; padding: 8px 10px; font-size: 12px; }
+.remaining-terminal-route .coinbase-connected-actions { padding: 12px; border-radius: 4px; background: var(--coqui-surface-1); }
+.remaining-terminal-route .coinbase-safety-strip { padding: 10px; border-radius: 4px; }
+.wallet-nicknames { margin-top: 12px; border-top: 1px solid var(--coqui-border); padding-top: 8px; }
+.wallet-nickname-field { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 8px; align-items: end; padding: 8px 0; }
+.wallet-nickname-field label { display: flex; flex-direction: column; gap: 6px; min-width: 0; overflow-wrap: anywhere; }
+.wallet-nickname-field :is(p,.surface-state) { grid-column: 1/-1; }
+.wallet-nickname-field input { width: 100%; background: var(--coqui-surface-2); color: var(--coqui-text); border: 1px solid var(--coqui-border); padding: 6px 8px; }
+.account-confirmation { color: var(--coqui-text); background: var(--coqui-surface-1); border: 1px solid var(--coqui-border-strong); border-radius: 4px; width: min(620px,calc(100vw - 24px)); max-height: calc(100dvh - 24px); padding: 20px; overflow: auto; font-size: 13px; }
+.account-confirmation::backdrop { background: var(--coqui-overlay); }
+.account-confirmation h2 { font-size: 18px; margin: 0 0 12px; }
+.account-confirmation p { margin: 12px 0; }
+.account-confirmation footer { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; border-top: 1px solid var(--coqui-border); margin-top: 16px; padding-top: 12px; }
+.button-destructive { min-height: 36px; padding: 6px 12px; border-radius: 4px; border: 1px solid var(--coqui-negative); color: var(--coqui-negative); background: var(--coqui-surface-2); }
+.button-destructive:disabled { opacity: .5; cursor: not-allowed; }
+/* Portfolio: compact master/detail and readable attribution, without combining accounting. */
+.remaining-terminal-route .connected-portfolio-summary { border-radius: 4px; padding: 12px; border: 1px solid var(--coqui-border); background: var(--coqui-surface-1); }
+.remaining-terminal-route .connected-portfolio-summary strong { font-size: 24px; }
+.remaining-terminal-route .portfolio-master-detail { gap: 8px; grid-template-columns: minmax(0,1fr) 300px; }
+.remaining-terminal-route .connected-contributions li { padding: 8px 0; border-bottom: 1px solid var(--coqui-border); overflow-wrap: anywhere; }
+.remaining-terminal-route :is(.connected-contributions,.settings-readout) dd { overflow-wrap: anywhere; }
+/* Paper: comparison, queue and performance reuse the same framed evidence surfaces. */
+.remaining-terminal-route :is(.paper-overview-toolbar,.paper-command-bar,.feed-filters) { gap: 6px; flex-wrap: wrap; }
+.remaining-terminal-route :is(.metric-grid,.performance-lower-grid,.paper-comparison-grid) { gap: 8px; }
+.remaining-terminal-route :is(.metric-card,.performance-unavailable-panel,.exploratory-paper-summary) { border-radius: 4px; background: var(--coqui-surface-1); }
+.remaining-terminal-route .metric-grid > div { padding: 10px; border: 1px solid var(--coqui-border); border-radius: 4px; }
+.remaining-terminal-route .chart-empty-canvas { min-height: 220px; }
+/* Strategies/research: provenance stays inline and findings retain their commands. */
+.remaining-terminal-route :is(.research-visual-grid,.research-workspace,.evidence-grid) { gap: 8px; }
+.remaining-terminal-route :is(.worker-progress-list,.research-metric-bars) li { border-radius: 4px; padding: 8px; }
+.remaining-terminal-route :is(.research-availability,.research-negative-findings) { gap: 8px; }
+/* Events: local import controls precede the recorded timeline. */
+.remaining-terminal-route .event-import-actions { gap: 8px; flex-wrap: wrap; }
+.remaining-terminal-route .event-workspace-list { margin-top: 8px; }
+.remaining-terminal-route .event-workspace-list > li { padding: 12px; border-radius: 4px; border: 1px solid var(--coqui-border); background: var(--coqui-surface-1); overflow-wrap: anywhere; }
+/* Operations/risk: keep measured facts and historical decision details distinct. */
+.remaining-terminal-route .operations-floor-grid { gap: 8px; }
+.remaining-terminal-route .operations-floor-grid > li { border-radius: 4px; padding: 10px; }
+.remaining-terminal-route .activity-feed > li { padding: 10px 0; }
+.remaining-terminal-route .activity-explanation { border-radius: 4px; padding: 12px; overflow-wrap: anywhere; }
+.remaining-terminal-route :is(.execution-route-grid,.risk-meter-grid) { gap: 8px; }
+.remaining-terminal-route .risk-workspace { display: flex; flex-direction: column; gap: 12px; }
+.remaining-terminal-route .risk-summary { border: 1px solid var(--coqui-border); padding: 12px; border-radius: 4px; background: var(--coqui-surface-1); }
+.remaining-terminal-route .risk-ladder { border: 1px solid var(--coqui-border); border-radius: 4px; padding: 12px; background: var(--coqui-surface-1); }
+.remaining-terminal-route :is(.risk-callout,.activity-empty-workspace) { border-radius: 4px; }
+@media (max-width: 1100px) {
+  .remaining-terminal-route .portfolio-master-detail { grid-template-columns: minmax(0,1fr); }
+  .remaining-terminal-route .settings-layout { grid-template-columns: 180px minmax(0,1fr); }
+  .remaining-terminal-route :is(.research-visual-grid,.performance-lower-grid) { grid-template-columns: minmax(0,1fr); }
+}
+@media (max-width: 760px) {
+  .remaining-terminal-route .settings-layout { grid-template-columns: minmax(0,1fr); }
+  .wallet-nickname-field { grid-template-columns: minmax(0,1fr); }
+  .remaining-terminal-route :is(.panel-heading,.connection-card-heading,.connected-portfolio-summary) { align-items: start; flex-direction: column; }
+  .remaining-terminal-route :is(.risk-summary,.operations-floor-grid,.risk-meter-grid,.metric-grid) { grid-template-columns: minmax(0,1fr); }
+  .remaining-terminal-route dl.grid { grid-template-columns: minmax(0,1fr); }
+  .account-confirmation { padding: 12px; }
+}
+@media (pointer: coarse) {
+  .remaining-terminal-route :is(button,select,input,summary), .account-confirmation button { min-height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .remaining-terminal-route *, .account-confirmation { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+@media (max-width: 760px) {
+  .terminal-shell:has(.remaining-terminal-route) .terminal-shell-header { flex-wrap: wrap; height: auto; }
+  .terminal-shell:has(.remaining-terminal-route) .terminal-navigation { flex-wrap: wrap; max-width: 100%; min-width: 0; }
+  .terminal-shell:has(.remaining-terminal-route) .terminal-shell-header .status-rail { flex-basis: 100%; }
+}
+.remaining-terminal-route .metric-grid dd { line-height: 1.5; min-height: 24px; }
+.remaining-terminal-route .coinbase-connected-actions { display: grid; grid-template-columns: minmax(0,1fr); gap: 8px; align-items: stretch; }
+.remaining-terminal-route .coinbase-connected-actions > .button-disconnect { justify-self: start; }
+.account-confirmation { margin: auto; inset: 0; }

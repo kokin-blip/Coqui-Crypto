@@ -70,7 +70,7 @@ export async function checkCoinbaseSettings(window, fixture, check) {
   const click = (label, twice = false) => evaluate(`(() => {
     const button = [...document.querySelectorAll('.coinbase-settings button')].find(b => b.textContent.includes(${JSON.stringify(label)}));
     if (!button) throw new Error('Expected Coinbase control missing');
-    button.click(); ${twice ? 'button.click();' : ''}
+    button.focus(); button.click(); ${twice ? 'button.click();' : ''}
   })()`);
   await evaluate('window.location.hash = "/settings"');
   await waitFor('document.body.innerText.includes("Exchange connections")');
@@ -94,6 +94,7 @@ export async function checkCoinbaseSettings(window, fixture, check) {
   await click('Sync now', true);
   for (let attempt = 0; attempt < 100 && fixture.control.acquisitions < 2; attempt += 1) await delay(50);
   check('Coinbase sync command is idempotently activated', fixture.control.acquisitions === 2);
+  await waitFor('[...document.querySelectorAll(".coinbase-settings button")].some(b=>b.textContent.includes("Sync now")&&!b.disabled)');
   const switchProfile = async (id) => {
     await evaluate(`(() => {
       const select = document.querySelector('select[aria-label="Active profile"]');
@@ -107,9 +108,42 @@ export async function checkCoinbaseSettings(window, fixture, check) {
   await switchProfile('main');
   await waitFor('document.body.innerText.includes("Sync now")');
   check('Coinbase original profile retains isolated connection', true);
+  const wallets = JSON.parse(await evaluate('window.coqui.query("wallets.list", {}).then(JSON.stringify)'));
+  check('Wallet identity verified in main with local-only scope', wallets.status === 'ok' && wallets.value.scope === 'installation' && wallets.value.wallets.length === 1);
+  const nickname = await evaluate(`window.coqui.query('wallets.nickname.set', {commandId:crypto.randomUUID(),walletId:${JSON.stringify(wallets.value.wallets[0].id)},nickname:'Smoke savings',revision:null}).then(JSON.stringify)`);
+  check('Nickname command persists locally', JSON.parse(nickname).status === 'ok');
+  await evaluate('window.location.hash="/portfolio/holdings"');
+  await waitFor('document.body.innerText.includes("Smoke savings")');
+  check('Connected holdings cite nickname and masked provider identity', await evaluate('document.body.innerText.includes("Coinbase") && document.body.innerText.includes("••••2222")'));
+  await evaluate('window.location.hash="/settings"');await waitFor('document.body.innerText.includes("Disconnect")');
   await click('Disconnect');
+  await waitFor('document.querySelector("dialog[open]") !== null');
+  check('Disconnect requires an explicit dialog confirmation', await evaluate('document.querySelector("dialog").contains(document.activeElement)'));
+  await waitFor('document.querySelector("dialog")?.textContent.includes("Connector is in use")');
+  check('Unknown execution blocks connector cleanup', await evaluate('[...document.querySelectorAll("dialog button")].find(b=>b.textContent.includes("Disconnect and remove credentials")).disabled'));
+  await evaluate('[...document.querySelectorAll("dialog button")].find(b=>b.textContent.trim()==="Cancel").click()');
+  await waitFor('document.querySelector("dialog[open]") === null');
+  check('Removal dialog cancellation restores focus', await evaluate('document.activeElement.textContent.includes("Disconnect")'));
+  await switchProfile('00000000-0000-4000-8000-000000000001');await waitFor('document.body.innerText.includes("No exchange connections yet")');
+  await click('Choose Coinbase key file');await waitFor('document.body.innerText.includes("Smoke savings")');
+  check('Verified wallet nickname follows identity across isolated profiles', true);
+  await click('Disconnect');await waitFor('document.querySelector("dialog[open]") !== null');
+  await waitFor('[...document.querySelectorAll("dialog button")].some(b=>b.textContent.includes("Disconnect and remove credentials")&&!b.disabled)');
+  await evaluate('[...document.querySelectorAll("dialog button")].find(b=>b.textContent.includes("Disconnect and remove credentials")).click()');
   await waitFor('window.coqui.query("connections.list", {}).then(result => result.status === "ok" && result.value.connections[0]?.status === "disconnected")');
   check('Coinbase disconnect is connection scoped', true);
+  check('Last disconnected connector leaves current balances unavailable', JSON.parse(await evaluate('window.coqui.query("portfolio.current", {}).then(JSON.stringify)')).value === null);
+  await click('Remove connector');await waitFor('document.querySelector("dialog[open]") !== null');
+  check('Removal consequence copy preserves historical evidence', await evaluate('document.querySelector("dialog").textContent.includes("historical snapshot")'));
+  await waitFor('[...document.querySelectorAll("dialog button")].some(b=>b.textContent.includes("Remove connector and credentials")&&!b.disabled)');
+  await evaluate('[...document.querySelectorAll("dialog button")].find(b=>b.textContent.includes("Remove connector and credentials")).click()');
+  await waitFor('document.body.innerText.includes("No exchange connections yet")');
+  check('Removed connector disappears from active Settings', true);
+  await click('Choose Coinbase key file');await waitFor('document.body.innerText.includes("Smoke savings")');
+  check('Explicit verified re-addition restores installation nickname', true);
+  const named = JSON.parse(await evaluate('window.coqui.query("wallets.list", {}).then(JSON.stringify)'));
+  check('Nickname clear is explicit and revision checked', JSON.parse(await evaluate(`window.coqui.query('wallets.nickname.set',{commandId:crypto.randomUUID(),walletId:${JSON.stringify(named.value.wallets[0].id)},nickname:null,revision:${JSON.stringify(named.value.revision)}}).then(JSON.stringify)`)).status === 'ok');
+  await switchProfile('main');await waitFor('document.body.innerText.includes("Sync now")');
   const settings = await evaluate('window.coqui.query("accounts.settings", {}).then(JSON.stringify)');
   const status = await evaluate('window.coqui.query("connections.list", {}).then(JSON.stringify)');
   check('Coinbase credential absent from preferences and command readback', !`${settings}${status}`.includes('PRIVATE KEY') && !`${settings}${status}`.includes('organizations/smoke'));

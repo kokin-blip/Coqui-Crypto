@@ -9,8 +9,6 @@ import {
   fetchAuthenticatedCoinbaseDisplayBars,
   fetchCoinbaseDailyBars,
   fetchCoinbaseDisplayBars,
-  migrateConnectionSecretAlias,
-  migrateLegacyConnectionSecret,
   parseStoredCoinbaseCredentials,
   readConnectionSecret,
   validateCoinbaseCredentials,
@@ -22,8 +20,8 @@ import {
   type RateLimiterRegistry,
   type SecretStore,
 } from '@coqui/adapters';
-import type { InstrumentIdentity } from '@coqui/core';
-import { getLegacyProfileConnectionId, listProfileConnectionsV2, type Db } from '@coqui/storage';
+import { sha256Hex, type InstrumentIdentity } from '@coqui/core';
+import { connectionEligible, getProfileConnectionV2, getLegacyProfileConnectionId, listProfileConnectionsV2, type Db } from '@coqui/storage';
 
 type Interval = Parameters<typeof fetchCoinbaseDisplayBars>[2]['interval'];
 
@@ -42,22 +40,25 @@ export function createHistoricalCoinbaseCandleSource(input: {
   async function authenticatedClient() {
     if (input.secrets === undefined) return null;
     const connection = listProfileConnectionsV2(input.profileId, input.database)
-      .filter((item) => item.provider === 'coinbase' && item.status === 'active')
+      .filter((item) => item.provider === 'coinbase' && item.status === 'active' && connectionEligible(item,input.database))
       .sort((a, b) => b.updatedAtMs - a.updatedAtMs || a.id.localeCompare(b.id))[0];
     if (connection === undefined) return null;
     const ref = { profileId: input.profileId, connectionId: connection.id,
       provider: 'coinbase' as const, credentialType: 'api_credentials' as const, schemaVersion: 2 as const };
     try {
       const legacyId = getLegacyProfileConnectionId(input.profileId, connection.id, input.database);
-      let stored = legacyId === null ? await readConnectionSecret(input.secrets, ref)
-        : await migrateConnectionSecretAlias(input.secrets, {
-          profileId: input.profileId, connectionId: legacyId, provider: 'coinbase',
-          credentialType: 'api_credentials',
-        }, ref);
-      if (stored.ok && stored.value === null) stored = await migrateLegacyConnectionSecret(input.secrets, ref);
+      // Chart reads must not migrate aliases while a lifecycle cleanup is awaiting the OS.
+      let stored = await readConnectionSecret(input.secrets, ref);
+      if (stored.ok && stored.value === null && legacyId !== null) stored = await readConnectionSecret(input.secrets, {
+        profileId: input.profileId, connectionId: legacyId, provider: 'coinbase', credentialType: 'api_credentials',
+      });
+      if (stored.ok && stored.value === null) stored = await input.secrets.read('coinbase-credentials', input.profileId);
       if (!stored.ok || stored.value === null) return null;
       const credentials = parseStoredCoinbaseCredentials(stored.value);
-      if (credentials === null || !validateCoinbaseCredentials(credentials).ok) return null;
+      const current = getProfileConnectionV2(input.profileId, connection.id, input.database);
+      if (credentials === null || !validateCoinbaseCredentials(credentials).ok ||
+          sha256Hex(credentials.keyName) !== connection.credentialFingerprint ||
+          current === null || !connectionEligible(current,input.database)) return null;
       return input.clientFactory?.(credentials) ?? createCoinbaseReadHttpClient(credentials,
         { rateLimiters: input.rateLimiters });
     } catch {

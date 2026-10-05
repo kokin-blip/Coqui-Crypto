@@ -1,6 +1,6 @@
 {
   "name": "coqui-crypto",
-  "version": "0.1.0-beta.14",
+  "version": "0.1.0-beta.15",
   "description": "Evidence-first crypto research and paper-trading workstation with live execution disabled.",
   "author": "Coqui Crypto",
   "private": true,
@@ -46,7 +46,8 @@
     "package": "pnpm --filter @coqui/desktop package",
     "research:overlay": "pnpm build && node scripts/research-overlay.mjs",
     "research:integrity": "pnpm build && node scripts/research-integrity.mjs",
-    "research:remediation-report": "pnpm build && node scripts/research-remediation-report.mjs"
+    "research:remediation-report": "pnpm build && node scripts/research-remediation-report.mjs",
+    "perf:terminal": "pnpm --filter @coqui/desktop perf:terminal"
   },
   "devDependencies": {
     "@emnapi/runtime": "2.0.0-alpha.3",

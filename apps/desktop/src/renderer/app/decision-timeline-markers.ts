@@ -19,8 +19,8 @@ export function decisionTimelineMarkers(
       candidate.decisionId === event.decisionId) === index)
     .map((event) => ({
       decisionId: event.decisionId, timeMs: event.occurredAtMs,
-      label: event.globalScope ? `Global decision ${event.decisionId.slice(0, 8)}` :
-        `Decision ${event.decisionId.slice(0, 8)}`,
+      label: event.globalScope ? `Global decision ${event.decisionId.slice(0, 8)} · ${event.status.replaceAll('_', ' ')}` :
+        `Decision ${event.decisionId.slice(0, 8)} · ${event.status.replaceAll('_', ' ')}`,
       tone: event.status === 'succeeded' ? 'positive' : event.status === 'blocked' ? 'negative' :
         event.status === 'pending' ? 'warning' : 'neutral',
     }));

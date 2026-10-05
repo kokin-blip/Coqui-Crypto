@@ -174,3 +174,22 @@
 
 .terminal-performance { padding: 8px; }
 .terminal-performance-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; margin: 0; }
+
+.terminal-activity-controls { flex-wrap: wrap; min-height: 32px; gap: 6px 12px; padding: 4px 8px; }
+.terminal-activity-controls label { display: inline-flex; align-items: center; gap: 6px; color: var(--coqui-text-muted); }
+.terminal-activity-controls select { max-width: 280px; min-height: 28px; }
+.terminal-position-table { min-width: 1380px; }
+.terminal-position-table th, .terminal-position-table td { font-variant-numeric: tabular-nums; }
+.terminal-position-table tr[aria-selected="true"] { background: var(--coqui-surface-2); }
+.terminal-detail-toggle { margin: 6px 12px; }
+.terminal-execution-trail { padding: 8px 12px; }
+.terminal-execution-trail > p { margin: 4px 0 8px; color: var(--coqui-text-muted); }
+.terminal-trail-pagination { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 8px; }
+.terminal-shared-evaluations { padding: 8px 12px; border-top: 1px solid var(--coqui-border); color: var(--coqui-text-muted); }
+.terminal-shared-evaluations p { margin: 6px 0; }
+@media (max-width: 1280px) { .terminal-activity-controls select { max-width: 220px; } }
+
+
+.chart-paper-notes { padding: 8px 12px; border-top: 1px solid var(--coqui-border); color: var(--coqui-text-muted); font-size: 12px; overflow-wrap: anywhere; }
+.chart-paper-notes p { margin: 0; }
+.chart-paper-notes p + p { margin-top: 4px; }

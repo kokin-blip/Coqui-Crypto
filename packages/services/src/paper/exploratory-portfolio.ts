@@ -8,7 +8,7 @@ import {
 import {
   currentExploratoryPaperCampaign,
   exploratoryPaperExecutionFacts,
-  getLatestUnifiedPortfolioSnapshotV2,
+  getCurrentUnifiedPortfolioSnapshotV2,
   listExploratoryPaperBalances,
   listExploratoryPaperValuations,
   saveExploratoryPaperValuation,
@@ -45,7 +45,7 @@ function priceFor(
   exposureKey: string,
   assetId: string | null,
   market: PaperMarketData,
-  connected: ReturnType<typeof getLatestUnifiedPortfolioSnapshotV2>,
+  connected: ReturnType<typeof getCurrentUnifiedPortfolioSnapshotV2>,
 ): Decimal | null {
   if (exposureKey === 'USD') return new Decimal(1);
   if (assetId !== null) {
@@ -66,7 +66,7 @@ export function exploratoryPaperPortfolioView(input: {
 }): ExploratoryPaperPortfolioView | null {
   const current = currentExploratoryPaperCampaign(input.profileId, input.database);
   if (current === null) return null;
-  const connected = getLatestUnifiedPortfolioSnapshotV2(input.profileId, false, input.database);
+  const connected = getCurrentUnifiedPortfolioSnapshotV2(input.profileId, input.database);
   const balances = listExploratoryPaperBalances(current.campaign.campaignId, input.profileId, input.database);
   let equity = new Decimal(0), benchmark = new Decimal(0), unpricedCount = 0;
   const rows = balances.map((balance) => {

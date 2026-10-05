@@ -6,7 +6,7 @@ import {
 } from '@coqui/core';
 import {
   getConnectionAccountSnapshotV2,
-  getLatestUnifiedPortfolioSnapshotV2,
+  getCurrentUnifiedPortfolioSnapshotV2,
   getMultiConnectionPaperCampaignByCommand,
   latestMultiConnectionPaperCampaign,
   paperConnectionBooks,
@@ -25,7 +25,7 @@ export class MultiConnectionPaperCampaignService {
     const prior = getMultiConnectionPaperCampaignByCommand(profileId, commandId, this.database);
     if (prior !== null) return { ok: true, campaign: prior,
       books: paperConnectionBooks(prior.id, this.database) };
-    const unified = getLatestUnifiedPortfolioSnapshotV2(profileId, false, this.database);
+    const unified = getCurrentUnifiedPortfolioSnapshotV2(profileId, this.database);
     if (unified === null) return { ok: false, code: 'portfolio_unavailable' };
     if (!unified.complete || !unified.exposures.some((exposure) =>
       exposure.exposureKey !== 'USD' && exposure.quantity !== '0')) {

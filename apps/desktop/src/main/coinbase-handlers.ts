@@ -1,7 +1,7 @@
 import type { SecretStore } from '@coqui/adapters';
 import type { Clock, PriceSource } from '@coqui/core';
 import {
-  CoinbaseAccountSyncService,
+  CoinbaseAccountSyncService, type ProfileOperationGate,
   type CoinbaseEvidenceAcquirer,
 } from '@coqui/services';
 import { getSetting, type Db } from '@coqui/storage';
@@ -17,6 +17,7 @@ export function lastCoinbaseSyncAtMs(database: Db): number | null {
 }
 
 export function createCoinbaseSyncHandlers(input: {
+  readonly operationGate?: ProfileOperationGate;
   readonly profileId: string;
   readonly database: Db;
   readonly clock: Clock;
@@ -39,12 +40,15 @@ export function createCoinbaseSyncHandlers(input: {
       if (service === null) {
         return { ok: false, issues: [{ path: [], code: 'credentials_unavailable' }] };
       }
+      if(input.operationGate&&!input.operationGate.begin())return {ok:false,issues:[{path:[],code:'connection_operation_in_progress'}]};
+      try {
       const prior = outcomes.get(payload.commandId);
       const result = prior ?? await service.sync(input.profileId);
       if (prior === undefined) outcomes.set(payload.commandId, result);
       return result.ok
         ? { ok: true, value: result.value }
         : { ok: false, issues: [{ path: [], code: result.code }] };
+      } finally {input.operationGate?.end();}
     },
   } as ChannelHandlers;
 }

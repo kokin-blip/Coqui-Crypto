@@ -1,50 +1,40 @@
-import { useDeferredValue, useEffect, useMemo, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { chartHistoryRange } from './chart-history-range.js';
+import { useDeferredValue, useEffect, useState } from 'react';
 import { ArrowDownAZ, CircleDot, Save, Search, X } from 'lucide-react';
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { AdvisorSheet } from './AdvisorSheet.js';
 import { decisionTimelineMarkers } from './decision-timeline-markers.js';
 import { ChartExtensionManager } from './ChartExtensionManager.js';
 import { ChartLinkController } from './chart-link-controller.js';
-import { ChartDrawingManager } from './ChartDrawingManager.js';
 import { MarketChartTileHeader } from './MarketChartTileHeader.js';
 import { workstationChartHeight } from './chart-workstation-types.js';
-import type { ChartDrawing, ChartTileConfiguration, DrawingTool, WorkstationBar, WorkstationChartStyle, WorkstationExtensionMarker, WorkstationIndicators, WorkstationInterval, WorkstationLayout } from './chart-workstation-types.js';
+import type { ChartTileConfiguration, DrawingTool, WorkstationBar, WorkstationChartStyle, WorkstationExtensionMarker, WorkstationIndicators, WorkstationInterval, WorkstationLayout } from './chart-workstation-types.js';
 import { MarketFactsPanel } from './MarketFactsPanel.js'; import { CoinbaseMarketContext } from './CoinbaseMarketContext.js';
 import { MarketDrawingTools, MarketPanelTriggers } from './MarketPanelControls.js';
 import { eventMatchesProduct, MarketEventsDisclosure } from './MarketEventsPanel.js';
 import { MarketFeedStatus } from './MarketFeedStatus.js';
 import { SurfaceState } from './SurfaceState.js';
 import { MarketWorkspaceToolbar } from './MarketWorkspaceToolbar.js';
-import { TradingWorkstationChart } from './TradingWorkstationChart.js';
-import { useChartExtensionSeries } from './use-chart-extension-series.js';
-import { useComparisonSeries } from './use-comparison-series.js';
+import type { ActivitySummary } from './TerminalActivity.js';
+import { ChartTile } from './MarketChartTile.js';
 import { useChannel } from '../query/use-channel.js';
 import { useCommand } from '../query/use-command.js';
 import { useWorkspace } from './WorkspaceContext.js';
 import { takeAdvisorSelection } from './advisor-navigation.js';
-import { routeHash } from './routes.js';
 type Product = ChannelResponse<'market-data.products'>['products'][number]; const INTERVALS: readonly WorkstationInterval[] = ['1m', '5m', '15m', '1h', '6h', '1d'];
 const EMPTY_INDICATORS: WorkstationIndicators = Object.freeze({
   sma20: false, sma50: false, ema20: false, bollinger20: false, rsi14: false, macd: false,
 });
 const CHART_INVALIDATIONS = ['app.chart.workspace'] as const;
 
-function rangeMs(interval: WorkstationInterval): number {
-  return { '1m': 86_400_000, '5m': 7 * 86_400_000, '15m': 30 * 86_400_000,
-    '1h': 90 * 86_400_000, '6h': 365 * 86_400_000, '1d': 5 * 365 * 86_400_000 }[interval];
-}
-
 function tileCount(layout: WorkstationLayout): number {
   return layout === 'single' ? 1 : layout === 'horizontal' || layout === 'vertical' ? 2 : 4;
 }
-
 function makeTile(productId: string, interval: WorkstationInterval, chartStyle: WorkstationChartStyle,
   scaleMode: ChartTileConfiguration['scaleMode'], indicators: WorkstationIndicators): ChartTileConfiguration {
   return { productId, interval, linkGroup: 'primary', chartStyle, scaleMode,
     indicators, compareProductIds: [] };
 }
-
 function normalizeTile(tile: { readonly productId: string; readonly interval: WorkstationInterval;
   readonly linkGroup: string | null; readonly chartStyle?: WorkstationChartStyle | undefined;
   readonly scaleMode?: ChartTileConfiguration['scaleMode'] | undefined;
@@ -55,67 +45,15 @@ function normalizeTile(tile: { readonly productId: string; readonly interval: Wo
     indicators: tile.indicatorSet ?? fallback.indicators,
     compareProductIds: [...new Set(tile.compareProductIds ?? [])].filter((id) => id !== tile.productId).slice(0, 3) };
 }
-
 function resizeTiles(current: readonly ChartTileConfiguration[], layout: WorkstationLayout,
   productIds: readonly string[], fallback: ChartTileConfiguration): readonly ChartTileConfiguration[] {
   const products = [...new Set([...current.map((tile) => tile.productId), ...productIds])];
   return Array.from({ length: Math.min(tileCount(layout), Math.max(1, products.length)) }, (_, index) =>
     current[index] ?? { ...fallback, productId: products[index] ?? products[0] ?? 'BTC-USD' });
 }
-
-function ChartTile({ client, tile, tileId, layoutId, style, activeTool, height,
-  indicators, scaleMode, volumeVisible, liveVisible, extensionIds, linkController,
-  decisionMarkers, onDrawing, onDeleteDrawing }: {
-  readonly client: CoquiClient; readonly tile: ChartTileConfiguration; readonly tileId: string;
-  readonly layoutId: string | null; readonly style: WorkstationChartStyle;
-  readonly activeTool: DrawingTool; readonly height: number; readonly indicators: WorkstationIndicators;
-  readonly scaleMode: 'linear' | 'percentage' | 'indexed' | 'logarithmic';
-  readonly volumeVisible: boolean; readonly liveVisible: boolean; readonly extensionIds: readonly string[];
-  readonly linkController: ChartLinkController; readonly onDrawing: (drawing: ChartDrawing) => void;
-  readonly decisionMarkers: readonly WorkstationExtensionMarker[];
-  readonly onDeleteDrawing: (id: string) => void;
-}): React.JSX.Element {
-  const queryClient = useQueryClient();
-  const [anchor] = useState(() => Date.now());
-  const history = useChannel(client, 'market-data.display-bars', {
-    productId: tile.productId, interval: tile.interval,
-    startTimeMs: anchor - rangeMs(tile.interval), endTimeMs: anchor,
-  });
-  const live = useChannel(client, 'market-data.live-candles', { productIds: [tile.productId], interval: tile.interval });
-  const chartWorkspace = useChannel(client, 'app.chart.workspace', { productId: tile.productId, interval: tile.interval });
-  const bars = useMemo<readonly WorkstationBar[]>(() => {
-    const completed = history.kind === 'ready' ? history.value.bars : [];
-    if (!liveVisible || live.kind !== 'ready') return completed;
-    const provisional = live.value.candles[0];
-    return provisional === undefined ? completed : [...completed, provisional];
-  }, [history, live, liveVisible]);
-  const extensionState = useChartExtensionSeries(client, extensionIds, bars);
-  const comparisons = useComparisonSeries(client, tile.compareProductIds, tile.interval,
-    anchor - rangeMs(tile.interval), anchor);
-  const drawings: readonly ChartDrawing[] = chartWorkspace.kind === 'ready'
-    ? chartWorkspace.value.drawings.filter((drawing) => drawing.layoutId === null || drawing.layoutId === layoutId)
-      .map((drawing) => ({ id: drawing.id, kind: drawing.kind, points: drawing.points, label: drawing.label }))
-    : [];
-  if (history.kind === 'loading') return <div className="workstation-chart-loading workstation-chart-empty" role="status"><strong>Loading completed candles</strong><span>Reading completed Coinbase display history for {tile.productId}.</span></div>;
-  const retry = (): void => { void queryClient.invalidateQueries({ queryKey: ['market-data.display-bars'] }); };
-  if (history.kind !== 'ready') return <div className="workstation-chart-empty"><strong>Chart unavailable</strong><span>Coinbase history could not be loaded. No substitute source was used.</span><div><button type="button" onClick={retry}>Refresh history</button><a href={routeHash('settings')}>Open connections</a></div></div>;
-  if (bars.length === 0) return <div className="workstation-chart-empty"><strong>No completed candles</strong><span>Try a longer interval or refresh the completed-bar history.</span><div><button type="button" onClick={retry}>Refresh history</button><a href={routeHash('settings')}>Open connections</a></div></div>;
-  return <div className="chart-render-stack">
-    {extensionState.kind === 'loading' && <span className="chart-extension-state">Evaluating extensions…</span>}
-    {extensionState.failedCount > 0 && <span className="chart-extension-state warning">{extensionState.failedCount} extension{extensionState.failedCount === 1 ? '' : 's'} unavailable</span>}
-    {comparisons.loading && <span className="chart-comparison-state">Loading comparisons…</span>}
-    {comparisons.failedCount > 0 && <span className="chart-comparison-state warning">{comparisons.failedCount} comparison{comparisons.failedCount === 1 ? '' : 's'} unavailable</span>}
-    <TradingWorkstationChart client={client} bars={bars} productId={tile.productId}
-      style={style} scaleMode={scaleMode} volumeVisible={volumeVisible} indicators={indicators}
-      comparisons={comparisons.series}
-      extensionSeries={extensionState.series} extensionMarkers={[...extensionState.markers, ...decisionMarkers]} activeTool={activeTool} drawings={drawings}
-      onDrawing={onDrawing} height={height} syncId={tileId} linkGroup={tile.linkGroup}
-      linkController={linkController} />
-    <ChartDrawingManager drawings={drawings} onSave={onDrawing} onDelete={onDeleteDrawing} />
-  </div>;
-}
-
-export function AdvancedMarkets({ client, embedded = false, productId, onProductChange }: {
+export function AdvancedMarkets({ client, embedded = false, productId, onProductChange, active = true, activity }: {
+  readonly activity?: ActivitySummary | undefined;
+  readonly active?: boolean;
   readonly client: CoquiClient; readonly embedded?: boolean;
   readonly productId?: string; readonly onProductChange?: (productId: string) => void;
 }): React.JSX.Element {
@@ -186,12 +124,11 @@ export function AdvancedMarkets({ client, embedded = false, productId, onProduct
     }));
   const completed = useChannel(client, 'market-data.display-bars', {
     productId: selected, interval: defaultInterval,
-    startTimeMs: historyAnchor - rangeMs(defaultInterval), endTimeMs: historyAnchor,
+    ...chartHistoryRange(defaultInterval, historyAnchor),
   });
   const factsBars: readonly WorkstationBar[] = completed.kind === 'ready' ? completed.value.bars : [];
   const activeProfileId = profiles.kind === 'ready' ? profiles.value.activeProfile.id : null;
   useEffect(()=>setRecentProducts([]),[activeProfileId]);
-
   useEffect(()=>{const selection=takeAdvisorSelection();if(selection?.productId!==null&&selection?.productId!==undefined) {setSelected(selection.productId);setDraftTiles(null);}if(selection?.openAdvisor===true) setAnalystOpen(true);},[]);
 
   useEffect(()=>{const first=portfolioProductIds[0];
@@ -285,7 +222,7 @@ export function AdvancedMarkets({ client, embedded = false, productId, onProduct
             style={tile.chartStyle} activeTool={activeTool} height={embedded && layout === 'single' ? 410 : workstationChartHeight(layout, index)} indicators={tile.indicators}
             scaleMode={tile.scaleMode} volumeVisible={workspace.preferences?.marketVolumeVisible ?? true}
             liveVisible={workspace.preferences?.marketLiveCandle ?? false} extensionIds={enabledExtensionIds}
-            decisionMarkers={[...decisionMarkers(tile.productId), ...eventMarkers(tile.productId)]}
+            pendingActions={activity?.annotations.filter(a => a.productId === tile.productId && a.kind === 'proposal').filter((a, index, all) => !all.slice(index + 1).some(other => other.proposalId === a.proposalId)).filter(a => ['proposed', 'pending_review', 'approved', 'executing'].includes(a.status)).map(a => ({ ...a, atMs: activity?.annotations.find(original => original.kind === 'proposal' && original.proposalId === a.proposalId && original.productId === a.productId && original.status === 'proposed')?.atMs ?? a.atMs })) ?? []} position={activity?.positions.find(p => p.productId === tile.productId)} decisionMarkers={[...decisionMarkers(tile.productId), ...eventMarkers(tile.productId), ...(activity?.annotations.filter(a => a.kind === 'fill' && a.productId === tile.productId && a.priceUsd !== null && a.timestampSource === 'recorded_fill').map(a => ({ extensionId: `fill:${a.id}`, timeMs: a.atMs, priceUsd: a.priceUsd!, label: `${a.side === 'buy' ? 'Buy' : a.side === 'sell' ? 'Sell' : 'Fill'} ${a.quantity ?? 'unknown quantity'} @ ${a.priceUsd ?? 'unavailable'}${a.timestampSource === 'recorded_event_fill_time_unavailable' ? ' · exact fill time unavailable' : ''}`, tone: a.side === 'sell' ? 'negative' as const : 'positive' as const })) ?? [])]} historyAnchor={historyAnchor} active={active}
             linkController={linkController} onDrawing={(drawing) => void chartCommand.run({ commandId: crypto.randomUUID(), action: { kind: 'save_drawing', drawing: { ...drawing, productId: tile.productId, interval: tile.interval, layoutId: activeLayoutId } } })}
             onDeleteDrawing={(drawingId) => void chartCommand.run({ commandId: crypto.randomUUID(), action: { kind: 'delete_drawing', drawingId } })} />
         </article>;

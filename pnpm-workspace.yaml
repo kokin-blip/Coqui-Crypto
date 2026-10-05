@@ -12,3 +12,7 @@ allowBuilds:
   # dependency already supplies, so the script is denied rather than approved.
   # The bundler is verified to work without it.
   esbuild: false
+
+# Patch the exact version pinned by minimatch 10 without changing older majors.
+overrides:
+  "brace-expansion@5.0.9": 5.0.12

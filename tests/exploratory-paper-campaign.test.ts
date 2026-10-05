@@ -22,7 +22,7 @@ import {
   type PaperDecisionPreparation,
 } from '../packages/services/src/index.js';
 import {
-  listExploratoryPaperBalances,
+  listExploratoryPaperBalances, tradingActivityScopes, readTradingActivity, linkExploratoryPaperExecution,
   listDecisionEvidenceEvents,
   listSubmittedExploratoryPaperExecutions,
   openDatabase,
@@ -177,6 +177,18 @@ describe('exploratory paper campaign', () => {
       .every((balance) => Number(balance.quantity) >= 0)).toBe(true);
     expect(database.prepare('SELECT COUNT(*) AS count FROM paper_fills_v3').get())
       .toMatchObject({ count: first.submittedCount });
+    const scopes=tradingActivityScopes(PROFILE,database).scopes;
+    const current=scopes.find(scope=>scope.current)!;
+    const facts=readTradingActivity(PROFILE,current,null,'BTC-USD',database);
+    expect(facts.fills).toHaveLength(first.submittedCount);
+    expect(readTradingActivity(PROFILE,scopes.find(scope=>scope.id==='ledger')!,null,'BTC-USD',database).fills).toEqual([]);
+    const firstFill=facts.fills[0]!;
+    linkExploratoryPaperExecution({profileId:PROFILE,campaignId:current.campaignId!,fillId:firstFill.id,createdAtMs:AT+4*DAY},database);
+    expect(readTradingActivity(PROFILE,current,null,'BTC-USD',database).fills).toHaveLength(first.submittedCount);
+    const wallet=tradingActivityScopes(PROFILE,database).wallets[0]!.id;
+    const attributed=readTradingActivity(PROFILE,current,wallet,'BTC-USD',database);
+    expect(attributed.fills).toEqual([]);expect(attributed.opening).toEqual({});
+
     database.close();
   });
 
@@ -215,4 +227,18 @@ describe('exploratory paper campaign', () => {
       .run('different-profile', start.campaign.campaignId, AT + 4)).toThrow('profile mismatch');
     database.close();
   });
+});
+
+it('blocks dependent active cleanup and refuses a paused campaign resume after disconnect',async()=>{
+  const {ConnectorRemovalService,connectorRemovalPreview}=await import('../packages/services/src/accounts/connector-removal.js');
+  const {createMemorySecretStore}=await import('../packages/adapters/src/index.js');
+  const {database,service}=fixture();const connection=profileConnectionV2(PROFILE,'robinhood_crypto',sha256Hex('credential'),AT);
+  const started=service.start({profileId:PROFILE,commandId:'lifecycle-campaign',explicitConfirmation:true,nowMs:AT+1,instruments:[BTC],preparation:stubPreparation([BTC_KEY])});
+  if(!started.ok)throw new Error('Campaign fixture failed');
+  const preview=connectorRemovalPreview(PROFILE,connection.id,AT+2,database)!;expect(preview.blockers).toContain('active_exploratory_campaign');
+  const cleanup=new ConnectorRemovalService({profileId:PROFILE,database,clock:new FixedClock(AT+2),secrets:createMemorySecretStore()});
+  expect(await cleanup.remove(connection.id,'blocked',preview.revision,true,false)).toMatchObject({ok:false,issues:[{code:'connection_in_use'}]});
+  expect(service.transition({profileId:PROFILE,campaignId:started.campaign.campaignId,commandId:'pause-source',action:'pause',nowMs:AT+2}).ok).toBe(true);
+  expect(await cleanup.remove(connection.id,'disconnect-source',connectorRemovalPreview(PROFILE,connection.id,AT+2,database)!.revision,true,false)).toMatchObject({ok:true});
+  expect(service.transition({profileId:PROFILE,campaignId:started.campaign.campaignId,commandId:'resume-source',action:'resume',nowMs:AT+3})).toMatchObject({ok:false,code:'portfolio_unavailable'});database.close();
 });

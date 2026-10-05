@@ -20,6 +20,7 @@ import {
   type UnifiedPortfolioSnapshotV2,
 } from '@coqui/core';
 import {
+  connectionEligible,
   ensureLegacyCoinbaseConnection,
   getLatestConnectionAccountSnapshotV2,
   getProfileConnectionV2,
@@ -108,6 +109,7 @@ export async function persistCoinbasePortfolioSnapshotV2(
 ): Promise<{ readonly connection: ProfileConnectionV2; readonly snapshot: ConnectionAccountSnapshotV2; readonly unified: UnifiedPortfolioSnapshotV2 }> {
   const candidate = profileConnectionV2(input.profileId, 'coinbase', input.credentialFingerprint, input.receivedAtMs);
   const connection = getProfileConnectionV2(input.profileId, candidate.id, database) ?? candidate;
+  if(!connectionEligible(connection,database))throw new Error('connection_ineligible');
   saveProfileConnectionV2(connection, database);
   const legacy = ensureLegacyCoinbaseConnection(input.profileId, input.credentialFingerprint, input.receivedAtMs, database);
   linkProfileConnectionMigration(legacy.id, connection.id, input.receivedAtMs, database);
@@ -162,11 +164,12 @@ export async function persistCoinbasePortfolioSnapshotV2(
   const contentHash = connectionAccountSnapshotV2Hash({ ...material, id: '', contentHash: '' });
   const snapshot = Object.freeze({ ...material,
     id: sha256Hex(`connection-account-snapshot-v2:${contentHash}`), contentHash });
+  if(!connectionEligible(getProfileConnectionV2(input.profileId,connection.id,database)!,database))throw new Error('connection_ineligible');
   saveConnectionAccountSnapshotV2(snapshot, database);
   seedAllocationFromCoinbaseSnapshot(snapshot, database);
 
   const sources = listProfileConnectionsV2(input.profileId, database)
-    .filter((candidate) => candidate.status !== 'disconnected')
+    .filter((candidate) => connectionEligible(candidate,database))
     .map((candidate) => candidate.id === connection.id ? snapshot
       : getLatestConnectionAccountSnapshotV2(input.profileId, candidate.id, database) ?? unavailableSnapshot(candidate, input.receivedAtMs));
   const unified = buildUnifiedPortfolioSnapshotV2(input.profileId, sources, input.receivedAtMs);
@@ -190,6 +193,7 @@ export async function persistRobinhoodPortfolioSnapshotV2(
 ): Promise<{ readonly connection: ProfileConnectionV2; readonly snapshot: ConnectionAccountSnapshotV2; readonly unified: UnifiedPortfolioSnapshotV2 }> {
   const candidate = profileConnectionV2(input.profileId, 'robinhood_crypto', input.credentialFingerprint, input.receivedAtMs);
   const connection = getProfileConnectionV2(input.profileId, candidate.id, database) ?? candidate;
+  if(!connectionEligible(connection,database))throw new Error('connection_ineligible');
   saveProfileConnectionV2(connection, database);
   const refs = new Map(input.evidence.accounts.map((account) => {
     const ref = providerAccountRefV1(connection, account.accountNumber, input.receivedAtMs);
@@ -240,8 +244,9 @@ export async function persistRobinhoodPortfolioSnapshotV2(
   };
   const contentHash = connectionAccountSnapshotV2Hash({ ...material, id: '', contentHash: '' });
   const snapshot = Object.freeze({ ...material, id: sha256Hex(`connection-account-snapshot-v2:${contentHash}`), contentHash });
+  if(!connectionEligible(getProfileConnectionV2(input.profileId,connection.id,database)!,database))throw new Error('connection_ineligible');
   saveConnectionAccountSnapshotV2(snapshot, database);
-  const sources = listProfileConnectionsV2(input.profileId, database).filter((item) => item.status !== 'disconnected')
+  const sources = listProfileConnectionsV2(input.profileId, database).filter((item) => connectionEligible(item,database))
     .map((item) => item.id === connection.id ? snapshot
       : getLatestConnectionAccountSnapshotV2(input.profileId, item.id, database) ?? unavailableSnapshot(item, input.receivedAtMs));
   const unified = buildUnifiedPortfolioSnapshotV2(input.profileId, sources, input.receivedAtMs);

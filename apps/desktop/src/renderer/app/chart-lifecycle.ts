@@ -21,6 +21,7 @@ export interface ChartLifecycle {
   readonly reducedMotion: boolean;
   registerCleanup(cleanup: () => void): void;
   onResize(listener: () => void): void;
+  setHeight(height: number): void;
   destroy(): void;
 }
 
@@ -85,8 +86,9 @@ export function createChartLifecycle(
   const cleanups: Array<() => void> = [];
   const resizeListeners = new Set<() => void>();
   let destroyed = false;
+  let baseHeight = options.height;
   const fullscreenHeight = (): number => document.fullscreenElement?.contains(container) === true
-    ? Math.max(options.height, document.fullscreenElement.clientHeight - 200) : options.height;
+    ? Math.max(baseHeight, document.fullscreenElement.clientHeight - 200) : baseHeight;
   const onFullscreen = (): void => { if (!destroyed) chart.applyOptions({ height: fullscreenHeight() }); };
   document.addEventListener('fullscreenchange', onFullscreen);
   const observer = new ResizeObserver(([entry]) => {
@@ -100,6 +102,7 @@ export function createChartLifecycle(
     chart,
     reducedMotion,
     registerCleanup(cleanup) { cleanups.push(cleanup); },
+    setHeight(height) { baseHeight = height; if (!destroyed) chart.applyOptions({ height: fullscreenHeight() }); },
     onResize(listener) { resizeListeners.add(listener); },
     destroy() {
       if (destroyed) return;

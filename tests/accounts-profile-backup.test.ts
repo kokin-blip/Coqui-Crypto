@@ -22,7 +22,7 @@ import {
   createProfileOperationGate,
 } from '../packages/services/src/index.js';
 import {
-  createFileProfileBackupStore,
+  createFileProfileBackupStore, createFileWalletNicknameStore,
   createFileProfileManifestStore,
   openDatabase,
   type CreateProfileBackupInput,
@@ -89,6 +89,8 @@ describe('file profile backup store', () => {
     const root = temporaryRoot('coqui-profile-backup-store-');
     const backups = join(root, 'backups');
     const sourcePath = createSourceDatabase(root);
+    const localNames=createFileWalletNicknameStore(join(root,'wallet-nicknames.json'));
+    expect(localNames.set('a'.repeat(64),'Local nickname excluded from backup',null).ok).toBe(true);
     const sourceBefore = sha256(sourcePath);
     const store = createFileProfileBackupStore(root, backups);
 
@@ -101,7 +103,7 @@ describe('file profile backup store', () => {
         backupId: BACKUP_ID,
         profileId: PROFILE_ID,
         createdAtMs: 50,
-        schemaVersion: 86,
+        schemaVersion: 87,
         totalDurableRecords: 0,
         credentialKinds: ['advisor_gemini', 'coinbase'],
         credentialsIncluded: false,
@@ -114,6 +116,7 @@ describe('file profile backup store', () => {
     expect(Object.isFrozen(created.backup.credentialKinds)).toBe(true);
 
     const artifactPath = join(backups, created.backup.artifactName);
+    expect(readdirSync(artifactPath).every(filename=>!readFileSync(join(artifactPath,filename)).includes(Buffer.from('Local nickname excluded from backup')))).toBe(true);
     const rawManifest = readFileSync(join(artifactPath, 'manifest.json'), 'utf8');
     expect(rawManifest).toContain('"credentialsIncluded": false');
     expect(rawManifest).toContain('"coinbase"');

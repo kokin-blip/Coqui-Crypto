@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { formatPercent, formatUsd } from '@coqui/ui-kit';
 
+import { AllocationComposition } from './AllocationComposition.js';
 import { DeferredPanel } from './DeferredPanel.js';
 import { SurfaceState } from './SurfaceState.js';
 import { useChannel } from '../query/use-channel.js';
@@ -44,6 +46,7 @@ function Drift({ value }: { readonly value: number | null }): React.JSX.Element 
 }
 
 export function Allocation({ client }: { readonly client: CoquiClient }): React.JSX.Element {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const allocation = useChannel(client, 'portfolio.allocation', {});
 
   if (allocation.kind === 'loading') return <SurfaceState kind="loading" title="Loading allocation" />;
@@ -52,18 +55,25 @@ export function Allocation({ client }: { readonly client: CoquiClient }): React.
   }
 
   const view = allocation.value;
+  const composition = view.allocation.slices.map((slice) => ({
+    id: slice.asset.symbol, label: slice.asset.symbol, valueUsd: slice.valueUsd, percent: slice.actualWeight * 100,
+  }));
+  const activeId = composition.some((entry) => entry.id === selectedId) ? selectedId : null;
   const planned = view.planStatus === 'available';
 
   return (
     <section aria-labelledby="allocation-heading" className="space-y-4">
       <h2 id="allocation-heading" className="font-semibold">
-        Allocation
+        Accounting allocation
       </h2>
+
+      <p className="allocation-source-note">Imported accounting holdings · as of {new Date(view.allocation.asOf).toLocaleString()}</p>
+      {composition.length > 0 && <AllocationComposition data={composition} selectedId={activeId} onSelect={setSelectedId} />}
 
       {view.allocation.slices.length === 0 ? (
         <SurfaceState kind="empty" title="Nothing to allocate yet" detail="Holdings appear here after verified portfolio evidence exists." compact />
       ) : (
-        <table className="w-full text-left">
+        <div className="terminal-route-table-scroll" tabIndex={0} role="region" aria-label="Scrollable evidence table"><table className="w-full text-left">
           <caption className="sr-only">Actual versus target weight and drift per asset</caption>
           <thead>
             <tr className="border-b">
@@ -76,8 +86,8 @@ export function Allocation({ client }: { readonly client: CoquiClient }): React.
           </thead>
           <tbody>
             {view.allocation.slices.map((slice) => (
-              <tr key={slice.asset.symbol}>
-                <th scope="row" className="pr-4 text-left font-normal">{slice.asset.symbol}</th>
+              <tr key={slice.asset.symbol} aria-selected={activeId === slice.asset.symbol}>
+                <th scope="row" className="pr-4 text-left font-normal"><button type="button" className="holding-select" aria-pressed={activeId === slice.asset.symbol} onClick={() => setSelectedId(slice.asset.symbol)}>{slice.asset.symbol}</button></th>
                 <td className="pr-4 text-right tabular-nums">
                   {formatUsd(slice.valueUsd)?.text ?? '—'}
                 </td>
@@ -95,7 +105,7 @@ export function Allocation({ client }: { readonly client: CoquiClient }): React.
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
       )}
 
       <div className="space-y-1">

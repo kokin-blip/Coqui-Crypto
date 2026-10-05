@@ -139,7 +139,7 @@ describe('the gate cannot be edited from the UI', () => {
       'connections.robinhood.keypair.begin',
       'connections.robinhood.keypair.complete',
       'connections.robinhood.keypair.cancel',
-      'connections.rename',
+      'connections.remove', 'wallets.nickname.set', 'connections.rename',
       'connections.disconnect',
       'connections.sync',
       'app.chart.snapshot.save',

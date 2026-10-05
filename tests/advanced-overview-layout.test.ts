@@ -9,7 +9,7 @@ describe('advanced overview composition', () => {
   it('composes one terminal with market panels, data tabs, and algorithm evidence', () => {
     const terminal = readFileSync(resolve('apps/desktop/src/renderer/app/TerminalWorkspace.tsx'), 'utf8');
     expect(overview).toContain('TerminalWorkspace');
-    expect(terminal).toContain('<AdvancedMarkets client={client} embedded');
+    expect(terminal).toContain('<AdvancedMarkets client={client}');
     expect(terminal).toContain('<TerminalOrderBook');
     expect(terminal).toContain('<TerminalAlgorithm');
     expect(terminal).toContain('<TerminalAlgorithmDrawer');

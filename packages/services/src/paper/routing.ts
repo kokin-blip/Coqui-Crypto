@@ -8,6 +8,7 @@ import {
   type PaperVenuePlacement,
 } from '@coqui/core';
 import {
+  connectionRemoval, getProfileConnectionV2, connectionEligible,
   getExecutionPlan,
   latestMultiConnectionPaperCampaign,
   linkPaperConnectionRoute,
@@ -75,6 +76,10 @@ export class VenueNeutralPaperRoutingService {
     if (plan === null || route === undefined) {
       throw new Error('execution_route_not_found');
     }
+    const connection=getProfileConnectionV2(profileId,route.connectionId,this.#database);
+    if(connection!==null&&!connectionEligible(connection,this.#database))return {accepted:false,providerOrderId:null,reasonCode:'assumption_changed',idempotencyKey:route.idempotencyKey};
+    const removal=connectionRemoval(profileId,route.connectionId,this.#database);
+    if(removal!==null&&removal.state!=='reactivated')return {accepted:false,providerOrderId:null,reasonCode:'assumption_changed',idempotencyKey:route.idempotencyKey};
     const latest = this.#currentAssumptionHash(route);
     if (latest === null || latest !== route.assumptionHash) {
       return Object.freeze({

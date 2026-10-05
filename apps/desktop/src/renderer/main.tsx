@@ -12,6 +12,7 @@ import './styles/features.css';
 import './styles/motion.css';
 import './styles/workstation.css';
 import './styles/terminal.css';
+import './styles/terminal-routes.css';
 
 const client = createIpcClient();
 

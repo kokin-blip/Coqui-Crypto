@@ -71,6 +71,8 @@ export interface WorkstationExtensionSeries {
 }
 
 export interface WorkstationExtensionMarker {
+  /** Recorded execution/reference price; omitted for non-price events. */
+  readonly priceUsd?: string;
   readonly extensionId: string;
   readonly timeMs: number;
   readonly label: string;

@@ -7,7 +7,7 @@ import {
 } from '@coqui/core';
 import {
   getSetting,
-  getLatestUnifiedPortfolioSnapshotV2,
+  getCurrentUnifiedPortfolioSnapshotV2,
   getWalletRiskState,
   listCoinbaseBalanceDiscrepancies,
   listWalletSchedules,
@@ -122,7 +122,7 @@ export class StatusRailService {
 
     try {
       const risk = getWalletRiskState(profileId, this.#database);
-      const portfolio = getLatestUnifiedPortfolioSnapshotV2(profileId, false, this.#database);
+      const portfolio = getCurrentUnifiedPortfolioSnapshotV2(profileId, this.#database);
       const schedules = listWalletSchedules(MAX_DISCREPANCIES, this.#database);
       const exploratory = currentExploratoryPaperCampaign(profileId, this.#database);
       const discrepancies = listCoinbaseBalanceDiscrepancies(this.#database, MAX_DISCREPANCIES);

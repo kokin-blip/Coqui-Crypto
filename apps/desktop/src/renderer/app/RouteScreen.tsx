@@ -1,6 +1,7 @@
 import type { CoquiClient } from '@coqui/contracts';
 import { lazy, Suspense } from 'react';
 
+import { RouteEvidenceBoundary } from './RouteEvidenceBoundary.js';
 import { Alerts } from './Alerts.js';
 import { Activity } from './Activity.js';
 import { Allocation } from './Allocation.js';
@@ -79,11 +80,12 @@ export function RouteScreen({
   const definition = routeDefinition(route);
   const integrated = route === 'overview';
   return (
-    <section className="route-screen" data-route={route}>
+    <section className={`route-screen${route !== 'overview' && route !== 'markets' ? ' remaining-terminal-route' : ''}`} data-route={route}>
       <header className={`screen-heading${integrated ? ' screen-heading-integrated' : ''}`}>
         <div className={integrated ? 'sr-only' : undefined}><h1 data-route-heading tabIndex={-1}>{definition.title}</h1></div>
       </header>
       <RouteTabs route={route} />
+      <RouteEvidenceBoundary route={route} />
       <Suspense fallback={<div className="panel"><span className="muted">Loading workspace…</span></div>}>
         <ScreenBody client={client} route={route} />
       </Suspense>

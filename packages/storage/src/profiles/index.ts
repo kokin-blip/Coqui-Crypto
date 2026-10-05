@@ -5,3 +5,4 @@ export * from './deletion.js';
 export * from './duplication.js';
 export * from './manifest.js';
 export * from './person.js';
+export * from './wallet-nicknames.js';

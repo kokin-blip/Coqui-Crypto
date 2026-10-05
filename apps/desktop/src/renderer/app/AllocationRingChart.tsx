@@ -2,13 +2,12 @@ import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 
 import { formatUsd } from '@coqui/ui-kit';
 
-import { allocationPercentages, type AllocationDatum, type WeightedAllocationDatum } from './allocation-data.js';
+import { AllocationLegend } from './AllocationLegend.js';
+import { allocationColor, allocationPercentages, type AllocationDatum, type WeightedAllocationDatum } from './allocation-data.js';
 import { routeHash } from './routes.js';
 import { SurfaceState } from './SurfaceState.js';
 
 export type { AllocationDatum } from './allocation-data.js';
-
-const COLORS = ['#43e08a', '#8b7cff', '#f2b84b', '#57c7e3', '#ff8f70', '#b8d86b'];
 
 export default function AllocationRingChart({
   data,
@@ -24,11 +23,12 @@ export default function AllocationRingChart({
   const summary = weighted.map((entry) => `${entry.label} ${entry.percent.toFixed(1)}%`).join(', ');
 
   return (
-    <figure className="allocation-ring">
+    <div className="allocation-chart-container"><figure className="allocation-ring">
       <div className="allocation-ring-visual" aria-hidden="true">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
+              rootTabIndex={-1}
               data={weighted}
               dataKey="value"
               nameKey="label"
@@ -43,10 +43,10 @@ export default function AllocationRingChart({
                 if (selected !== undefined) onSelect?.(selected.id);
               }}
             >
-              {weighted.map((entry, index) => (
+              {weighted.map((entry) => (
                 <Cell
                   key={entry.id}
-                  fill={COLORS[index % COLORS.length]!}
+                  fill={allocationColor(entry.id)}
                   opacity={selectedId === null || selectedId === undefined || selectedId === entry.id ? 1 : 0.36}
                 />
               ))}
@@ -56,24 +56,15 @@ export default function AllocationRingChart({
                 const datum = item.payload as WeightedAllocationDatum;
                 return [`${datum.percent.toFixed(1)}% · ${formatUsd(datum.valueUsd)?.text ?? datum.valueUsd}`, datum.label];
               }}
-              contentStyle={{ background: 'var(--coqui-surface-2)', border: '1px solid var(--coqui-border)', borderRadius: 8 }}
+              contentStyle={{ background: 'var(--coqui-surface-2)', border: '1px solid var(--coqui-border)', borderRadius: 4, color: 'var(--coqui-text)' }}
             />
           </PieChart>
         </ResponsiveContainer>
       </div>
       <figcaption>
         <span className="sr-only">Portfolio allocation: {summary}.</span>
-        <ul className="allocation-legend">
-          {weighted.map((entry, index) => (
-            <li key={entry.id}>
-              <button type="button" aria-pressed={selectedId === entry.id} onClick={() => onSelect?.(entry.id)}>
-                <i style={{ backgroundColor: COLORS[index % COLORS.length] }} aria-hidden="true" />
-                <span>{entry.label}</span><strong>{entry.percent.toFixed(1)}%</strong>
-              </button>
-            </li>
-          ))}
-        </ul>
+        <AllocationLegend data={weighted} selectedId={selectedId} onSelect={onSelect} />
       </figcaption>
-    </figure>
+    </figure></div>
   );
 }

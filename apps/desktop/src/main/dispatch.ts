@@ -27,6 +27,7 @@ export type ChannelHandlers = Readonly<Partial<Record<ChannelName, ChannelHandle
  * service's issue codes and the wire's four-way outcome.
  */
 const BLOCKED_CODES: ReadonlySet<string> = new Set([
+  'connection_in_use', 'connection_operation_in_progress', 'removal_preview_stale', 'confirmation_required',
   'kill_switch_engaged',
   'guardrail_rejected',
   'execution_not_permitted',
@@ -40,6 +41,7 @@ const BLOCKED_CODES: ReadonlySet<string> = new Set([
 
 /** Codes describing an outcome the application genuinely cannot determine. */
 const UNKNOWN_CODES: ReadonlySet<string> = new Set([
+  'removal_recovery_required',
   'source_cancelled',
   'source_shutdown',
   'recovery_required',

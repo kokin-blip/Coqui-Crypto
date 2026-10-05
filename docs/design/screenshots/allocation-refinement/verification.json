@@ -1,0 +1,73 @@
+[
+  {
+    "name": "holdings-dark-300px",
+    "width": 274,
+    "overflow": [],
+    "donutWidth": 180,
+    "rows": 2
+  },
+  {
+    "name": "holdings-light-1280",
+    "width": 274,
+    "overflow": [],
+    "donutWidth": 180,
+    "rows": 2
+  },
+  {
+    "name": "holdings-partial-960",
+    "width": 860,
+    "overflow": [],
+    "donutWidth": 220,
+    "rows": 7
+  },
+  {
+    "name": "holdings-zoom-200",
+    "width": 552,
+    "overflow": [],
+    "donutWidth": 220,
+    "rows": 2
+  },
+  {
+    "name": "holdings-single",
+    "width": 274,
+    "overflow": [],
+    "donutWidth": 180,
+    "rows": 1
+  },
+  {
+    "name": "holdings-empty"
+  },
+  {
+    "name": "allocation-dark",
+    "width": 1366,
+    "overflow": [],
+    "rows": 2
+  },
+  {
+    "name": "allocation-light-1280",
+    "width": 1206,
+    "overflow": [],
+    "rows": 7
+  },
+  {
+    "name": "allocation-contrast-960",
+    "width": 886,
+    "overflow": [],
+    "rows": 7
+  },
+  {
+    "name": "allocation-zoom-200",
+    "width": 600,
+    "overflow": [],
+    "rows": 2
+  },
+  {
+    "name": "allocation-reported-weights",
+    "width": 1206,
+    "overflow": [],
+    "rows": 2
+  },
+  {
+    "name": "allocation-empty"
+  }
+]

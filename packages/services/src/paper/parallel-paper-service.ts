@@ -1,3 +1,4 @@
+import { connectionEligible, getProfileConnectionV2, getConnectionAccountSnapshotV2 } from '@coqui/storage';
 import { Decimal } from 'decimal.js';
 
 import { createAlpacaPaperClient, createRequestDeadline, childRequestDeadline, AlpacaPaperError, withinDeadline, type AlpacaPaperCredentials, type SecretStore, type RequestDeadline } from '@coqui/adapters';
@@ -119,7 +120,7 @@ export class ParallelPaperService {
     }
     if (this.#input.killSwitchEngaged()) return { ok: false, code: 'kill_switch_engaged' };
     const coinbase = listProfileConnectionsV2(this.#input.profileId, this.#input.database)
-      .filter((item) => item.provider === 'coinbase' && item.status === 'active');
+      .filter((item) => item.provider === 'coinbase' && item.status === 'active' && connectionEligible(item,this.#input.database));
     if (coinbase.length !== 1) return { ok: false, code: 'one_coinbase_connection_required' };
     const snapshot = getLatestConnectionAccountSnapshotV2(this.#input.profileId, coinbase[0]!.id, this.#input.database);
     const now = this.#input.clock.nowMs();
@@ -176,6 +177,7 @@ export class ParallelPaperService {
   transition(kind: 'paused' | 'resumed' | 'stopped', commandId: string): boolean {
     const current = this.status();
     if (current.experiment === null || current.status === 'stopped') return false;
+    if(kind==='resumed'){const source=getConnectionAccountSnapshotV2(this.#input.profileId,current.experiment.sourceConnectionSnapshotId,this.#input.database);const connection=source===null?null:getProfileConnectionV2(this.#input.profileId,source.connectionId,this.#input.database);if(connection===null||!connectionEligible(connection,this.#input.database))return false;}
     if (kind === 'resumed' && (current.status !== 'paused' || this.#input.killSwitchEngaged() || this.summary().reconciliationAttention.blocked)) return false;
     this.#append(current.experiment, kind, `transition:${commandId}`, { reason: 'user_action' });
     return true;

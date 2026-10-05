@@ -1,3 +1,4 @@
+import { WalletAttribution } from './WalletNames.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Sparkles } from 'lucide-react';
 
@@ -181,7 +182,7 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
           <ol className="execution-route-grid">{detail.routes.map((route)=><li key={route.routeId}>
             <header><strong>{route.side.toUpperCase()} {route.exposureKey}</strong><span>{route.provider.replace('_',' ')}</span></header>
             <dl><div><dt>Paper notional</dt><dd>{route.amountUsd} USD</dd></div><div><dt>Instrument</dt><dd>{route.productId}</dd></div>
-              <div><dt>Connection</dt><dd title={route.connectionId}>{route.connectionId.slice(0,12)}…</dd></div>
+              <div><dt>Connection</dt><dd title={route.connectionId}><WalletAttribution client={client} connectionId={route.connectionId} /></dd></div>
               <div><dt>Assumptions</dt><dd title={route.assumptionHash}>{route.assumptionHash.slice(0,12)}…</dd></div></dl>
             <small>Fee, spread, liquidity, permission, and minimum evidence: unavailable in this bounded read model.</small>
           </li>)}</ol>}

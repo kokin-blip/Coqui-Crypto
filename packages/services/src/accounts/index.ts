@@ -15,3 +15,4 @@ export * from './status-rail.js';
 export * from './onboarding.js';
 export * from './readiness.js';
 export * from './results.js';
+export * from './connector-removal.js';

@@ -13,3 +13,6 @@ data/
 
 # Packaged artifacts. Built by CI on a tag; never committed.
 apps/desktop/release/
+
+# macOS Finder metadata
+.DS_Store

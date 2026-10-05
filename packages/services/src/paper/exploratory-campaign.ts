@@ -16,7 +16,8 @@ import {
   countSubmittedExploratoryPaperExecutions,
   currentExploratoryPaperCampaign,
   getExploratoryPaperCampaignByCommand,
-  getLatestUnifiedPortfolioSnapshotV2,
+  getCurrentUnifiedPortfolioSnapshotV2,
+  listProfileConnectionsV2, connectionEligible,
   listSubmittedPaperExecutions,
   saveExploratoryPaperCampaign,
   transitionExploratoryPaperCampaign,
@@ -78,7 +79,7 @@ export class ExploratoryPaperCampaignService {
     if (current !== null && current.status !== 'stopped') {
       return { ok: false, code: 'campaign_already_active' };
     }
-    const unified = getLatestUnifiedPortfolioSnapshotV2(input.profileId, false, this.database);
+    const unified = getCurrentUnifiedPortfolioSnapshotV2(input.profileId, this.database);
     if (unified === null) return { ok: false, code: 'portfolio_unavailable' };
     if (!unified.complete || unified.totalValueUsd === null ||
         !unified.exposures.some((item) => item.exposureKey !== 'USD' && new Decimal(item.quantity).isPositive())) {
@@ -176,6 +177,13 @@ export class ExploratoryPaperCampaignService {
     ) > 0) {
       return { ok: false as const, code: 'pending_settlement' as const };
     }
+    if(input.action==='resume') {
+      const sourceConnections=this.database.prepare(`SELECT snapshot.connection_id AS id FROM unified_portfolio_snapshot_sources_v2 sources
+        JOIN connection_account_snapshots_v2 snapshot ON snapshot.id=sources.connection_snapshot_id
+        WHERE sources.unified_snapshot_id=? AND snapshot.profile_id=?`).all(current.campaign.sourcePortfolioSnapshotId,input.profileId) as {id:string}[];
+      const eligible=new Set(listProfileConnectionsV2(input.profileId,this.database).filter(c=>connectionEligible(c,this.database)).map(c=>c.id));
+      if(getCurrentUnifiedPortfolioSnapshotV2(input.profileId,this.database)===null||sourceConnections.some(c=>!eligible.has(c.id)))return {ok:false as const,code:'portfolio_unavailable' as const};
+    }
     const requested = input.action === 'pause' ? 'paused' : input.action === 'resume' ? 'active' : 'stopping';
     let state = transitionExploratoryPaperCampaign({ profileId: input.profileId,
       campaignId: input.campaignId, commandId: input.commandId, status: requested,
@@ -189,6 +197,6 @@ export class ExploratoryPaperCampaignService {
   }
 
   latestUnified(profileId: string): UnifiedPortfolioSnapshotV2 | null {
-    return getLatestUnifiedPortfolioSnapshotV2(profileId, false, this.database);
+    return getCurrentUnifiedPortfolioSnapshotV2(profileId, this.database);
   }
 }

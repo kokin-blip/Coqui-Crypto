@@ -5,6 +5,7 @@ import { DatabaseSync } from 'node:sqlite';
 import type { TaxLot } from '@coqui/core';
 
 import { listPaperBalances, type PaperBalance } from '../repositories/paper.js';
+import { getDecisionDetail, type DecisionDetailV1 } from '../repositories/decision-timeline.js';
 import { listTaxLots } from '../repositories/portfolio.js';
 
 export interface StoredProfileComparisonFacts {
@@ -104,4 +105,26 @@ export function createFileProfileComparisonFactsReader(
       }
     },
   });
+}
+
+/** Detached shared context: one allowlisted profile, read-only, no migrations or active-context swap. */
+export function readDetachedProfileDecision(rootDirectory: string, profileId: string,
+  dbFilename: string, assetScope: string): DecisionDetailV1 | null {
+  if (!PROFILE_ID.test(profileId) || !safeFilename(dbFilename) || !/^[A-Z0-9][A-Z0-9._-]{0,31}$/.test(assetScope)) throw new TypeError('Invalid shared context selection');
+  const root = realpathSync(rootDirectory); const candidate = resolve(root, dbFilename);
+  if (!inside(root, candidate) || !statSync(candidate).isFile()) throw new Error('Profile unavailable');
+  const path = realpathSync(candidate); if (!inside(root, path)) throw new Error('Profile unavailable');
+  const database = new DatabaseSync(path, { readOnly: true, allowExtension: false });
+  try {
+    const row = database.prepare(`SELECT d.decision_id FROM strategy_decisions_v1 d
+      WHERE d.profile_id=? AND EXISTS(SELECT 1 FROM decision_asset_links_v1 a
+        WHERE a.profile_id=d.profile_id AND a.decision_id=d.decision_id AND a.asset_scope=?)
+      ORDER BY d.created_at DESC LIMIT 1`).get(profileId, assetScope) as { decision_id: string } | undefined;
+    if(row===undefined)return null;
+    for(const table of ['decision_evidence_events_v1','execution_routes_v1','decision_asset_links_v1']){
+      const bounded=database.prepare(`SELECT 1 FROM ${table} WHERE profile_id=? AND decision_id=? LIMIT 501`).all(profileId,row.decision_id);
+      if(bounded.length>500)throw new Error('Shared context limit exceeded');
+    }
+    return getDecisionDetail(profileId, row.decision_id, database);
+  } finally { database.close(); }
 }

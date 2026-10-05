@@ -1,8 +1,9 @@
 import type { Clock } from '@coqui/core';
 import {
+  connectionEligible,
   getAllocationPolicy,
   getLatestConnectionAccountSnapshotV2,
-  getLatestUnifiedPortfolioSnapshotV2,
+  getCurrentUnifiedPortfolioSnapshotV2,
   latestMultiConnectionPaperCampaign,
   latestPaperCampaign,
   latestWalletDecisionRun,
@@ -51,10 +52,10 @@ export class ProfileReadinessService {
   view(profileId: string): ProfileReadinessV1 {
     const asOfMs = this.clock.nowMs();
     const connections = listProfileConnectionsV2(profileId, this.database)
-      .filter((connection) => connection.status !== 'disconnected');
+      .filter((connection) => connectionEligible(connection,this.database));
     const snapshots = connections.map((connection) =>
       getLatestConnectionAccountSnapshotV2(profileId, connection.id, this.database));
-    const unified = getLatestUnifiedPortfolioSnapshotV2(profileId, false, this.database);
+    const unified = getCurrentUnifiedPortfolioSnapshotV2(profileId, this.database);
     connections.forEach((connection, index) => {
       const snapshot = snapshots[index];
       if (connection.provider === 'coinbase' && snapshot !== null && snapshot !== undefined) {

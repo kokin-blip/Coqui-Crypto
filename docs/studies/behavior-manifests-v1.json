@@ -5,7 +5,7 @@
     "members": [
       [
         "apps/desktop/src/main/coinbase-candle-source.ts",
-        "a1c7c8c32f9f8368003f646f67cc3d7432e5c8b6abe1931c4fc2991f317d43f8"
+        "385a1bd4a470e28f205ee3eff9726bc738d5adb8ad21f6c520d8547f1725231a"
       ],
       [
         "apps/desktop/src/main/ml-signal-runtime.ts",
@@ -229,7 +229,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "a871e967dc7a9fb22d70fe2922f62f19a2c765f57f9d397b9a09eb88b1403e43"
+        "7aa210854459eade9ec0593f8a1d38ffc32eb5e2d5c3df78265aa7271a54b647"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -277,7 +277,7 @@
       ],
       [
         "packages/contracts/src/schemas/connections.ts",
-        "79dbc23336223f3d2f2d2834152618db6c2b03801a1eba5f4a6f3ab31f4d7671"
+        "2458bdb89c49838f9742c64c265d83ba26395213d01a44213a7357f419db6043"
       ],
       [
         "packages/contracts/src/schemas/decisions.ts",
@@ -330,6 +330,10 @@
       [
         "packages/contracts/src/schemas/risk.ts",
         "3efe556c6484b94866a6add2973b4e0017e2cf7c20f79f5e6ce6eaa1183d1ecf"
+      ],
+      [
+        "packages/contracts/src/schemas/trading-activity.ts",
+        "91a58e04c726b2f284e8f4a0fde0bb1b19ad895656841d0de3a553fcc58bddbd"
       ],
       [
         "packages/core/src/backtest/analytics.ts",
@@ -517,7 +521,11 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "e8d18ca54f8081b6cdfc3d9789dbf6bac6138dd81391ccd7975cb473539967b6"
+        "5cb9afb694c282e7d1ee19596072b41391d48da4a5465bb1e8282ff2463e988f"
+      ],
+      [
+        "packages/core/src/portfolio/paper-activity.ts",
+        "b41df7ab2cc1830f7b359c53400bf59a3ad6f70796cbe7b5bce0bf3f4ffab406"
       ],
       [
         "packages/core/src/portfolio/paper-performance.ts",
@@ -849,11 +857,11 @@
       ],
       [
         "packages/services/src/accounts/coinbase-connection.ts",
-        "1d47333cd77ed105d4af3ee8918787beaadf68440980e45f170f67554f269812"
+        "1d905c773a975cc7f507c2adce092f906c5e45c9ecd71a6e86f59958fb056cc5"
       ],
       [
         "packages/services/src/accounts/coinbase-sync.ts",
-        "22cdda99cb3224083d07ec14dc03d6f617ae756d59357afd3ebc0c9a4907248f"
+        "fcd1ecefd9640cb245b73ad12316340737b7a8fba55782eb53bc3e06c7dca775"
       ],
       [
         "packages/services/src/accounts/comparison.ts",
@@ -861,11 +869,15 @@
       ],
       [
         "packages/services/src/accounts/connection-snapshots-v2.ts",
-        "56812a19f7551e338fbb01f3658983a3aa37a61718290f4dd4f9f75d305f17b2"
+        "52f38f9171e9406d135c4af0cd1ad7bb0b561855a40641153d26ff588f37855c"
       ],
       [
         "packages/services/src/accounts/connection-snapshots.ts",
         "eaa2b16dda47b515923c1645ddfba8fe4520967293f6aee41f6b4f123d4f66ee"
+      ],
+      [
+        "packages/services/src/accounts/connector-removal.ts",
+        "e8f7af2becf8bd273007eacbfb96263c2c9ba9b305bcaeb11d5b97d0c6f85e93"
       ],
       [
         "packages/services/src/accounts/dashboard.ts",
@@ -885,7 +897,7 @@
       ],
       [
         "packages/services/src/accounts/index.ts",
-        "b7d9acc5fdb0ec7704058a4f40328ecbf709e5c889446fc1044a71815f66f852"
+        "2a1b033eb8f8fc74b0a68dabbbbf952a85b8f29f3986f33e80baf7adac5bd182"
       ],
       [
         "packages/services/src/accounts/onboarding.ts",
@@ -897,7 +909,7 @@
       ],
       [
         "packages/services/src/accounts/readiness.ts",
-        "c968ddce555e74b21a9dc7c7ce52bfc8819ea66daf41292df2c4bde7807af89a"
+        "e6a92a34adff1f8d695d1202948f3f6f100a078af4fdfbb49f0806d25ab47022"
       ],
       [
         "packages/services/src/accounts/refresh.ts",
@@ -913,7 +925,7 @@
       ],
       [
         "packages/services/src/accounts/status-rail.ts",
-        "7bf4531816074cd647ff636e4d8cc3f78938d5979bd8373fcfa60f47e55cae8a"
+        "b0913a3617ed1095ac03f9898c27f505a88685e55a33f5e11f1ded8a54084e52"
       ],
       [
         "packages/services/src/advisor/analyst.ts",
@@ -1029,7 +1041,7 @@
       ],
       [
         "packages/services/src/paper/connection-campaign.ts",
-        "e255d383eaf86ec6094c675eba406bdd59e4bcc94d8669e5c9499e8e85b3ae78"
+        "d5a80aa953543f8ccdf3d2f9d4706d7cdb68a9d0f416890e0f17afc40a2ce1e6"
       ],
       [
         "packages/services/src/paper/decision-recorder.ts",
@@ -1049,11 +1061,11 @@
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
-        "0be758fbfde7ff2efffc6b624c53dbc1fe422be2ff3475c5661d3b02c400c758"
+        "9fb073a74858594c295adebdfd9151a9e63ac2e7665d29b23a183f8f7efc4e30"
       ],
       [
         "packages/services/src/paper/exploratory-portfolio.ts",
-        "30a8b4bbf0450d85124b5c80851212e7bac2d2b1cfea44cf0e3e1fff05c94fa8"
+        "36930103cc7ca5bc7c47ee11c356a9e0fc443feb5ede3fc3e78f0857097a1158"
       ],
       [
         "packages/services/src/paper/exploratory-run-loop.ts",
@@ -1157,7 +1169,7 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-service.ts",
-        "aae0e535fe680db045442fcc3ccd07196d1b66cf532ca8c2e9f3d596806baeb8"
+        "0a96dc1b49aa4ca68287ff68764864e62d1ced086df3e7df1285a5524b703c26"
       ],
       [
         "packages/services/src/paper/parallel-paper-slots.ts",
@@ -1181,7 +1193,7 @@
       ],
       [
         "packages/services/src/paper/routing.ts",
-        "9ee948c275c4f311c7dde20cf8615ca6162812dd403d73bf71214dab01c1f559"
+        "1c1cd3c32bd3f07b95e383c4409e9b64cc6f4c54b82483a40fc4aeb6009ab581"
       ],
       [
         "packages/services/src/paper/run-loop.ts",
@@ -1385,7 +1397,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "b4b1c0e93b86669afc6adfa1efa9f96a8379d9616dd2f2a9716c0cfe85520000"
+        "d94eec21fe31a8a55a48e9b16773beca442d9f85279a82b0854e1f63dd923dac"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -1636,6 +1648,10 @@
         "aa1187fb06d366f0a83d88b4262486cd44f2d742a03033d8c28b4d8a61104d75"
       ],
       [
+        "packages/storage/src/migrations/v87.ts",
+        "bfe7a12a4cedefb447d782564b95e8bf1e227c49c3406eb05bcaf65dbd3ede33"
+      ],
+      [
         "packages/storage/src/migrations/v9-v17.ts",
         "b393c4fd6bc1f10e8c9e9ef5af65713ae68f01c2823f337091793102639d0489"
       ],
@@ -1645,7 +1661,7 @@
       ],
       [
         "packages/storage/src/profiles/comparison.ts",
-        "c3dce99f4fb24d9f4890f3a6a82bfad97bee17182872836e4bb444efc9850808"
+        "1de0af1d3dde4e03dac86cd07a2480479147fef002fc61174c150d849caec8f0"
       ],
       [
         "packages/storage/src/profiles/dashboard.ts",
@@ -1673,11 +1689,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "58480cbae1b98f45316f0b1b77140fe0bee427b0ee5b865b1eb3dc20aeccdae8"
+        "1bc7f8691652d7380858840d8b4f85bf2d1728bc8c3253474569cbf89b0e8787"
       ],
       [
         "packages/storage/src/profiles/index.ts",
-        "4ce2de23fe0ad1f62430dc8458539578e2753f9fe281998c1d2d5e6abaf9ddb8"
+        "16023a957e7ba6e4d3109028088748b62984d21b30a2b85acbdf821010e5c2ef"
       ],
       [
         "packages/storage/src/profiles/manifest.ts",
@@ -1686,6 +1702,10 @@
       [
         "packages/storage/src/profiles/person.ts",
         "72581ad564b2665c0139c9ff73adedaa2f971733cb077fd1550352599b29d2c4"
+      ],
+      [
+        "packages/storage/src/profiles/wallet-nicknames.ts",
+        "094c1f734cf687da12aae08c442c68801524c207a39bdec790646f89f5ff40da"
       ],
       [
         "packages/storage/src/repositories/account-preferences.ts",
@@ -1740,8 +1760,12 @@
         "918b41493d842011b55858bb7cc06a030516b5404bc87efc15bc86c3b6c44b91"
       ],
       [
+        "packages/storage/src/repositories/connection-lifecycle.ts",
+        "05a93e2d037be5c5c9318258b630153534b5afa621ffd910234c8e842bc8578d"
+      ],
+      [
         "packages/storage/src/repositories/connections-v2.ts",
-        "7f16fa563427604c2139e0e389a91be8daa803d9d901d59ff5ce63ac2cd507b5"
+        "ab39b3bc4e50e16804120e5977d4ee023c6673b88811a11a96e0da2bb11c1240"
       ],
       [
         "packages/storage/src/repositories/connections.ts",
@@ -1793,7 +1817,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "5e158495144f610bb56cd017332f31b6501ed895cc7331a19d35c9cd3b533b8a"
+        "4cf65b3c1ddfd15808960ad2f374d9f54568a067bbafd01ad20c4acf06d81a92"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -1912,6 +1936,10 @@
         "aa2151e1f51a102c3acc9ad508bfda091f15f310c65524e2b87b4157a7d503ab"
       ],
       [
+        "packages/storage/src/repositories/trading-activity.ts",
+        "d94a4db11a3f9aeac9aa04ba731c20356763fc4958c3d2c5dc43eae2963ba0f6"
+      ],
+      [
         "packages/storage/src/repositories/trials.ts",
         "8fe70b3f3c4517c18a4b198920d1ce27247b50008b27a76dfdbc1b561ee6dec8"
       ],
@@ -1941,7 +1969,7 @@
       ],
       [
         "pnpm-lock.yaml",
-        "6fd5d389957c3d865d8ac94dab7d3a631f4d0f725671dbd1957842d2751db567"
+        "e05ab03ee1fae5815b563978fc85d42a82753bf7cd0f93da03e0fc8da4a4f027"
       ],
       [
         "tsconfig.base.json",
@@ -1952,7 +1980,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "0f3be5284d8fe48992a20ce7a3883f13c762698a4aa96ba28458c591c50cbfe7"
+    "hash": "92b6d76d81b213fd6111461e85cb181f7f5b19c5dbc6bdbf00462149024538aa"
   },
   "wider-breakout-v1": {
     "version": 1,
@@ -1964,7 +1992,7 @@
       ],
       [
         "apps/desktop/src/main/coinbase-candle-source.ts",
-        "a1c7c8c32f9f8368003f646f67cc3d7432e5c8b6abe1931c4fc2991f317d43f8"
+        "385a1bd4a470e28f205ee3eff9726bc738d5adb8ad21f6c520d8547f1725231a"
       ],
       [
         "apps/desktop/src/main/wider-universe-runtime.ts",
@@ -2184,7 +2212,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "a871e967dc7a9fb22d70fe2922f62f19a2c765f57f9d397b9a09eb88b1403e43"
+        "7aa210854459eade9ec0593f8a1d38ffc32eb5e2d5c3df78265aa7271a54b647"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -2232,7 +2260,7 @@
       ],
       [
         "packages/contracts/src/schemas/connections.ts",
-        "79dbc23336223f3d2f2d2834152618db6c2b03801a1eba5f4a6f3ab31f4d7671"
+        "2458bdb89c49838f9742c64c265d83ba26395213d01a44213a7357f419db6043"
       ],
       [
         "packages/contracts/src/schemas/decisions.ts",
@@ -2285,6 +2313,10 @@
       [
         "packages/contracts/src/schemas/risk.ts",
         "3efe556c6484b94866a6add2973b4e0017e2cf7c20f79f5e6ce6eaa1183d1ecf"
+      ],
+      [
+        "packages/contracts/src/schemas/trading-activity.ts",
+        "91a58e04c726b2f284e8f4a0fde0bb1b19ad895656841d0de3a553fcc58bddbd"
       ],
       [
         "packages/core/src/backtest/analytics.ts",
@@ -2472,7 +2504,11 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "e8d18ca54f8081b6cdfc3d9789dbf6bac6138dd81391ccd7975cb473539967b6"
+        "5cb9afb694c282e7d1ee19596072b41391d48da4a5465bb1e8282ff2463e988f"
+      ],
+      [
+        "packages/core/src/portfolio/paper-activity.ts",
+        "b41df7ab2cc1830f7b359c53400bf59a3ad6f70796cbe7b5bce0bf3f4ffab406"
       ],
       [
         "packages/core/src/portfolio/paper-performance.ts",
@@ -2804,11 +2840,11 @@
       ],
       [
         "packages/services/src/accounts/coinbase-connection.ts",
-        "1d47333cd77ed105d4af3ee8918787beaadf68440980e45f170f67554f269812"
+        "1d905c773a975cc7f507c2adce092f906c5e45c9ecd71a6e86f59958fb056cc5"
       ],
       [
         "packages/services/src/accounts/coinbase-sync.ts",
-        "22cdda99cb3224083d07ec14dc03d6f617ae756d59357afd3ebc0c9a4907248f"
+        "fcd1ecefd9640cb245b73ad12316340737b7a8fba55782eb53bc3e06c7dca775"
       ],
       [
         "packages/services/src/accounts/comparison.ts",
@@ -2816,11 +2852,15 @@
       ],
       [
         "packages/services/src/accounts/connection-snapshots-v2.ts",
-        "56812a19f7551e338fbb01f3658983a3aa37a61718290f4dd4f9f75d305f17b2"
+        "52f38f9171e9406d135c4af0cd1ad7bb0b561855a40641153d26ff588f37855c"
       ],
       [
         "packages/services/src/accounts/connection-snapshots.ts",
         "eaa2b16dda47b515923c1645ddfba8fe4520967293f6aee41f6b4f123d4f66ee"
+      ],
+      [
+        "packages/services/src/accounts/connector-removal.ts",
+        "e8f7af2becf8bd273007eacbfb96263c2c9ba9b305bcaeb11d5b97d0c6f85e93"
       ],
       [
         "packages/services/src/accounts/dashboard.ts",
@@ -2840,7 +2880,7 @@
       ],
       [
         "packages/services/src/accounts/index.ts",
-        "b7d9acc5fdb0ec7704058a4f40328ecbf709e5c889446fc1044a71815f66f852"
+        "2a1b033eb8f8fc74b0a68dabbbbf952a85b8f29f3986f33e80baf7adac5bd182"
       ],
       [
         "packages/services/src/accounts/onboarding.ts",
@@ -2852,7 +2892,7 @@
       ],
       [
         "packages/services/src/accounts/readiness.ts",
-        "c968ddce555e74b21a9dc7c7ce52bfc8819ea66daf41292df2c4bde7807af89a"
+        "e6a92a34adff1f8d695d1202948f3f6f100a078af4fdfbb49f0806d25ab47022"
       ],
       [
         "packages/services/src/accounts/refresh.ts",
@@ -2868,7 +2908,7 @@
       ],
       [
         "packages/services/src/accounts/status-rail.ts",
-        "7bf4531816074cd647ff636e4d8cc3f78938d5979bd8373fcfa60f47e55cae8a"
+        "b0913a3617ed1095ac03f9898c27f505a88685e55a33f5e11f1ded8a54084e52"
       ],
       [
         "packages/services/src/advisor/analyst.ts",
@@ -2984,7 +3024,7 @@
       ],
       [
         "packages/services/src/paper/connection-campaign.ts",
-        "e255d383eaf86ec6094c675eba406bdd59e4bcc94d8669e5c9499e8e85b3ae78"
+        "d5a80aa953543f8ccdf3d2f9d4706d7cdb68a9d0f416890e0f17afc40a2ce1e6"
       ],
       [
         "packages/services/src/paper/decision-recorder.ts",
@@ -3004,11 +3044,11 @@
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
-        "0be758fbfde7ff2efffc6b624c53dbc1fe422be2ff3475c5661d3b02c400c758"
+        "9fb073a74858594c295adebdfd9151a9e63ac2e7665d29b23a183f8f7efc4e30"
       ],
       [
         "packages/services/src/paper/exploratory-portfolio.ts",
-        "30a8b4bbf0450d85124b5c80851212e7bac2d2b1cfea44cf0e3e1fff05c94fa8"
+        "36930103cc7ca5bc7c47ee11c356a9e0fc443feb5ede3fc3e78f0857097a1158"
       ],
       [
         "packages/services/src/paper/exploratory-run-loop.ts",
@@ -3112,7 +3152,7 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-service.ts",
-        "aae0e535fe680db045442fcc3ccd07196d1b66cf532ca8c2e9f3d596806baeb8"
+        "0a96dc1b49aa4ca68287ff68764864e62d1ced086df3e7df1285a5524b703c26"
       ],
       [
         "packages/services/src/paper/parallel-paper-slots.ts",
@@ -3136,7 +3176,7 @@
       ],
       [
         "packages/services/src/paper/routing.ts",
-        "9ee948c275c4f311c7dde20cf8615ca6162812dd403d73bf71214dab01c1f559"
+        "1c1cd3c32bd3f07b95e383c4409e9b64cc6f4c54b82483a40fc4aeb6009ab581"
       ],
       [
         "packages/services/src/paper/run-loop.ts",
@@ -3340,7 +3380,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "b4b1c0e93b86669afc6adfa1efa9f96a8379d9616dd2f2a9716c0cfe85520000"
+        "d94eec21fe31a8a55a48e9b16773beca442d9f85279a82b0854e1f63dd923dac"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -3591,6 +3631,10 @@
         "aa1187fb06d366f0a83d88b4262486cd44f2d742a03033d8c28b4d8a61104d75"
       ],
       [
+        "packages/storage/src/migrations/v87.ts",
+        "bfe7a12a4cedefb447d782564b95e8bf1e227c49c3406eb05bcaf65dbd3ede33"
+      ],
+      [
         "packages/storage/src/migrations/v9-v17.ts",
         "b393c4fd6bc1f10e8c9e9ef5af65713ae68f01c2823f337091793102639d0489"
       ],
@@ -3600,7 +3644,7 @@
       ],
       [
         "packages/storage/src/profiles/comparison.ts",
-        "c3dce99f4fb24d9f4890f3a6a82bfad97bee17182872836e4bb444efc9850808"
+        "1de0af1d3dde4e03dac86cd07a2480479147fef002fc61174c150d849caec8f0"
       ],
       [
         "packages/storage/src/profiles/dashboard.ts",
@@ -3628,11 +3672,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "58480cbae1b98f45316f0b1b77140fe0bee427b0ee5b865b1eb3dc20aeccdae8"
+        "1bc7f8691652d7380858840d8b4f85bf2d1728bc8c3253474569cbf89b0e8787"
       ],
       [
         "packages/storage/src/profiles/index.ts",
-        "4ce2de23fe0ad1f62430dc8458539578e2753f9fe281998c1d2d5e6abaf9ddb8"
+        "16023a957e7ba6e4d3109028088748b62984d21b30a2b85acbdf821010e5c2ef"
       ],
       [
         "packages/storage/src/profiles/manifest.ts",
@@ -3641,6 +3685,10 @@
       [
         "packages/storage/src/profiles/person.ts",
         "72581ad564b2665c0139c9ff73adedaa2f971733cb077fd1550352599b29d2c4"
+      ],
+      [
+        "packages/storage/src/profiles/wallet-nicknames.ts",
+        "094c1f734cf687da12aae08c442c68801524c207a39bdec790646f89f5ff40da"
       ],
       [
         "packages/storage/src/repositories/account-preferences.ts",
@@ -3695,8 +3743,12 @@
         "918b41493d842011b55858bb7cc06a030516b5404bc87efc15bc86c3b6c44b91"
       ],
       [
+        "packages/storage/src/repositories/connection-lifecycle.ts",
+        "05a93e2d037be5c5c9318258b630153534b5afa621ffd910234c8e842bc8578d"
+      ],
+      [
         "packages/storage/src/repositories/connections-v2.ts",
-        "7f16fa563427604c2139e0e389a91be8daa803d9d901d59ff5ce63ac2cd507b5"
+        "ab39b3bc4e50e16804120e5977d4ee023c6673b88811a11a96e0da2bb11c1240"
       ],
       [
         "packages/storage/src/repositories/connections.ts",
@@ -3748,7 +3800,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "5e158495144f610bb56cd017332f31b6501ed895cc7331a19d35c9cd3b533b8a"
+        "4cf65b3c1ddfd15808960ad2f374d9f54568a067bbafd01ad20c4acf06d81a92"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -3867,6 +3919,10 @@
         "aa2151e1f51a102c3acc9ad508bfda091f15f310c65524e2b87b4157a7d503ab"
       ],
       [
+        "packages/storage/src/repositories/trading-activity.ts",
+        "d94a4db11a3f9aeac9aa04ba731c20356763fc4958c3d2c5dc43eae2963ba0f6"
+      ],
+      [
         "packages/storage/src/repositories/trials.ts",
         "8fe70b3f3c4517c18a4b198920d1ce27247b50008b27a76dfdbc1b561ee6dec8"
       ],
@@ -3896,7 +3952,7 @@
       ],
       [
         "pnpm-lock.yaml",
-        "6fd5d389957c3d865d8ac94dab7d3a631f4d0f725671dbd1957842d2751db567"
+        "e05ab03ee1fae5815b563978fc85d42a82753bf7cd0f93da03e0fc8da4a4f027"
       ],
       [
         "tsconfig.base.json",
@@ -3907,7 +3963,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "e94578d82290e1bc3f9d23fef1e2bd6e5dcec5546e7a87234371a763c3428f68"
+    "hash": "5eab5b56bdfc2ceaaaa752bb55fd3908612f09ff0a4fdfe88d00f04e57852ce1"
   },
   "wider-range-rotation-v1": {
     "version": 1,
@@ -3915,7 +3971,7 @@
     "members": [
       [
         "apps/desktop/src/main/coinbase-candle-source.ts",
-        "a1c7c8c32f9f8368003f646f67cc3d7432e5c8b6abe1931c4fc2991f317d43f8"
+        "385a1bd4a470e28f205ee3eff9726bc738d5adb8ad21f6c520d8547f1725231a"
       ],
       [
         "apps/desktop/src/main/range-rotation-runtime.ts",
@@ -4139,7 +4195,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "a871e967dc7a9fb22d70fe2922f62f19a2c765f57f9d397b9a09eb88b1403e43"
+        "7aa210854459eade9ec0593f8a1d38ffc32eb5e2d5c3df78265aa7271a54b647"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -4187,7 +4243,7 @@
       ],
       [
         "packages/contracts/src/schemas/connections.ts",
-        "79dbc23336223f3d2f2d2834152618db6c2b03801a1eba5f4a6f3ab31f4d7671"
+        "2458bdb89c49838f9742c64c265d83ba26395213d01a44213a7357f419db6043"
       ],
       [
         "packages/contracts/src/schemas/decisions.ts",
@@ -4240,6 +4296,10 @@
       [
         "packages/contracts/src/schemas/risk.ts",
         "3efe556c6484b94866a6add2973b4e0017e2cf7c20f79f5e6ce6eaa1183d1ecf"
+      ],
+      [
+        "packages/contracts/src/schemas/trading-activity.ts",
+        "91a58e04c726b2f284e8f4a0fde0bb1b19ad895656841d0de3a553fcc58bddbd"
       ],
       [
         "packages/core/src/backtest/analytics.ts",
@@ -4427,7 +4487,11 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "e8d18ca54f8081b6cdfc3d9789dbf6bac6138dd81391ccd7975cb473539967b6"
+        "5cb9afb694c282e7d1ee19596072b41391d48da4a5465bb1e8282ff2463e988f"
+      ],
+      [
+        "packages/core/src/portfolio/paper-activity.ts",
+        "b41df7ab2cc1830f7b359c53400bf59a3ad6f70796cbe7b5bce0bf3f4ffab406"
       ],
       [
         "packages/core/src/portfolio/paper-performance.ts",
@@ -4759,11 +4823,11 @@
       ],
       [
         "packages/services/src/accounts/coinbase-connection.ts",
-        "1d47333cd77ed105d4af3ee8918787beaadf68440980e45f170f67554f269812"
+        "1d905c773a975cc7f507c2adce092f906c5e45c9ecd71a6e86f59958fb056cc5"
       ],
       [
         "packages/services/src/accounts/coinbase-sync.ts",
-        "22cdda99cb3224083d07ec14dc03d6f617ae756d59357afd3ebc0c9a4907248f"
+        "fcd1ecefd9640cb245b73ad12316340737b7a8fba55782eb53bc3e06c7dca775"
       ],
       [
         "packages/services/src/accounts/comparison.ts",
@@ -4771,11 +4835,15 @@
       ],
       [
         "packages/services/src/accounts/connection-snapshots-v2.ts",
-        "56812a19f7551e338fbb01f3658983a3aa37a61718290f4dd4f9f75d305f17b2"
+        "52f38f9171e9406d135c4af0cd1ad7bb0b561855a40641153d26ff588f37855c"
       ],
       [
         "packages/services/src/accounts/connection-snapshots.ts",
         "eaa2b16dda47b515923c1645ddfba8fe4520967293f6aee41f6b4f123d4f66ee"
+      ],
+      [
+        "packages/services/src/accounts/connector-removal.ts",
+        "e8f7af2becf8bd273007eacbfb96263c2c9ba9b305bcaeb11d5b97d0c6f85e93"
       ],
       [
         "packages/services/src/accounts/dashboard.ts",
@@ -4795,7 +4863,7 @@
       ],
       [
         "packages/services/src/accounts/index.ts",
-        "b7d9acc5fdb0ec7704058a4f40328ecbf709e5c889446fc1044a71815f66f852"
+        "2a1b033eb8f8fc74b0a68dabbbbf952a85b8f29f3986f33e80baf7adac5bd182"
       ],
       [
         "packages/services/src/accounts/onboarding.ts",
@@ -4807,7 +4875,7 @@
       ],
       [
         "packages/services/src/accounts/readiness.ts",
-        "c968ddce555e74b21a9dc7c7ce52bfc8819ea66daf41292df2c4bde7807af89a"
+        "e6a92a34adff1f8d695d1202948f3f6f100a078af4fdfbb49f0806d25ab47022"
       ],
       [
         "packages/services/src/accounts/refresh.ts",
@@ -4823,7 +4891,7 @@
       ],
       [
         "packages/services/src/accounts/status-rail.ts",
-        "7bf4531816074cd647ff636e4d8cc3f78938d5979bd8373fcfa60f47e55cae8a"
+        "b0913a3617ed1095ac03f9898c27f505a88685e55a33f5e11f1ded8a54084e52"
       ],
       [
         "packages/services/src/advisor/analyst.ts",
@@ -4939,7 +5007,7 @@
       ],
       [
         "packages/services/src/paper/connection-campaign.ts",
-        "e255d383eaf86ec6094c675eba406bdd59e4bcc94d8669e5c9499e8e85b3ae78"
+        "d5a80aa953543f8ccdf3d2f9d4706d7cdb68a9d0f416890e0f17afc40a2ce1e6"
       ],
       [
         "packages/services/src/paper/decision-recorder.ts",
@@ -4959,11 +5027,11 @@
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
-        "0be758fbfde7ff2efffc6b624c53dbc1fe422be2ff3475c5661d3b02c400c758"
+        "9fb073a74858594c295adebdfd9151a9e63ac2e7665d29b23a183f8f7efc4e30"
       ],
       [
         "packages/services/src/paper/exploratory-portfolio.ts",
-        "30a8b4bbf0450d85124b5c80851212e7bac2d2b1cfea44cf0e3e1fff05c94fa8"
+        "36930103cc7ca5bc7c47ee11c356a9e0fc443feb5ede3fc3e78f0857097a1158"
       ],
       [
         "packages/services/src/paper/exploratory-run-loop.ts",
@@ -5067,7 +5135,7 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-service.ts",
-        "aae0e535fe680db045442fcc3ccd07196d1b66cf532ca8c2e9f3d596806baeb8"
+        "0a96dc1b49aa4ca68287ff68764864e62d1ced086df3e7df1285a5524b703c26"
       ],
       [
         "packages/services/src/paper/parallel-paper-slots.ts",
@@ -5091,7 +5159,7 @@
       ],
       [
         "packages/services/src/paper/routing.ts",
-        "9ee948c275c4f311c7dde20cf8615ca6162812dd403d73bf71214dab01c1f559"
+        "1c1cd3c32bd3f07b95e383c4409e9b64cc6f4c54b82483a40fc4aeb6009ab581"
       ],
       [
         "packages/services/src/paper/run-loop.ts",
@@ -5295,7 +5363,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "b4b1c0e93b86669afc6adfa1efa9f96a8379d9616dd2f2a9716c0cfe85520000"
+        "d94eec21fe31a8a55a48e9b16773beca442d9f85279a82b0854e1f63dd923dac"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -5546,6 +5614,10 @@
         "aa1187fb06d366f0a83d88b4262486cd44f2d742a03033d8c28b4d8a61104d75"
       ],
       [
+        "packages/storage/src/migrations/v87.ts",
+        "bfe7a12a4cedefb447d782564b95e8bf1e227c49c3406eb05bcaf65dbd3ede33"
+      ],
+      [
         "packages/storage/src/migrations/v9-v17.ts",
         "b393c4fd6bc1f10e8c9e9ef5af65713ae68f01c2823f337091793102639d0489"
       ],
@@ -5555,7 +5627,7 @@
       ],
       [
         "packages/storage/src/profiles/comparison.ts",
-        "c3dce99f4fb24d9f4890f3a6a82bfad97bee17182872836e4bb444efc9850808"
+        "1de0af1d3dde4e03dac86cd07a2480479147fef002fc61174c150d849caec8f0"
       ],
       [
         "packages/storage/src/profiles/dashboard.ts",
@@ -5583,11 +5655,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "58480cbae1b98f45316f0b1b77140fe0bee427b0ee5b865b1eb3dc20aeccdae8"
+        "1bc7f8691652d7380858840d8b4f85bf2d1728bc8c3253474569cbf89b0e8787"
       ],
       [
         "packages/storage/src/profiles/index.ts",
-        "4ce2de23fe0ad1f62430dc8458539578e2753f9fe281998c1d2d5e6abaf9ddb8"
+        "16023a957e7ba6e4d3109028088748b62984d21b30a2b85acbdf821010e5c2ef"
       ],
       [
         "packages/storage/src/profiles/manifest.ts",
@@ -5596,6 +5668,10 @@
       [
         "packages/storage/src/profiles/person.ts",
         "72581ad564b2665c0139c9ff73adedaa2f971733cb077fd1550352599b29d2c4"
+      ],
+      [
+        "packages/storage/src/profiles/wallet-nicknames.ts",
+        "094c1f734cf687da12aae08c442c68801524c207a39bdec790646f89f5ff40da"
       ],
       [
         "packages/storage/src/repositories/account-preferences.ts",
@@ -5650,8 +5726,12 @@
         "918b41493d842011b55858bb7cc06a030516b5404bc87efc15bc86c3b6c44b91"
       ],
       [
+        "packages/storage/src/repositories/connection-lifecycle.ts",
+        "05a93e2d037be5c5c9318258b630153534b5afa621ffd910234c8e842bc8578d"
+      ],
+      [
         "packages/storage/src/repositories/connections-v2.ts",
-        "7f16fa563427604c2139e0e389a91be8daa803d9d901d59ff5ce63ac2cd507b5"
+        "ab39b3bc4e50e16804120e5977d4ee023c6673b88811a11a96e0da2bb11c1240"
       ],
       [
         "packages/storage/src/repositories/connections.ts",
@@ -5703,7 +5783,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "5e158495144f610bb56cd017332f31b6501ed895cc7331a19d35c9cd3b533b8a"
+        "4cf65b3c1ddfd15808960ad2f374d9f54568a067bbafd01ad20c4acf06d81a92"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -5822,6 +5902,10 @@
         "aa2151e1f51a102c3acc9ad508bfda091f15f310c65524e2b87b4157a7d503ab"
       ],
       [
+        "packages/storage/src/repositories/trading-activity.ts",
+        "d94a4db11a3f9aeac9aa04ba731c20356763fc4958c3d2c5dc43eae2963ba0f6"
+      ],
+      [
         "packages/storage/src/repositories/trials.ts",
         "8fe70b3f3c4517c18a4b198920d1ce27247b50008b27a76dfdbc1b561ee6dec8"
       ],
@@ -5851,7 +5935,7 @@
       ],
       [
         "pnpm-lock.yaml",
-        "6fd5d389957c3d865d8ac94dab7d3a631f4d0f725671dbd1957842d2751db567"
+        "e05ab03ee1fae5815b563978fc85d42a82753bf7cd0f93da03e0fc8da4a4f027"
       ],
       [
         "tsconfig.base.json",
@@ -5862,7 +5946,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "6fc59ba1c1569d505472235db1d0164ba27c140723f88251679dbada72edc2f2"
+    "hash": "cdb75b055b7c95509cc2c054f238a60c0520eca571749c57fe826bbec476478c"
   },
   "paper-market-selector-v1": {
     "version": 1,
@@ -5870,7 +5954,7 @@
     "members": [
       [
         "apps/desktop/src/main/coinbase-candle-source.ts",
-        "a1c7c8c32f9f8368003f646f67cc3d7432e5c8b6abe1931c4fc2991f317d43f8"
+        "385a1bd4a470e28f205ee3eff9726bc738d5adb8ad21f6c520d8547f1725231a"
       ],
       [
         "apps/desktop/src/main/market-selector-runtime.ts",
@@ -6094,7 +6178,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "a871e967dc7a9fb22d70fe2922f62f19a2c765f57f9d397b9a09eb88b1403e43"
+        "7aa210854459eade9ec0593f8a1d38ffc32eb5e2d5c3df78265aa7271a54b647"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -6142,7 +6226,7 @@
       ],
       [
         "packages/contracts/src/schemas/connections.ts",
-        "79dbc23336223f3d2f2d2834152618db6c2b03801a1eba5f4a6f3ab31f4d7671"
+        "2458bdb89c49838f9742c64c265d83ba26395213d01a44213a7357f419db6043"
       ],
       [
         "packages/contracts/src/schemas/decisions.ts",
@@ -6195,6 +6279,10 @@
       [
         "packages/contracts/src/schemas/risk.ts",
         "3efe556c6484b94866a6add2973b4e0017e2cf7c20f79f5e6ce6eaa1183d1ecf"
+      ],
+      [
+        "packages/contracts/src/schemas/trading-activity.ts",
+        "91a58e04c726b2f284e8f4a0fde0bb1b19ad895656841d0de3a553fcc58bddbd"
       ],
       [
         "packages/core/src/backtest/analytics.ts",
@@ -6382,7 +6470,11 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "e8d18ca54f8081b6cdfc3d9789dbf6bac6138dd81391ccd7975cb473539967b6"
+        "5cb9afb694c282e7d1ee19596072b41391d48da4a5465bb1e8282ff2463e988f"
+      ],
+      [
+        "packages/core/src/portfolio/paper-activity.ts",
+        "b41df7ab2cc1830f7b359c53400bf59a3ad6f70796cbe7b5bce0bf3f4ffab406"
       ],
       [
         "packages/core/src/portfolio/paper-performance.ts",
@@ -6714,11 +6806,11 @@
       ],
       [
         "packages/services/src/accounts/coinbase-connection.ts",
-        "1d47333cd77ed105d4af3ee8918787beaadf68440980e45f170f67554f269812"
+        "1d905c773a975cc7f507c2adce092f906c5e45c9ecd71a6e86f59958fb056cc5"
       ],
       [
         "packages/services/src/accounts/coinbase-sync.ts",
-        "22cdda99cb3224083d07ec14dc03d6f617ae756d59357afd3ebc0c9a4907248f"
+        "fcd1ecefd9640cb245b73ad12316340737b7a8fba55782eb53bc3e06c7dca775"
       ],
       [
         "packages/services/src/accounts/comparison.ts",
@@ -6726,11 +6818,15 @@
       ],
       [
         "packages/services/src/accounts/connection-snapshots-v2.ts",
-        "56812a19f7551e338fbb01f3658983a3aa37a61718290f4dd4f9f75d305f17b2"
+        "52f38f9171e9406d135c4af0cd1ad7bb0b561855a40641153d26ff588f37855c"
       ],
       [
         "packages/services/src/accounts/connection-snapshots.ts",
         "eaa2b16dda47b515923c1645ddfba8fe4520967293f6aee41f6b4f123d4f66ee"
+      ],
+      [
+        "packages/services/src/accounts/connector-removal.ts",
+        "e8f7af2becf8bd273007eacbfb96263c2c9ba9b305bcaeb11d5b97d0c6f85e93"
       ],
       [
         "packages/services/src/accounts/dashboard.ts",
@@ -6750,7 +6846,7 @@
       ],
       [
         "packages/services/src/accounts/index.ts",
-        "b7d9acc5fdb0ec7704058a4f40328ecbf709e5c889446fc1044a71815f66f852"
+        "2a1b033eb8f8fc74b0a68dabbbbf952a85b8f29f3986f33e80baf7adac5bd182"
       ],
       [
         "packages/services/src/accounts/onboarding.ts",
@@ -6762,7 +6858,7 @@
       ],
       [
         "packages/services/src/accounts/readiness.ts",
-        "c968ddce555e74b21a9dc7c7ce52bfc8819ea66daf41292df2c4bde7807af89a"
+        "e6a92a34adff1f8d695d1202948f3f6f100a078af4fdfbb49f0806d25ab47022"
       ],
       [
         "packages/services/src/accounts/refresh.ts",
@@ -6778,7 +6874,7 @@
       ],
       [
         "packages/services/src/accounts/status-rail.ts",
-        "7bf4531816074cd647ff636e4d8cc3f78938d5979bd8373fcfa60f47e55cae8a"
+        "b0913a3617ed1095ac03f9898c27f505a88685e55a33f5e11f1ded8a54084e52"
       ],
       [
         "packages/services/src/advisor/analyst.ts",
@@ -6894,7 +6990,7 @@
       ],
       [
         "packages/services/src/paper/connection-campaign.ts",
-        "e255d383eaf86ec6094c675eba406bdd59e4bcc94d8669e5c9499e8e85b3ae78"
+        "d5a80aa953543f8ccdf3d2f9d4706d7cdb68a9d0f416890e0f17afc40a2ce1e6"
       ],
       [
         "packages/services/src/paper/decision-recorder.ts",
@@ -6914,11 +7010,11 @@
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
-        "0be758fbfde7ff2efffc6b624c53dbc1fe422be2ff3475c5661d3b02c400c758"
+        "9fb073a74858594c295adebdfd9151a9e63ac2e7665d29b23a183f8f7efc4e30"
       ],
       [
         "packages/services/src/paper/exploratory-portfolio.ts",
-        "30a8b4bbf0450d85124b5c80851212e7bac2d2b1cfea44cf0e3e1fff05c94fa8"
+        "36930103cc7ca5bc7c47ee11c356a9e0fc443feb5ede3fc3e78f0857097a1158"
       ],
       [
         "packages/services/src/paper/exploratory-run-loop.ts",
@@ -7022,7 +7118,7 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-service.ts",
-        "aae0e535fe680db045442fcc3ccd07196d1b66cf532ca8c2e9f3d596806baeb8"
+        "0a96dc1b49aa4ca68287ff68764864e62d1ced086df3e7df1285a5524b703c26"
       ],
       [
         "packages/services/src/paper/parallel-paper-slots.ts",
@@ -7046,7 +7142,7 @@
       ],
       [
         "packages/services/src/paper/routing.ts",
-        "9ee948c275c4f311c7dde20cf8615ca6162812dd403d73bf71214dab01c1f559"
+        "1c1cd3c32bd3f07b95e383c4409e9b64cc6f4c54b82483a40fc4aeb6009ab581"
       ],
       [
         "packages/services/src/paper/run-loop.ts",
@@ -7250,7 +7346,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "b4b1c0e93b86669afc6adfa1efa9f96a8379d9616dd2f2a9716c0cfe85520000"
+        "d94eec21fe31a8a55a48e9b16773beca442d9f85279a82b0854e1f63dd923dac"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -7501,6 +7597,10 @@
         "aa1187fb06d366f0a83d88b4262486cd44f2d742a03033d8c28b4d8a61104d75"
       ],
       [
+        "packages/storage/src/migrations/v87.ts",
+        "bfe7a12a4cedefb447d782564b95e8bf1e227c49c3406eb05bcaf65dbd3ede33"
+      ],
+      [
         "packages/storage/src/migrations/v9-v17.ts",
         "b393c4fd6bc1f10e8c9e9ef5af65713ae68f01c2823f337091793102639d0489"
       ],
@@ -7510,7 +7610,7 @@
       ],
       [
         "packages/storage/src/profiles/comparison.ts",
-        "c3dce99f4fb24d9f4890f3a6a82bfad97bee17182872836e4bb444efc9850808"
+        "1de0af1d3dde4e03dac86cd07a2480479147fef002fc61174c150d849caec8f0"
       ],
       [
         "packages/storage/src/profiles/dashboard.ts",
@@ -7538,11 +7638,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "58480cbae1b98f45316f0b1b77140fe0bee427b0ee5b865b1eb3dc20aeccdae8"
+        "1bc7f8691652d7380858840d8b4f85bf2d1728bc8c3253474569cbf89b0e8787"
       ],
       [
         "packages/storage/src/profiles/index.ts",
-        "4ce2de23fe0ad1f62430dc8458539578e2753f9fe281998c1d2d5e6abaf9ddb8"
+        "16023a957e7ba6e4d3109028088748b62984d21b30a2b85acbdf821010e5c2ef"
       ],
       [
         "packages/storage/src/profiles/manifest.ts",
@@ -7551,6 +7651,10 @@
       [
         "packages/storage/src/profiles/person.ts",
         "72581ad564b2665c0139c9ff73adedaa2f971733cb077fd1550352599b29d2c4"
+      ],
+      [
+        "packages/storage/src/profiles/wallet-nicknames.ts",
+        "094c1f734cf687da12aae08c442c68801524c207a39bdec790646f89f5ff40da"
       ],
       [
         "packages/storage/src/repositories/account-preferences.ts",
@@ -7605,8 +7709,12 @@
         "918b41493d842011b55858bb7cc06a030516b5404bc87efc15bc86c3b6c44b91"
       ],
       [
+        "packages/storage/src/repositories/connection-lifecycle.ts",
+        "05a93e2d037be5c5c9318258b630153534b5afa621ffd910234c8e842bc8578d"
+      ],
+      [
         "packages/storage/src/repositories/connections-v2.ts",
-        "7f16fa563427604c2139e0e389a91be8daa803d9d901d59ff5ce63ac2cd507b5"
+        "ab39b3bc4e50e16804120e5977d4ee023c6673b88811a11a96e0da2bb11c1240"
       ],
       [
         "packages/storage/src/repositories/connections.ts",
@@ -7658,7 +7766,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "5e158495144f610bb56cd017332f31b6501ed895cc7331a19d35c9cd3b533b8a"
+        "4cf65b3c1ddfd15808960ad2f374d9f54568a067bbafd01ad20c4acf06d81a92"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -7777,6 +7885,10 @@
         "aa2151e1f51a102c3acc9ad508bfda091f15f310c65524e2b87b4157a7d503ab"
       ],
       [
+        "packages/storage/src/repositories/trading-activity.ts",
+        "d94a4db11a3f9aeac9aa04ba731c20356763fc4958c3d2c5dc43eae2963ba0f6"
+      ],
+      [
         "packages/storage/src/repositories/trials.ts",
         "8fe70b3f3c4517c18a4b198920d1ce27247b50008b27a76dfdbc1b561ee6dec8"
       ],
@@ -7806,7 +7918,7 @@
       ],
       [
         "pnpm-lock.yaml",
-        "6fd5d389957c3d865d8ac94dab7d3a631f4d0f725671dbd1957842d2751db567"
+        "e05ab03ee1fae5815b563978fc85d42a82753bf7cd0f93da03e0fc8da4a4f027"
       ],
       [
         "tsconfig.base.json",
@@ -7817,7 +7929,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "a18837ef370d60f114e8e12c8a2d764f5944f46b25f974fa5574b9da6eb1dae3"
+    "hash": "f6167b464539acb29282f77e5a971bd84b624e9940399593e45e3ff0dff338fa"
   },
   "trendvol-hourly-execution-v1": {
     "version": 1,
@@ -8221,7 +8333,11 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "e8d18ca54f8081b6cdfc3d9789dbf6bac6138dd81391ccd7975cb473539967b6"
+        "5cb9afb694c282e7d1ee19596072b41391d48da4a5465bb1e8282ff2463e988f"
+      ],
+      [
+        "packages/core/src/portfolio/paper-activity.ts",
+        "b41df7ab2cc1830f7b359c53400bf59a3ad6f70796cbe7b5bce0bf3f4ffab406"
       ],
       [
         "packages/core/src/portfolio/paper-performance.ts",
@@ -8589,7 +8705,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "b4b1c0e93b86669afc6adfa1efa9f96a8379d9616dd2f2a9716c0cfe85520000"
+        "d94eec21fe31a8a55a48e9b16773beca442d9f85279a82b0854e1f63dd923dac"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -8840,6 +8956,10 @@
         "aa1187fb06d366f0a83d88b4262486cd44f2d742a03033d8c28b4d8a61104d75"
       ],
       [
+        "packages/storage/src/migrations/v87.ts",
+        "bfe7a12a4cedefb447d782564b95e8bf1e227c49c3406eb05bcaf65dbd3ede33"
+      ],
+      [
         "packages/storage/src/migrations/v9-v17.ts",
         "b393c4fd6bc1f10e8c9e9ef5af65713ae68f01c2823f337091793102639d0489"
       ],
@@ -8849,7 +8969,7 @@
       ],
       [
         "packages/storage/src/profiles/comparison.ts",
-        "c3dce99f4fb24d9f4890f3a6a82bfad97bee17182872836e4bb444efc9850808"
+        "1de0af1d3dde4e03dac86cd07a2480479147fef002fc61174c150d849caec8f0"
       ],
       [
         "packages/storage/src/profiles/dashboard.ts",
@@ -8877,11 +8997,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "58480cbae1b98f45316f0b1b77140fe0bee427b0ee5b865b1eb3dc20aeccdae8"
+        "1bc7f8691652d7380858840d8b4f85bf2d1728bc8c3253474569cbf89b0e8787"
       ],
       [
         "packages/storage/src/profiles/index.ts",
-        "4ce2de23fe0ad1f62430dc8458539578e2753f9fe281998c1d2d5e6abaf9ddb8"
+        "16023a957e7ba6e4d3109028088748b62984d21b30a2b85acbdf821010e5c2ef"
       ],
       [
         "packages/storage/src/profiles/manifest.ts",
@@ -8890,6 +9010,10 @@
       [
         "packages/storage/src/profiles/person.ts",
         "72581ad564b2665c0139c9ff73adedaa2f971733cb077fd1550352599b29d2c4"
+      ],
+      [
+        "packages/storage/src/profiles/wallet-nicknames.ts",
+        "094c1f734cf687da12aae08c442c68801524c207a39bdec790646f89f5ff40da"
       ],
       [
         "packages/storage/src/repositories/account-preferences.ts",
@@ -8944,8 +9068,12 @@
         "918b41493d842011b55858bb7cc06a030516b5404bc87efc15bc86c3b6c44b91"
       ],
       [
+        "packages/storage/src/repositories/connection-lifecycle.ts",
+        "05a93e2d037be5c5c9318258b630153534b5afa621ffd910234c8e842bc8578d"
+      ],
+      [
         "packages/storage/src/repositories/connections-v2.ts",
-        "7f16fa563427604c2139e0e389a91be8daa803d9d901d59ff5ce63ac2cd507b5"
+        "ab39b3bc4e50e16804120e5977d4ee023c6673b88811a11a96e0da2bb11c1240"
       ],
       [
         "packages/storage/src/repositories/connections.ts",
@@ -8997,7 +9125,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "5e158495144f610bb56cd017332f31b6501ed895cc7331a19d35c9cd3b533b8a"
+        "4cf65b3c1ddfd15808960ad2f374d9f54568a067bbafd01ad20c4acf06d81a92"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -9116,6 +9244,10 @@
         "aa2151e1f51a102c3acc9ad508bfda091f15f310c65524e2b87b4157a7d503ab"
       ],
       [
+        "packages/storage/src/repositories/trading-activity.ts",
+        "d94a4db11a3f9aeac9aa04ba731c20356763fc4958c3d2c5dc43eae2963ba0f6"
+      ],
+      [
         "packages/storage/src/repositories/trials.ts",
         "8fe70b3f3c4517c18a4b198920d1ce27247b50008b27a76dfdbc1b561ee6dec8"
       ],
@@ -9145,7 +9277,7 @@
       ],
       [
         "pnpm-lock.yaml",
-        "6fd5d389957c3d865d8ac94dab7d3a631f4d0f725671dbd1957842d2751db567"
+        "e05ab03ee1fae5815b563978fc85d42a82753bf7cd0f93da03e0fc8da4a4f027"
       ],
       [
         "tsconfig.base.json",
@@ -9156,7 +9288,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "d7d476af7572963b0be48dec8ac4a6cd7e9225c9567d0b636f973c69a01d4888"
+    "hash": "e45e601a1ce0c72be52f71915753e87c704fb455af40647f9cd4edd7c52750b2"
   },
   "trendvol-execution-remediation-v1": {
     "version": 1,
@@ -9560,7 +9692,11 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "e8d18ca54f8081b6cdfc3d9789dbf6bac6138dd81391ccd7975cb473539967b6"
+        "5cb9afb694c282e7d1ee19596072b41391d48da4a5465bb1e8282ff2463e988f"
+      ],
+      [
+        "packages/core/src/portfolio/paper-activity.ts",
+        "b41df7ab2cc1830f7b359c53400bf59a3ad6f70796cbe7b5bce0bf3f4ffab406"
       ],
       [
         "packages/core/src/portfolio/paper-performance.ts",
@@ -9920,7 +10056,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "b4b1c0e93b86669afc6adfa1efa9f96a8379d9616dd2f2a9716c0cfe85520000"
+        "d94eec21fe31a8a55a48e9b16773beca442d9f85279a82b0854e1f63dd923dac"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -10171,6 +10307,10 @@
         "aa1187fb06d366f0a83d88b4262486cd44f2d742a03033d8c28b4d8a61104d75"
       ],
       [
+        "packages/storage/src/migrations/v87.ts",
+        "bfe7a12a4cedefb447d782564b95e8bf1e227c49c3406eb05bcaf65dbd3ede33"
+      ],
+      [
         "packages/storage/src/migrations/v9-v17.ts",
         "b393c4fd6bc1f10e8c9e9ef5af65713ae68f01c2823f337091793102639d0489"
       ],
@@ -10180,7 +10320,7 @@
       ],
       [
         "packages/storage/src/profiles/comparison.ts",
-        "c3dce99f4fb24d9f4890f3a6a82bfad97bee17182872836e4bb444efc9850808"
+        "1de0af1d3dde4e03dac86cd07a2480479147fef002fc61174c150d849caec8f0"
       ],
       [
         "packages/storage/src/profiles/dashboard.ts",
@@ -10208,11 +10348,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "58480cbae1b98f45316f0b1b77140fe0bee427b0ee5b865b1eb3dc20aeccdae8"
+        "1bc7f8691652d7380858840d8b4f85bf2d1728bc8c3253474569cbf89b0e8787"
       ],
       [
         "packages/storage/src/profiles/index.ts",
-        "4ce2de23fe0ad1f62430dc8458539578e2753f9fe281998c1d2d5e6abaf9ddb8"
+        "16023a957e7ba6e4d3109028088748b62984d21b30a2b85acbdf821010e5c2ef"
       ],
       [
         "packages/storage/src/profiles/manifest.ts",
@@ -10221,6 +10361,10 @@
       [
         "packages/storage/src/profiles/person.ts",
         "72581ad564b2665c0139c9ff73adedaa2f971733cb077fd1550352599b29d2c4"
+      ],
+      [
+        "packages/storage/src/profiles/wallet-nicknames.ts",
+        "094c1f734cf687da12aae08c442c68801524c207a39bdec790646f89f5ff40da"
       ],
       [
         "packages/storage/src/repositories/account-preferences.ts",
@@ -10275,8 +10419,12 @@
         "918b41493d842011b55858bb7cc06a030516b5404bc87efc15bc86c3b6c44b91"
       ],
       [
+        "packages/storage/src/repositories/connection-lifecycle.ts",
+        "05a93e2d037be5c5c9318258b630153534b5afa621ffd910234c8e842bc8578d"
+      ],
+      [
         "packages/storage/src/repositories/connections-v2.ts",
-        "7f16fa563427604c2139e0e389a91be8daa803d9d901d59ff5ce63ac2cd507b5"
+        "ab39b3bc4e50e16804120e5977d4ee023c6673b88811a11a96e0da2bb11c1240"
       ],
       [
         "packages/storage/src/repositories/connections.ts",
@@ -10328,7 +10476,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "5e158495144f610bb56cd017332f31b6501ed895cc7331a19d35c9cd3b533b8a"
+        "4cf65b3c1ddfd15808960ad2f374d9f54568a067bbafd01ad20c4acf06d81a92"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -10447,6 +10595,10 @@
         "aa2151e1f51a102c3acc9ad508bfda091f15f310c65524e2b87b4157a7d503ab"
       ],
       [
+        "packages/storage/src/repositories/trading-activity.ts",
+        "d94a4db11a3f9aeac9aa04ba731c20356763fc4958c3d2c5dc43eae2963ba0f6"
+      ],
+      [
         "packages/storage/src/repositories/trials.ts",
         "8fe70b3f3c4517c18a4b198920d1ce27247b50008b27a76dfdbc1b561ee6dec8"
       ],
@@ -10476,7 +10628,7 @@
       ],
       [
         "pnpm-lock.yaml",
-        "6fd5d389957c3d865d8ac94dab7d3a631f4d0f725671dbd1957842d2751db567"
+        "e05ab03ee1fae5815b563978fc85d42a82753bf7cd0f93da03e0fc8da4a4f027"
       ],
       [
         "tsconfig.base.json",
@@ -10487,6 +10639,6 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "065ed5320f7ace9f6fd55ca90ae9f17f9f5c54b2cb6a4c7a350b1141562f5565"
+    "hash": "d6c53c9010f9e4d37ffdae77a526b1bf05c1f1103362736501a2972958664e61"
   }
 }

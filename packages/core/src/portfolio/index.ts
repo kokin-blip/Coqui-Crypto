@@ -15,3 +15,5 @@ export * from './snapshot-evidence.js';
 export * from './policy.js';
 export * from './contribution.js';
 export * from './import-csv.js';
+
+export * from "./paper-activity.js";

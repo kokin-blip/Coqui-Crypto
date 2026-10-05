@@ -411,26 +411,26 @@ export class CoinbaseConnectionService {
       [validated.code === 'invalid_key_name' ? 'keyName' : 'privateKey'],
       validated.code,
     );
-    const preliminary = readManifest(this.#manifestStore);
-    if (!preliminary.ok) return preliminary;
-    if (profile(preliminary.value, profileId) === null) {
-      return failure(['profileId'], 'profile_not_found');
-    }
-    const asOfMs = safeNow(this.#clock);
-    if (asOfMs === null) return failure([], 'coinbase_connection_invalid_clock');
-    if (signal?.aborted) return failure([], 'coinbase_verification_cancelled');
-    let verified: CoinbaseCredentialVerificationResult;
-    try {
-      verified = await this.#verifier.verify(validated.credentials, signal);
-    } catch {
-      verified = { ok: false, reasonCode: 'unexpected_failure' };
-    }
-    if (!verified.ok) return failure([], VERIFICATION_ISSUES[verified.reasonCode]);
-
-    const keyFingerprint = sha256Hex(validated.credentials.keyName);
-    const portfolioFingerprint = sha256Hex(verified.portfolioUuid);
     if (!this.#operationGate.begin()) return failure([], 'profile_operation_in_progress');
     try {
+      const preliminary = readManifest(this.#manifestStore);
+      if (!preliminary.ok) return preliminary;
+      if (profile(preliminary.value, profileId) === null) {
+        return failure(['profileId'], 'profile_not_found');
+      }
+      const asOfMs = safeNow(this.#clock);
+      if (asOfMs === null) return failure([], 'coinbase_connection_invalid_clock');
+      if (signal?.aborted) return failure([], 'coinbase_verification_cancelled');
+      let verified: CoinbaseCredentialVerificationResult;
+      try {
+        verified = await this.#verifier.verify(validated.credentials, signal);
+      } catch {
+        verified = { ok: false, reasonCode: 'unexpected_failure' };
+      }
+      if (!verified.ok) return failure([], VERIFICATION_ISSUES[verified.reasonCode]);
+
+      const keyFingerprint = sha256Hex(validated.credentials.keyName);
+      const portfolioFingerprint = sha256Hex(verified.portfolioUuid);
       const current = readManifest(this.#manifestStore);
       if (!current.ok) return current;
       const record = profile(current.value, profileId);

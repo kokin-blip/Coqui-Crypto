@@ -1,19 +1,22 @@
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { Database, Plus, RefreshCw, ShieldCheck, Unplug } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useChannel } from '../query/use-channel.js';
 import { useCommand } from '../query/use-command.js';
 import { SurfaceState } from './SurfaceState.js';
+import { ConnectorRemovalDialog, CONNECTION_INVALIDATIONS } from './ConnectorRemovalDialog.js';
+import { WalletNicknames } from './WalletNames.js';
 import { AlpacaPaperConnection } from './AlpacaPaperConnection.js';
 
 type Connection = ChannelResponse<'connections.list'>['connections'][number];
-const INVALIDATIONS = ['connections.list', 'portfolio.current', 'portfolio.history', 'app.status-rail'] as const;
+const INVALIDATIONS = CONNECTION_INVALIDATIONS;
 const ROBINHOOD_SETUP_INVALIDATIONS = ['connections.robinhood.keypair.status'] as const;
 
 function ConnectionRow({ client, connection }: { readonly client: CoquiClient; readonly connection: Connection }): React.JSX.Element {
   const sync = useCommand(client, 'connections.sync', INVALIDATIONS);
-  const disconnect = useCommand(client, 'connections.disconnect', INVALIDATIONS);
+  const opener = useRef<HTMLButtonElement | null>(null);
+  const [action, setAction] = useState<'remove'|'disconnect'|null>(null);
   return (
     <article className="coinbase-connected-actions" aria-label={`${connection.label} connection`}>
       <div className="connection-card-heading">
@@ -29,13 +32,17 @@ function ConnectionRow({ client, connection }: { readonly client: CoquiClient; r
         <div><dt>Live execution</dt><dd>Disabled</dd></div>
       </dl></details>
       <div className="coinbase-action-row">
-        <button type="button" className="button-primary" disabled={sync.state.kind === 'pending' || connection.status === 'disconnected'} onClick={() => void sync.run({ commandId: crypto.randomUUID(), connectionId: connection.id })}>
+        <button type="button" className="button-primary" disabled={sync.state.kind === 'pending' || connection.status === 'disconnected' || connection.removalState === 'pending'} onClick={() => void sync.run({ commandId: crypto.randomUUID(), connectionId: connection.id })}>
           <RefreshCw aria-hidden="true" size={15} />{sync.state.kind === 'pending' ? 'Syncing…' : 'Sync now'}
         </button>
-        <button type="button" className="button-quiet button-disconnect" disabled={disconnect.state.kind === 'pending' || connection.status === 'disconnected'} onClick={() => void disconnect.run({ commandId: crypto.randomUUID(), connectionId: connection.id })}>
+        <button type="button" className="button-quiet button-disconnect" disabled={sync.state.kind === 'pending' || connection.status === 'disconnected' || connection.removalState === 'pending'} onClick={event => { opener.current = event.currentTarget; setAction('disconnect'); }}>
           <Unplug aria-hidden="true" size={15} />Disconnect
         </button>
       </div>
+      {(connection.provider === 'coinbase' || connection.removalState === 'pending') && <button type="button" className="button-quiet button-disconnect" disabled={sync.state.kind === 'pending'} onClick={event => { opener.current = event.currentTarget; setAction(connection.provider === 'coinbase' ? 'remove' : 'disconnect'); }}>{connection.removalState === 'pending' ? 'Recover removal' : 'Remove connector'}</button>}
+      {connection.removalState === 'pending' && <SurfaceState kind="blocked" title="Removal needs recovery" detail="Balances and routing are excluded. Recover removal to finish local credential cleanup." compact />}
+      <WalletNicknames client={client} connectionId={connection.id} />
+      {action !== null && <ConnectorRemovalDialog client={client} connectionId={connection.id} action={action} returnFocus={opener.current} onClose={() => setAction(null)} />}
       {sync.state.kind === 'failed' && <SurfaceState kind="error" title="Sync failed" detail={sync.state.codes.join(', ')} compact />}
       {sync.state.kind === 'succeeded' && <SurfaceState kind="success" title="Portfolio updated" detail="Connected balances and their valuation were stored as immutable current-portfolio evidence." compact />}
     </article>

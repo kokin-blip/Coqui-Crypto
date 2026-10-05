@@ -209,3 +209,11 @@ describe('provider-neutral connection handlers', () => {
     database.close();
   });
 });
+
+it('rejects a changed verified portfolio before overwriting an existing credential or nickname identity',async()=>{
+  const {profileConnectionV2}=await import('../packages/core/src/index.js');const {saveProfileConnectionV2,saveVerifiedWalletIdentity}=await import('../packages/storage/src/index.js');const {writeConnectionSecret,readConnectionSecret}=await import('../packages/adapters/src/index.js');
+  const database=openDatabase(':memory:'),secrets=createMemorySecretStore();const keyName='organizations/0/keys/00000000-0000-4000-8000-0000000000aa';const connection=profileConnectionV2('main','coinbase',sha256Hex(keyName),10);saveProfileConnectionV2(connection,database);saveVerifiedWalletIdentity(connection,'portfolio','11111111-2222-4333-8444-555555555555',10,database);
+  const ref={profileId:'main',connectionId:connection.id,provider:'coinbase' as const,credentialType:'api_credentials' as const};await writeConnectionSecret(secrets,ref,'original-fixture-credential');
+  const handlers=createConnectionHandlers({profileId:'main',database,secrets,clock:new FixedClock(20),priceSource:{name:'fixture',async spot(){return new Map();}},pickConnectionFile:async()=>({contents:JSON.stringify({name:keyName,privateKey:PRIVATE_KEY})}),coinbaseVerifier:{async verify(){return {ok:true,portfolioUuid:'22222222-2222-4222-8222-222222222222'};}}});
+  expect(await handlers['connections.connect-file']!({commandId:'changed-wallet',provider:'coinbase'} as never)).toMatchObject({ok:false,issues:[{code:'wallet_identity_changed'}]});expect(await readConnectionSecret(secrets,ref)).toEqual({ok:true,value:'original-fixture-credential'});database.close();
+});

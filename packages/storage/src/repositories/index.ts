@@ -59,3 +59,6 @@ export * from './remediation-evidence.js';
 export * from './study-instances.js';
 export * from './research-integrity.js';
 export * from './bound-profitability.js';
+
+export * from "./trading-activity.js";
+export * from './connection-lifecycle.js';

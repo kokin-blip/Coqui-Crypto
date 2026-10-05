@@ -1,3 +1,4 @@
+import type { ProfileOperationGate } from '@coqui/services'; import type { WalletNicknameStore, ProfileManifestStore } from '@coqui/storage';
 import { createOverlayShadowRuntime } from './overlay-shadow-runtime.js'; import { createWiderUniverseRuntime } from './wider-universe-runtime.js'; import { createBreakoutRuntime } from './breakout-runtime.js'; import { createRangeRotationRuntime } from './range-rotation-runtime.js'; import { createMarketSelectorRuntime } from './market-selector-runtime.js';
 import { readStrategyHealth, PAPER_TRENDVOL_VERSION } from '@coqui/services';
 import { randomUUID } from 'node:crypto';
@@ -11,8 +12,7 @@ import {
   type HttpClient,
 } from '@coqui/adapters';
 import {
-  SystemClock, NEGATIVE_FINDINGS,
-  NEGATIVE_FINDING_LEDGER_NOTE,
+  SystemClock, NEGATIVE_FINDINGS, NEGATIVE_FINDING_LEDGER_NOTE,
   planAutoRebalance,
   calculatePaperPerformance,
   deriveFifoPaperLots,
@@ -20,15 +20,9 @@ import {
   type Clock,
 } from '@coqui/core';
 import {
-  AccountSettingsService,
-  type CoinbaseEvidenceAcquirer,
-  type CoinbaseCredentialVerifier,
-  AlertsService,
-  PortfolioReadModelService,
-  PortfolioTaxService,
-  PaperExecutionService,
-  ExploratoryPaperCampaignService,
-  ReconciliationLedgerService,
+  AccountSettingsService, type CoinbaseEvidenceAcquirer, type CoinbaseCredentialVerifier,
+  AlertsService, PortfolioReadModelService, PortfolioTaxService,
+  PaperExecutionService, ExploratoryPaperCampaignService, ReconciliationLedgerService,
   paperPortfolioView,
   MarketDisplayQueryService,
   type PricedHolding,
@@ -64,6 +58,7 @@ import {
 
 import { createDiagnostics } from './diagnostics.js';
 import { createExploratoryPaperRuntime } from './exploratory-paper-handlers.js';
+import { createTradingActivityHandlers, resolveActivityMark } from './trading-activity-handlers.js';
 import { createDecisionHandlers } from './decision-handlers.js';
 import { createAdvisorHandlers } from './advisor-handlers.js';
 import { createChartExtensionHandlers, createChartSnapshotHandlers, createChartWorkspaceHandlers } from './chart-handler-factories.js';
@@ -93,6 +88,9 @@ import type { ChannelHandlers } from './dispatch.js';
 export interface RuntimeOptions extends Partial<Pick<Parameters<typeof createAdvisorHandlers>[0], 'secrets' | 'saveHistory' |
   'readClipboardText' | 'clearClipboardIfMatches'>> {
   readonly hostKind?: 'desktop' | 'headless'; readonly databasePath: string; readonly profileId: string; readonly hostId?: string;
+  readonly operationGate?: ProfileOperationGate;
+  readonly nicknameStore?: WalletNicknameStore;
+  readonly manifestStore?: ProfileManifestStore;
   readonly readSystemTime?: () => number;
   readonly onUnexpectedError?: (context: string, error: unknown) => void;
   /** Leave the scheduler stopped for smoke tests. */
@@ -274,8 +272,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     if (!isAuthoritativeHost(options.profileId, hostId, database)) return;
     liveMarket.start(paperInstruments().map((instrument) => instrument.productId));
     scheduler = startSchedulerRuntime({ overlayShadow,
-        database,
-        clock,
+        database, clock, ...(options.operationGate === undefined ? {} : {operationGate:options.operationGate}),
         profileId: options.profileId, hostId, onUnexpectedError: report, research: researchHost,
         async prepare(nowMs) {
           await paperMarket.refresh(nowMs);
@@ -296,11 +293,15 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       onDisconnect: () => parallel.service.pauseForDisconnect(),
       ...(options.secrets === undefined ? {} : { secrets: options.secrets }) }),
     ...createParallelPaperHandlers(parallel.service),
-    ...createCoinbaseSyncHandlers({ profileId: options.profileId, database, clock, priceSource,
+    ...createCoinbaseSyncHandlers({
+      ...(options.operationGate===undefined?{}:{operationGate:options.operationGate}), profileId: options.profileId, database, clock, priceSource,
       ...(options.secrets === undefined ? {} : { secrets: options.secrets }),
       ...(options.coinbaseAcquirer === undefined ? {} : { acquirer: options.coinbaseAcquirer }),
     }),
-    ...createConnectionHandlers({ profileId: options.profileId, database, clock, priceSource, ...(options.secrets === undefined ? {} : { secrets: options.secrets }),
+    ...createConnectionHandlers({
+      ...(options.operationGate===undefined?{}:{operationGate:options.operationGate}),
+      ...(options.nicknameStore===undefined?{}:{nicknameStore:options.nicknameStore}),
+      ...(options.manifestStore===undefined?{}:{manifestStore:options.manifestStore}), profileId: options.profileId, database, clock, priceSource, ...(options.secrets === undefined ? {} : { secrets: options.secrets }),
       ...(options.pickConnectionFile === undefined ? {} : { pickConnectionFile: options.pickConnectionFile }), ...(options.coinbaseAcquirer === undefined ? {} : { coinbaseAcquirer: options.coinbaseAcquirer }),
       ...(options.coinbaseVerifier === undefined ? {} : { coinbaseVerifier: options.coinbaseVerifier }),
       ...(options.readClipboardText === undefined ? {} : { readClipboardText: options.readClipboardText }) }),
@@ -316,6 +317,8 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       ...(options.pickMarketEventFile===undefined?{}:{pickEventFile:options.pickMarketEventFile}) }),
     ...createResearchOrchestrationHandlers({coordinator:researchHost,clock}),
     ...createDecisionHandlers(options.profileId, clock, database),
+    ...createTradingActivityHandlers({ profileId: options.profileId, database, now: () => clock.nowMs(),
+      mark: productId => resolveActivityMark(productId, liveMarket.snapshot().quotes, id => paperMarket.view.bars(id as never).at(-1)) }),
     ...exploratoryRuntime.handlers,
     'activity.feed': (payload: { readonly limit: number; readonly cursor: string | null }) => ({
       ok: true,
@@ -366,10 +369,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
         },
       };
     },
-    'paper.execution.policy': () => ({
-      ok: true,
-      value: getPaperExecutionPolicy(options.profileId, database),
-    }),
+    'paper.execution.policy': () => ({ ok: true, value: getPaperExecutionPolicy(options.profileId, database) }),
     'paper.execution.policy.set': (payload: {
       readonly commandId: string;
       readonly mode: 'off' | 'review_required' | 'unattended';

@@ -9,7 +9,7 @@ import {
   WalletSchedulerService,
   type PaperRunLoopDependencies,
   type WalletSchedulerTask,
-  type HostLifecycle,
+  type HostLifecycle, type ProfileOperationGate,
 } from '@coqui/services';
 import { appendRemediationEvidence, getAuthoritativeHost, listRemediationEvidence, type Db } from '@coqui/storage';
 
@@ -41,6 +41,7 @@ const DEFAULT_POLL_MS = 60_000;
 
 export interface SchedulerRuntimeOptions {
   readonly database: Db;
+  readonly operationGate?: ProfileOperationGate;
   readonly clock: Clock;
   readonly profileId: string;
   readonly hostId?: string;
@@ -100,6 +101,7 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
     // Ticks never overlap. The scheduler bounds concurrency across profiles,
     // but nothing stops a slow tick from being re-entered by the timer.
     if (running || suspended) return;
+    if (options.operationGate && !options.operationGate.begin()) return;
     running = true;
     const started = performance.now();
     recordMissingSlots();
@@ -127,6 +129,7 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
       record('tick_finish', { durationMs: performance.now() - started });
       lastFinishedAtMs = options.clock.nowMs();
       running = false;
+      options.operationGate?.end();
     }
   };
 
