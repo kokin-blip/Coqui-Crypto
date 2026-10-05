@@ -357,12 +357,12 @@ async function run() {
       if (!opener) return JSON.stringify({ opened: false });
       opener.click();
       const heading = await until(() => document.querySelector('#decision-detail-heading'));
-      const focused = heading !== null && document.activeElement === heading;
-      const reason = document.querySelector('.decision-gate-reasons')?.textContent ?? '';
+      const focused = await until(() => heading !== null && document.activeElement === heading);
+      const reason = await until(() => document.querySelector('.decision-gate-reasons')?.textContent?.includes('profitability gate failed'));
       document.querySelector('#decision-detail .button-secondary')?.click();
       const restored = await until(() => document.activeElement === opener);
-      return JSON.stringify({ opened: heading !== null, focused, restored: restored === true,
-        reason: reason.includes('profitability gate failed') });
+      return JSON.stringify({ opened: heading !== null, focused: focused === true, restored: restored === true,
+        reason: reason === true });
     })()
   `)));
   check('decision detail opens with focus and recorded gate reason', focusResult.opened && focusResult.focused && focusResult.reason);

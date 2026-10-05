@@ -88,7 +88,9 @@ async function measure({ blockRendererMs = 0 } = {}) {
 
   const startedAt = Date.now();
   const window = new BrowserWindow({
-    show: false,
+    // Measure foreground rendering: hidden windows throttle animation frames
+    // on Linux, which otherwise measures that throttle instead of interaction.
+    show: true,
     webPreferences: { ...WEB_PREFERENCES, preload: join(root, 'dist/preload/index.cjs') },
   });
   const entry = join(root, 'dist/renderer/index.html');
