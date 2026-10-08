@@ -2,16 +2,22 @@ import { childRequestDeadline, withinDeadline, type RequestDeadline, type create
 import { Decimal } from 'decimal.js';
 import type { ParallelPaperEvent, ParallelPaperExperiment } from '@coqui/storage';
 import type { ParallelPaperDependencies } from './parallel-paper-service.js';
-import { ParallelReconciliationError, type PaperPositionDifference } from './parallel-paper-utils.js';
+import { ParallelBudgetError, ParallelReconciliationError, type PaperPositionDifference } from './parallel-paper-utils.js';
 import type { PaperDecisionPreparation } from './runtime-model.js';
+import { currentPaperPositionResolution } from './parallel-paper-resolution.js';
 
 export function parallelAttemptsResolved(events: readonly ParallelPaperEvent[]): boolean {
-  return events.filter((event) => event.kind === 'submit_attempt').every((attempt) => {
-    const order = [...events].reverse().find((event) => event.kind === 'external_order' &&
-      event.detail['clientOrderId'] === attempt.detail['clientOrderId']);
-    return order?.detail['status'] === 'filled' && events.filter((event) => event.kind === 'external_fill' &&
-      event.detail['orderId'] === order.detail['orderId']).reduce((sum, event) =>
-        sum.plus(String(event.detail['quantity'] ?? '0')), new Decimal(0)).eq(String(order.detail['filledQty']));
+  const orders = new Map<unknown, ParallelPaperEvent>(), fills = new Map<unknown, Decimal>();
+  for (const event of events) {
+    if (event.kind === 'external_order') orders.set(event.detail['clientOrderId'], event);
+    if (event.kind === 'external_fill') {
+      const id = event.detail['orderId'];
+      fills.set(id, (fills.get(id) ?? new Decimal(0)).plus(String(event.detail['quantity'] ?? '0')));
+    }
+  }
+  return events.filter(event => event.kind === 'submit_attempt').every(attempt => {
+    const order = orders.get(attempt.detail['clientOrderId']);
+    return order?.detail['status'] === 'filled' && (fills.get(order.detail['orderId']) ?? new Decimal(0)).eq(String(order.detail['filledQty']));
   });
 }
 
@@ -26,18 +32,25 @@ export async function validateParallelBroker(experiment: ParallelPaperExperiment
 }
 
 export async function prepareParallelPass(input: Pick<ParallelPaperDependencies, 'clock' | 'refreshFor' | 'preparation'>,
-  deadline?: RequestDeadline): Promise<PaperDecisionPreparation> {
+  deadline?: RequestDeadline, purpose: 'execution' | 'recovery' = 'execution'): Promise<PaperDecisionPreparation> {
   if (!deadline) return input.preparation();
-  const budget = Math.min(10_000, deadline.remainingMs() - 15_000);
-  if (budget <= 0) throw new Error('deadline_exceeded');
+  const reservationMs = purpose === 'execution' ? 15_000 : 0;
+  const budget = Math.min(10_000, deadline.remainingMs() - reservationMs);
+  if (budget <= 0) throw new ParallelBudgetError('market_preparation', deadline, reservationMs);
   const preparationDeadline = childRequestDeadline(deadline, budget);
+  const started = performance.now();
   try { return await withinDeadline(input.refreshFor(input.clock.nowMs(), preparationDeadline), preparationDeadline); }
+  catch (error) {
+    if (error instanceof Error && error.message === 'deadline_exceeded')
+      throw new ParallelBudgetError('market_preparation', preparationDeadline, reservationMs, performance.now() - started, budget);
+    throw error;
+  }
   finally { preparationDeadline.dispose(); }
 }
 
 /** A clean opening account has zero quantities; unexplained residuals never auto-resume. */
 export async function validateParallelPositions(client: ReturnType<typeof createAlpacaPaperClient>,
-  events: readonly ParallelPaperEvent[]): Promise<void> {
+  events: readonly ParallelPaperEvent[], observe?: (positions: readonly { symbol: string; quantity: string }[]) => void): Promise<void> {
   const expected = new Map<string, Decimal>();
   const symbolKey = (value: unknown) => String(value).replaceAll('/', '');
   const add = (symbol: string, qty: Decimal) => expected.set(symbol, (expected.get(symbol) ?? new Decimal(0)).plus(qty));
@@ -56,9 +69,16 @@ export async function validateParallelPositions(client: ReturnType<typeof create
       if (!qty.isFinite()) throw new Error('invalid_fee');
       add(symbol, qty.abs().neg());
     }
+    const resolution = currentPaperPositionResolution(events);
+    if (resolution) for (const row of resolution.detail['positionDifferences'] as PaperPositionDifference[]) {
+      const qty = new Decimal(row.observedQty);
+      if (!['BTCUSD', 'ETHUSD', 'LTCUSD'].includes(row.symbol) || !qty.isFinite() || qty.lt(0)) throw new Error('invalid_resolution');
+      expected.set(row.symbol, qty);
+    }
   } catch { throw new ParallelReconciliationError('broker_positions_mismatch', 'positions'); }
   const positions = await client.positions();
   const differences: PaperPositionDifference[] = [];
+  const observedPositions: { symbol: string; quantity: string }[] = [];
   const compare = (symbol: string, observed: Decimal, recorded: Decimal) => {
     if (!observed.eq(recorded)) differences.push({ symbol, expectedQty: recorded.toString(),
       observedQty: observed.toString(), differenceQty: observed.minus(recorded).toString() });
@@ -69,10 +89,12 @@ export async function validateParallelPositions(client: ReturnType<typeof create
       const symbol = symbolKey(position.symbol), qty = new Decimal(position.qty);
       if (!symbol || symbol.length > 128 || seen.has(symbol) || !qty.isFinite() || qty.lt(0)) throw new Error('invalid_position');
       seen.add(symbol);
+      observedPositions.push({ symbol, quantity: qty.toString() });
       compare(symbol, qty, expected.get(symbol) ?? new Decimal(0));
       expected.delete(symbol);
     }
     for (const [symbol, qty] of expected) compare(symbol, new Decimal(0), qty);
   } catch { throw new ParallelReconciliationError('broker_positions_mismatch', 'positions'); }
+  observe?.(observedPositions);
   if (differences.length > 0) throw new ParallelReconciliationError('broker_positions_mismatch', 'positions', undefined, differences.slice(0, 100));
 }

@@ -12,6 +12,7 @@ import type { ChartLinkController } from './chart-link-controller.js';
 import type { ActivityAnnotation, ActivityPosition } from './TerminalActivity.js';
 import type { ChartDrawing, ChartTileConfiguration, DrawingTool, WorkstationBar, WorkstationChartStyle, WorkstationExtensionMarker, WorkstationIndicators } from './chart-workstation-types.js';
 
+const EMPTY_BARS: readonly WorkstationBar[] = [];
 
 export function ChartTile({ client, tile, tileId, layoutId, style, activeTool, height,
   indicators, scaleMode, volumeVisible, liveVisible, extensionIds, linkController,
@@ -44,7 +45,8 @@ export function ChartTile({ client, tile, tileId, layoutId, style, activeTool, h
     const provisional = liveCandle;
     return provisional === undefined ? completed : [...completed, provisional];
   }, [historyBars, liveCandle, liveVisible, active]);
-  const extensionState = useChartExtensionSeries(client, extensionIds, bars);
+  // Provisional candle updates must not rebuild the immutable extension input.
+  const extensionState = useChartExtensionSeries(client, extensionIds, historyBars ?? EMPTY_BARS);
   const comparisons = useComparisonSeries(client, tile.compareProductIds, tile.interval,
     range.startTimeMs, range.endTimeMs);
   const savedDrawings = chartWorkspace.kind === 'ready' ? chartWorkspace.value.drawings : undefined;

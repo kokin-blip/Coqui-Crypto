@@ -1,0 +1,110 @@
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: '74ce5c80fe656af7a8201aff53f2fd499dc2f23afc88ce4c098ea647ef390d09'
+}
+PASS  composition root builds
+PASS  profile database migrated  (user_version=87)
+PASS  window hardening installed  (5 controls)
+PASS  sandbox enabled
+PASS  csp denies connect-src
+PASS  renderer loaded
+PASS  react tree mounted under CSP
+PASS  contextBridge exposes coqui.query
+PASS  renderer has no node require
+PASS  renderer has no node process
+PASS  research.runs round-trips  (status=ok)
+PASS  unknown channel refused  (code=unknown_channel)
+PASS  invalid payload refused  (code=invalid_request_payload)
+PASS  research.jobs round-trips  (status=ok)
+PASS  risk.evidence-gate round-trips  (status=ok, gateStatus=blocked_trial_history_incomplete)
+PASS  research.scoreboard reports no run distinctly  (status=failed, code=no_verified_run)
+PASS  research.negative-findings round-trips  (count=13)
+PASS  portfolio.view round-trips  (status=ok, holdings=0)
+PASS  portfolio.reconciliation round-trips  (status=ok)
+PASS  reconciliation write refuses unbacked evidence  (status=failed, code=unknown_discrepancy)
+PASS  accounts.profiles round-trips  (status=ok, profiles=2)
+PASS  activity.feed round-trips  (status=ok, events=0)
+PASS  decision.timeline round-trips  (status=ok, items=0)
+PASS  portfolio.allocation round-trips  (status=ok, estimateOnly=true)
+PASS  portfolio.tax round-trips  (status=ok, disposals=0)
+PASS  accounts.settings round-trips  (status=ok, density=comfortable)
+PASS  market-data.live round-trips  (status=ok, connection=offline)
+PASS  market-data.order-book round-trips  (status=ok, state=unavailable, displayOnly=true)
+PASS  market-data.recent-trades round-trips  (status=ok, trades=0, displayOnly=true)
+PASS  paper.portfolio round-trips  (status=ok, simulation=true)
+PASS  paper.campaign round-trips  (status=ok, state=not_started)
+PASS  paper.execution.policy round-trips  (status=ok, policy=review_required)
+PASS  paper.execution.proposals round-trips  (status=ok, proposals=0)
+PASS  paper.performance round-trips  (status=ok, points=0)
+PASS  research.performance round-trips  (status=ok, runs=0)
+PASS  research.edge-study round-trips  (status=ok, status=collecting)
+PASS  risk.dashboard round-trips  (status=ok, stage=null)
+PASS  alerts.view round-trips  (status=ok, unread=0)
+PASS  app.incidents round-trips  (status=ok, incidents=0)
+PASS  app.status-rail round-trips  (status=ok, mode=paper)
+PASS  decision detail opens with focus and recorded gate reason
+PASS  decision detail close returns focus to opener
+{"timestamp":"2026-10-08T18:33:28.995Z","level":"info","event":"coinbase_candles.source","context":{"profileId":"main","source":"public","productId":"BTC-USD","interval":"1d"}}
+{"timestamp":"2026-10-08T18:33:29.121Z","level":"info","event":"coinbase_candles.source","context":{"profileId":"main","source":"public","productId":"BTC-USD","interval":"1d"}}
+{"timestamp":"2026-10-08T18:33:29.287Z","level":"info","event":"coinbase_candles.source","context":{"profileId":"main","source":"public","productId":"BTC-USD","interval":"1d"}}
+PASS  blocked and unknown proposal rows retain evidence and recovery guidance
+{"timestamp":"2026-10-08T18:33:29.417Z","level":"info","event":"coinbase_candles.source","context":{"profileId":"main","source":"public","productId":"BTC-USD","interval":"1d"}}
+{"timestamp":"2026-10-08T18:33:29.578Z","level":"info","event":"coinbase_candles.source","context":{"profileId":"main","source":"public","productId":"BTC-USD","interval":"1d"}}
+PASS  Provider-neutral Settings renders
+PASS  Credential contents stay outside renderer
+PASS  Coinbase excessive permissions rejected and duplicate activation suppressed
+{"timestamp":"2026-10-08T18:33:29.727Z","level":"info","event":"coinbase_candles.source","context":{"profileId":"main","source":"public","productId":"BTC-USD","interval":"1d"}}
+{"timestamp":"2026-10-08T18:33:29.876Z","level":"info","event":"coinbase_candles.source","context":{"profileId":"main","source":"public","productId":"BTC-USD","interval":"1d"}}
+PASS  Coinbase file connects and creates current portfolio evidence
+PASS  portfolio.current is backed by connected accounts
+PASS  Overview renders connected balances without tax lots
+PASS  Coinbase sync command is idempotently activated
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: '74ce5c80fe656af7a8201aff53f2fd499dc2f23afc88ce4c098ea647ef390d09'
+}
+PASS  Coinbase profile switch clears prior connection evidence
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: '74ce5c80fe656af7a8201aff53f2fd499dc2f23afc88ce4c098ea647ef390d09'
+}
+PASS  Coinbase original profile retains isolated connection
+PASS  Wallet identity verified in main with local-only scope
+PASS  Nickname command persists locally
+PASS  Connected holdings cite nickname and masked provider identity
+PASS  Disconnect requires an explicit dialog confirmation
+PASS  Unknown execution blocks connector cleanup
+PASS  Removal dialog cancellation restores focus
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: '74ce5c80fe656af7a8201aff53f2fd499dc2f23afc88ce4c098ea647ef390d09'
+}
+PASS  Verified wallet nickname follows identity across isolated profiles
+PASS  Coinbase disconnect is connection scoped
+PASS  Last disconnected connector leaves current balances unavailable
+PASS  Removal consequence copy preserves historical evidence
+PASS  Removed connector disappears from active Settings
+PASS  Explicit verified re-addition restores installation nickname
+PASS  Nickname clear is explicit and revision checked
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: '74ce5c80fe656af7a8201aff53f2fd499dc2f23afc88ce4c098ea647ef390d09'
+}
+PASS  Coinbase credential absent from preferences and command readback
+PASS  terminal Assets tab selects its labelled panel
+PASS  terminal Paper Positions tab selects its labelled panel
+PASS  terminal Paper Proposals tab selects its labelled panel
+PASS  terminal proposal rows preserve blocked and unknown execution guidance
+PASS  terminal Decisions tab selects its labelled panel
+PASS  terminal Performance tab selects its labelled panel
+PASS  terminal Research Runs tab selects its labelled panel
+PASS  terminal tabs support keyboard navigation and focus
+PASS  terminal links product selection to chart and decision evidence
+PASS  terminal depth and recent-trades views retain the selected product
+PASS  terminal chart panel enters and exits native fullscreen
+{"timestamp":"2026-10-08T18:33:31.392Z","level":"warn","event":"coinbase_candles.fetch_failed","context":{"profileId":"main","source":"authenticated","productId":"ETH-USD","interval":"1d","status":401,"reason":"http"}}
+PASS  terminal evidence drawer traps and restores keyboard focus
+
+=== STAGE 2.4 SMOKE GATE ===
+=== ALL PASS ===
+{"timestamp":"2026-10-08T18:33:31.438Z","level":"warn","event":"coinbase_candles.fetch_failed","context":{"profileId":"main","source":"public","productId":"ETH-USD","interval":"1d","status":0,"reason":"shutdown"}}

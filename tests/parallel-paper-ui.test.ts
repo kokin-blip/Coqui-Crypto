@@ -38,6 +38,9 @@ describe('Alpaca paper activity panel', () => {
     mocked.channels['parallel.paper.status'] = { kind: 'ready', value: {
       state: 'active', runtimeState: 'intraday', lastCheckAtMs: Date.now(), lastDecisionAtMs: Date.now(),
       reconciliationAttention: { blocked: false, lastSuccessfulAtMs: null, latestFailure: null, unresolvedOrders: [] }, slotOutcomes: [],
+      brokerEvidence: { tradeStream: 'listening', quoteStatus: 'stale', quoteAtMs: null,
+        latestFillAtMs: null, latestFeeCreatedAtMs: null, feeCoverage: 'unconfirmed', positionStatus: 'unreconciled',
+        capturedExecutionCount: 3, lastExecutionAtMs: null },
       lastReason: null, lastMarkDay: null, coquiOpeningUsd: '1000', alpacaOpeningUsd: '100000',
       coquiEquityUsd: null, alpacaEquityUsd: null, coquiReturnPct: null, alpacaReturnPct: null,
       coquiFeesUsd: '0', alpacaBookedFeesUsd: null, alpacaModeledFrictionUsd: '0',
@@ -59,6 +62,10 @@ describe('Alpaca paper activity panel', () => {
     } };
     const html = render();
     expect(html).toContain('Monitoring intraday paper rebalances');
+    expect(html).toContain('Alpaca broker evidence');
+    expect(html).toContain('Alpaca quote freshness');
+    expect(html).toContain('Completeness unconfirmed');
+    expect(html).toContain('Captured stream positions do not replace the accounting guard');
     expect(html).toContain('Across 3 recorded daily decisions');
     expect(html).toContain('No intraday order needed');
     expect(html).toContain('not execution-matched');
@@ -66,6 +73,11 @@ describe('Alpaca paper activity panel', () => {
     expect(html).toContain('collecting hourly history');
     expect(html).toContain('Hourly execution candidate · shadow only');
     expect(html).toContain('awaiting registration');
+    const waiting = mocked.channels['parallel.paper.status'] as { value: Record<string, unknown> };
+    mocked.channels['parallel.paper.status'] = { kind: 'ready', value: { ...waiting.value,
+      latestPass: { outcome: 'deferred', phase: 'market_preparation', atMs: Date.now(), retryAtMs: Date.now() + 60_000 } } };
+    expect(render()).toContain('Waiting for a complete check');
+    expect(render()).toContain('orders wait for complete checks');
     const shadowReady = mocked.channels['parallel.paper.status'] as { kind: string; value: Record<string, unknown> };
     mocked.channels['parallel.paper.status'] = { ...shadowReady, value: { ...shadowReady.value,
       hourlyShadow: { version: 'trendvol-hourly-execution-v1', mode: 'shadow',
@@ -111,7 +123,8 @@ describe('Alpaca paper activity panel', () => {
     expect(render()).toContain('ML target applied');
     const qualified = mocked.channels['parallel.paper.status'] as { kind: string; value: Record<string, unknown> };
     mocked.channels['parallel.paper.status'] = { ...qualified, value: { ...qualified.value,
-      state: 'paused', runtimeState: 'attention', lastReason: 'alpaca_unavailable' } };
+      state: 'paused', runtimeState: 'attention', lastReason: 'alpaca_unavailable',
+      reconciliationAttention: { blocked: true, lastSuccessfulAtMs: null, latestFailure: null, unresolvedOrders: [] } } };
     expect(render()).toContain('Retrying Alpaca connection');
     expect(render()).toContain('Alpaca read failed · retrying on the next check');
   });
@@ -182,7 +195,41 @@ it('shows exact broker quantity differences in recovery while retaining the paus
   }}));
   expect(html).toContain('Paper position differences');
   expect(html).toContain('0.999');expect(html).toContain('-0.001');
-  expect(html).toContain('Coqui keeps orders paused until the quantities match');
+  expect(html).toContain('larger or unexplained differences remain blocked');
+  expect(html).toContain('Last failed recovery check');
+  expect(html).toContain('Coqui rechecks the broker while this app is running');
+});
+
+it('identifies market preparation timeouts and displays the recorded budget', async () => {
+  // @ts-expect-error TS6142: the root test compiler intentionally omits JSX support.
+  const { ParallelPaperRecovery } = await import('../apps/desktop/src/renderer/app/ParallelPaperRecovery.js');
+  const html = server.renderToStaticMarkup(react.createElement(ParallelPaperRecovery, { client: {}, data: {
+    state: 'paused', experimentId: 'paper', reconciliationAttention: { blocked: true, lastSuccessfulAtMs: Date.now(),
+      unresolvedOrders: [], latestFailure: { atMs: Date.now(), operation: 'market_preparation', reason: 'deadline_exceeded',
+        httpStatus: null, attemptCount: null, elapsedMs: 10_025, budgetMs: 10_000, remainingMs: 0 } },
+  } }));
+  expect(html).toContain('Market preparation timed out');
+  expect(html).toContain('Elapsed time'); expect(html).toContain('10.0s');
+  expect(html).toContain('Remaining budget'); expect(html).toContain('0.0s');
+  expect(html).toContain('Trading remains paused');
+  expect(html).not.toContain('Alpaca reconciliation read failed');
+});
+
+it('shows ready to resume after recovery without claiming that trading was enabled', async () => {
+  // @ts-expect-error TS6142: the root test compiler intentionally omits JSX support.
+  const {ParallelPaperRecovery}=await import('../apps/desktop/src/renderer/app/ParallelPaperRecovery.js');
+  const html=server.renderToStaticMarkup(react.createElement(ParallelPaperRecovery,{client:{},data:{state:'paused',experimentId:'paper',
+    brokerEvidence:{tradeStream:'listening',quoteStatus:'stale',quoteAtMs:Date.now()-70000,latestFillAtMs:null,latestFeeCreatedAtMs:null,feeCoverage:'no_fills',positionStatus:'reconciled',capturedExecutionCount:0,lastExecutionAtMs:null,
+      quoteAssets:[{symbol:'ETH/USD',quoteAtMs:Date.now()-70000,receivedAtMs:Date.now(),ageSeconds:70,status:'stale'}]},
+    reconciliationAttention:{blocked:false,lastSuccessfulAtMs:Date.now(),unresolvedOrders:[],latestFailure:null,
+      minorResolution:{atMs:Date.now(),valueUsd:'10.25',feeAttribution:'unconfirmed'}}}}));
+  expect(html).toContain('Recovery complete · ready to resume');
+  expect(html).toContain('Alpaca US quote timestamps');
+  expect(html).toContain('70s old');
+  expect(html).toContain('Last response');
+  expect(html).toContain('Trading remains paused until you press Resume');
+  expect(html).toContain('Fee attribution remains unconfirmed');
+  expect(html).not.toContain('New paper orders blocked');
 });
 
 it('labels a submitted local simulation as waiting for its execution bar rather than executing', async () => {

@@ -109,6 +109,11 @@ describe('paper execution diagnostics and recovery', () => {
     const deadline = createRequestDeadline(() => clock.nowMs());
     await service.tick(deadline); deadline.dispose();
     expect(calls.indexOf('activities')).toBeLessThan(calls.indexOf('preparation'));
+    expect(service.status().status).toBe('paused');
+    expect(service.summary().reconciliationAttention.blocked).toBe(false);
+    expect(mock.submit).not.toHaveBeenCalled();
+    expect(service.transition('resumed', 'manual-resume')).toBe(true);
+    await service.tick();
     expect(service.status().status).toBe('active'); expect(mock.submit).not.toHaveBeenCalled();
     service.transition('paused', 'owner-pause'); await service.tick();
     expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'user_action' });
@@ -230,8 +235,18 @@ describe('paper execution diagnostics and recovery', () => {
     await service.tick();
     expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'stale_alpaca_quote' });
     expect(mock.submit).not.toHaveBeenCalled();
+    await service.retryReconciliation();
+    expect(service.summary().reconciliationAttention.blocked).toBe(false);
+    expect(service.transition('resumed', 'resume-without-orders')).toBe(true);
+    await service.tick();
+    expect(service.summary().state).toBe('paused');
+    expect(mock.submit).not.toHaveBeenCalled();
     mock.client.latestCryptoQuotes = mockClient(false, 'filled', TODAY).client.latestCryptoQuotes;
     await service.tick();
+    expect(service.summary().state).toBe('paused');
+    expect(service.summary().reconciliationAttention.blocked).toBe(false);
+    expect(mock.submit).not.toHaveBeenCalled();
+    expect(service.transition('resumed', 'manual-resume')).toBe(true);
     await service.tick();
     expect(service.summary().state).toBe('active');
     expect(mock.submit).toHaveBeenCalledTimes(3);
@@ -272,6 +287,8 @@ describe('paper execution diagnostics and recovery', () => {
     await service.retryReconciliation();
     expect(acceptedSubmit).toHaveBeenCalledOnce();
     expect(service.status().status).toBe('paused');
+    expect(service.summary().reconciliationAttention.blocked).toBe(false);
+    expect(service.transition('resumed', 'manual-resume')).toBe(true);
     await service.tick(); await service.tick();
     expect(service.status().status).toBe('active');
     const ids = acceptedSubmit.mock.calls.map(([order]) => order.client_order_id);
@@ -298,6 +315,11 @@ describe('paper execution diagnostics and recovery', () => {
     appendParallelEvent({ experimentId: service.status().experiment!.id, profileId: 'main', kind: 'buy_plan',
       key: 'unsubmitted-late', at: clock.nowMs(), detail: { day: '2026-09-23', orders: [{ clientOrderId: 'old', symbol: 'BTCUSD', side: 'buy', qty: '100' }] } }, database);
     clock.set(Date.parse('2026-09-24T00:20:00Z'));
+    await service.tick();
+    expect(service.status().status).toBe('paused');
+    expect(service.summary().reconciliationAttention.blocked).toBe(false);
+    expect(mock.submit).not.toHaveBeenCalled();
+    expect(service.transition('resumed', 'manual-resume')).toBe(true);
     await service.tick();
     expect(service.status().status).toBe('active');
     expect(service.status().events.some((event) => event.kind === 'daily_window_missed')).toBe(true);

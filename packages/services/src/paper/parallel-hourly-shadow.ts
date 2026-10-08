@@ -1,10 +1,11 @@
+import { validateCandidateInstance } from '../research/registered-study.js';
 import { studyCollection } from '../research/study-collection.js';
 import { canonicalJson, sha256Hex, STUDY_BEHAVIOR_HASHES, HOURLY_EXECUTION_V1, hourlySlotAt,
   validateHourlyObservation, advanceHourlyExecution, openingHourlyState,
   replayHourlyExecution,
-  type CanonicalJsonValue, type HourlyExecutionObservation, type HourlyVirtualOrder, type HourlyVirtualState } from '@coqui/core';
+  studySourceMatches, type CanonicalJsonValue, type HourlyExecutionObservation, type HourlyVirtualOrder, type HourlyVirtualState } from '@coqui/core';
 import { type createAlpacaPaperClient } from '@coqui/adapters';
-import { appendRemediationEvidence, listRemediationEvidence, listStudyInstances, appendHourlyExecutionRecord, getHourlyExecutionRecord, hourlyExecutionCoverage,
+import { appendRemediationEvidence, latestParallelExperiment, listRemediationEvidence, listStudyInstances, appendHourlyExecutionRecord, getHourlyExecutionRecord, hourlyExecutionCoverage,
   latestHourlyExecutionRecord, listHourlyExecutionRecords, type Db } from '@coqui/storage';
 
 import { parallelSafeFailureReason } from './parallel-paper-utils.js';
@@ -17,10 +18,26 @@ const DAY_MS = 86_400_000;
 const CANDIDATE = HOURLY_EXECUTION_V1.id;
 
 export function hourlyShadowStatus(profileId: string, db: Db) {
-  const study = getHourlyExecutionRecord(profileId, 'study', CANDIDATE, db);
-  const coverage = hourlyExecutionCoverage(profileId, db);
-  const failure = latestHourlyExecutionRecord(profileId, 'failure', db);
-  const last = latestHourlyExecutionRecord(profileId, 'shadow', db);
+  const instance = listStudyInstances(profileId, CANDIDATE, db).at(-1);
+  const list = (kind: string) => instance ? listRemediationEvidence(profileId, instance.id, kind, db) : [];
+  const study = instance ? { body: instance.definition.candidateDefinition } : getHourlyExecutionRecord(profileId, 'study', CANDIDATE, db);
+  let provenanceFailure: string | null = null;
+  const experiment = latestParallelExperiment(profileId, db);
+  try {
+    if (instance) validateCandidateInstance(instance, experiment?.id ?? '');
+    else if (study) {
+      const definition = study.body as { sourceHash?: string; experimentId?: string };
+      if (!studySourceMatches(definition.sourceHash ?? '', hourlyExecutionSourceHash()) || definition.experimentId !== experiment?.id)
+        provenanceFailure = 'registered_study_source_changed';
+    }
+  } catch (error) { provenanceFailure = error instanceof Error && error.message === 'invalid_candidate_definition'
+    ? 'invalid_candidate_definition' : 'registered_study_source_changed'; }
+  const observations = list('observation');
+  const dayCounts = new Map<number, number>();
+  for (const row of observations) { const day = Math.floor(row.atMs / DAY_MS); dayCounts.set(day, (dayCounts.get(day) ?? 0) + 1); }
+  const coverage = instance ? { observations: observations.length, completeDays: [...dayCounts.values()].filter((count) => count === 24).length } : hourlyExecutionCoverage(profileId, db);
+  const failure = instance ? list('failure').at(-1) ?? null : latestHourlyExecutionRecord(profileId, 'failure', db);
+  const last = instance ? list('shadow').at(-1) ?? null : latestHourlyExecutionRecord(profileId, 'shadow', db);
   const body = last?.body as { result?: { orders?: readonly HourlyVirtualOrder[];
     blocked?: readonly { reason: string }[] } } | undefined;
   const startMs = (study?.body as { startMs?: number } | undefined)?.startMs ?? null;
@@ -32,8 +49,9 @@ export function hourlyShadowStatus(profileId: string, db: Db) {
       quantity: order.quantity.toString(), filledQuantity: order.filledQuantity.toString(),
       remainingQuantity: order.remainingQuantity.toString() })),
     lastBlockedReasons: (body?.result?.blocked ?? []).map((item) => item.reason).slice(0, 3),
-    lastFailureReason: failure === null || (last !== null && failure.atMs < last.atMs)
-      ? null : String((failure.body as { reason?: string }).reason ?? 'hourly_shadow_unavailable') };
+    lastFailureReason: provenanceFailure ?? (failure === null || (last !== null && failure.atMs < last.atMs) ||
+      ((failure.body as { reason?: string }).reason === 'registered_study_source_changed' && provenanceFailure === null && study !== null)
+      ? null : String((failure.body as { reason?: string }).reason ?? 'hourly_shadow_unavailable')) };
 }
 
 /** A read-only broker collector and virtual book. No Alpaca submit method is accepted. */

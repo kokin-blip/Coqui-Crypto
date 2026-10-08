@@ -1,7 +1,7 @@
 import { connectionEligible, getProfileConnectionV2, getConnectionAccountSnapshotV2 } from '@coqui/storage';
 import { Decimal } from 'decimal.js';
 
-import { createAlpacaPaperClient, createRequestDeadline, childRequestDeadline, AlpacaPaperError, withinDeadline, type AlpacaPaperCredentials, type SecretStore, type RequestDeadline } from '@coqui/adapters';
+import { createAlpacaPaperClient, createAlpacaPaperTradeStream, createRequestDeadline, childRequestDeadline, AlpacaPaperError, withinDeadline, type AlpacaPaperCredentials, type AlpacaPaperTradeUpdate, type SecretStore, type RequestDeadline } from '@coqui/adapters';
 import { instrumentKey, sha256Hex, type Clock } from '@coqui/core';
 import {
   appendParallelEvent, getLatestConnectionAccountSnapshotV2, getSetting,
@@ -10,16 +10,19 @@ import {
   type ParallelPaperExperiment,
 } from '@coqui/storage';
 
+import { settleParallelLocal } from './parallel-paper-local.js';
+import { ParallelPaperPass } from './parallel-paper-pass.js';
 import { collectExecutionRemediationShadow } from './execution-remediation-shadow.js';
 import { finalizeParallelSlots } from './parallel-paper-slots.js';
 import { activeParallelEvents, supersedeUnsubmittedParallelPlans } from './parallel-paper-plans.js';
 import { parallelPaperSummary } from './parallel-paper-summary.js';
 import { parallelExecutionClaim, observedParallelClient } from './parallel-execution-safety.js';
-import { PARALLEL_COSTS, PARALLEL_INSTRUMENTS, PARALLEL_TRENDVOL_VERSION,
+import { PARALLEL_INSTRUMENTS, PARALLEL_TRENDVOL_VERSION,
   parallelAnchor, parallelDecision } from './parallel-signal.js';
 import { recordParallelMark } from './parallel-paper-mark.js';
-import { parallelAttemptsResolved, validateParallelPositions, validateParallelBroker, prepareParallelPass } from './parallel-paper-recovery.js';
-import { dayAfter, isRecoverableParallelTransientPause, shouldResumeParallelTransientPause } from './parallel-paper-activity.js';
+import { parallelAttemptsResolved, validateParallelBroker, prepareParallelPass } from './parallel-paper-recovery.js';
+import { reconcilePaperPositionEvidence } from './parallel-paper-minor-recovery.js';
+import { dayAfter } from './parallel-paper-activity.js';
 import { reconcileParallelPaper } from './parallel-paper-reconciliation.js';
 import { collectParallelHourlyShadowSafely } from './parallel-hourly-shadow.js';
 import { recordFourHourExecutionObservation } from './parallel-execution-observation.js';
@@ -27,13 +30,11 @@ import { executeParallelDaily } from './parallel-paper-daily.js';
 import { executeParallelIntraday } from './parallel-paper-intraday.js';
 import type { MlSignalSnapshot } from './parallel-ml-worker.js';
 import { readParallelMlSignal } from './parallel-ml-status.js';
-import { ParallelReconciliationError, eventFor, money, parallelPaperFailureDetail, parallelSafeFailureReason, quantity, symbolFor } from './parallel-paper-utils.js';
+import { ParallelBudgetError, ParallelReconciliationError, eventFor, money, parallelPaperFailureDetail, parallelSafeFailureReason } from './parallel-paper-utils.js';
 import type { PaperDecisionPreparation } from './runtime-model.js';
 
-const DAY_MS = 86_400_000, CUTOFF_MS = 15 * 60_000;
-const MIN_TRADE = new Decimal(25);
-const BAND = new Decimal('0.05');
 const ASSET_IDS = PARALLEL_INSTRUMENTS.map(instrumentKey);
+const DAY_MS = 86_400_000, CUTOFF_MS = 15 * 60_000;
 type Client = ReturnType<typeof createAlpacaPaperClient>;
 
 export interface ParallelPaperDependencies {
@@ -55,9 +56,13 @@ export class ParallelPaperService {
   readonly #clientFactory: (credentials: AlpacaPaperCredentials) => Client;
   #lastCheckAtMs: number | null = null;
   #checking = false;
+  #pass: ParallelPaperPass | undefined;
   #suspended = false;
   #deadline: RequestDeadline | undefined;
   #claim: ReturnType<typeof parallelExecutionClaim> | undefined;
+  #tradeStream: ReturnType<typeof createAlpacaPaperTradeStream> | undefined;
+  #tradeStreamKey: string | undefined;
+  #tradeStreamStatus: 'connecting' | 'listening' | 'unavailable' = 'unavailable';
 
   constructor(input: ParallelPaperDependencies) {
     this.#input = input;
@@ -65,7 +70,7 @@ export class ParallelPaperService {
   }
 
   #events(experiment: ParallelPaperExperiment): readonly ParallelPaperEvent[] {
-    return listParallelEvents(experiment.id, this.#input.profileId, this.#input.database);
+    return this.#pass?.events(experiment.id) ?? listParallelEvents(experiment.id, this.#input.profileId, this.#input.database);
   }
 
   #append(experiment: ParallelPaperExperiment, kind: string, key: string, detail: Record<string, unknown>): void {
@@ -79,8 +84,10 @@ export class ParallelPaperService {
 
   async #client(): Promise<Client> {
     const startedAtMs = this.#input.clock.nowMs(), started = performance.now(), budgetMs = this.#deadline?.remainingMs() ?? null;
+    if (this.#pass) this.#pass.phase = 'credentials';
     try { return await this.#readClient(); }
     catch (error) {
+      this.#tradeStream?.close(); this.#tradeStream = undefined; this.#tradeStreamKey = undefined;
       const experiment = latestParallelExperiment(this.#input.profileId, this.#input.database);
       if (experiment) this.#append(experiment, 'readiness', `credentials:${startedAtMs}:${this.#events(experiment).length}`,
         { operation: 'credentials', status: 'unavailable', startedAtMs, observedAtMs: this.#input.clock.nowMs(),
@@ -100,6 +107,19 @@ export class ParallelPaperService {
         typeof parsed.keyId !== 'string' || typeof parsed.secretKey !== 'string') throw new Error('credentials_unavailable');
     const credentials = { keyId: parsed.keyId, secretKey: parsed.secretKey };
     const experiment = latestParallelExperiment(this.#input.profileId, this.#input.database);
+    if (experiment && !this.#input.clientFactory && !this.#suspended) {
+      const streamKey = sha256Hex(`${experiment.id}:${credentials.keyId}:${credentials.secretKey}`);
+      if (this.#tradeStreamKey !== streamKey) {
+        this.#tradeStream?.close(); this.#tradeStreamKey = streamKey;
+        this.#tradeStream = createAlpacaPaperTradeStream({ credentials,
+          onUpdate: (update) => this.recordTradeUpdate(experiment.id, update),
+          onStatus: (status) => {
+            this.#tradeStreamStatus = status; if (parallelExperimentStatus(this.#events(experiment)) === 'stopped') return;
+            this.#append(experiment, 'readiness', `trade-stream:${this.#events(experiment).length}`,
+              { operation: 'trade_stream', status, observedAtMs: this.#input.clock.nowMs() });
+          } });
+      }
+    }
     const readKey = String(experiment ? this.#events(experiment).length : 0);
     let attemptSequence = 0;
     const client = this.#input.clientFactory ? this.#clientFactory(credentials) : createAlpacaPaperClient(credentials, undefined, this.#deadline,
@@ -172,17 +192,28 @@ export class ParallelPaperService {
     return { experiment, status: parallelExperimentStatus(events), events };
   }
 
-  summary() { return parallelPaperSummary(this.status(), this.#input, this.#lastCheckAtMs, this.#checking); }
-
+  summary() { return parallelPaperSummary(this.status(), this.#input, this.#lastCheckAtMs, this.#checking, this.#tradeStream ? this.#tradeStreamStatus : 'unavailable'); }
+  recordTradeUpdate(experimentId: string, update: AlpacaPaperTradeUpdate): void {
+    const current = this.status();
+    if (!current.experiment || current.experiment.id !== experimentId || current.status === 'stopped' || this.#suspended) return;
+    const intent = current.events.find((event) => event.kind === 'external_intent' && event.detail['clientOrderId'] === update.clientOrderId);
+    if (!intent || !current.events.some((event) => event.kind === 'submit_attempt' && event.detail['clientOrderId'] === update.clientOrderId) ||
+        String(intent.detail['symbol']).replaceAll('/', '') !== update.symbol || intent.detail['side'] !== update.side ||
+        Date.parse(update.at) < current.experiment.startedAt || Date.parse(update.at) > this.#input.clock.nowMs() + 5000) return;
+    this.#append(current.experiment, 'broker_trade_update', `trade-update:${update.executionId}`, { ...update,
+      accountId: current.experiment.alpacaAccountId, source: 'alpaca_paper_trade_updates', feeAttribution: 'unconfirmed' });
+  }
   transition(kind: 'paused' | 'resumed' | 'stopped', commandId: string): boolean {
     const current = this.status();
     if (current.experiment === null || current.status === 'stopped') return false;
     if(kind==='resumed'){const source=getConnectionAccountSnapshotV2(this.#input.profileId,current.experiment.sourceConnectionSnapshotId,this.#input.database);const connection=source===null?null:getProfileConnectionV2(this.#input.profileId,source.connectionId,this.#input.database);if(connection===null||!connectionEligible(connection,this.#input.database))return false;}
-    if (kind === 'resumed' && (current.status !== 'paused' || this.#input.killSwitchEngaged() || this.summary().reconciliationAttention.blocked)) return false;
+    if (kind === 'resumed' && (this.#suspended || current.status !== 'paused' || this.#input.killSwitchEngaged() || this.summary().reconciliationAttention.blocked)) return false;
+    const preflight = current.events.findLast((event) => event.kind === 'readiness' && event.detail['operation'] === 'resume_preflight' && event.detail['status'] === 'validated');
+    if (kind === 'resumed' && (!preflight || this.#input.clock.nowMs() - preflight.at > 60_000 || preflight.at > this.#input.clock.nowMs())) return false;
     this.#append(current.experiment, kind, `transition:${commandId}`, { reason: 'user_action' });
+    if (kind === 'stopped') { this.#tradeStream?.close(); this.#tradeStream = undefined; this.#tradeStreamKey = undefined; }
     return true;
   }
-
   async stop(commandId: string): Promise<boolean> {
     const current = this.status();
     if (current.experiment === null || current.status === 'stopped') return false;
@@ -203,10 +234,10 @@ export class ParallelPaperService {
       }
       await this.#reconcile(current.experiment, client);
       this.#append(current.experiment, 'stopped', `transition:${commandId}`, { reason: 'user_action' });
+      this.#tradeStream?.close(); this.#tradeStream = undefined; this.#tradeStreamKey = undefined;
       return true;
     } catch { return false; }
   }
-
   pauseForDisconnect(): void {
     const current = this.status();
     if (current.experiment !== null && current.status === 'active') {
@@ -222,6 +253,7 @@ export class ParallelPaperService {
     const experiment = current.experiment;
     this.#checking = true;
     this.#deadline = createRequestDeadline(() => this.#input.clock.nowMs());
+    this.#pass = new ParallelPaperPass(this.#input.profileId, this.#input.database, this.#input.clock, this.#deadline);
     try {
       this.#claim = parallelExecutionClaim(this.#input.profileId, this.#input.hostId ?? 'desktop-main-test',
         this.#input.database, () => this.#input.clock.nowMs(), this.#deadline, this.#input.hostKind);
@@ -229,30 +261,45 @@ export class ParallelPaperService {
       const clear = await validateParallelBroker(experiment, client, this.#events(experiment));
       await this.#reconcile(experiment, client, true);
       await this.#validateRecovery(experiment, client, clear);
+      await this.#validateResume(experiment, client);
+      this.#pass?.complete(experiment);
     } catch (error) {
       this.#append(experiment, 'reconciliation_error', `operator-retry:${this.#events(experiment).length}`,
-        parallelPaperFailureDetail(error, 'reconciliation_unavailable'));
+        (this.#pass?.failure(error, 'reconciliation_unavailable') ?? parallelPaperFailureDetail(error, 'reconciliation_unavailable')));
     } finally {
-      this.#claim?.release(); this.#claim = undefined; this.#deadline.dispose(); this.#deadline = undefined; this.#checking = false;
+      this.#claim?.release(); this.#claim = undefined; this.#deadline.dispose(); this.#deadline = undefined; this.#checking = false; this.#pass = undefined;
     }
   }
 
   async #validateRecovery(experiment: ParallelPaperExperiment, client: Client, clear: boolean): Promise<void> {
+    if (this.#pass) this.#pass.phase = 'broker_reconciliation';
     if (!clear) throw new ParallelReconciliationError('broker_orders_pending', 'orders');
     if (!parallelAttemptsResolved(this.#events(experiment))) throw new ParallelReconciliationError('broker_fills_pending', 'order_lookup');
-    await validateParallelPositions(client, this.#events(experiment));
+    await reconcilePaperPositionEvidence({ experiment, client, events: () => this.#events(experiment), now: () => this.#input.clock.nowMs(),
+      allowMinorResolution: this.status().status === 'paused', fullAudit: () => this.#reconcile(experiment, client, true),
+      append: (kind, key, detail) => this.#append(experiment, kind, key, detail) });
     this.#deadline?.check(); this.#claim?.check();
     this.#append(experiment, 'readiness', `broker-reconciled:${this.#events(experiment).length}`,
       { operation: 'broker_reconciliation', status: 'validated', observedAtMs: this.#input.clock.nowMs() });
   }
 
-  suspend(): void { this.#suspended = true; this.#deadline?.dispose(); }
+  async #validateResume(experiment: ParallelPaperExperiment, client: Client): Promise<void> {
+    if (this.#input.killSwitchEngaged()) throw new Error('kill_switch_engaged');
+    const preparation = await this.#prepare('recovery');
+    if (!preparation.ok) throw new Error(preparation.code);
+    if (dayAfter(preparation.dataset.dayKeys.at(-1)!) !== new Date(this.#input.clock.nowMs()).toISOString().slice(0, 10)) throw new Error('stale_market_data');
+    this.#deadline?.check(); this.#claim?.check();
+    this.#append(experiment, 'readiness', `resume-ready:${this.#events(experiment).length}`, { operation: 'resume_preflight', status: 'validated' });
+    await client.latestCryptoQuotes().catch(() => undefined); // Health observation cannot block reconciliation or arm an order.
+  }
+  suspend(): void { this.#suspended = true; this.#deadline?.dispose(); this.#tradeStream?.close(); this.#tradeStream = undefined; this.#tradeStreamKey = undefined; }
   resume(): void { this.#suspended = false; }
 
   async tick(deadline?: RequestDeadline): Promise<void> {
     if (this.#checking || this.#suspended) return;
     this.#lastCheckAtMs = this.#input.clock.nowMs(); this.#checking = true;
     this.#deadline = deadline;
+    this.#pass = new ParallelPaperPass(this.#input.profileId, this.#input.database, this.#input.clock, deadline);
     try {
       this.#claim = parallelExecutionClaim(this.#input.profileId, this.#input.hostId ?? 'desktop-main-test',
         this.#input.database, () => this.#input.clock.nowMs(), deadline, this.#input.hostKind);
@@ -262,14 +309,15 @@ export class ParallelPaperService {
         const current = this.status();
         if (current.experiment) finalizeParallelSlots(current.experiment, current.events, this.#input.clock.nowMs(),
           (kind, key, detail) => this.#append(current.experiment!, kind, key, detail));
-      } finally { this.#claim?.release(); this.#claim = undefined; this.#deadline = undefined; this.#checking = false; }
+      } finally { this.#claim?.release(); this.#claim = undefined; this.#deadline = undefined; this.#checking = false; this.#pass = undefined; }
     }
   }
 
   #beforeSubmit(): void {
+    if (this.#pass) this.#pass.phase = 'pre_submission';
     if (this.#suspended) throw new Error('host_unavailable');
     this.#deadline?.check(); this.#claim?.check();
-    if (this.#deadline && this.#deadline.remainingMs() < 5_000) throw new Error('deadline_exceeded');
+    if (this.#deadline && this.#deadline.remainingMs() < 5_000) throw new ParallelBudgetError('pre_submission', this.#deadline, 5_000);
     if (this.#input.killSwitchEngaged()) throw new Error('kill_switch_engaged');
     if (this.status().status !== 'active') throw new Error('explicit_pause_preserved');
     if (!this.#input.preparation().ok) throw new Error('stale_market_data');
@@ -286,29 +334,17 @@ export class ParallelPaperService {
         bucket: checkBucket, checkedAtMs: checkedAt, status: current.status, preparationOk: this.#input.preparation().ok });
     }
     if (current.status === 'paused') {
-      const pause = [...current.events].reverse().find((event) => event.kind === 'paused');
       try {
         const client = await this.#client();
         const brokerClear = await validateParallelBroker(experiment, client, this.#events(experiment));
-        await this.#reconcile(experiment, client, true);
+        await this.#reconcile(experiment, client);
         await this.#validateRecovery(experiment, client, brokerClear);
-        const recoverable = isRecoverableParallelTransientPause(pause?.detail['reason']) ||
-          (['paper_execution_unknown', 'submission_outcome_unknown', 'broker_positions_mismatch'].includes(String(pause?.detail['reason'])) && parallelAttemptsResolved(this.#events(experiment)));
-        const preparation = recoverable ? await this.#prepare() : this.#input.preparation();
-        const latestState = this.#events(experiment).findLast((event) => ['paused', 'resumed', 'started', 'stopped'].includes(event.kind));
-        if (latestState?.id !== pause?.id || this.#suspended) return;
-        this.#deadline?.check(); this.#claim?.check();
-        if ((shouldResumeParallelTransientPause(current.events, preparation, this.#input.clock.nowMs()) ||
-            (['paper_execution_unknown', 'submission_outcome_unknown', 'broker_positions_mismatch'].includes(String(pause?.detail['reason'])) && recoverable && preparation.ok &&
-              dayAfter(preparation.dataset.dayKeys.at(-1)!) === new Date(this.#input.clock.nowMs()).toISOString().slice(0, 10))) &&
-            brokerClear && !this.#input.killSwitchEngaged()) {
-          this.#append(experiment, 'resumed', `dependencies-recovered:${this.#input.clock.nowMs()}`, { reason: 'dependencies_recovered' });
-          await this.#tick();
-        }
+        await this.#validateResume(experiment, client);
+        this.#pass?.complete(experiment);
       } catch (error) {
-        const detail = parallelPaperFailureDetail(error, 'reconciliation_unavailable');
+        const detail = (this.#pass?.failure(error, 'reconciliation_unavailable') ?? parallelPaperFailureDetail(error, 'reconciliation_unavailable'));
         this.#append(experiment, 'reconciliation_error',
-          `reconcile-failure:${checkedAt}:${detail.reason}`, detail);
+          `reconcile-failure:${checkedAt}:${detail.reason}:${this.#events(experiment).length}`, detail);
       }
       return;
     }
@@ -332,14 +368,16 @@ export class ParallelPaperService {
       await this.#validateRecovery(experiment, client, clear);
     }
     catch (error) {
-      const detail = parallelPaperFailureDetail(error, 'reconciliation_unavailable');
-      this.#append(experiment, 'paused', `broker-failure:${checkedAt}`, detail); return;
+      const detail = (this.#pass?.failure(error, 'reconciliation_unavailable') ?? parallelPaperFailureDetail(error, 'reconciliation_unavailable'));
+      if (this.#pass?.defer(experiment, error)) return;
+      this.#append(experiment, 'paused', `broker-failure:${checkedAt}:${this.#events(experiment).length}`, detail); return;
     }
     supersedeUnsubmittedParallelPlans(this.#events(experiment), (kind, key, detail) => this.#append(experiment, kind, key, detail));
     let preparation: PaperDecisionPreparation;
     try { preparation = await this.#prepare(); }
-    catch (error) { const detail = parallelPaperFailureDetail(error, 'market_fetch_failed');
-      this.#append(experiment, 'paused', `preparation-failure:${checkedAt}`, detail); return; }
+    catch (error) { const detail = (this.#pass?.failure(error, 'market_fetch_failed') ?? parallelPaperFailureDetail(error, 'market_fetch_failed'));
+      if (this.#pass?.defer(experiment, error)) return;
+      this.#append(experiment, 'paused', `preparation-failure:${checkedAt}:${this.#events(experiment).length}`, detail); return; }
     if (!preparation.ok) {
       this.#append(experiment, 'paused', `data:${this.#input.clock.nowMs()}`, { reason: preparation.code });
       return;
@@ -354,7 +392,7 @@ export class ParallelPaperService {
         this.#append(experiment, 'decision', `decision:${day}`, decision);
         events = activeParallelEvents(this.#events(experiment));
       }
-      this.#settleLocal(experiment, preparation);
+      settleParallelLocal(experiment, preparation, this.#events(experiment), (kind, key, detail) => this.#append(experiment, kind, key, detail));
       if (this.#input.clock.nowMs() - Date.parse(`${today}T00:00:00Z`) <= CUTOFF_MS) {
         await executeParallelDaily({ experiment, client, preparation, day, today,
           now: () => this.#input.clock.nowMs(), events: () => this.#events(experiment),
@@ -393,80 +431,31 @@ export class ParallelPaperService {
           decision: { day, weights: decision.detail['weights'] as Record<string, number> }, read: client });
       })(), research); }
       catch (error) { this.#append(experiment, 'research_error', `research:${checkedAt}`,
-        parallelPaperFailureDetail(error, 'research_unavailable')); }
+        (this.#pass?.failure(error, 'research_unavailable') ?? parallelPaperFailureDetail(error, 'research_unavailable'))); }
       finally { research?.dispose(); }
+      this.#pass?.complete(experiment);
     } catch (error) {
-      const detail = parallelPaperFailureDetail(error, 'paper_execution_unknown');
+      if (this.#pass?.defer(experiment, error)) return;
+      const detail = (this.#pass?.failure(error, 'paper_execution_unknown') ?? parallelPaperFailureDetail(error, 'paper_execution_unknown'));
       const events = this.#events(experiment);
       if (events.some((attempt) => attempt.kind === 'submit_attempt' && !events.some((order) =>
           order.kind === 'external_order' && order.detail['clientOrderId'] === attempt.detail['clientOrderId'])))
         detail.reason = 'submission_outcome_unknown';
-      this.#append(experiment, 'paused', `failure:${this.#input.clock.nowMs()}:${detail.reason}`, detail);
+      this.#append(experiment, 'paused', `failure:${this.#input.clock.nowMs()}:${detail.reason}:${this.#events(experiment).length}`, detail);
     }
   }
 
-  #prepare(): Promise<PaperDecisionPreparation> {
-    return prepareParallelPass(this.#input, this.#deadline);
+  #prepare(purpose: 'execution' | 'recovery' = 'execution'): Promise<PaperDecisionPreparation> {
+    if (this.#pass) this.#pass.phase = 'market_preparation';
+    return prepareParallelPass(this.#input, this.#deadline, purpose);
   }
 
   async #reconcile(experiment: ParallelPaperExperiment, client: Client, fullAudit = false): Promise<void> {
-    await reconcileParallelPaper({ experiment, client, fullAudit, events: () => this.#events(experiment),
+    if (this.#pass) this.#pass.phase = 'activity_reconciliation';
+    await reconcileParallelPaper({ experiment, client, fullAudit, ...(this.#deadline ? { deadline: this.#deadline } : {}), events: () => this.#events(experiment),
       now: () => this.#input.clock.nowMs(), append: (kind, key, detail) => this.#append(experiment, kind, key, detail) });
   }
 
-  #settleLocal(experiment: ParallelPaperExperiment, preparation: Extract<PaperDecisionPreparation, { ok: true }>): void {
-    const dataset = preparation.dataset;
-    const events = this.#events(experiment);
-    const decisions = events.filter((event) => event.kind === 'decision');
-    let cash = money(experiment.openingCoquiCash);
-    const held = new Map<string, Decimal>(ASSET_IDS.map((id) => [id, new Decimal(0)]));
-    for (const fill of events.filter((event) => event.kind === 'local_fill')) {
-      const id = String(fill.detail['assetId']);
-      held.set(id, (held.get(id) ?? new Decimal(0)).plus(String(fill.detail['qty'])));
-      cash = cash.plus(String(fill.detail['cashDelta']));
-    }
-    for (const decision of decisions) {
-      const day = String(decision.detail['day']);
-      const executionDay = dayAfter(day);
-      if (!dataset.dayKeys.includes(executionDay) || eventFor(events, 'local_settled', day) !== undefined) continue;
-      if (decision.at - Date.parse(`${executionDay}T00:00:00Z`) > CUTOFF_MS) {
-        this.#append(experiment, 'local_settled', `local-settled:${day}`, { day, executionDay, skipped: 'late_decision' });
-        continue;
-      }
-      const index = dataset.dayKeys.indexOf(executionDay);
-      const opens = new Map(ASSET_IDS.map((id) => [id, money(String(dataset.opensById[id]?.[index]))]));
-      const equity = ASSET_IDS.reduce((sum, id) => sum.plus(held.get(id)!.mul(opens.get(id)!)), cash);
-      if (!equity.isPositive()) throw new Error('local_wallet_unavailable');
-      const weights = decision.detail['weights'] as Record<string, number>;
-      const orders = ASSET_IDS.map((id) => {
-        const price = opens.get(id)!;
-        const actual = held.get(id)!.mul(price).div(equity);
-        const target = money(String(weights[id]));
-        const delta = money(quantity(equity.mul(target).div(price).minus(held.get(id)!)));
-        return { id, price, delta, drift: target.minus(actual).abs() };
-      }).filter((item) => item.drift.greaterThanOrEqualTo(BAND) && item.delta.abs().mul(item.price).greaterThanOrEqualTo(MIN_TRADE))
-        .sort((a, b) => a.delta.isNegative() === b.delta.isNegative() ? a.id.localeCompare(b.id) : a.delta.isNegative() ? -1 : 1);
-      for (const order of orders) {
-        let qty = order.delta;
-        const friction = money(PARALLEL_COSTS.spread).plus(PARALLEL_COSTS.slippage);
-        if (qty.isPositive()) {
-          const cap = money(quantity(cash.div(order.price.mul(new Decimal(1).plus(friction))
-            .div(new Decimal(1).plus(PARALLEL_COSTS.fee)))));
-          qty = Decimal.min(qty, cap);
-        }
-        if (qty.isZero() || qty.abs().mul(order.price).lessThan(MIN_TRADE)) continue;
-        const fillPrice = order.price.mul(qty.isPositive() ? new Decimal(1).plus(friction) : new Decimal(1).minus(friction));
-        const fee = qty.abs().mul(fillPrice).mul(PARALLEL_COSTS.fee);
-        const cashDelta = qty.mul(fillPrice).neg().minus(fee);
-        cash = cash.plus(cashDelta);
-        held.set(order.id, held.get(order.id)!.plus(qty));
-        this.#append(experiment, 'local_fill', `local:${day}:${order.id}`,
-          { day: executionDay, decisionDay: day, assetId: order.id, symbol: symbolFor(order.id),
-            qty: quantity(qty), rawOpen: order.price.toString(), fillPrice: fillPrice.toString(),
-            fee: fee.toString(), cashDelta: cashDelta.toString() });
-      }
-      this.#append(experiment, 'local_settled', `local-settled:${day}`, { day, executionDay });
-    }
-  }
+
 
 }

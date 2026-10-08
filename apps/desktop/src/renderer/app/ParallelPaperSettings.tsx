@@ -46,7 +46,7 @@ export function ParallelPaperSettings({ client }: { readonly client: CoquiClient
       </dl>
       <details className="exact-value-detail"><summary>Exact opening values</summary><p>Coqui: {current.coquiOpeningUsd === null ? 'Unavailable' : formatUsd(current.coquiOpeningUsd)?.text} · Alpaca: {current.alpacaOpeningUsd === null ? 'Unavailable' : formatUsd(current.alpacaOpeningUsd)?.text}</p></details>
       <ParallelPaperRecovery client={client} data={current} />
-      {current.lastReason !== null && <SurfaceState kind="blocked" title="Experiment paused" detail={current.lastReason.replaceAll('_', ' ')} compact />}
+      {current.lastReason !== null && current.reconciliationAttention.blocked && current.reconciliationAttention.latestFailure?.reason == null && <SurfaceState kind="blocked" title="Experiment paused" detail={current.lastReason.replaceAll('_', ' ')} compact />}
       {current.state === 'active' && <button type="button" className="button-secondary" disabled={pause.state.kind === 'pending'} onClick={() => void pause.run({ commandId: crypto.randomUUID() })}>Pause new paper orders</button>}
       {current.state === 'paused' && <button type="button" className="button-primary" disabled={resume.state.kind === 'pending' || current.reconciliationAttention.blocked} onClick={() => void resume.run({ commandId: crypto.randomUUID() })}>Resume</button>}
       {current.state !== 'stopped' && <>

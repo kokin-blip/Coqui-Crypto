@@ -50,6 +50,8 @@ export interface AlpacaPaperActivity {
   readonly date?: string;
   readonly net_amount?: string;
   readonly status?: string;
+  readonly created_at?: string;
+  readonly side?: string;
 }
 
 export interface AlpacaPaperAsset {

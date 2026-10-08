@@ -19,6 +19,7 @@ function pct(value: string | null): string {
 }
 
 function stateLabel(data: Status, dailyWindowOpen: boolean): string {
+  if (data.state === 'paused' && !data.reconciliationAttention.blocked) return 'Ready to resume';
   switch (data.runtimeState) {
     case 'none': return 'Not started';
     case 'awaiting': return data.lastCheckAtMs === null ? 'Awaiting first scheduler check'
@@ -81,7 +82,7 @@ function ActivityContent({ data, client }: { readonly data: Status; readonly cli
     </div>
     <p className="muted">Daily targets update from completed Coinbase bars. At 04:00, 08:00, 12:00, 16:00, and 20:00 UTC, Coqui can rebalance the Alpaca paper account when fresh Alpaca quotes show at least 1% portfolio drift and a $25 trade. No price move means no order.</p>
     <ParallelPaperRecovery client={client} data={data} />
-    {data.lastReason !== null && <SurfaceState kind="blocked" title={
+    {data.lastReason !== null && data.reconciliationAttention.blocked && data.reconciliationAttention.latestFailure?.reason == null && <SurfaceState kind="blocked" title={
       ['alpaca_unavailable', 'alpaca_rate_limited'].includes(data.lastReason)
         ? 'Alpaca read failed · retrying on the next check' : 'New Alpaca orders paused'}
       detail={data.lastReason.replaceAll('_', ' ')} compact />}

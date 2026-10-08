@@ -1,5 +1,5 @@
 import { chartHistoryRange } from './chart-history-range.js';
-import { useDeferredValue, useEffect, useState } from 'react';
+import { memo, useDeferredValue, useEffect, useState } from 'react';
 import { ArrowDownAZ, CircleDot, Save, Search, X } from 'lucide-react';
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { AdvisorSheet } from './AdvisorSheet.js';
@@ -51,7 +51,7 @@ function resizeTiles(current: readonly ChartTileConfiguration[], layout: Worksta
   return Array.from({ length: Math.min(tileCount(layout), Math.max(1, products.length)) }, (_, index) =>
     current[index] ?? { ...fallback, productId: products[index] ?? products[0] ?? 'BTC-USD' });
 }
-export function AdvancedMarkets({ client, embedded = false, productId, onProductChange, active = true, activity }: {
+export const AdvancedMarkets = memo(function AdvancedMarkets({ client, embedded = false, productId, onProductChange, active = true, activity }: {
   readonly activity?: ActivitySummary | undefined;
   readonly active?: boolean;
   readonly client: CoquiClient; readonly embedded?: boolean;
@@ -244,4 +244,4 @@ export function AdvancedMarkets({ client, embedded = false, productId, onProduct
     {analystOpen && <AdvisorSheet client={client} productId={selected} bars={factsBars} onClose={() => setAnalystOpen(false)} />}
     {!embedded && <CoinbaseMarketContext client={client} productId={selected} />}{extensionsOpen && <ChartExtensionManager client={client} onClose={() => setExtensionsOpen(false)} />}
   </div>;
-}
+});

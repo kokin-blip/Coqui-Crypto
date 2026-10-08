@@ -9,7 +9,7 @@ function observedDecimal(value: unknown): Decimal | null {
 /** Account-level observed fees are separate from modeled trading friction. */
 export function parallelFeeAccounting(events: readonly ParallelPaperEvent[], experiment: ParallelPaperExperiment | null) {
   let cashFees = new Decimal(0), reportedUsd = new Decimal(0), unvalued = 0;
-  const crypto: Record<string, Decimal> = {}, valuations: {activityId: string; at: string | null; usd: string | null; attribution: string}[] = [];
+  const crypto: Record<string, Decimal> = {}, valuations: {activityId: string; at: string | null; createdAt: string | null; billingDate: string | null; usd: string | null; attribution: string}[] = [];
   const unique = new Set<string>();
   for (const event of events.filter((item) => item.kind === 'external_fee')) {
     const detail = event.detail, activityId = String(detail['activityId']);
@@ -25,8 +25,10 @@ export function parallelFeeAccounting(events: readonly ParallelPaperEvent[], exp
       if (price?.isFinite() && price.gt(0)) usd = qty.abs().mul(price);
     } else if (net?.isFinite()) { usd = net.neg(); cashFees = cashFees.plus(usd); }
     if (usd === null) unvalued++; else reportedUsd = reportedUsd.plus(usd);
-    valuations.push({ activityId, at: typeof detail['at'] === 'string' ? detail['at'] :
-      typeof detail['date'] === 'string' ? detail['date'] : null, usd: usd?.toString() ?? null,
+    const metadata = events.findLast((item) => item.kind === 'broker_activity_metadata' && item.detail['activityId'] === activityId)?.detail;
+    valuations.push({ activityId, at: typeof detail['at'] === 'string' ? detail['at'] : null,
+      createdAt: typeof metadata?.['createdAt'] === 'string' ? metadata['createdAt'] : null,
+      billingDate: typeof detail['date'] === 'string' ? detail['date'] : null, usd: usd?.toString() ?? null,
       attribution: detail['orderId'] ? 'reported_order_link' : 'account_level' });
   }
   const quantities: Record<string, Decimal> = {};

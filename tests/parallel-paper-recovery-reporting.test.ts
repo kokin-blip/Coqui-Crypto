@@ -7,6 +7,9 @@ import { finalizeParallelSlots } from '../packages/services/src/paper/parallel-p
 import { activeParallelEvents, supersedeUnsubmittedParallelPlans } from '../packages/services/src/paper/parallel-paper-plans.js';
 import { parallelReconciliationAttention } from '../packages/services/src/paper/parallel-paper-attention.js';
 import { CHANNEL_SCHEMAS } from '../packages/contracts/src/index.js';
+import { parallelFeeAccounting } from '../packages/services/src/paper/parallel-fee-accounting.js';
+import { parallelBrokerEvidence } from '../packages/services/src/paper/parallel-broker-evidence.js';
+import { projectParallelPaperActivity } from '../packages/services/src/paper/parallel-paper-activity.js';
 
 const start = Date.parse('2026-10-02T00:00:00Z');
 const experiment = { id: 'e', profileId: 'main', startedAt: start } as ParallelPaperExperiment;
@@ -22,6 +25,44 @@ function filledHistory() {
 }
 
 describe('complete paper recovery evidence', () => {
+  it('labels failures by their actual phase and keeps historical unknown phases honest', () => {
+    const history = [event('reconciliation_error', { reason: 'deadline_exceeded', operation: 'market_preparation', elapsedMs: 1_254, remainingMs: 0 }),
+      event('reconciliation_error', { reason: 'alpaca_unavailable', operation: 'activities', httpStatus: 503 }),
+      event('reconciliation_error', { reason: 'deadline_exceeded' })];
+    const { activity } = projectParallelPaperActivity(history);
+    expect(activity.find(item => item.title === 'Market preparation timed out')?.detail).toContain('1.3s elapsed · 0.0s remaining');
+    expect(activity.find(item => item.title === 'Alpaca activities read failed')?.detail).toContain('HTTP 503');
+    expect(activity.some(item => item.title === 'Paper recovery check timed out')).toBe(true);
+    expect(parallelReconciliationAttention(history.slice(0, 1), 'paused').latestFailure)
+      .toMatchObject({ operation: 'market_preparation', elapsedMs: 1_254, remainingMs: 0 });
+  });
+  it('preserves billing dates separately from publication times and leaves booked fee records unchanged', async () => {
+    const history = filledHistory();
+    const fees = [{id:'fee-1',activity_type:'CFEE',symbol:'BTCUSD',qty:'-0.001',price:'100',date:'2026-10-05',created_at:'2026-10-03T04:00:00Z'}];
+    const input={experiment,client:{activities:async()=>fees} as never,events:()=>history,now:()=>start,
+      append:(kind:string,_key:string,detail:Record<string,unknown>)=>history.push(event(kind,detail))};
+    await reconcileParallelPaper(input);
+    const original=history.find((item)=>item.kind==='external_fee')!;
+    expect(original.detail).not.toHaveProperty('createdAt');
+    expect(parallelFeeAccounting(history,null).valuations[0]).toMatchObject({at:null,billingDate:'2026-10-05',createdAt:'2026-10-03T04:00:00Z'});
+    expect(parallelBrokerEvidence(history,start).latestFeeCreatedAtMs).toBe(Date.parse('2026-10-03T04:00:00Z'));
+  });
+
+  it('does not let a completed foreign order disappear from the reconciliation audit', async () => {
+    const history=filledHistory();
+    await expect(reconcileParallelPaper({experiment,client:{activities:async()=>[{id:'foreign-fill',activity_type:'FILL',
+      order_id:'foreign',transaction_time:new Date(start+1000).toISOString()}]} as never,
+      events:()=>history,now:()=>start,append:vi.fn()})).rejects.toMatchObject({message:'unexpected_alpaca_order',operation:'activities'});
+  });
+
+  it('expires quote freshness independently of stream connectivity and refuses to infer complete fees', () => {
+    const history=[event('readiness',{operation:'trade_stream',status:'listening'}),
+      event('readiness',{operation:'quote',status:'received',oldestQuoteAtMs:start}),
+      event('external_fill',{at:new Date(start).toISOString()})];
+    expect(parallelBrokerEvidence(history,start+60_001)).toMatchObject({tradeStream:'listening',quoteStatus:'stale',feeCoverage:'unconfirmed'});
+    history.push(event('readiness',{operation:'quote',status:'unavailable'}));
+    expect(parallelBrokerEvidence(history,start+60_001).quoteStatus).toBe('unavailable');
+  });
   it('requires exactly matching recorded fills and positions, including delayed crypto fees', async () => {
     const history = filledHistory();
     const client = { positions: async () => [{ symbol: 'BTCUSD', qty: '0.999' }] };
@@ -38,12 +79,65 @@ describe('complete paper recovery evidence', () => {
 
   it('does not declare a truncated activity audit complete and records its operation', async () => {
     const history: ParallelPaperEvent[] = [];
-    const activities = vi.fn(async () => Array.from({ length: 100 }, (_, i) => ({ id: `row-${i}`, activity_type: 'FILL' })));
+    let page = 0;
+    const activities = vi.fn(async () => Array.from({ length: 100 }, (_, i) => ({ id: `row-${page++}-${i}`, activity_type: 'FILL' })));
     await expect(reconcileParallelPaper({ experiment, client: { activities } as never,
       events: () => history, now: () => start, append: (kind, _key, detail) => history.push(event(kind, detail)) }))
       .rejects.toMatchObject({ message: 'alpaca_activity_page_limit', operation: 'activities' });
     expect(activities).toHaveBeenCalledTimes(20);
     expect(history.some((item) => item.kind === 'activity_audit' || item.detail['operation'] === 'broker_reconciliation')).toBe(false);
+  });
+
+  it('resumes a full audit from the last completed page after a timeout and a new reader', async () => {
+    const history: ParallelPaperEvent[] = [];
+    const firstPage = Array.from({ length: 100 }, (_, i) => ({ id: `fee-${i}`, activity_type: 'CFEE', symbol: 'USD', net_amount: '-1' }));
+    const append = (kind: string, key: string, detail: Record<string, unknown>) => {
+      if (!history.some(row => row.id === key)) history.push({ ...event(kind, detail), id: key });
+    };
+    const reads = vi.fn(async (_after: string, cursor?: string) => {
+      if (!cursor) return firstPage;
+      throw new Error('deadline_exceeded');
+    });
+    await expect(reconcileParallelPaper({ experiment, fullAudit: true, client: { activities: reads } as never,
+      events: () => history.slice(), now: () => start, append })).rejects.toThrow('deadline_exceeded');
+    expect(history.findLast(row => row.kind === 'activity_audit_progress')?.detail).toMatchObject({
+      pagesCompleted: 1, pageToken: 'fee-99', afterMs: start });
+    expect(history.some(row => row.kind === 'activity_audit')).toBe(false);
+    const next = vi.fn(async () => [{ id: 'fee-100', activity_type: 'CFEE', symbol: 'USD', net_amount: '-1' }]);
+    await reconcileParallelPaper({ experiment, client: { activities: next } as never,
+      events: () => history.slice(), now: () => start + 60_000, append });
+    expect(next).toHaveBeenCalledExactlyOnceWith(new Date(start).toISOString(), 'fee-99');
+    expect(history.filter(row => row.kind === 'external_fee')).toHaveLength(101);
+    expect(history.filter(row => row.kind === 'activity_audit')).toHaveLength(1);
+    const fresh = vi.fn(async () => []);
+    await reconcileParallelPaper({ experiment, fullAudit: true, client: { activities: fresh } as never,
+      events: () => history.slice(), now: () => start + 120_000, append });
+    expect(fresh).toHaveBeenCalledExactlyOnceWith(new Date(start).toISOString(), undefined);
+  });
+
+  it('does not checkpoint a partially validated page or reuse a previous day cursor', async () => {
+    const history: ParallelPaperEvent[] = [];
+    const append = (kind: string, _key: string, detail: Record<string, unknown>) => history.push(event(kind, detail));
+    const broken = [{ id: 'fee-valid', activity_type: 'CFEE' }, { id: '', activity_type: 'CFEE' }];
+    await expect(reconcileParallelPaper({ experiment, client: { activities: async () => broken } as never,
+      events: () => history, now: () => start, append })).rejects.toThrow('invalid_alpaca_activity');
+    expect(history.some(row => row.kind === 'activity_audit_progress' || row.kind === 'activity_audit')).toBe(false);
+    history.push(event('activity_audit_progress', { day: '2026-10-02', afterMs: start,
+      auditId: 'old-audit', pageToken: 'old-cursor', pagesCompleted: 1 }));
+    const reads = vi.fn(async () => []);
+    await reconcileParallelPaper({ experiment, client: { activities: reads } as never,
+      events: () => history, now: () => start + 86_400_000, append });
+    expect(reads).toHaveBeenCalledExactlyOnceWith(new Date(start).toISOString(), undefined);
+  });
+
+  it('uses recent overlap after a daily audit even when the experiment has no fills', async () => {
+    const now = start + 5 * 86_400_000;
+    const history = [event('activity_audit', { day: '2026-10-07', afterMs: start }, now),
+      event('readiness', { operation: 'activity_reconciliation', status: 'validated' }, now)];
+    const reads = vi.fn(async () => []);
+    await reconcileParallelPaper({ experiment, client: { activities: reads } as never,
+      events: () => history, now: () => now + 60_000, append: vi.fn() });
+    expect(reads).toHaveBeenCalledExactlyOnceWith(new Date(now - 86_400_000).toISOString(), undefined);
   });
 
   it('rejects a client ID lookup returning a different order identity', async () => {

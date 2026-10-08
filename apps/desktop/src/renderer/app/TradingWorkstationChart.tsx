@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { createChartObservationCache } from './chart-observations.js';
 
 import type { CoquiClient } from '@coqui/contracts';
 import { CHART_COLORS } from '@coqui/ui-kit';
@@ -73,6 +74,7 @@ export function TradingWorkstationChart({ bars, productId, style, scaleMode,
   const pendingPoint = useRef<{ timeMs: number; value: string } | null>(null);
   const suppressSync = useRef(false);
   const [cursorLabel, setCursorLabel] = useState<string | null>(null);
+  const [observationCache] = useState(createChartObservationCache);
   const [drawingShapes, setDrawingShapes] = useState<readonly DrawingShape[]>([]);
   const paperAnnotations = useMemo(() => chartPaperAnnotations(position, pendingActions ?? []), [position, pendingActions]);
   const markers = useMemo(() => [...(extensionMarkers ?? EMPTY_MARKERS), ...paperAnnotations.markers], [extensionMarkers, paperAnnotations]);
@@ -86,7 +88,7 @@ export function TradingWorkstationChart({ bars, productId, style, scaleMode,
   const interval = bars[0]?.interval;
   useEffect(() => { currentBars.current = bars; currentDrawings.current = drawings; });
   const completedBars = useMemo(() => bars.filter(bar => bar.isComplete), [bars]);
-  const completedKey = completedBars.map(bar => `${bar.startTimeMs}:${bar.close}`).join('|');
+  const completedKey = useMemo(() => completedBars.map(bar => `${bar.startTimeMs}:${bar.close}`).join('|'), [completedBars]);
   const indicatorKey = JSON.stringify(indicators);
 
 
@@ -297,8 +299,7 @@ export function TradingWorkstationChart({ bars, productId, style, scaleMode,
       commandId: crypto.randomUUID(), filenameStem: `coqui-${productId.toLowerCase()}`, pngBase64: png,
     });
   };
-  const observations = useMemo(() => bars.map((bar) => ({ day: String(bar.startTimeMs),
-    label: `${formatLocalTimestamp(bar.startTimeMs)} (UTC ${exactUtcTimestamp(bar.startTimeMs)}): close ${bar.close}${bar.isComplete ? '' : ', live candle'}` })), [bars]);
+  const observations = useMemo(() => observationCache(bars), [bars, observationCache]);
   return <><div className={`workstation-chart-host tool-${activeTool}`} onPointerDown={capturePoint}>
     <ChartFrame className="trading-workstation-chart" containerRef={container}
       observations={observations} summary={`${bars.length} Coinbase ${bars[0]?.interval ?? ''} observations for ${productId}. Provisional bars are display only.`}

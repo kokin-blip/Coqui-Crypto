@@ -66,12 +66,34 @@ export function appendParallelEvent(input: Omit<ParallelPaperEvent, 'id'> & { re
     kind: input.kind, at: input.at, detail: input.detail };
 }
 
+function eventFromRow(row: Record<string, unknown>): ParallelPaperEvent {
+  return { id: String(row['id']), experimentId: String(row['experiment_id']),
+    profileId: String(row['profile_id']), kind: String(row['kind']), at: Number(row['at']),
+    detail: JSON.parse(String(row['detail_json'])) as Record<string, unknown> };
+}
+
 export function listParallelEvents(experimentId: string, profileId: string, db: Db): readonly ParallelPaperEvent[] {
   return (db.prepare(`SELECT * FROM parallel_paper_events_v1
-    WHERE experiment_id=? AND profile_id=? ORDER BY rowid`).all(experimentId, profileId) as Record<string, unknown>[])
-    .map((row) => ({ id: String(row['id']), experimentId: String(row['experiment_id']),
-      profileId: String(row['profile_id']), kind: String(row['kind']), at: Number(row['at']),
-      detail: JSON.parse(String(row['detail_json'])) as Record<string, unknown> }));
+    WHERE experiment_id=? AND profile_id=? ORDER BY rowid`).all(experimentId, profileId) as Record<string, unknown>[]).map(eventFromRow);
+}
+
+/** Pass-scoped reader. Each call observes concurrent appends without reparsing history. */
+export function createParallelEventReader(profileId: string, db: Db) {
+  let experimentId: string | null = null, cursor = 0;
+  let events: readonly ParallelPaperEvent[] = [];
+  return (id: string): readonly ParallelPaperEvent[] => {
+    if (id !== experimentId) { experimentId = id; cursor = 0; events = []; }
+    const rows = db.prepare(`SELECT rowid AS cursor,* FROM parallel_paper_events_v1
+      WHERE rowid>? AND experiment_id=? AND profile_id=? ORDER BY rowid`)
+      .all(cursor, id, profileId) as Record<string, unknown>[];
+    if (rows.length) { cursor = Number(rows.at(-1)!['cursor']); events = events.concat(rows.map(eventFromRow)); }
+    return events;
+  };
+}
+
+export function countParallelEvents(experimentId: string, profileId: string, db: Db): number {
+  return Number((db.prepare(`SELECT COUNT(*) AS count FROM parallel_paper_events_v1
+    WHERE experiment_id=? AND profile_id=?`).get(experimentId, profileId) as { count: number }).count);
 }
 
 export function parallelExperimentStatus(events: readonly ParallelPaperEvent[]): 'active' | 'paused' | 'stopped' {

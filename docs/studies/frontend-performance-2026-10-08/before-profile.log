@@ -1,0 +1,5 @@
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: '74ce5c80fe656af7a8201aff53f2fd499dc2f23afc88ce4c098ea647ef390d09'
+}
+{"shellMs":59,"coldChartMs":355,"cachedNavigationP75Ms":16,"feedSeconds":30,"ticks":31,"feedTicks":31,"bookQueries":31,"tradeQueries":15,"historyQueries":1,"unchangedExtensionEvaluations":0,"viewportDriftPx":0,"frameP95Ms":9.299999999999272,"framesOver34Ms":0,"removedCanvases":0,"longTasks":[],"audit":{"renders":{"Workspace":136,"AdvancedMarkets":139,"ChartTile":199,"TradingWorkstationChart":229,"ChartFrame":229,"TerminalAssets":137},"metrics":{"TaskDuration":1.4264569999999999,"ScriptDuration":0.837164,"LayoutDuration":0.026119000000000003,"RecalcStyleDuration":0.004411999999999999,"LayoutCount":60,"RecalcStyleCount":32},"dom":{"elements":745,"svg":56,"svgNodes":181,"canvases":7},"heapUsedBytes":49903148},"crosshair":{"samples":120,"p75Ms":17,"p95Ms":17,"scriptSeconds":0.19257600000000008,"layoutSeconds":0.038445999999999994}}

@@ -1,0 +1,428 @@
+{
+  "runs": {
+    "before": [
+      {
+        "shellMs": 59,
+        "coldChartMs": 356,
+        "cachedNavigationP75Ms": 15,
+        "feedSeconds": 30,
+        "ticks": 31,
+        "feedTicks": 31,
+        "bookQueries": 31,
+        "tradeQueries": 15,
+        "historyQueries": 1,
+        "unchangedExtensionEvaluations": 0,
+        "viewportDriftPx": 0,
+        "frameP95Ms": 9.200000000000728,
+        "framesOver34Ms": 0,
+        "removedCanvases": 0,
+        "longTasks": [],
+        "audit": {
+          "metrics": {
+            "TaskDuration": 1.3549380000000002,
+            "ScriptDuration": 0.7972840000000001,
+            "LayoutDuration": 0.023059000000000003,
+            "RecalcStyleDuration": 0.0038709999999999994,
+            "LayoutCount": 60,
+            "RecalcStyleCount": 32
+          },
+          "dom": {
+            "elements": 744,
+            "svg": 56,
+            "svgNodes": 181,
+            "canvases": 7
+          },
+          "heapUsedBytes": 25928644,
+          "navigationHeap": {
+            "before": {
+              "backingStorageSize": 914342,
+              "embedderHeapUsedSize": 2923392,
+              "totalSize": 28033024,
+              "usedSize": 25188916
+            },
+            "after": {
+              "backingStorageSize": 914281,
+              "embedderHeapUsedSize": 3164888,
+              "totalSize": 29294592,
+              "usedSize": 25948376
+            }
+          }
+        },
+        "crosshair": {
+          "samples": 120,
+          "p75Ms": 17,
+          "p95Ms": 18,
+          "scriptSeconds": 0.19132499999999997,
+          "layoutSeconds": 0.038841999999999995
+        },
+        "scroll": {
+          "samples": 60,
+          "p75Ms": 17,
+          "p95Ms": 18,
+          "scriptSeconds": 0.03572099999999989,
+          "layoutSeconds": 0.0009530000000000094
+        }
+      },
+      {
+        "shellMs": 57,
+        "coldChartMs": 369,
+        "cachedNavigationP75Ms": 14,
+        "feedSeconds": 30,
+        "ticks": 31,
+        "feedTicks": 31,
+        "bookQueries": 31,
+        "tradeQueries": 15,
+        "historyQueries": 1,
+        "unchangedExtensionEvaluations": 0,
+        "viewportDriftPx": 0,
+        "frameP95Ms": 9.299999999999272,
+        "framesOver34Ms": 0,
+        "removedCanvases": 0,
+        "longTasks": [],
+        "audit": {
+          "metrics": {
+            "TaskDuration": 1.4244109999999999,
+            "ScriptDuration": 0.81054,
+            "LayoutDuration": 0.025291,
+            "RecalcStyleDuration": 0.005080999999999999,
+            "LayoutCount": 61,
+            "RecalcStyleCount": 33
+          },
+          "dom": {
+            "elements": 744,
+            "svg": 56,
+            "svgNodes": 181,
+            "canvases": 7
+          },
+          "heapUsedBytes": 59343108,
+          "navigationHeap": {
+            "before": {
+              "backingStorageSize": 914344,
+              "embedderHeapUsedSize": 2927400,
+              "totalSize": 27770880,
+              "usedSize": 25188556
+            },
+            "after": {
+              "backingStorageSize": 914283,
+              "embedderHeapUsedSize": 3169136,
+              "totalSize": 29556736,
+              "usedSize": 25961160
+            }
+          }
+        },
+        "crosshair": {
+          "samples": 120,
+          "p75Ms": 17,
+          "p95Ms": 18,
+          "scriptSeconds": 0.22908299999999993,
+          "layoutSeconds": 0.037857
+        },
+        "scroll": {
+          "samples": 60,
+          "p75Ms": 17,
+          "p95Ms": 18,
+          "scriptSeconds": 0.03032900000000005,
+          "layoutSeconds": 0.0013159999999999977
+        }
+      },
+      {
+        "shellMs": 60,
+        "coldChartMs": 372,
+        "cachedNavigationP75Ms": 15,
+        "feedSeconds": 30,
+        "ticks": 31,
+        "feedTicks": 31,
+        "bookQueries": 31,
+        "tradeQueries": 15,
+        "historyQueries": 1,
+        "unchangedExtensionEvaluations": 0,
+        "viewportDriftPx": 0,
+        "frameP95Ms": 9.299999999999272,
+        "framesOver34Ms": 0,
+        "removedCanvases": 0,
+        "longTasks": [],
+        "audit": {
+          "metrics": {
+            "TaskDuration": 1.5484969999999998,
+            "ScriptDuration": 0.915589,
+            "LayoutDuration": 0.026456,
+            "RecalcStyleDuration": 0.004937,
+            "LayoutCount": 60,
+            "RecalcStyleCount": 32
+          },
+          "dom": {
+            "elements": 744,
+            "svg": 56,
+            "svgNodes": 181,
+            "canvases": 7
+          },
+          "heapUsedBytes": 59122868,
+          "navigationHeap": {
+            "before": {
+              "backingStorageSize": 914346,
+              "embedderHeapUsedSize": 2927464,
+              "totalSize": 27770880,
+              "usedSize": 25201384
+            },
+            "after": {
+              "backingStorageSize": 914285,
+              "embedderHeapUsedSize": 3199648,
+              "totalSize": 29556736,
+              "usedSize": 25941796
+            }
+          }
+        },
+        "crosshair": {
+          "samples": 120,
+          "p75Ms": 17,
+          "p95Ms": 17,
+          "scriptSeconds": 0.12095000000000011,
+          "layoutSeconds": 0.024319000000000007
+        },
+        "scroll": {
+          "samples": 60,
+          "p75Ms": 17,
+          "p95Ms": 18,
+          "scriptSeconds": 0.026615000000000055,
+          "layoutSeconds": 0.000672999999999993
+        }
+      }
+    ],
+    "after": [
+      {
+        "shellMs": 100,
+        "coldChartMs": 366,
+        "cachedNavigationP75Ms": 14,
+        "feedSeconds": 30,
+        "ticks": 31,
+        "feedTicks": 31,
+        "bookQueries": 31,
+        "tradeQueries": 15,
+        "historyQueries": 1,
+        "unchangedExtensionEvaluations": 0,
+        "viewportDriftPx": 0,
+        "frameP95Ms": 9.400000000001455,
+        "framesOver34Ms": 0,
+        "removedCanvases": 0,
+        "longTasks": [],
+        "audit": {
+          "metrics": {
+            "TaskDuration": 1.0520230000000002,
+            "ScriptDuration": 0.5067699999999999,
+            "LayoutDuration": 0.03950599999999999,
+            "RecalcStyleDuration": 0.006255999999999998,
+            "LayoutCount": 62,
+            "RecalcStyleCount": 34
+          },
+          "dom": {
+            "elements": 750,
+            "svg": 56,
+            "svgNodes": 181,
+            "canvases": 7
+          },
+          "heapUsedBytes": 36128028,
+          "navigationHeap": {
+            "before": {
+              "backingStorageSize": 809898,
+              "embedderHeapUsedSize": 2933048,
+              "totalSize": 25526272,
+              "usedSize": 22788716
+            },
+            "after": {
+              "backingStorageSize": 811958,
+              "embedderHeapUsedSize": 3059048,
+              "totalSize": 28934144,
+              "usedSize": 25295552
+            }
+          }
+        },
+        "crosshair": {
+          "samples": 120,
+          "p75Ms": 17,
+          "p95Ms": 18,
+          "scriptSeconds": 0.17028,
+          "layoutSeconds": 0.048073000000000005
+        },
+        "scroll": {
+          "samples": 60,
+          "p75Ms": 17,
+          "p95Ms": 18,
+          "scriptSeconds": 0.01778500000000005,
+          "layoutSeconds": 0.0013190000000000146
+        }
+      },
+      {
+        "shellMs": 53,
+        "coldChartMs": 369,
+        "cachedNavigationP75Ms": 14,
+        "feedSeconds": 30,
+        "ticks": 31,
+        "feedTicks": 31,
+        "bookQueries": 31,
+        "tradeQueries": 15,
+        "historyQueries": 1,
+        "unchangedExtensionEvaluations": 0,
+        "viewportDriftPx": 0,
+        "frameP95Ms": 9.300000000000182,
+        "framesOver34Ms": 0,
+        "removedCanvases": 0,
+        "longTasks": [],
+        "audit": {
+          "metrics": {
+            "TaskDuration": 1.069465,
+            "ScriptDuration": 0.508102,
+            "LayoutDuration": 0.040601,
+            "RecalcStyleDuration": 0.006402999999999999,
+            "LayoutCount": 61,
+            "RecalcStyleCount": 33
+          },
+          "dom": {
+            "elements": 750,
+            "svg": 56,
+            "svgNodes": 181,
+            "canvases": 7
+          },
+          "heapUsedBytes": 28121728,
+          "navigationHeap": {
+            "before": {
+              "backingStorageSize": 811918,
+              "embedderHeapUsedSize": 3007264,
+              "totalSize": 26574848,
+              "usedSize": 23831328
+            },
+            "after": {
+              "backingStorageSize": 811958,
+              "embedderHeapUsedSize": 3195144,
+              "totalSize": 27623424,
+              "usedSize": 25047588
+            }
+          }
+        },
+        "crosshair": {
+          "samples": 120,
+          "p75Ms": 17,
+          "p95Ms": 17,
+          "scriptSeconds": 0.167489,
+          "layoutSeconds": 0.045471
+        },
+        "scroll": {
+          "samples": 60,
+          "p75Ms": 17,
+          "p95Ms": 18,
+          "scriptSeconds": 0.01915800000000001,
+          "layoutSeconds": 0.0015300000000000036
+        }
+      },
+      {
+        "shellMs": 52,
+        "coldChartMs": 359,
+        "cachedNavigationP75Ms": 14,
+        "feedSeconds": 30,
+        "ticks": 31,
+        "feedTicks": 31,
+        "bookQueries": 31,
+        "tradeQueries": 15,
+        "historyQueries": 1,
+        "unchangedExtensionEvaluations": 0,
+        "viewportDriftPx": 0,
+        "frameP95Ms": 9.200000000000728,
+        "framesOver34Ms": 0,
+        "removedCanvases": 0,
+        "longTasks": [],
+        "audit": {
+          "metrics": {
+            "TaskDuration": 1.059132,
+            "ScriptDuration": 0.5080560000000001,
+            "LayoutDuration": 0.041166999999999995,
+            "RecalcStyleDuration": 0.0059029999999999985,
+            "LayoutCount": 60,
+            "RecalcStyleCount": 32
+          },
+          "dom": {
+            "elements": 750,
+            "svg": 56,
+            "svgNodes": 181,
+            "canvases": 7
+          },
+          "heapUsedBytes": 36145044,
+          "navigationHeap": {
+            "before": {
+              "backingStorageSize": 810020,
+              "embedderHeapUsedSize": 2933096,
+              "totalSize": 26574848,
+              "usedSize": 24227484
+            },
+            "after": {
+              "backingStorageSize": 811958,
+              "embedderHeapUsedSize": 3287936,
+              "totalSize": 29196288,
+              "usedSize": 25345000
+            }
+          }
+        },
+        "crosshair": {
+          "samples": 120,
+          "p75Ms": 17,
+          "p95Ms": 17,
+          "scriptSeconds": 0.18174800000000002,
+          "layoutSeconds": 0.049821000000000004
+        },
+        "scroll": {
+          "samples": 60,
+          "p75Ms": 17,
+          "p95Ms": 19,
+          "scriptSeconds": 0.01834100000000005,
+          "layoutSeconds": 0.0016339999999999966
+        }
+      }
+    ]
+  },
+  "medians": {
+    "before": {
+      "shellMs": 59,
+      "coldChartMs": 369,
+      "navigationP75Ms": 15,
+      "scriptSeconds": 0.81054,
+      "taskSeconds": 1.4244109999999999,
+      "layoutSeconds": 0.025291,
+      "styleSeconds": 0.004937,
+      "frameP95Ms": 9.299999999999272,
+      "crosshairP75Ms": 17,
+      "scrollP75Ms": 17,
+      "scrollScriptSeconds": 0.03032900000000005,
+      "heapAfterNavigation": 25948376
+    },
+    "after": {
+      "shellMs": 53,
+      "coldChartMs": 366,
+      "navigationP75Ms": 14,
+      "scriptSeconds": 0.5080560000000001,
+      "taskSeconds": 1.059132,
+      "layoutSeconds": 0.040601,
+      "styleSeconds": 0.006255999999999998,
+      "frameP95Ms": 9.300000000000182,
+      "crosshairP75Ms": 17,
+      "scrollP75Ms": 17,
+      "scrollScriptSeconds": 0.01834100000000005,
+      "heapAfterNavigation": 25295552
+    }
+  },
+  "profile": {
+    "before": {
+      "Workspace": 136,
+      "AdvancedMarkets": 139,
+      "ChartTile": 199,
+      "TradingWorkstationChart": 229,
+      "ChartFrame": 229,
+      "TerminalAssets": 137
+    },
+    "after": {
+      "Workspace": 136,
+      "TerminalAssets": 137,
+      "ChartTile": 68,
+      "TradingWorkstationChart": 98,
+      "ChartFrame": 98,
+      "AdvancedMarkets": 9
+    }
+  }
+}

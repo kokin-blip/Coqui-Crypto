@@ -2,6 +2,7 @@ import type { ParallelPaperEvent } from '@coqui/storage';
 import { parallelAttemptsResolved } from './parallel-paper-recovery.js';
 import { parallelPaperFailureDetail, parallelSafeOperation } from './parallel-paper-utils.js';
 import type { PaperPositionDifference } from './parallel-paper-utils.js';
+import { currentPaperPositionResolution } from './parallel-paper-resolution.js';
 
 /** Persistent projection independent of the short activity timeline. */
 export function parallelReconciliationAttention(events: readonly ParallelPaperEvent[], state: string) {
@@ -25,9 +26,12 @@ export function parallelReconciliationAttention(events: readonly ParallelPaperEv
     ? parallelPaperFailureDetail(new Error(failure.detail['reason']), 'reconciliation_unavailable').reason : null;
   const positionDifferences = Array.isArray(failure?.detail['positionDifferences'])
     ? (failure.detail['positionDifferences'] as PaperPositionDifference[]).slice(0, 100) : [];
+  const resolution = currentPaperPositionResolution(events);
   return { blocked: state !== 'stopped' && (unknown || failedAfterSuccess || unresolvedOrders.length > 0),
+    minorResolution: resolution ? { atMs: resolution.at, valueUsd: String(resolution.detail['observedValueUsd']), feeAttribution: 'unconfirmed' as const } : null,
     lastSuccessfulAtMs: successful?.at ?? null,
     latestFailure: failure ? { atMs: failure.at, operation, reason,
-      httpStatus: number('httpStatus'), attemptCount: number('attemptCount'), remainingMs: number('remainingMs'), positionDifferences } : null,
+      httpStatus: number('httpStatus'), attemptCount: number('attemptCount'), remainingMs: number('remainingMs'),
+      elapsedMs: number('elapsedMs'), budgetMs: number('budgetMs'), positionDifferences } : null,
     unresolvedOrders };
 }

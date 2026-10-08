@@ -8,9 +8,14 @@ import { parallelDayReconciled, parallelRuntimeState, projectParallelPaperActivi
 import { projectParallelMlStatus, readParallelMlSignal } from './parallel-ml-status.js';
 import { hourlyShadowStatus } from './parallel-hourly-shadow.js';
 import { parallelFeeAccounting } from './parallel-fee-accounting.js';
+import { parallelBrokerEvidence } from './parallel-broker-evidence.js';
 import { money } from './parallel-paper-utils.js';
-export function parallelPaperSummary(current: {experiment: ParallelPaperExperiment | null; status: 'none' | 'active' | 'paused' | 'stopped'; events: readonly ParallelPaperEvent[]}, input: ParallelPaperDependencies, lastCheckAtMs: number | null, checking: boolean) {
+export function parallelPaperSummary(current: {experiment: ParallelPaperExperiment | null; status: 'none' | 'active' | 'paused' | 'stopped'; events: readonly ParallelPaperEvent[]}, input: ParallelPaperDependencies, lastCheckAtMs: number | null, checking: boolean, tradeStreamStatus: 'connecting' | 'listening' | 'unavailable' = 'unavailable') {
     const experiment = current.experiment, events = current.events;
+    // Scheduler checks are durable; a renderer query after restart must retain
+    // the last observed check rather than imply the scheduler has never run.
+    lastCheckAtMs ??= events.findLast((event) => event.kind === 'scheduler_check')?.at ?? null;
+    const pass = events.findLast(event => ['pass_complete', 'pass_deferred', 'paused', 'reconciliation_error'].includes(event.kind));
     const mark = [...events].reverse().find((event) => event.kind === 'account_mark');
     const latestState = [...events].reverse().find((event) => ['paused', 'resumed', 'stopped', 'started'].includes(event.kind));
     const { latestDecision, lastDecisionAtMs, decisionDay, activity, filterSummary } = projectParallelPaperActivity(events), completed = parallelDayReconciled(events, decisionDay);
@@ -36,10 +41,14 @@ export function parallelPaperSummary(current: {experiment: ParallelPaperExperime
       lastMarkDay: mark === undefined ? null : String(mark.detail['markKey'] ?? mark.detail['day']),
       decisionCount: events.filter((event) => event.kind === 'decision').length,
       reconciliationAttention: parallelReconciliationAttention(events, current.status),
+      brokerEvidence: { ...parallelBrokerEvidence(events, input.clock.nowMs()), tradeStream: tradeStreamStatus },
       slotOutcomes: events.filter((event) => event.kind === 'slot_finalized').slice(-18).reverse().map((event) => ({
         slotMs: Number(event.detail['slotMs']), outcome: String(event.detail['outcome']),
         reason: typeof event.detail['reason'] === 'string' ? event.detail['reason'] : null,
         inferred: event.detail['inferred'] === true })),
+      latestPass: pass ? { outcome: pass.kind === 'pass_complete' ? 'completed' as const : pass.kind === 'pass_deferred' ? 'deferred' as const : 'blocked' as const,
+        phase: String(pass.detail['operation'] ?? 'unknown'), atMs: pass.at,
+        retryAtMs: pass.kind === 'pass_deferred' ? Number(pass.detail['retryAtMs']) : null } : null,
       runtimeState, lastCheckAtMs: lastCheckAtMs,
       lastDecisionAtMs, latestDecision, activity, filterSummary,
       mlSignal: projectParallelMlStatus(events, readParallelMlSignal(input.mlSignal)),
@@ -68,4 +77,3 @@ export function parallelPaperSummary(current: {experiment: ParallelPaperExperime
       paperOnly: true as const,
     };
   }
-

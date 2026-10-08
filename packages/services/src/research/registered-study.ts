@@ -9,7 +9,8 @@ export function validateCandidateInstance(instance:StudyInstance, experimentId:s
   if(!config||typeof config!=='object'||Array.isArray(config)) throw new Error('invalid_candidate_definition');
   const object = config as Readonly<Record<string, unknown>>;
   const hash=object['sourceContentHash']??object['sourceHash'];
-  if(hash!==instance.definition.behaviorHash || object['startMs']!==instance.definition.startMs ||
+  if(hash!==instance.definition.behaviorHash || [object['sourceHash'], object['sourceContentHash']].some(value =>
+      value !== undefined && value !== instance.definition.behaviorHash) || object['startMs']!==instance.definition.startMs ||
       (object['holdoutEndMs']??object['endExclusiveMs'])!==instance.definition.holdoutEndMs)
     throw new Error('invalid_candidate_definition');
   const ends = object['foldEndsMs'];

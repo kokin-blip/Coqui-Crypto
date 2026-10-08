@@ -104,13 +104,20 @@ export function projectParallelPaperActivity(events: readonly ParallelPaperEvent
       case 'external_fee': return item('fee', 'Alpaca reported fee activity',
         `${String(event.detail['activityType'])} · ${String(event.detail['symbol'] ?? 'USD')} · quantity ${String(event.detail['quantity'] ?? 'unreported')} · cash ${String(event.detail['netAmount'] ?? 'unreported')} · account-level attribution`, orderId);
       case 'reconciliation_error': {
-        const operation = typeof event.detail['operation'] === 'string'
-          ? ` · ${String(event.detail['operation']).replaceAll('_', ' ')} request` : '';
+        const phase = String(event.detail['operation'] ?? 'unknown');
+        const phases: Record<string, string> = { market_preparation: 'Market preparation', credentials: 'Credential check',
+          broker_reconciliation: 'Broker reconciliation', activity_reconciliation: 'Activity reconciliation',
+          resume_preflight: 'Resume readiness check', pre_submission: 'Pre-submission check' };
+        const operation = phase === 'unknown' ? '' : ` · ${phase.replaceAll('_', ' ')}`;
+        const title = phases[phase] ?? (['account', 'orders', 'order_lookup', 'positions', 'activities', 'quote', 'asset'].includes(phase)
+          ? `Alpaca ${phase.replaceAll('_', ' ')} read` : 'Paper recovery check');
+        const timing = (key: string, label: string) => typeof event.detail[key] === 'number' && Number.isFinite(event.detail[key])
+          ? ` · ${(Math.max(0, event.detail[key] as number) / 1000).toFixed(1)}s ${label}` : '';
         const httpStatus = typeof event.detail['httpStatus'] === 'number'
           ? ` · HTTP ${String(event.detail['httpStatus'])}`
           : event.detail['reason'] === 'alpaca_unavailable' && operation.length > 0 ? ' · network or timeout' : '';
-        return item('retry', 'Alpaca reconciliation read failed',
-          `${String(event.detail['reason'])}${operation}${httpStatus} · original pause retained`);
+        return item('retry', `${title} ${event.detail['reason'] === 'deadline_exceeded' || event.detail['reason'] === 'alpaca_timeout' ? 'timed out' : 'failed'}`,
+          `${String(event.detail['reason'])}${operation}${httpStatus}${timing('elapsedMs', 'elapsed')}${timing('remainingMs', 'remaining')} · original pause retained`);
       }
       case 'external_fill': {
         const related = orders.get(String(event.detail['orderId']));

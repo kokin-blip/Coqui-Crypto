@@ -166,7 +166,7 @@ The scheduler runs while the Coqui desktop host is open and authoritative. A con
 
 Balances, current marked equity, percentage return, holdings, trades, and modeled costs remain under **Balances, returns, and paper fills**. The local leg is a daily-fill baseline and is not a paired execution simulation for Alpaca's intraday rebalances. Alpaca's records are **externally recorded paper fills** from its simulator, not live exchange executions. The local leg models a 0.60% fee plus 0.10% spread and 0.15% slippage in fill prices. The Alpaca cost envelope shown in Coqui is a comparison estimate; Alpaca account equity is the external account's actual paper value, and no additional modeled charge is deducted from it.
 
-Order intent and a deterministic client order ID are persisted before each Alpaca submission. A lost or ambiguous response is reconciled by client ID, never blindly retried. Intraday slots cannot submit while an earlier experiment order is unresolved or any Alpaca order remains open. Missing market data, changed account, unexpected orders, rejected/partial daily orders that cannot finish in the daily execution window, or unresolved outcomes pause new submissions. A pause caused by missing or stale market data, a transient OS credential-read failure, or an Alpaca `unavailable`/`rate_limited` response is retried on later scheduler checks. It automatically resumes only after the current completed bar is available and Alpaca reconciliation succeeds. The pause record includes a fixed operation name and HTTP status when available, without the request URL, body, headers, or credentials. An ambiguous order outcome can auto-resume only after the complete broker recovery gate below passes. Explicit user pauses do not auto-resume. Failed OS secret-store reads are no longer cached indefinitely. The first five minutes after 00:00 UTC may still be waiting for Coinbase to finalize the new daily bar; checks continue within the 00:00–00:15 UTC window. Pausing does not cancel existing Alpaca orders; stopping requests cancellation and requires terminal order confirmation before the experiment is marked stopped.
+Order intent and a deterministic client order ID are persisted before each Alpaca submission. A lost or ambiguous response is reconciled by client ID, never blindly retried. Intraday slots cannot submit while an earlier experiment order is unresolved or any Alpaca order remains open. Missing market data, changed account, unexpected orders, rejected/partial daily orders that cannot finish in the daily execution window, or unresolved outcomes pause new submissions. A pause caused by missing or stale market data, a transient OS credential-read failure, or an Alpaca `unavailable`/`rate_limited` response is retried on later scheduler checks. Recovery never automatically resumes a paused experiment. It prepares a ready-to-resume state after current completed market data and broker reconciliation pass; the user must press Resume, which repeats the checks. The pause record includes a fixed operation name and HTTP status when available, without the request URL, body, headers, or credentials. An ambiguous order outcome remains blocked until the complete broker recovery gate below passes; recovery then awaits manual Resume. Explicit user pauses do not auto-resume. Failed OS secret-store reads are no longer cached indefinitely. The first five minutes after 00:00 UTC may still be waiting for Coinbase to finalize the new daily bar; checks continue within the 00:00–00:15 UTC window. Pausing does not cancel existing Alpaca orders; stopping requests cancellation and requires terminal order confirmation before the experiment is marked stopped.
 
 ## Execution cost observations
 
@@ -297,9 +297,13 @@ attempt now appends its fixed operation, observation timestamp, attempt number,
 HTTP status if received, safe error category, elapsed time and remaining budget.
 POST/DELETE retain one attempt. Diagnostics exclude raw errors, request URLs,
 headers, bodies and credentials. Lookup, pagination and position-validation
-failures retain their operation names. A recovery check performs a full activity
-audit from the experiment's opening day, within the existing page and time caps;
-incomplete pagination never counts as complete reconciliation.
+failures retain their operation names. The daily activity audit and explicit operator retry
+read from the experiment's opening day, within the existing page and time caps.
+Each fully processed page checkpoints its cursor in the append-only journal;
+interrupted audits resume that cursor on the next pass, including after restart.
+Only the final page marks an audit complete. Scheduled recovery uses a recent
+one-day overlap after the daily audit, including experiments without recorded fills.
+Incomplete or invalid pages never advance the checkpoint; a new UTC day starts a new audit.
 
 New submissions remain blocked until account identity and permissions are valid,
 no open or unexpected orders remain, every attempted client ID has a conclusively
@@ -367,6 +371,111 @@ are introduced.
 Alpaca position reconciliation reports exact recorded quantities, current broker
 quantities, and their differences. A complete activity read can still leave a
 residual when the broker has not reported enough fill/fee evidence to explain its
-positions. Such a residual remains blocked; retries do not invent fees, rewrite
-balances, or grant order authority. The displayed differences come from the
+positions. Larger or unexplained residuals remain blocked. A narrowly bounded, fee-shaped
+paper exception can be accepted as described below; retries do not invent fees,
+rewrite financial entries, or activate trading. The displayed differences come from the
 latest reconciliation failure, not an older account valuation mark.
+
+Scheduler status retains the latest recorded scheduler check across restarts;
+before the next tick it does not imply that no check has ever run. Recovery also
+shows the last failed read's timestamp and explains the automatic read retries.
+The same pause reason appears once when the recovery panel already reports it;
+distinct pause reasons remain visible.
+## Broker evidence and delayed fees
+
+Alpaca paper positions, execution quotes, stream connectivity, and fee coverage
+are reported separately. Coinbase's public market-feed indicator cannot establish
+Alpaca execution readiness. Quote freshness uses provider timestamps for all three
+required assets, never HTTP receipt time.
+
+Crypto fee billing dates are distinct from provider creation timestamps and fill times.
+Reconciliation appends allowlisted activity metadata beside existing immutable
+financial entries; refreshing metadata never rewrites a booked fill or fee.
+Fee completeness remains unconfirmed because an activity query is not proof of
+zero additional fees. Estimates never become booked fees.
+
+The paper-only `trade_updates` stream records execution IDs, exact decimal fill
+values, and reported post-fill quantities for attempted Coqui orders. Binary
+frames, authentication, subscription acknowledgment, reconnects, credential
+rotation, and suspension are handled in the main process. This explicitly scoped
+execution-evidence stream does not add another market-data supplier.
+
+Stream checkpoints are observational. Their crypto-fee semantics have not yet
+been validated against an actual paper execution, so they cannot bypass the exact
+fills-minus-published-fees position guard. The paper-only minor exception policy below can prepare manual resume without
+assuming that stream checkpoints include crypto fees. Full recovery audits also reject completed foreign
+orders. Recovery queries do not submit orders.
+
+To replace a source-invalidated hourly shadow study after building the final code:
+
+```sh
+node scripts/restart-hourly-study.mjs --database=/path/to/coqui.db --profile=main
+```
+
+This is an explicit owner registration action. It retains the prior frozen policy
+and fold durations, starts at the next UTC midnight, and creates an isolated study
+namespace with a common $100,000 virtual opening. It does not replay observations,
+edit old results, reset the paper account, or unseal the prior holdout. Status reads
+the newest study namespace instead of continuing to display legacy coverage.
+
+## Manual resume and minor paper exceptions
+
+Scheduler retries never append a resumed event. A successful recovery leaves the
+experiment paused and shows Ready to resume. Resume performs a fresh full broker
+audit, position checks, current completed-market preparation, and kill-switch
+checks before arming the scheduler. Quote freshness is an independent gate at
+each order: only the submitted asset is requested and validated. Intraday
+planning requires fresh prices for assets held or assigned positive targets;
+assets with no holdings and no target do not block that plan. No order is submitted by recovery.
+
+The owner-authorized minor policy accepts only negative residuals matching the
+frozen 0.25% taker fee on known buys after the latest reported fee creation time,
+within three billionths of an asset per fill for classification rounding. The
+total discrepancy at fresh ask prices for only the discrepant assets must be at most $25 and 0.05% of paper
+equity. An unchanged account, no open orders, resolved own fills, a full activity
+audit, and repeat stable position reads are required. Missing fee timestamps,
+unknown assets, foreign fills, credits, larger losses, stale quotes, and ambiguous
+orders remain blocked.
+
+An accepted quantity is recorded as an explicit paper_position_resolution, not a
+fee or tax lot. It records the original discrepancy, account, policy, value and
+exact ledger fingerprint. Changes to fills, fees or orders invalidate it. When
+the delayed actual fee arrives, the original ledger is checked again without
+subtracting the exception a second time. Fee attribution stays unconfirmed. This
+policy changes only the isolated Alpaca paper simulation; Coinbase lots and
+financial entries are untouched.
+
+After recovery, a best-effort quote health read updates diagnostics. An unavailable
+or old health quote does not invalidate a successful broker reconciliation.
+Broker evidence shows each asset’s provider quote timestamp, last API response
+time, age, and freshness independently. A fresh scoped BTC read never refreshes
+ETH or LTC evidence. Missing prices stay unavailable; the 60-second order guard
+and Alpaca US execution source remain unchanged.
+
+### Paper-pass deadlines and recovery
+
+Each authoritative pass retains its 30-second deadline and execution lease.
+Execution preparation reserves 15 seconds for submission and pre-submission
+reserves 5 seconds. Paused recovery reserves no submission time and can use
+up to 10 seconds of the remaining pass budget for market preparation.
+The journal is loaded once per service pass; subsequent reads synchronize newly
+appended rows so an external user pause or broker update remains visible.
+Reconciliation indexes financial events rather than repeatedly parsing history.
+
+A deadline during a read-only pass defers work to the next scheduler check when
+all earlier attempts are resolved and this pass has made no submission attempt.
+An already active experiment stays active, with orders waiting for complete
+checks. A paused experiment never resumes automatically. Uncertain submissions
+remain blocked and are reconciled before any further submission. Durable pass
+records include the operation, elapsed and remaining time, and required reserve
+when an internal budget guard fires. Status exposes the latest completed,
+deferred, or blocked pass independently from position reconciliation.
+Recovery activity and the recovery panel identify the failing phase and display
+elapsed and remaining budget. A market-preparation timeout is labeled separately
+from an Alpaca read failure; older records without a phase remain unknown.
+
+Hourly shadow status revalidates the current registration. Obsolete provenance
+failures remain in history but do not replace valid current provenance; current
+source changes and malformed registrations still block collection. The runtime
+records its scheduler version and research behavior hash at startup, making
+loaded-build differences visible without exposing credentials.

@@ -22,14 +22,15 @@ function amount(value: unknown, code = 'invalid_amount'): Decimal {
   return result;
 }
 
-export function parallelQuotes(raw: unknown, nowMs: number): { prices: Record<string, Decimal>;
+export function parallelQuotes(raw: unknown, nowMs: number, requiredSymbols: readonly string[] = SYMBOLS): { prices: Record<string, Decimal>;
   sides: Record<string, { bid: string; ask: string; atMs: number }>; observedAtMs: number } {
   if (typeof raw !== 'object' || raw === null || !('quotes' in raw) ||
       typeof raw.quotes !== 'object' || raw.quotes === null) throw new Error('invalid_alpaca_quote');
   const source = raw.quotes as Record<string, unknown>;
   const observedAt: number[] = [];
   const sides: Record<string, { bid: string; ask: string; atMs: number }> = {};
-  const prices = Object.fromEntries(SYMBOLS.map((symbol) => {
+  if (!requiredSymbols.length || requiredSymbols.some(symbol => !SYMBOLS.some(known => known === symbol)) || new Set(requiredSymbols).size !== requiredSymbols.length) throw new Error('invalid_alpaca_quote');
+  const prices = Object.fromEntries(requiredSymbols.map((symbol) => {
     const quote = source[`${symbol.slice(0, -3)}/USD`];
     if (typeof quote !== 'object' || quote === null || !('bp' in quote) || !('ap' in quote) || !('t' in quote)) {
       throw new Error('invalid_alpaca_quote');
@@ -126,8 +127,16 @@ export async function executeParallelIntraday(input: {
     .map((event) => event.detail['clientOrderId']));
   if (open.some((order) => !knownIds.has(order.client_order_id))) throw new Error('unexpected_alpaca_order');
   if (hasPending || open.length > 0) return;
+  const planningPositions = await input.client.positions();
+  const neededSymbols = SYMBOLS.filter(symbol => {
+    const id = instrumentKey(PARALLEL_INSTRUMENTS.find(asset => asset.productId.replace('-', '') === symbol)!);
+    return amount(planningPositions.find(position => position.symbol.replace('/', '') === symbol)?.qty ?? '0').gt(0) || amount(weights[id] ?? 0).gt(0);
+  });
+  if (!neededSymbols.length) {
+    input.append('intraday_complete', `intraday-complete:${slot}`, { slot, decisionDay, orderCount: 0 }); return;
+  }
   let quoteRead: ReturnType<typeof parallelQuotes>;
-  try { quoteRead = parallelQuotes(await input.client.latestCryptoQuotes(), input.nowMs); }
+  try { quoteRead = parallelQuotes(await input.client.latestCryptoQuotes(neededSymbols.map(symbol => `${symbol.slice(0, -3)}/USD`)), input.nowMs, neededSymbols); }
   catch (error) {
     const reason = error instanceof AlpacaPaperError ? `alpaca_quote_${error.code}`
       : parallelSafeFailureReason(error, 'alpaca_quote_unavailable');
@@ -144,7 +153,7 @@ export async function executeParallelIntraday(input: {
     let planned: { symbol: string; side: 'buy' | 'sell'; qty: string; clientOrderId: string }[];
     if (existing === undefined) {
       const [account, positions, ...assets] = await Promise.all([input.client.account(), input.client.positions(),
-        ...SYMBOLS.map((symbol) => input.client.asset(symbol))]);
+        ...neededSymbols.map((symbol) => input.client.asset(symbol))]);
       const equity = amount(account.equity);
       if (!equity.isPositive()) throw new Error('alpaca_equity_unavailable');
       let available = amount(account.cash);
@@ -157,9 +166,10 @@ export async function executeParallelIntraday(input: {
               attempt.kind === 'submit_attempt' && attempt.detail['clientOrderId'] === intent.detail['clientOrderId']))) continue;
         const position = positions.find((item) => item.symbol.replace('/', '') === symbol);
         const held = amount(position?.qty ?? '0');
-        const actual = held.mul(prices[symbol]!);
         const assetId = instrumentKey(PARALLEL_INSTRUMENTS.find((item) => item.productId.replace('-', '') === symbol)!);
         const target = equity.mul(String(weights[assetId] ?? 0));
+        if (!prices[symbol]) { if (held.gt(0) || target.gt(0)) throw new Error('material_sizing_inputs_changed'); continue; }
+        const actual = held.mul(prices[symbol]!);
         if (target.minus(actual).abs().div(equity).lessThan(BAND)) continue;
         let delta = target.div(prices[symbol]!).minus(held);
         if ((stage === 'sell' && !delta.isNegative()) || (stage === 'buy' && !delta.isPositive())) continue;
@@ -239,8 +249,8 @@ export async function recordParallelPreOrder(client: Client, now: () => number, 
   if (!intended.isPositive() || !sizedQuantity(intended, asset).eq(intended)) throw new Error('material_sizing_inputs_changed');
   if (order.side === 'sell' && intended.gt(positions.find((item) => item.symbol.replace('/', '') === order.symbol)?.qty ?? '0'))
     throw new Error('material_sizing_inputs_changed');
-  const raw = await client.latestCryptoQuotes();
-  const quote = parallelQuotes(raw, now());
+  const raw = await client.latestCryptoQuotes([`${order.symbol.slice(0, -3)}/USD`]);
+  const quote = parallelQuotes(raw, now(), [order.symbol]);
   const sides = quote.sides[order.symbol]!;
   const midpoint = quote.prices[order.symbol]!;
   const notional = midpoint.mul(order.qty);

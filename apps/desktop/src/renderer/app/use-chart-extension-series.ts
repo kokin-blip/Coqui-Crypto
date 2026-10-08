@@ -24,7 +24,7 @@ export function useChartExtensionSeries(
   extensionIds: readonly string[],
   bars: readonly WorkstationBar[],
 ): ExtensionSeriesState {
-  const inputKey = JSON.stringify(bars.filter(bar => bar.isComplete).slice(-2_000).map(({productId,interval,startTimeMs,open,high,low,close,volume})=>({productId,interval,startTimeMs,open,high,low,close,volume})));
+  const inputKey = useMemo(() => JSON.stringify(bars.filter(bar => bar.isComplete).slice(-2_000).map(({productId,interval,startTimeMs,open,high,low,close,volume})=>({productId,interval,startTimeMs,open,high,low,close,volume}))), [bars]);
   const completed = useMemo<readonly WorkstationBar[]>(() => JSON.parse(inputKey) as WorkstationBar[], [inputKey]);
   const idsKey = [...new Set(extensionIds)].join('|');
   const ids = useMemo(() => idsKey === '' ? [] : idsKey.split('|'), [idsKey]);

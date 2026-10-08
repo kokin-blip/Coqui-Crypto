@@ -1,6 +1,6 @@
 import { Decimal } from 'decimal.js';
 
-import { AlpacaPaperError, type AlpacaPaperAsset } from '@coqui/adapters';
+import { AlpacaPaperError, type RequestDeadline, type AlpacaPaperAsset } from '@coqui/adapters';
 import { instrumentKey } from '@coqui/core';
 import type { ParallelPaperEvent } from '@coqui/storage';
 
@@ -29,8 +29,8 @@ export function parallelSafeFailureReason(error: unknown, fallback: string): str
   return error instanceof Error && SAFE_FAILURE_REASONS.has(error.message) ? error.message : fallback;
 }
 
-const SAFE_OPERATIONS = new Set(['unknown', 'credentials', 'account', 'positions', 'orders', 'order_lookup',
-  'asset', 'activities', 'quote', 'assets', 'orderbook', 'submit', 'cancel', 'broker_reconciliation', 'activity_reconciliation']);
+const SAFE_OPERATIONS = new Set(['market_preparation', 'pre_submission', 'paper_pass', 'unknown', 'credentials', 'account', 'positions', 'orders', 'order_lookup',
+  'asset', 'activities', 'quote', 'assets', 'orderbook', 'submit', 'cancel', 'trade_stream', 'resume_preflight', 'broker_reconciliation', 'activity_reconciliation']);
 export function parallelSafeOperation(operation: unknown): string {
   return typeof operation === 'string' && SAFE_OPERATIONS.has(operation) ? operation : 'unknown';
 }
@@ -42,13 +42,25 @@ export interface PaperPositionDifference {
   readonly differenceQty: string;
 }
 
+export class ParallelBudgetError extends Error {
+  readonly remainingMs: number;
+  constructor(readonly operation: string, deadline: RequestDeadline, readonly requiredReservationMs: number,
+    readonly elapsedMs?: number, readonly budgetMs?: number) {
+    super('deadline_exceeded'); this.remainingMs = deadline.remainingMs();
+  }
+}
+
 export class ParallelReconciliationError extends Error {
   constructor(reason: string, readonly operation: string, readonly failure?: AlpacaPaperError,
     readonly positionDifferences: readonly PaperPositionDifference[] = []) { super(reason); }
 }
 
 export function parallelPaperFailureDetail(error: unknown, fallback: string):
-  { reason: string; operation?: string; httpStatus?: number; attemptCount?: number; elapsedMs?: number; budgetMs?: number | null; remainingMs?: number | null; positionDifferences?: readonly PaperPositionDifference[] } {
+  { reason: string; operation?: string; httpStatus?: number; attemptCount?: number; elapsedMs?: number; budgetMs?: number | null; remainingMs?: number | null; positionDifferences?: readonly PaperPositionDifference[]; requiredReservationMs?: number } {
+  if (error instanceof ParallelBudgetError) return { reason: error.message, operation: error.operation,
+    remainingMs: error.remainingMs, requiredReservationMs: error.requiredReservationMs,
+    ...(error.elapsedMs === undefined ? {} : { elapsedMs: error.elapsedMs }),
+    ...(error.budgetMs === undefined ? {} : { budgetMs: error.budgetMs }) };
   if (error instanceof AlpacaPaperError) return {
     reason: error.code === 'deadline_exceeded' ? 'deadline_exceeded' : `alpaca_${error.code}`, operation: parallelSafeOperation(error.operation),
     attemptCount: error.attemptCount, elapsedMs: error.elapsedMs, budgetMs: error.budgetMs, remainingMs: error.remainingMs,

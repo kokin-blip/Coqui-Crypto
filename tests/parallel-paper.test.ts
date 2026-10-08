@@ -7,7 +7,10 @@ import { assetExposureKey, connectionAccountSnapshotV2Hash, FixedClock, instrume
 import { ParallelPaperService, PARALLEL_INSTRUMENTS, parallelAnchor, parallelDecision,
   type MlSignalSnapshot, type PaperDecisionPreparation } from '../packages/services/src/index.js';
 import { appendParallelEvent, listParallelEvents, openDatabase, saveConnectionAccountSnapshotV2, saveProfileConnectionV2,
-  setSetting } from '../packages/storage/src/index.js';
+  appendHourlyExecutionRecord, listHourlyExecutionRecords, listStudyInstances, setSetting } from '../packages/storage/src/index.js';
+import { restartHourlyStudy } from '../packages/services/src/paper/restart-hourly-study.js';
+import { hourlyShadowStatus } from '../packages/services/src/paper/parallel-hourly-shadow.js';
+import { canonicalJson, HOURLY_EXECUTION_V1 } from '../packages/core/src/index.js';
 
 const TODAY = Date.parse('2026-09-24T00:06:00Z');
 const DAY = 86_400_000;
@@ -89,7 +92,53 @@ function mockClient(submitFailure = false, fillStatus = 'filled', quoteAtMs: num
 }
 
 describe('parallel paper experiment', () => {
-  it('retries a market-data pause and resumes only after the current bar is ready', async () => {
+  it('captures only its own attempted executions once and cannot resume from an unvalidated net-position update', async () => {
+    const { database, clock, secrets } = await setup();
+    const mock = mockClient();
+    const ready: PaperDecisionPreparation = { ok: true, dataset: dataset(), datasetHash: sha256Hex('data'),
+      latestCompletedStartMs: TODAY - DAY, expectedCompletedStartMs: TODAY - DAY, ruleSnapshotHash: sha256Hex('rules') };
+    const service = new ParallelPaperService({profileId:'main',database,clock,secrets,preparation:()=>ready,
+      refreshFor:async()=>ready,clientFactory:()=>mock.client as never,killSwitchEngaged:()=>false});
+    await service.start('stream-evidence',true); await service.tick();
+    const current = service.status(), order = current.events.find((event)=>event.kind==='external_order')!;
+    const update = { executionId:'exec-1',orderId:String(order.detail['orderId']),clientOrderId:String(order.detail['clientOrderId']),
+      symbol:String(order.detail['symbol']),side:'buy' as const,at:new Date(TODAY).toISOString(),
+      quantity:String(order.detail['filledQty']),filledQty:String(order.detail['filledQty']),price:'100',positionQty:'0.01' };
+    service.recordTradeUpdate('wrong-experiment',update);
+    service.recordTradeUpdate(current.experiment!.id,{...update,clientOrderId:'foreign'});
+    expect(service.status().events.filter((event)=>event.kind==='broker_trade_update')).toHaveLength(0);
+    service.recordTradeUpdate(current.experiment!.id,update); service.recordTradeUpdate(current.experiment!.id,update);
+    expect(service.status().events.filter((event)=>event.kind==='broker_trade_update')).toHaveLength(1);
+    mock.client.positions = async()=>[{symbol:update.symbol,qty:'0.01',market_value:'1'}];
+    await service.retryReconciliation();
+    expect(service.summary().reconciliationAttention.blocked).toBe(true);
+    expect(service.summary().brokerEvidence).toMatchObject({positionStatus:'unreconciled',feeCoverage:'unconfirmed',capturedExecutionCount:1});
+    expect(mock.submit).toHaveBeenCalledTimes(3);
+    database.close();
+  });
+
+  it('starts a prospective hourly study in a fresh namespace without reusing legacy observations', async () => {
+    const { database, clock, secrets } = await setup(); const mock=mockClient();
+    const ready: PaperDecisionPreparation={ok:true,dataset:dataset(),datasetHash:sha256Hex('data'),
+      latestCompletedStartMs:TODAY-DAY,expectedCompletedStartMs:TODAY-DAY,ruleSnapshotHash:sha256Hex('rules')};
+    const service=new ParallelPaperService({profileId:'main',database,clock,secrets,preparation:()=>ready,
+      refreshFor:async()=>ready,clientFactory:()=>mock.client as never,killSwitchEngaged:()=>false});
+    await service.start('restart-hourly',true);
+    const oldStart=Math.floor(TODAY/DAY)*DAY-10*DAY;
+    appendHourlyExecutionRecord('main',{kind:'study',key:HOURLY_EXECUTION_V1.id,atMs:oldStart-DAY,
+      body:{version:HOURLY_EXECUTION_V1.id,startMs:oldStart,foldEndsMs:[oldStart+30*DAY,oldStart+60*DAY,oldStart+90*DAY],
+        holdoutEndMs:oldStart+120*DAY,planHash:sha256Hex(canonicalJson(HOURLY_EXECUTION_V1)),sourceHash:sha256Hex('old-code')}},database);
+    appendHourlyExecutionRecord('main',{kind:'observation',key:'old',atMs:oldStart,body:{}},database);
+    const instance=restartHourlyStudy({profileId:'main',db:database,nowMs:TODAY,artifactHash:sha256Hex('artifact')});
+    expect(instance.definition.startMs).toBe(Math.floor(TODAY/DAY)*DAY+DAY);
+    expect(instance.definition.holdoutEndMs-instance.definition.startMs).toBe(120*DAY);
+    expect(listHourlyExecutionRecords('main','observation',database)).toHaveLength(1);
+    expect(hourlyShadowStatus('main',database)).toMatchObject({startMs:instance.definition.startMs,observationCount:0,lastFailureReason:null});
+    expect(restartHourlyStudy({profileId:'main',db:database,nowMs:TODAY+1000,artifactHash:sha256Hex('artifact')})).toEqual(instance);
+    expect(listStudyInstances('main',HOURLY_EXECUTION_V1.id,database)).toHaveLength(1);
+    database.close();
+  });
+  it('repairs a market-data pause but requires manual resume after the current bar is ready', async () => {
     const { database, clock, secrets } = await setup();
     const mock = mockClient();
     const ready: PaperDecisionPreparation = { ok: true, dataset: dataset(),
@@ -110,6 +159,10 @@ describe('parallel paper experiment', () => {
     expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'market_fetch_failed' });
     preparation = ready;
     await service.tick();
+    expect(service.summary()).toMatchObject({ state: 'paused', reconciliationAttention: { blocked: false } });
+    expect(mock.submit).not.toHaveBeenCalled();
+    expect(service.transition('resumed', 'manual-resume')).toBe(true);
+    await service.tick();
     expect(service.summary()).toMatchObject({ state: 'active', decisionCount: 1 });
     expect(mock.submit).toHaveBeenCalled();
     service.transition('paused', 'manual-pause-test');
@@ -118,7 +171,7 @@ describe('parallel paper experiment', () => {
     database.close();
   });
 
-  it('resumes after temporary credential access returns without overriding a user pause', async () => {
+  it('prepares manual resume after credential access returns without overriding a user pause', async () => {
     const { database, clock, secrets } = await setup();
     const prepared: PaperDecisionPreparation = { ok: true, dataset: dataset(),
       datasetHash: sha256Hex('data'), latestCompletedStartMs: TODAY - DAY,
@@ -137,6 +190,10 @@ describe('parallel paper experiment', () => {
     failRead = true;
     await service.tick();
     expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'secret_store_unavailable' });
+    await service.tick();
+    expect(service.summary()).toMatchObject({ state: 'paused', reconciliationAttention: { blocked: false } });
+    expect(mock.submit).not.toHaveBeenCalled();
+    expect(service.transition('resumed', 'manual-resume')).toBe(true);
     await service.tick();
     expect(service.summary()).toMatchObject({ state: 'active', decisionCount: 1 });
     service.transition('paused', 'manual-pause-test');
@@ -226,7 +283,7 @@ describe('parallel paper experiment', () => {
     database.close();
   });
 
-  it('automatically resumes after an Alpaca read outage and records the failing operation', async () => {
+  it('repairs an Alpaca read outage without automatically enabling trading', async () => {
     const { database, clock, secrets } = await setup();
     const mock = mockClient();
     const prepared = { ok: true as const, dataset: dataset(), datasetHash: sha256Hex('data'),
@@ -249,9 +306,14 @@ describe('parallel paper experiment', () => {
     expect(service.summary().activity[0]?.detail).toContain('Alpaca account · HTTP 503');
     unavailable = false;
     await service.tick();
+    expect(service.summary()).toMatchObject({ state: 'paused', reconciliationAttention: { blocked: false } });
+    expect(mock.submit).not.toHaveBeenCalled();
+    expect(service.status().events.some((event) => event.kind === 'resumed')).toBe(false);
+    expect(service.transition('resumed', 'manual-resume')).toBe(true);
+    await service.tick();
     expect(service.summary()).toMatchObject({ state: 'active', decisionCount: 1 });
     expect(service.status().events.some((event) => event.kind === 'resumed' &&
-      event.detail['reason'] === 'dependencies_recovered')).toBe(true);
+      event.detail['reason'] === 'user_action')).toBe(true);
     database.close();
   });
 
@@ -306,6 +368,10 @@ describe('parallel paper experiment', () => {
     expect(service.summary().activity[0]).toMatchObject({ kind: 'no_trade', title: 'No Alpaca order needed' });
     clock.set(TODAY + 240_000);
     expect(service.summary()).toMatchObject({ runtimeState: 'attention', lastCheckAtMs: TODAY });
+    const restarted = new ParallelPaperService({ profileId: 'main', database, clock, secrets,
+      preparation: () => prepared, refreshFor: async () => prepared,
+      clientFactory: () => mockClient().client as never, killSwitchEngaged: () => false });
+    expect(restarted.summary()).toMatchObject({ runtimeState: 'attention', lastCheckAtMs: TODAY });
     database.close();
   });
 

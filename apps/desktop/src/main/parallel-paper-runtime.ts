@@ -1,7 +1,7 @@
 import { createRequestDeadline, type HttpClient, type SecretStore } from '@coqui/adapters';
-import type { Clock } from '@coqui/core';
+import { STUDY_BEHAVIOR_HASHES, type Clock } from '@coqui/core';
 import { ParallelPaperService, PARALLEL_INSTRUMENTS, resolveKillSwitch } from '@coqui/services';
-import { appendParallelEvent, latestParallelExperiment, listParallelEvents, parallelExperimentStatus, type Db } from '@coqui/storage';
+import { appendParallelEvent, countParallelEvents, latestParallelExperiment, listParallelEvents, parallelExperimentStatus, type Db } from '@coqui/storage';
 
 import { createPaperMarketFeed, type PaperMarketFeedDependencies } from './paper-market.js';
 import type { createMlSignalRuntime } from './ml-signal-runtime.js';
@@ -22,6 +22,12 @@ export function createParallelPaperRuntime(input: {
   readonly marketSelector?: { refresh(): Promise<void> };
   readonly mlSignal?: ReturnType<typeof createMlSignalRuntime>;
 }) {
+  const loadedAtMs = input.clock.nowMs(), build = { schedulerVersion: 'paper-recovery-budget-v3',
+    behaviorHash: STUDY_BEHAVIOR_HASHES['trendvol-hourly-execution-v1'] };
+  console.info('Coqui paper runtime loaded', build);
+  const existing = latestParallelExperiment(input.profileId, input.database);
+  if (existing) appendParallelEvent({ experimentId: existing.id, profileId: input.profileId,
+    kind: 'runtime_build', key: `runtime-build:${loadedAtMs}`, at: loadedAtMs, detail: build }, input.database);
   const market = createPaperMarketFeed({ database: input.database, http: input.http, now: () => input.clock.nowMs(),
     instruments: () => PARALLEL_INSTRUMENTS, bars: input.bars,
     onUnexpectedError: input.onUnexpectedError });
@@ -35,7 +41,7 @@ export function createParallelPaperRuntime(input: {
       const started = performance.now(), budgetMs = deadline?.remainingMs() ?? null;
       const record = (kind: string) => {
         if (experiment) appendParallelEvent({ experimentId: experiment.id, profileId: input.profileId,
-          kind, key: `${kind}:${nowMs}:${listParallelEvents(experiment.id, input.profileId, input.database).length}`,
+          kind, key: `${kind}:${nowMs}:${countParallelEvents(experiment.id, input.profileId, input.database)}`,
           at: input.clock.nowMs(), detail: { operation: 'market_preparation', startedAtMs: nowMs,
             elapsedMs: performance.now() - started, budgetMs, remainingMs: deadline?.remainingMs() ?? null } }, input.database);
       };
@@ -64,8 +70,11 @@ export function createParallelPaperRuntime(input: {
           const orders = events.filter((event) => event.kind === 'submit_attempt' && event.at >= slot && event.at < slot+900_000).length;
           const pauseReason = [...events].reverse().find((event) => event.kind === 'paused')?.detail['reason'];
           const skipped = [...events].reverse().find((event) => event.kind === 'intraday_skipped' && event.at >= slot && event.at < slot + 900_000);
+          const deferred = events.findLast(event => event.kind === 'pass_deferred' && event.at >= now);
+          reason ??= deferred ? 'deadline_exceeded' : null;
           reason ??= typeof skipped?.detail['reason'] === 'string' ? skipped.detail['reason'] : null;
-          reason ??= status === 'paused' && typeof pauseReason === 'string' ? pauseReason : null;
+          const recovered = events.some(event => event.kind === 'pass_complete' && event.at >= now);
+          reason ??= status === 'paused' && !recovered && typeof pauseReason === 'string' ? pauseReason : null;
           const outcome = ['stale_host_authority','execution_lease_unavailable','host_suspended'].includes(reason ?? '') ? 'host_unavailable' : reason === 'deadline_exceeded' ? 'deadline_exceeded' : reason === 'stale_alpaca_quote' ? 'stale_quote' : status === 'paused' ? 'paused' : pending ? 'pending_order'
             : !market.preparation().ok ? 'stale_evidence' : completed ? (orders ? 'observed' : 'no_order') : 'stale_evidence';
           appendParallelEvent({ experimentId: experiment.id, profileId: input.profileId, kind: now < slot+900_000 ? 'slot_outcome' : 'readiness_check',

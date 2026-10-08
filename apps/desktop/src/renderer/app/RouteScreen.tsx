@@ -2,18 +2,19 @@ import type { CoquiClient } from '@coqui/contracts';
 import { lazy, Suspense } from 'react';
 
 import { RouteEvidenceBoundary } from './RouteEvidenceBoundary.js';
-import { Alerts } from './Alerts.js';
-import { Activity } from './Activity.js';
-import { Allocation } from './Allocation.js';
-import { Events } from './Events.js';
-import { OperationsFloor } from './OperationsFloor.js';
-import { PaperTrading } from './PaperTrading.js';
-import { Portfolio } from './Portfolio.js';
-import { Reconciliation } from './Reconciliation.js';
 import { routeDefinition, routeHash, type AppRoute } from './routes.js';
-import { Scoreboard } from './Scoreboard.js';
-import { Settings } from './Settings.js';
-import { Tax } from './Tax.js';
+
+const Alerts = lazy(async () => ({ default: (await import('./Alerts.js')).Alerts }));
+const Activity = lazy(async () => ({ default: (await import('./Activity.js')).Activity }));
+const Allocation = lazy(async () => ({ default: (await import('./Allocation.js')).Allocation }));
+const Events = lazy(async () => ({ default: (await import('./Events.js')).Events }));
+const OperationsFloor = lazy(async () => ({ default: (await import('./OperationsFloor.js')).OperationsFloor }));
+const PaperTrading = lazy(async () => ({ default: (await import('./PaperTrading.js')).PaperTrading }));
+const Portfolio = lazy(async () => ({ default: (await import('./Portfolio.js')).Portfolio }));
+const Reconciliation = lazy(async () => ({ default: (await import('./Reconciliation.js')).Reconciliation }));
+const Scoreboard = lazy(async () => ({ default: (await import('./Scoreboard.js')).Scoreboard }));
+const Settings = lazy(async () => ({ default: (await import('./Settings.js')).Settings }));
+const Tax = lazy(async () => ({ default: (await import('./Tax.js')).Tax }));
 
 const Markets = lazy(async () => ({ default: (await import('./Markets.js')).Markets }));
 const Overview = lazy(async () => ({ default: (await import('./Overview.js')).Overview }));

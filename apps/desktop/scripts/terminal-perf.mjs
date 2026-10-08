@@ -63,16 +63,31 @@ ipcMain.handle('coqui:query', async (_event, channel, payload) => {
 });
 const window = new BrowserWindow({ show: false, width: 1920, height: 1080, webPreferences: { ...WEB_PREFERENCES, backgroundThrottling: false, preload: join(root, 'dist/preload/index.cjs') } });
 const evaluate = code => window.webContents.executeJavaScript(code);
+// Optional audit instrumentation; never installed in the shipped application.
+if (process.env.COQUI_PERF_AUDIT === '1') {
+  await window.loadURL('about:blank');
+  window.webContents.debugger.attach('1.3');
+  await window.webContents.debugger.sendCommand('Performance.enable');
+
+}
 const wait = predicate => evaluate(`new Promise((resolve,reject)=>{const end=performance.now()+15000;const check=()=>{if(${predicate})resolve(true);else if(performance.now()>end)reject(new Error('Terminal timeout: '+${JSON.stringify(predicate)}));else requestAnimationFrame(check)};check()})`);
 try {
+  const startupStarted = Date.now();
   if(process.env.COQUI_PERF_DEV_URL)await window.loadURL(`${process.env.COQUI_PERF_DEV_URL}/#/settings`);
   else await window.loadFile(join(root, 'dist/renderer/index.html'), { hash: '/settings' });
   await wait('document.querySelector(".app-shell")');
+  const shellMs = Date.now() - startupStarted;
   const coldStart = Date.now();
   await evaluate("location.hash='/overview'");
   await wait('document.querySelector(".trading-workstation-chart canvas")');
   const coldChartMs = Date.now() - coldStart;
   const navigation = [];
+  const heapSnapshot = async () => {
+    if (process.env.COQUI_PERF_AUDIT !== '1') return null;
+    await window.webContents.debugger.sendCommand('HeapProfiler.collectGarbage');
+    return window.webContents.debugger.sendCommand('Runtime.getHeapUsage');
+  };
+  const heapBeforeNavigation = await heapSnapshot();
   for (let i = 0; i < 12; i++) {
     await evaluate("location.hash='/settings'");
     await wait('!document.querySelector(".terminal-workspace")');
@@ -81,6 +96,7 @@ try {
     await wait('document.querySelector(".trading-workstation-chart canvas")');
     navigation.push(Date.now() - start);
   }
+  const heapAfterNavigation = await heapSnapshot();
   if(activity!==null){await evaluate("document.querySelector('#terminal-data-tab-1').click()");await wait("document.querySelector('.chart-evidence-list')?.textContent.includes('+9.00') && document.querySelector('.terminal-execution-trail')?.textContent.includes('fixture-close')");}
   await wait("document.querySelector('.chart-drawing-layer line')!==null");
   const oldX=await evaluate("Number(document.querySelector('.chart-drawing-layer line').getAttribute('x1'))");
@@ -89,19 +105,61 @@ try {
   await new Promise(resolve=>setTimeout(resolve,250));
   const viewportX=await evaluate("Number(document.querySelector('.chart-drawing-layer line').getAttribute('x1'))");
   if(Math.abs(viewportX-oldX)<1)throw new Error('Viewport probe did not zoom');
-  await evaluate(`window.__terminalRemoved=0; window.__terminalLongTasks=[];
+  await evaluate(`window.__terminalRemoved=0; window.__terminalLongTasks=[]; window.__terminalFrames=[];
+    window.__terminalFrameActive=true; let lastFrame;
+    const sampleFrame=now=>{if(lastFrame!==undefined)window.__terminalFrames.push(now-lastFrame);lastFrame=now;if(window.__terminalFrameActive)requestAnimationFrame(sampleFrame)};requestAnimationFrame(sampleFrame);
     window.__terminalObserver=new MutationObserver(records=>{for(const r of records)for(const n of r.removedNodes)if(n.nodeType===1)window.__terminalRemoved+=(n.matches?.('canvas')?1:0)+(n.querySelectorAll?.('canvas').length??0)});
     window.__terminalObserver.observe(document.querySelector('.terminal-price-panel'),{childList:true,subtree:true});
     window.__terminalPerfObserver=new PerformanceObserver(list=>window.__terminalLongTasks.push(...list.getEntries().map(e=>e.duration)));
     window.__terminalPerfObserver.observe({type:'longtask',buffered:false});`);
   const evaluationsBeforeFeed=extensionEvaluations;
+  const auditMetrics = async () => process.env.COQUI_PERF_AUDIT === '1'
+    ? Object.fromEntries((await window.webContents.debugger.sendCommand('Performance.getMetrics')).metrics.map(m => [m.name, m.value])) : null;
+  const auditBefore = await auditMetrics();
+  await evaluate('window.__auditRenders && (window.__auditRenders = {})');
   // Each wait is short so the caller can collect progress while the benchmark runs.
   for (let i = 0; i < seconds; i++) {if(i===Math.floor(seconds/2))await evaluate("document.querySelector('#microstructure-tab-1').click()");await new Promise(resolve => setTimeout(resolve, 1000));}
   const updates = await evaluate('({removedCanvases:window.__terminalRemoved,longTasks:window.__terminalLongTasks})');
+  await evaluate('window.__terminalFrameActive=false');
+  const percentile = (values, p) => [...values].sort((a,b)=>a-b)[Math.max(0,Math.ceil(values.length*p)-1)] ?? 0;
+  const frames = await evaluate('window.__terminalFrames');
   const finalX=await evaluate("Number(document.querySelector('.chart-drawing-layer line').getAttribute('x1'))");
   const viewportDriftPx=Math.abs(finalX-viewportX);
   const p75 = navigation.sort((a,b)=>a-b)[Math.ceil(navigation.length*.75)-1];
-  const result = { coldChartMs, cachedNavigationP75Ms: p75, feedSeconds: seconds, ticks, feedTicks, bookQueries, tradeQueries, historyQueries, unchangedExtensionEvaluations:extensionEvaluations-evaluationsBeforeFeed, viewportDriftPx, ...updates };
+  const result = { shellMs, coldChartMs, cachedNavigationP75Ms: p75, feedSeconds: seconds, ticks, feedTicks, bookQueries, tradeQueries, historyQueries, unchangedExtensionEvaluations:extensionEvaluations-evaluationsBeforeFeed, viewportDriftPx, frameP95Ms:percentile(frames,.95), framesOver34Ms:frames.filter(ms=>ms>34).length, ...updates };
+  if (auditBefore !== null) {
+    const after = await auditMetrics();
+    result.audit = {
+      renders: await evaluate('window.__auditRenders'),
+      metrics: Object.fromEntries(['TaskDuration', 'ScriptDuration', 'LayoutDuration', 'RecalcStyleDuration', 'LayoutCount', 'RecalcStyleCount'].map(key => [key, after[key] - auditBefore[key]])),
+      dom: await evaluate(`({ elements: document.querySelectorAll('*').length, svg: document.querySelectorAll('svg').length, svgNodes: document.querySelectorAll('svg *').length, canvases: document.querySelectorAll('canvas').length })`),
+      heapUsedBytes: after.JSHeapUsedSize,
+      navigationHeap: { before: heapBeforeNavigation, after: heapAfterNavigation },
+    };
+  }
+  if (process.env.COQUI_PERF_INTERACTIONS === '1') {
+    const samples=[];
+    const bounds=await evaluate("(()=>{const r=document.querySelector('.chart-canvas').getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height}})()");
+    const before=await auditMetrics();
+    for(let i=0;i<120;i++){
+      const started=Date.now();
+      window.webContents.sendInputEvent({type:'mouseMove',x:Math.round(bounds.x+20+(bounds.width-80)*(i%60)/60),y:Math.round(bounds.y+bounds.height/2)});
+      await evaluate('new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))');
+      samples.push(Date.now()-started);
+    }
+    const after=await auditMetrics();
+    result.crosshair={samples:samples.length,p75Ms:percentile(samples,.75),p95Ms:percentile(samples,.95),...(before===null?{}:{scriptSeconds:after.ScriptDuration-before.ScriptDuration,layoutSeconds:after.LayoutDuration-before.LayoutDuration})};
+    const scrollBefore=await auditMetrics();
+    const scroll=[];
+    for(let i=0;i<60;i++){
+      const started=Date.now();
+      window.webContents.sendInputEvent({type:'mouseWheel',x:Math.round(bounds.x+bounds.width+30),y:Math.round(bounds.y+bounds.height/2),deltaX:0,deltaY:i<30?60:-60,canScroll:true});
+      await evaluate('new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))');
+      scroll.push(Date.now()-started);
+    }
+    const scrollAfter=await auditMetrics();
+    result.scroll={samples:scroll.length,p75Ms:percentile(scroll,.75),p95Ms:percentile(scroll,.95),...(scrollBefore===null?{}:{scriptSeconds:scrollAfter.ScriptDuration-scrollBefore.ScriptDuration,layoutSeconds:scrollAfter.LayoutDuration-scrollBefore.LayoutDuration})};
+  }
   if(process.env.COQUI_PERF_OUTPUT){mkdirSync(process.env.COQUI_PERF_OUTPUT,{recursive:true});for(const [width,height] of [[1920,1080],[1440,900],[1280,800]]){window.setContentSize(width,height);await new Promise(resolve=>setTimeout(resolve,250));writeFileSync(join(process.env.COQUI_PERF_OUTPUT,`terminal-activity-${width}.png`),(await window.webContents.capturePage()).toPNG());}}
   console.log(JSON.stringify(result));
   if (process.env.COQUI_PERF_BASELINE !== '1' && (p75 > 200 || viewportDriftPx > .5 || extensionEvaluations-evaluationsBeforeFeed > 1 || updates.removedCanvases > 0 || updates.longTasks.some(ms=>ms>200))) process.exitCode = 1;

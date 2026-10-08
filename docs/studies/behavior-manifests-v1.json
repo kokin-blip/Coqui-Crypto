@@ -132,8 +132,12 @@
         "d5281c8f01551cccc520811eaf6787de45bb48564b78ec3f093e60b32c8d563e"
       ],
       [
+        "packages/adapters/src/http/alpaca-paper-stream.ts",
+        "79d0ca4325277a9ff5acc6a3de177c9b017480efa16d1d570e98fda864b61146"
+      ],
+      [
         "packages/adapters/src/http/alpaca-paper.ts",
-        "8a17e364469982bbd83b88a59cf48a9b0a74018b9d2e5ea63cba9792aa6e9b0c"
+        "86f4c17d64169c7c4bf03f6fa2dcf3afd1871bcfc52b1ac31b799f9b4c4a03bc"
       ],
       [
         "packages/adapters/src/http/alpaca-universe.ts",
@@ -157,7 +161,7 @@
       ],
       [
         "packages/adapters/src/http/index.ts",
-        "dc31e9a916ec7c6a2275ce3173a1059d80a9ae9c80cb46d02b2fbb407c08baa7"
+        "7f7d679c2f0198b1452f54c2906dfc4ede57304cba2d37589ae203138fff179a"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -313,7 +317,7 @@
       ],
       [
         "packages/contracts/src/schemas/parallel-paper.ts",
-        "092feaf58318fe7cfb69811b7c83560e6af727eaf9f03c966632ffb6d6171db7"
+        "ada24c3af90a6824fd5c95cdbcfbc7808123d7aa41be7ce74d950760b1ab8c1f"
       ],
       [
         "packages/contracts/src/schemas/portfolio.ts",
@@ -1100,6 +1104,10 @@
         "4df77ab085bc4fff52d00d49e4f294a498a61c0c23321f50db169fee31ea9448"
       ],
       [
+        "packages/services/src/paper/parallel-broker-evidence.ts",
+        "f9d4808e27b35842f0cdb8a26161338738e7463eed95772d9335f18f0e1e6758"
+      ],
+      [
         "packages/services/src/paper/parallel-execution-measurement.ts",
         "d0abbd73bf55a560b5c9c14a2030dbb5a0eaac05cbb8189fad07cfd59b7c789e"
       ],
@@ -1109,15 +1117,15 @@
       ],
       [
         "packages/services/src/paper/parallel-execution-safety.ts",
-        "cac183ca4884b639e9500f84bfce5263bbba03e1ab5e38e9b2bd924622220485"
+        "a01a90a6c24560db5f9d671487be968b11b887651934afbab8b7744ff00c5af7"
       ],
       [
         "packages/services/src/paper/parallel-fee-accounting.ts",
-        "2abb4eae97ff06edfa09ea4d9d3789b24e8662d9540d8953682986ef2617f2c2"
+        "b66369334709466a7bc54fbf7eb4a79d1f4e0ed1aef9cbc6e2aa02534dd12f70"
       ],
       [
         "packages/services/src/paper/parallel-hourly-shadow.ts",
-        "0e0ae5cdb00a0cc1a44ad52ca5f862d9643d3ba57c12859c57fa9db01de7d4e1"
+        "c433554a3dcc8281ebbf1d6abafcbe3caf60ed24c991bb17194f63a2260c1b76"
       ],
       [
         "packages/services/src/paper/parallel-ml-functional.ts",
@@ -1137,11 +1145,11 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-activity.ts",
-        "893a555ada11daea2adc31f5795ba3a98e88024378fd3fe37c65fca2129a493a"
+        "0c466b3cc0345f0cc5abcabd27f930b063d6b4cc1cb7fc2352c9f480875bed56"
       ],
       [
         "packages/services/src/paper/parallel-paper-attention.ts",
-        "faad1879bfcc582601cc71eb26af595c4adc14d8f965f2d880d81828edb29699"
+        "760e9148be43cdc08165258d3969a0ba6f746c695f5fa5333ab3cad8e6eb6d73"
       ],
       [
         "packages/services/src/paper/parallel-paper-daily.ts",
@@ -1149,11 +1157,23 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-intraday.ts",
-        "96315ff1977461f4b27ec150aeec3a1d8fab35e6a9c32c94c39fa82d8df80a02"
+        "42fdaf43ab8f657be5f924b0344216953e5e9aa2f46dfa31ec3f5413e75cde1e"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-local.ts",
+        "6feaafa88cda35ab30869241e3cdd8e3076c40b5a1c2cdaeae7c64ef4969b09e"
       ],
       [
         "packages/services/src/paper/parallel-paper-mark.ts",
         "b481b8b78e0a22918471787e13affb1d8c4a53f8983b7c0a9885d86dd320fec8"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-minor-recovery.ts",
+        "fa9870271ccda30a0fc3c2e5f189b269e74a986a4f824662acab6575d6ea2ced"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-pass.ts",
+        "10ce2ffb841aabaa946743f3b0cc4b01653781c647b93354b7a0eb5f6132ae71"
       ],
       [
         "packages/services/src/paper/parallel-paper-plans.ts",
@@ -1161,15 +1181,19 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-reconciliation.ts",
-        "1c69dfad59cdf9a4f006db3cee56f7caa046b0bcf012657a140d21eeab654008"
+        "9a496457a945ba3bc5f3ee534bce5171c5116e2fe9cd419fe8d27ea12894364f"
       ],
       [
         "packages/services/src/paper/parallel-paper-recovery.ts",
-        "7be147fcc5c1cf19e29d717072698ebbb776ce4c550c1286fb078803081f09ba"
+        "d5dffdd378a056eb6054b35a20b5b0c9faf414f2632e2d3bb376006a5d1967da"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-resolution.ts",
+        "2d8f9e7c2b8114a8f662c99b8f41afe52e519db7a0f53c9ae42bd41686ddc8e4"
       ],
       [
         "packages/services/src/paper/parallel-paper-service.ts",
-        "0a96dc1b49aa4ca68287ff68764864e62d1ced086df3e7df1285a5524b703c26"
+        "ecb1fbbb930cf12a0c3c92e8e267607c54b4db786a100677da30348b19472c00"
       ],
       [
         "packages/services/src/paper/parallel-paper-slots.ts",
@@ -1177,11 +1201,11 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-summary.ts",
-        "b3754dad831540b7d6970bf9f3d7e72bda2e30fc7059b40277b278eb6969ee7f"
+        "d2c0311fb6885e41d9b85c1380b31199b583690e9009c1cc6e81e2d2e7727162"
       ],
       [
         "packages/services/src/paper/parallel-paper-utils.ts",
-        "73cbd45d3e430109b2e6a47cbeb549e11c2f9da00e1af6d6b8d836d77481fa00"
+        "98adbc018c9098cf89a041805c8c52860d1a0c14a857bc8fcac4391692b6f1f1"
       ],
       [
         "packages/services/src/paper/parallel-signal.ts",
@@ -1289,7 +1313,7 @@
       ],
       [
         "packages/services/src/research/registered-study.ts",
-        "58d21be6e5f4983cd1ffd600eaf38aac596da1ab33e3283ef8083c3904dc5fab"
+        "73f0423326585c7c4409aa63da7886911b1939e7d84062e360b1a379fa2381e6"
       ],
       [
         "packages/services/src/research/remediation-report.ts",
@@ -1869,7 +1893,7 @@
       ],
       [
         "packages/storage/src/repositories/parallel-paper.ts",
-        "d14379bb490f3abd4475722216559a9cd670a98bc9165a9c0120d4cbdbac9a1b"
+        "9c88891571322d1a01059c6946acd40fb71f8645a4b4c656a93b6aa85a69f53a"
       ],
       [
         "packages/storage/src/repositories/portfolio-evidence.ts",
@@ -1980,7 +2004,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "6f7d50c1d4609055da166b5a33b6820deb806001c10adc22ef398c2e42d5052a"
+    "hash": "b35b565ffc1b1bed2af32383d19b0c9e6278fe730b1bc8766d8a2f359b966362"
   },
   "wider-breakout-v1": {
     "version": 1,
@@ -2115,8 +2139,12 @@
         "d5281c8f01551cccc520811eaf6787de45bb48564b78ec3f093e60b32c8d563e"
       ],
       [
+        "packages/adapters/src/http/alpaca-paper-stream.ts",
+        "79d0ca4325277a9ff5acc6a3de177c9b017480efa16d1d570e98fda864b61146"
+      ],
+      [
         "packages/adapters/src/http/alpaca-paper.ts",
-        "8a17e364469982bbd83b88a59cf48a9b0a74018b9d2e5ea63cba9792aa6e9b0c"
+        "86f4c17d64169c7c4bf03f6fa2dcf3afd1871bcfc52b1ac31b799f9b4c4a03bc"
       ],
       [
         "packages/adapters/src/http/alpaca-universe.ts",
@@ -2140,7 +2168,7 @@
       ],
       [
         "packages/adapters/src/http/index.ts",
-        "dc31e9a916ec7c6a2275ce3173a1059d80a9ae9c80cb46d02b2fbb407c08baa7"
+        "7f7d679c2f0198b1452f54c2906dfc4ede57304cba2d37589ae203138fff179a"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -2296,7 +2324,7 @@
       ],
       [
         "packages/contracts/src/schemas/parallel-paper.ts",
-        "092feaf58318fe7cfb69811b7c83560e6af727eaf9f03c966632ffb6d6171db7"
+        "ada24c3af90a6824fd5c95cdbcfbc7808123d7aa41be7ce74d950760b1ab8c1f"
       ],
       [
         "packages/contracts/src/schemas/portfolio.ts",
@@ -3083,6 +3111,10 @@
         "4df77ab085bc4fff52d00d49e4f294a498a61c0c23321f50db169fee31ea9448"
       ],
       [
+        "packages/services/src/paper/parallel-broker-evidence.ts",
+        "f9d4808e27b35842f0cdb8a26161338738e7463eed95772d9335f18f0e1e6758"
+      ],
+      [
         "packages/services/src/paper/parallel-execution-measurement.ts",
         "d0abbd73bf55a560b5c9c14a2030dbb5a0eaac05cbb8189fad07cfd59b7c789e"
       ],
@@ -3092,15 +3124,15 @@
       ],
       [
         "packages/services/src/paper/parallel-execution-safety.ts",
-        "cac183ca4884b639e9500f84bfce5263bbba03e1ab5e38e9b2bd924622220485"
+        "a01a90a6c24560db5f9d671487be968b11b887651934afbab8b7744ff00c5af7"
       ],
       [
         "packages/services/src/paper/parallel-fee-accounting.ts",
-        "2abb4eae97ff06edfa09ea4d9d3789b24e8662d9540d8953682986ef2617f2c2"
+        "b66369334709466a7bc54fbf7eb4a79d1f4e0ed1aef9cbc6e2aa02534dd12f70"
       ],
       [
         "packages/services/src/paper/parallel-hourly-shadow.ts",
-        "0e0ae5cdb00a0cc1a44ad52ca5f862d9643d3ba57c12859c57fa9db01de7d4e1"
+        "c433554a3dcc8281ebbf1d6abafcbe3caf60ed24c991bb17194f63a2260c1b76"
       ],
       [
         "packages/services/src/paper/parallel-ml-functional.ts",
@@ -3120,11 +3152,11 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-activity.ts",
-        "893a555ada11daea2adc31f5795ba3a98e88024378fd3fe37c65fca2129a493a"
+        "0c466b3cc0345f0cc5abcabd27f930b063d6b4cc1cb7fc2352c9f480875bed56"
       ],
       [
         "packages/services/src/paper/parallel-paper-attention.ts",
-        "faad1879bfcc582601cc71eb26af595c4adc14d8f965f2d880d81828edb29699"
+        "760e9148be43cdc08165258d3969a0ba6f746c695f5fa5333ab3cad8e6eb6d73"
       ],
       [
         "packages/services/src/paper/parallel-paper-daily.ts",
@@ -3132,11 +3164,23 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-intraday.ts",
-        "96315ff1977461f4b27ec150aeec3a1d8fab35e6a9c32c94c39fa82d8df80a02"
+        "42fdaf43ab8f657be5f924b0344216953e5e9aa2f46dfa31ec3f5413e75cde1e"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-local.ts",
+        "6feaafa88cda35ab30869241e3cdd8e3076c40b5a1c2cdaeae7c64ef4969b09e"
       ],
       [
         "packages/services/src/paper/parallel-paper-mark.ts",
         "b481b8b78e0a22918471787e13affb1d8c4a53f8983b7c0a9885d86dd320fec8"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-minor-recovery.ts",
+        "fa9870271ccda30a0fc3c2e5f189b269e74a986a4f824662acab6575d6ea2ced"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-pass.ts",
+        "10ce2ffb841aabaa946743f3b0cc4b01653781c647b93354b7a0eb5f6132ae71"
       ],
       [
         "packages/services/src/paper/parallel-paper-plans.ts",
@@ -3144,15 +3188,19 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-reconciliation.ts",
-        "1c69dfad59cdf9a4f006db3cee56f7caa046b0bcf012657a140d21eeab654008"
+        "9a496457a945ba3bc5f3ee534bce5171c5116e2fe9cd419fe8d27ea12894364f"
       ],
       [
         "packages/services/src/paper/parallel-paper-recovery.ts",
-        "7be147fcc5c1cf19e29d717072698ebbb776ce4c550c1286fb078803081f09ba"
+        "d5dffdd378a056eb6054b35a20b5b0c9faf414f2632e2d3bb376006a5d1967da"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-resolution.ts",
+        "2d8f9e7c2b8114a8f662c99b8f41afe52e519db7a0f53c9ae42bd41686ddc8e4"
       ],
       [
         "packages/services/src/paper/parallel-paper-service.ts",
-        "0a96dc1b49aa4ca68287ff68764864e62d1ced086df3e7df1285a5524b703c26"
+        "ecb1fbbb930cf12a0c3c92e8e267607c54b4db786a100677da30348b19472c00"
       ],
       [
         "packages/services/src/paper/parallel-paper-slots.ts",
@@ -3160,11 +3208,11 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-summary.ts",
-        "b3754dad831540b7d6970bf9f3d7e72bda2e30fc7059b40277b278eb6969ee7f"
+        "d2c0311fb6885e41d9b85c1380b31199b583690e9009c1cc6e81e2d2e7727162"
       ],
       [
         "packages/services/src/paper/parallel-paper-utils.ts",
-        "73cbd45d3e430109b2e6a47cbeb549e11c2f9da00e1af6d6b8d836d77481fa00"
+        "98adbc018c9098cf89a041805c8c52860d1a0c14a857bc8fcac4391692b6f1f1"
       ],
       [
         "packages/services/src/paper/parallel-signal.ts",
@@ -3272,7 +3320,7 @@
       ],
       [
         "packages/services/src/research/registered-study.ts",
-        "58d21be6e5f4983cd1ffd600eaf38aac596da1ab33e3283ef8083c3904dc5fab"
+        "73f0423326585c7c4409aa63da7886911b1939e7d84062e360b1a379fa2381e6"
       ],
       [
         "packages/services/src/research/remediation-report.ts",
@@ -3852,7 +3900,7 @@
       ],
       [
         "packages/storage/src/repositories/parallel-paper.ts",
-        "d14379bb490f3abd4475722216559a9cd670a98bc9165a9c0120d4cbdbac9a1b"
+        "9c88891571322d1a01059c6946acd40fb71f8645a4b4c656a93b6aa85a69f53a"
       ],
       [
         "packages/storage/src/repositories/portfolio-evidence.ts",
@@ -3963,7 +4011,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "4ceb3a5ddd246998a8928917b4ad0cb35f84005b15fbdac1e24cd6eec69b4ce0"
+    "hash": "a8fce15a5ac3a0cfba4b772ead8616bbd5ba941ca2ed39d0a5536adb7cec2371"
   },
   "wider-range-rotation-v1": {
     "version": 1,
@@ -4098,8 +4146,12 @@
         "d5281c8f01551cccc520811eaf6787de45bb48564b78ec3f093e60b32c8d563e"
       ],
       [
+        "packages/adapters/src/http/alpaca-paper-stream.ts",
+        "79d0ca4325277a9ff5acc6a3de177c9b017480efa16d1d570e98fda864b61146"
+      ],
+      [
         "packages/adapters/src/http/alpaca-paper.ts",
-        "8a17e364469982bbd83b88a59cf48a9b0a74018b9d2e5ea63cba9792aa6e9b0c"
+        "86f4c17d64169c7c4bf03f6fa2dcf3afd1871bcfc52b1ac31b799f9b4c4a03bc"
       ],
       [
         "packages/adapters/src/http/alpaca-universe.ts",
@@ -4123,7 +4175,7 @@
       ],
       [
         "packages/adapters/src/http/index.ts",
-        "dc31e9a916ec7c6a2275ce3173a1059d80a9ae9c80cb46d02b2fbb407c08baa7"
+        "7f7d679c2f0198b1452f54c2906dfc4ede57304cba2d37589ae203138fff179a"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -4279,7 +4331,7 @@
       ],
       [
         "packages/contracts/src/schemas/parallel-paper.ts",
-        "092feaf58318fe7cfb69811b7c83560e6af727eaf9f03c966632ffb6d6171db7"
+        "ada24c3af90a6824fd5c95cdbcfbc7808123d7aa41be7ce74d950760b1ab8c1f"
       ],
       [
         "packages/contracts/src/schemas/portfolio.ts",
@@ -5066,6 +5118,10 @@
         "4df77ab085bc4fff52d00d49e4f294a498a61c0c23321f50db169fee31ea9448"
       ],
       [
+        "packages/services/src/paper/parallel-broker-evidence.ts",
+        "f9d4808e27b35842f0cdb8a26161338738e7463eed95772d9335f18f0e1e6758"
+      ],
+      [
         "packages/services/src/paper/parallel-execution-measurement.ts",
         "d0abbd73bf55a560b5c9c14a2030dbb5a0eaac05cbb8189fad07cfd59b7c789e"
       ],
@@ -5075,15 +5131,15 @@
       ],
       [
         "packages/services/src/paper/parallel-execution-safety.ts",
-        "cac183ca4884b639e9500f84bfce5263bbba03e1ab5e38e9b2bd924622220485"
+        "a01a90a6c24560db5f9d671487be968b11b887651934afbab8b7744ff00c5af7"
       ],
       [
         "packages/services/src/paper/parallel-fee-accounting.ts",
-        "2abb4eae97ff06edfa09ea4d9d3789b24e8662d9540d8953682986ef2617f2c2"
+        "b66369334709466a7bc54fbf7eb4a79d1f4e0ed1aef9cbc6e2aa02534dd12f70"
       ],
       [
         "packages/services/src/paper/parallel-hourly-shadow.ts",
-        "0e0ae5cdb00a0cc1a44ad52ca5f862d9643d3ba57c12859c57fa9db01de7d4e1"
+        "c433554a3dcc8281ebbf1d6abafcbe3caf60ed24c991bb17194f63a2260c1b76"
       ],
       [
         "packages/services/src/paper/parallel-ml-functional.ts",
@@ -5103,11 +5159,11 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-activity.ts",
-        "893a555ada11daea2adc31f5795ba3a98e88024378fd3fe37c65fca2129a493a"
+        "0c466b3cc0345f0cc5abcabd27f930b063d6b4cc1cb7fc2352c9f480875bed56"
       ],
       [
         "packages/services/src/paper/parallel-paper-attention.ts",
-        "faad1879bfcc582601cc71eb26af595c4adc14d8f965f2d880d81828edb29699"
+        "760e9148be43cdc08165258d3969a0ba6f746c695f5fa5333ab3cad8e6eb6d73"
       ],
       [
         "packages/services/src/paper/parallel-paper-daily.ts",
@@ -5115,11 +5171,23 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-intraday.ts",
-        "96315ff1977461f4b27ec150aeec3a1d8fab35e6a9c32c94c39fa82d8df80a02"
+        "42fdaf43ab8f657be5f924b0344216953e5e9aa2f46dfa31ec3f5413e75cde1e"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-local.ts",
+        "6feaafa88cda35ab30869241e3cdd8e3076c40b5a1c2cdaeae7c64ef4969b09e"
       ],
       [
         "packages/services/src/paper/parallel-paper-mark.ts",
         "b481b8b78e0a22918471787e13affb1d8c4a53f8983b7c0a9885d86dd320fec8"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-minor-recovery.ts",
+        "fa9870271ccda30a0fc3c2e5f189b269e74a986a4f824662acab6575d6ea2ced"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-pass.ts",
+        "10ce2ffb841aabaa946743f3b0cc4b01653781c647b93354b7a0eb5f6132ae71"
       ],
       [
         "packages/services/src/paper/parallel-paper-plans.ts",
@@ -5127,15 +5195,19 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-reconciliation.ts",
-        "1c69dfad59cdf9a4f006db3cee56f7caa046b0bcf012657a140d21eeab654008"
+        "9a496457a945ba3bc5f3ee534bce5171c5116e2fe9cd419fe8d27ea12894364f"
       ],
       [
         "packages/services/src/paper/parallel-paper-recovery.ts",
-        "7be147fcc5c1cf19e29d717072698ebbb776ce4c550c1286fb078803081f09ba"
+        "d5dffdd378a056eb6054b35a20b5b0c9faf414f2632e2d3bb376006a5d1967da"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-resolution.ts",
+        "2d8f9e7c2b8114a8f662c99b8f41afe52e519db7a0f53c9ae42bd41686ddc8e4"
       ],
       [
         "packages/services/src/paper/parallel-paper-service.ts",
-        "0a96dc1b49aa4ca68287ff68764864e62d1ced086df3e7df1285a5524b703c26"
+        "ecb1fbbb930cf12a0c3c92e8e267607c54b4db786a100677da30348b19472c00"
       ],
       [
         "packages/services/src/paper/parallel-paper-slots.ts",
@@ -5143,11 +5215,11 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-summary.ts",
-        "b3754dad831540b7d6970bf9f3d7e72bda2e30fc7059b40277b278eb6969ee7f"
+        "d2c0311fb6885e41d9b85c1380b31199b583690e9009c1cc6e81e2d2e7727162"
       ],
       [
         "packages/services/src/paper/parallel-paper-utils.ts",
-        "73cbd45d3e430109b2e6a47cbeb549e11c2f9da00e1af6d6b8d836d77481fa00"
+        "98adbc018c9098cf89a041805c8c52860d1a0c14a857bc8fcac4391692b6f1f1"
       ],
       [
         "packages/services/src/paper/parallel-signal.ts",
@@ -5255,7 +5327,7 @@
       ],
       [
         "packages/services/src/research/registered-study.ts",
-        "58d21be6e5f4983cd1ffd600eaf38aac596da1ab33e3283ef8083c3904dc5fab"
+        "73f0423326585c7c4409aa63da7886911b1939e7d84062e360b1a379fa2381e6"
       ],
       [
         "packages/services/src/research/remediation-report.ts",
@@ -5835,7 +5907,7 @@
       ],
       [
         "packages/storage/src/repositories/parallel-paper.ts",
-        "d14379bb490f3abd4475722216559a9cd670a98bc9165a9c0120d4cbdbac9a1b"
+        "9c88891571322d1a01059c6946acd40fb71f8645a4b4c656a93b6aa85a69f53a"
       ],
       [
         "packages/storage/src/repositories/portfolio-evidence.ts",
@@ -5946,7 +6018,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "8f3b447b82b36b3afe6ad4dc81c96557b6952b87503abd4bff683a19593fdd4b"
+    "hash": "038af943209fb00b65792b71d03fc1db36a39acb6a3fdec75efdd0c75f00dcac"
   },
   "paper-market-selector-v1": {
     "version": 1,
@@ -6081,8 +6153,12 @@
         "d5281c8f01551cccc520811eaf6787de45bb48564b78ec3f093e60b32c8d563e"
       ],
       [
+        "packages/adapters/src/http/alpaca-paper-stream.ts",
+        "79d0ca4325277a9ff5acc6a3de177c9b017480efa16d1d570e98fda864b61146"
+      ],
+      [
         "packages/adapters/src/http/alpaca-paper.ts",
-        "8a17e364469982bbd83b88a59cf48a9b0a74018b9d2e5ea63cba9792aa6e9b0c"
+        "86f4c17d64169c7c4bf03f6fa2dcf3afd1871bcfc52b1ac31b799f9b4c4a03bc"
       ],
       [
         "packages/adapters/src/http/alpaca-universe.ts",
@@ -6106,7 +6182,7 @@
       ],
       [
         "packages/adapters/src/http/index.ts",
-        "dc31e9a916ec7c6a2275ce3173a1059d80a9ae9c80cb46d02b2fbb407c08baa7"
+        "7f7d679c2f0198b1452f54c2906dfc4ede57304cba2d37589ae203138fff179a"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -6262,7 +6338,7 @@
       ],
       [
         "packages/contracts/src/schemas/parallel-paper.ts",
-        "092feaf58318fe7cfb69811b7c83560e6af727eaf9f03c966632ffb6d6171db7"
+        "ada24c3af90a6824fd5c95cdbcfbc7808123d7aa41be7ce74d950760b1ab8c1f"
       ],
       [
         "packages/contracts/src/schemas/portfolio.ts",
@@ -7049,6 +7125,10 @@
         "4df77ab085bc4fff52d00d49e4f294a498a61c0c23321f50db169fee31ea9448"
       ],
       [
+        "packages/services/src/paper/parallel-broker-evidence.ts",
+        "f9d4808e27b35842f0cdb8a26161338738e7463eed95772d9335f18f0e1e6758"
+      ],
+      [
         "packages/services/src/paper/parallel-execution-measurement.ts",
         "d0abbd73bf55a560b5c9c14a2030dbb5a0eaac05cbb8189fad07cfd59b7c789e"
       ],
@@ -7058,15 +7138,15 @@
       ],
       [
         "packages/services/src/paper/parallel-execution-safety.ts",
-        "cac183ca4884b639e9500f84bfce5263bbba03e1ab5e38e9b2bd924622220485"
+        "a01a90a6c24560db5f9d671487be968b11b887651934afbab8b7744ff00c5af7"
       ],
       [
         "packages/services/src/paper/parallel-fee-accounting.ts",
-        "2abb4eae97ff06edfa09ea4d9d3789b24e8662d9540d8953682986ef2617f2c2"
+        "b66369334709466a7bc54fbf7eb4a79d1f4e0ed1aef9cbc6e2aa02534dd12f70"
       ],
       [
         "packages/services/src/paper/parallel-hourly-shadow.ts",
-        "0e0ae5cdb00a0cc1a44ad52ca5f862d9643d3ba57c12859c57fa9db01de7d4e1"
+        "c433554a3dcc8281ebbf1d6abafcbe3caf60ed24c991bb17194f63a2260c1b76"
       ],
       [
         "packages/services/src/paper/parallel-ml-functional.ts",
@@ -7086,11 +7166,11 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-activity.ts",
-        "893a555ada11daea2adc31f5795ba3a98e88024378fd3fe37c65fca2129a493a"
+        "0c466b3cc0345f0cc5abcabd27f930b063d6b4cc1cb7fc2352c9f480875bed56"
       ],
       [
         "packages/services/src/paper/parallel-paper-attention.ts",
-        "faad1879bfcc582601cc71eb26af595c4adc14d8f965f2d880d81828edb29699"
+        "760e9148be43cdc08165258d3969a0ba6f746c695f5fa5333ab3cad8e6eb6d73"
       ],
       [
         "packages/services/src/paper/parallel-paper-daily.ts",
@@ -7098,11 +7178,23 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-intraday.ts",
-        "96315ff1977461f4b27ec150aeec3a1d8fab35e6a9c32c94c39fa82d8df80a02"
+        "42fdaf43ab8f657be5f924b0344216953e5e9aa2f46dfa31ec3f5413e75cde1e"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-local.ts",
+        "6feaafa88cda35ab30869241e3cdd8e3076c40b5a1c2cdaeae7c64ef4969b09e"
       ],
       [
         "packages/services/src/paper/parallel-paper-mark.ts",
         "b481b8b78e0a22918471787e13affb1d8c4a53f8983b7c0a9885d86dd320fec8"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-minor-recovery.ts",
+        "fa9870271ccda30a0fc3c2e5f189b269e74a986a4f824662acab6575d6ea2ced"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-pass.ts",
+        "10ce2ffb841aabaa946743f3b0cc4b01653781c647b93354b7a0eb5f6132ae71"
       ],
       [
         "packages/services/src/paper/parallel-paper-plans.ts",
@@ -7110,15 +7202,19 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-reconciliation.ts",
-        "1c69dfad59cdf9a4f006db3cee56f7caa046b0bcf012657a140d21eeab654008"
+        "9a496457a945ba3bc5f3ee534bce5171c5116e2fe9cd419fe8d27ea12894364f"
       ],
       [
         "packages/services/src/paper/parallel-paper-recovery.ts",
-        "7be147fcc5c1cf19e29d717072698ebbb776ce4c550c1286fb078803081f09ba"
+        "d5dffdd378a056eb6054b35a20b5b0c9faf414f2632e2d3bb376006a5d1967da"
+      ],
+      [
+        "packages/services/src/paper/parallel-paper-resolution.ts",
+        "2d8f9e7c2b8114a8f662c99b8f41afe52e519db7a0f53c9ae42bd41686ddc8e4"
       ],
       [
         "packages/services/src/paper/parallel-paper-service.ts",
-        "0a96dc1b49aa4ca68287ff68764864e62d1ced086df3e7df1285a5524b703c26"
+        "ecb1fbbb930cf12a0c3c92e8e267607c54b4db786a100677da30348b19472c00"
       ],
       [
         "packages/services/src/paper/parallel-paper-slots.ts",
@@ -7126,11 +7222,11 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-summary.ts",
-        "b3754dad831540b7d6970bf9f3d7e72bda2e30fc7059b40277b278eb6969ee7f"
+        "d2c0311fb6885e41d9b85c1380b31199b583690e9009c1cc6e81e2d2e7727162"
       ],
       [
         "packages/services/src/paper/parallel-paper-utils.ts",
-        "73cbd45d3e430109b2e6a47cbeb549e11c2f9da00e1af6d6b8d836d77481fa00"
+        "98adbc018c9098cf89a041805c8c52860d1a0c14a857bc8fcac4391692b6f1f1"
       ],
       [
         "packages/services/src/paper/parallel-signal.ts",
@@ -7238,7 +7334,7 @@
       ],
       [
         "packages/services/src/research/registered-study.ts",
-        "58d21be6e5f4983cd1ffd600eaf38aac596da1ab33e3283ef8083c3904dc5fab"
+        "73f0423326585c7c4409aa63da7886911b1939e7d84062e360b1a379fa2381e6"
       ],
       [
         "packages/services/src/research/remediation-report.ts",
@@ -7818,7 +7914,7 @@
       ],
       [
         "packages/storage/src/repositories/parallel-paper.ts",
-        "d14379bb490f3abd4475722216559a9cd670a98bc9165a9c0120d4cbdbac9a1b"
+        "9c88891571322d1a01059c6946acd40fb71f8645a4b4c656a93b6aa85a69f53a"
       ],
       [
         "packages/storage/src/repositories/portfolio-evidence.ts",
@@ -7929,7 +8025,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "1b987910d307e0e17a0738ffff81442df519719e36b0f506f0b024fd6884d028"
+    "hash": "6780bfc8a76a3225f551ece0b0841ce3b97851b49a4b50cc7f111fc3c23104d4"
   },
   "trendvol-hourly-execution-v1": {
     "version": 1,
@@ -8052,8 +8148,12 @@
         "d5281c8f01551cccc520811eaf6787de45bb48564b78ec3f093e60b32c8d563e"
       ],
       [
+        "packages/adapters/src/http/alpaca-paper-stream.ts",
+        "79d0ca4325277a9ff5acc6a3de177c9b017480efa16d1d570e98fda864b61146"
+      ],
+      [
         "packages/adapters/src/http/alpaca-paper.ts",
-        "8a17e364469982bbd83b88a59cf48a9b0a74018b9d2e5ea63cba9792aa6e9b0c"
+        "86f4c17d64169c7c4bf03f6fa2dcf3afd1871bcfc52b1ac31b799f9b4c4a03bc"
       ],
       [
         "packages/adapters/src/http/alpaca-universe.ts",
@@ -8077,7 +8177,7 @@
       ],
       [
         "packages/adapters/src/http/index.ts",
-        "dc31e9a916ec7c6a2275ce3173a1059d80a9ae9c80cb46d02b2fbb407c08baa7"
+        "7f7d679c2f0198b1452f54c2906dfc4ede57304cba2d37589ae203138fff179a"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -8645,7 +8745,7 @@
       ],
       [
         "packages/services/src/paper/parallel-hourly-shadow.ts",
-        "0e0ae5cdb00a0cc1a44ad52ca5f862d9643d3ba57c12859c57fa9db01de7d4e1"
+        "c433554a3dcc8281ebbf1d6abafcbe3caf60ed24c991bb17194f63a2260c1b76"
       ],
       [
         "packages/services/src/paper/parallel-ml-worker.ts",
@@ -8653,7 +8753,7 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-intraday.ts",
-        "96315ff1977461f4b27ec150aeec3a1d8fab35e6a9c32c94c39fa82d8df80a02"
+        "42fdaf43ab8f657be5f924b0344216953e5e9aa2f46dfa31ec3f5413e75cde1e"
       ],
       [
         "packages/services/src/paper/parallel-paper-plans.ts",
@@ -8661,7 +8761,7 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-utils.ts",
-        "73cbd45d3e430109b2e6a47cbeb549e11c2f9da00e1af6d6b8d836d77481fa00"
+        "98adbc018c9098cf89a041805c8c52860d1a0c14a857bc8fcac4391692b6f1f1"
       ],
       [
         "packages/services/src/paper/parallel-signal.ts",
@@ -8669,7 +8769,7 @@
       ],
       [
         "packages/services/src/research/registered-study.ts",
-        "58d21be6e5f4983cd1ffd600eaf38aac596da1ab33e3283ef8083c3904dc5fab"
+        "73f0423326585c7c4409aa63da7886911b1939e7d84062e360b1a379fa2381e6"
       ],
       [
         "packages/services/src/research/study-collection.ts",
@@ -9177,7 +9277,7 @@
       ],
       [
         "packages/storage/src/repositories/parallel-paper.ts",
-        "d14379bb490f3abd4475722216559a9cd670a98bc9165a9c0120d4cbdbac9a1b"
+        "9c88891571322d1a01059c6946acd40fb71f8645a4b4c656a93b6aa85a69f53a"
       ],
       [
         "packages/storage/src/repositories/portfolio-evidence.ts",
@@ -9288,7 +9388,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "36f323c798366da27b8669f1995895c1e6b7fc4de731d313ae295ae65853a5a7"
+    "hash": "74ce5c80fe656af7a8201aff53f2fd499dc2f23afc88ce4c098ea647ef390d09"
   },
   "trendvol-execution-remediation-v1": {
     "version": 1,
@@ -9411,8 +9511,12 @@
         "d5281c8f01551cccc520811eaf6787de45bb48564b78ec3f093e60b32c8d563e"
       ],
       [
+        "packages/adapters/src/http/alpaca-paper-stream.ts",
+        "79d0ca4325277a9ff5acc6a3de177c9b017480efa16d1d570e98fda864b61146"
+      ],
+      [
         "packages/adapters/src/http/alpaca-paper.ts",
-        "8a17e364469982bbd83b88a59cf48a9b0a74018b9d2e5ea63cba9792aa6e9b0c"
+        "86f4c17d64169c7c4bf03f6fa2dcf3afd1871bcfc52b1ac31b799f9b4c4a03bc"
       ],
       [
         "packages/adapters/src/http/alpaca-universe.ts",
@@ -9436,7 +9540,7 @@
       ],
       [
         "packages/adapters/src/http/index.ts",
-        "dc31e9a916ec7c6a2275ce3173a1059d80a9ae9c80cb46d02b2fbb407c08baa7"
+        "7f7d679c2f0198b1452f54c2906dfc4ede57304cba2d37589ae203138fff179a"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -10012,7 +10116,7 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-intraday.ts",
-        "96315ff1977461f4b27ec150aeec3a1d8fab35e6a9c32c94c39fa82d8df80a02"
+        "42fdaf43ab8f657be5f924b0344216953e5e9aa2f46dfa31ec3f5413e75cde1e"
       ],
       [
         "packages/services/src/paper/parallel-paper-plans.ts",
@@ -10020,7 +10124,7 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-utils.ts",
-        "73cbd45d3e430109b2e6a47cbeb549e11c2f9da00e1af6d6b8d836d77481fa00"
+        "98adbc018c9098cf89a041805c8c52860d1a0c14a857bc8fcac4391692b6f1f1"
       ],
       [
         "packages/services/src/paper/parallel-signal.ts",
@@ -10528,7 +10632,7 @@
       ],
       [
         "packages/storage/src/repositories/parallel-paper.ts",
-        "d14379bb490f3abd4475722216559a9cd670a98bc9165a9c0120d4cbdbac9a1b"
+        "9c88891571322d1a01059c6946acd40fb71f8645a4b4c656a93b6aa85a69f53a"
       ],
       [
         "packages/storage/src/repositories/portfolio-evidence.ts",
@@ -10639,6 +10743,6 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "bf876781930d5fccf9e0e5126234043a3e07db9855d2446242222b10af8002df"
+    "hash": "45eb0e92cbf9ee82070a01c255af738bccdd9a5c00044eb61325573e9fc99c09"
   }
 }
