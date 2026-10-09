@@ -9,7 +9,7 @@ import { assignAuthoritativeHost, getAuthoritativeHost, heartbeatAuthoritativeHo
   recordHostReconciliation, relinquishAuthoritativeHost, takeoverAuthoritativeHost } from '@coqui/storage';
 
 const HELP=`Usage: coqui-headless <start|tick|recover|status|stop|assign|relinquish|takeover>
-  [--database=data/coqui.sqlite] [--profile=main] [--host=headless-local]
+  [--database=data/coqui.sqlite] [--profile=main] [--host=headless-local] [--news-quota-database=MAIN_DATABASE]
 
 Authority changes require --confirm. Takeover performs reconciliation first.
 This local CLI opens no listener, enrolls no credentials, and remains paper-only.`;
@@ -26,6 +26,7 @@ if (command===undefined || command==='help' || args.includes('--help') || args.i
 const profileId=option('profile')??'main', hostId=option('host')??'headless-local';
 const databaseOption=option('database')??'data/coqui.sqlite';
 const databasePath=databaseOption===':memory:'?databaseOption:resolve(databaseOption);
+const newsQuotaDatabasePath=option('news-quota-database') === undefined ? databasePath : resolve(option('news-quota-database')!);
 const clock=new SystemClock(()=>Date.now());
 
 function requireConfirmation():void { if (!confirmed()) throw new Error('confirmation_required'); }
@@ -42,14 +43,14 @@ function reconcile(database:ReturnType<typeof openDatabase>):string {
 }
 async function oneShotTick():Promise<void> {
   const probe=openDatabase(databasePath); requireOwnership(probe); probe.close();
-  const runtime=createRuntime({hostKind:'headless',secrets:createOsKeyringSecretStore(),databasePath,profileId,hostId,disableScheduler:true});
+  const runtime=createRuntime({hostKind:'headless',secrets:createOsKeyringSecretStore(),databasePath,profileId,hostId,newsQuotaDatabasePath,disableScheduler:true});
   try { runtime.startScheduler(); if (runtime.scheduler===null) throw new Error('headless_scheduler_not_started');
-    await runtime.scheduler.tick(); print({ok:true,command:'tick',hostId,profileId,status:runtime.scheduler.status()});
+    await runtime.scheduler.tick(); await runtime.news.tick(); print({ok:true,command:'tick',hostId,profileId,status:runtime.scheduler.status()});
   } finally { runtime.dispose(); }
 }
 async function start():Promise<void> {
   const probe=openDatabase(databasePath), authority=requireOwnership(probe); probe.close();
-  const runtime:CoquiRuntime=createRuntime({hostKind:'headless',secrets:createOsKeyringSecretStore(),databasePath,profileId,hostId});
+  const runtime:CoquiRuntime=createRuntime({hostKind:'headless',secrets:createOsKeyringSecretStore(),databasePath,profileId,hostId,newsQuotaDatabasePath});
   if(runtime.scheduler===null){runtime.dispose();throw new Error('headless_scheduler_not_started');}
   let stopping=false;
   const stop=():void=>{ if(stopping)return; stopping=true; clearInterval(control); runtime.dispose(); };

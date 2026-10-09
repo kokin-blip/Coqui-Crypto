@@ -1,3 +1,4 @@
+import type { NewsHostRuntime } from './news-host-runtime.js';
 import { fullApplicationArtifactHash } from './research-provenance.js';
 import { clearInterval, setInterval } from 'node:timers';
 
@@ -54,6 +55,7 @@ export interface SchedulerRuntimeOptions {
   readonly prepare?: (nowMs: number) => Promise<void>;
   readonly pollMs?: number;
   readonly onUnexpectedError?: (context: string, error: unknown) => void;
+  readonly news?: NewsHostRuntime;
   readonly research?: { recover():unknown; tick():Promise<void> };
   readonly overlayShadow?: { tick(): Promise<void> };
   readonly parallelPaper?: { tick(): Promise<void>; suspend?(): void; resume?(): void };
@@ -106,6 +108,8 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
     const started = performance.now();
     recordMissingSlots();
     record('tick_start');
+    try { void options.news?.tick().catch(() => report('news_host_tick', new Error('News collector failed.'))); }
+    catch { report('news_host_tick', new Error('News collector failed.')); }
     try {
       // The narrow Alpaca window must not wait behind local portfolio/research work.
       if (options.parallelPaper !== undefined) {
@@ -147,6 +151,7 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
       try { options.research?.recover(); } catch (error) { report('research_recovery',error); }
     },
     start() {
+      options.news?.resume();
       scheduler = new WalletSchedulerService({
         database: options.database, clock: options.clock, ownerId: hostId,
       });
@@ -160,6 +165,7 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
     },
     tick,
     stop() {
+      options.news?.suspend();
       if (timer !== null) clearInterval(timer);
       timer = null;
       scheduler?.dispose();
@@ -173,8 +179,8 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
     tick: () => host.tick(),
     stop: () => host.stop(),
     status: () => host.status(),
-    dispose: () => { options.parallelPaper?.suspend?.(); record('shutdown'); host.stop(); },
-    suspend: () => { suspended = true; options.parallelPaper?.suspend?.(); record('suspend'); },
-    resume: () => { record('resume'); options.parallelPaper?.resume?.(); suspended = false; void host.tick(); },
+    dispose: () => { options.news?.dispose(); options.parallelPaper?.suspend?.(); record('shutdown'); host.stop(); },
+    suspend: () => { suspended = true; options.news?.suspend(); options.parallelPaper?.suspend?.(); record('suspend'); },
+    resume: () => { record('resume'); options.news?.resume(); options.parallelPaper?.resume?.(); suspended = false; void host.tick(); },
   };
 }

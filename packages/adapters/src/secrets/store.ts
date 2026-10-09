@@ -13,6 +13,8 @@ export type SecretKey =
   | 'advisor-history-key'
   | 'coingecko-api-key'
   | 'coinmarketcap-api-key'
+  | 'marketaux-api-token'
+  | 'currents-api-key'
   | 'robinhood-crypto-credentials'
   | 'robinhood-pending-private-key'
   | 'alpaca-paper-credentials';
@@ -228,7 +230,7 @@ export function secretAccountForScope(
   walletId: string | null | undefined,
   key: SecretKey,
 ): string {
-  if (key === 'coingecko-api-key' || key === 'coinmarketcap-api-key') return key;
+  if (['coingecko-api-key', 'coinmarketcap-api-key', 'marketaux-api-token', 'currents-api-key'].includes(key)) return key;
   const scope = normalizeWalletId(walletId);
   return scope === MAIN_WALLET_ID ? key : `${key}:${scope}`;
 }

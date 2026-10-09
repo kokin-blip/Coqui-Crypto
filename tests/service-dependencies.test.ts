@@ -10,6 +10,7 @@ const domainServices = new Set([
   'alerts',
   'ingest',
   'market-data',
+  'news',
   'paper',
   'portfolio',
   'research',

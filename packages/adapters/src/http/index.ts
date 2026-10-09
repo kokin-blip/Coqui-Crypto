@@ -9,3 +9,4 @@ export * from './rate-limiter.js';
 export * from './alpaca-universe.js';
 export * from './deadline.js';
 export * from './download.js';
+export * from './news.js';

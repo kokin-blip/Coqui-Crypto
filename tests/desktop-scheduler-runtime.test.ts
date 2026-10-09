@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { createPaperMarketFeed } from '../apps/desktop/src/main/paper-market.js';
 import { startSchedulerRuntime } from '../apps/desktop/src/main/scheduler-runtime.js';
@@ -140,6 +140,23 @@ function paperDeps(db: Db, clock: Clock = new FixedClock(T0)): PaperRunLoopDepen
 }
 
 describe('the scheduler finally has a wake-up', () => {
+  it.each(['pending', 'rejected', 'throwing'])('isolates %s news work from paper preparation and execution', async mode => {
+    const db = seeded(), clock = new StepClock(T0), order: string[] = [], report = vi.fn();
+    const news = { tick: () => {
+      if (mode === 'throwing') throw new Error('synthetic failure');
+      if (mode === 'rejected') return Promise.reject(new Error('synthetic failure'));
+      return new Promise<void>(() => {});
+    }, suspend() {}, resume() {}, dispose() {} };
+    const runtime = startSchedulerRuntime({ database: db, clock, profileId: PROFILE, paper: paperDeps(db, clock),
+      news, onUnexpectedError: report, pollMs: 3_600_000,
+      parallelPaper: { tick: async () => { order.push('alpaca'); } }, prepare: async () => { order.push('prepare'); } });
+    clock.advance(DAY); await runtime.tick();
+    expect(order).toEqual(['alpaca', 'prepare']);
+    expect(countCompletedDecisionRuns(PROFILE, 0, db)).toBe(1);
+    if (mode !== 'pending') expect(report).toHaveBeenCalledWith('news_host_tick', expect.any(Error));
+    runtime.dispose(); db.close();
+  });
+
   it('records suspend/resume and restart gaps durably without inferring their cause', async () => {
     const db = seeded(), clock = new StepClock(T0);
     const options = { database: db, clock, profileId: PROFILE, hostId: 'fixture-host', paper: paperDeps(db,clock), pollMs: 3_600_000 };
