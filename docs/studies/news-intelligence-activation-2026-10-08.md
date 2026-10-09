@@ -120,3 +120,25 @@ merge and release remain open; no paid activation or upgrade occurred. Cost: $0.
 
 Phase 3 requires explicit instruction. Its instruments, sentiment, event clustering
 and research features, followed by archives and UI, remain out of this delivery.
+
+## CI follow-up and baseline control
+
+At delivery, GitHub's push verification passed, Linux desktop smoke passed and
+all three native dependency checks passed. Other PR jobs were still running.
+The macOS smoke job failed its existing assertion:
+`decision detail opens with focus and recorded gate reason`.
+
+A targeted control rerun on the unchanged baseline commit
+`ade88e3991b47fba00512adecf3c409518346a56` reproduced the **same assertion failure**,
+confirming it is pre-existing rather than introduced by news host wiring:
+[baseline macOS control log](https://github.com/kokin-blip/Coqui-Crypto/actions/runs/37855493928/job/113631009485).
+The control also reported a renderer script exception; this delivery does not
+claim that unrelated UI issue is repaired. The
+[news PR macOS job](https://github.com/kokin-blip/Coqui-Crypto/actions/runs/37871299354/job/113629778663)
+records the matching focus failure.
+
+Local `pnpm smoke` on the news revision passed **all 78 Electron checks**, using
+the existing isolated fixture harness; it did not alter the selected development
+database. No production UI or smoke assertion was changed to mask CI failure.
+Human review and successful CI remain explicit gates. This follow-up edits only
+this report; the tested implementation and generated manifests remain unchanged.
