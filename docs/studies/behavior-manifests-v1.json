@@ -125,7 +125,11 @@
       ],
       [
         "packages/adapters/src/config/index.ts",
-        "1ca050c26ebc96d53b32f0baadffafbaa045ad18105bb9bcc5f6a6a12bc58a46"
+        "5be8c409a8d6eeea2e462ce7768433d9f44357534630278d59aa6cff54ef414f"
+      ],
+      [
+        "packages/adapters/src/config/news-env.ts",
+        "b06847a9630f01b5cbd56af86085b42b42f9767ced5c2b3a2c5818baaec6bcd7"
       ],
       [
         "packages/adapters/src/config/provider-env.ts",
@@ -161,7 +165,11 @@
       ],
       [
         "packages/adapters/src/http/index.ts",
-        "7f7d679c2f0198b1452f54c2906dfc4ede57304cba2d37589ae203138fff179a"
+        "1e2ff01fcccc680511024f8010edb855c9c90b192a16eef0de70d7425844dfef"
+      ],
+      [
+        "packages/adapters/src/http/news.ts",
+        "f39814bf2370e6569a93d9dd1de0c7684fa4e8126139d54f5247626faf3ac84e"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -169,7 +177,7 @@
       ],
       [
         "packages/adapters/src/index.ts",
-        "9e7dfc8a8b9c320702baa7826f16deacf2fa4d37c5f30617e0df5e32c8bcd4a7"
+        "96648c7b1ce8fa1faebe817cfaf1f8ea61f36ae1b7ebf0f8399b7d21bc42de2b"
       ],
       [
         "packages/adapters/src/market-data/index.ts",
@@ -182,6 +190,26 @@
       [
         "packages/adapters/src/market-data/types.ts",
         "206ac66512eead5f22e4ca7105a88c6a0f25d7d4a8fd01790869752b30c98c0a"
+      ],
+      [
+        "packages/adapters/src/news/common.ts",
+        "5ce345f889ab32bd92c3ce28770967599ab62d608fcaf5f9b01a4d9552937198"
+      ],
+      [
+        "packages/adapters/src/news/currents.ts",
+        "69ac6019ef22e418cf16cce676502e407eadca1c2583e123d60f13a8dc0d9f6b"
+      ],
+      [
+        "packages/adapters/src/news/gdelt.ts",
+        "831dcbde3c93178a4783369a05e57a93752d05f15dbf7376c25b3e0b4f21bf38"
+      ],
+      [
+        "packages/adapters/src/news/index.ts",
+        "bec0ea87a71fdc8bb23bb2e5ce66997074495ef1cc6efbbb8925b63d02ed2051"
+      ],
+      [
+        "packages/adapters/src/news/marketaux.ts",
+        "1a1925ac21b432966b86a74bcc9d8a4f06d8ebd1d01dd0969a3a9197c5c7c10f"
       ],
       [
         "packages/adapters/src/paper/index.ts",
@@ -229,7 +257,7 @@
       ],
       [
         "packages/adapters/src/secrets/store.ts",
-        "823aa447d29d2eb562fc3072d95c4220ec86069c4eebb31dd64051a7030bfc61"
+        "6c157cbc5012a40ce670e864e3a6f26886c1fbf76f92d75a03bd279c49376bbb"
       ],
       [
         "packages/contracts/src/channels.ts",
@@ -241,7 +269,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "b0d99ef280ddf9db56b96c5219e4bb5b72e2dc81ae4e1e2b0e03518d69d28735"
+        "c1309ea95b5c5c20ec59d8314f5ebaab4758940cb579ae59f06643240152599f"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -298,6 +326,10 @@
       [
         "packages/contracts/src/schemas/market-microstructure.ts",
         "b72fb653811abebcb0ee178a9c93f43324f65f89afb35037ad1a46755539e083"
+      ],
+      [
+        "packages/contracts/src/schemas/news.ts",
+        "c0f3d5688821f966c3dede91c50cdb0f64927eeb56d098835f22846829800adf"
       ],
       [
         "packages/contracts/src/schemas/operations.ts",
@@ -449,7 +481,7 @@
       ],
       [
         "packages/core/src/index.ts",
-        "14d808347a4968b6445e3c2496b790d5fb4aeaa507e3da0a96bceca593baa705"
+        "a8fbf5040ff227ce0272c07d72f3fefd6d69c15ac3f8ce980220732a6885b124"
       ],
       [
         "packages/core/src/indicators/index.ts",
@@ -474,6 +506,22 @@
       [
         "packages/core/src/market/universe.ts",
         "249daba11c2612e3fd67f5630e9bbe7e52126810758130b49eeb425c519aabd4"
+      ],
+      [
+        "packages/core/src/news/identity.ts",
+        "948498592f08e225132235d6e36673aa39daf2fc8e7e8be533c50ca4202d089b"
+      ],
+      [
+        "packages/core/src/news/index.ts",
+        "48da61aa8319935020a808082c56b7fcebe7f9dd3b88b2e09dba4abb78a0b9b7"
+      ],
+      [
+        "packages/core/src/news/types.ts",
+        "30138925e55dd1cb30d8281e581def6f844b35d22a5886be40d0ec370c1450fe"
+      ],
+      [
+        "packages/core/src/news/validation.ts",
+        "9e1b7b759a2f772b1d0e1595baebc5293b42efcaa85694f2a973872bddc9b260"
       ],
       [
         "packages/core/src/paper/connection-book.ts",
@@ -965,7 +1013,7 @@
       ],
       [
         "packages/services/src/index.ts",
-        "63fac34049f9b96679e740f05d36f0b43156e464a2850d3d516980f8fbdae161"
+        "e81e1cd867f3816fbce7743e4efb76c4ed6b185a565ce2a1a9a706cbdd011eb1"
       ],
       [
         "packages/services/src/market-data/acquisition/artifacts.ts",
@@ -1042,6 +1090,26 @@
       [
         "packages/services/src/market-events/service.ts",
         "c5f18209d80ba4b0ef37ccfc0a4f8ccbbbe9db77a1838d0125345eb2e595e380"
+      ],
+      [
+        "packages/services/src/news/configuration.ts",
+        "2478fbbe435dffc64326ecc2ff8b9ff2aa2f4cb93de21eb9094abb8202b17668"
+      ],
+      [
+        "packages/services/src/news/index.ts",
+        "1a84b19864e2fd9908efd5688265be13cddc7f16d1ee9887f80bb0d7d7af750e"
+      ],
+      [
+        "packages/services/src/news/quota-governor.ts",
+        "3751133132b0460d4ed5f85cbd29dcb2b355e38506e70912f14c67ca490a2d01"
+      ],
+      [
+        "packages/services/src/news/runtime.ts",
+        "3765e620ada22896abdf49de01f0d84d88cddab8cc2f32f1480937d2a751a5d4"
+      ],
+      [
+        "packages/services/src/news/service.ts",
+        "b2ca625cb4d376cb10778e2c62e9f8b0748c3f46830bb2a424db11175225656d"
       ],
       [
         "packages/services/src/paper/connection-campaign.ts",
@@ -1421,7 +1489,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "d94eec21fe31a8a55a48e9b16773beca442d9f85279a82b0854e1f63dd923dac"
+        "8730d37b37058e5b57ed178b3333869038262cd038326dd5c226b015e4c74292"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -1676,6 +1744,14 @@
         "bfe7a12a4cedefb447d782564b95e8bf1e227c49c3406eb05bcaf65dbd3ede33"
       ],
       [
+        "packages/storage/src/migrations/v88.ts",
+        "4ff3750d5535b2f387097cf1b6079084a83ef1e970c20d1992f9364b810945cf"
+      ],
+      [
+        "packages/storage/src/migrations/v89.ts",
+        "9d543edc8de20ecdaf3b7b8d97dc2fe808f9e0a1042059833512e7cbe35448ed"
+      ],
+      [
         "packages/storage/src/migrations/v9-v17.ts",
         "b393c4fd6bc1f10e8c9e9ef5af65713ae68f01c2823f337091793102639d0489"
       ],
@@ -1841,7 +1917,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "4cf65b3c1ddfd15808960ad2f374d9f54568a067bbafd01ad20c4acf06d81a92"
+        "023f44f7dcd8307a77d4e00210c2c7755a5d55fd2a5c7b703cbca5aa1f915ac3"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -1862,6 +1938,14 @@
       [
         "packages/storage/src/repositories/ml-signal-study.ts",
         "ac019e740f61611209e6ef9ca73be7ffdd4c4bd9877576d39dd575a50f7ad0b4"
+      ],
+      [
+        "packages/storage/src/repositories/news-quota.ts",
+        "2434463a07f3a0ed5770d0be335326a5938d90d31b80bafd12e563d9f5877079"
+      ],
+      [
+        "packages/storage/src/repositories/news.ts",
+        "dc0c7390df41ed732296bc8596d4a0e86c78dfb0a610292dc0b5cf010a8cb645"
       ],
       [
         "packages/storage/src/repositories/operational-metrics.ts",
@@ -2004,7 +2088,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "b35b565ffc1b1bed2af32383d19b0c9e6278fe730b1bc8766d8a2f359b966362"
+    "hash": "537f6173f7df5d78a2076039fa0847758fdd7cc869d20f555621614959bcb2ef"
   },
   "wider-breakout-v1": {
     "version": 1,
@@ -2132,7 +2216,11 @@
       ],
       [
         "packages/adapters/src/config/index.ts",
-        "1ca050c26ebc96d53b32f0baadffafbaa045ad18105bb9bcc5f6a6a12bc58a46"
+        "5be8c409a8d6eeea2e462ce7768433d9f44357534630278d59aa6cff54ef414f"
+      ],
+      [
+        "packages/adapters/src/config/news-env.ts",
+        "b06847a9630f01b5cbd56af86085b42b42f9767ced5c2b3a2c5818baaec6bcd7"
       ],
       [
         "packages/adapters/src/config/provider-env.ts",
@@ -2168,7 +2256,11 @@
       ],
       [
         "packages/adapters/src/http/index.ts",
-        "7f7d679c2f0198b1452f54c2906dfc4ede57304cba2d37589ae203138fff179a"
+        "1e2ff01fcccc680511024f8010edb855c9c90b192a16eef0de70d7425844dfef"
+      ],
+      [
+        "packages/adapters/src/http/news.ts",
+        "f39814bf2370e6569a93d9dd1de0c7684fa4e8126139d54f5247626faf3ac84e"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -2176,7 +2268,7 @@
       ],
       [
         "packages/adapters/src/index.ts",
-        "9e7dfc8a8b9c320702baa7826f16deacf2fa4d37c5f30617e0df5e32c8bcd4a7"
+        "96648c7b1ce8fa1faebe817cfaf1f8ea61f36ae1b7ebf0f8399b7d21bc42de2b"
       ],
       [
         "packages/adapters/src/market-data/index.ts",
@@ -2189,6 +2281,26 @@
       [
         "packages/adapters/src/market-data/types.ts",
         "206ac66512eead5f22e4ca7105a88c6a0f25d7d4a8fd01790869752b30c98c0a"
+      ],
+      [
+        "packages/adapters/src/news/common.ts",
+        "5ce345f889ab32bd92c3ce28770967599ab62d608fcaf5f9b01a4d9552937198"
+      ],
+      [
+        "packages/adapters/src/news/currents.ts",
+        "69ac6019ef22e418cf16cce676502e407eadca1c2583e123d60f13a8dc0d9f6b"
+      ],
+      [
+        "packages/adapters/src/news/gdelt.ts",
+        "831dcbde3c93178a4783369a05e57a93752d05f15dbf7376c25b3e0b4f21bf38"
+      ],
+      [
+        "packages/adapters/src/news/index.ts",
+        "bec0ea87a71fdc8bb23bb2e5ce66997074495ef1cc6efbbb8925b63d02ed2051"
+      ],
+      [
+        "packages/adapters/src/news/marketaux.ts",
+        "1a1925ac21b432966b86a74bcc9d8a4f06d8ebd1d01dd0969a3a9197c5c7c10f"
       ],
       [
         "packages/adapters/src/paper/index.ts",
@@ -2236,7 +2348,7 @@
       ],
       [
         "packages/adapters/src/secrets/store.ts",
-        "823aa447d29d2eb562fc3072d95c4220ec86069c4eebb31dd64051a7030bfc61"
+        "6c157cbc5012a40ce670e864e3a6f26886c1fbf76f92d75a03bd279c49376bbb"
       ],
       [
         "packages/contracts/src/channels.ts",
@@ -2248,7 +2360,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "b0d99ef280ddf9db56b96c5219e4bb5b72e2dc81ae4e1e2b0e03518d69d28735"
+        "c1309ea95b5c5c20ec59d8314f5ebaab4758940cb579ae59f06643240152599f"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -2305,6 +2417,10 @@
       [
         "packages/contracts/src/schemas/market-microstructure.ts",
         "b72fb653811abebcb0ee178a9c93f43324f65f89afb35037ad1a46755539e083"
+      ],
+      [
+        "packages/contracts/src/schemas/news.ts",
+        "c0f3d5688821f966c3dede91c50cdb0f64927eeb56d098835f22846829800adf"
       ],
       [
         "packages/contracts/src/schemas/operations.ts",
@@ -2456,7 +2572,7 @@
       ],
       [
         "packages/core/src/index.ts",
-        "14d808347a4968b6445e3c2496b790d5fb4aeaa507e3da0a96bceca593baa705"
+        "a8fbf5040ff227ce0272c07d72f3fefd6d69c15ac3f8ce980220732a6885b124"
       ],
       [
         "packages/core/src/indicators/index.ts",
@@ -2481,6 +2597,22 @@
       [
         "packages/core/src/market/universe.ts",
         "249daba11c2612e3fd67f5630e9bbe7e52126810758130b49eeb425c519aabd4"
+      ],
+      [
+        "packages/core/src/news/identity.ts",
+        "948498592f08e225132235d6e36673aa39daf2fc8e7e8be533c50ca4202d089b"
+      ],
+      [
+        "packages/core/src/news/index.ts",
+        "48da61aa8319935020a808082c56b7fcebe7f9dd3b88b2e09dba4abb78a0b9b7"
+      ],
+      [
+        "packages/core/src/news/types.ts",
+        "30138925e55dd1cb30d8281e581def6f844b35d22a5886be40d0ec370c1450fe"
+      ],
+      [
+        "packages/core/src/news/validation.ts",
+        "9e1b7b759a2f772b1d0e1595baebc5293b42efcaa85694f2a973872bddc9b260"
       ],
       [
         "packages/core/src/paper/connection-book.ts",
@@ -2972,7 +3104,7 @@
       ],
       [
         "packages/services/src/index.ts",
-        "63fac34049f9b96679e740f05d36f0b43156e464a2850d3d516980f8fbdae161"
+        "e81e1cd867f3816fbce7743e4efb76c4ed6b185a565ce2a1a9a706cbdd011eb1"
       ],
       [
         "packages/services/src/market-data/acquisition/artifacts.ts",
@@ -3049,6 +3181,26 @@
       [
         "packages/services/src/market-events/service.ts",
         "c5f18209d80ba4b0ef37ccfc0a4f8ccbbbe9db77a1838d0125345eb2e595e380"
+      ],
+      [
+        "packages/services/src/news/configuration.ts",
+        "2478fbbe435dffc64326ecc2ff8b9ff2aa2f4cb93de21eb9094abb8202b17668"
+      ],
+      [
+        "packages/services/src/news/index.ts",
+        "1a84b19864e2fd9908efd5688265be13cddc7f16d1ee9887f80bb0d7d7af750e"
+      ],
+      [
+        "packages/services/src/news/quota-governor.ts",
+        "3751133132b0460d4ed5f85cbd29dcb2b355e38506e70912f14c67ca490a2d01"
+      ],
+      [
+        "packages/services/src/news/runtime.ts",
+        "3765e620ada22896abdf49de01f0d84d88cddab8cc2f32f1480937d2a751a5d4"
+      ],
+      [
+        "packages/services/src/news/service.ts",
+        "b2ca625cb4d376cb10778e2c62e9f8b0748c3f46830bb2a424db11175225656d"
       ],
       [
         "packages/services/src/paper/connection-campaign.ts",
@@ -3428,7 +3580,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "d94eec21fe31a8a55a48e9b16773beca442d9f85279a82b0854e1f63dd923dac"
+        "8730d37b37058e5b57ed178b3333869038262cd038326dd5c226b015e4c74292"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -3683,6 +3835,14 @@
         "bfe7a12a4cedefb447d782564b95e8bf1e227c49c3406eb05bcaf65dbd3ede33"
       ],
       [
+        "packages/storage/src/migrations/v88.ts",
+        "4ff3750d5535b2f387097cf1b6079084a83ef1e970c20d1992f9364b810945cf"
+      ],
+      [
+        "packages/storage/src/migrations/v89.ts",
+        "9d543edc8de20ecdaf3b7b8d97dc2fe808f9e0a1042059833512e7cbe35448ed"
+      ],
+      [
         "packages/storage/src/migrations/v9-v17.ts",
         "b393c4fd6bc1f10e8c9e9ef5af65713ae68f01c2823f337091793102639d0489"
       ],
@@ -3848,7 +4008,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "4cf65b3c1ddfd15808960ad2f374d9f54568a067bbafd01ad20c4acf06d81a92"
+        "023f44f7dcd8307a77d4e00210c2c7755a5d55fd2a5c7b703cbca5aa1f915ac3"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -3869,6 +4029,14 @@
       [
         "packages/storage/src/repositories/ml-signal-study.ts",
         "ac019e740f61611209e6ef9ca73be7ffdd4c4bd9877576d39dd575a50f7ad0b4"
+      ],
+      [
+        "packages/storage/src/repositories/news-quota.ts",
+        "2434463a07f3a0ed5770d0be335326a5938d90d31b80bafd12e563d9f5877079"
+      ],
+      [
+        "packages/storage/src/repositories/news.ts",
+        "dc0c7390df41ed732296bc8596d4a0e86c78dfb0a610292dc0b5cf010a8cb645"
       ],
       [
         "packages/storage/src/repositories/operational-metrics.ts",
@@ -4011,7 +4179,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "a8fce15a5ac3a0cfba4b772ead8616bbd5ba941ca2ed39d0a5536adb7cec2371"
+    "hash": "a93fb4610367ec7628515d5e6b7c32ffd059478d89ad754d1990e4e1a8ee27d4"
   },
   "wider-range-rotation-v1": {
     "version": 1,
@@ -4139,7 +4307,11 @@
       ],
       [
         "packages/adapters/src/config/index.ts",
-        "1ca050c26ebc96d53b32f0baadffafbaa045ad18105bb9bcc5f6a6a12bc58a46"
+        "5be8c409a8d6eeea2e462ce7768433d9f44357534630278d59aa6cff54ef414f"
+      ],
+      [
+        "packages/adapters/src/config/news-env.ts",
+        "b06847a9630f01b5cbd56af86085b42b42f9767ced5c2b3a2c5818baaec6bcd7"
       ],
       [
         "packages/adapters/src/config/provider-env.ts",
@@ -4175,7 +4347,11 @@
       ],
       [
         "packages/adapters/src/http/index.ts",
-        "7f7d679c2f0198b1452f54c2906dfc4ede57304cba2d37589ae203138fff179a"
+        "1e2ff01fcccc680511024f8010edb855c9c90b192a16eef0de70d7425844dfef"
+      ],
+      [
+        "packages/adapters/src/http/news.ts",
+        "f39814bf2370e6569a93d9dd1de0c7684fa4e8126139d54f5247626faf3ac84e"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -4183,7 +4359,7 @@
       ],
       [
         "packages/adapters/src/index.ts",
-        "9e7dfc8a8b9c320702baa7826f16deacf2fa4d37c5f30617e0df5e32c8bcd4a7"
+        "96648c7b1ce8fa1faebe817cfaf1f8ea61f36ae1b7ebf0f8399b7d21bc42de2b"
       ],
       [
         "packages/adapters/src/market-data/index.ts",
@@ -4196,6 +4372,26 @@
       [
         "packages/adapters/src/market-data/types.ts",
         "206ac66512eead5f22e4ca7105a88c6a0f25d7d4a8fd01790869752b30c98c0a"
+      ],
+      [
+        "packages/adapters/src/news/common.ts",
+        "5ce345f889ab32bd92c3ce28770967599ab62d608fcaf5f9b01a4d9552937198"
+      ],
+      [
+        "packages/adapters/src/news/currents.ts",
+        "69ac6019ef22e418cf16cce676502e407eadca1c2583e123d60f13a8dc0d9f6b"
+      ],
+      [
+        "packages/adapters/src/news/gdelt.ts",
+        "831dcbde3c93178a4783369a05e57a93752d05f15dbf7376c25b3e0b4f21bf38"
+      ],
+      [
+        "packages/adapters/src/news/index.ts",
+        "bec0ea87a71fdc8bb23bb2e5ce66997074495ef1cc6efbbb8925b63d02ed2051"
+      ],
+      [
+        "packages/adapters/src/news/marketaux.ts",
+        "1a1925ac21b432966b86a74bcc9d8a4f06d8ebd1d01dd0969a3a9197c5c7c10f"
       ],
       [
         "packages/adapters/src/paper/index.ts",
@@ -4243,7 +4439,7 @@
       ],
       [
         "packages/adapters/src/secrets/store.ts",
-        "823aa447d29d2eb562fc3072d95c4220ec86069c4eebb31dd64051a7030bfc61"
+        "6c157cbc5012a40ce670e864e3a6f26886c1fbf76f92d75a03bd279c49376bbb"
       ],
       [
         "packages/contracts/src/channels.ts",
@@ -4255,7 +4451,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "b0d99ef280ddf9db56b96c5219e4bb5b72e2dc81ae4e1e2b0e03518d69d28735"
+        "c1309ea95b5c5c20ec59d8314f5ebaab4758940cb579ae59f06643240152599f"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -4312,6 +4508,10 @@
       [
         "packages/contracts/src/schemas/market-microstructure.ts",
         "b72fb653811abebcb0ee178a9c93f43324f65f89afb35037ad1a46755539e083"
+      ],
+      [
+        "packages/contracts/src/schemas/news.ts",
+        "c0f3d5688821f966c3dede91c50cdb0f64927eeb56d098835f22846829800adf"
       ],
       [
         "packages/contracts/src/schemas/operations.ts",
@@ -4463,7 +4663,7 @@
       ],
       [
         "packages/core/src/index.ts",
-        "14d808347a4968b6445e3c2496b790d5fb4aeaa507e3da0a96bceca593baa705"
+        "a8fbf5040ff227ce0272c07d72f3fefd6d69c15ac3f8ce980220732a6885b124"
       ],
       [
         "packages/core/src/indicators/index.ts",
@@ -4488,6 +4688,22 @@
       [
         "packages/core/src/market/universe.ts",
         "249daba11c2612e3fd67f5630e9bbe7e52126810758130b49eeb425c519aabd4"
+      ],
+      [
+        "packages/core/src/news/identity.ts",
+        "948498592f08e225132235d6e36673aa39daf2fc8e7e8be533c50ca4202d089b"
+      ],
+      [
+        "packages/core/src/news/index.ts",
+        "48da61aa8319935020a808082c56b7fcebe7f9dd3b88b2e09dba4abb78a0b9b7"
+      ],
+      [
+        "packages/core/src/news/types.ts",
+        "30138925e55dd1cb30d8281e581def6f844b35d22a5886be40d0ec370c1450fe"
+      ],
+      [
+        "packages/core/src/news/validation.ts",
+        "9e1b7b759a2f772b1d0e1595baebc5293b42efcaa85694f2a973872bddc9b260"
       ],
       [
         "packages/core/src/paper/connection-book.ts",
@@ -4979,7 +5195,7 @@
       ],
       [
         "packages/services/src/index.ts",
-        "63fac34049f9b96679e740f05d36f0b43156e464a2850d3d516980f8fbdae161"
+        "e81e1cd867f3816fbce7743e4efb76c4ed6b185a565ce2a1a9a706cbdd011eb1"
       ],
       [
         "packages/services/src/market-data/acquisition/artifacts.ts",
@@ -5056,6 +5272,26 @@
       [
         "packages/services/src/market-events/service.ts",
         "c5f18209d80ba4b0ef37ccfc0a4f8ccbbbe9db77a1838d0125345eb2e595e380"
+      ],
+      [
+        "packages/services/src/news/configuration.ts",
+        "2478fbbe435dffc64326ecc2ff8b9ff2aa2f4cb93de21eb9094abb8202b17668"
+      ],
+      [
+        "packages/services/src/news/index.ts",
+        "1a84b19864e2fd9908efd5688265be13cddc7f16d1ee9887f80bb0d7d7af750e"
+      ],
+      [
+        "packages/services/src/news/quota-governor.ts",
+        "3751133132b0460d4ed5f85cbd29dcb2b355e38506e70912f14c67ca490a2d01"
+      ],
+      [
+        "packages/services/src/news/runtime.ts",
+        "3765e620ada22896abdf49de01f0d84d88cddab8cc2f32f1480937d2a751a5d4"
+      ],
+      [
+        "packages/services/src/news/service.ts",
+        "b2ca625cb4d376cb10778e2c62e9f8b0748c3f46830bb2a424db11175225656d"
       ],
       [
         "packages/services/src/paper/connection-campaign.ts",
@@ -5435,7 +5671,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "d94eec21fe31a8a55a48e9b16773beca442d9f85279a82b0854e1f63dd923dac"
+        "8730d37b37058e5b57ed178b3333869038262cd038326dd5c226b015e4c74292"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -5690,6 +5926,14 @@
         "bfe7a12a4cedefb447d782564b95e8bf1e227c49c3406eb05bcaf65dbd3ede33"
       ],
       [
+        "packages/storage/src/migrations/v88.ts",
+        "4ff3750d5535b2f387097cf1b6079084a83ef1e970c20d1992f9364b810945cf"
+      ],
+      [
+        "packages/storage/src/migrations/v89.ts",
+        "9d543edc8de20ecdaf3b7b8d97dc2fe808f9e0a1042059833512e7cbe35448ed"
+      ],
+      [
         "packages/storage/src/migrations/v9-v17.ts",
         "b393c4fd6bc1f10e8c9e9ef5af65713ae68f01c2823f337091793102639d0489"
       ],
@@ -5855,7 +6099,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "4cf65b3c1ddfd15808960ad2f374d9f54568a067bbafd01ad20c4acf06d81a92"
+        "023f44f7dcd8307a77d4e00210c2c7755a5d55fd2a5c7b703cbca5aa1f915ac3"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -5876,6 +6120,14 @@
       [
         "packages/storage/src/repositories/ml-signal-study.ts",
         "ac019e740f61611209e6ef9ca73be7ffdd4c4bd9877576d39dd575a50f7ad0b4"
+      ],
+      [
+        "packages/storage/src/repositories/news-quota.ts",
+        "2434463a07f3a0ed5770d0be335326a5938d90d31b80bafd12e563d9f5877079"
+      ],
+      [
+        "packages/storage/src/repositories/news.ts",
+        "dc0c7390df41ed732296bc8596d4a0e86c78dfb0a610292dc0b5cf010a8cb645"
       ],
       [
         "packages/storage/src/repositories/operational-metrics.ts",
@@ -6018,7 +6270,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "038af943209fb00b65792b71d03fc1db36a39acb6a3fdec75efdd0c75f00dcac"
+    "hash": "83c4a1ca5a4edb56d2979b47428e118db99c5d609955a210b5dba87a0c7423c3"
   },
   "paper-market-selector-v1": {
     "version": 1,
@@ -6146,7 +6398,11 @@
       ],
       [
         "packages/adapters/src/config/index.ts",
-        "1ca050c26ebc96d53b32f0baadffafbaa045ad18105bb9bcc5f6a6a12bc58a46"
+        "5be8c409a8d6eeea2e462ce7768433d9f44357534630278d59aa6cff54ef414f"
+      ],
+      [
+        "packages/adapters/src/config/news-env.ts",
+        "b06847a9630f01b5cbd56af86085b42b42f9767ced5c2b3a2c5818baaec6bcd7"
       ],
       [
         "packages/adapters/src/config/provider-env.ts",
@@ -6182,7 +6438,11 @@
       ],
       [
         "packages/adapters/src/http/index.ts",
-        "7f7d679c2f0198b1452f54c2906dfc4ede57304cba2d37589ae203138fff179a"
+        "1e2ff01fcccc680511024f8010edb855c9c90b192a16eef0de70d7425844dfef"
+      ],
+      [
+        "packages/adapters/src/http/news.ts",
+        "f39814bf2370e6569a93d9dd1de0c7684fa4e8126139d54f5247626faf3ac84e"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -6190,7 +6450,7 @@
       ],
       [
         "packages/adapters/src/index.ts",
-        "9e7dfc8a8b9c320702baa7826f16deacf2fa4d37c5f30617e0df5e32c8bcd4a7"
+        "96648c7b1ce8fa1faebe817cfaf1f8ea61f36ae1b7ebf0f8399b7d21bc42de2b"
       ],
       [
         "packages/adapters/src/market-data/index.ts",
@@ -6203,6 +6463,26 @@
       [
         "packages/adapters/src/market-data/types.ts",
         "206ac66512eead5f22e4ca7105a88c6a0f25d7d4a8fd01790869752b30c98c0a"
+      ],
+      [
+        "packages/adapters/src/news/common.ts",
+        "5ce345f889ab32bd92c3ce28770967599ab62d608fcaf5f9b01a4d9552937198"
+      ],
+      [
+        "packages/adapters/src/news/currents.ts",
+        "69ac6019ef22e418cf16cce676502e407eadca1c2583e123d60f13a8dc0d9f6b"
+      ],
+      [
+        "packages/adapters/src/news/gdelt.ts",
+        "831dcbde3c93178a4783369a05e57a93752d05f15dbf7376c25b3e0b4f21bf38"
+      ],
+      [
+        "packages/adapters/src/news/index.ts",
+        "bec0ea87a71fdc8bb23bb2e5ce66997074495ef1cc6efbbb8925b63d02ed2051"
+      ],
+      [
+        "packages/adapters/src/news/marketaux.ts",
+        "1a1925ac21b432966b86a74bcc9d8a4f06d8ebd1d01dd0969a3a9197c5c7c10f"
       ],
       [
         "packages/adapters/src/paper/index.ts",
@@ -6250,7 +6530,7 @@
       ],
       [
         "packages/adapters/src/secrets/store.ts",
-        "823aa447d29d2eb562fc3072d95c4220ec86069c4eebb31dd64051a7030bfc61"
+        "6c157cbc5012a40ce670e864e3a6f26886c1fbf76f92d75a03bd279c49376bbb"
       ],
       [
         "packages/contracts/src/channels.ts",
@@ -6262,7 +6542,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "b0d99ef280ddf9db56b96c5219e4bb5b72e2dc81ae4e1e2b0e03518d69d28735"
+        "c1309ea95b5c5c20ec59d8314f5ebaab4758940cb579ae59f06643240152599f"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -6319,6 +6599,10 @@
       [
         "packages/contracts/src/schemas/market-microstructure.ts",
         "b72fb653811abebcb0ee178a9c93f43324f65f89afb35037ad1a46755539e083"
+      ],
+      [
+        "packages/contracts/src/schemas/news.ts",
+        "c0f3d5688821f966c3dede91c50cdb0f64927eeb56d098835f22846829800adf"
       ],
       [
         "packages/contracts/src/schemas/operations.ts",
@@ -6470,7 +6754,7 @@
       ],
       [
         "packages/core/src/index.ts",
-        "14d808347a4968b6445e3c2496b790d5fb4aeaa507e3da0a96bceca593baa705"
+        "a8fbf5040ff227ce0272c07d72f3fefd6d69c15ac3f8ce980220732a6885b124"
       ],
       [
         "packages/core/src/indicators/index.ts",
@@ -6495,6 +6779,22 @@
       [
         "packages/core/src/market/universe.ts",
         "249daba11c2612e3fd67f5630e9bbe7e52126810758130b49eeb425c519aabd4"
+      ],
+      [
+        "packages/core/src/news/identity.ts",
+        "948498592f08e225132235d6e36673aa39daf2fc8e7e8be533c50ca4202d089b"
+      ],
+      [
+        "packages/core/src/news/index.ts",
+        "48da61aa8319935020a808082c56b7fcebe7f9dd3b88b2e09dba4abb78a0b9b7"
+      ],
+      [
+        "packages/core/src/news/types.ts",
+        "30138925e55dd1cb30d8281e581def6f844b35d22a5886be40d0ec370c1450fe"
+      ],
+      [
+        "packages/core/src/news/validation.ts",
+        "9e1b7b759a2f772b1d0e1595baebc5293b42efcaa85694f2a973872bddc9b260"
       ],
       [
         "packages/core/src/paper/connection-book.ts",
@@ -6986,7 +7286,7 @@
       ],
       [
         "packages/services/src/index.ts",
-        "63fac34049f9b96679e740f05d36f0b43156e464a2850d3d516980f8fbdae161"
+        "e81e1cd867f3816fbce7743e4efb76c4ed6b185a565ce2a1a9a706cbdd011eb1"
       ],
       [
         "packages/services/src/market-data/acquisition/artifacts.ts",
@@ -7063,6 +7363,26 @@
       [
         "packages/services/src/market-events/service.ts",
         "c5f18209d80ba4b0ef37ccfc0a4f8ccbbbe9db77a1838d0125345eb2e595e380"
+      ],
+      [
+        "packages/services/src/news/configuration.ts",
+        "2478fbbe435dffc64326ecc2ff8b9ff2aa2f4cb93de21eb9094abb8202b17668"
+      ],
+      [
+        "packages/services/src/news/index.ts",
+        "1a84b19864e2fd9908efd5688265be13cddc7f16d1ee9887f80bb0d7d7af750e"
+      ],
+      [
+        "packages/services/src/news/quota-governor.ts",
+        "3751133132b0460d4ed5f85cbd29dcb2b355e38506e70912f14c67ca490a2d01"
+      ],
+      [
+        "packages/services/src/news/runtime.ts",
+        "3765e620ada22896abdf49de01f0d84d88cddab8cc2f32f1480937d2a751a5d4"
+      ],
+      [
+        "packages/services/src/news/service.ts",
+        "b2ca625cb4d376cb10778e2c62e9f8b0748c3f46830bb2a424db11175225656d"
       ],
       [
         "packages/services/src/paper/connection-campaign.ts",
@@ -7442,7 +7762,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "d94eec21fe31a8a55a48e9b16773beca442d9f85279a82b0854e1f63dd923dac"
+        "8730d37b37058e5b57ed178b3333869038262cd038326dd5c226b015e4c74292"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -7697,6 +8017,14 @@
         "bfe7a12a4cedefb447d782564b95e8bf1e227c49c3406eb05bcaf65dbd3ede33"
       ],
       [
+        "packages/storage/src/migrations/v88.ts",
+        "4ff3750d5535b2f387097cf1b6079084a83ef1e970c20d1992f9364b810945cf"
+      ],
+      [
+        "packages/storage/src/migrations/v89.ts",
+        "9d543edc8de20ecdaf3b7b8d97dc2fe808f9e0a1042059833512e7cbe35448ed"
+      ],
+      [
         "packages/storage/src/migrations/v9-v17.ts",
         "b393c4fd6bc1f10e8c9e9ef5af65713ae68f01c2823f337091793102639d0489"
       ],
@@ -7862,7 +8190,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "4cf65b3c1ddfd15808960ad2f374d9f54568a067bbafd01ad20c4acf06d81a92"
+        "023f44f7dcd8307a77d4e00210c2c7755a5d55fd2a5c7b703cbca5aa1f915ac3"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -7883,6 +8211,14 @@
       [
         "packages/storage/src/repositories/ml-signal-study.ts",
         "ac019e740f61611209e6ef9ca73be7ffdd4c4bd9877576d39dd575a50f7ad0b4"
+      ],
+      [
+        "packages/storage/src/repositories/news-quota.ts",
+        "2434463a07f3a0ed5770d0be335326a5938d90d31b80bafd12e563d9f5877079"
+      ],
+      [
+        "packages/storage/src/repositories/news.ts",
+        "dc0c7390df41ed732296bc8596d4a0e86c78dfb0a610292dc0b5cf010a8cb645"
       ],
       [
         "packages/storage/src/repositories/operational-metrics.ts",
@@ -8025,7 +8361,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "6780bfc8a76a3225f551ece0b0841ce3b97851b49a4b50cc7f111fc3c23104d4"
+    "hash": "2e7d5b8e4af103bf675007eb7c560f2194c82d24789da1a1dd90ea1883a33477"
   },
   "trendvol-hourly-execution-v1": {
     "version": 1,
@@ -8141,7 +8477,11 @@
       ],
       [
         "packages/adapters/src/config/index.ts",
-        "1ca050c26ebc96d53b32f0baadffafbaa045ad18105bb9bcc5f6a6a12bc58a46"
+        "5be8c409a8d6eeea2e462ce7768433d9f44357534630278d59aa6cff54ef414f"
+      ],
+      [
+        "packages/adapters/src/config/news-env.ts",
+        "b06847a9630f01b5cbd56af86085b42b42f9767ced5c2b3a2c5818baaec6bcd7"
       ],
       [
         "packages/adapters/src/config/provider-env.ts",
@@ -8177,7 +8517,11 @@
       ],
       [
         "packages/adapters/src/http/index.ts",
-        "7f7d679c2f0198b1452f54c2906dfc4ede57304cba2d37589ae203138fff179a"
+        "1e2ff01fcccc680511024f8010edb855c9c90b192a16eef0de70d7425844dfef"
+      ],
+      [
+        "packages/adapters/src/http/news.ts",
+        "f39814bf2370e6569a93d9dd1de0c7684fa4e8126139d54f5247626faf3ac84e"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -8185,7 +8529,7 @@
       ],
       [
         "packages/adapters/src/index.ts",
-        "9e7dfc8a8b9c320702baa7826f16deacf2fa4d37c5f30617e0df5e32c8bcd4a7"
+        "96648c7b1ce8fa1faebe817cfaf1f8ea61f36ae1b7ebf0f8399b7d21bc42de2b"
       ],
       [
         "packages/adapters/src/market-data/index.ts",
@@ -8198,6 +8542,26 @@
       [
         "packages/adapters/src/market-data/types.ts",
         "206ac66512eead5f22e4ca7105a88c6a0f25d7d4a8fd01790869752b30c98c0a"
+      ],
+      [
+        "packages/adapters/src/news/common.ts",
+        "5ce345f889ab32bd92c3ce28770967599ab62d608fcaf5f9b01a4d9552937198"
+      ],
+      [
+        "packages/adapters/src/news/currents.ts",
+        "69ac6019ef22e418cf16cce676502e407eadca1c2583e123d60f13a8dc0d9f6b"
+      ],
+      [
+        "packages/adapters/src/news/gdelt.ts",
+        "831dcbde3c93178a4783369a05e57a93752d05f15dbf7376c25b3e0b4f21bf38"
+      ],
+      [
+        "packages/adapters/src/news/index.ts",
+        "bec0ea87a71fdc8bb23bb2e5ce66997074495ef1cc6efbbb8925b63d02ed2051"
+      ],
+      [
+        "packages/adapters/src/news/marketaux.ts",
+        "1a1925ac21b432966b86a74bcc9d8a4f06d8ebd1d01dd0969a3a9197c5c7c10f"
       ],
       [
         "packages/adapters/src/paper/index.ts",
@@ -8245,7 +8609,7 @@
       ],
       [
         "packages/adapters/src/secrets/store.ts",
-        "823aa447d29d2eb562fc3072d95c4220ec86069c4eebb31dd64051a7030bfc61"
+        "6c157cbc5012a40ce670e864e3a6f26886c1fbf76f92d75a03bd279c49376bbb"
       ],
       [
         "packages/core/src/backtest/analytics.ts",
@@ -8357,7 +8721,7 @@
       ],
       [
         "packages/core/src/index.ts",
-        "14d808347a4968b6445e3c2496b790d5fb4aeaa507e3da0a96bceca593baa705"
+        "a8fbf5040ff227ce0272c07d72f3fefd6d69c15ac3f8ce980220732a6885b124"
       ],
       [
         "packages/core/src/indicators/index.ts",
@@ -8382,6 +8746,22 @@
       [
         "packages/core/src/market/universe.ts",
         "249daba11c2612e3fd67f5630e9bbe7e52126810758130b49eeb425c519aabd4"
+      ],
+      [
+        "packages/core/src/news/identity.ts",
+        "948498592f08e225132235d6e36673aa39daf2fc8e7e8be533c50ca4202d089b"
+      ],
+      [
+        "packages/core/src/news/index.ts",
+        "48da61aa8319935020a808082c56b7fcebe7f9dd3b88b2e09dba4abb78a0b9b7"
+      ],
+      [
+        "packages/core/src/news/types.ts",
+        "30138925e55dd1cb30d8281e581def6f844b35d22a5886be40d0ec370c1450fe"
+      ],
+      [
+        "packages/core/src/news/validation.ts",
+        "9e1b7b759a2f772b1d0e1595baebc5293b42efcaa85694f2a973872bddc9b260"
       ],
       [
         "packages/core/src/paper/connection-book.ts",
@@ -8805,7 +9185,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "d94eec21fe31a8a55a48e9b16773beca442d9f85279a82b0854e1f63dd923dac"
+        "8730d37b37058e5b57ed178b3333869038262cd038326dd5c226b015e4c74292"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -9060,6 +9440,14 @@
         "bfe7a12a4cedefb447d782564b95e8bf1e227c49c3406eb05bcaf65dbd3ede33"
       ],
       [
+        "packages/storage/src/migrations/v88.ts",
+        "4ff3750d5535b2f387097cf1b6079084a83ef1e970c20d1992f9364b810945cf"
+      ],
+      [
+        "packages/storage/src/migrations/v89.ts",
+        "9d543edc8de20ecdaf3b7b8d97dc2fe808f9e0a1042059833512e7cbe35448ed"
+      ],
+      [
         "packages/storage/src/migrations/v9-v17.ts",
         "b393c4fd6bc1f10e8c9e9ef5af65713ae68f01c2823f337091793102639d0489"
       ],
@@ -9225,7 +9613,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "4cf65b3c1ddfd15808960ad2f374d9f54568a067bbafd01ad20c4acf06d81a92"
+        "023f44f7dcd8307a77d4e00210c2c7755a5d55fd2a5c7b703cbca5aa1f915ac3"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -9246,6 +9634,14 @@
       [
         "packages/storage/src/repositories/ml-signal-study.ts",
         "ac019e740f61611209e6ef9ca73be7ffdd4c4bd9877576d39dd575a50f7ad0b4"
+      ],
+      [
+        "packages/storage/src/repositories/news-quota.ts",
+        "2434463a07f3a0ed5770d0be335326a5938d90d31b80bafd12e563d9f5877079"
+      ],
+      [
+        "packages/storage/src/repositories/news.ts",
+        "dc0c7390df41ed732296bc8596d4a0e86c78dfb0a610292dc0b5cf010a8cb645"
       ],
       [
         "packages/storage/src/repositories/operational-metrics.ts",
@@ -9388,7 +9784,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "74ce5c80fe656af7a8201aff53f2fd499dc2f23afc88ce4c098ea647ef390d09"
+    "hash": "cdb382bb29b7cd00a8640aa5ce928eda2e7cb824e6a739551748fce6f880995e"
   },
   "trendvol-execution-remediation-v1": {
     "version": 1,
@@ -9504,7 +9900,11 @@
       ],
       [
         "packages/adapters/src/config/index.ts",
-        "1ca050c26ebc96d53b32f0baadffafbaa045ad18105bb9bcc5f6a6a12bc58a46"
+        "5be8c409a8d6eeea2e462ce7768433d9f44357534630278d59aa6cff54ef414f"
+      ],
+      [
+        "packages/adapters/src/config/news-env.ts",
+        "b06847a9630f01b5cbd56af86085b42b42f9767ced5c2b3a2c5818baaec6bcd7"
       ],
       [
         "packages/adapters/src/config/provider-env.ts",
@@ -9540,7 +9940,11 @@
       ],
       [
         "packages/adapters/src/http/index.ts",
-        "7f7d679c2f0198b1452f54c2906dfc4ede57304cba2d37589ae203138fff179a"
+        "1e2ff01fcccc680511024f8010edb855c9c90b192a16eef0de70d7425844dfef"
+      ],
+      [
+        "packages/adapters/src/http/news.ts",
+        "f39814bf2370e6569a93d9dd1de0c7684fa4e8126139d54f5247626faf3ac84e"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -9548,7 +9952,7 @@
       ],
       [
         "packages/adapters/src/index.ts",
-        "9e7dfc8a8b9c320702baa7826f16deacf2fa4d37c5f30617e0df5e32c8bcd4a7"
+        "96648c7b1ce8fa1faebe817cfaf1f8ea61f36ae1b7ebf0f8399b7d21bc42de2b"
       ],
       [
         "packages/adapters/src/market-data/index.ts",
@@ -9561,6 +9965,26 @@
       [
         "packages/adapters/src/market-data/types.ts",
         "206ac66512eead5f22e4ca7105a88c6a0f25d7d4a8fd01790869752b30c98c0a"
+      ],
+      [
+        "packages/adapters/src/news/common.ts",
+        "5ce345f889ab32bd92c3ce28770967599ab62d608fcaf5f9b01a4d9552937198"
+      ],
+      [
+        "packages/adapters/src/news/currents.ts",
+        "69ac6019ef22e418cf16cce676502e407eadca1c2583e123d60f13a8dc0d9f6b"
+      ],
+      [
+        "packages/adapters/src/news/gdelt.ts",
+        "831dcbde3c93178a4783369a05e57a93752d05f15dbf7376c25b3e0b4f21bf38"
+      ],
+      [
+        "packages/adapters/src/news/index.ts",
+        "bec0ea87a71fdc8bb23bb2e5ce66997074495ef1cc6efbbb8925b63d02ed2051"
+      ],
+      [
+        "packages/adapters/src/news/marketaux.ts",
+        "1a1925ac21b432966b86a74bcc9d8a4f06d8ebd1d01dd0969a3a9197c5c7c10f"
       ],
       [
         "packages/adapters/src/paper/index.ts",
@@ -9608,7 +10032,7 @@
       ],
       [
         "packages/adapters/src/secrets/store.ts",
-        "823aa447d29d2eb562fc3072d95c4220ec86069c4eebb31dd64051a7030bfc61"
+        "6c157cbc5012a40ce670e864e3a6f26886c1fbf76f92d75a03bd279c49376bbb"
       ],
       [
         "packages/core/src/backtest/analytics.ts",
@@ -9720,7 +10144,7 @@
       ],
       [
         "packages/core/src/index.ts",
-        "14d808347a4968b6445e3c2496b790d5fb4aeaa507e3da0a96bceca593baa705"
+        "a8fbf5040ff227ce0272c07d72f3fefd6d69c15ac3f8ce980220732a6885b124"
       ],
       [
         "packages/core/src/indicators/index.ts",
@@ -9745,6 +10169,22 @@
       [
         "packages/core/src/market/universe.ts",
         "249daba11c2612e3fd67f5630e9bbe7e52126810758130b49eeb425c519aabd4"
+      ],
+      [
+        "packages/core/src/news/identity.ts",
+        "948498592f08e225132235d6e36673aa39daf2fc8e7e8be533c50ca4202d089b"
+      ],
+      [
+        "packages/core/src/news/index.ts",
+        "48da61aa8319935020a808082c56b7fcebe7f9dd3b88b2e09dba4abb78a0b9b7"
+      ],
+      [
+        "packages/core/src/news/types.ts",
+        "30138925e55dd1cb30d8281e581def6f844b35d22a5886be40d0ec370c1450fe"
+      ],
+      [
+        "packages/core/src/news/validation.ts",
+        "9e1b7b759a2f772b1d0e1595baebc5293b42efcaa85694f2a973872bddc9b260"
       ],
       [
         "packages/core/src/paper/connection-book.ts",
@@ -10160,7 +10600,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "d94eec21fe31a8a55a48e9b16773beca442d9f85279a82b0854e1f63dd923dac"
+        "8730d37b37058e5b57ed178b3333869038262cd038326dd5c226b015e4c74292"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -10415,6 +10855,14 @@
         "bfe7a12a4cedefb447d782564b95e8bf1e227c49c3406eb05bcaf65dbd3ede33"
       ],
       [
+        "packages/storage/src/migrations/v88.ts",
+        "4ff3750d5535b2f387097cf1b6079084a83ef1e970c20d1992f9364b810945cf"
+      ],
+      [
+        "packages/storage/src/migrations/v89.ts",
+        "9d543edc8de20ecdaf3b7b8d97dc2fe808f9e0a1042059833512e7cbe35448ed"
+      ],
+      [
         "packages/storage/src/migrations/v9-v17.ts",
         "b393c4fd6bc1f10e8c9e9ef5af65713ae68f01c2823f337091793102639d0489"
       ],
@@ -10580,7 +11028,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "4cf65b3c1ddfd15808960ad2f374d9f54568a067bbafd01ad20c4acf06d81a92"
+        "023f44f7dcd8307a77d4e00210c2c7755a5d55fd2a5c7b703cbca5aa1f915ac3"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -10601,6 +11049,14 @@
       [
         "packages/storage/src/repositories/ml-signal-study.ts",
         "ac019e740f61611209e6ef9ca73be7ffdd4c4bd9877576d39dd575a50f7ad0b4"
+      ],
+      [
+        "packages/storage/src/repositories/news-quota.ts",
+        "2434463a07f3a0ed5770d0be335326a5938d90d31b80bafd12e563d9f5877079"
+      ],
+      [
+        "packages/storage/src/repositories/news.ts",
+        "dc0c7390df41ed732296bc8596d4a0e86c78dfb0a610292dc0b5cf010a8cb645"
       ],
       [
         "packages/storage/src/repositories/operational-metrics.ts",
@@ -10743,6 +11199,6 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "45eb0e92cbf9ee82070a01c255af738bccdd9a5c00044eb61325573e9fc99c09"
+    "hash": "8a311b9688f5abe6348254fcd85e0d6893171ac4e0ffe1aa94b81382227a0317"
   }
 }

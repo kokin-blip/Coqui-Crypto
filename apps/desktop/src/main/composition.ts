@@ -1,4 +1,4 @@
-import type { ProfileOperationGate } from '@coqui/services'; import type { WalletNicknameStore, ProfileManifestStore } from '@coqui/storage';
+import { createRuntimeNewsHost, type NewsHostRuntime } from './news-host-runtime.js'; import type { NewsHostConfiguration, ProfileOperationGate } from '@coqui/services'; import type { WalletNicknameStore, ProfileManifestStore } from '@coqui/storage';
 import { createOverlayShadowRuntime } from './overlay-shadow-runtime.js'; import { createWiderUniverseRuntime } from './wider-universe-runtime.js'; import { createBreakoutRuntime } from './breakout-runtime.js'; import { createRangeRotationRuntime } from './range-rotation-runtime.js'; import { createMarketSelectorRuntime } from './market-selector-runtime.js';
 import { readStrategyHealth, PAPER_TRENDVOL_VERSION } from '@coqui/services';
 import { randomUUID } from 'node:crypto';
@@ -94,7 +94,7 @@ export interface RuntimeOptions extends Partial<Pick<Parameters<typeof createAdv
   readonly readSystemTime?: () => number;
   readonly onUnexpectedError?: (context: string, error: unknown) => void;
   /** Leave the scheduler stopped for smoke tests. */
-  readonly disableScheduler?: boolean;
+  readonly disableScheduler?: boolean; readonly newsConfiguration?: NewsHostConfiguration; readonly newsQuotaDatabasePath?: string;
   /**
    * A verified CoinGecko Demo key, read from the secret store *before* the
    * runtime is built.
@@ -124,7 +124,7 @@ export interface CoquiRuntime {
   readonly database: Db;
   readonly clock: Clock;
   /** Null when the scheduler is disabled. Exposed so a test can drive a tick. */
-  readonly scheduler: SchedulerRuntime | null;
+  readonly scheduler: SchedulerRuntime | null; readonly news: NewsHostRuntime;
   /** Start after a prepared profile becomes authoritative. Idempotent. */
   startScheduler(): void;
   dispose(): void;
@@ -266,12 +266,12 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     },
     onUnexpectedError: report,
   };
-  let scheduler: SchedulerRuntime | null = null, disposed = false;
+  const news = createRuntimeNewsHost(options, clock, hostId, report); let scheduler: SchedulerRuntime | null = null, disposed = false;
   const startScheduler = (): void => {
     if (disposed || scheduler !== null) return;
     if (!isAuthoritativeHost(options.profileId, hostId, database)) return;
     liveMarket.start(paperInstruments().map((instrument) => instrument.productId));
-    scheduler = startSchedulerRuntime({ overlayShadow,
+    scheduler = startSchedulerRuntime({ overlayShadow, news,
         database, clock, ...(options.operationGate === undefined ? {} : {operationGate:options.operationGate}),
         profileId: options.profileId, hostId, onUnexpectedError: report, research: researchHost,
         async prepare(nowMs) {
@@ -558,12 +558,12 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     },
     database,
     clock,
-    get scheduler() { return scheduler; },
+    get scheduler() { return scheduler; }, news,
     startScheduler,
     dispose() {
       if (disposed) return;
       disposed = true;
-      scheduler?.dispose();
+      scheduler?.dispose(); news.dispose();
       liveMarket.dispose();
       if (coinGeckoHttp !== http) coinGeckoHttp.destroy();
       http.destroy();

@@ -21,3 +21,4 @@ export * from './cache/index.js';
 export * from './connections/index.js';
 export * from './concurrency/index.js';
 export * from './events/index.js';
+export * from './news/index.js';
