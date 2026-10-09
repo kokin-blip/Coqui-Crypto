@@ -33,14 +33,15 @@ function featureWindow(instrument: InstrumentIdentity, decisionAtMs: number, win
     dataAgeSeconds: eligible.length ? (decisionAtMs - Math.max(...eligible.map(a => a.availableAtMs))) / 1000 : null };
 }
 export function buildNewsFeatureSnapshot(input: {
-  readonly runId: string; readonly instrument: NewsInstrumentIdentity; readonly cadence: 'hourly' | 'daily';
+  readonly featureVersion?: NewsFeatureSnapshot['featureVersion']; readonly runId: string; readonly instrument: NewsInstrumentIdentity; readonly cadence: 'hourly' | 'daily';
   readonly decisionAtMs: number; readonly availableAtMs: number; readonly analyses: readonly NewsObservationAnalysis[];
   readonly clusters: readonly NewsClusterSnapshot[]; readonly baseline: readonly NewsFeatureSnapshot[];
   readonly coverage: NewsFeatureSnapshot['coverage']; readonly reconstruction: boolean;
 }): NewsFeatureSnapshot {
+  const version = input.featureVersion ?? NEWS_FEATURE_VERSION;
   const windows = ([NEWS_HOUR_MS, NEWS_DAY_MS] as const).map(window => featureWindow(input.instrument, input.decisionAtMs,
     window, input.analyses, input.clusters));
-  const baseline = [...input.baseline].filter(s => s.cadence === 'daily' && s.featureVersion === NEWS_FEATURE_VERSION &&
+  const baseline = [...input.baseline].filter(s => s.cadence === 'daily' && s.featureVersion === version &&
     !s.reconstruction && s.availableAtMs <= input.decisionAtMs && s.decisionAtMs <= input.decisionAtMs - NEWS_DAY_MS &&
     instrumentKey(s.instrument) === instrumentKey(input.instrument)).sort((a, b) => b.decisionAtMs - a.decisionAtMs);
   const distinct = baseline.filter((s, i) => baseline.findIndex(other => other.decisionAtMs === s.decisionAtMs) === i).slice(0, 30);
@@ -48,8 +49,8 @@ export function buildNewsFeatureSnapshot(input: {
   const average = mean(counts), variance = average === null ? 0 : mean(counts.map(n => (n - average) ** 2))!;
   const volumeZScore24h = counts.length === 30 && variance > 0 ? (windows[1]!.groupCount - average!) / Math.sqrt(variance) : null;
   return { schemaVersion: 1, id: newsEvidenceHash({ runId: input.runId, instrument: input.instrument,
-    cadence: input.cadence, decisionAtMs: input.decisionAtMs, version: NEWS_FEATURE_VERSION }), runId: input.runId,
-    featureVersion: NEWS_FEATURE_VERSION, instrument: input.instrument, cadence: input.cadence,
+    cadence: input.cadence, decisionAtMs: input.decisionAtMs, version }), runId: input.runId,
+    featureVersion: version, instrument: input.instrument, cadence: input.cadence,
     decisionAtMs: input.decisionAtMs, availableAtMs: input.availableAtMs,
     reconstruction: input.reconstruction, windows, volumeZScore24h,
     baselineSnapshotIds: distinct.map(s => s.id), clusterSnapshotIds: input.clusters.map(c => c.id), coverageComplete: null, coverage: input.coverage,

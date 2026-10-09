@@ -1,3 +1,4 @@
+import { setTimeout, clearTimeout } from 'node:timers';
 import { setTimeout as delay } from 'node:timers/promises';
 
 /** Exercises the production terminal through its ordinary controls. */
@@ -10,6 +11,11 @@ export async function checkTerminal(window, check) {
     }
     throw new Error(`Terminal control did not settle: ${source}`);
   };
+  const windowEvent = (event) => new Promise((resolve, reject) => {
+    const complete = () => { clearTimeout(timer); resolve(); };
+    const timer = setTimeout(() => { window.removeListener(event, complete); reject(new Error(`Fullscreen transition did not settle: ${event}`)); }, 6_000);
+    window.once(event, complete);
+  });
   await evaluate(`location.hash = '#/overview'`);
   await waitFor(`document.querySelector('[aria-label="Account and algorithm data"]') !== null`);
   for (const tab of ['Assets', 'Paper Positions', 'Paper Proposals', 'Decisions', 'Performance', 'Research Runs']) {
@@ -42,9 +48,17 @@ export async function checkTerminal(window, check) {
   await waitFor(`document.querySelector('#terminal-chart-panel')?.textContent.includes('ETH-USD') && document.querySelector('#microstructure-tab-1')?.getAttribute('aria-selected') === 'true'`);
   check('terminal depth and recent-trades views retain the selected product', true);
   await evaluate(`document.querySelector('#terminal-chart-tab-0').click()`);
+  await waitFor(`document.querySelector('button[aria-label="Fullscreen chart panel"]') !== null`);
+  const enterHtml = windowEvent('enter-html-full-screen');
+  const enterNative = process.platform === 'darwin' ? windowEvent('enter-full-screen') : Promise.resolve();
   await evaluate(`document.querySelector('button[aria-label="Fullscreen chart panel"]').click()`, true);
+  await Promise.all([enterHtml, enterNative]);
   await waitFor(`document.fullscreenElement?.classList.contains('terminal-price-panel') === true`);
+  await waitFor(`document.querySelector('button[aria-label="Exit chart fullscreen"]') !== null`);
+  const leaveHtml = windowEvent('leave-html-full-screen');
+  const leaveNative = process.platform === 'darwin' ? windowEvent('leave-full-screen') : Promise.resolve();
   await evaluate(`document.querySelector('button[aria-label="Exit chart fullscreen"]').click()`, true);
+  await Promise.all([leaveHtml, leaveNative]);
   await waitFor(`document.fullscreenElement === null`);
   check('terminal chart panel enters and exits native fullscreen', true);
 

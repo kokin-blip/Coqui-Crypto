@@ -261,7 +261,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "7aa210854459eade9ec0593f8a1d38ffc32eb5e2d5c3df78265aa7271a54b647"
+        "58937e4cd25df12b2f92d6f8733621292fb70c9b80184f1970c6c9aa42029f49"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -269,7 +269,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "aeca9c3142285529d47778f8738b49da63db83a0b1f05a0e2733357a5a49337a"
+        "90b63dc140b14a3bcf5d117551011e136c58729fc7f1ca37ba4a0820c778fbc1"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -328,8 +328,16 @@
         "b72fb653811abebcb0ee178a9c93f43324f65f89afb35037ad1a46755539e083"
       ],
       [
+        "packages/contracts/src/schemas/news-archive.ts",
+        "89a525b5ad3d5c4509b1d1d35f266b68a69e4470d6e23c565fa971c46efadf1b"
+      ],
+      [
+        "packages/contracts/src/schemas/news-channels.ts",
+        "ef7b89219815ceae2b942092fc82338bf52eaec19d1496934a8b4b06986a1e7b"
+      ],
+      [
         "packages/contracts/src/schemas/news-intelligence.ts",
-        "425d117ab1e7abac478ef246a724d077225bfe9e08060d5f1dec9d3097551293"
+        "3f61b41bb88451c57e0640b36a199d198995cf91c4b9442929e6bba23463c89e"
       ],
       [
         "packages/contracts/src/schemas/news.ts",
@@ -517,7 +525,7 @@
       ],
       [
         "packages/core/src/news/features.ts",
-        "38ef69ec9f5364c4b20b9eb146cea174540af058bd1781dbcbda6a2f9b2f2e94"
+        "dc612d133d815238788bf2f3bacfe2092b8a98434a70ecfc12f128126395905b"
       ],
       [
         "packages/core/src/news/identity.ts",
@@ -525,15 +533,19 @@
       ],
       [
         "packages/core/src/news/index.ts",
-        "16a6a66e050ad42ff22232d679235cbce797a9d4116a7833ef43dcf3081f8551"
+        "0fba753857885c76969b2676ddad7d2f3d7a6a169ebbe6780b1aa7d9d7ea9980"
       ],
       [
         "packages/core/src/news/intelligence-types.ts",
-        "c9c50b960bb103aeefdaac6377ecb64b6cf9032931818f8c0be708bddc5edab0"
+        "254cda24d2d198d80c4599c0d3c1e6d5c5431f4d241c92b3db7c50a37e52a759"
       ],
       [
         "packages/core/src/news/intelligence.ts",
         "aeae3a4c1808dd9c9534eadb11478f35bbad7536bb68de9e6ce341e5551d5595"
+      ],
+      [
+        "packages/core/src/news/study.ts",
+        "6e14689bc27bcf2ad2d0686d0c639b9d10e1a656729b7af18c7dc58b1b664141"
       ],
       [
         "packages/core/src/news/types.ts",
@@ -749,7 +761,7 @@
       ],
       [
         "packages/core/src/research/overlay/models.ts",
-        "faa4614fa04e2afec7058eb2a437c550bb1a3034af76bbb7b486e087c6b828d7"
+        "a126edb2b9b3ae94781f475f40164f01be318ed6b38164f5e0cafa544d663886"
       ],
       [
         "packages/core/src/research/overlay/proposals.ts",
@@ -1113,7 +1125,7 @@
       ],
       [
         "packages/services/src/news/configuration.ts",
-        "2478fbbe435dffc64326ecc2ff8b9ff2aa2f4cb93de21eb9094abb8202b17668"
+        "1a080d237eb213aeeea9e29cbda72cec469e7b58c3033be9453cef777d66d4e3"
       ],
       [
         "packages/services/src/news/index.ts",
@@ -1121,7 +1133,7 @@
       ],
       [
         "packages/services/src/news/intelligence.ts",
-        "3295e8c7f3daa185b1c7f00dd868946407d2068bb3c12d18836c6f4b9bb6d7ad"
+        "a7f751f04102d26393489d8f633309b09dd1b8ee6952c7450d28e14fe37db8e1"
       ],
       [
         "packages/services/src/news/quota-governor.ts",
@@ -1485,27 +1497,35 @@
       ],
       [
         "packages/storage/src/archive/common.ts",
-        "55e47d80202c707c9b4febc92b304549b76292309688f00ab12bfa2f9fdb6c59"
+        "5937e5dc34443c6afba50759bf1f3e7000ccc7c9026948db9f62bd3c23a4e50e"
       ],
       [
         "packages/storage/src/archive/decision-dataset.ts",
-        "2fb8fa8398fb6a9f8eba04aec5707bc795c3ce1566392a1b7d9a11de9fe9b481"
+        "c685cf151e743aaa89f9c0b5cc56eaf78f7ee562f13039385ee11da6361c0e4d"
       ],
       [
         "packages/storage/src/archive/index.ts",
-        "a2c9aeda10c0b0b54e776e4932698b7eafafaa1b8441b112d89b57135a04690f"
+        "ea5beb0ac2e71b26eadc1dfc87fabc8d2fbfbb451427e67e5aa15714fcfd6619"
+      ],
+      [
+        "packages/storage/src/archive/news-provenance.ts",
+        "16cde9a9fb83469e19c562fd29b724e1115c64ef3375711e3f10fb3cc1fcb19b"
+      ],
+      [
+        "packages/storage/src/archive/news.ts",
+        "9f849ecdf7bdb49a1f75ddab69144a268116b86bae1fe2e8155a5ef87824f479"
       ],
       [
         "packages/storage/src/archive/reader.ts",
-        "19b2fcba35da9c4bc51d08827e8aefc1a3c6aa4c37a5a9a6d27824d7cbd1778c"
+        "3b64b54dd513ed2729280f3b50dfa1d88d73a174ee4378495cc7ca8663fa7db1"
       ],
       [
         "packages/storage/src/archive/types.ts",
-        "6212503313b5adfb979288267109ef02c789b692acc64bf6dc3be49cfcda2773"
+        "87dbbfb7520e8026e85705bd99a047a3ab9d018bfc81afbc18a461707a168a5b"
       ],
       [
         "packages/storage/src/archive/writer.ts",
-        "21bd81f8b7f77dff7e0c944355c707151105569f7b74edb50beaedcfb716b8ce"
+        "73b5f56c143dbf7e1aace07b7c8a5da3b1acd9eb38129f455f47e081721f48f3"
       ],
       [
         "packages/storage/src/index.ts",
@@ -1513,7 +1533,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "575dc8b39455b17e1517440ff9cc3f862f57f5b029637285f1038761c9f2501d"
+        "f705fc4c0d21b7781ccf70d7a78882af7f76cee41c44a7a16b979750e2758a86"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -1784,6 +1804,10 @@
         "68ed92ebd13ad4f3a3b2fbd6be8b25e2a492bb182a661e71c09dfa4dcb69e6e6"
       ],
       [
+        "packages/storage/src/migrations/v91.ts",
+        "f688e608825c103c73cd5f00e4df3288eaef2a601c18be7f80ddb7daa9bade92"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -1945,7 +1969,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "663b94c886fb16e94c7e7b859650a06512f16abfc878d0cb5841f59905d07eee"
+        "860a3eb7aec86b3255f425f272cf02cf6863e6f0d8ecb7d4c41a14a69f232017"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -1968,8 +1992,12 @@
         "ac019e740f61611209e6ef9ca73be7ffdd4c4bd9877576d39dd575a50f7ad0b4"
       ],
       [
+        "packages/storage/src/repositories/news-chunks.ts",
+        "f8a5d0b90240dd2ec37e069ab19a08e9530af942393c5249e4c00358037f8b15"
+      ],
+      [
         "packages/storage/src/repositories/news-intelligence.ts",
-        "f2047efb640247af2471708269506c7496343644c93de39133a66a2552ec2629"
+        "d8c7e76cf08799493059ba09d99157f7754fa5d9525bb3c733b7959c7932cf6e"
       ],
       [
         "packages/storage/src/repositories/news-quota.ts",
@@ -1977,7 +2005,7 @@
       ],
       [
         "packages/storage/src/repositories/news.ts",
-        "ede46178e5256a45d2923c1935916b9591c33cd4119a762e5c886fb63e990238"
+        "22976dbacb9f8e85935b036a784f99585e68a3056fa40e5d491e0e15997d6151"
       ],
       [
         "packages/storage/src/repositories/operational-metrics.ts",
@@ -2120,7 +2148,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "a12335cc865e9b7483a2b477e8a5f273342efa90c197fe1187a5e0560e268ab1"
+    "hash": "7ecac2acf6a95adf57c6d689f2fa4aed3272c3c22992437a229812dd0076179e"
   },
   "wider-breakout-v1": {
     "version": 1,
@@ -2384,7 +2412,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "7aa210854459eade9ec0593f8a1d38ffc32eb5e2d5c3df78265aa7271a54b647"
+        "58937e4cd25df12b2f92d6f8733621292fb70c9b80184f1970c6c9aa42029f49"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -2392,7 +2420,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "aeca9c3142285529d47778f8738b49da63db83a0b1f05a0e2733357a5a49337a"
+        "90b63dc140b14a3bcf5d117551011e136c58729fc7f1ca37ba4a0820c778fbc1"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -2451,8 +2479,16 @@
         "b72fb653811abebcb0ee178a9c93f43324f65f89afb35037ad1a46755539e083"
       ],
       [
+        "packages/contracts/src/schemas/news-archive.ts",
+        "89a525b5ad3d5c4509b1d1d35f266b68a69e4470d6e23c565fa971c46efadf1b"
+      ],
+      [
+        "packages/contracts/src/schemas/news-channels.ts",
+        "ef7b89219815ceae2b942092fc82338bf52eaec19d1496934a8b4b06986a1e7b"
+      ],
+      [
         "packages/contracts/src/schemas/news-intelligence.ts",
-        "425d117ab1e7abac478ef246a724d077225bfe9e08060d5f1dec9d3097551293"
+        "3f61b41bb88451c57e0640b36a199d198995cf91c4b9442929e6bba23463c89e"
       ],
       [
         "packages/contracts/src/schemas/news.ts",
@@ -2640,7 +2676,7 @@
       ],
       [
         "packages/core/src/news/features.ts",
-        "38ef69ec9f5364c4b20b9eb146cea174540af058bd1781dbcbda6a2f9b2f2e94"
+        "dc612d133d815238788bf2f3bacfe2092b8a98434a70ecfc12f128126395905b"
       ],
       [
         "packages/core/src/news/identity.ts",
@@ -2648,15 +2684,19 @@
       ],
       [
         "packages/core/src/news/index.ts",
-        "16a6a66e050ad42ff22232d679235cbce797a9d4116a7833ef43dcf3081f8551"
+        "0fba753857885c76969b2676ddad7d2f3d7a6a169ebbe6780b1aa7d9d7ea9980"
       ],
       [
         "packages/core/src/news/intelligence-types.ts",
-        "c9c50b960bb103aeefdaac6377ecb64b6cf9032931818f8c0be708bddc5edab0"
+        "254cda24d2d198d80c4599c0d3c1e6d5c5431f4d241c92b3db7c50a37e52a759"
       ],
       [
         "packages/core/src/news/intelligence.ts",
         "aeae3a4c1808dd9c9534eadb11478f35bbad7536bb68de9e6ce341e5551d5595"
+      ],
+      [
+        "packages/core/src/news/study.ts",
+        "6e14689bc27bcf2ad2d0686d0c639b9d10e1a656729b7af18c7dc58b1b664141"
       ],
       [
         "packages/core/src/news/types.ts",
@@ -2872,7 +2912,7 @@
       ],
       [
         "packages/core/src/research/overlay/models.ts",
-        "faa4614fa04e2afec7058eb2a437c550bb1a3034af76bbb7b486e087c6b828d7"
+        "a126edb2b9b3ae94781f475f40164f01be318ed6b38164f5e0cafa544d663886"
       ],
       [
         "packages/core/src/research/overlay/proposals.ts",
@@ -3236,7 +3276,7 @@
       ],
       [
         "packages/services/src/news/configuration.ts",
-        "2478fbbe435dffc64326ecc2ff8b9ff2aa2f4cb93de21eb9094abb8202b17668"
+        "1a080d237eb213aeeea9e29cbda72cec469e7b58c3033be9453cef777d66d4e3"
       ],
       [
         "packages/services/src/news/index.ts",
@@ -3244,7 +3284,7 @@
       ],
       [
         "packages/services/src/news/intelligence.ts",
-        "3295e8c7f3daa185b1c7f00dd868946407d2068bb3c12d18836c6f4b9bb6d7ad"
+        "a7f751f04102d26393489d8f633309b09dd1b8ee6952c7450d28e14fe37db8e1"
       ],
       [
         "packages/services/src/news/quota-governor.ts",
@@ -3608,27 +3648,35 @@
       ],
       [
         "packages/storage/src/archive/common.ts",
-        "55e47d80202c707c9b4febc92b304549b76292309688f00ab12bfa2f9fdb6c59"
+        "5937e5dc34443c6afba50759bf1f3e7000ccc7c9026948db9f62bd3c23a4e50e"
       ],
       [
         "packages/storage/src/archive/decision-dataset.ts",
-        "2fb8fa8398fb6a9f8eba04aec5707bc795c3ce1566392a1b7d9a11de9fe9b481"
+        "c685cf151e743aaa89f9c0b5cc56eaf78f7ee562f13039385ee11da6361c0e4d"
       ],
       [
         "packages/storage/src/archive/index.ts",
-        "a2c9aeda10c0b0b54e776e4932698b7eafafaa1b8441b112d89b57135a04690f"
+        "ea5beb0ac2e71b26eadc1dfc87fabc8d2fbfbb451427e67e5aa15714fcfd6619"
+      ],
+      [
+        "packages/storage/src/archive/news-provenance.ts",
+        "16cde9a9fb83469e19c562fd29b724e1115c64ef3375711e3f10fb3cc1fcb19b"
+      ],
+      [
+        "packages/storage/src/archive/news.ts",
+        "9f849ecdf7bdb49a1f75ddab69144a268116b86bae1fe2e8155a5ef87824f479"
       ],
       [
         "packages/storage/src/archive/reader.ts",
-        "19b2fcba35da9c4bc51d08827e8aefc1a3c6aa4c37a5a9a6d27824d7cbd1778c"
+        "3b64b54dd513ed2729280f3b50dfa1d88d73a174ee4378495cc7ca8663fa7db1"
       ],
       [
         "packages/storage/src/archive/types.ts",
-        "6212503313b5adfb979288267109ef02c789b692acc64bf6dc3be49cfcda2773"
+        "87dbbfb7520e8026e85705bd99a047a3ab9d018bfc81afbc18a461707a168a5b"
       ],
       [
         "packages/storage/src/archive/writer.ts",
-        "21bd81f8b7f77dff7e0c944355c707151105569f7b74edb50beaedcfb716b8ce"
+        "73b5f56c143dbf7e1aace07b7c8a5da3b1acd9eb38129f455f47e081721f48f3"
       ],
       [
         "packages/storage/src/index.ts",
@@ -3636,7 +3684,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "575dc8b39455b17e1517440ff9cc3f862f57f5b029637285f1038761c9f2501d"
+        "f705fc4c0d21b7781ccf70d7a78882af7f76cee41c44a7a16b979750e2758a86"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -3907,6 +3955,10 @@
         "68ed92ebd13ad4f3a3b2fbd6be8b25e2a492bb182a661e71c09dfa4dcb69e6e6"
       ],
       [
+        "packages/storage/src/migrations/v91.ts",
+        "f688e608825c103c73cd5f00e4df3288eaef2a601c18be7f80ddb7daa9bade92"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -4068,7 +4120,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "663b94c886fb16e94c7e7b859650a06512f16abfc878d0cb5841f59905d07eee"
+        "860a3eb7aec86b3255f425f272cf02cf6863e6f0d8ecb7d4c41a14a69f232017"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -4091,8 +4143,12 @@
         "ac019e740f61611209e6ef9ca73be7ffdd4c4bd9877576d39dd575a50f7ad0b4"
       ],
       [
+        "packages/storage/src/repositories/news-chunks.ts",
+        "f8a5d0b90240dd2ec37e069ab19a08e9530af942393c5249e4c00358037f8b15"
+      ],
+      [
         "packages/storage/src/repositories/news-intelligence.ts",
-        "f2047efb640247af2471708269506c7496343644c93de39133a66a2552ec2629"
+        "d8c7e76cf08799493059ba09d99157f7754fa5d9525bb3c733b7959c7932cf6e"
       ],
       [
         "packages/storage/src/repositories/news-quota.ts",
@@ -4100,7 +4156,7 @@
       ],
       [
         "packages/storage/src/repositories/news.ts",
-        "ede46178e5256a45d2923c1935916b9591c33cd4119a762e5c886fb63e990238"
+        "22976dbacb9f8e85935b036a784f99585e68a3056fa40e5d491e0e15997d6151"
       ],
       [
         "packages/storage/src/repositories/operational-metrics.ts",
@@ -4243,7 +4299,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "1c2b3c0c38ab34edf25dab2a853e4f5489954d3cde677ae0166b475e34a802a5"
+    "hash": "e40c203f2c15342fda5b3fc3c72f40e259066f8ea6b9c7b090ff0c77f3f7379e"
   },
   "wider-range-rotation-v1": {
     "version": 1,
@@ -4507,7 +4563,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "7aa210854459eade9ec0593f8a1d38ffc32eb5e2d5c3df78265aa7271a54b647"
+        "58937e4cd25df12b2f92d6f8733621292fb70c9b80184f1970c6c9aa42029f49"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -4515,7 +4571,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "aeca9c3142285529d47778f8738b49da63db83a0b1f05a0e2733357a5a49337a"
+        "90b63dc140b14a3bcf5d117551011e136c58729fc7f1ca37ba4a0820c778fbc1"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -4574,8 +4630,16 @@
         "b72fb653811abebcb0ee178a9c93f43324f65f89afb35037ad1a46755539e083"
       ],
       [
+        "packages/contracts/src/schemas/news-archive.ts",
+        "89a525b5ad3d5c4509b1d1d35f266b68a69e4470d6e23c565fa971c46efadf1b"
+      ],
+      [
+        "packages/contracts/src/schemas/news-channels.ts",
+        "ef7b89219815ceae2b942092fc82338bf52eaec19d1496934a8b4b06986a1e7b"
+      ],
+      [
         "packages/contracts/src/schemas/news-intelligence.ts",
-        "425d117ab1e7abac478ef246a724d077225bfe9e08060d5f1dec9d3097551293"
+        "3f61b41bb88451c57e0640b36a199d198995cf91c4b9442929e6bba23463c89e"
       ],
       [
         "packages/contracts/src/schemas/news.ts",
@@ -4763,7 +4827,7 @@
       ],
       [
         "packages/core/src/news/features.ts",
-        "38ef69ec9f5364c4b20b9eb146cea174540af058bd1781dbcbda6a2f9b2f2e94"
+        "dc612d133d815238788bf2f3bacfe2092b8a98434a70ecfc12f128126395905b"
       ],
       [
         "packages/core/src/news/identity.ts",
@@ -4771,15 +4835,19 @@
       ],
       [
         "packages/core/src/news/index.ts",
-        "16a6a66e050ad42ff22232d679235cbce797a9d4116a7833ef43dcf3081f8551"
+        "0fba753857885c76969b2676ddad7d2f3d7a6a169ebbe6780b1aa7d9d7ea9980"
       ],
       [
         "packages/core/src/news/intelligence-types.ts",
-        "c9c50b960bb103aeefdaac6377ecb64b6cf9032931818f8c0be708bddc5edab0"
+        "254cda24d2d198d80c4599c0d3c1e6d5c5431f4d241c92b3db7c50a37e52a759"
       ],
       [
         "packages/core/src/news/intelligence.ts",
         "aeae3a4c1808dd9c9534eadb11478f35bbad7536bb68de9e6ce341e5551d5595"
+      ],
+      [
+        "packages/core/src/news/study.ts",
+        "6e14689bc27bcf2ad2d0686d0c639b9d10e1a656729b7af18c7dc58b1b664141"
       ],
       [
         "packages/core/src/news/types.ts",
@@ -4995,7 +5063,7 @@
       ],
       [
         "packages/core/src/research/overlay/models.ts",
-        "faa4614fa04e2afec7058eb2a437c550bb1a3034af76bbb7b486e087c6b828d7"
+        "a126edb2b9b3ae94781f475f40164f01be318ed6b38164f5e0cafa544d663886"
       ],
       [
         "packages/core/src/research/overlay/proposals.ts",
@@ -5359,7 +5427,7 @@
       ],
       [
         "packages/services/src/news/configuration.ts",
-        "2478fbbe435dffc64326ecc2ff8b9ff2aa2f4cb93de21eb9094abb8202b17668"
+        "1a080d237eb213aeeea9e29cbda72cec469e7b58c3033be9453cef777d66d4e3"
       ],
       [
         "packages/services/src/news/index.ts",
@@ -5367,7 +5435,7 @@
       ],
       [
         "packages/services/src/news/intelligence.ts",
-        "3295e8c7f3daa185b1c7f00dd868946407d2068bb3c12d18836c6f4b9bb6d7ad"
+        "a7f751f04102d26393489d8f633309b09dd1b8ee6952c7450d28e14fe37db8e1"
       ],
       [
         "packages/services/src/news/quota-governor.ts",
@@ -5731,27 +5799,35 @@
       ],
       [
         "packages/storage/src/archive/common.ts",
-        "55e47d80202c707c9b4febc92b304549b76292309688f00ab12bfa2f9fdb6c59"
+        "5937e5dc34443c6afba50759bf1f3e7000ccc7c9026948db9f62bd3c23a4e50e"
       ],
       [
         "packages/storage/src/archive/decision-dataset.ts",
-        "2fb8fa8398fb6a9f8eba04aec5707bc795c3ce1566392a1b7d9a11de9fe9b481"
+        "c685cf151e743aaa89f9c0b5cc56eaf78f7ee562f13039385ee11da6361c0e4d"
       ],
       [
         "packages/storage/src/archive/index.ts",
-        "a2c9aeda10c0b0b54e776e4932698b7eafafaa1b8441b112d89b57135a04690f"
+        "ea5beb0ac2e71b26eadc1dfc87fabc8d2fbfbb451427e67e5aa15714fcfd6619"
+      ],
+      [
+        "packages/storage/src/archive/news-provenance.ts",
+        "16cde9a9fb83469e19c562fd29b724e1115c64ef3375711e3f10fb3cc1fcb19b"
+      ],
+      [
+        "packages/storage/src/archive/news.ts",
+        "9f849ecdf7bdb49a1f75ddab69144a268116b86bae1fe2e8155a5ef87824f479"
       ],
       [
         "packages/storage/src/archive/reader.ts",
-        "19b2fcba35da9c4bc51d08827e8aefc1a3c6aa4c37a5a9a6d27824d7cbd1778c"
+        "3b64b54dd513ed2729280f3b50dfa1d88d73a174ee4378495cc7ca8663fa7db1"
       ],
       [
         "packages/storage/src/archive/types.ts",
-        "6212503313b5adfb979288267109ef02c789b692acc64bf6dc3be49cfcda2773"
+        "87dbbfb7520e8026e85705bd99a047a3ab9d018bfc81afbc18a461707a168a5b"
       ],
       [
         "packages/storage/src/archive/writer.ts",
-        "21bd81f8b7f77dff7e0c944355c707151105569f7b74edb50beaedcfb716b8ce"
+        "73b5f56c143dbf7e1aace07b7c8a5da3b1acd9eb38129f455f47e081721f48f3"
       ],
       [
         "packages/storage/src/index.ts",
@@ -5759,7 +5835,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "575dc8b39455b17e1517440ff9cc3f862f57f5b029637285f1038761c9f2501d"
+        "f705fc4c0d21b7781ccf70d7a78882af7f76cee41c44a7a16b979750e2758a86"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -6030,6 +6106,10 @@
         "68ed92ebd13ad4f3a3b2fbd6be8b25e2a492bb182a661e71c09dfa4dcb69e6e6"
       ],
       [
+        "packages/storage/src/migrations/v91.ts",
+        "f688e608825c103c73cd5f00e4df3288eaef2a601c18be7f80ddb7daa9bade92"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -6191,7 +6271,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "663b94c886fb16e94c7e7b859650a06512f16abfc878d0cb5841f59905d07eee"
+        "860a3eb7aec86b3255f425f272cf02cf6863e6f0d8ecb7d4c41a14a69f232017"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -6214,8 +6294,12 @@
         "ac019e740f61611209e6ef9ca73be7ffdd4c4bd9877576d39dd575a50f7ad0b4"
       ],
       [
+        "packages/storage/src/repositories/news-chunks.ts",
+        "f8a5d0b90240dd2ec37e069ab19a08e9530af942393c5249e4c00358037f8b15"
+      ],
+      [
         "packages/storage/src/repositories/news-intelligence.ts",
-        "f2047efb640247af2471708269506c7496343644c93de39133a66a2552ec2629"
+        "d8c7e76cf08799493059ba09d99157f7754fa5d9525bb3c733b7959c7932cf6e"
       ],
       [
         "packages/storage/src/repositories/news-quota.ts",
@@ -6223,7 +6307,7 @@
       ],
       [
         "packages/storage/src/repositories/news.ts",
-        "ede46178e5256a45d2923c1935916b9591c33cd4119a762e5c886fb63e990238"
+        "22976dbacb9f8e85935b036a784f99585e68a3056fa40e5d491e0e15997d6151"
       ],
       [
         "packages/storage/src/repositories/operational-metrics.ts",
@@ -6366,7 +6450,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "6f604951487806046e9ebe4e90ad4901c28379f5e9678bf5109acb44e4c37f50"
+    "hash": "1dbc7aeec35c7d46e881cff92e9e6571687b1121b930c28cb5f8c08b28ceb6cd"
   },
   "paper-market-selector-v1": {
     "version": 1,
@@ -6630,7 +6714,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "7aa210854459eade9ec0593f8a1d38ffc32eb5e2d5c3df78265aa7271a54b647"
+        "58937e4cd25df12b2f92d6f8733621292fb70c9b80184f1970c6c9aa42029f49"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -6638,7 +6722,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "aeca9c3142285529d47778f8738b49da63db83a0b1f05a0e2733357a5a49337a"
+        "90b63dc140b14a3bcf5d117551011e136c58729fc7f1ca37ba4a0820c778fbc1"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -6697,8 +6781,16 @@
         "b72fb653811abebcb0ee178a9c93f43324f65f89afb35037ad1a46755539e083"
       ],
       [
+        "packages/contracts/src/schemas/news-archive.ts",
+        "89a525b5ad3d5c4509b1d1d35f266b68a69e4470d6e23c565fa971c46efadf1b"
+      ],
+      [
+        "packages/contracts/src/schemas/news-channels.ts",
+        "ef7b89219815ceae2b942092fc82338bf52eaec19d1496934a8b4b06986a1e7b"
+      ],
+      [
         "packages/contracts/src/schemas/news-intelligence.ts",
-        "425d117ab1e7abac478ef246a724d077225bfe9e08060d5f1dec9d3097551293"
+        "3f61b41bb88451c57e0640b36a199d198995cf91c4b9442929e6bba23463c89e"
       ],
       [
         "packages/contracts/src/schemas/news.ts",
@@ -6886,7 +6978,7 @@
       ],
       [
         "packages/core/src/news/features.ts",
-        "38ef69ec9f5364c4b20b9eb146cea174540af058bd1781dbcbda6a2f9b2f2e94"
+        "dc612d133d815238788bf2f3bacfe2092b8a98434a70ecfc12f128126395905b"
       ],
       [
         "packages/core/src/news/identity.ts",
@@ -6894,15 +6986,19 @@
       ],
       [
         "packages/core/src/news/index.ts",
-        "16a6a66e050ad42ff22232d679235cbce797a9d4116a7833ef43dcf3081f8551"
+        "0fba753857885c76969b2676ddad7d2f3d7a6a169ebbe6780b1aa7d9d7ea9980"
       ],
       [
         "packages/core/src/news/intelligence-types.ts",
-        "c9c50b960bb103aeefdaac6377ecb64b6cf9032931818f8c0be708bddc5edab0"
+        "254cda24d2d198d80c4599c0d3c1e6d5c5431f4d241c92b3db7c50a37e52a759"
       ],
       [
         "packages/core/src/news/intelligence.ts",
         "aeae3a4c1808dd9c9534eadb11478f35bbad7536bb68de9e6ce341e5551d5595"
+      ],
+      [
+        "packages/core/src/news/study.ts",
+        "6e14689bc27bcf2ad2d0686d0c639b9d10e1a656729b7af18c7dc58b1b664141"
       ],
       [
         "packages/core/src/news/types.ts",
@@ -7118,7 +7214,7 @@
       ],
       [
         "packages/core/src/research/overlay/models.ts",
-        "faa4614fa04e2afec7058eb2a437c550bb1a3034af76bbb7b486e087c6b828d7"
+        "a126edb2b9b3ae94781f475f40164f01be318ed6b38164f5e0cafa544d663886"
       ],
       [
         "packages/core/src/research/overlay/proposals.ts",
@@ -7482,7 +7578,7 @@
       ],
       [
         "packages/services/src/news/configuration.ts",
-        "2478fbbe435dffc64326ecc2ff8b9ff2aa2f4cb93de21eb9094abb8202b17668"
+        "1a080d237eb213aeeea9e29cbda72cec469e7b58c3033be9453cef777d66d4e3"
       ],
       [
         "packages/services/src/news/index.ts",
@@ -7490,7 +7586,7 @@
       ],
       [
         "packages/services/src/news/intelligence.ts",
-        "3295e8c7f3daa185b1c7f00dd868946407d2068bb3c12d18836c6f4b9bb6d7ad"
+        "a7f751f04102d26393489d8f633309b09dd1b8ee6952c7450d28e14fe37db8e1"
       ],
       [
         "packages/services/src/news/quota-governor.ts",
@@ -7854,27 +7950,35 @@
       ],
       [
         "packages/storage/src/archive/common.ts",
-        "55e47d80202c707c9b4febc92b304549b76292309688f00ab12bfa2f9fdb6c59"
+        "5937e5dc34443c6afba50759bf1f3e7000ccc7c9026948db9f62bd3c23a4e50e"
       ],
       [
         "packages/storage/src/archive/decision-dataset.ts",
-        "2fb8fa8398fb6a9f8eba04aec5707bc795c3ce1566392a1b7d9a11de9fe9b481"
+        "c685cf151e743aaa89f9c0b5cc56eaf78f7ee562f13039385ee11da6361c0e4d"
       ],
       [
         "packages/storage/src/archive/index.ts",
-        "a2c9aeda10c0b0b54e776e4932698b7eafafaa1b8441b112d89b57135a04690f"
+        "ea5beb0ac2e71b26eadc1dfc87fabc8d2fbfbb451427e67e5aa15714fcfd6619"
+      ],
+      [
+        "packages/storage/src/archive/news-provenance.ts",
+        "16cde9a9fb83469e19c562fd29b724e1115c64ef3375711e3f10fb3cc1fcb19b"
+      ],
+      [
+        "packages/storage/src/archive/news.ts",
+        "9f849ecdf7bdb49a1f75ddab69144a268116b86bae1fe2e8155a5ef87824f479"
       ],
       [
         "packages/storage/src/archive/reader.ts",
-        "19b2fcba35da9c4bc51d08827e8aefc1a3c6aa4c37a5a9a6d27824d7cbd1778c"
+        "3b64b54dd513ed2729280f3b50dfa1d88d73a174ee4378495cc7ca8663fa7db1"
       ],
       [
         "packages/storage/src/archive/types.ts",
-        "6212503313b5adfb979288267109ef02c789b692acc64bf6dc3be49cfcda2773"
+        "87dbbfb7520e8026e85705bd99a047a3ab9d018bfc81afbc18a461707a168a5b"
       ],
       [
         "packages/storage/src/archive/writer.ts",
-        "21bd81f8b7f77dff7e0c944355c707151105569f7b74edb50beaedcfb716b8ce"
+        "73b5f56c143dbf7e1aace07b7c8a5da3b1acd9eb38129f455f47e081721f48f3"
       ],
       [
         "packages/storage/src/index.ts",
@@ -7882,7 +7986,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "575dc8b39455b17e1517440ff9cc3f862f57f5b029637285f1038761c9f2501d"
+        "f705fc4c0d21b7781ccf70d7a78882af7f76cee41c44a7a16b979750e2758a86"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -8153,6 +8257,10 @@
         "68ed92ebd13ad4f3a3b2fbd6be8b25e2a492bb182a661e71c09dfa4dcb69e6e6"
       ],
       [
+        "packages/storage/src/migrations/v91.ts",
+        "f688e608825c103c73cd5f00e4df3288eaef2a601c18be7f80ddb7daa9bade92"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -8314,7 +8422,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "663b94c886fb16e94c7e7b859650a06512f16abfc878d0cb5841f59905d07eee"
+        "860a3eb7aec86b3255f425f272cf02cf6863e6f0d8ecb7d4c41a14a69f232017"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -8337,8 +8445,12 @@
         "ac019e740f61611209e6ef9ca73be7ffdd4c4bd9877576d39dd575a50f7ad0b4"
       ],
       [
+        "packages/storage/src/repositories/news-chunks.ts",
+        "f8a5d0b90240dd2ec37e069ab19a08e9530af942393c5249e4c00358037f8b15"
+      ],
+      [
         "packages/storage/src/repositories/news-intelligence.ts",
-        "f2047efb640247af2471708269506c7496343644c93de39133a66a2552ec2629"
+        "d8c7e76cf08799493059ba09d99157f7754fa5d9525bb3c733b7959c7932cf6e"
       ],
       [
         "packages/storage/src/repositories/news-quota.ts",
@@ -8346,7 +8458,7 @@
       ],
       [
         "packages/storage/src/repositories/news.ts",
-        "ede46178e5256a45d2923c1935916b9591c33cd4119a762e5c886fb63e990238"
+        "22976dbacb9f8e85935b036a784f99585e68a3056fa40e5d491e0e15997d6151"
       ],
       [
         "packages/storage/src/repositories/operational-metrics.ts",
@@ -8489,7 +8601,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "317b0ef441fbd9c58dd39baa0f6f1dc5d8a9d4241edb9accbf5fa9d25074a5a0"
+    "hash": "d1fff63965830f1ea78359c83bbccfd571cc871ee9173e823d47592c0c3f1d66"
   },
   "trendvol-hourly-execution-v1": {
     "version": 1,
@@ -8741,7 +8853,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "7aa210854459eade9ec0593f8a1d38ffc32eb5e2d5c3df78265aa7271a54b647"
+        "58937e4cd25df12b2f92d6f8733621292fb70c9b80184f1970c6c9aa42029f49"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -8749,7 +8861,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "aeca9c3142285529d47778f8738b49da63db83a0b1f05a0e2733357a5a49337a"
+        "90b63dc140b14a3bcf5d117551011e136c58729fc7f1ca37ba4a0820c778fbc1"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -8808,8 +8920,16 @@
         "b72fb653811abebcb0ee178a9c93f43324f65f89afb35037ad1a46755539e083"
       ],
       [
+        "packages/contracts/src/schemas/news-archive.ts",
+        "89a525b5ad3d5c4509b1d1d35f266b68a69e4470d6e23c565fa971c46efadf1b"
+      ],
+      [
+        "packages/contracts/src/schemas/news-channels.ts",
+        "ef7b89219815ceae2b942092fc82338bf52eaec19d1496934a8b4b06986a1e7b"
+      ],
+      [
         "packages/contracts/src/schemas/news-intelligence.ts",
-        "425d117ab1e7abac478ef246a724d077225bfe9e08060d5f1dec9d3097551293"
+        "3f61b41bb88451c57e0640b36a199d198995cf91c4b9442929e6bba23463c89e"
       ],
       [
         "packages/contracts/src/schemas/news.ts",
@@ -8997,7 +9117,7 @@
       ],
       [
         "packages/core/src/news/features.ts",
-        "38ef69ec9f5364c4b20b9eb146cea174540af058bd1781dbcbda6a2f9b2f2e94"
+        "dc612d133d815238788bf2f3bacfe2092b8a98434a70ecfc12f128126395905b"
       ],
       [
         "packages/core/src/news/identity.ts",
@@ -9005,15 +9125,19 @@
       ],
       [
         "packages/core/src/news/index.ts",
-        "16a6a66e050ad42ff22232d679235cbce797a9d4116a7833ef43dcf3081f8551"
+        "0fba753857885c76969b2676ddad7d2f3d7a6a169ebbe6780b1aa7d9d7ea9980"
       ],
       [
         "packages/core/src/news/intelligence-types.ts",
-        "c9c50b960bb103aeefdaac6377ecb64b6cf9032931818f8c0be708bddc5edab0"
+        "254cda24d2d198d80c4599c0d3c1e6d5c5431f4d241c92b3db7c50a37e52a759"
       ],
       [
         "packages/core/src/news/intelligence.ts",
         "aeae3a4c1808dd9c9534eadb11478f35bbad7536bb68de9e6ce341e5551d5595"
+      ],
+      [
+        "packages/core/src/news/study.ts",
+        "6e14689bc27bcf2ad2d0686d0c639b9d10e1a656729b7af18c7dc58b1b664141"
       ],
       [
         "packages/core/src/news/types.ts",
@@ -9229,7 +9353,7 @@
       ],
       [
         "packages/core/src/research/overlay/models.ts",
-        "faa4614fa04e2afec7058eb2a437c550bb1a3034af76bbb7b486e087c6b828d7"
+        "a126edb2b9b3ae94781f475f40164f01be318ed6b38164f5e0cafa544d663886"
       ],
       [
         "packages/core/src/research/overlay/proposals.ts",
@@ -9417,27 +9541,35 @@
       ],
       [
         "packages/storage/src/archive/common.ts",
-        "55e47d80202c707c9b4febc92b304549b76292309688f00ab12bfa2f9fdb6c59"
+        "5937e5dc34443c6afba50759bf1f3e7000ccc7c9026948db9f62bd3c23a4e50e"
       ],
       [
         "packages/storage/src/archive/decision-dataset.ts",
-        "2fb8fa8398fb6a9f8eba04aec5707bc795c3ce1566392a1b7d9a11de9fe9b481"
+        "c685cf151e743aaa89f9c0b5cc56eaf78f7ee562f13039385ee11da6361c0e4d"
       ],
       [
         "packages/storage/src/archive/index.ts",
-        "a2c9aeda10c0b0b54e776e4932698b7eafafaa1b8441b112d89b57135a04690f"
+        "ea5beb0ac2e71b26eadc1dfc87fabc8d2fbfbb451427e67e5aa15714fcfd6619"
+      ],
+      [
+        "packages/storage/src/archive/news-provenance.ts",
+        "16cde9a9fb83469e19c562fd29b724e1115c64ef3375711e3f10fb3cc1fcb19b"
+      ],
+      [
+        "packages/storage/src/archive/news.ts",
+        "9f849ecdf7bdb49a1f75ddab69144a268116b86bae1fe2e8155a5ef87824f479"
       ],
       [
         "packages/storage/src/archive/reader.ts",
-        "19b2fcba35da9c4bc51d08827e8aefc1a3c6aa4c37a5a9a6d27824d7cbd1778c"
+        "3b64b54dd513ed2729280f3b50dfa1d88d73a174ee4378495cc7ca8663fa7db1"
       ],
       [
         "packages/storage/src/archive/types.ts",
-        "6212503313b5adfb979288267109ef02c789b692acc64bf6dc3be49cfcda2773"
+        "87dbbfb7520e8026e85705bd99a047a3ab9d018bfc81afbc18a461707a168a5b"
       ],
       [
         "packages/storage/src/archive/writer.ts",
-        "21bd81f8b7f77dff7e0c944355c707151105569f7b74edb50beaedcfb716b8ce"
+        "73b5f56c143dbf7e1aace07b7c8a5da3b1acd9eb38129f455f47e081721f48f3"
       ],
       [
         "packages/storage/src/index.ts",
@@ -9445,7 +9577,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "575dc8b39455b17e1517440ff9cc3f862f57f5b029637285f1038761c9f2501d"
+        "f705fc4c0d21b7781ccf70d7a78882af7f76cee41c44a7a16b979750e2758a86"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -9716,6 +9848,10 @@
         "68ed92ebd13ad4f3a3b2fbd6be8b25e2a492bb182a661e71c09dfa4dcb69e6e6"
       ],
       [
+        "packages/storage/src/migrations/v91.ts",
+        "f688e608825c103c73cd5f00e4df3288eaef2a601c18be7f80ddb7daa9bade92"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -9877,7 +10013,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "663b94c886fb16e94c7e7b859650a06512f16abfc878d0cb5841f59905d07eee"
+        "860a3eb7aec86b3255f425f272cf02cf6863e6f0d8ecb7d4c41a14a69f232017"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -9900,8 +10036,12 @@
         "ac019e740f61611209e6ef9ca73be7ffdd4c4bd9877576d39dd575a50f7ad0b4"
       ],
       [
+        "packages/storage/src/repositories/news-chunks.ts",
+        "f8a5d0b90240dd2ec37e069ab19a08e9530af942393c5249e4c00358037f8b15"
+      ],
+      [
         "packages/storage/src/repositories/news-intelligence.ts",
-        "f2047efb640247af2471708269506c7496343644c93de39133a66a2552ec2629"
+        "d8c7e76cf08799493059ba09d99157f7754fa5d9525bb3c733b7959c7932cf6e"
       ],
       [
         "packages/storage/src/repositories/news-quota.ts",
@@ -9909,7 +10049,7 @@
       ],
       [
         "packages/storage/src/repositories/news.ts",
-        "ede46178e5256a45d2923c1935916b9591c33cd4119a762e5c886fb63e990238"
+        "22976dbacb9f8e85935b036a784f99585e68a3056fa40e5d491e0e15997d6151"
       ],
       [
         "packages/storage/src/repositories/operational-metrics.ts",
@@ -10052,7 +10192,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "cef2ee5a610b65d9b73157421234eabb43525ce39fbfa9bb5fab1f2ef831a90f"
+    "hash": "40b82ed8469177d9163793bef9df9d7d54d05497c7dcf73247350828c5d4d0dd"
   },
   "trendvol-execution-remediation-v1": {
     "version": 1,
@@ -10304,7 +10444,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "7aa210854459eade9ec0593f8a1d38ffc32eb5e2d5c3df78265aa7271a54b647"
+        "58937e4cd25df12b2f92d6f8733621292fb70c9b80184f1970c6c9aa42029f49"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -10312,7 +10452,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "aeca9c3142285529d47778f8738b49da63db83a0b1f05a0e2733357a5a49337a"
+        "90b63dc140b14a3bcf5d117551011e136c58729fc7f1ca37ba4a0820c778fbc1"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -10371,8 +10511,16 @@
         "b72fb653811abebcb0ee178a9c93f43324f65f89afb35037ad1a46755539e083"
       ],
       [
+        "packages/contracts/src/schemas/news-archive.ts",
+        "89a525b5ad3d5c4509b1d1d35f266b68a69e4470d6e23c565fa971c46efadf1b"
+      ],
+      [
+        "packages/contracts/src/schemas/news-channels.ts",
+        "ef7b89219815ceae2b942092fc82338bf52eaec19d1496934a8b4b06986a1e7b"
+      ],
+      [
         "packages/contracts/src/schemas/news-intelligence.ts",
-        "425d117ab1e7abac478ef246a724d077225bfe9e08060d5f1dec9d3097551293"
+        "3f61b41bb88451c57e0640b36a199d198995cf91c4b9442929e6bba23463c89e"
       ],
       [
         "packages/contracts/src/schemas/news.ts",
@@ -10560,7 +10708,7 @@
       ],
       [
         "packages/core/src/news/features.ts",
-        "38ef69ec9f5364c4b20b9eb146cea174540af058bd1781dbcbda6a2f9b2f2e94"
+        "dc612d133d815238788bf2f3bacfe2092b8a98434a70ecfc12f128126395905b"
       ],
       [
         "packages/core/src/news/identity.ts",
@@ -10568,15 +10716,19 @@
       ],
       [
         "packages/core/src/news/index.ts",
-        "16a6a66e050ad42ff22232d679235cbce797a9d4116a7833ef43dcf3081f8551"
+        "0fba753857885c76969b2676ddad7d2f3d7a6a169ebbe6780b1aa7d9d7ea9980"
       ],
       [
         "packages/core/src/news/intelligence-types.ts",
-        "c9c50b960bb103aeefdaac6377ecb64b6cf9032931818f8c0be708bddc5edab0"
+        "254cda24d2d198d80c4599c0d3c1e6d5c5431f4d241c92b3db7c50a37e52a759"
       ],
       [
         "packages/core/src/news/intelligence.ts",
         "aeae3a4c1808dd9c9534eadb11478f35bbad7536bb68de9e6ce341e5551d5595"
+      ],
+      [
+        "packages/core/src/news/study.ts",
+        "6e14689bc27bcf2ad2d0686d0c639b9d10e1a656729b7af18c7dc58b1b664141"
       ],
       [
         "packages/core/src/news/types.ts",
@@ -10792,7 +10944,7 @@
       ],
       [
         "packages/core/src/research/overlay/models.ts",
-        "faa4614fa04e2afec7058eb2a437c550bb1a3034af76bbb7b486e087c6b828d7"
+        "a126edb2b9b3ae94781f475f40164f01be318ed6b38164f5e0cafa544d663886"
       ],
       [
         "packages/core/src/research/overlay/proposals.ts",
@@ -10972,27 +11124,35 @@
       ],
       [
         "packages/storage/src/archive/common.ts",
-        "55e47d80202c707c9b4febc92b304549b76292309688f00ab12bfa2f9fdb6c59"
+        "5937e5dc34443c6afba50759bf1f3e7000ccc7c9026948db9f62bd3c23a4e50e"
       ],
       [
         "packages/storage/src/archive/decision-dataset.ts",
-        "2fb8fa8398fb6a9f8eba04aec5707bc795c3ce1566392a1b7d9a11de9fe9b481"
+        "c685cf151e743aaa89f9c0b5cc56eaf78f7ee562f13039385ee11da6361c0e4d"
       ],
       [
         "packages/storage/src/archive/index.ts",
-        "a2c9aeda10c0b0b54e776e4932698b7eafafaa1b8441b112d89b57135a04690f"
+        "ea5beb0ac2e71b26eadc1dfc87fabc8d2fbfbb451427e67e5aa15714fcfd6619"
+      ],
+      [
+        "packages/storage/src/archive/news-provenance.ts",
+        "16cde9a9fb83469e19c562fd29b724e1115c64ef3375711e3f10fb3cc1fcb19b"
+      ],
+      [
+        "packages/storage/src/archive/news.ts",
+        "9f849ecdf7bdb49a1f75ddab69144a268116b86bae1fe2e8155a5ef87824f479"
       ],
       [
         "packages/storage/src/archive/reader.ts",
-        "19b2fcba35da9c4bc51d08827e8aefc1a3c6aa4c37a5a9a6d27824d7cbd1778c"
+        "3b64b54dd513ed2729280f3b50dfa1d88d73a174ee4378495cc7ca8663fa7db1"
       ],
       [
         "packages/storage/src/archive/types.ts",
-        "6212503313b5adfb979288267109ef02c789b692acc64bf6dc3be49cfcda2773"
+        "87dbbfb7520e8026e85705bd99a047a3ab9d018bfc81afbc18a461707a168a5b"
       ],
       [
         "packages/storage/src/archive/writer.ts",
-        "21bd81f8b7f77dff7e0c944355c707151105569f7b74edb50beaedcfb716b8ce"
+        "73b5f56c143dbf7e1aace07b7c8a5da3b1acd9eb38129f455f47e081721f48f3"
       ],
       [
         "packages/storage/src/index.ts",
@@ -11000,7 +11160,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "575dc8b39455b17e1517440ff9cc3f862f57f5b029637285f1038761c9f2501d"
+        "f705fc4c0d21b7781ccf70d7a78882af7f76cee41c44a7a16b979750e2758a86"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -11271,6 +11431,10 @@
         "68ed92ebd13ad4f3a3b2fbd6be8b25e2a492bb182a661e71c09dfa4dcb69e6e6"
       ],
       [
+        "packages/storage/src/migrations/v91.ts",
+        "f688e608825c103c73cd5f00e4df3288eaef2a601c18be7f80ddb7daa9bade92"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -11432,7 +11596,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "663b94c886fb16e94c7e7b859650a06512f16abfc878d0cb5841f59905d07eee"
+        "860a3eb7aec86b3255f425f272cf02cf6863e6f0d8ecb7d4c41a14a69f232017"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -11455,8 +11619,12 @@
         "ac019e740f61611209e6ef9ca73be7ffdd4c4bd9877576d39dd575a50f7ad0b4"
       ],
       [
+        "packages/storage/src/repositories/news-chunks.ts",
+        "f8a5d0b90240dd2ec37e069ab19a08e9530af942393c5249e4c00358037f8b15"
+      ],
+      [
         "packages/storage/src/repositories/news-intelligence.ts",
-        "f2047efb640247af2471708269506c7496343644c93de39133a66a2552ec2629"
+        "d8c7e76cf08799493059ba09d99157f7754fa5d9525bb3c733b7959c7932cf6e"
       ],
       [
         "packages/storage/src/repositories/news-quota.ts",
@@ -11464,7 +11632,7 @@
       ],
       [
         "packages/storage/src/repositories/news.ts",
-        "ede46178e5256a45d2923c1935916b9591c33cd4119a762e5c886fb63e990238"
+        "22976dbacb9f8e85935b036a784f99585e68a3056fa40e5d491e0e15997d6151"
       ],
       [
         "packages/storage/src/repositories/operational-metrics.ts",
@@ -11607,6 +11775,6 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "ad67baddd9a452991a8e6b0cba598e7ba63595e304c26556f80308d830d2b041"
+    "hash": "798d44f5292f0f703d9c6d715ef3c7c040a47ce3aad747432ba0040d08d67d2f"
   }
 }

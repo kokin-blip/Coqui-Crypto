@@ -25,6 +25,10 @@ export interface ChannelPolicy {
 }
 
 export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
+  'news.timeline': { refetchIntervalMs: MINUTE, staleTimeMs: 30 * SECOND },
+  'news.detail': { refetchIntervalMs: MINUTE, staleTimeMs: 30 * SECOND },
+  'news.health': { refetchIntervalMs: MINUTE, staleTimeMs: 30 * SECOND },
+  'news.analysis.set-enabled': { refetchIntervalMs: false, staleTimeMs: 0 },
   'research.overlay-shadow.status': { refetchIntervalMs: MINUTE, staleTimeMs: 30 * SECOND },
   'research.overlay-shadow.set': { refetchIntervalMs: false, staleTimeMs: 0 },
   'alpaca.paper.status': { refetchIntervalMs: false, staleTimeMs: 30 * SECOND },

@@ -65,7 +65,9 @@ function exactDecimal(value: string | null): boolean {
   return value === null || /^(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$/u.test(value);
 }
 
-export function normalizedRecord(record: MarketBarRecord): ArchivedMarketBar {
+export type ArchiveMarketBarInput = Omit<MarketBarRecord, 'interval'> & { readonly interval: '1d' | '1h' };
+
+export function normalizedRecord(record: ArchiveMarketBarInput): ArchivedMarketBar {
   const year = new Date(record.startTimeMs).getUTCFullYear();
   return Object.freeze({
     source: record.source,
@@ -93,15 +95,16 @@ export function validateRecord(record: ArchivedMarketBar): void {
   validateSafeSegment(record.venue, 'venue');
   validateSafeSegment(record.productId, 'productId');
   validateSafeSegment(record.providerAssetId, 'providerAssetId');
-  if (record.productType !== 'spot' || record.interval !== '1d') {
-    throw new TypeError('The v1 market-bar archive supports daily spot rows only.');
+  if (record.productType !== 'spot' || !['1d', '1h'].includes(record.interval)) {
+    throw new TypeError('The v1 market-bar archive supports daily or hourly spot rows only.');
   }
+  const intervalMs = record.interval === '1h' ? 3_600_000 : DAY_MS;
   if (
     !Number.isSafeInteger(record.startTimeMs) || record.startTimeMs < 0 ||
-    record.startTimeMs % DAY_MS !== 0 || record.endTimeMs !== record.startTimeMs + DAY_MS ||
+    record.startTimeMs % intervalMs !== 0 || record.endTimeMs !== record.startTimeMs + intervalMs ||
     !Number.isSafeInteger(record.retrievedAtMs) || record.retrievedAtMs < 0 ||
     record.year !== new Date(record.startTimeMs).getUTCFullYear()
-  ) throw new TypeError('Archive timestamps must describe one exact UTC day.');
+  ) throw new TypeError('Archive timestamps must describe one exact UTC interval.');
   if (
     !exactDecimal(record.open) || !exactDecimal(record.high) || !exactDecimal(record.low) ||
     !exactDecimal(record.close) || !exactDecimal(record.volume)
@@ -118,11 +121,11 @@ export function validateRecord(record: ArchivedMarketBar): void {
   ) throw new TypeError('Archive rows must have valid positive OHLC relationships.');
 }
 
-export function canonicalRecords(records: readonly MarketBarRecord[]): readonly ArchivedMarketBar[] {
+export function canonicalRecords(records: readonly ArchiveMarketBarInput[]): readonly ArchivedMarketBar[] {
   if (records.length === 0) throw new TypeError('An archive dataset cannot be empty.');
   const normalized = records.map(normalizedRecord).sort((left, right) =>
     compareText(left.venue, right.venue) || compareText(left.productId, right.productId) ||
-    compareText(left.source, right.source) || left.startTimeMs - right.startTimeMs);
+    compareText(left.source, right.source) || compareText(left.interval, right.interval) || left.startTimeMs - right.startTimeMs);
   let prior = '';
   for (const record of normalized) {
     validateRecord(record);

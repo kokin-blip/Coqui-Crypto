@@ -3,7 +3,7 @@ import { existsSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { setTimeout } from 'node:timers';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 /**
  * Stage 3.6 performance harness.
@@ -43,9 +43,9 @@ for (const artifact of ['dist/main/composition.js', 'dist/renderer/index.html'])
   }
 }
 
-const { createRuntime } = await import(join(root, 'dist/main/composition.js'));
-const { createDispatcher } = await import(join(root, 'dist/main/dispatch.js'));
-const { applyWindowHardening, WEB_PREFERENCES } = await import(join(root, 'dist/main/security.js'));
+const { createRuntime } = await import(pathToFileURL(join(root, 'dist/main/composition.js')).href);
+const { createDispatcher } = await import(pathToFileURL(join(root, 'dist/main/dispatch.js')).href);
+const { applyWindowHardening, WEB_PREFERENCES } = await import(pathToFileURL(join(root, 'dist/main/security.js')).href);
 
 const WATCHDOG_MS = 90_000;
 function withTimeout(label, promise) {
@@ -91,10 +91,10 @@ async function measure({ blockRendererMs = 0 } = {}) {
     // Measure foreground rendering: hidden windows throttle animation frames
     // on Linux, which otherwise measures that throttle instead of interaction.
     show: true,
-    webPreferences: { ...WEB_PREFERENCES, preload: join(root, 'dist/preload/index.cjs') },
+    webPreferences: { ...WEB_PREFERENCES, preload: join(root, 'dist/preload/index.cjs'), backgroundThrottling: false },
   });
   const entry = join(root, 'dist/renderer/index.html');
-  applyWindowHardening(window.webContents, `file://${entry}`, shell);
+  applyWindowHardening(window.webContents, pathToFileURL(entry).href, shell);
 
   // loadFile's promise rejects with an abort on paths where the load actually
   // succeeded, so completion is taken from the event instead.

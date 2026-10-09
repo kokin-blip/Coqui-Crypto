@@ -1,3 +1,4 @@
+import { createNewsHandlers } from './news-handlers.js';
 import { createRuntimeNewsHost, type NewsHostRuntime } from './news-host-runtime.js'; import type { NewsHostConfiguration, ProfileOperationGate } from '@coqui/services'; import type { WalletNicknameStore, ProfileManifestStore } from '@coqui/storage';
 import { createOverlayShadowRuntime } from './overlay-shadow-runtime.js'; import { createWiderUniverseRuntime } from './wider-universe-runtime.js'; import { createBreakoutRuntime } from './breakout-runtime.js'; import { createRangeRotationRuntime } from './range-rotation-runtime.js'; import { createMarketSelectorRuntime } from './market-selector-runtime.js';
 import { readStrategyHealth, PAPER_TRENDVOL_VERSION } from '@coqui/services';
@@ -520,10 +521,8 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
         options.profileId,
       ),
     }),
-    ...createAccountPreferenceHandlers(options.profileId, settings),
+    ...createNewsHandlers(options.profileId, database, clock), ...createAccountPreferenceHandlers(options.profileId, settings),
     'research.scoreboard': () => scoreboard.latest(), 'research.lineage': (payload: { readonly limit: number }) => ({ ok: true, value: { asOfMs: clock.nowMs(), scope: 'global', candidates: listResearchLineage(payload.limit, database) } }),
-    // Static, frozen core data — there is no service to fail, so this cannot
-    // return anything but ok.
     'research.negative-findings': () => ({
       ok: true,
       value: { findings: NEGATIVE_FINDINGS, ledgerNote: NEGATIVE_FINDING_LEDGER_NOTE },
@@ -551,8 +550,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   } as ChannelHandlers;
 
   return {
-    handlers,
-    report,
+    handlers, report,
     recordDeprecatedChannel(channel) {
       diagnostics.logger.warn('deprecated_channel_used', { operation: channel });
     },

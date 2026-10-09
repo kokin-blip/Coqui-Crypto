@@ -1,10 +1,12 @@
 import { basename, dirname, join } from 'node:path';
 import { readFile, stat, writeFile } from 'node:fs/promises';
+import { pathToFileURL } from 'node:url';
 
 import { createOsKeyringSecretStore, type SecretStore } from '@coqui/adapters';
 import { app, BrowserWindow, clipboard, dialog, ipcMain, Notification, powerMonitor, shell } from 'electron';
 
 import { createDispatcher } from './dispatch.js';
+import { verifyPackagedNewsWorker } from './packaged-news-worker.js';
 import { createRuntime, type CoquiRuntime } from './composition.js';
 import { createRuntimeProfileController, type RuntimeProfileController } from './profile-runtime.js';
 import {
@@ -32,7 +34,7 @@ function rendererEntry(): { readonly url?: string; readonly file?: string; reado
     return { url: devServer, origin: new URL(devServer).origin };
   }
   const file = join(import.meta.dirname, '../renderer/index.html');
-  return { file, origin: `file://${file}` };
+  return { file, origin: pathToFileURL(file).href };
 }
 
 function createWindow(): BrowserWindow {
@@ -203,8 +205,8 @@ function shutdown(): void {
  * Printed as one machine-readable line because the harness parses stdout: a
  * packaged process has nowhere else to report to.
  */
-function runPackagedSmoke(): void {
-  let payload: { opened: boolean; schemaVersion: number | null; error: string | null };
+async function runPackagedSmoke(): Promise<void> {
+  let payload: { opened: boolean; schemaVersion: number | null; workerLoaded: boolean; error: string | null };
   let probe: CoquiRuntime | null = null;
   try {
     probe = createRuntime({
@@ -213,12 +215,14 @@ function runPackagedSmoke(): void {
       disableScheduler: true,
     });
     const row = probe.database.prepare('PRAGMA user_version').get() as { user_version: number };
-    payload = { opened: true, schemaVersion: Number(row.user_version), error: null };
+    await verifyPackagedNewsWorker();
+    payload = { opened: true, schemaVersion: Number(row.user_version), workerLoaded: true, error: null };
   } catch (error) {
     // The error's *type*, not its message: a failure here is reported in CI
     // logs, and a message can carry a path.
     payload = {
       opened: false,
+      workerLoaded: false,
       schemaVersion: null,
       error: error instanceof Error ? error.constructor.name : typeof error,
     };
@@ -233,7 +237,7 @@ app.enableSandbox();
 
 app.on('ready', () => {
   if (process.argv.includes('--packaged-smoke')) {
-    runPackagedSmoke();
+    void runPackagedSmoke();
     return;
   }
 

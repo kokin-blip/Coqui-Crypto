@@ -1,3 +1,4 @@
+import { NewsStudyStatus } from './NewsPanels.js';
 import type { CoquiClient } from '@coqui/contracts';
 
 import { NegativeFindings } from './NegativeFindings.js';
@@ -9,7 +10,7 @@ import { useChannel } from '../query/use-channel.js';
 export function Research({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const edgeStudy = useChannel(client, 'research.edge-study', {});
   return (
-    <div className="screen-stack">
+    <div className="screen-stack"><NewsStudyStatus client={client} />
       <section className="panel" aria-labelledby="forward-edge-heading">
         <div className="panel-heading"><div><h2 id="forward-edge-heading">Forward edge study</h2></div><span className="section-label">Prospective evidence only</span></div>
         {edgeStudy.kind === 'loading' && <SurfaceState kind="loading" title="Reading the registered study" compact />}

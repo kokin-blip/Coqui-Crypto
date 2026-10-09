@@ -4,7 +4,7 @@ import { setTimeout } from 'node:timers';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { checkTerminal } from './terminal-smoke.mjs';
 import { coinbaseSmokeFixture, checkCoinbaseSettings, seedCoinbaseSmokeProfile } from './coinbase-settings-smoke.mjs';
 import { sha256Hex, strategyDecisionId } from '@coqui/core';
@@ -37,10 +37,10 @@ for (const artifact of ['dist/main/composition.js', 'dist/preload/index.cjs', 'd
   }
 }
 
-const { createRuntimeProfileController } = await import(join(root, 'dist/main/profile-runtime.js'));
-const { createDispatcher } = await import(join(root, 'dist/main/dispatch.js'));
+const { createRuntimeProfileController } = await import(pathToFileURL(join(root, 'dist/main/profile-runtime.js')).href);
+const { createDispatcher } = await import(pathToFileURL(join(root, 'dist/main/dispatch.js')).href);
 const { applyWindowHardening, WEB_PREFERENCES, CONTENT_SECURITY_POLICY } = await import(
-  join(root, 'dist/main/security.js')
+  pathToFileURL(join(root, 'dist/main/security.js')).href
 );
 
 const checks = [];
@@ -108,7 +108,7 @@ async function run() {
   ipcMain.handle('coqui:query', async (_event, channel, payload) => dispatch(channel, payload));
 
   const entry = join(root, 'dist/renderer/index.html');
-  const origin = `file://${entry}`;
+  const origin = pathToFileURL(entry).href;
   const window = new BrowserWindow({
     show: false,
     webPreferences: { ...WEB_PREFERENCES, preload: join(root, 'dist/preload/index.cjs') },

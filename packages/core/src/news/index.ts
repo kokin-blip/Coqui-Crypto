@@ -5,3 +5,5 @@ export * from './intelligence-types.js';
 export * from './intelligence.js';
 export * from './clusters.js';
 export * from './features.js';
+
+export * from "./study.js";

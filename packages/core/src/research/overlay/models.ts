@@ -1,6 +1,6 @@
 import type { OverlayCandidate, OverlayModel, OverlayRow, TreeNode } from './types.js';
 import { OVERLAY_VERSION } from './types.js';
-function solve(matrix: number[][], target: number[]): number[] {
+export function solve(matrix: number[][], target: number[]): number[] {
   const rows = matrix.map((row, i) => [...row, target[i]!]), size = target.length;
   for (let column = 0; column < size; column++) {
     let pivot = column;

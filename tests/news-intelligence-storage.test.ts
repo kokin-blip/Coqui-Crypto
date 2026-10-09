@@ -33,7 +33,7 @@ describe('news intelligence migration and durable evidence', () => {
     prior.prepare('INSERT INTO app_settings VALUES (?,?)').run('fixture-preserved', 'yes');
     prior.prepare('INSERT INTO news_api_usage_v1 VALUES (?,?,?,?,?,?,?)').run('gdelt', 'a'.repeat(64), '1970-01-01', 72, 1, 0, 0);
     prior.close(); const upgraded = db(file);
-    expect(upgraded.prepare('PRAGMA user_version').get()?.['user_version']).toBe(90);
+    expect(upgraded.prepare('PRAGMA user_version').get()?.['user_version']).toBe(91);
     expect(readdirSync(directories[0]!).some(name => name.includes('.pre-migration-v89-'))).toBe(true);
     expect(upgraded.prepare('SELECT value FROM app_settings WHERE key=?').get('fixture-preserved')?.['value']).toBe('yes');
     expect(upgraded.prepare('SELECT reserved FROM news_api_usage_v1').get()?.['reserved']).toBe(1);

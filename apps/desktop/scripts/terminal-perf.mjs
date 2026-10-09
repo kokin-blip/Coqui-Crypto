@@ -2,17 +2,17 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import { mkdtempSync, rmSync, mkdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { setTimeout, setInterval, clearInterval } from 'node:timers';
 import { activityFixture } from './terminal-activity-fixture.mjs';
 import { randomUUID } from 'node:crypto';
 
 // Deterministic feed fixtures are confined to this isolated benchmark process.
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
-const { createRuntimeProfileController } = await import(join(root, 'dist/main/profile-runtime.js'));
-const { createDispatcher } = await import(join(root, 'dist/main/dispatch.js'));
-const { CoinbaseMicrostructure } = await import(join(root, 'dist/main/coinbase-microstructure.js'));
-const { WEB_PREFERENCES } = await import(join(root, 'dist/main/security.js'));
+const { createRuntimeProfileController } = await import(pathToFileURL(join(root, 'dist/main/profile-runtime.js')).href);
+const { createDispatcher } = await import(pathToFileURL(join(root, 'dist/main/dispatch.js')).href);
+const { CoinbaseMicrostructure } = await import(pathToFileURL(join(root, 'dist/main/coinbase-microstructure.js')).href);
+const { WEB_PREFERENCES } = await import(pathToFileURL(join(root, 'dist/main/security.js')).href);
 const seconds = Number(process.env.COQUI_PERF_SECONDS ?? 60);
 const intervalMs = { '1m': 60000, '5m': 300000, '15m': 900000, '1h': 3600000, '6h': 21600000, '1d': 86400000 };
 app.enableSandbox();

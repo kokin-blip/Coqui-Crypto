@@ -14,7 +14,7 @@ export interface MarketBarArchiveFile {
   readonly venue: string;
   readonly productId: string;
   readonly productType: 'spot';
-  readonly interval: '1d';
+  readonly interval: '1d' | '1h';
   readonly year: number;
 }
 
@@ -42,7 +42,7 @@ export interface ArchivedMarketBar {
   readonly productId: string;
   readonly productType: 'spot';
   readonly providerAssetId: string;
-  readonly interval: '1d';
+  readonly interval: '1d' | '1h';
   readonly year: number;
   readonly startTimeMs: number;
   readonly endTimeMs: number;
@@ -60,6 +60,7 @@ export interface MarketBarArchiveQuery {
   readonly venue?: string;
   readonly productId?: string;
   readonly source?: string;
+  readonly interval?: '1d' | '1h';
   readonly startTimeMs?: number;
   readonly endTimeMs?: number;
 }

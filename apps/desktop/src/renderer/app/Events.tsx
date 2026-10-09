@@ -1,3 +1,4 @@
+import { NewsTimeline } from './NewsPanels.js';
 import { FileUp,ShieldCheck } from 'lucide-react';
 import { useEffect,useRef,useState } from 'react';
 import type { CoquiClient } from '@coqui/contracts';
@@ -18,7 +19,7 @@ export function Events({client}:{readonly client:CoquiClient}):React.JSX.Element
     if(eventId===null||eventId===undefined||timeline.kind!=='ready') return;
     requestAnimationFrame(()=>document.getElementById(`event-${eventId}`)?.scrollIntoView({block:'center'}));
   },[events.length]);
-  return <div className="screen-stack"><section className="panel events-import" aria-labelledby="events-import-heading">
+  return <div className="screen-stack"><NewsTimeline client={client} /><section className="panel events-import" aria-labelledby="events-import-heading">
     <div className="panel-heading"><div><p className="eyebrow">Local evidence only</p><h2 id="events-import-heading">Event dataset</h2></div>
       <span className="data-boundary"><ShieldCheck size={14} aria-hidden="true" /> Target and execution influence disabled</span></div>
     <p>Import a validated JSON fixture. Published time and first-known time remain separate so historical replay cannot see future information.</p>

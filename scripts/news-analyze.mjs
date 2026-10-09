@@ -1,10 +1,11 @@
 import { existsSync, readFileSync, statSync } from 'node:fs';
+import { setImmediate } from 'node:timers';
 import { parseArgs } from 'node:util';
 import { openDatabase } from '../packages/storage/dist/index.js';
-import { NewsIntelligenceService } from '../packages/services/dist/index.js';
+import { NewsIntelligenceService, saveNewsAnalysisConfiguration } from '../packages/services/dist/index.js';
 
 const { values } = parseArgs({ options: { database: { type: 'string' }, configuration: { type: 'string' },
-  'input-cutoff-ms': { type: 'string' }, 'max-observations': { type: 'string' } } });
+  incremental: { type: 'boolean', default: false }, 'install-mapping': { type: 'boolean', default: false }, 'input-cutoff-ms': { type: 'string' }, 'max-observations': { type: 'string' } } });
 let database;
 try {
   if (!values.database || !existsSync(values.database) || !statSync(values.database).isFile() ||
@@ -12,7 +13,12 @@ try {
   const configuration = JSON.parse(readFileSync(values.configuration, 'utf8'));
   database = openDatabase(values.database);
   const service = new NewsIntelligenceService({ database, clock: { nowMs: () => Date.now() } });
-  const result = service.analyze(configuration, {
+  if (values['install-mapping']) saveNewsAnalysisConfiguration(configuration, database);
+  let step;
+  if (values.incremental) {
+    do { step = service.advance(configuration); if (step.state === 'processing') await new Promise(resolve => setImmediate(resolve)); } while (step.state === 'processing');
+  }
+  const result = step?.result ?? service.analyze(configuration, {
     ...(values['input-cutoff-ms'] ? { inputCutoffMs: Number(values['input-cutoff-ms']) } : {}),
     ...(values['max-observations'] ? { maxObservations: Number(values['max-observations']) } : {}),
   });

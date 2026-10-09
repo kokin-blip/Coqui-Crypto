@@ -3,9 +3,10 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { FetchLike } from '@coqui/adapters';
-import { readNewsHostConfiguration, saveNewsHostConfiguration } from '@coqui/services';
-import { assignAuthoritativeHost, listNewsObservationsAsOf, openDatabase, type Db } from '@coqui/storage';
+import { readNewsHostConfiguration, saveNewsHostConfiguration, saveNewsAnalysisConfiguration, saveNewsAnalysisEnabled } from '@coqui/services';
+import { assignAuthoritativeHost, listNewsObservationsAsOf, openDatabase, saveNewsObservation, type Db } from '@coqui/storage';
 import { createNewsHostRuntime, type NewsHostRuntime } from '../apps/desktop/src/main/news-host-runtime.js';
+import { newsFixture } from './fixtures/news/observations.js';
 import { gdeltPayload, NEWS_NOW, newsPassThrough, newsResponse } from './fixtures/news/providers.js';
 const hosts: NewsHostRuntime[] = [], databases: Db[] = [], directories: string[] = [];
 afterEach(async () => {
@@ -88,6 +89,17 @@ describe('Main news host integration', () => {
     expect(observations(reopened)).toEqual([]);
     expect(reopened.prepare('SELECT reserved FROM news_api_usage_v1').get()?.['reserved']).toBe(1);
     expect(reopened.prepare('SELECT outcome FROM news_request_attempts_v1').get()?.['outcome']).toBe('reserved');
+  });
+  it('fences opt-in analysis chunks across hosts even when collection is disabled', async () => {
+    const test=fixture();test.database.prepare('INSERT INTO canonical_instruments VALUES (?,?,?,?,?,?,?,?,?)').run('coinbase','BTC-USD','spot','BTC','Bitcoin','BTC','USD',100,100);
+    saveNewsAnalysisConfiguration({schemaVersion:1,reviewedAtMs:100,instruments:[{asset:'BTC',instrument:{venue:'coinbase',productId:'BTC-USD',productType:'spot'}}],publisherAliases:[]},test.database);
+    saveNewsAnalysisEnabled(true,test.database);
+    saveNewsObservation(newsFixture({provider:'gdelt',title:'Bitcoin gains'}),300,test.database);
+    const first=test.host('main','host-a'),second=test.host('main','host-b');await Promise.all([first.tick(),second.tick()]);
+    expect(test.fetch).not.toHaveBeenCalled();
+    expect(test.database.prepare('SELECT count(*) AS n FROM news_analysis_chunks_v1').get()?.['n']).toBe(1);
+    expect(test.database.prepare("SELECT next_run_at FROM wallet_schedule_lease WHERE profile_id='news.analysis.v2'").get()?.['next_run_at']).toBe(NEWS_NOW+60000);
+    first.suspend();test.advance(60000);await first.tick();expect(test.database.prepare('SELECT count(*) AS n FROM news_analysis_runs_v1').get()?.['n']).toBe(0);
   });
   it('rejects a split Main storage/quota database path', () => {
     const test = fixture(); expect(() => createNewsHostRuntime({ profileId: 'main', databasePath: test.path,

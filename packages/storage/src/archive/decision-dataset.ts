@@ -234,6 +234,7 @@ export async function prepareDecisionDatasetFromArchives(
       codeRevision: sourceManifest.codeRevision,
     });
     const archived = await queryMarketBarArchive(directory, {
+      interval: '1d',
       venue: 'coinbase',
       startTimeMs: request.startTimeMs,
       endTimeMs: request.endExclusiveMs,

@@ -136,3 +136,11 @@ export function pageNewsObservationRevisionsAsOf(asOfMs: number, afterId: string
   const selected = rows.slice(0, limit);
   return { observations: Object.freeze(selected.map(restore)), nextCursor: rows.length > limit ? selected.at(-1)!.id : null };
 }
+
+/** Internal bounded immutable input reads for restartable analysis. */
+export function readNewsObservation(id: string, database: Db): StoredNewsObservation {
+  if (!/^[a-f0-9]{64}$/u.test(id)) throw new TypeError('Invalid news observation identity.');
+  const row = database.prepare(`${SELECT_NEWS} WHERE observation.id=?`).get(id) as unknown as NewsRow | undefined;
+  if (!row) throw new Error('Missing news observation.');
+  return restore(row);
+}
