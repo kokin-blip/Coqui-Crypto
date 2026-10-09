@@ -50,7 +50,8 @@
     "research:overlay": "pnpm build && node scripts/research-overlay.mjs",
     "research:integrity": "pnpm build && node scripts/research-integrity.mjs",
     "research:remediation-report": "pnpm build && node scripts/research-remediation-report.mjs",
-    "perf:terminal": "pnpm --filter @coqui/desktop perf:terminal"
+    "perf:terminal": "pnpm --filter @coqui/desktop perf:terminal",
+    "news:analyze": "node scripts/news-analyze.mjs"
   },
   "devDependencies": {
     "@emnapi/runtime": "2.0.0-alpha.3",

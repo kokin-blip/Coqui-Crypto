@@ -109,3 +109,30 @@ export function listNewsObservationsAsOf(asOfMs: number, limit: number, database
     .all(asOfMs, asOfMs, limit) as unknown as NewsRow[];
   return Object.freeze(rows.map(restore));
 }
+
+/** Stable keyset paging of latest eligible revisions, never a capped aggregate. */
+export function pageNewsObservationsAsOf(asOfMs: number, afterId: string | null, limit: number, database: Db): {
+  readonly observations: readonly StoredNewsObservation[]; readonly nextCursor: string | null;
+} {
+  if (!isNewsTimestamp(asOfMs) || (afterId !== null && !/^[a-f0-9]{64}$/u.test(afterId)) ||
+    !Number.isSafeInteger(limit) || limit < 1 || limit > 250) throw new TypeError('Invalid news observation page.');
+  const rows = database.prepare(`${SELECT_NEWS}
+    WHERE observation.id>? AND observation.id=(SELECT candidate.id FROM news_observations_v1 candidate
+      WHERE candidate.provider_record_id=record.id AND candidate.observed_at<=? AND candidate.persisted_at<=?
+      ORDER BY candidate.observed_at DESC,candidate.persisted_at DESC,candidate.id DESC LIMIT 1)
+    ORDER BY observation.id LIMIT ?`).all(afterId ?? '', asOfMs, asOfMs, limit + 1) as unknown as NewsRow[];
+  const selected = rows.slice(0, limit);
+  return { observations: Object.freeze(selected.map(restore)), nextCursor: rows.length > limit ? selected.at(-1)!.id : null };
+}
+
+/** All revisions for analysis: boundary selection must not lose an earlier eligible correction. */
+export function pageNewsObservationRevisionsAsOf(asOfMs: number, afterId: string | null, limit: number, database: Db): {
+  readonly observations: readonly StoredNewsObservation[]; readonly nextCursor: string | null;
+} {
+  if (!isNewsTimestamp(asOfMs) || (afterId !== null && !/^[a-f0-9]{64}$/u.test(afterId)) ||
+    !Number.isSafeInteger(limit) || limit < 1 || limit > 250) throw new TypeError('Invalid news revision page.');
+  const rows = database.prepare(`${SELECT_NEWS} WHERE observation.id>? AND observation.observed_at<=? AND observation.persisted_at<=?
+    ORDER BY observation.id LIMIT ?`).all(afterId ?? '', asOfMs, asOfMs, limit + 1) as unknown as NewsRow[];
+  const selected = rows.slice(0, limit);
+  return { observations: Object.freeze(selected.map(restore)), nextCursor: rows.length > limit ? selected.at(-1)!.id : null };
+}
