@@ -76,6 +76,16 @@ describe('restartable news rollout', () => {
     expect(d.prepare('SELECT count(*) AS n FROM news_analysis_runs_v1').get()?.['n']).toBe(0);
     await expect(s.advanceAsync(configuration,new AbortController().signal,()=>false)).rejects.toThrow(/ownership/u);
   });
+  it('rechecks ownership under the write lock for both chunks and worker completion', async () => {
+    const d=db();seed(d,1);
+    const s=new NewsIntelligenceService({database:d,clock:{nowMs:()=>HOUR+100},workerUrl:new URL('./fixtures/news/worker-delay.mjs',import.meta.url)});
+    let checks=0;
+    await expect(s.advanceAsync(configuration,new AbortController().signal,()=>++checks===1)).rejects.toThrow(/ownership/u);
+    expect(d.prepare('SELECT count(*) AS n FROM news_analysis_chunks_v1').get()?.['n']).toBe(0);
+    s.advance(configuration);checks=0;
+    await expect(s.advanceAsync(configuration,new AbortController().signal,()=>++checks<3)).rejects.toThrow(/ownership/u);
+    expect(d.prepare('SELECT count(*) AS n FROM news_analysis_runs_v1').get()?.['n']).toBe(0);
+  });
   it('does not accumulate old history into the active window and appends corrections', () => {
     const d=db();seed(d,1,HOUR); const s=new NewsIntelligenceService({database:d,clock:{nowMs:()=>5*DAY}});
     s.advance(configuration);expect(s.advance(configuration).result?.analyses).toHaveLength(0);

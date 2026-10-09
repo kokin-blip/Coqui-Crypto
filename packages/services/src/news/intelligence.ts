@@ -86,21 +86,24 @@ export class NewsIntelligenceService {
     const prior = readNewsAnalysisRun(id, this.input.database);
     if (prior) return { state: 'complete', processed: 0, result: this.result(false, prior, listNewsRunAnalyses(id, this.input.database), listNewsRunClusters(id, this.input.database)) };
     const clusters = [...clusterNewsAnalyses(analyses, cutoff)];
-    const completedAtMs = this.input.clock.nowMs(), persistedAtMs = this.input.clock.nowMs();
-    const run: NewsAnalysisRun = { schemaVersion: 1, algorithmVersion: 'news-intelligence-window-v2', id, ...identity,
-      completedAtMs, persistedAtMs, availableAtMs: persistedAtMs };
     const features: NewsFeatureSnapshot[] = [];
     for (const entry of registry) for (const cadence of ['hourly', 'daily'] as const) {
       const decisionAtMs = Math.floor(cutoff / (cadence === 'hourly' ? NEWS_HOUR_MS : NEWS_DAY_MS)) * (cadence === 'hourly' ? NEWS_HOUR_MS : NEWS_DAY_MS);
       const boundary = clusterNewsAnalyses(analyses, decisionAtMs);
       for (const c of boundary) if (!clusters.some(existing => existing.id === c.id)) clusters.push(c);
       features.push(buildNewsFeatureSnapshot({ featureVersion: 'news-features-window-v2', runId: id, instrument: entry.instrument,
-        cadence, decisionAtMs, availableAtMs: persistedAtMs, analyses, clusters: boundary,
+        cadence, decisionAtMs, availableAtMs: cutoff, analyses, clusters: boundary,
         baseline: readNewsDailyBaseline(entry.instrument, decisionAtMs, this.input.database, 'news-features-window-v2'),
         coverage: readNewsCoverage(decisionAtMs, this.input.database), reconstruction: false }));
     }
-    const inserted = saveNewsIntelligenceBatch(run, analyses, clusters, features, this.input.database);
-    return { state: 'complete', processed: 0, result: this.result(inserted, run, analyses, clusters) };
+    const completedAtMs = this.input.clock.nowMs();
+    return inTransaction(this.input.database, () => {
+      const persistedAtMs = this.input.clock.nowMs();
+      const run: NewsAnalysisRun = { schemaVersion: 1, algorithmVersion: 'news-intelligence-window-v2', id, ...identity,
+        completedAtMs, persistedAtMs, availableAtMs: persistedAtMs };
+      const inserted = saveNewsIntelligenceBatch(run, analyses, clusters, features.map(f => ({ ...f, availableAtMs: persistedAtMs })), this.input.database);
+      return { state: 'complete' as const, processed: 0, result: this.result(inserted, run, analyses, clusters) };
+    });
   }
 
   /** Host computation runs off-thread; only validated, still-owned completions may persist. */
@@ -111,7 +114,11 @@ export class NewsIntelligenceService {
     const registry = readNewsRegistryEvidence(configuration, cutoff, this.input.database);
     if (registry.length !== configuration.instruments.length) throw new Error('Reviewed registry identities are missing.');
     const configurationHash = newsEvidenceHash({ configuration, registry, algorithmVersion: NEWS_INTELLIGENCE_VERSION });
-    if (pendingNewsAnalysisIds(configurationHash, cutoff, this.input.database).length) return this.advance(configuration);
+    if (pendingNewsAnalysisIds(configurationHash, cutoff, this.input.database).length) return inTransaction(this.input.database, () => {
+      if (signal.aborted || !canPersist()) throw new Error('News analysis ownership lost.');
+      if (!pendingNewsAnalysisIds(configurationHash, cutoff, this.input.database).length) return { state: 'processing' as const };
+      return this.advance(configuration);
+    });
     const inputWindowStartMs = Math.max(0, Math.floor(cutoff / NEWS_DAY_MS) * NEWS_DAY_MS - 2 * NEWS_DAY_MS);
     const { analyses, chunkIds } = readNewsWindowAnalyses(configurationHash, cutoff, inputWindowStartMs, this.input.database);
     const identity = { inputCutoffMs: cutoff, inputWindowStartMs, configuration, registry, inputObservationIds: analyses.map(a => a.observationId).sort(), chunkIds };
@@ -135,11 +142,15 @@ export class NewsIntelligenceService {
     if (signal.aborted || !canPersist()) throw new Error('News analysis ownership lost.');
     const result = output as { clusters?: unknown[]; features?: unknown[] };
     if (!Array.isArray(result?.clusters) || !Array.isArray(result.features) || result.clusters.length > 60_000 || result.features.length > 6) throw new Error('Invalid worker output.');
-    const completedAtMs = this.input.clock.nowMs(), persistedAtMs = this.input.clock.nowMs();
-    const run: NewsAnalysisRun = { schemaVersion: 1, algorithmVersion: 'news-intelligence-window-v2', id, ...identity, completedAtMs, persistedAtMs, availableAtMs: persistedAtMs };
+    const completedAtMs = this.input.clock.nowMs();
     const clusters = result.clusters.map(c => newsClusterSnapshotSchema.parse(c));
-    const features = result.features.map(f => ({ ...newsFeatureSnapshotSchema.parse(f), availableAtMs: persistedAtMs }));
-    saveNewsIntelligenceBatch(run, analyses, clusters, features, this.input.database);
+    const features = result.features.map(f => newsFeatureSnapshotSchema.parse(f));
+    inTransaction(this.input.database, () => {
+      if (signal.aborted || !canPersist()) throw new Error('News analysis ownership lost.');
+      const persistedAtMs = this.input.clock.nowMs();
+      const run: NewsAnalysisRun = { schemaVersion: 1, algorithmVersion: 'news-intelligence-window-v2', id, ...identity, completedAtMs, persistedAtMs, availableAtMs: persistedAtMs };
+      saveNewsIntelligenceBatch(run, analyses, clusters, features.map(f => ({ ...f, availableAtMs: persistedAtMs })), this.input.database);
+    });
     return { state: 'complete' };
   }
 

@@ -1133,7 +1133,7 @@
       ],
       [
         "packages/services/src/news/intelligence.ts",
-        "a7f751f04102d26393489d8f633309b09dd1b8ee6952c7450d28e14fe37db8e1"
+        "6a809905a46d1b4d96bb677a6909bea6d3a6cb3f2b63ab469ee5534e531001ce"
       ],
       [
         "packages/services/src/news/quota-governor.ts",
@@ -2148,7 +2148,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "7ecac2acf6a95adf57c6d689f2fa4aed3272c3c22992437a229812dd0076179e"
+    "hash": "d430ee2bfc7a3b87167987a53cffb3aea621d83f1096ebff1c01bc4e24ed32fb"
   },
   "wider-breakout-v1": {
     "version": 1,
@@ -3284,7 +3284,7 @@
       ],
       [
         "packages/services/src/news/intelligence.ts",
-        "a7f751f04102d26393489d8f633309b09dd1b8ee6952c7450d28e14fe37db8e1"
+        "6a809905a46d1b4d96bb677a6909bea6d3a6cb3f2b63ab469ee5534e531001ce"
       ],
       [
         "packages/services/src/news/quota-governor.ts",
@@ -4299,7 +4299,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "e40c203f2c15342fda5b3fc3c72f40e259066f8ea6b9c7b090ff0c77f3f7379e"
+    "hash": "d8b157532a5f688a3b0ae0ff561e864cf26a2164f07f3f6236fdbb9151a65f40"
   },
   "wider-range-rotation-v1": {
     "version": 1,
@@ -5435,7 +5435,7 @@
       ],
       [
         "packages/services/src/news/intelligence.ts",
-        "a7f751f04102d26393489d8f633309b09dd1b8ee6952c7450d28e14fe37db8e1"
+        "6a809905a46d1b4d96bb677a6909bea6d3a6cb3f2b63ab469ee5534e531001ce"
       ],
       [
         "packages/services/src/news/quota-governor.ts",
@@ -6450,7 +6450,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "1dbc7aeec35c7d46e881cff92e9e6571687b1121b930c28cb5f8c08b28ceb6cd"
+    "hash": "799176d33a47ba6e7d94ea363a6490b4d36faab964539454a3362efd19c0d65d"
   },
   "paper-market-selector-v1": {
     "version": 1,
@@ -7586,7 +7586,7 @@
       ],
       [
         "packages/services/src/news/intelligence.ts",
-        "a7f751f04102d26393489d8f633309b09dd1b8ee6952c7450d28e14fe37db8e1"
+        "6a809905a46d1b4d96bb677a6909bea6d3a6cb3f2b63ab469ee5534e531001ce"
       ],
       [
         "packages/services/src/news/quota-governor.ts",
@@ -8601,7 +8601,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "d1fff63965830f1ea78359c83bbccfd571cc871ee9173e823d47592c0c3f1d66"
+    "hash": "cb44ab45812d6c3cd5b92feadb3dd43853f499eabb9042faa069009fcb1a0fc3"
   },
   "trendvol-hourly-execution-v1": {
     "version": 1,
