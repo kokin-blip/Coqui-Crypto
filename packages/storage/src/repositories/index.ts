@@ -64,3 +64,4 @@ export * from "./trading-activity.js";
 export * from './connection-lifecycle.js';
 export * from './news.js';
 export * from './news-quota.js';
+export * from './news-intelligence.js';

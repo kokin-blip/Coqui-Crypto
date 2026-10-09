@@ -197,6 +197,9 @@ importers:
 
   packages/storage:
     dependencies:
+      '@coqui/contracts':
+        specifier: workspace:*
+        version: link:../contracts
       '@coqui/core':
         specifier: workspace:*
         version: link:../core
