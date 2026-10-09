@@ -110,8 +110,8 @@ async function run() {
   const entry = join(root, 'dist/renderer/index.html');
   const origin = pathToFileURL(entry).href;
   const window = new BrowserWindow({
-    show: false,
-    webPreferences: { ...WEB_PREFERENCES, preload: join(root, 'dist/preload/index.cjs') },
+    show: true,
+    webPreferences: { ...WEB_PREFERENCES, preload: join(root, 'dist/preload/index.cjs'), backgroundThrottling: false },
   });
 
   const installed = applyWindowHardening(window.webContents, origin, shell);

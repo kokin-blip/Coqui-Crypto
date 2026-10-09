@@ -3,6 +3,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 
 /** Exercises the production terminal through its ordinary controls. */
 export async function checkTerminal(window, check) {
+  window.show(); window.focus(); window.webContents.focus();
   const evaluate = (source, gesture = false) => window.webContents.executeJavaScript(source, gesture);
   const waitFor = async (source) => {
     for (let attempt = 0; attempt < 120; attempt++) {
