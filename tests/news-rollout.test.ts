@@ -164,4 +164,21 @@ describe('point-in-time news research', () => {
     expect(rows.every(r=>r.labelAvailableAtMs>r.decisionAtMs)).toBe(true);
     expect(newsEvidenceHash(rows)).toHaveLength(64);
   });
+  it('keeps available snapshots without relevant news missing in study inputs', () => {
+    const d=db();seed(d,1);const service=new NewsIntelligenceService({database:d,clock:{nowMs:()=>HOUR+100}});
+    service.advance(configuration);service.advance(configuration);
+    const template=service.featuresAsOf(BTC,HOUR+100).find(f=>f.cadence==='hourly')!;
+    const features=bars().map(b=>({...template,id:newsEvidenceHash({empty:b.startTimeMs}),
+      decisionAtMs:b.startTimeMs,availableAtMs:b.startTimeMs,
+      windows:template.windows.map(w=>({...w,articleCount:0,groupCount:0,publisherCount:0,
+        sentimentMean:null,sentimentSampleCount:0})),missingReasons:['no_relevant_evidence']}));
+    const input={bars:bars(),features,cadence:'hourly' as const,horizonHours:4 as const,
+      cost:{feeBps:60,spreadBps:10,slippageBps:10,minUsefulTradeUsd:25},
+      sourceManifestHashes:['a'.repeat(64)],codeRevision:'fixture',completedAtMs:15*DAY};
+    const rows=buildNewsStudyRows(input.bars,features,'hourly',4);
+    expect(rows.length).toBeGreaterThan(0);
+    expect(rows.every(r=>r.featureId===null && r.augmented[12]===1)).toBe(true);
+    expect(runNewsStudy(input)).toMatchObject({status:'insufficient_evidence',prospectiveRowCount:0,
+      reasons:['no_eligible_prospective_news']});
+  });
 });

@@ -14,7 +14,7 @@ export interface NewsStudyRow {
   readonly baseline: readonly number[]; readonly augmented: readonly number[];
   readonly outcome: number; readonly labelAvailableAtMs: number; readonly entryPrice: number; readonly exitPrice: number;
 }
-export const NEWS_STUDY_SPEC = Object.freeze({ version: 'news-study-v1', ridge: 1, trainDays: 120,
+export const NEWS_STUDY_SPEC = Object.freeze({ version: 'news-study-v2', newsEligibility: 'available_nonreconstructed_relevant_24h_evidence', ridge: 1, trainDays: 120,
   calibrationDays: 60, testDays: 30, purgeHours: 24, embargoHours: 24, replayNotionalUsd: 1000,
   baselineFeatures: ['return_1_interval', 'return_24h', 'return_7d', 'volatility_24h', 'volatility_7d'],
   newsFeatures: ['log_groups_1h', 'log_groups_24h', 'tone_1h', 'tone_24h', 'tone_missing_1h', 'tone_missing_24h',
@@ -57,7 +57,10 @@ export function buildNewsStudyRows(bars: readonly NewsStudyBar[], features: read
       const daily = history.find(b => b.endTimeMs === last.endTimeMs - NEWS_DAY_MS), weekly = history.find(b => b.endTimeMs === last.endTimeMs - 7 * NEWS_DAY_MS);
       if (!daily || !weekly) continue;
       const baseline = [returns.at(-1)!, Math.log(last.close / daily.close), Math.log(last.close / weekly.close), volatility(trailing(NEWS_DAY_MS)), volatility(trailing(7 * NEWS_DAY_MS))];
-      const f = evidence.find(f => f.decisionAtMs <= at && f.availableAtMs <= at && at - f.decisionAtMs <= 2 * width);
+      const latest = evidence.find(f => f.decisionAtMs <= at && f.availableAtMs <= at && at - f.decisionAtMs <= 2 * width);
+      // Empty snapshots carry coverage diagnostics, not evidence of observed absence.
+      // Do not fall back to an older snapshot when the latest window has no relevant news.
+      const f = latest?.windows.find(w => w.windowMs === NEWS_DAY_MS)?.articleCount ? latest : undefined;
       rows.push({ instrumentKey: key, decisionAtMs: at, featureId: f?.id ?? null, baseline, augmented: [...baseline, ...featureVector(f)],
         outcome: Math.log(label.close / entry.open), labelAvailableAtMs: Math.max(...horizonBars.map(b => b!.availableAtMs)), entryPrice: entry.open, exitPrice: label.close });
     }
