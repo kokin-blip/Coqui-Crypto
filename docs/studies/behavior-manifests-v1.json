@@ -545,7 +545,7 @@
       ],
       [
         "packages/core/src/news/study.ts",
-        "6e14689bc27bcf2ad2d0686d0c639b9d10e1a656729b7af18c7dc58b1b664141"
+        "82274a1490bca0a3a1df6e4fab0dd87f1276f212685014e37bbfce4645b73d03"
       ],
       [
         "packages/core/src/news/types.ts",
@@ -2148,7 +2148,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "d430ee2bfc7a3b87167987a53cffb3aea621d83f1096ebff1c01bc4e24ed32fb"
+    "hash": "b1bc098f2cf51cf3259e372e023ae775849aba0c23dd2aac055a54676f37e7f3"
   },
   "wider-breakout-v1": {
     "version": 1,
@@ -2696,7 +2696,7 @@
       ],
       [
         "packages/core/src/news/study.ts",
-        "6e14689bc27bcf2ad2d0686d0c639b9d10e1a656729b7af18c7dc58b1b664141"
+        "82274a1490bca0a3a1df6e4fab0dd87f1276f212685014e37bbfce4645b73d03"
       ],
       [
         "packages/core/src/news/types.ts",
@@ -4299,7 +4299,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "d8b157532a5f688a3b0ae0ff561e864cf26a2164f07f3f6236fdbb9151a65f40"
+    "hash": "2f5ef2b297510177f68420f5d645e13aca7b034d06f23a9d62961007506d8a89"
   },
   "wider-range-rotation-v1": {
     "version": 1,
@@ -4847,7 +4847,7 @@
       ],
       [
         "packages/core/src/news/study.ts",
-        "6e14689bc27bcf2ad2d0686d0c639b9d10e1a656729b7af18c7dc58b1b664141"
+        "82274a1490bca0a3a1df6e4fab0dd87f1276f212685014e37bbfce4645b73d03"
       ],
       [
         "packages/core/src/news/types.ts",
@@ -6450,7 +6450,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "799176d33a47ba6e7d94ea363a6490b4d36faab964539454a3362efd19c0d65d"
+    "hash": "271c3ca019bea5fd765da3c5c45f7b43e9e5a532bffaba13e45108c2775223f6"
   },
   "paper-market-selector-v1": {
     "version": 1,
@@ -6998,7 +6998,7 @@
       ],
       [
         "packages/core/src/news/study.ts",
-        "6e14689bc27bcf2ad2d0686d0c639b9d10e1a656729b7af18c7dc58b1b664141"
+        "82274a1490bca0a3a1df6e4fab0dd87f1276f212685014e37bbfce4645b73d03"
       ],
       [
         "packages/core/src/news/types.ts",
@@ -8601,7 +8601,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "cb44ab45812d6c3cd5b92feadb3dd43853f499eabb9042faa069009fcb1a0fc3"
+    "hash": "c00b79321d76b22dcee8dd653faab4989e1487b25b4d1c79130f3d936511c445"
   },
   "trendvol-hourly-execution-v1": {
     "version": 1,
@@ -9137,7 +9137,7 @@
       ],
       [
         "packages/core/src/news/study.ts",
-        "6e14689bc27bcf2ad2d0686d0c639b9d10e1a656729b7af18c7dc58b1b664141"
+        "82274a1490bca0a3a1df6e4fab0dd87f1276f212685014e37bbfce4645b73d03"
       ],
       [
         "packages/core/src/news/types.ts",
@@ -10192,7 +10192,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "40b82ed8469177d9163793bef9df9d7d54d05497c7dcf73247350828c5d4d0dd"
+    "hash": "c8b4eab46cd17c73406bc01a130875dbfa5c7538b1148bdaa3aa7870291a58fd"
   },
   "trendvol-execution-remediation-v1": {
     "version": 1,
@@ -10728,7 +10728,7 @@
       ],
       [
         "packages/core/src/news/study.ts",
-        "6e14689bc27bcf2ad2d0686d0c639b9d10e1a656729b7af18c7dc58b1b664141"
+        "82274a1490bca0a3a1df6e4fab0dd87f1276f212685014e37bbfce4645b73d03"
       ],
       [
         "packages/core/src/news/types.ts",
@@ -11775,6 +11775,6 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "798d44f5292f0f703d9c6d715ef3c7c040a47ce3aad747432ba0040d08d67d2f"
+    "hash": "8a727e186e2e62749b5b777d605c4e49db21933b94b89d4fba60381468962256"
   }
 }
