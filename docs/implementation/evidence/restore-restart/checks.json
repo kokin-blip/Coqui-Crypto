@@ -1,0 +1,146 @@
+{
+  "version": "restore-restart-evidence-v1",
+  "simulated": true,
+  "profileKind": "generated_disposable",
+  "startedAtMs": 1791616963443,
+  "completedAtMs": 1791616965094,
+  "sourceRevision": "402aca6264d6c961aae3f128be9d06ed902b7019",
+  "build": {
+    "version": "0.1.0-beta.16",
+    "sourceRevision": "402aca6264d6c961aae3f128be9d06ed902b7019",
+    "dirty": false,
+    "sourceHash": "fc6724f8cb1b13b5a675b81161ffafea89697a3e42e2a62d77aeeb1ce1dce1f7",
+    "channel": "beta-candidate",
+    "builtAtMs": 1791616936184
+  },
+  "environment": {
+    "platform": "darwin",
+    "electron": "43.4.1",
+    "node": "24.18.1"
+  },
+  "workload": {
+    "version": 1,
+    "generatedProfile": true,
+    "metadata": [
+      "wallet-profiles.json",
+      "coqui-person.json",
+      "wallet-nicknames.json"
+    ],
+    "externalReport": "synthetic_insufficient_four_horizons",
+    "ledger": "exact_balanced_decimal",
+    "originalIsolation": "quarantined_source",
+    "reconstructions": 3,
+    "existingAssociationRelocationProbe": true
+  },
+  "workloadHash": "34236c0a10709c429a74e355f9fc307983f24c956c1aee0293f983850d68e27c",
+  "schemaVersion": 93,
+  "backupHashes": {
+    "database": "7502302b1c7405dde94046b953a67b77cf5854e7b6079529a0f382d4ccc5cb2e",
+    "manifest": "36062b77463c77f48838aa1c43b35a0803bdbaf3edc285e3581610a642fb1e38"
+  },
+  "reportHash": "0ac3a688ebdf6f6fd4998e99f38bfedb075ea6fc0f5d5989df7c1e8649d37096",
+  "originalAssociationPreserved": true,
+  "checks": [
+    {
+      "name": "existing backup store creates verified snapshot",
+      "passed": true
+    },
+    {
+      "name": "backup manifest verified",
+      "passed": true
+    },
+    {
+      "name": "exact ledger and immutable evidence validated",
+      "passed": true
+    },
+    {
+      "name": "copied metadata and report match supplied hashes",
+      "passed": true
+    },
+    {
+      "name": "unresolved original absolute report path stays unavailable",
+      "passed": true
+    },
+    {
+      "name": "two separate process reconstructions succeed",
+      "passed": true
+    },
+    {
+      "name": "relocation remains unavailable across two restarts",
+      "passed": true
+    },
+    {
+      "name": "person and nickname survive reconstruction",
+      "passed": true
+    },
+    {
+      "name": "same-hash reassociation is a no-op; original and negative evidence preserved",
+      "passed": true
+    },
+    {
+      "name": "no orders created by reconstruction",
+      "passed": true
+    },
+    {
+      "name": "schema unchanged on reconstruction",
+      "passed": true
+    },
+    {
+      "name": "source and backup preserved",
+      "passed": true
+    },
+    {
+      "name": "corrupt manifest refused",
+      "passed": true
+    }
+  ],
+  "sampleProof": {
+    "version": "isolated-restore-proof-v1",
+    "schemaVersion": 93,
+    "buildIdentity": "fc6724f8cb1b13b5a675b81161ffafea89697a3e42e2a62d77aeeb1ce1dce1f7",
+    "databaseHash": "7502302b1c7405dde94046b953a67b77cf5854e7b6079529a0f382d4ccc5cb2e",
+    "ledgerTotalUsd": "0",
+    "ledgerRows": 2,
+    "integrityEventKinds": 1,
+    "artifacts": [
+      {
+        "hash": "20de4858eb2ff4eb98cbb4f04ac8cb3137fdddfbfa5a97d3c7a2410505d4cb1a"
+      },
+      {
+        "hash": "811f198e5219ebf89b478827abffb6b817dab0c7bc81c4ed1273f2a95d5a7bc5"
+      },
+      {
+        "hash": "161be338ee7d0b5e35c2e7863ae37c2c48dcd1be28e094001730ea8fa4894842"
+      },
+      {
+        "hash": "e834f77b3df597eca702e1a26a453cc77f5963267acbed1f4c33fb50bb0e0991"
+      }
+    ],
+    "credentialsIncluded": false,
+    "scope": "explicit_database_and_supplied_artifacts",
+    "exclusions": [
+      "OS credentials",
+      "person/nickname/profile manifest unless separately supplied",
+      "unsupplied external archives/reports",
+      "broker operation",
+      "application restart"
+    ],
+    "proofHash": "03885bed8d7418f7a6dfed468e52939b179409a779d0c10ef2a8a6245eb94903"
+  },
+  "credentialsIncluded": false,
+  "actualProfileOpened": false,
+  "network": "503_only",
+  "scheduler": "disabled",
+  "gatesClosed": [],
+  "exclusions": [
+    "actual-profile certification",
+    "multi-profile restore",
+    "actual archive/publisher content",
+    "broker/provider operation",
+    "automatic relocation of absolute report references",
+    "installed distributable",
+    "VoiceOver"
+  ],
+  "observedLimit": "Copied reports do not repair stored absolute paths. The existing association API silently ignores relocation for the same report/profile primary key. An explicit append-only relocation design is still required.",
+  "evidenceHash": "e67a715e20c95cd444cb8aaf88f363b59ccdd74542855cb650a7f837a8eb6c43"
+}

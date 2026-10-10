@@ -1,0 +1,7 @@
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: 'c33237666c765bbdb9f1bb3cdd24f736bad1d10a0b0ee17730b5e921a79166c3'
+}
+{"state":"human_session_ready","profileKind":"disposable","simulated":true,"VoiceOver":"not_certified","scheduler":"disabled","network":"503_only","secrets":"memory_only"}
+{"fixtureLaunchChecks":3,"passed":true,"VoiceOver":"not_tested"}
+{"timestamp":"2026-10-10T07:22:46.772Z","level":"warn","event":"coinbase_candles.fetch_failed","context":{"profileId":"main","source":"public","productId":"BTC-USD","interval":"1d","status":0,"reason":"shutdown"}}

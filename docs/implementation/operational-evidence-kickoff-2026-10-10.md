@@ -170,3 +170,20 @@ changes settings, marks PRs ready, merges branches, signs or publishes a release
 All V01–V09/G01–G09 identities and original F01–F14 classifications remain.
 COQ-26/27 track accessibility/recovery; COQ-6/7 market evidence; COQ-19–22 news;
 COQ-12/14/15 paper; COQ-9/13 safeguards/release. No evidence gate is closed here.
+
+## Local execution receipts
+
+Clean tested source: `402aca6264d6c961aae3f128be9d06ed902b7019`; build
+source manifest `fc6724f8cb1b13b5a675b81161ffafea89697a3e42e2a62d77aeeb1ce1dce1f7`.
+Restore exercise: **13 checks passed**, including expected relocation refusal;
+that count is not 13 successful recovery capabilities. VoiceOver launcher:
+**3 native checks passed**, human announcements unobserved. Root/renderer
+TypeScript, ESLint and desktop production build passed. Three relevant Vitest
+files passed **8 tests** (isolated restore, profile backup, news association).
+The full suite was not rerun locally for this harness/document-only continuation;
+prior source suite and new branch CI receipts remain separate facts.
+
+Fixtures: [restore receipt](evidence/restore-restart/checks.json),
+[launcher receipt](evidence/voiceover-launcher/receipt.json),
+[actual launcher log](evidence/voiceover-launcher/launcher.log). No V/G gate is
+closed. An independent reviewer/operator and actual approved evidence scope remain.
