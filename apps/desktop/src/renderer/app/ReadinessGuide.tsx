@@ -32,8 +32,8 @@ export function ReadinessGuide({ client }: { readonly client: CoquiClient }): Re
     {study.kind === 'ready' && <p>Study {study.value.lifecycle.replaceAll('_', ' ')} · {study.value.eligibilityReasons.join(', ').replaceAll('_', ' ')}</p>}
     <div className="readiness-summary">
       <div><p className="section-label">Setup · {complete} of {readiness.value.steps.length} complete</p>
-        <h2 id="readiness-title">{current?.title ?? 'Review your first decision'}</h2>
-        <p>{current?.detail ?? 'The next paper decision is ready to inspect.'}</p></div>
+        <h2 id="readiness-title">{current?.title ?? 'Inspect current operational evidence'}</h2>
+        <p>{current?.detail ?? 'Setup is complete. Review the recorded evidence and any open operational gates.'}</p></div>
       {current !== undefined && <a className="button-primary readiness-action" href={current.route}>{current.actionLabel}</a>}
     </div>
     <details className="readiness-details"><summary>View setup steps and host activity</summary>
@@ -46,8 +46,8 @@ export function ReadinessGuide({ client }: { readonly client: CoquiClient }): Re
       </li>)}</ol>
       <section className="readiness-now" aria-label="Host activity and evidence">
         <div><p className="section-label">Host activity</p><h3>{hostTask}</h3></div>
-        <dl><div><dt>Last completed action</dt><dd>{activity.kind !== 'ready' ? 'Activity evidence unavailable' : lastEvent === undefined ? 'No durable action recorded yet' : <>{lastEvent.title}<small><time dateTime={exactUtcTimestamp(lastEvent.occurredAt)} title={exactUtcTimestamp(lastEvent.occurredAt)}>{formatLocalTimestamp(lastEvent.occurredAt)}</time></small></>}</dd></div>
-          <div><dt>Current blocker</dt><dd>{current?.detail ?? 'No readiness blocker recorded'}</dd></div>
+        <dl><div><dt>Last recorded action</dt><dd>{activity.kind !== 'ready' ? 'Activity evidence unavailable' : lastEvent === undefined ? 'No durable action recorded yet' : <>{lastEvent.title}<small><time dateTime={exactUtcTimestamp(lastEvent.occurredAt)} title={exactUtcTimestamp(lastEvent.occurredAt)}>{formatLocalTimestamp(lastEvent.occurredAt)}</time></small></>}</dd></div>
+          <div><dt>Setup blocker</dt><dd>{current?.detail ?? 'No setup blocker recorded'}</dd></div>
           <div><dt>Next action</dt><dd>{current?.actionLabel ?? 'Inspect the latest decision evidence'}</dd></div></dl>
         {lastEvent?.decisionId !== null && lastEvent?.decisionId !== undefined && <a className="button-secondary" href="#/activity">Open latest evidence</a>}
       </section>
