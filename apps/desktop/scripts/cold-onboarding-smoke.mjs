@@ -1,5 +1,5 @@
 import { app,BrowserWindow,ipcMain } from 'electron';
-import { mkdtempSync,mkdirSync,rmSync,writeFileSync } from 'node:fs';
+import { mkdtempSync,mkdirSync,rmSync,writeFileSync,readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join,dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -70,7 +70,8 @@ try{
   const workload={version:1,network:'always_503',scheduler:'disabled',coldReadDelayMs:150,nameOutcomes:['blocked','unknown'],skipOutcomes:['failed','ok'],viewport:[1280,800],zoom:[1,2]};
   writeFileSync(join(output,'checks.json'),JSON.stringify({simulated:true,profileKind:'disposable',
     sourceRevision:execFileSync('git',['rev-parse','HEAD'],{cwd:repository,encoding:'utf8'}).trim(),
-    sourceIdentity:'local working tree; see build-info source manifest',environment:{platform:process.platform,electron:process.versions.electron,node:process.versions.node},
+    buildIdentity:JSON.parse(readFileSync(join(root,'dist/main/build-info.json'),'utf8')),
+    environment:{platform:process.platform,electron:process.versions.electron,node:process.versions.node},
     startedAtMs,completedAtMs:Date.now(),workload,workloadHash:createHash('sha256').update(JSON.stringify(workload)).digest('hex'),
     authority:'approved local implementation fixture',rights:'generated fixture UI only',checks,
     excluded:['VoiceOver','real account/provider/broker evidence','actual-profile migration/restore','installed distributable','real-market latency']},null,2)+'\n');
