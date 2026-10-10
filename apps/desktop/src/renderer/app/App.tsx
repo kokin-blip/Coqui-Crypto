@@ -1,3 +1,5 @@
+import { installInputTracing } from '../query/performance-trace.js';
+import { useChannel } from '../query/use-channel.js';
 import type { CoquiClient } from '@coqui/contracts';
 
 import { useEffect } from 'react';
@@ -12,6 +14,8 @@ import { useRoute } from './use-route.js';
 import { useWorkspace, WorkspaceProvider } from './WorkspaceContext.js';
 
 function WorkspaceApp({ client }: { readonly client: CoquiClient }): React.JSX.Element {
+  const profiles = useChannel(client,'accounts.profiles',{});
+  useEffect(()=>installInputTracing(),[]);
   const [route] = useRoute();
   const workspace = useWorkspace();
   const { inspectorVisible, shellState } = workspace;
@@ -29,11 +33,11 @@ function WorkspaceApp({ client }: { readonly client: CoquiClient }): React.JSX.E
   return (
     <div className={`app-shell terminal-shell shell-${shellState}`}>
       <PreferenceBoundary client={client} />
-      <Onboarding client={client} />
+      <Onboarding key={profiles.kind==='ready'?profiles.value.activeProfile.id:'profile-unavailable'} client={client} />
       <div className="terminal-shell-header"><Sidebar route={route} /><StatusRail client={client} /></div>
       <div className="app-workspace">
         <div className={`workspace-content-grid ${shellState === 'wide' && inspectorVisible ? 'inspector-docked' : ''}`}>
-          <main id="main-content" className="route-content" key={route}>
+          <main id="main-content" tabIndex={-1} className="route-content" key={route}>
             <RouteScreen client={client} route={route} />
           </main>
           {route !== 'overview' && inspectorVisible && (

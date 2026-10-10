@@ -7,6 +7,7 @@ import type {
   ChannelRequest,
   ChannelResponse,
   CoquiClient,
+  Outcome,
 } from '@coqui/contracts';
 
 /**
@@ -26,7 +27,7 @@ import type {
 export interface CommandHandle<TChannel extends ChannelName> {
   readonly state: ActionState;
   readonly value: ChannelResponse<TChannel> | null;
-  run(payload: ChannelRequest<TChannel>): Promise<void>;
+  run(payload: ChannelRequest<TChannel>): Promise<Outcome<ChannelResponse<TChannel>> | { readonly status: 'in_flight' }>;
   reset(): void;
 }
 
@@ -40,12 +41,15 @@ export function useCommand<TChannel extends ChannelName>(
   const [state, dispatch] = useReducer(reduceAction, { kind: 'idle' } as ActionState);
   const [value, setValue] = useState<ChannelResponse<TChannel> | null>(null);
   const inFlight = useRef(false);
+  const uncertain = useRef<Outcome<ChannelResponse<TChannel>> | null>(null);
 
   const run = useCallback(
     async (payload: ChannelRequest<TChannel>) => {
-      if (inFlight.current) return;
+      if (uncertain.current) return uncertain.current;
+      if (inFlight.current) return { status: 'in_flight' as const };
       inFlight.current = true;
       dispatch({ type: 'activate' });
+      setValue(null);
       try {
         const outcome = await client.query(channel, payload);
         if (outcome.status === 'ok') {
@@ -53,16 +57,24 @@ export function useCommand<TChannel extends ChannelName>(
           dispatch({ type: 'settled', status: 'ok' });
           // Invalidate only after confirmation. Refetching on activation would
           // paint the pre-write value back over the pending state.
-          await Promise.all(
+          void Promise.all(
             invalidates.map((name) => queryClient.invalidateQueries({ queryKey: [name] })),
-          );
-          return;
+          ).catch(() => {});
+          return outcome;
         }
+        if (outcome.status === 'unknown') uncertain.current = outcome;
         dispatch({
           type: 'settled',
           status: outcome.status,
           codes: outcome.issues.map((issue) => issue.code),
         });
+        return outcome;
+      } catch {
+        // A rejected transport cannot establish whether the write completed.
+        dispatch({ type: 'settled', status: 'unknown', codes: ['command_completion_unknown'] });
+        const outcome = { status: 'unknown' as const, issues: [{ path: ['transport'], code: 'command_completion_unknown' }] };
+        uncertain.current = outcome;
+        return outcome;
       } finally {
         inFlight.current = false;
       }
@@ -71,6 +83,9 @@ export function useCommand<TChannel extends ChannelName>(
   );
 
   const reset = useCallback(() => {
+    if (inFlight.current) return;
+    uncertain.current = null;
+    setValue(null);
     dispatch({ type: 'reset' });
   }, []);
 

@@ -750,7 +750,6 @@ input[type='checkbox'] {
 
 .onboarding-dialog {
   z-index: var(--coqui-z-modal);
-  display: grid;
   grid-template-rows: auto auto minmax(0, 1fr) auto;
   width: min(760px, 100%);
   max-height: min(820px, calc(100vh - 48px));
@@ -761,6 +760,9 @@ input[type='checkbox'] {
   border-radius: var(--coqui-radius-lg);
   box-shadow: var(--coqui-shadow);
 }
+
+.onboarding-dialog[open] { display: grid; padding: 0; margin: auto; }
+.onboarding-dialog::backdrop { background: var(--coqui-overlay); }
 
 .onboarding-returning { width: min(560px, 100%); }
 .onboarding-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--coqui-border); }
