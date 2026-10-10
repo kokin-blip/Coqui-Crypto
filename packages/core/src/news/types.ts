@@ -18,7 +18,7 @@ export interface NewsEntity {
   readonly sentimentScore: number | null;
 }
 
-export interface NewsObservation {
+export interface NewsObservationV1 {
   readonly schemaVersion: 1;
   readonly provider: NewsProviderId;
   readonly providerArticleId: string | null;
@@ -34,6 +34,13 @@ export interface NewsObservation {
   readonly language: string | null;
   readonly entities: readonly NewsEntity[];
 }
+
+/** Versioned collection provenance; legacy v1 observations remain readable and hash-stable. */
+export interface NewsObservationV2 extends Omit<NewsObservationV1, 'schemaVersion'> {
+  readonly schemaVersion: 2;
+  readonly transportProtocol: 'https' | 'http';
+}
+export type NewsObservation = NewsObservationV1 | NewsObservationV2;
 
 export interface NewsFetchResult {
   readonly articles: readonly NewsObservation[];

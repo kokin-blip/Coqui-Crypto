@@ -1,7 +1,7 @@
-import type { NewsObservation } from '@coqui/core';
+import type { NewsObservationV1 } from '@coqui/core';
 
 /** Entirely synthetic metadata; no provider credentials or copyrighted article bodies. */
-export function newsFixture(overrides: Partial<NewsObservation> = {}): NewsObservation {
+export function newsFixture(overrides: Partial<NewsObservationV1> = {}): NewsObservationV1 {
   return {
     schemaVersion: 1, provider: 'marketaux', providerArticleId: 'synthetic-article-1',
     title: 'Synthetic protocol announcement', url: 'https://publisher.example/story?utm_source=fixture',

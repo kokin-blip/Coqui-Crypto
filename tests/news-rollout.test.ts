@@ -102,9 +102,12 @@ describe('restartable news rollout', () => {
 });
 describe('news and hourly archives', () => {
   it('round-trips observations and derived provenance, replays and detects byte corruption', async () => {
-    const d=db();seed(d,1);const s=new NewsIntelligenceService({database:d,clock:{nowMs:()=>HOUR+100}});s.advance(configuration);s.advance(configuration);
+    const d=db();seed(d,1);
+    const transportEvidence=saveNewsObservation({...newsFixture({provider:'gdelt',providerArticleId:'v2',url:'https://publisher.example/v2',observedAtMs:200}),schemaVersion:2,transportProtocol:'http'},300,d);
+    const s=new NewsIntelligenceService({database:d,clock:{nowMs:()=>HOUR+100}});s.advance(configuration);s.advance(configuration);
     const rootDir=root(), input={database:d,rootDir,cutoffMs:HOUR+100,createdAtMs:HOUR+200,codeRevision:'synthetic-fixture'};
     const m=await writeNewsArchive(input), directory=join(rootDir,'news',m.datasetHash), read=await readNewsArchive(directory);
+    expect(read.records.find(r=>r.kind==='observation'&&r.key===transportEvidence.stored.observationId)?.payload).toMatchObject({observation:{schemaVersion:2,transportProtocol:'http'}});
     expect(read.records.some(r=>r.kind==='feature')).toBe(true);expect(read.manifest.attribution).toContain('GDELT');
     expect(()=>validateNewsArchiveProvenance(read.records.filter(r=>r.kind!=='observation'),HOUR+100)).toThrow(/provenance/u);
     const interrupted=join(rootDir,'news',`.${m.datasetHash}.interrupted`);mkdirSync(interrupted);writeFileSync(join(interrupted,'partial'),'incomplete');
