@@ -59,7 +59,7 @@ try{
   await window.webContents.executeJavaScript("location.hash='/settings'");
   await waitFor("document.querySelector('#settings-tab-recovery')!==null");
   await window.webContents.executeJavaScript("document.querySelector('#settings-tab-recovery').click()");
-  await waitFor("document.body.innerText.includes('Schema 92')");
+  await waitFor("document.body.innerText.includes('Schema 93')");
   check('Recovery/About reads the disposable schema and keeps certification unverified',await window.webContents.executeJavaScript("document.body.innerText.includes('Restore proof: not certified for this profile')"));
   await window.webContents.executeJavaScript("location.hash='/research'");
   await waitFor("document.body.innerText.includes('Governed experiments')");

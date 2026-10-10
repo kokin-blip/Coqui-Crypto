@@ -12,6 +12,7 @@ import {
   appendPaperExecutionEvent,
   acquireExecutionLease,
   getPaperExecutionAttemptOutcome,
+  getPaperExecutionAttemptIdentity,
   getPaperExecutionPolicy,
   getPaperExecutionProposal,
   linkExploratoryPaperExecution,
@@ -258,9 +259,19 @@ export class PaperExecutionService {
     if (proposal.profileId !== this.#profileId || proposal.proposalHash !== input.proposalHash) {
       return result(proposal, 'blocked', 'stale_proposal_review');
     }
-    if (input.decision === 'approve') {
+    const identity = getPaperExecutionAttemptIdentity(input.commandId, this.#database);
+    if (identity !== null && (input.decision !== 'approve' || identity.proposalId !== proposal.id ||
+        identity.profileId !== proposal.profileId || identity.proposalHash !== proposal.proposalHash)) {
+      return result(proposal, 'blocked', 'review_command_identity_mismatch');
+    }
+    if (identity !== null) {
       const prior = getPaperExecutionAttemptOutcome(input.commandId,this.#database);
       if (prior) return result(proposal,prior.status,prior.reasonCode,prior.filledCount,prior.refusedCount);
+    }
+    if (!['pending_review', 'blocked', 'failed'].includes(proposal.status)) {
+      return result(proposal, 'blocked', 'proposal_review_closed');
+    }
+    if (input.decision === 'approve') {
       const preview = this.preview(input.proposalId,input.previewExpiresAtMs-60_000);
       if (preview.reason === 'kill_switch_engaged') return result(proposal,'blocked','kill_switch_engaged');
       if (preview.status !== 'available' || preview.previewHash !== input.previewHash ||

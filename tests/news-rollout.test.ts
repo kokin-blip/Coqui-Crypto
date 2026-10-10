@@ -27,7 +27,7 @@ describe('restartable news rollout', () => {
   it('upgrades version 90, backs up and preserves evidence', () => {
     const directory = root(), file = join(directory,'coqui.db'), old = openDatabase(file, { migrations: migrations.filter(m => m.version <= 90) });
     old.prepare('INSERT INTO app_settings(key,value) VALUES (?,?)').run('preserved','yes'); old.close();
-    const d = db(file); expect(d.prepare('PRAGMA user_version').get()?.['user_version']).toBe(92);
+    const d = db(file); expect(d.prepare('PRAGMA user_version').get()?.['user_version']).toBe(93);
     expect(readdirSync(directory).some(n => n.includes('pre-migration-v90'))).toBe(true);
     expect(d.prepare('SELECT value FROM app_settings WHERE key=?').get('preserved')?.['value']).toBe('yes');
   });

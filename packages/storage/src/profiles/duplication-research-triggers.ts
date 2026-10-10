@@ -126,11 +126,13 @@ export function restoreResearchDuplicationTriggers(database:DatabaseSync):void {
 
 /** A clone needs its own explicit report association; original report files/history stay untouched. */
 export function excludeNewsReportAssociations(db: DatabaseSync): number {
-  if (!db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='news_report_associations_v1'").get()) return 0;
-  const count = db.prepare('SELECT count(*) AS n FROM news_report_associations_v1').get()!['n'] as number;
-  db.exec(`DROP TRIGGER news_report_associations_v1_no_delete;
-    DELETE FROM news_report_associations_v1;
-    CREATE TRIGGER news_report_associations_v1_no_delete BEFORE DELETE ON news_report_associations_v1
+  let count=0;
+  for(const table of ['news_report_associations_v1','news_export_permissions_v1']) {
+    if(!db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name=?").get(table))continue;
+    count+=db.prepare(`SELECT count(*) AS n FROM ${table}`).get()!['n'] as number;
+    db.exec(`DROP TRIGGER ${table}_no_delete; DELETE FROM ${table};
+      CREATE TRIGGER ${table}_no_delete BEFORE DELETE ON ${table}
       BEGIN SELECT RAISE(ABORT,'news evidence is immutable'); END;`);
+  }
   return count;
 }

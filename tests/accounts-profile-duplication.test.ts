@@ -153,23 +153,26 @@ describe('profile database duplication storage', { timeout: 20_000 }, () => {
       appendUniverseRecord('main', { kind, key: kind, atMs: 1, body: { kind } }, db);
     }
     db.prepare('INSERT INTO news_report_associations_v1(report_hash,profile_id,associated_at,report_path) VALUES(?,?,?,?)').run('a'.repeat(64),'main',1,'/fixture/report.json');
+    db.prepare('INSERT INTO news_export_permissions_v1(id,profile_id,artifact_hash,reviewed_at,body_json,content_hash) VALUES(?,?,?,?,?,?)').run('a'.repeat(64),'main','b'.repeat(64),1,'{}','c'.repeat(64));
     db.close();
     const result = await createFileProfileDatabaseDuplicator(root).duplicate({ sourceProfileId: 'main',
       sourceDbFilename: 'kokintrader.db', targetProfileId: TARGET_ID, targetDbFilename: `wallet-${TARGET_ID}.db` });
     expect(result.ok).toBe(true);
     if (!result.ok) throw new Error('duplication failed');
-    expect(result.evidence.excludedTransientRowCount).toBe(15);
+    expect(result.evidence.excludedTransientRowCount).toBe(16);
     const target = openDatabase(join(root, `wallet-${TARGET_ID}.db`));
     expect(listUniverseRecords(TARGET_ID, 'policy', target)).toHaveLength(1);
     for (const kind of ['study', 'observation', 'shadow'] as const) expect(listUniverseRecords(TARGET_ID, kind, target)).toEqual([]);
     expect(() => target.exec('DELETE FROM wider_universe_records_v1')).toThrow('immutable');
     expect(target.prepare('SELECT count(*) AS n FROM news_report_associations_v1').get()?.['n']).toBe(0);
+    expect(target.prepare('SELECT count(*) AS n FROM news_export_permissions_v1').get()?.['n']).toBe(0);
     target.prepare('INSERT INTO news_report_associations_v1(report_hash,profile_id,associated_at,report_path) VALUES(?,?,?,?)').run('b'.repeat(64),TARGET_ID,2,'/fixture/clone-report.json');
     expect(()=>target.exec('DELETE FROM news_report_associations_v1')).toThrow('immutable');
     target.close();
     const original = openDatabase(sourcePath);
     expect(listUniverseRecords('main', 'study', original)).toHaveLength(1);
     expect(original.prepare('SELECT count(*) AS n FROM news_report_associations_v1').get()?.['n']).toBe(1);
+    expect(original.prepare('SELECT count(*) AS n FROM news_export_permissions_v1').get()?.['n']).toBe(1);
     original.close();
   });
   it('clones a consistent database and rewrites every discovered profile identity', async () => {
@@ -188,8 +191,8 @@ describe('profile database duplication storage', { timeout: 20_000 }, () => {
     expect(result).toEqual({
       ok: true,
       evidence: expect.objectContaining({
-        schemaVersion: 92,
-        profileScopedTableCount: 107,
+        schemaVersion: 93,
+        profileScopedTableCount: 108,
         rewrittenRowCount: 13,
         excludedTransientRowCount: 11,
         clearedCredentialMetadataCount: 4,
@@ -375,8 +378,8 @@ describe('accounts profile duplication service', { timeout: 20_000 }, () => {
           lastOpenedAtMs: 50,
           order: 1,
         },
-        schemaVersion: 92,
-        profileScopedTableCount: 107,
+        schemaVersion: 93,
+        profileScopedTableCount: 108,
         rewrittenRowCount: 13,
         excludedTransientRowCount: 11,
         clearedCredentialMetadataCount: 4,

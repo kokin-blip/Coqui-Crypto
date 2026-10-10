@@ -138,12 +138,12 @@ async function start(): Promise<void> {
         if (!metadata.isFile() || metadata.size < 2 || metadata.size > 65_536) throw new TypeError('invalid_connection_file');
         return { contents: await readFile(result.filePaths[0], 'utf8') };
       },
-      async saveEvidence(data) {
+      async saveEvidence(readData) {
         const result = await dialog.showSaveDialog({title:'Export redacted operational evidence',defaultPath:'coqui-evidence.json',filters:[{name:'JSON',extensions:['json']}]});
         if (result.canceled || !result.filePath) return 'cancelled';
         // A new destination is required; no silent overwrite or partial final artifact.
         const temporary = `${result.filePath}.${crypto.randomUUID()}.partial`;
-        try { await writeFile(temporary,data,{encoding:'utf8',flag:'wx'}); await link(temporary,result.filePath); }
+        try { await writeFile(temporary,readData(),{encoding:'utf8',flag:'wx'}); await link(temporary,result.filePath); }
         finally { await unlink(temporary).catch(()=>{}); }
         return 'saved';
       },

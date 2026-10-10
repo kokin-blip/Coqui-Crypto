@@ -15,6 +15,7 @@ const INVALIDATIONS = [
 function outcomeCopy(status: string, reason: string | null): string {
   if (status === 'succeeded') return 'Paper submission confirmed.';
   if (status === 'pending') return 'Waiting for human review.';
+  if (status === 'submitted') return 'Paper action submitted; settlement remains unconfirmed.';
   if (status === 'unknown') return 'Outcome unknown. Do not retry; reconcile first.';
   if (status === 'blocked') return `Blocked${reason === null ? '' : `: ${reason.replaceAll('_', ' ')}`}.`;
   return `Failed${reason === null ? '' : `: ${reason.replaceAll('_', ' ')}`}.`;
@@ -31,7 +32,11 @@ export function PaperProposalReview({
   const preview = useChannel(client,'paper.execution.preview',{proposalId:proposal.id});
   const [note, setNote] = useState('');
   const command = useCommand(client, 'paper.execution.review', INVALIDATIONS);
-  const presentation = presentAction(command.state, {
+  const domainState = command.state.kind === 'succeeded' && command.value !== null &&
+    ['unknown', 'blocked', 'failed'].includes(command.value.status)
+    ? { kind: command.value.status as 'unknown' | 'blocked' | 'failed', codes: [command.value.reasonCode ?? command.value.status] } as const
+    : command.state;
+  const presentation = presentAction(domainState, {
     idle: 'Confirm paper submission', pending: 'Rechecking every gate…',
   }, 'consequential');
 
@@ -112,7 +117,7 @@ export function PaperProposalReview({
             <button
               type="button"
               className="button-secondary"
-              disabled={presentation.disabled}
+              disabled={presentation.disabled || command.value !== null}
               onClick={() => review('reject')}
             >
               Reject proposal
@@ -120,14 +125,14 @@ export function PaperProposalReview({
             <button
               type="button"
               className="button-primary"
-              disabled={presentation.disabled || note.trim().length === 0 || preview.kind !== 'ready' || preview.value.status !== 'available' || preview.value.proposalHash !== proposal.proposalHash || Date.now() > preview.value.expiresAtMs}
+              disabled={presentation.disabled || command.value !== null || note.trim().length === 0 || preview.kind !== 'ready' || preview.value.status !== 'available' || preview.value.proposalHash !== proposal.proposalHash || Date.now() > preview.value.expiresAtMs}
               aria-busy={presentation.busy}
               onClick={() => review('approve')}
             >
               {presentation.label}
             </button>
           </div>
-          <span className="sr-only" aria-live="polite">{presentation.liveMessage}</span>
+          <span className="sr-only" aria-live="polite">{command.value === null ? presentation.liveMessage : outcomeCopy(command.value.status, command.value.reasonCode)}</span>
         </form>
       </dialog>
     </>

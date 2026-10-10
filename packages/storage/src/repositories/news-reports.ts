@@ -17,7 +17,7 @@ export function readVerifiedNewsReport(path: string, expectedHash?: string) {
   return { reportHash: report.reportHash, completedAtMs: report.completedAtMs,
     horizons: report.reports.map(r => ({ status: r.status, reasons: r.reasons, prospectiveRows: r.prospectiveRowCount,
       cadence: r.manifest.spec.cadence, horizonHours: r.manifest.spec.horizonHours,
-      codeRevision: r.manifest.codeRevision, datasetHash: r.manifest.datasetHash, costHash: r.manifest.spec.costHash,
+      codeRevision: /^[a-f0-9]{40}$/u.test(r.manifest.codeRevision) ? r.manifest.codeRevision : 'unverified', datasetHash: r.manifest.datasetHash, costHash: r.manifest.spec.costHash,
       sourceManifestHashes: r.manifest.sourceManifestHashes, manifestHash: r.manifestHash })) };
 }
 export function associateNewsReport(input: { profileId: string; path: string; atMs: number }, db: Db) {

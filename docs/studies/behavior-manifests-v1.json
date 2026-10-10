@@ -269,7 +269,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "699055ece4d3c56b050182fa9160444fb763e691e723c8069b747588628ae073"
+        "613983840894cef6d8ea5a8e0b63d36056d11fd6eb47fded02c1f04db4cd1825"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -336,12 +336,16 @@
         "e1d40a693a10b6f974a5e8e95efda62bfcb1ad9fb91df0a9e21f18126c3ea904"
       ],
       [
+        "packages/contracts/src/schemas/news-export-permission.ts",
+        "a61d267c639ffd446c22f4154a1ddda7ef2af6e8cb9dc1d356de85aa3e9d2141"
+      ],
+      [
         "packages/contracts/src/schemas/news-intelligence.ts",
         "3f61b41bb88451c57e0640b36a199d198995cf91c4b9442929e6bba23463c89e"
       ],
       [
         "packages/contracts/src/schemas/news-report-file.ts",
-        "af9193d945fe985196a8a855a6deb28aa0d78e541f88fd4992666c0d72e71d6e"
+        "1e014f98fd5bba3fda14d55346ed6359e224faf80fe4b8265c4e6ee97401af08"
       ],
       [
         "packages/contracts/src/schemas/news.ts",
@@ -1169,7 +1173,7 @@
       ],
       [
         "packages/services/src/paper/execution-service.ts",
-        "86abd88901d2db8686e65abb811f236aecf314aef8ec8d2f6ef3f5c1c0996ff1"
+        "c79e197b2ae384eb26f82b8fa064fae4bf58a1621ebcef38b15c4554c86212ae"
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
@@ -1545,7 +1549,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "27f5f04f7dbbd0de2185e7454476e9d666f4f40be460fe5335cdec56806c6693"
+        "246623f8e61408742803c02e6d5a77be4de8b9f8810fab43455aeedb66c265f5"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -1824,6 +1828,10 @@
         "be7cbaa2562de97d17fef219717604b91cd1c9b4b358b0852bf8e318ea033c43"
       ],
       [
+        "packages/storage/src/migrations/v93.ts",
+        "4e21f7a581c56c6c22f33b9dc375a094a6e13fe0d1f5a4604ac0f57b0d7df5f9"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -1849,7 +1857,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "aca693a083c335d6ce713044813548cf0479762b4ce0dd7d1f9af39f38647c6a"
+        "2bc343c4451ddc9af628d935cac4238db5b7efbe768130f397e83bc939f01587"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -1989,7 +1997,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "90dcd777311415809f4e7c505b87fa8b969c94e3ec14a90b087c2a0d47ed9898"
+        "f03c729fdc8d69ab64a177e6f80c509e17bb4a9a101fbd085b48faaa6a4a8d41"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -2016,6 +2024,10 @@
         "f8a5d0b90240dd2ec37e069ab19a08e9530af942393c5249e4c00358037f8b15"
       ],
       [
+        "packages/storage/src/repositories/news-export-permissions.ts",
+        "204a94e86f22fb25797c790a048e710502e348b0e9087f0b8bc386fdcafa8571"
+      ],
+      [
         "packages/storage/src/repositories/news-intelligence.ts",
         "d8c7e76cf08799493059ba09d99157f7754fa5d9525bb3c733b7959c7932cf6e"
       ],
@@ -2025,7 +2037,7 @@
       ],
       [
         "packages/storage/src/repositories/news-reports.ts",
-        "09be04432daded9c09e5c510bdaf01566eadf1f36c4cc86a62731c3bfb4cc10b"
+        "52dfff819755152a0da24f92d6fb5ee1553996ea930ae772f3736bca8725ebad"
       ],
       [
         "packages/storage/src/repositories/news.ts",
@@ -2045,7 +2057,7 @@
       ],
       [
         "packages/storage/src/repositories/paper-execution.ts",
-        "b2286ef1ff133cea1919f0b1ccf87c4fbd84c1152b50591d4fbf9abb74181afa"
+        "26cb1942634053d71e8f4a4121c46617cc2f94a9c7fd63398b4cc1b1dfc4329e"
       ],
       [
         "packages/storage/src/repositories/paper-performance.ts",
@@ -2172,7 +2184,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "90e16220230fef0b86b68e13dd1931c3a2077487ae435fc03627d18949ee8901"
+    "hash": "5f3905af2584f377c7cf8d7c8d638995d9e6aa2fb39bbb6c080b2fa0588ed40c"
   },
   "wider-breakout-v1": {
     "version": 1,
@@ -2444,7 +2456,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "699055ece4d3c56b050182fa9160444fb763e691e723c8069b747588628ae073"
+        "613983840894cef6d8ea5a8e0b63d36056d11fd6eb47fded02c1f04db4cd1825"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -2511,12 +2523,16 @@
         "e1d40a693a10b6f974a5e8e95efda62bfcb1ad9fb91df0a9e21f18126c3ea904"
       ],
       [
+        "packages/contracts/src/schemas/news-export-permission.ts",
+        "a61d267c639ffd446c22f4154a1ddda7ef2af6e8cb9dc1d356de85aa3e9d2141"
+      ],
+      [
         "packages/contracts/src/schemas/news-intelligence.ts",
         "3f61b41bb88451c57e0640b36a199d198995cf91c4b9442929e6bba23463c89e"
       ],
       [
         "packages/contracts/src/schemas/news-report-file.ts",
-        "af9193d945fe985196a8a855a6deb28aa0d78e541f88fd4992666c0d72e71d6e"
+        "1e014f98fd5bba3fda14d55346ed6359e224faf80fe4b8265c4e6ee97401af08"
       ],
       [
         "packages/contracts/src/schemas/news.ts",
@@ -3344,7 +3360,7 @@
       ],
       [
         "packages/services/src/paper/execution-service.ts",
-        "86abd88901d2db8686e65abb811f236aecf314aef8ec8d2f6ef3f5c1c0996ff1"
+        "c79e197b2ae384eb26f82b8fa064fae4bf58a1621ebcef38b15c4554c86212ae"
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
@@ -3720,7 +3736,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "27f5f04f7dbbd0de2185e7454476e9d666f4f40be460fe5335cdec56806c6693"
+        "246623f8e61408742803c02e6d5a77be4de8b9f8810fab43455aeedb66c265f5"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -3999,6 +4015,10 @@
         "be7cbaa2562de97d17fef219717604b91cd1c9b4b358b0852bf8e318ea033c43"
       ],
       [
+        "packages/storage/src/migrations/v93.ts",
+        "4e21f7a581c56c6c22f33b9dc375a094a6e13fe0d1f5a4604ac0f57b0d7df5f9"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -4024,7 +4044,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "aca693a083c335d6ce713044813548cf0479762b4ce0dd7d1f9af39f38647c6a"
+        "2bc343c4451ddc9af628d935cac4238db5b7efbe768130f397e83bc939f01587"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -4164,7 +4184,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "90dcd777311415809f4e7c505b87fa8b969c94e3ec14a90b087c2a0d47ed9898"
+        "f03c729fdc8d69ab64a177e6f80c509e17bb4a9a101fbd085b48faaa6a4a8d41"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -4191,6 +4211,10 @@
         "f8a5d0b90240dd2ec37e069ab19a08e9530af942393c5249e4c00358037f8b15"
       ],
       [
+        "packages/storage/src/repositories/news-export-permissions.ts",
+        "204a94e86f22fb25797c790a048e710502e348b0e9087f0b8bc386fdcafa8571"
+      ],
+      [
         "packages/storage/src/repositories/news-intelligence.ts",
         "d8c7e76cf08799493059ba09d99157f7754fa5d9525bb3c733b7959c7932cf6e"
       ],
@@ -4200,7 +4224,7 @@
       ],
       [
         "packages/storage/src/repositories/news-reports.ts",
-        "09be04432daded9c09e5c510bdaf01566eadf1f36c4cc86a62731c3bfb4cc10b"
+        "52dfff819755152a0da24f92d6fb5ee1553996ea930ae772f3736bca8725ebad"
       ],
       [
         "packages/storage/src/repositories/news.ts",
@@ -4220,7 +4244,7 @@
       ],
       [
         "packages/storage/src/repositories/paper-execution.ts",
-        "b2286ef1ff133cea1919f0b1ccf87c4fbd84c1152b50591d4fbf9abb74181afa"
+        "26cb1942634053d71e8f4a4121c46617cc2f94a9c7fd63398b4cc1b1dfc4329e"
       ],
       [
         "packages/storage/src/repositories/paper-performance.ts",
@@ -4347,7 +4371,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "0f938dcfc8a8a3b2ab79ea9aad5eb926e1b6bd03e99d03ad857bd3d8744d460d"
+    "hash": "397cbdfa5c55d825ece6c1b95ab90fab5a78f4cf943b146ce606d8f5a35979e1"
   },
   "wider-range-rotation-v1": {
     "version": 1,
@@ -4619,7 +4643,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "699055ece4d3c56b050182fa9160444fb763e691e723c8069b747588628ae073"
+        "613983840894cef6d8ea5a8e0b63d36056d11fd6eb47fded02c1f04db4cd1825"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -4686,12 +4710,16 @@
         "e1d40a693a10b6f974a5e8e95efda62bfcb1ad9fb91df0a9e21f18126c3ea904"
       ],
       [
+        "packages/contracts/src/schemas/news-export-permission.ts",
+        "a61d267c639ffd446c22f4154a1ddda7ef2af6e8cb9dc1d356de85aa3e9d2141"
+      ],
+      [
         "packages/contracts/src/schemas/news-intelligence.ts",
         "3f61b41bb88451c57e0640b36a199d198995cf91c4b9442929e6bba23463c89e"
       ],
       [
         "packages/contracts/src/schemas/news-report-file.ts",
-        "af9193d945fe985196a8a855a6deb28aa0d78e541f88fd4992666c0d72e71d6e"
+        "1e014f98fd5bba3fda14d55346ed6359e224faf80fe4b8265c4e6ee97401af08"
       ],
       [
         "packages/contracts/src/schemas/news.ts",
@@ -5519,7 +5547,7 @@
       ],
       [
         "packages/services/src/paper/execution-service.ts",
-        "86abd88901d2db8686e65abb811f236aecf314aef8ec8d2f6ef3f5c1c0996ff1"
+        "c79e197b2ae384eb26f82b8fa064fae4bf58a1621ebcef38b15c4554c86212ae"
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
@@ -5895,7 +5923,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "27f5f04f7dbbd0de2185e7454476e9d666f4f40be460fe5335cdec56806c6693"
+        "246623f8e61408742803c02e6d5a77be4de8b9f8810fab43455aeedb66c265f5"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -6174,6 +6202,10 @@
         "be7cbaa2562de97d17fef219717604b91cd1c9b4b358b0852bf8e318ea033c43"
       ],
       [
+        "packages/storage/src/migrations/v93.ts",
+        "4e21f7a581c56c6c22f33b9dc375a094a6e13fe0d1f5a4604ac0f57b0d7df5f9"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -6199,7 +6231,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "aca693a083c335d6ce713044813548cf0479762b4ce0dd7d1f9af39f38647c6a"
+        "2bc343c4451ddc9af628d935cac4238db5b7efbe768130f397e83bc939f01587"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -6339,7 +6371,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "90dcd777311415809f4e7c505b87fa8b969c94e3ec14a90b087c2a0d47ed9898"
+        "f03c729fdc8d69ab64a177e6f80c509e17bb4a9a101fbd085b48faaa6a4a8d41"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -6366,6 +6398,10 @@
         "f8a5d0b90240dd2ec37e069ab19a08e9530af942393c5249e4c00358037f8b15"
       ],
       [
+        "packages/storage/src/repositories/news-export-permissions.ts",
+        "204a94e86f22fb25797c790a048e710502e348b0e9087f0b8bc386fdcafa8571"
+      ],
+      [
         "packages/storage/src/repositories/news-intelligence.ts",
         "d8c7e76cf08799493059ba09d99157f7754fa5d9525bb3c733b7959c7932cf6e"
       ],
@@ -6375,7 +6411,7 @@
       ],
       [
         "packages/storage/src/repositories/news-reports.ts",
-        "09be04432daded9c09e5c510bdaf01566eadf1f36c4cc86a62731c3bfb4cc10b"
+        "52dfff819755152a0da24f92d6fb5ee1553996ea930ae772f3736bca8725ebad"
       ],
       [
         "packages/storage/src/repositories/news.ts",
@@ -6395,7 +6431,7 @@
       ],
       [
         "packages/storage/src/repositories/paper-execution.ts",
-        "b2286ef1ff133cea1919f0b1ccf87c4fbd84c1152b50591d4fbf9abb74181afa"
+        "26cb1942634053d71e8f4a4121c46617cc2f94a9c7fd63398b4cc1b1dfc4329e"
       ],
       [
         "packages/storage/src/repositories/paper-performance.ts",
@@ -6522,7 +6558,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "c46686ec6fb20467d61a6bea5b5e3b92b2bdfafcebcd4a4a95aafd4de3bfe16b"
+    "hash": "8f07dd8d45377a5907441c90ed48d71081b64365f6bc734489208c227d2e1614"
   },
   "paper-market-selector-v1": {
     "version": 1,
@@ -6794,7 +6830,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "699055ece4d3c56b050182fa9160444fb763e691e723c8069b747588628ae073"
+        "613983840894cef6d8ea5a8e0b63d36056d11fd6eb47fded02c1f04db4cd1825"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -6861,12 +6897,16 @@
         "e1d40a693a10b6f974a5e8e95efda62bfcb1ad9fb91df0a9e21f18126c3ea904"
       ],
       [
+        "packages/contracts/src/schemas/news-export-permission.ts",
+        "a61d267c639ffd446c22f4154a1ddda7ef2af6e8cb9dc1d356de85aa3e9d2141"
+      ],
+      [
         "packages/contracts/src/schemas/news-intelligence.ts",
         "3f61b41bb88451c57e0640b36a199d198995cf91c4b9442929e6bba23463c89e"
       ],
       [
         "packages/contracts/src/schemas/news-report-file.ts",
-        "af9193d945fe985196a8a855a6deb28aa0d78e541f88fd4992666c0d72e71d6e"
+        "1e014f98fd5bba3fda14d55346ed6359e224faf80fe4b8265c4e6ee97401af08"
       ],
       [
         "packages/contracts/src/schemas/news.ts",
@@ -7694,7 +7734,7 @@
       ],
       [
         "packages/services/src/paper/execution-service.ts",
-        "86abd88901d2db8686e65abb811f236aecf314aef8ec8d2f6ef3f5c1c0996ff1"
+        "c79e197b2ae384eb26f82b8fa064fae4bf58a1621ebcef38b15c4554c86212ae"
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
@@ -8070,7 +8110,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "27f5f04f7dbbd0de2185e7454476e9d666f4f40be460fe5335cdec56806c6693"
+        "246623f8e61408742803c02e6d5a77be4de8b9f8810fab43455aeedb66c265f5"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -8349,6 +8389,10 @@
         "be7cbaa2562de97d17fef219717604b91cd1c9b4b358b0852bf8e318ea033c43"
       ],
       [
+        "packages/storage/src/migrations/v93.ts",
+        "4e21f7a581c56c6c22f33b9dc375a094a6e13fe0d1f5a4604ac0f57b0d7df5f9"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -8374,7 +8418,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "aca693a083c335d6ce713044813548cf0479762b4ce0dd7d1f9af39f38647c6a"
+        "2bc343c4451ddc9af628d935cac4238db5b7efbe768130f397e83bc939f01587"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -8514,7 +8558,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "90dcd777311415809f4e7c505b87fa8b969c94e3ec14a90b087c2a0d47ed9898"
+        "f03c729fdc8d69ab64a177e6f80c509e17bb4a9a101fbd085b48faaa6a4a8d41"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -8541,6 +8585,10 @@
         "f8a5d0b90240dd2ec37e069ab19a08e9530af942393c5249e4c00358037f8b15"
       ],
       [
+        "packages/storage/src/repositories/news-export-permissions.ts",
+        "204a94e86f22fb25797c790a048e710502e348b0e9087f0b8bc386fdcafa8571"
+      ],
+      [
         "packages/storage/src/repositories/news-intelligence.ts",
         "d8c7e76cf08799493059ba09d99157f7754fa5d9525bb3c733b7959c7932cf6e"
       ],
@@ -8550,7 +8598,7 @@
       ],
       [
         "packages/storage/src/repositories/news-reports.ts",
-        "09be04432daded9c09e5c510bdaf01566eadf1f36c4cc86a62731c3bfb4cc10b"
+        "52dfff819755152a0da24f92d6fb5ee1553996ea930ae772f3736bca8725ebad"
       ],
       [
         "packages/storage/src/repositories/news.ts",
@@ -8570,7 +8618,7 @@
       ],
       [
         "packages/storage/src/repositories/paper-execution.ts",
-        "b2286ef1ff133cea1919f0b1ccf87c4fbd84c1152b50591d4fbf9abb74181afa"
+        "26cb1942634053d71e8f4a4121c46617cc2f94a9c7fd63398b4cc1b1dfc4329e"
       ],
       [
         "packages/storage/src/repositories/paper-performance.ts",
@@ -8697,7 +8745,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "b9069d666542e7a8556861315b6dcbd85d6e4ca1dcf19aea2352d27fc4d6d47a"
+    "hash": "5cb2dc423a5e377eccefd7e7ca4c1be786bea102143c3ca4a4ff05b42b3f24a4"
   },
   "trendvol-hourly-execution-v1": {
     "version": 1,
@@ -8957,7 +9005,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "699055ece4d3c56b050182fa9160444fb763e691e723c8069b747588628ae073"
+        "613983840894cef6d8ea5a8e0b63d36056d11fd6eb47fded02c1f04db4cd1825"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -9024,12 +9072,16 @@
         "e1d40a693a10b6f974a5e8e95efda62bfcb1ad9fb91df0a9e21f18126c3ea904"
       ],
       [
+        "packages/contracts/src/schemas/news-export-permission.ts",
+        "a61d267c639ffd446c22f4154a1ddda7ef2af6e8cb9dc1d356de85aa3e9d2141"
+      ],
+      [
         "packages/contracts/src/schemas/news-intelligence.ts",
         "3f61b41bb88451c57e0640b36a199d198995cf91c4b9442929e6bba23463c89e"
       ],
       [
         "packages/contracts/src/schemas/news-report-file.ts",
-        "af9193d945fe985196a8a855a6deb28aa0d78e541f88fd4992666c0d72e71d6e"
+        "1e014f98fd5bba3fda14d55346ed6359e224faf80fe4b8265c4e6ee97401af08"
       ],
       [
         "packages/contracts/src/schemas/news.ts",
@@ -9677,7 +9729,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "27f5f04f7dbbd0de2185e7454476e9d666f4f40be460fe5335cdec56806c6693"
+        "246623f8e61408742803c02e6d5a77be4de8b9f8810fab43455aeedb66c265f5"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -9956,6 +10008,10 @@
         "be7cbaa2562de97d17fef219717604b91cd1c9b4b358b0852bf8e318ea033c43"
       ],
       [
+        "packages/storage/src/migrations/v93.ts",
+        "4e21f7a581c56c6c22f33b9dc375a094a6e13fe0d1f5a4604ac0f57b0d7df5f9"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -9981,7 +10037,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "aca693a083c335d6ce713044813548cf0479762b4ce0dd7d1f9af39f38647c6a"
+        "2bc343c4451ddc9af628d935cac4238db5b7efbe768130f397e83bc939f01587"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -10121,7 +10177,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "90dcd777311415809f4e7c505b87fa8b969c94e3ec14a90b087c2a0d47ed9898"
+        "f03c729fdc8d69ab64a177e6f80c509e17bb4a9a101fbd085b48faaa6a4a8d41"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -10148,6 +10204,10 @@
         "f8a5d0b90240dd2ec37e069ab19a08e9530af942393c5249e4c00358037f8b15"
       ],
       [
+        "packages/storage/src/repositories/news-export-permissions.ts",
+        "204a94e86f22fb25797c790a048e710502e348b0e9087f0b8bc386fdcafa8571"
+      ],
+      [
         "packages/storage/src/repositories/news-intelligence.ts",
         "d8c7e76cf08799493059ba09d99157f7754fa5d9525bb3c733b7959c7932cf6e"
       ],
@@ -10157,7 +10217,7 @@
       ],
       [
         "packages/storage/src/repositories/news-reports.ts",
-        "09be04432daded9c09e5c510bdaf01566eadf1f36c4cc86a62731c3bfb4cc10b"
+        "52dfff819755152a0da24f92d6fb5ee1553996ea930ae772f3736bca8725ebad"
       ],
       [
         "packages/storage/src/repositories/news.ts",
@@ -10177,7 +10237,7 @@
       ],
       [
         "packages/storage/src/repositories/paper-execution.ts",
-        "b2286ef1ff133cea1919f0b1ccf87c4fbd84c1152b50591d4fbf9abb74181afa"
+        "26cb1942634053d71e8f4a4121c46617cc2f94a9c7fd63398b4cc1b1dfc4329e"
       ],
       [
         "packages/storage/src/repositories/paper-performance.ts",
@@ -10304,7 +10364,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "a86acb4608fa544155137e1814d19201628254de6c93772fb29bc5fc845b3178"
+    "hash": "c33237666c765bbdb9f1bb3cdd24f736bad1d10a0b0ee17730b5e921a79166c3"
   },
   "trendvol-execution-remediation-v1": {
     "version": 1,
@@ -10564,7 +10624,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "699055ece4d3c56b050182fa9160444fb763e691e723c8069b747588628ae073"
+        "613983840894cef6d8ea5a8e0b63d36056d11fd6eb47fded02c1f04db4cd1825"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -10631,12 +10691,16 @@
         "e1d40a693a10b6f974a5e8e95efda62bfcb1ad9fb91df0a9e21f18126c3ea904"
       ],
       [
+        "packages/contracts/src/schemas/news-export-permission.ts",
+        "a61d267c639ffd446c22f4154a1ddda7ef2af6e8cb9dc1d356de85aa3e9d2141"
+      ],
+      [
         "packages/contracts/src/schemas/news-intelligence.ts",
         "3f61b41bb88451c57e0640b36a199d198995cf91c4b9442929e6bba23463c89e"
       ],
       [
         "packages/contracts/src/schemas/news-report-file.ts",
-        "af9193d945fe985196a8a855a6deb28aa0d78e541f88fd4992666c0d72e71d6e"
+        "1e014f98fd5bba3fda14d55346ed6359e224faf80fe4b8265c4e6ee97401af08"
       ],
       [
         "packages/contracts/src/schemas/news.ts",
@@ -11276,7 +11340,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "27f5f04f7dbbd0de2185e7454476e9d666f4f40be460fe5335cdec56806c6693"
+        "246623f8e61408742803c02e6d5a77be4de8b9f8810fab43455aeedb66c265f5"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -11555,6 +11619,10 @@
         "be7cbaa2562de97d17fef219717604b91cd1c9b4b358b0852bf8e318ea033c43"
       ],
       [
+        "packages/storage/src/migrations/v93.ts",
+        "4e21f7a581c56c6c22f33b9dc375a094a6e13fe0d1f5a4604ac0f57b0d7df5f9"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -11580,7 +11648,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "aca693a083c335d6ce713044813548cf0479762b4ce0dd7d1f9af39f38647c6a"
+        "2bc343c4451ddc9af628d935cac4238db5b7efbe768130f397e83bc939f01587"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -11720,7 +11788,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "90dcd777311415809f4e7c505b87fa8b969c94e3ec14a90b087c2a0d47ed9898"
+        "f03c729fdc8d69ab64a177e6f80c509e17bb4a9a101fbd085b48faaa6a4a8d41"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -11747,6 +11815,10 @@
         "f8a5d0b90240dd2ec37e069ab19a08e9530af942393c5249e4c00358037f8b15"
       ],
       [
+        "packages/storage/src/repositories/news-export-permissions.ts",
+        "204a94e86f22fb25797c790a048e710502e348b0e9087f0b8bc386fdcafa8571"
+      ],
+      [
         "packages/storage/src/repositories/news-intelligence.ts",
         "d8c7e76cf08799493059ba09d99157f7754fa5d9525bb3c733b7959c7932cf6e"
       ],
@@ -11756,7 +11828,7 @@
       ],
       [
         "packages/storage/src/repositories/news-reports.ts",
-        "09be04432daded9c09e5c510bdaf01566eadf1f36c4cc86a62731c3bfb4cc10b"
+        "52dfff819755152a0da24f92d6fb5ee1553996ea930ae772f3736bca8725ebad"
       ],
       [
         "packages/storage/src/repositories/news.ts",
@@ -11776,7 +11848,7 @@
       ],
       [
         "packages/storage/src/repositories/paper-execution.ts",
-        "b2286ef1ff133cea1919f0b1ccf87c4fbd84c1152b50591d4fbf9abb74181afa"
+        "26cb1942634053d71e8f4a4121c46617cc2f94a9c7fd63398b4cc1b1dfc4329e"
       ],
       [
         "packages/storage/src/repositories/paper-performance.ts",
@@ -11903,6 +11975,6 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "9ad62cacd7a6a1ac9a2e7deea2a34d56eefa32a1bc4fc281eaf8cb07e37a7504"
+    "hash": "f146c556debb4bbfd50aa5164899722031c6e1141c85014416bee1f2b33bc83f"
   }
 }

@@ -20,8 +20,10 @@ qualify a changed executable. No replacement study, holdout read, promotion or
 prospective start-date change is authorized by this implementation.
 
 Schema 92 adds immutable numeric ingestion diagnostics and explicit validated
-news report associations. Only disposable test databases have been migrated.
-Do not downgrade a schema-92 database with a schema-91 executable.
+news report associations. Schema 93 adds immutable, scoped export permission
+records; grants and report associations are excluded from profile clones.
+Only disposable test databases have been migrated. Do not open a schema-93
+database with an older executable. No actual export permission has been granted.
 
 External evidence stays open: cold macOS VoiceOver, real-market stutter and soak,
 licensed useful provider observations, connected Alpaca paper recovery,

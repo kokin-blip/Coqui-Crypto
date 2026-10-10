@@ -42,6 +42,23 @@ and ambiguous candidates remain visible. Do not add providers or buy quota to
 repair mapping. Naturally due observations need approved configuration and rights.
 A first page with zero articles does not establish comprehensive absent coverage.
 
+Export authority is a separate immutable, field-scoped register in schema 93.
+No grant exists by default, including for report/decision/outcome hashes.
+The approved manifest binds one exact artifact and profile, allowed fields,
+review/expiry times, terms URL/version/evidence hash and owner approval hash.
+Decision/outcome summaries additionally require G07 authority evidence; each
+outcome has its own permission rather than inheriting a decision's grant.
+Latest deny/expiry/future-time uncertainty blocks use. Clones exclude grants.
+Permission is rechecked after native destination choice before writing.
+
+Only after separate G02/G07 approval, an administrator can record the reviewed
+manifest with `node scripts/record-news-export-permission.mjs --database EXISTING_SCHEMA_93_DB
+--manifest APPROVED_PERMISSION.json --confirm-owner-reviewed`. This CLI never
+migrates a DB, buys rights, activates collection or verifies that a claimed license
+is legally sufficient. It records the owner's evidence; fabricated hashes/terms
+are not operational proof. There is no renderer grant command. No actual grant
+was recorded during implementation. Raw article fields are never exportable here.
+
 ## WP-08 connected paper (COQ-12/14/15, V07)
 
 Local restart tests use fake broker responses. Dedicated real Alpaca paper scope,

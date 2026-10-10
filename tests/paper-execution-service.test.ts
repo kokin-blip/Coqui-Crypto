@@ -130,6 +130,25 @@ describe('authoritative paper execution service', () => {
     expect(database.prepare('SELECT COUNT(*) AS n FROM paper_fills_v3').get()).toEqual({ n: 1 });
   });
 
+  it('fences repeated confirmation, uncertain proposals, and command identity collisions', () => {
+    const database = seeded();
+    const target = service(database, readyState());
+    const prepared = target.prepare(action());
+    const commandId = crypto.randomUUID();
+    expect(approve(target, prepared.proposalHash, commandId).status).toBe('succeeded');
+    expect(approve(target, prepared.proposalHash)).toMatchObject({ status: 'blocked', reasonCode: 'proposal_review_closed' });
+    const second = target.prepare({ ...action(), proposalId: 'proposal-2', runId: 'run-2' });
+    const reviewSecond = (id: string) => target.review({ commandId: id, proposalId: 'proposal-2', proposalHash: second.proposalHash,
+      decision: 'approve', previewHash: target.preview('proposal-2').previewHash,
+      previewExpiresAtMs: target.preview('proposal-2').expiresAtMs, reviewer: 'owner', note: 'Reviewed.' });
+    expect(reviewSecond(commandId)).toMatchObject({ status: 'blocked', reasonCode: 'review_command_identity_mismatch' });
+    database.prepare("UPDATE paper_execution_proposals_v1 SET status='unknown' WHERE id='proposal-2'").run();
+    expect(reviewSecond(crypto.randomUUID())).toMatchObject({ status: 'blocked', reasonCode: 'proposal_review_closed' });
+    expect(database.prepare('SELECT COUNT(*) AS n FROM paper_fills_v3').get()).toEqual({ n: 1 });
+    expect(database.prepare('SELECT COUNT(*) AS n FROM paper_execution_attempts_v1').get()).toEqual({ n: 1 });
+    database.close();
+  });
+
   it('refuses stale review hashes and a kill switch engaged after preflight', () => {
     const database = seeded();
     let state = readyState();

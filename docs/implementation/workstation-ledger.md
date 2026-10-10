@@ -27,7 +27,7 @@ returned 404. Rulesets were empty; branch-protection read returned permission
 | WP-10 | F07 | Service-bound exact modeled costs/exposure and marked allocation drift; preview hash/expiry rechecked | Changed portfolio/policy/expiry fixtures pass; modeled values exclude cash/actual fills; human review open |
 | WP-11 | F10 | Hash-verified explicit profile/report association and all four horizon outcomes | Corrupt/legacy/wrong-profile fixtures pass; actual research qualification remains separate |
 | WP-12 | F14B/F14A | Build source manifest/About/current-status index; publication unverified | Development build passes; installed distributable/signing/merged revision and G06 open |
-| WP-13 | N02A | Allowlisted build/report/archive identities and bounded redacted decision/outcome summaries | G02/G07 remain; raw reports/market payloads/account evidence omitted; deterministic replay deferred |
+| WP-13 | N02A | Allowlisted build metadata; report/decision/outcome summaries require exact artifact/profile/field permission, current expiry and account authority where applicable | G02/G07 remain; unapproved hashes are omitted; raw reports/market payloads/account evidence excluded; replay deferred |
 | WP-14 | N03 | Read-only governance stages, candidate none, claim metadata without sealed performance bodies | Governance fixtures pass; G03–G05 owner/elapsed evidence remain open |
 | WP-15 | N04/N05/N07/N08 | Deferred feasibility only | Later explicit operator selection |
 
@@ -74,7 +74,7 @@ Review by boundary:
 | Boundary | Main paths | Packages |
 |---|---|---|
 | Read outcomes and cold dialog | renderer/query/use-command, Onboarding, TerminalWorkspace, StatusRail; command/notification tests | WP-01/02 |
-| Immutable news/research/storage | migration v92, news runtime/reports, integrity-workspace, profile duplication/restore | WP-03/06/07/11/14 |
+| Immutable news/research/storage | migrations v92/v93, news runtime/reports/permissions, integrity-workspace, profile duplication/restore | WP-03/06/07/11/13/14 |
 | Paper submission safety | parallel-paper-service, execution-service, proposal-preview and service tests | WP-08/10 |
 | Desktop read/integration | workstation/paper-review handlers, trace/preload/query instrumentation, Research/Recovery/About/readiness | WP-05/09/12/13 |
 | Documentation/proof | INSTALL, CURRENT-STATUS, this ledger, protocols, cold fixture evidence | WP-00/04/15 and V01–V09/G01–G09 |
@@ -83,9 +83,11 @@ Generated behavior-manifest identities changed with the executable import graph.
 Stored studies, freeze/claim events, reports and prospective dates were not
 rewritten. Installation cannot qualify or enroll the changed executable.
 
-Schema 92 is append-only and tested only in disposable databases. Profile clones
-exclude report associations rather than inheriting another profile's verified
-report context. No actual profile was opened/migrated/restored.
+Schemas 92 and 93 are append-only and tested only in disposable databases.
+Profile clones exclude report associations and export authority. Source history
+is preserved. No actual profile was opened/migrated/restored and no actual
+export permission was granted. Export rechecks rights after destination choice,
+before writing, so expiry/revocation during the dialog cannot grant stale authority.
 
 News CLI database runs now require an explicit `--profile-id` association.
 Archive-only runs retain immutable reports without inventing an operational

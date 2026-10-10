@@ -12,9 +12,9 @@ describe('isolated disposable restore proof',()=>{
       db.exec("INSERT INTO paper_ledger_entries_v3(id,profile_id,run_id,account,asset_id,amount_usd_text,quantity_text,at) VALUES ('opening','main','fixture','opening','USD','-1000.0000000000001','0',1),('cash','main','fixture','cash','USD','1000.0000000000001','1000.0000000000001',1)");
       appendIntegrityEvent({namespace:'fixture',kind:'negative_result',key:'preserved',atMs:1,body:{fixture:true}},db);
       backupDatabase(db,source);writeFileSync(artifact,'{"fixture":true}');
-      const input={sourceDatabase:source,disposableRoot:root,destination:join(root,'restored'),expectedDatabaseHash:hash(source),schemaVersion:92,buildIdentity:'fixture-only',artifacts:[{path:artifact,hash:hash(artifact)}]};
+      const input={sourceDatabase:source,disposableRoot:root,destination:join(root,'restored'),expectedDatabaseHash:hash(source),schemaVersion:93,buildIdentity:'fixture-only',artifacts:[{path:artifact,hash:hash(artifact)}]};
       const proof=verifyIsolatedRestore(input);
-      expect(proof).toMatchObject({schemaVersion:92,credentialsIncluded:false,ledgerTotalUsd:'0',scope:'explicit_database_and_supplied_artifacts'});
+      expect(proof).toMatchObject({schemaVersion:93,credentialsIncluded:false,ledgerTotalUsd:'0',scope:'explicit_database_and_supplied_artifacts'});
       expect(proof.ledgerRows).toBe(2);expect(proof.integrityEventKinds).toBe(1);
       expect(hash(source)).toBe(input.expectedDatabaseHash);
       expect(()=>verifyIsolatedRestore(input)).toThrow();

@@ -97,7 +97,7 @@ export interface RuntimeOptions extends Partial<Pick<Parameters<typeof createAdv
   readonly readSystemTime?: () => number;
   readonly onUnexpectedError?: (context: string, error: unknown) => void;
   /** Leave the scheduler stopped for smoke tests. */
-  readonly saveEvidence?: (data: string) => Promise<'saved' | 'cancelled'>;
+  readonly saveEvidence?: (readData: () => string) => Promise<'saved' | 'cancelled'>;
   readonly disableScheduler?: boolean; readonly newsConfiguration?: NewsHostConfiguration; readonly newsQuotaDatabasePath?: string;
   /**
    * A verified CoinGecko Demo key, read from the secret store *before* the
