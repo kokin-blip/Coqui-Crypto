@@ -497,13 +497,19 @@ describe('parallel paper experiment', () => {
     expect(target?.detail['combinedWeights']).toEqual(target?.detail['baselineWeights']);
     expect(service.summary().activity.some((item) => item.kind === 'ml')).toBe(true);
     const count = mock.submit.mock.calls.length;
-    await new ParallelPaperService(dependencies).tick();
+    const restarted = new ParallelPaperService(dependencies);
+    await restarted.tick();
+    expect(restarted.status().status).toBe('paused');
+    expect(restarted.status().events.some(e=>e.kind==='paused' && e.detail['reason']==='runtime_restart')).toBe(true);
+    expect(restarted.transition('resumed','manual-restart-resume')).toBe(true);
     expect(mock.submit).toHaveBeenCalledTimes(count);
     expect(service.status().events.filter((event) => event.kind === 'ml_target')).toHaveLength(1);
     clock.set(Date.parse('2026-09-24T12:02:00Z'));
-    await new ParallelPaperService({ ...dependencies, mlSignal: () => {
-      throw new Error('model_unavailable');
-    } }).tick();
+    const unavailable = new ParallelPaperService({ ...dependencies, mlSignal: () => { throw new Error('model_unavailable'); } });
+    await unavailable.tick();
+    expect(unavailable.status().status).toBe('paused');
+    expect(unavailable.transition('resumed','manual-second-restart-resume')).toBe(true);
+    await unavailable.tick();
     expect(service.status().status).toBe('active');
     expect(service.status().events.filter((event) => event.kind === 'ml_target')).toHaveLength(2);
     expect(service.status().events.at(-1)?.kind).not.toBe('paused');

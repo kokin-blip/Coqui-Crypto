@@ -86,6 +86,7 @@ function readyState(): PaperExecutionState {
 function approve(target: PaperExecutionService, hash: string, commandId = crypto.randomUUID()) {
   return target.review({
     commandId, proposalId: 'proposal-1', proposalHash: hash,
+    previewHash:target.preview('proposal-1').previewHash,previewExpiresAtMs:target.preview('proposal-1').expiresAtMs,
     decision: 'approve', reviewer: 'owner', note: 'Reviewed gate evidence.',
   });
 }
@@ -143,6 +144,26 @@ describe('authoritative paper execution service', () => {
     const blocked = approve(target, prepared.proposalHash);
     expect(blocked).toMatchObject({ status: 'blocked', reasonCode: 'kill_switch_engaged' });
     expect(database.prepare('SELECT COUNT(*) AS n FROM paper_orders_v3').get()).toEqual({ n: 0 });
+    database.close();
+  });
+
+  it('binds modeled consequences to portfolio/cost/quote identity and refuses an expired preview', () => {
+    const database=seeded();let state=readyState();let now=AT;
+    const target=new PaperExecutionService({database,profileId:PROFILE,nowMs:()=>now,
+      market:{bars:()=>[bar(0,100,110)],rules:()=>RULES},state:()=>state});
+    const prepared=target.prepare(action()),preview=target.preview('proposal-1');
+    expect(preview).toMatchObject({status:'available',totalCostUsd:'2.125'});
+    expect(preview.actions[0]).toMatchObject({feeUsd:'1.5',spreadUsd:'0.25',slippageUsd:'0.375',beforeExposureUsd:'10000',afterExposureUsd:'10250'});
+    const review={commandId:crypto.randomUUID(),proposalId:'proposal-1',proposalHash:prepared.proposalHash,
+      decision:'approve' as const,reviewer:'owner',note:'Fixture only',previewHash:preview.previewHash,previewExpiresAtMs:preview.expiresAtMs};
+    state={...state,holdings:[{...HOLDING,valueUsd:'9999' as UsdAmount}]};
+    expect(target.review(review).reasonCode).toBe('proposal_preview_stale');
+    state={...readyState(),allocationPolicy:{targets:[{instrument:HOLDING.asset.instrument,weight:1}],rebalanceBandPct:5}};
+    expect(target.preview('proposal-1').drift[0]).toMatchObject({targetWeight:1,beforeDriftPct:0,afterDriftPct:0});
+    expect(target.review({...review,commandId:crypto.randomUUID()}).reasonCode).toBe('proposal_preview_stale');
+    state=readyState();now=preview.expiresAtMs+1;
+    expect(target.review({...review,commandId:crypto.randomUUID()}).reasonCode).toBe('proposal_preview_stale');
+    expect(database.prepare('SELECT count(*) AS n FROM paper_orders_v3').get()?.['n']).toBe(0);
     database.close();
   });
 

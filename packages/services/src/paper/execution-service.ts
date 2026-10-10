@@ -1,7 +1,9 @@
+import { proposalPreview } from './proposal-preview.js';
 import {
   sha256Hex,
   type ExecutionIntent,
   type Holding,
+  type AllocationPolicy,
   type MarketQualitySnapshot,
   type PaperAdmissionModeV1,
   type RiskControlInput,
@@ -34,6 +36,7 @@ import {
 
 export interface PaperExecutionState {
   readonly holdings: readonly Holding[];
+  readonly allocationPolicy?: AllocationPolicy;
   readonly killSwitchEngaged: boolean;
   readonly evidenceVerified: boolean;
   readonly historicalGrossEdgeLowerBoundPct: number | null;
@@ -126,6 +129,16 @@ export class PaperExecutionService {
     this.#onUnexpectedError = dependencies.onUnexpectedError ?? (() => {});
     this.#executionOwnerId = dependencies.executionOwnerId ?? 'paper-execution-local';
     this.#executionLeaseMs = dependencies.executionLeaseMs ?? 5 * 60 * 1_000;
+  }
+
+  preview(proposalId: string, issuedAtMs = this.#nowMs()) {
+    const proposal = getPaperExecutionProposal(proposalId,this.#database);
+    if (!proposal || proposal.profileId !== this.#profileId) throw new Error('proposal_not_found');
+    const state = this.#state();
+    return proposalPreview({ proposalHash:proposal.proposalHash, revision:proposal.revision,
+      intents:JSON.parse(proposal.intentsJson) as readonly ExecutionIntent[], holdings:state.holdings,
+      ...(state.allocationPolicy ? {allocationPolicy:state.allocationPolicy}:{}),
+      market:this.#market, nowMs:this.#nowMs(), issuedAtMs, killSwitchEngaged:state.killSwitchEngaged });
   }
 
   /** Reconcile durable simulator submissions through the same sole OMS boundary. */
@@ -230,6 +243,8 @@ export class PaperExecutionService {
     readonly proposalId: string;
     readonly proposalHash: string;
     readonly decision: 'approve' | 'reject';
+    readonly previewHash: string | null;
+    readonly previewExpiresAtMs: number;
     readonly reviewer: string;
     readonly note: string;
   }): PaperExecutionResult {
@@ -242,6 +257,14 @@ export class PaperExecutionService {
     }
     if (proposal.profileId !== this.#profileId || proposal.proposalHash !== input.proposalHash) {
       return result(proposal, 'blocked', 'stale_proposal_review');
+    }
+    if (input.decision === 'approve') {
+      const prior = getPaperExecutionAttemptOutcome(input.commandId,this.#database);
+      if (prior) return result(proposal,prior.status,prior.reasonCode,prior.filledCount,prior.refusedCount);
+      const preview = this.preview(input.proposalId,input.previewExpiresAtMs-60_000);
+      if (preview.reason === 'kill_switch_engaged') return result(proposal,'blocked','kill_switch_engaged');
+      if (preview.status !== 'available' || preview.previewHash !== input.previewHash ||
+          input.previewExpiresAtMs === undefined || this.#nowMs() > input.previewExpiresAtMs) return result(proposal,'blocked','proposal_preview_stale');
     }
     const at = this.#nowMs();
     recordPaperExecutionReview({
