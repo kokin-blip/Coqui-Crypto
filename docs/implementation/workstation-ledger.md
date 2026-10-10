@@ -24,7 +24,7 @@ returned 404. Rulesets were empty; branch-protection read returned permission
 | WP-08 | F11 | Durable pause on active reconstruction/ownership transfer; explicit Resume preserved | Deterministic restart fixture passes; G01/G07/G08 broker cases open |
 | WP-07 | F12B | Existing backup verifier plus separate read-only disposable restore checker/manifest | Exact ledger, integrity events, supplied artifact and corruption fixtures pass; unsupplied artifacts/application restart and G09 representative certification open |
 | WP-09 | F02/N01/N06 | Readiness restored; safety/feed/research first; paper uncertainty and backup proof explained | V03 real laptop operator/VoiceOver task certification open |
-| WP-10 | F07 | Service-bound exact modeled costs/exposure and marked allocation drift; preview hash/expiry rechecked | Changed portfolio/policy/expiry fixtures pass; modeled values exclude cash/actual fills; human review open |
+| WP-10 | F07 | Service-bound exact modeled costs/exposure and marked allocation drift; preview hash/expiry rechecked | Changed portfolio/policy/expiry, duplicate-confirmation, uncertain-status and command-identity fixtures pass; modeled values exclude cash/actual fills; human review open |
 | WP-11 | F10 | Hash-verified explicit profile/report association and all four horizon outcomes | Corrupt/legacy/wrong-profile fixtures pass; actual research qualification remains separate |
 | WP-12 | F14B/F14A | Build source manifest/About/current-status index; publication unverified | Development build passes; installed distributable/signing/merged revision and G06 open |
 | WP-13 | N02A | Allowlisted build metadata; report/decision/outcome summaries require exact artifact/profile/field permission, current expiry and account authority where applicable | G02/G07 remain; unapproved hashes are omitted; raw reports/market payloads/account evidence excluded; replay deferred |
@@ -58,7 +58,7 @@ alternatives, dependency, security gate and rollback, remains in
 this ledger does not claim all operational acceptance criteria are complete.
 
 - Root and renderer TypeScript, ESLint, root build and production renderer/preload build pass.
-- Full Vitest suite: 266 files, 1,782 tests pass. Focused restore corruption checks also pass.
+- Full Vitest suite: 267 files, 1,787 tests pass. Focused restore corruption checks also pass.
 - Native disposable Electron evidence: [checks](evidence/cold-modal/checks.json),
   [cold dialog](evidence/cold-modal/cold-1280.png),
   [unknown save at 200%](evidence/cold-modal/unknown-200pct.png).
@@ -92,3 +92,15 @@ before writing, so expiry/revocation during the dialog cannot grant stale author
 News CLI database runs now require an explicit `--profile-id` association.
 Archive-only runs retain immutable reports without inventing an operational
 profile association. Historical command examples remain dated evidence.
+
+Final safety revision: `7b17fd3a951dafbf4709375f25b3e5e563ffbd88`.
+The 36-check cold fixture binds that clean source/build identity and schema 93.
+New review commands cannot reconfirm completed/uncertain proposals; the original
+command returns its durable outcome only for the same proposal/profile/hash.
+Domain unknown/submitted outcomes never announce confirmed execution.
+Report reads constrain reasons and mark non-SHA source revisions unverified.
+
+The standard desktop smoke fixture passes in cross-platform CI on the earlier
+`95f5e70` revision; locally its final native-fullscreen transition timed out.
+That host limitation is not waived. Final-head CI receipts are recorded in the PR
+and Linear, with merge/publication still separate G06 gates.
