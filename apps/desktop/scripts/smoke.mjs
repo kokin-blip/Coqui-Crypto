@@ -71,8 +71,9 @@ async function run() {
   const coinbaseFixture = coinbaseSmokeFixture();
   // Deterministic catalog fixture at the HTTP boundary; production adapters,
   // contracts, dispatcher, and renderer still perform the complete round-trip.
-  const networkFetch = globalThis.fetch;
-  globalThis.fetch = async (url, init) => {
+  // Fail closed for every non-fixture endpoint; this is not provider evidence.
+  globalThis.WebSocket = class { close() {} send() {} };
+  globalThis.fetch = async (url) => {
     const endpoint = new globalThis.URL(String(url));
     if (endpoint.hostname === 'api.exchange.coinbase.com' && endpoint.pathname === '/products') {
       return new globalThis.Response(JSON.stringify(['BTC', 'ETH'].map((symbol) => ({
@@ -84,7 +85,7 @@ async function run() {
       return new globalThis.Response(JSON.stringify([{ id: 'BTC', name: 'Bitcoin' }, { id: 'ETH', name: 'Ethereum' }]),
         { status: 200, headers: { 'content-type': 'application/json' } });
     }
-    return networkFetch(url, init);
+    return new globalThis.Response('{}', { status: 503 });
   };
   await seedCoinbaseSmokeProfile(dataDir);
   runtime = createRuntimeProfileController({
@@ -105,6 +106,11 @@ async function run() {
   check('profile database migrated', Number(version?.user_version) > 0, `user_version=${Number(version?.user_version)}`);
 
   const dispatch = createDispatcher({ handlers: () => runtime?.handlers() ?? {} });
+  // This harness tests background task flows. The separate cold-onboarding
+  // harness proves genuine modal inertness; explicitly skip setup here rather
+  // than programmatically interacting behind an active first-run dialog.
+  const skipped = await dispatch('app.onboarding.skip', { commandId: globalThis.crypto.randomUUID() });
+  check('fixture onboarding is explicitly skipped', skipped.status === 'ok');
   ipcMain.handle('coqui:query', async (_event, channel, payload) => dispatch(channel, payload));
 
   const entry = join(root, 'dist/renderer/index.html');
