@@ -1,0 +1,44 @@
+{
+  "version": "voiceover-launcher-smoke-v1",
+  "simulated": true,
+  "profileKind": "generated_disposable",
+  "sourceRevision": "402aca6264d6c961aae3f128be9d06ed902b7019",
+  "build": {
+    "version": "0.1.0-beta.16",
+    "sourceRevision": "402aca6264d6c961aae3f128be9d06ed902b7019",
+    "dirty": false,
+    "sourceHash": "fc6724f8cb1b13b5a675b81161ffafea89697a3e42e2a62d77aeeb1ce1dce1f7",
+    "channel": "beta-candidate",
+    "builtAtMs": 1791616936184
+  },
+  "environment": {
+    "platform": "darwin",
+    "electron": "43.4.1",
+    "node": "24.18.1"
+  },
+  "logSha256": "4ae1dcdb06fb1cc58274a597a003cc910e90af9169dfaf6b8eb7b9548a9a4eac",
+  "checks": [
+    {
+      "name": "native cold dialog mounted",
+      "passed": true
+    },
+    {
+      "name": "unrelated write denied by fixture boundary",
+      "passed": true
+    },
+    {
+      "name": "schema93 and disabled live execution read through preload",
+      "passed": true
+    }
+  ],
+  "VoiceOver": "not_observed",
+  "humanOperatorEvidence": null,
+  "network": "503_only; external renderer traffic blocked",
+  "scheduler": "disabled",
+  "secrets": "memory_only",
+  "exclusions": [
+    "spoken announcements",
+    "human VoiceOver walkthrough",
+    "actual-profile or broker/provider proof"
+  ]
+}
