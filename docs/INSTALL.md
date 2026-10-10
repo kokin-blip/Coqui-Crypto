@@ -93,7 +93,16 @@ than bypassed.
 | macOS | `~/Library/Application Support/Coqui/coqui.db` |
 | Windows | `%APPDATA%\Coqui\coqui.db` |
 
-One SQLite file. API keys and private keys are **not** in it — they go to the OS
+These are packaged defaults, not a universal development path. The application
+uses Electron's `userData` directory unless `COQUI_DB_PATH` explicitly overrides
+the database. Development builds may use `@coqui/desktop` rather than `Coqui`.
+Confirm the exact active location in the installed build before recovery.
+
+Storage includes the Main database, additional profile databases,
+`wallet-profiles.json`, `coqui-person.json`, and local wallet nicknames. Research
+datasets, Parquet archives, immutable reports and referenced files may be outside
+the database directory. Keep their manifests and content-addressed directories.
+API keys and private keys are **not** in the database — they go to the OS
 credential store (Keychain on macOS, Credential Manager on Windows), and never
 appear in the database, in a log, in an error message, or in an exported file.
 
@@ -109,7 +118,28 @@ remain available under Portfolio → Accounting for cost basis and reconciliatio
 they are not added to connected quantities. If a holding lacks a usable price or
 cost basis, Coqui labels it unavailable instead of inventing a value.
 
-To back up, quit Coqui and copy that file. To start over, quit and delete it.
+Use the existing verified profile-backup machinery for database snapshots. The
+application creates consistent SQLite snapshots and verified pre-migration
+backups; copying a running WAL database file alone is not a complete backup.
+Profile backup verification checks the database checksum, integrity and schema;
+it does not by itself certify external archives, ledger equivalence or restore.
+
+Before recovery, preserve the original directory and external evidence. Restore
+only into a separate disposable destination with a schema-compatible build.
+Check database integrity, foreign keys, exact ledger totals, immutable record
+hashes and every required external artifact. Missing/corrupt references make
+the restore incomplete. A newer timestamp is not proof that a backup is better.
+
+Credentials are intentionally excluded. The profile backup also does not include
+the local person/nickname files or all external archives; preserve required
+metadata separately and record omissions. Never copy keychain contents into an
+evidence bundle. Reconnection is an explicit owner action.
+
+Do not delete the source database to reset, overwrite an active profile, or open
+a migrated database with an older application. Unsupported schema downgrades are
+rejected. Failed restore verification leaves the original untouched and the
+separate destination quarantined. See the current implementation ledger for
+which restore checks have actually been performed.
 
 ---
 
@@ -133,3 +163,13 @@ database for auditability.
 If an Apple Developer certificate is ever obtained, the ad-hoc hook becomes a
 no-op and the first-open warning disappears. Nothing else about the application
 changes, and this document will say so rather than quietly dropping the section.
+
+The local verifier reuses the existing backup manifest/checksum validation:
+`node scripts/verify-isolated-restore.mjs --backup /absolute/backup-artifact
+--destination /absolute/new-directory-under-system-temp --build-identity VERIFIED_BUILD`.
+Supply `--artifacts` with an explicit JSON array of `{ "path": "/absolute/file", "hash": "sha256" }`
+for external artifact checks. It refuses existing destinations, incompatible schemas,
+foreign-key failures, unbalanced ledger totals and changed hashes. Missing artifacts
+remain excluded. It never starts the application, migrates or restores an actual profile,
+loads credentials or certifies broker restart. Use only a separately approved disposable
+exercise; review the manifest's explicit exclusions before claiming G09.

@@ -4,6 +4,8 @@ Coqui Crypto is an evidence-first crypto research and paper-trading workstation.
 
 Coqui is not a live-trading application. `liveExecutionPermitted` is a contract-level literal `false`; there is no live venue, leverage, derivatives, transfer, withdrawal, or real-order path.
 
+[Current status and evidence index](docs/CURRENT-STATUS.md).
+
 ## Current status
 
 The active implementation continues from `p5-shell-and-ui` at the P5–P9 baseline. It includes a routed desktop shell, active-profile isolation, research and risk evidence surfaces, Coinbase read-only infrastructure, scheduler/recovery/reconciliation, and an authoritative paper-execution service.
@@ -98,7 +100,7 @@ Start with [the plan](./docs/PLAN.md), [architecture](./docs/ARCHITECTURE.md), [
 
 - The 2026-08-24 screenshot set approved the prior direction. Material 2026-08-27 shell and market-workspace changes have a [new review set](./docs/design/owner-screenshot-review-2026-08-27.md) awaiting owner approval.
 - Real Coinbase permission verification is owner-deferred because API keys are personal. No key is bundled, requested, or needed for public market data and paper-only operation.
-- A forward-only confirmatory edge study is registered and its prospective collector is active, but 365 complete observed days and 30 cost-bearing rebalances cannot be manufactured. Manual edge settings are ignored and profitability checks block proposals until an integrity-verified pass exists.
+- Historical forward-study registrations and observations are preserved. Installation does not register a study, and incompatible legacy identity is shown as retired. Approved elapsed eligible coverage cannot be manufactured. Manual edge settings are ignored and profitability checks block proposals until an integrity-verified pass exists.
 - The seven-day zero-edge stand-down campaign starts on the first real scheduler observation. It requires seven consecutive observed UTC days, a confirmed safety-stop exercise and acknowledgement, and reconciliation; missed days are never backfilled.
 - Daily paper valuation evidence begins when the scheduler records it; missing historical days are never fabricated or backfilled.
 - Strategy curves appear only when an immutable artifact explicitly contains them. Existing artifacts without curves show an unavailable state.
