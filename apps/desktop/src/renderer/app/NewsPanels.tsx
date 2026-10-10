@@ -45,7 +45,7 @@ export function NewsHealth({ client }: { readonly client: CoquiClient }): React.
     <p>{value.mainProfile ? 'Main profile' : 'Inactive collection profile'} · coverage unknown · counts cover the trailing 24 hours</p>
     <dl className="settings-readout">{value.providers.map(p => <div key={p.provider}><dt>{p.provider}</dt><dd>{p.enabled ? 'Scheduled' : 'Disabled'} · {p.succeeded} transport successes · {p.failed} failed · {p.pending} pending · last completion {p.lastCompletedAtMs === null ? 'unknown' : new Date(p.lastCompletedAtMs).toISOString()}</dd></div>)}</dl>
     <p>Last completed analysis: {value.latestAnalysisAtMs === null ? 'None' : new Date(value.latestAnalysisAtMs).toISOString()}</p>
-    <button type="button" className="button-secondary" disabled={!value.mainProfile || !value.mappingReady || toggle.state.kind === 'pending'} onClick={() => void toggle.run({ commandId: crypto.randomUUID(), enabled: !value.analysisEnabled })}>{value.analysisEnabled ? 'Disable scheduled analysis' : 'Enable scheduled analysis'}</button>
+    <button type="button" className="button-secondary" disabled={!value.mainProfile || !value.analysisEnabled && !value.mappingReady || toggle.state.kind === 'pending'} onClick={() => void toggle.run({ commandId: crypto.randomUUID(), enabled: !value.analysisEnabled })}>{value.analysisEnabled ? 'Disable scheduled analysis' : 'Enable scheduled analysis'}</button>
     {!value.mappingReady && <p>Install a reviewed mapping configuration through the news analysis command before enabling analysis.</p>}
     {toggle.state.kind === 'failed' && <p role="alert">Analysis setting was not saved. Check Main profile and mapping readiness.</p>}
     <p>Marketaux and Currents remain disabled pending credentials and retention permissions.</p>
