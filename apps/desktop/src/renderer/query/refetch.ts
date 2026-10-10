@@ -25,6 +25,12 @@ export interface ChannelPolicy {
 }
 
 export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
+  'app.evidence-export': { refetchIntervalMs:false,staleTimeMs:0 },
+  'app.about': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },
+  'paper.execution.preview': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'research.integrity-workspace': { refetchIntervalMs: false, staleTimeMs: 30 * SECOND },
+  'news.report': { refetchIntervalMs: false, staleTimeMs: 30 * SECOND },
+  'app.performance-trace': { refetchIntervalMs: false, staleTimeMs: 0 },
   'news.timeline': { refetchIntervalMs: MINUTE, staleTimeMs: 30 * SECOND },
   'news.detail': { refetchIntervalMs: MINUTE, staleTimeMs: 30 * SECOND },
   'news.health': { refetchIntervalMs: MINUTE, staleTimeMs: 30 * SECOND },

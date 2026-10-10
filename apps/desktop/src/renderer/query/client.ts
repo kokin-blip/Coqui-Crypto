@@ -1,3 +1,4 @@
+import { beginQueryTrace, finishQueryTrace } from './performance-trace.js';
 import type {
   ChannelName,
   ChannelRequest,
@@ -10,7 +11,8 @@ import type {
 declare global {
   interface Window {
     readonly coqui?: {
-      query(channel: string, payload: unknown): Promise<Outcome<unknown>>;
+      readonly traceEnabled?: boolean;
+      query(channel: string, payload: unknown, traceId?: string): Promise<Outcome<unknown>>;
       onComponentStateChanged(listener: (payload: unknown) => void): () => void;
     };
   }
@@ -37,7 +39,10 @@ export function createIpcClient(): CoquiClient {
           issues: [{ path: ['transport'], code: 'transport_unavailable' }],
         };
       }
-      return (await bridge.query(channel, payload)) as Outcome<ChannelResponse<TChannel>>;
+      const trace=beginQueryTrace(channel);
+      const outcome=await bridge.query(channel,payload,trace?.id);
+      if(trace)finishQueryTrace(channel,trace,new TextEncoder().encode(JSON.stringify(outcome)).byteLength);
+      return outcome as Outcome<ChannelResponse<TChannel>>;
     },
 
     onComponentStateChanged(listener: (payload: ComponentStateChangedPayload) => void): () => void {

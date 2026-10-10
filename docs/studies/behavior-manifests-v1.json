@@ -261,7 +261,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "58937e4cd25df12b2f92d6f8733621292fb70c9b80184f1970c6c9aa42029f49"
+        "75582744f8942905f0a47908f0461c14811700328e79fe81132438f1cfc8a752"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -269,7 +269,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "90b63dc140b14a3bcf5d117551011e136c58729fc7f1ca37ba4a0820c778fbc1"
+        "699055ece4d3c56b050182fa9160444fb763e691e723c8069b747588628ae073"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -333,11 +333,15 @@
       ],
       [
         "packages/contracts/src/schemas/news-channels.ts",
-        "ef7b89219815ceae2b942092fc82338bf52eaec19d1496934a8b4b06986a1e7b"
+        "e1d40a693a10b6f974a5e8e95efda62bfcb1ad9fb91df0a9e21f18126c3ea904"
       ],
       [
         "packages/contracts/src/schemas/news-intelligence.ts",
         "3f61b41bb88451c57e0640b36a199d198995cf91c4b9442929e6bba23463c89e"
+      ],
+      [
+        "packages/contracts/src/schemas/news-report-file.ts",
+        "af9193d945fe985196a8a855a6deb28aa0d78e541f88fd4992666c0d72e71d6e"
       ],
       [
         "packages/contracts/src/schemas/news.ts",
@@ -353,7 +357,7 @@
       ],
       [
         "packages/contracts/src/schemas/paper-execution.ts",
-        "889e749d57d75261bdd101ddf12283ba877c3ddcaafcffcf0eb7a8644730e64b"
+        "fb1638780202e7323fc4d1cc4a770fa2c4061220d65600d6cd2a029355416443"
       ],
       [
         "packages/contracts/src/schemas/paper-performance.ts",
@@ -373,7 +377,7 @@
       ],
       [
         "packages/contracts/src/schemas/research.ts",
-        "feb2f044a7e42bbb229eb6e0a86616bf50d656e7c2329d58a0f09ed4d303e4b1"
+        "d60eadb9a7d3955fcd983d338a6b679cc0221633f640cac5807ce499336af4da"
       ],
       [
         "packages/contracts/src/schemas/risk.ts",
@@ -1141,7 +1145,7 @@
       ],
       [
         "packages/services/src/news/runtime.ts",
-        "3765e620ada22896abdf49de01f0d84d88cddab8cc2f32f1480937d2a751a5d4"
+        "309a6e762e2df261955e4d91a6dd65ece17ce9c7c711cfd00439e7b0f348bb6b"
       ],
       [
         "packages/services/src/news/service.ts",
@@ -1165,7 +1169,7 @@
       ],
       [
         "packages/services/src/paper/execution-service.ts",
-        "cf3f0265a9d0290fa28ac75115df1feca387b99fa4279ec4df88061f2b5c4dab"
+        "86abd88901d2db8686e65abb811f236aecf314aef8ec8d2f6ef3f5c1c0996ff1"
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
@@ -1297,7 +1301,7 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-service.ts",
-        "ecb1fbbb930cf12a0c3c92e8e267607c54b4db786a100677da30348b19472c00"
+        "8f944445030d33781a64bd81017529a8e543e06b81ceec54badf78b2a1dd85e7"
       ],
       [
         "packages/services/src/paper/parallel-paper-slots.ts",
@@ -1314,6 +1318,10 @@
       [
         "packages/services/src/paper/parallel-signal.ts",
         "098e78b361f24479d881834b0deb83ea1b8c84d5a44844df1984e8e47b4dd452"
+      ],
+      [
+        "packages/services/src/paper/proposal-preview.ts",
+        "0c46abe3e92bca21a29b290204b20471d9cd8c4f34dfb3d3e8e85a467a9c393f"
       ],
       [
         "packages/services/src/paper/reconciliation.ts",
@@ -1385,11 +1393,15 @@
       ],
       [
         "packages/services/src/research/index.ts",
-        "950b81b91bdd684e822360d8bd3ecb70a9dc067110e0debacf7ff21e50ab15b4"
+        "05dc1a72448e75dd5b5d20d76c712341d5baed5ff0e8f7f5eab9f33c5c8843a6"
       ],
       [
         "packages/services/src/research/integrity-study.ts",
         "cc62beb7f19bcc3f28ec8ab80ffda59faee618bca44f9aca7275473f0e49ba85"
+      ],
+      [
+        "packages/services/src/research/integrity-workspace.ts",
+        "45a93e9b4aa7bc431c44980503ca45cde06fff63841002dd8040b34f465d983a"
       ],
       [
         "packages/services/src/research/nested-study.ts",
@@ -1533,7 +1545,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "f705fc4c0d21b7781ccf70d7a78882af7f76cee41c44a7a16b979750e2758a86"
+        "27f5f04f7dbbd0de2185e7454476e9d666f4f40be460fe5335cdec56806c6693"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -1808,6 +1820,10 @@
         "f688e608825c103c73cd5f00e4df3288eaef2a601c18be7f80ddb7daa9bade92"
       ],
       [
+        "packages/storage/src/migrations/v92.ts",
+        "be7cbaa2562de97d17fef219717604b91cd1c9b4b358b0852bf8e318ea033c43"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -1833,7 +1849,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "4c10f76ea95b594d0c4495ce924a99207031e7cf6ebf7508240c36d94b045ee8"
+        "aca693a083c335d6ce713044813548cf0479762b4ce0dd7d1f9af39f38647c6a"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -1841,11 +1857,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "1bc7f8691652d7380858840d8b4f85bf2d1728bc8c3253474569cbf89b0e8787"
+        "d378033d766e84ab1c5f3eb5d38798b64395bf6f88408d32d044bc365e277077"
       ],
       [
         "packages/storage/src/profiles/index.ts",
-        "16023a957e7ba6e4d3109028088748b62984d21b30a2b85acbdf821010e5c2ef"
+        "101e3c8670cbb8d4e30f6c26784eab39486e688dd02a25dbbcbd94b79a18344e"
       ],
       [
         "packages/storage/src/profiles/manifest.ts",
@@ -1854,6 +1870,10 @@
       [
         "packages/storage/src/profiles/person.ts",
         "72581ad564b2665c0139c9ff73adedaa2f971733cb077fd1550352599b29d2c4"
+      ],
+      [
+        "packages/storage/src/profiles/restore-proof.ts",
+        "61c339be7a214da1e118c0622e96e41d08ed46d2a402b560711a5a2f10cf4ecd"
       ],
       [
         "packages/storage/src/profiles/wallet-nicknames.ts",
@@ -1969,7 +1989,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "860a3eb7aec86b3255f425f272cf02cf6863e6f0d8ecb7d4c41a14a69f232017"
+        "90dcd777311415809f4e7c505b87fa8b969c94e3ec14a90b087c2a0d47ed9898"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -2002,6 +2022,10 @@
       [
         "packages/storage/src/repositories/news-quota.ts",
         "2434463a07f3a0ed5770d0be335326a5938d90d31b80bafd12e563d9f5877079"
+      ],
+      [
+        "packages/storage/src/repositories/news-reports.ts",
+        "09be04432daded9c09e5c510bdaf01566eadf1f36c4cc86a62731c3bfb4cc10b"
       ],
       [
         "packages/storage/src/repositories/news.ts",
@@ -2148,7 +2172,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "b1bc098f2cf51cf3259e372e023ae775849aba0c23dd2aac055a54676f37e7f3"
+    "hash": "90e16220230fef0b86b68e13dd1931c3a2077487ae435fc03627d18949ee8901"
   },
   "wider-breakout-v1": {
     "version": 1,
@@ -2412,7 +2436,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "58937e4cd25df12b2f92d6f8733621292fb70c9b80184f1970c6c9aa42029f49"
+        "75582744f8942905f0a47908f0461c14811700328e79fe81132438f1cfc8a752"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -2420,7 +2444,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "90b63dc140b14a3bcf5d117551011e136c58729fc7f1ca37ba4a0820c778fbc1"
+        "699055ece4d3c56b050182fa9160444fb763e691e723c8069b747588628ae073"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -2484,11 +2508,15 @@
       ],
       [
         "packages/contracts/src/schemas/news-channels.ts",
-        "ef7b89219815ceae2b942092fc82338bf52eaec19d1496934a8b4b06986a1e7b"
+        "e1d40a693a10b6f974a5e8e95efda62bfcb1ad9fb91df0a9e21f18126c3ea904"
       ],
       [
         "packages/contracts/src/schemas/news-intelligence.ts",
         "3f61b41bb88451c57e0640b36a199d198995cf91c4b9442929e6bba23463c89e"
+      ],
+      [
+        "packages/contracts/src/schemas/news-report-file.ts",
+        "af9193d945fe985196a8a855a6deb28aa0d78e541f88fd4992666c0d72e71d6e"
       ],
       [
         "packages/contracts/src/schemas/news.ts",
@@ -2504,7 +2532,7 @@
       ],
       [
         "packages/contracts/src/schemas/paper-execution.ts",
-        "889e749d57d75261bdd101ddf12283ba877c3ddcaafcffcf0eb7a8644730e64b"
+        "fb1638780202e7323fc4d1cc4a770fa2c4061220d65600d6cd2a029355416443"
       ],
       [
         "packages/contracts/src/schemas/paper-performance.ts",
@@ -2524,7 +2552,7 @@
       ],
       [
         "packages/contracts/src/schemas/research.ts",
-        "feb2f044a7e42bbb229eb6e0a86616bf50d656e7c2329d58a0f09ed4d303e4b1"
+        "d60eadb9a7d3955fcd983d338a6b679cc0221633f640cac5807ce499336af4da"
       ],
       [
         "packages/contracts/src/schemas/risk.ts",
@@ -3292,7 +3320,7 @@
       ],
       [
         "packages/services/src/news/runtime.ts",
-        "3765e620ada22896abdf49de01f0d84d88cddab8cc2f32f1480937d2a751a5d4"
+        "309a6e762e2df261955e4d91a6dd65ece17ce9c7c711cfd00439e7b0f348bb6b"
       ],
       [
         "packages/services/src/news/service.ts",
@@ -3316,7 +3344,7 @@
       ],
       [
         "packages/services/src/paper/execution-service.ts",
-        "cf3f0265a9d0290fa28ac75115df1feca387b99fa4279ec4df88061f2b5c4dab"
+        "86abd88901d2db8686e65abb811f236aecf314aef8ec8d2f6ef3f5c1c0996ff1"
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
@@ -3448,7 +3476,7 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-service.ts",
-        "ecb1fbbb930cf12a0c3c92e8e267607c54b4db786a100677da30348b19472c00"
+        "8f944445030d33781a64bd81017529a8e543e06b81ceec54badf78b2a1dd85e7"
       ],
       [
         "packages/services/src/paper/parallel-paper-slots.ts",
@@ -3465,6 +3493,10 @@
       [
         "packages/services/src/paper/parallel-signal.ts",
         "098e78b361f24479d881834b0deb83ea1b8c84d5a44844df1984e8e47b4dd452"
+      ],
+      [
+        "packages/services/src/paper/proposal-preview.ts",
+        "0c46abe3e92bca21a29b290204b20471d9cd8c4f34dfb3d3e8e85a467a9c393f"
       ],
       [
         "packages/services/src/paper/reconciliation.ts",
@@ -3536,11 +3568,15 @@
       ],
       [
         "packages/services/src/research/index.ts",
-        "950b81b91bdd684e822360d8bd3ecb70a9dc067110e0debacf7ff21e50ab15b4"
+        "05dc1a72448e75dd5b5d20d76c712341d5baed5ff0e8f7f5eab9f33c5c8843a6"
       ],
       [
         "packages/services/src/research/integrity-study.ts",
         "cc62beb7f19bcc3f28ec8ab80ffda59faee618bca44f9aca7275473f0e49ba85"
+      ],
+      [
+        "packages/services/src/research/integrity-workspace.ts",
+        "45a93e9b4aa7bc431c44980503ca45cde06fff63841002dd8040b34f465d983a"
       ],
       [
         "packages/services/src/research/nested-study.ts",
@@ -3684,7 +3720,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "f705fc4c0d21b7781ccf70d7a78882af7f76cee41c44a7a16b979750e2758a86"
+        "27f5f04f7dbbd0de2185e7454476e9d666f4f40be460fe5335cdec56806c6693"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -3959,6 +3995,10 @@
         "f688e608825c103c73cd5f00e4df3288eaef2a601c18be7f80ddb7daa9bade92"
       ],
       [
+        "packages/storage/src/migrations/v92.ts",
+        "be7cbaa2562de97d17fef219717604b91cd1c9b4b358b0852bf8e318ea033c43"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -3984,7 +4024,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "4c10f76ea95b594d0c4495ce924a99207031e7cf6ebf7508240c36d94b045ee8"
+        "aca693a083c335d6ce713044813548cf0479762b4ce0dd7d1f9af39f38647c6a"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -3992,11 +4032,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "1bc7f8691652d7380858840d8b4f85bf2d1728bc8c3253474569cbf89b0e8787"
+        "d378033d766e84ab1c5f3eb5d38798b64395bf6f88408d32d044bc365e277077"
       ],
       [
         "packages/storage/src/profiles/index.ts",
-        "16023a957e7ba6e4d3109028088748b62984d21b30a2b85acbdf821010e5c2ef"
+        "101e3c8670cbb8d4e30f6c26784eab39486e688dd02a25dbbcbd94b79a18344e"
       ],
       [
         "packages/storage/src/profiles/manifest.ts",
@@ -4005,6 +4045,10 @@
       [
         "packages/storage/src/profiles/person.ts",
         "72581ad564b2665c0139c9ff73adedaa2f971733cb077fd1550352599b29d2c4"
+      ],
+      [
+        "packages/storage/src/profiles/restore-proof.ts",
+        "61c339be7a214da1e118c0622e96e41d08ed46d2a402b560711a5a2f10cf4ecd"
       ],
       [
         "packages/storage/src/profiles/wallet-nicknames.ts",
@@ -4120,7 +4164,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "860a3eb7aec86b3255f425f272cf02cf6863e6f0d8ecb7d4c41a14a69f232017"
+        "90dcd777311415809f4e7c505b87fa8b969c94e3ec14a90b087c2a0d47ed9898"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -4153,6 +4197,10 @@
       [
         "packages/storage/src/repositories/news-quota.ts",
         "2434463a07f3a0ed5770d0be335326a5938d90d31b80bafd12e563d9f5877079"
+      ],
+      [
+        "packages/storage/src/repositories/news-reports.ts",
+        "09be04432daded9c09e5c510bdaf01566eadf1f36c4cc86a62731c3bfb4cc10b"
       ],
       [
         "packages/storage/src/repositories/news.ts",
@@ -4299,7 +4347,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "2f5ef2b297510177f68420f5d645e13aca7b034d06f23a9d62961007506d8a89"
+    "hash": "0f938dcfc8a8a3b2ab79ea9aad5eb926e1b6bd03e99d03ad857bd3d8744d460d"
   },
   "wider-range-rotation-v1": {
     "version": 1,
@@ -4563,7 +4611,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "58937e4cd25df12b2f92d6f8733621292fb70c9b80184f1970c6c9aa42029f49"
+        "75582744f8942905f0a47908f0461c14811700328e79fe81132438f1cfc8a752"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -4571,7 +4619,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "90b63dc140b14a3bcf5d117551011e136c58729fc7f1ca37ba4a0820c778fbc1"
+        "699055ece4d3c56b050182fa9160444fb763e691e723c8069b747588628ae073"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -4635,11 +4683,15 @@
       ],
       [
         "packages/contracts/src/schemas/news-channels.ts",
-        "ef7b89219815ceae2b942092fc82338bf52eaec19d1496934a8b4b06986a1e7b"
+        "e1d40a693a10b6f974a5e8e95efda62bfcb1ad9fb91df0a9e21f18126c3ea904"
       ],
       [
         "packages/contracts/src/schemas/news-intelligence.ts",
         "3f61b41bb88451c57e0640b36a199d198995cf91c4b9442929e6bba23463c89e"
+      ],
+      [
+        "packages/contracts/src/schemas/news-report-file.ts",
+        "af9193d945fe985196a8a855a6deb28aa0d78e541f88fd4992666c0d72e71d6e"
       ],
       [
         "packages/contracts/src/schemas/news.ts",
@@ -4655,7 +4707,7 @@
       ],
       [
         "packages/contracts/src/schemas/paper-execution.ts",
-        "889e749d57d75261bdd101ddf12283ba877c3ddcaafcffcf0eb7a8644730e64b"
+        "fb1638780202e7323fc4d1cc4a770fa2c4061220d65600d6cd2a029355416443"
       ],
       [
         "packages/contracts/src/schemas/paper-performance.ts",
@@ -4675,7 +4727,7 @@
       ],
       [
         "packages/contracts/src/schemas/research.ts",
-        "feb2f044a7e42bbb229eb6e0a86616bf50d656e7c2329d58a0f09ed4d303e4b1"
+        "d60eadb9a7d3955fcd983d338a6b679cc0221633f640cac5807ce499336af4da"
       ],
       [
         "packages/contracts/src/schemas/risk.ts",
@@ -5443,7 +5495,7 @@
       ],
       [
         "packages/services/src/news/runtime.ts",
-        "3765e620ada22896abdf49de01f0d84d88cddab8cc2f32f1480937d2a751a5d4"
+        "309a6e762e2df261955e4d91a6dd65ece17ce9c7c711cfd00439e7b0f348bb6b"
       ],
       [
         "packages/services/src/news/service.ts",
@@ -5467,7 +5519,7 @@
       ],
       [
         "packages/services/src/paper/execution-service.ts",
-        "cf3f0265a9d0290fa28ac75115df1feca387b99fa4279ec4df88061f2b5c4dab"
+        "86abd88901d2db8686e65abb811f236aecf314aef8ec8d2f6ef3f5c1c0996ff1"
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
@@ -5599,7 +5651,7 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-service.ts",
-        "ecb1fbbb930cf12a0c3c92e8e267607c54b4db786a100677da30348b19472c00"
+        "8f944445030d33781a64bd81017529a8e543e06b81ceec54badf78b2a1dd85e7"
       ],
       [
         "packages/services/src/paper/parallel-paper-slots.ts",
@@ -5616,6 +5668,10 @@
       [
         "packages/services/src/paper/parallel-signal.ts",
         "098e78b361f24479d881834b0deb83ea1b8c84d5a44844df1984e8e47b4dd452"
+      ],
+      [
+        "packages/services/src/paper/proposal-preview.ts",
+        "0c46abe3e92bca21a29b290204b20471d9cd8c4f34dfb3d3e8e85a467a9c393f"
       ],
       [
         "packages/services/src/paper/reconciliation.ts",
@@ -5687,11 +5743,15 @@
       ],
       [
         "packages/services/src/research/index.ts",
-        "950b81b91bdd684e822360d8bd3ecb70a9dc067110e0debacf7ff21e50ab15b4"
+        "05dc1a72448e75dd5b5d20d76c712341d5baed5ff0e8f7f5eab9f33c5c8843a6"
       ],
       [
         "packages/services/src/research/integrity-study.ts",
         "cc62beb7f19bcc3f28ec8ab80ffda59faee618bca44f9aca7275473f0e49ba85"
+      ],
+      [
+        "packages/services/src/research/integrity-workspace.ts",
+        "45a93e9b4aa7bc431c44980503ca45cde06fff63841002dd8040b34f465d983a"
       ],
       [
         "packages/services/src/research/nested-study.ts",
@@ -5835,7 +5895,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "f705fc4c0d21b7781ccf70d7a78882af7f76cee41c44a7a16b979750e2758a86"
+        "27f5f04f7dbbd0de2185e7454476e9d666f4f40be460fe5335cdec56806c6693"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -6110,6 +6170,10 @@
         "f688e608825c103c73cd5f00e4df3288eaef2a601c18be7f80ddb7daa9bade92"
       ],
       [
+        "packages/storage/src/migrations/v92.ts",
+        "be7cbaa2562de97d17fef219717604b91cd1c9b4b358b0852bf8e318ea033c43"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -6135,7 +6199,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "4c10f76ea95b594d0c4495ce924a99207031e7cf6ebf7508240c36d94b045ee8"
+        "aca693a083c335d6ce713044813548cf0479762b4ce0dd7d1f9af39f38647c6a"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -6143,11 +6207,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "1bc7f8691652d7380858840d8b4f85bf2d1728bc8c3253474569cbf89b0e8787"
+        "d378033d766e84ab1c5f3eb5d38798b64395bf6f88408d32d044bc365e277077"
       ],
       [
         "packages/storage/src/profiles/index.ts",
-        "16023a957e7ba6e4d3109028088748b62984d21b30a2b85acbdf821010e5c2ef"
+        "101e3c8670cbb8d4e30f6c26784eab39486e688dd02a25dbbcbd94b79a18344e"
       ],
       [
         "packages/storage/src/profiles/manifest.ts",
@@ -6156,6 +6220,10 @@
       [
         "packages/storage/src/profiles/person.ts",
         "72581ad564b2665c0139c9ff73adedaa2f971733cb077fd1550352599b29d2c4"
+      ],
+      [
+        "packages/storage/src/profiles/restore-proof.ts",
+        "61c339be7a214da1e118c0622e96e41d08ed46d2a402b560711a5a2f10cf4ecd"
       ],
       [
         "packages/storage/src/profiles/wallet-nicknames.ts",
@@ -6271,7 +6339,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "860a3eb7aec86b3255f425f272cf02cf6863e6f0d8ecb7d4c41a14a69f232017"
+        "90dcd777311415809f4e7c505b87fa8b969c94e3ec14a90b087c2a0d47ed9898"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -6304,6 +6372,10 @@
       [
         "packages/storage/src/repositories/news-quota.ts",
         "2434463a07f3a0ed5770d0be335326a5938d90d31b80bafd12e563d9f5877079"
+      ],
+      [
+        "packages/storage/src/repositories/news-reports.ts",
+        "09be04432daded9c09e5c510bdaf01566eadf1f36c4cc86a62731c3bfb4cc10b"
       ],
       [
         "packages/storage/src/repositories/news.ts",
@@ -6450,7 +6522,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "271c3ca019bea5fd765da3c5c45f7b43e9e5a532bffaba13e45108c2775223f6"
+    "hash": "c46686ec6fb20467d61a6bea5b5e3b92b2bdfafcebcd4a4a95aafd4de3bfe16b"
   },
   "paper-market-selector-v1": {
     "version": 1,
@@ -6714,7 +6786,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "58937e4cd25df12b2f92d6f8733621292fb70c9b80184f1970c6c9aa42029f49"
+        "75582744f8942905f0a47908f0461c14811700328e79fe81132438f1cfc8a752"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -6722,7 +6794,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "90b63dc140b14a3bcf5d117551011e136c58729fc7f1ca37ba4a0820c778fbc1"
+        "699055ece4d3c56b050182fa9160444fb763e691e723c8069b747588628ae073"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -6786,11 +6858,15 @@
       ],
       [
         "packages/contracts/src/schemas/news-channels.ts",
-        "ef7b89219815ceae2b942092fc82338bf52eaec19d1496934a8b4b06986a1e7b"
+        "e1d40a693a10b6f974a5e8e95efda62bfcb1ad9fb91df0a9e21f18126c3ea904"
       ],
       [
         "packages/contracts/src/schemas/news-intelligence.ts",
         "3f61b41bb88451c57e0640b36a199d198995cf91c4b9442929e6bba23463c89e"
+      ],
+      [
+        "packages/contracts/src/schemas/news-report-file.ts",
+        "af9193d945fe985196a8a855a6deb28aa0d78e541f88fd4992666c0d72e71d6e"
       ],
       [
         "packages/contracts/src/schemas/news.ts",
@@ -6806,7 +6882,7 @@
       ],
       [
         "packages/contracts/src/schemas/paper-execution.ts",
-        "889e749d57d75261bdd101ddf12283ba877c3ddcaafcffcf0eb7a8644730e64b"
+        "fb1638780202e7323fc4d1cc4a770fa2c4061220d65600d6cd2a029355416443"
       ],
       [
         "packages/contracts/src/schemas/paper-performance.ts",
@@ -6826,7 +6902,7 @@
       ],
       [
         "packages/contracts/src/schemas/research.ts",
-        "feb2f044a7e42bbb229eb6e0a86616bf50d656e7c2329d58a0f09ed4d303e4b1"
+        "d60eadb9a7d3955fcd983d338a6b679cc0221633f640cac5807ce499336af4da"
       ],
       [
         "packages/contracts/src/schemas/risk.ts",
@@ -7594,7 +7670,7 @@
       ],
       [
         "packages/services/src/news/runtime.ts",
-        "3765e620ada22896abdf49de01f0d84d88cddab8cc2f32f1480937d2a751a5d4"
+        "309a6e762e2df261955e4d91a6dd65ece17ce9c7c711cfd00439e7b0f348bb6b"
       ],
       [
         "packages/services/src/news/service.ts",
@@ -7618,7 +7694,7 @@
       ],
       [
         "packages/services/src/paper/execution-service.ts",
-        "cf3f0265a9d0290fa28ac75115df1feca387b99fa4279ec4df88061f2b5c4dab"
+        "86abd88901d2db8686e65abb811f236aecf314aef8ec8d2f6ef3f5c1c0996ff1"
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
@@ -7750,7 +7826,7 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-service.ts",
-        "ecb1fbbb930cf12a0c3c92e8e267607c54b4db786a100677da30348b19472c00"
+        "8f944445030d33781a64bd81017529a8e543e06b81ceec54badf78b2a1dd85e7"
       ],
       [
         "packages/services/src/paper/parallel-paper-slots.ts",
@@ -7767,6 +7843,10 @@
       [
         "packages/services/src/paper/parallel-signal.ts",
         "098e78b361f24479d881834b0deb83ea1b8c84d5a44844df1984e8e47b4dd452"
+      ],
+      [
+        "packages/services/src/paper/proposal-preview.ts",
+        "0c46abe3e92bca21a29b290204b20471d9cd8c4f34dfb3d3e8e85a467a9c393f"
       ],
       [
         "packages/services/src/paper/reconciliation.ts",
@@ -7838,11 +7918,15 @@
       ],
       [
         "packages/services/src/research/index.ts",
-        "950b81b91bdd684e822360d8bd3ecb70a9dc067110e0debacf7ff21e50ab15b4"
+        "05dc1a72448e75dd5b5d20d76c712341d5baed5ff0e8f7f5eab9f33c5c8843a6"
       ],
       [
         "packages/services/src/research/integrity-study.ts",
         "cc62beb7f19bcc3f28ec8ab80ffda59faee618bca44f9aca7275473f0e49ba85"
+      ],
+      [
+        "packages/services/src/research/integrity-workspace.ts",
+        "45a93e9b4aa7bc431c44980503ca45cde06fff63841002dd8040b34f465d983a"
       ],
       [
         "packages/services/src/research/nested-study.ts",
@@ -7986,7 +8070,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "f705fc4c0d21b7781ccf70d7a78882af7f76cee41c44a7a16b979750e2758a86"
+        "27f5f04f7dbbd0de2185e7454476e9d666f4f40be460fe5335cdec56806c6693"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -8261,6 +8345,10 @@
         "f688e608825c103c73cd5f00e4df3288eaef2a601c18be7f80ddb7daa9bade92"
       ],
       [
+        "packages/storage/src/migrations/v92.ts",
+        "be7cbaa2562de97d17fef219717604b91cd1c9b4b358b0852bf8e318ea033c43"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -8286,7 +8374,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "4c10f76ea95b594d0c4495ce924a99207031e7cf6ebf7508240c36d94b045ee8"
+        "aca693a083c335d6ce713044813548cf0479762b4ce0dd7d1f9af39f38647c6a"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -8294,11 +8382,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "1bc7f8691652d7380858840d8b4f85bf2d1728bc8c3253474569cbf89b0e8787"
+        "d378033d766e84ab1c5f3eb5d38798b64395bf6f88408d32d044bc365e277077"
       ],
       [
         "packages/storage/src/profiles/index.ts",
-        "16023a957e7ba6e4d3109028088748b62984d21b30a2b85acbdf821010e5c2ef"
+        "101e3c8670cbb8d4e30f6c26784eab39486e688dd02a25dbbcbd94b79a18344e"
       ],
       [
         "packages/storage/src/profiles/manifest.ts",
@@ -8307,6 +8395,10 @@
       [
         "packages/storage/src/profiles/person.ts",
         "72581ad564b2665c0139c9ff73adedaa2f971733cb077fd1550352599b29d2c4"
+      ],
+      [
+        "packages/storage/src/profiles/restore-proof.ts",
+        "61c339be7a214da1e118c0622e96e41d08ed46d2a402b560711a5a2f10cf4ecd"
       ],
       [
         "packages/storage/src/profiles/wallet-nicknames.ts",
@@ -8422,7 +8514,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "860a3eb7aec86b3255f425f272cf02cf6863e6f0d8ecb7d4c41a14a69f232017"
+        "90dcd777311415809f4e7c505b87fa8b969c94e3ec14a90b087c2a0d47ed9898"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -8455,6 +8547,10 @@
       [
         "packages/storage/src/repositories/news-quota.ts",
         "2434463a07f3a0ed5770d0be335326a5938d90d31b80bafd12e563d9f5877079"
+      ],
+      [
+        "packages/storage/src/repositories/news-reports.ts",
+        "09be04432daded9c09e5c510bdaf01566eadf1f36c4cc86a62731c3bfb4cc10b"
       ],
       [
         "packages/storage/src/repositories/news.ts",
@@ -8601,7 +8697,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "c00b79321d76b22dcee8dd653faab4989e1487b25b4d1c79130f3d936511c445"
+    "hash": "b9069d666542e7a8556861315b6dcbd85d6e4ca1dcf19aea2352d27fc4d6d47a"
   },
   "trendvol-hourly-execution-v1": {
     "version": 1,
@@ -8853,7 +8949,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "58937e4cd25df12b2f92d6f8733621292fb70c9b80184f1970c6c9aa42029f49"
+        "75582744f8942905f0a47908f0461c14811700328e79fe81132438f1cfc8a752"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -8861,7 +8957,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "90b63dc140b14a3bcf5d117551011e136c58729fc7f1ca37ba4a0820c778fbc1"
+        "699055ece4d3c56b050182fa9160444fb763e691e723c8069b747588628ae073"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -8925,11 +9021,15 @@
       ],
       [
         "packages/contracts/src/schemas/news-channels.ts",
-        "ef7b89219815ceae2b942092fc82338bf52eaec19d1496934a8b4b06986a1e7b"
+        "e1d40a693a10b6f974a5e8e95efda62bfcb1ad9fb91df0a9e21f18126c3ea904"
       ],
       [
         "packages/contracts/src/schemas/news-intelligence.ts",
         "3f61b41bb88451c57e0640b36a199d198995cf91c4b9442929e6bba23463c89e"
+      ],
+      [
+        "packages/contracts/src/schemas/news-report-file.ts",
+        "af9193d945fe985196a8a855a6deb28aa0d78e541f88fd4992666c0d72e71d6e"
       ],
       [
         "packages/contracts/src/schemas/news.ts",
@@ -8945,7 +9045,7 @@
       ],
       [
         "packages/contracts/src/schemas/paper-execution.ts",
-        "889e749d57d75261bdd101ddf12283ba877c3ddcaafcffcf0eb7a8644730e64b"
+        "fb1638780202e7323fc4d1cc4a770fa2c4061220d65600d6cd2a029355416443"
       ],
       [
         "packages/contracts/src/schemas/paper-performance.ts",
@@ -8965,7 +9065,7 @@
       ],
       [
         "packages/contracts/src/schemas/research.ts",
-        "feb2f044a7e42bbb229eb6e0a86616bf50d656e7c2329d58a0f09ed4d303e4b1"
+        "d60eadb9a7d3955fcd983d338a6b679cc0221633f640cac5807ce499336af4da"
       ],
       [
         "packages/contracts/src/schemas/risk.ts",
@@ -9577,7 +9677,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "f705fc4c0d21b7781ccf70d7a78882af7f76cee41c44a7a16b979750e2758a86"
+        "27f5f04f7dbbd0de2185e7454476e9d666f4f40be460fe5335cdec56806c6693"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -9852,6 +9952,10 @@
         "f688e608825c103c73cd5f00e4df3288eaef2a601c18be7f80ddb7daa9bade92"
       ],
       [
+        "packages/storage/src/migrations/v92.ts",
+        "be7cbaa2562de97d17fef219717604b91cd1c9b4b358b0852bf8e318ea033c43"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -9877,7 +9981,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "4c10f76ea95b594d0c4495ce924a99207031e7cf6ebf7508240c36d94b045ee8"
+        "aca693a083c335d6ce713044813548cf0479762b4ce0dd7d1f9af39f38647c6a"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -9885,11 +9989,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "1bc7f8691652d7380858840d8b4f85bf2d1728bc8c3253474569cbf89b0e8787"
+        "d378033d766e84ab1c5f3eb5d38798b64395bf6f88408d32d044bc365e277077"
       ],
       [
         "packages/storage/src/profiles/index.ts",
-        "16023a957e7ba6e4d3109028088748b62984d21b30a2b85acbdf821010e5c2ef"
+        "101e3c8670cbb8d4e30f6c26784eab39486e688dd02a25dbbcbd94b79a18344e"
       ],
       [
         "packages/storage/src/profiles/manifest.ts",
@@ -9898,6 +10002,10 @@
       [
         "packages/storage/src/profiles/person.ts",
         "72581ad564b2665c0139c9ff73adedaa2f971733cb077fd1550352599b29d2c4"
+      ],
+      [
+        "packages/storage/src/profiles/restore-proof.ts",
+        "61c339be7a214da1e118c0622e96e41d08ed46d2a402b560711a5a2f10cf4ecd"
       ],
       [
         "packages/storage/src/profiles/wallet-nicknames.ts",
@@ -10013,7 +10121,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "860a3eb7aec86b3255f425f272cf02cf6863e6f0d8ecb7d4c41a14a69f232017"
+        "90dcd777311415809f4e7c505b87fa8b969c94e3ec14a90b087c2a0d47ed9898"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -10046,6 +10154,10 @@
       [
         "packages/storage/src/repositories/news-quota.ts",
         "2434463a07f3a0ed5770d0be335326a5938d90d31b80bafd12e563d9f5877079"
+      ],
+      [
+        "packages/storage/src/repositories/news-reports.ts",
+        "09be04432daded9c09e5c510bdaf01566eadf1f36c4cc86a62731c3bfb4cc10b"
       ],
       [
         "packages/storage/src/repositories/news.ts",
@@ -10192,7 +10304,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "c8b4eab46cd17c73406bc01a130875dbfa5c7538b1148bdaa3aa7870291a58fd"
+    "hash": "a86acb4608fa544155137e1814d19201628254de6c93772fb29bc5fc845b3178"
   },
   "trendvol-execution-remediation-v1": {
     "version": 1,
@@ -10444,7 +10556,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "58937e4cd25df12b2f92d6f8733621292fb70c9b80184f1970c6c9aa42029f49"
+        "75582744f8942905f0a47908f0461c14811700328e79fe81132438f1cfc8a752"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -10452,7 +10564,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "90b63dc140b14a3bcf5d117551011e136c58729fc7f1ca37ba4a0820c778fbc1"
+        "699055ece4d3c56b050182fa9160444fb763e691e723c8069b747588628ae073"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -10516,11 +10628,15 @@
       ],
       [
         "packages/contracts/src/schemas/news-channels.ts",
-        "ef7b89219815ceae2b942092fc82338bf52eaec19d1496934a8b4b06986a1e7b"
+        "e1d40a693a10b6f974a5e8e95efda62bfcb1ad9fb91df0a9e21f18126c3ea904"
       ],
       [
         "packages/contracts/src/schemas/news-intelligence.ts",
         "3f61b41bb88451c57e0640b36a199d198995cf91c4b9442929e6bba23463c89e"
+      ],
+      [
+        "packages/contracts/src/schemas/news-report-file.ts",
+        "af9193d945fe985196a8a855a6deb28aa0d78e541f88fd4992666c0d72e71d6e"
       ],
       [
         "packages/contracts/src/schemas/news.ts",
@@ -10536,7 +10652,7 @@
       ],
       [
         "packages/contracts/src/schemas/paper-execution.ts",
-        "889e749d57d75261bdd101ddf12283ba877c3ddcaafcffcf0eb7a8644730e64b"
+        "fb1638780202e7323fc4d1cc4a770fa2c4061220d65600d6cd2a029355416443"
       ],
       [
         "packages/contracts/src/schemas/paper-performance.ts",
@@ -10556,7 +10672,7 @@
       ],
       [
         "packages/contracts/src/schemas/research.ts",
-        "feb2f044a7e42bbb229eb6e0a86616bf50d656e7c2329d58a0f09ed4d303e4b1"
+        "d60eadb9a7d3955fcd983d338a6b679cc0221633f640cac5807ce499336af4da"
       ],
       [
         "packages/contracts/src/schemas/risk.ts",
@@ -11160,7 +11276,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "f705fc4c0d21b7781ccf70d7a78882af7f76cee41c44a7a16b979750e2758a86"
+        "27f5f04f7dbbd0de2185e7454476e9d666f4f40be460fe5335cdec56806c6693"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -11435,6 +11551,10 @@
         "f688e608825c103c73cd5f00e4df3288eaef2a601c18be7f80ddb7daa9bade92"
       ],
       [
+        "packages/storage/src/migrations/v92.ts",
+        "be7cbaa2562de97d17fef219717604b91cd1c9b4b358b0852bf8e318ea033c43"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -11460,7 +11580,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "4c10f76ea95b594d0c4495ce924a99207031e7cf6ebf7508240c36d94b045ee8"
+        "aca693a083c335d6ce713044813548cf0479762b4ce0dd7d1f9af39f38647c6a"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -11468,11 +11588,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "1bc7f8691652d7380858840d8b4f85bf2d1728bc8c3253474569cbf89b0e8787"
+        "d378033d766e84ab1c5f3eb5d38798b64395bf6f88408d32d044bc365e277077"
       ],
       [
         "packages/storage/src/profiles/index.ts",
-        "16023a957e7ba6e4d3109028088748b62984d21b30a2b85acbdf821010e5c2ef"
+        "101e3c8670cbb8d4e30f6c26784eab39486e688dd02a25dbbcbd94b79a18344e"
       ],
       [
         "packages/storage/src/profiles/manifest.ts",
@@ -11481,6 +11601,10 @@
       [
         "packages/storage/src/profiles/person.ts",
         "72581ad564b2665c0139c9ff73adedaa2f971733cb077fd1550352599b29d2c4"
+      ],
+      [
+        "packages/storage/src/profiles/restore-proof.ts",
+        "61c339be7a214da1e118c0622e96e41d08ed46d2a402b560711a5a2f10cf4ecd"
       ],
       [
         "packages/storage/src/profiles/wallet-nicknames.ts",
@@ -11596,7 +11720,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "860a3eb7aec86b3255f425f272cf02cf6863e6f0d8ecb7d4c41a14a69f232017"
+        "90dcd777311415809f4e7c505b87fa8b969c94e3ec14a90b087c2a0d47ed9898"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -11629,6 +11753,10 @@
       [
         "packages/storage/src/repositories/news-quota.ts",
         "2434463a07f3a0ed5770d0be335326a5938d90d31b80bafd12e563d9f5877079"
+      ],
+      [
+        "packages/storage/src/repositories/news-reports.ts",
+        "09be04432daded9c09e5c510bdaf01566eadf1f36c4cc86a62731c3bfb4cc10b"
       ],
       [
         "packages/storage/src/repositories/news.ts",
@@ -11775,6 +11903,6 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "8a727e186e2e62749b5b777d605c4e49db21933b94b89d4fba60381468962256"
+    "hash": "9ad62cacd7a6a1ac9a2e7deea2a34d56eefa32a1bc4fc281eaf8cb07e37a7504"
   }
 }

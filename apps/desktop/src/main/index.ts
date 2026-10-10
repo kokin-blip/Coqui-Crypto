@@ -1,5 +1,6 @@
+import { tracePerformance } from './performance-trace.js';
 import { basename, dirname, join } from 'node:path';
-import { readFile, stat, writeFile } from 'node:fs/promises';
+import { readFile, stat, writeFile, link, unlink } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 
 import { createOsKeyringSecretStore, type SecretStore } from '@coqui/adapters';
@@ -137,6 +138,15 @@ async function start(): Promise<void> {
         if (!metadata.isFile() || metadata.size < 2 || metadata.size > 65_536) throw new TypeError('invalid_connection_file');
         return { contents: await readFile(result.filePaths[0], 'utf8') };
       },
+      async saveEvidence(data) {
+        const result = await dialog.showSaveDialog({title:'Export redacted operational evidence',defaultPath:'coqui-evidence.json',filters:[{name:'JSON',extensions:['json']}]});
+        if (result.canceled || !result.filePath) return 'cancelled';
+        // A new destination is required; no silent overwrite or partial final artifact.
+        const temporary = `${result.filePath}.${crypto.randomUUID()}.partial`;
+        try { await writeFile(temporary,data,{encoding:'utf8',flag:'wx'}); await link(temporary,result.filePath); }
+        finally { await unlink(temporary).catch(()=>{}); }
+        return 'saved';
+      },
       async saveHistory(data) {
         const result = await dialog.showSaveDialog({ title: 'Export advisor conversation',
           defaultPath: 'coqui-advisor-history.json', filters: [{ name: 'JSON', extensions: ['json'] }] });
@@ -182,9 +192,11 @@ async function start(): Promise<void> {
     onDeprecatedChannel: (channel) => runtime?.recordDeprecatedChannel(channel),
   });
 
-  ipcMain.handle(QUERY_CHANNEL, async (_event, channel: unknown, payload: unknown) =>
-    dispatch(channel, payload),
-  );
+  ipcMain.handle(QUERY_CHANNEL, async (_event, channel: unknown, payload: unknown, traceId: unknown) => {
+    const started = performance.now();
+    try { return await dispatch(channel, payload); }
+    finally { if (typeof traceId === 'string' && typeof channel === 'string' && channel.startsWith('market-data.')) tracePerformance('ipc.reply',traceId,started); }
+  });
 
   createWindow();
 }

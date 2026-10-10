@@ -14,7 +14,7 @@
   },
   "scripts": {
     "icons": "node scripts/build-icons.mjs",
-    "build": "tsc -b && node scripts/build-preload.mjs && vite build",
+    "build": "tsc -b && node scripts/build-metadata.mjs && node scripts/build-preload.mjs && vite build",
     "dev": "vite",
     "dev:electron": "node scripts/dev-electron.mjs",
     "start": "pnpm build && electron .",
