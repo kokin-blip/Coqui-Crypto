@@ -1,15 +1,22 @@
 {
   "simulated": true,
   "profileKind": "disposable",
-  "sourceRevision": "487431cb04ff93213c065bcd1c412968c3fbd1b4",
-  "sourceIdentity": "local working tree; see build-info source manifest",
+  "sourceRevision": "9eb2aa9c63616055d0f67073cf037769a99cc5eb",
+  "buildIdentity": {
+    "version": "0.1.0-beta.16",
+    "sourceRevision": "9eb2aa9c63616055d0f67073cf037769a99cc5eb",
+    "dirty": false,
+    "sourceHash": "8956684edf6dcf63fe5ef23035bfa9a8d190807e1c34d184cf079d4c4c700b4c",
+    "channel": "beta-candidate",
+    "builtAtMs": 1791611781734
+  },
   "environment": {
     "platform": "darwin",
     "electron": "43.4.1",
     "node": "24.18.1"
   },
-  "startedAtMs": 1791611561835,
-  "completedAtMs": 1791611564679,
+  "startedAtMs": 1791611783318,
+  "completedAtMs": 1791611786033,
   "workload": {
     "version": 1,
     "network": "always_503",
