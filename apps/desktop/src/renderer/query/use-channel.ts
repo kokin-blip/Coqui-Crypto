@@ -1,5 +1,6 @@
+import { traceChannelCommit } from './performance-trace.js';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 
 import type {
   ChannelName,
@@ -68,5 +69,6 @@ export function useChannel<TChannel extends ChannelName>(
     // payload's data across instruments or profiles while the new key loads.
   });
 
+  useEffect(()=>{traceChannelCommit(channel);},[channel,query.data]);
   return useMemo(() => toState(query), [query.data, query.isStale]);
 }

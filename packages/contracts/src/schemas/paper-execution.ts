@@ -213,12 +213,21 @@ export const paperExecutionChannelSchemas = {
     request: z.strictObject({ commandId: commandIdSchema }).readonly(),
     response: executionResultSchema,
   },
+  'paper.execution.preview': { request: z.strictObject({proposalId:z.string().min(1).max(128)}), response:z.strictObject({
+    status:z.enum(['available','unavailable']),reason:z.string().nullable(),proposalHash:sha256HexSchema,revision:z.number().int().positive(),
+    previewHash:sha256HexSchema.nullable(),costHash:sha256HexSchema,expiresAtMs:epochMillisecondsSchema,totalCostUsd:decimalStringSchema.nullable(),
+    drift:z.array(z.strictObject({productId:z.string(),targetWeight:z.number().finite().nullable(),beforeDriftPct:z.number().finite().nullable(),afterDriftPct:z.number().finite().nullable()})).max(500),
+    actions:z.array(z.strictObject({productId:z.string(),side:z.enum(['buy','sell']),feeUsd:decimalStringSchema,spreadUsd:decimalStringSchema,
+      slippageUsd:decimalStringSchema,impactUsd:decimalStringSchema,totalCostUsd:decimalStringSchema,beforeExposureUsd:decimalStringSchema,
+      afterExposureUsd:decimalStringSchema,referenceAtMs:epochMillisecondsSchema,referencePriceUsd:decimalStringSchema})).max(200) }) },
   'paper.execution.review': {
     request: z.strictObject({
       commandId: commandIdSchema,
       proposalId: z.string().min(1).max(128),
       proposalHash: sha256HexSchema,
       decision: z.enum(['approve', 'reject']),
+      previewHash: sha256HexSchema.nullable(),
+      previewExpiresAtMs: epochMillisecondsSchema,
       reviewer: z.string().min(1).max(80),
       note: z.string().max(500),
     }).readonly(),

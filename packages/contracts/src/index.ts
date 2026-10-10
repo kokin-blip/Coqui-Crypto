@@ -11,3 +11,6 @@ export * from './schemas/news.js';
 export * from './schemas/news-intelligence.js';
 
 export * from './schemas/news-archive.js';
+
+export { newsStudyReportFileSchema } from './schemas/news-report-file.js';
+export * from './schemas/news-export-permission.js';

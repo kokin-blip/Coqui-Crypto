@@ -34,16 +34,25 @@ import { capturePaperPerformanceEvidence } from './paper-performance-evidence.js
 const DAY_MS = 86_400_000;
 const STRATEGY_MISMATCH_REASON = 'strategy_implementation_mismatch';
 
-export function readForwardEdgeStatus(profileId: string, database: Db) {
+export function readForwardEdgeStatus(profileId: string, database: Db, nowMs = Date.now()) {
   const status = readForwardEdgeStudyStatus(database);
   const observations = status.planHash === null ? []
     : listForwardEdgeObservations(status.planHash, profileId, database);
   const completedDays = observations.filter((item) => item.valuationComplete).length;
   const costBearingRebalances = observations.filter((item) => Number(item.turnoverUsd) > 0).length;
   const outcome = status.result?.outcome ?? 'not_registered';
+  const compatible = status.plan !== null && status.plan.strategyId === PAPER_TRENDVOL_VERSION;
+  // Stored complete observations remain historical until all runtime/data/cost
+  // identities are qualified. A matching strategy label cannot make them eligible.
+  const lastEligibleObservationAtMs = null;
+  // A compatible strategy name alone cannot qualify a frozen build/cost/data identity.
+  const lifecycle = status.plan === null ? 'not_registered' as const : !compatible ? 'retired_incompatible' as const : 'blocked' as const;
   return {
-    status: status.plan === null ? 'not_registered' as const
-      : outcome === 'not_registered' ? 'collecting' as const : outcome,
+    status: lifecycle, lifecycle, eligibilityReasons: status.plan === null ? ['owner_registration_required'] : !compatible ? [STRATEGY_MISMATCH_REASON] : ['runtime_identity_qualification_required'],
+    strategyId: status.plan?.strategyId ?? null, currentStrategyId: PAPER_TRENDVOL_VERSION,
+    codeRevision: status.plan?.codeRevision ?? null, lastEligibleObservationAtMs,
+    expectedDays: compatible && status.plan !== null ? Math.max(0, Math.floor((nowMs - status.plan.firstEligibleDayUtcMs) / DAY_MS)) : 0,
+    eligibleDays: 0,
     planHash: status.planHash, costProfileHash: status.plan?.costProfileHash ?? null,
     resultHash: status.resultHash, registeredAtMs: status.plan?.registeredAtMs ?? null,
     firstEligibleDayUtcMs: status.plan?.firstEligibleDayUtcMs ?? null,
@@ -52,7 +61,7 @@ export function readForwardEdgeStatus(profileId: string, database: Db) {
     minimumCostBearingRebalances: 30 as const, trialUpperBound: 215 as const,
     grossEdgeLowerBoundPct: status.result?.grossEdgeLowerConfidenceBoundPct ?? null,
     netEdgeLowerBoundPct: status.result?.netEdgeLowerConfidenceBoundPct ?? null,
-    sourceHashes: status.result?.sourceHashes ?? [], outcome, activated: status.activated,
+    sourceHashes: status.result?.sourceHashes ?? [], outcome, activated: false,
   };
 }
 

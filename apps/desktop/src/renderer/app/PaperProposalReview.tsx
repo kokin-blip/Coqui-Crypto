@@ -1,3 +1,4 @@
+import { useChannel } from '../query/use-channel.js';
 import { useRef, useState } from 'react';
 
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
@@ -14,6 +15,7 @@ const INVALIDATIONS = [
 function outcomeCopy(status: string, reason: string | null): string {
   if (status === 'succeeded') return 'Paper submission confirmed.';
   if (status === 'pending') return 'Waiting for human review.';
+  if (status === 'submitted') return 'Paper action submitted; settlement remains unconfirmed.';
   if (status === 'unknown') return 'Outcome unknown. Do not retry; reconcile first.';
   if (status === 'blocked') return `Blocked${reason === null ? '' : `: ${reason.replaceAll('_', ' ')}`}.`;
   return `Failed${reason === null ? '' : `: ${reason.replaceAll('_', ' ')}`}.`;
@@ -27,9 +29,14 @@ export function PaperProposalReview({
   readonly proposal: Proposal;
 }): React.JSX.Element {
   const dialog = useRef<HTMLDialogElement>(null);
+  const preview = useChannel(client,'paper.execution.preview',{proposalId:proposal.id});
   const [note, setNote] = useState('');
   const command = useCommand(client, 'paper.execution.review', INVALIDATIONS);
-  const presentation = presentAction(command.state, {
+  const domainState = command.state.kind === 'succeeded' && command.value !== null &&
+    ['unknown', 'blocked', 'failed'].includes(command.value.status)
+    ? { kind: command.value.status as 'unknown' | 'blocked' | 'failed', codes: [command.value.reasonCode ?? command.value.status] } as const
+    : command.state;
+  const presentation = presentAction(domainState, {
     idle: 'Confirm paper submission', pending: 'Rechecking every gate…',
   }, 'consequential');
 
@@ -39,6 +46,8 @@ export function PaperProposalReview({
       proposalId: proposal.id,
       proposalHash: proposal.proposalHash,
       decision,
+      previewHash: preview.kind === 'ready' ? preview.value.previewHash : null,
+      previewExpiresAtMs: preview.kind === 'ready' ? preview.value.expiresAtMs : 0,
       reviewer: 'profile owner',
       note: note.trim(),
     });
@@ -73,6 +82,14 @@ export function PaperProposalReview({
             ))}
           </ul>
 
+          <section aria-label="Modeled proposal consequences"><h3>Modeled costs and exposure</h3>
+            <p>Internal paper model. Allocation drift uses marked asset values before modeled costs; cash and actual broker fills are excluded.</p>
+            {preview.kind !== 'ready' || preview.value.status !== 'available' ? <p>Preview unavailable: {preview.kind === 'ready' ? preview.value.reason?.replaceAll('_',' ') : preview.kind}. Approval is disabled.</p> : <>
+              <p>Total modeled cost ${preview.value.totalCostUsd} · cost identity {preview.value.costHash.slice(0,16)}… · expires {new Date(preview.value.expiresAtMs).toLocaleTimeString()}</p>
+              <ul>{preview.value.actions.map((a,i)=><li key={i}>{a.productId}: fee ${a.feeUsd}, spread ${a.spreadUsd}, slippage ${a.slippageUsd}, impact ${a.impactUsd}. Marked exposure ${a.beforeExposureUsd} → ${a.afterExposureUsd}; reference {new Date(a.referenceAtMs).toISOString()}.</li>)}</ul>
+              <ul>{preview.value.drift.map(d=><li key={d.productId}>{d.productId}: drift {d.beforeDriftPct===null?'unavailable':`${d.beforeDriftPct.toFixed(2)}pp`} → {d.afterDriftPct===null?'unavailable':`${d.afterDriftPct.toFixed(2)}pp`}{d.targetWeight===null?' (target unavailable)':''}.</li>)}</ul>
+            </>}
+          </section>
           <ol className="gate-chain" aria-label="Submission gate chain">
             <li><strong>Profitability</strong><span>Recomputed with the shared cost model</span></li>
             <li><strong>Evidence</strong><span>Verified immutable snapshot required</span></li>
@@ -100,7 +117,7 @@ export function PaperProposalReview({
             <button
               type="button"
               className="button-secondary"
-              disabled={presentation.disabled}
+              disabled={presentation.disabled || command.value !== null}
               onClick={() => review('reject')}
             >
               Reject proposal
@@ -108,14 +125,14 @@ export function PaperProposalReview({
             <button
               type="button"
               className="button-primary"
-              disabled={presentation.disabled || note.trim().length === 0}
+              disabled={presentation.disabled || command.value !== null || note.trim().length === 0 || preview.kind !== 'ready' || preview.value.status !== 'available' || preview.value.proposalHash !== proposal.proposalHash || Date.now() > preview.value.expiresAtMs}
               aria-busy={presentation.busy}
               onClick={() => review('approve')}
             >
               {presentation.label}
             </button>
           </div>
-          <span className="sr-only" aria-live="polite">{presentation.liveMessage}</span>
+          <span className="sr-only" aria-live="polite">{command.value === null ? presentation.liveMessage : outcomeCopy(command.value.status, command.value.reasonCode)}</span>
         </form>
       </dialog>
     </>

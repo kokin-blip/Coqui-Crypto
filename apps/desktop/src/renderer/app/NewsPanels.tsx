@@ -43,7 +43,7 @@ export function NewsHealth({ client }: { readonly client: CoquiClient }): React.
   const value = health.value;
   return <section className="settings-section" aria-labelledby="news-health-heading"><h3 id="news-health-heading">News providers and analysis</h3>
     <p>{value.mainProfile ? 'Main profile' : 'Inactive collection profile'} · coverage unknown · counts cover the trailing 24 hours</p>
-    <dl className="settings-readout">{value.providers.map(p => <div key={p.provider}><dt>{p.provider}</dt><dd>{p.enabled ? 'Scheduled' : 'Disabled'} · {p.succeeded} transport successes · {p.failed} failed · {p.pending} pending · last completion {p.lastCompletedAtMs === null ? 'unknown' : new Date(p.lastCompletedAtMs).toISOString()}</dd></div>)}</dl>
+    <dl className="settings-readout">{value.providers.map(p => <div key={p.provider}><dt>{p.provider}</dt><dd>{p.enabled ? 'Scheduled' : 'Disabled'} · {p.succeeded} transport successes · {p.failed} failed · {p.pending} pending · last completion {p.lastCompletedAtMs === null ? 'unknown' : new Date(p.lastCompletedAtMs).toISOString()} · parsed {p.parsed} · retained {p.retained} · new observations {p.inserted} · last useful {p.lastUsefulAtMs === null ? 'unknown' : new Date(p.lastUsefulAtMs).toISOString()} · canonical eligibility {p.canonicalEligibility}{p.latestReason && ` · ${p.latestReason.replaceAll('_', ' ')}`}</dd></div>)}</dl>
     <p>Last completed analysis: {value.latestAnalysisAtMs === null ? 'None' : new Date(value.latestAnalysisAtMs).toISOString()}</p>
     <button type="button" className="button-secondary" disabled={!value.mainProfile || !value.analysisEnabled && !value.mappingReady || toggle.state.kind === 'pending'} onClick={() => void toggle.run({ commandId: crypto.randomUUID(), enabled: !value.analysisEnabled })}>{value.analysisEnabled ? 'Disable scheduled analysis' : 'Enable scheduled analysis'}</button>
     {!value.mappingReady && <p>Install a reviewed mapping configuration through the news analysis command before enabling analysis.</p>}
@@ -52,6 +52,14 @@ export function NewsHealth({ client }: { readonly client: CoquiClient }): React.
   </section>;
 }
 export function NewsStudyStatus({ client }: { readonly client: CoquiClient }): React.JSX.Element {
-  const health = useChannel(client, 'news.health', {});
-  return <section className="panel"><h2>News research</h2><p>{health.kind === 'ready' ? `Study status: ${health.value.studyStatus.replaceAll('_', ' ')}` : 'Study status unavailable'}</p><p>Daily 24-hour and hourly 1-, 4- and 24-hour studies require eligible prospective history. Reconstructed history cannot satisfy this requirement.</p></section>;
+  const report = useChannel(client, 'news.report', {});
+  return <section className="panel"><h2>News research</h2>
+    {report.kind !== 'ready' ? <SurfaceState compact kind={report.kind === 'loading' ? 'loading' : 'error'} title="Report association unavailable" /> : <>
+      <p>Report association: {report.value.association}. Evaluated does not imply profitability or promotion.</p>
+      {report.value.report && <><p className="mono">{report.value.report.reportHash}</p><p>Completed {new Date(report.value.report.completedAtMs).toISOString()}</p>
+        <ul>{report.value.report.horizons.map(h => <li key={`${h.cadence}:${h.horizonHours}`}><strong>{h.cadence} {h.horizonHours}h: {h.status.replaceAll('_',' ')}</strong> · {h.prospectiveRows} eligible rows · {h.reasons.join(', ').replaceAll('_',' ')}
+          <details><summary>Exact provenance</summary><p>Source {h.codeRevision} · dataset {h.datasetHash} · costs {h.costHash} · manifest {h.manifestHash}</p><p>Archives {h.sourceManifestHashes.join(', ')}</p></details></li>)}</ul></>}
+    </>}
+    <p>Reconstructed history cannot satisfy prospective evidence requirements. Legacy scalar status has no verified report association.</p>
+  </section>;
 }

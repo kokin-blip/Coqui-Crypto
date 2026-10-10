@@ -145,10 +145,22 @@ export const researchChannelSchemas = {
       }).readonly()).max(100).readonly(),
     }).readonly(),
   },
+  'research.integrity-workspace': { request: emptyPayloadSchema, response:z.strictObject({studies:z.array(z.strictObject({
+    planHash:sha256HexSchema,planEventHash:sha256HexSchema,family:z.string(),codeRevision:z.string(),sourceManifestHash:sha256HexSchema,
+    lockfileHash:sha256HexSchema,datasetHash:sha256HexSchema,dataLineage:z.string(),engineVersion:z.string(),candidateCount:z.number().int().nonnegative(),
+    costHashes:z.array(sha256HexSchema),freezeHash:sha256HexSchema.nullable(),candidateState:z.enum(['not_frozen','none','frozen']),candidateId:sha256HexSchema.nullable(),
+    holdoutState:z.enum(['consumed','no_claim_in_this_namespace']),developmentState:z.enum(['failed','recorded','attempted','not_run']),qualification:z.literal('requires_current_runtime_and_data_verification'),
+    prospectiveEnrollment:z.literal('not_verified'),stages:z.array(z.strictObject({kind:z.string(),count:z.number().int().nonnegative(),lastAtMs:epochMillisecondsSchema})),gates:z.array(z.string())
+  })).max(100)}) },
   'research.edge-study': {
     request: emptyPayloadSchema,
     response: z.strictObject({
-      status: z.enum(['not_registered', 'collecting', 'incomplete', 'passed', 'failed']),
+      status: z.enum(['not_registered', 'retired_incompatible', 'registered_idle', 'blocked', 'collecting', 'completed', 'incomplete', 'passed', 'failed']),
+      lifecycle: z.enum(['not_registered', 'retired_incompatible', 'registered_idle', 'blocked', 'collecting', 'completed']),
+      eligibilityReasons: z.array(z.string().min(1).max(100)).max(20).readonly(),
+      strategyId: z.string().nullable(), currentStrategyId: z.string(), codeRevision: z.string().nullable(),
+      lastEligibleObservationAtMs: epochMillisecondsSchema.nullable(),
+      expectedDays: z.number().int().nonnegative(), eligibleDays: z.number().int().nonnegative(),
       planHash: sha256HexSchema.nullable(),
       costProfileHash: sha256HexSchema.nullable(),
       resultHash: sha256HexSchema.nullable(),

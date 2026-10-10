@@ -1,3 +1,4 @@
+import { tracePerformance } from './performance-trace.js';
 import type { InstrumentIdentity } from '@coqui/core';
 import { CoinbaseMicrostructure } from './coinbase-microstructure.js';
 
@@ -295,6 +296,7 @@ export class CoinbaseMarketStreamService {
 
   #receive(data: unknown): void {
     if (typeof data !== 'string') return;
+    const received = performance.now();
     let message: Record<string, unknown>;
     try {
       const parsed: unknown = JSON.parse(data);
@@ -304,10 +306,14 @@ export class CoinbaseMarketStreamService {
       return;
     }
     const now = this.#nowMs();
+    tracePerformance('source.receipt',typeof message['product_id']==='string'?message['product_id']:'unknown',received,Buffer.byteLength(data));
     if (!validTime(now)) return;
     if ((message['type'] === 'snapshot' || message['type'] === 'l2update') && message['product_id'] !== this.#depthProduct) return;
     if (typeof message['product_id'] === 'string' && this.#products.includes(message['product_id'])) {
-      if (!this.#microstructure.receive(message, now)) {
+      const updateStarted = performance.now();
+      const accepted = this.#microstructure.receive(message, now);
+      tracePerformance('source.book_update', typeof message['product_id'] === 'string' ? message['product_id'] : 'unknown', updateStarted);
+      if (!accepted) {
         if (message['type'] === 'snapshot' || message['type'] === 'l2update') {
           this.#disconnect(); this.#scheduleReconnect();
         }

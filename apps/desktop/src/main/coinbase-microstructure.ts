@@ -1,3 +1,4 @@
+import { tracePerformance } from './performance-trace.js';
 import { aggregateDepth, canonicalPrice, comparePrice, validDecimal } from './market-depth.js';
 
 type Message = Readonly<Record<string, unknown>>;
@@ -86,9 +87,11 @@ export class CoinbaseMicrostructure {
   }
 
   book(productId: string, aggregation: string, limit: number, connection: Connection, asOfMs: number) {
+    const started = performance.now();
     const book = this.#books.get(productId);
     const bids = book === undefined ? [] : aggregateDepth([...book.bids].map(([price, size]) => ({ price, size })), aggregation, 'bid', limit);
     const asks = book === undefined ? [] : aggregateDepth([...book.asks].map(([price, size]) => ({ price, size })), aggregation, 'ask', limit);
+    tracePerformance('book.aggregate',productId,started,(book?.bids.size ?? 0)+(book?.asks.size ?? 0));
     const crossed = bids[0] !== undefined && asks[0] !== undefined && comparePrice(bids[0].price, asks[0].price) >= 0;
     return { instrument: instrument(productId), aggregation, bids: crossed ? [] : bids, asks: crossed ? [] : asks,
       state: book === undefined || crossed ? 'unavailable' as const : connection === 'live' ? 'ready' as const : 'stale' as const,

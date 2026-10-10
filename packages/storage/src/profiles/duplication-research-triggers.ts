@@ -123,3 +123,16 @@ export function restoreResearchDuplicationTriggers(database:DatabaseSync):void {
         BEGIN SELECT RAISE(ABORT,'ML study registration and result are immutable'); END;
   `);
 }
+
+/** A clone needs its own explicit report association; original report files/history stay untouched. */
+export function excludeNewsReportAssociations(db: DatabaseSync): number {
+  let count=0;
+  for(const table of ['news_report_associations_v1','news_export_permissions_v1']) {
+    if(!db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name=?").get(table))continue;
+    count+=db.prepare(`SELECT count(*) AS n FROM ${table}`).get()!['n'] as number;
+    db.exec(`DROP TRIGGER ${table}_no_delete; DELETE FROM ${table};
+      CREATE TRIGGER ${table}_no_delete BEFORE DELETE ON ${table}
+      BEGIN SELECT RAISE(ABORT,'news evidence is immutable'); END;`);
+  }
+  return count;
+}

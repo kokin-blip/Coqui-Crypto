@@ -429,3 +429,11 @@ export function getPaperExecutionAttemptOutcome(
     ? null
     : Object.freeze(JSON.parse(row.outcome_json) as PaperExecutionAttemptOutcome);
 }
+
+export function getPaperExecutionAttemptIdentity(commandId: string, database: Db): {
+  readonly proposalId: string; readonly profileId: string; readonly proposalHash: string;
+} | null {
+  const row = database.prepare('SELECT proposal_id, profile_id, proposal_hash FROM paper_execution_attempts_v1 WHERE command_id = ?')
+    .get(commandId) as unknown as { proposal_id: string; profile_id: string; proposal_hash: string } | undefined;
+  return row === undefined ? null : Object.freeze({ proposalId: row.proposal_id, profileId: row.profile_id, proposalHash: row.proposal_hash });
+}

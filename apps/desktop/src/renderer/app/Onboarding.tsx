@@ -5,7 +5,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useChannel } from '../query/use-channel.js';
 import { useCommand } from '../query/use-command.js';
 import { SurfaceState } from './SurfaceState.js';
-import { useDialogFocus } from './use-dialog-focus.js';
+import type { ActionState } from '@coqui/ui-kit';
 
 type Step = 'name' | 'safety' | 'exchange' | 'portfolio' | 'advisor' | 'done';
 type Provider = 'coinbase' | 'robinhood_crypto';
@@ -20,6 +20,35 @@ const SAMPLE_EVIDENCE = [{ label: 'Safety boundary', value: 'Paper only; live ex
 
 function GuideLink({ href, children }: { readonly href: string; readonly children: ReactNode }): React.JSX.Element {
   return <a className="button-secondary" href={href} target="_blank" rel="noreferrer">{children}<ExternalLink size={14} aria-hidden="true" /></a>;
+}
+
+function SetupOutcome({ state }: { readonly state: ActionState }): React.JSX.Element | null {
+  if (state.kind !== 'failed' && state.kind !== 'blocked' && state.kind !== 'unknown') return null;
+  return <SurfaceState compact kind={state.kind === 'blocked' ? 'blocked' : 'error'}
+    title={state.kind === 'unknown' ? 'Save outcome unknown' : state.kind === 'blocked' ? 'Setup save blocked' : 'Setup was not saved'}
+    detail={state.kind === 'unknown' ? 'Check the current setup state before trying again. Your entered name is retained.' : state.codes.join(', ').replaceAll('_', ' ')} />;
+}
+
+/** Mount only once the reads establish that setup is visible. Native modal owns inertness and Tab containment. */
+function SetupDialog({ children, variant, onClose }: { readonly children: ReactNode; readonly variant: string; readonly onClose: () => void }): React.JSX.Element {
+  const dialog = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const element = dialog.current;
+    const prior = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    element?.showModal();
+    return () => {
+      element?.close();
+      if (prior?.isConnected && prior !== document.body && !element?.contains(prior)) prior.focus();
+      else document.querySelector<HTMLElement>('#main-content')?.focus();
+    };
+  }, []);
+  useEffect(() => {
+    const heading = dialog.current?.querySelector<HTMLElement>('#onboarding-title');
+    if (variant === 'name') dialog.current?.querySelector<HTMLInputElement>('input')?.focus();
+    else { heading?.setAttribute('tabindex','-1'); heading?.focus(); }
+  }, [variant]);
+  return <dialog ref={dialog} className={`onboarding-dialog onboarding-${variant}`} aria-labelledby="onboarding-title"
+    onCancel={(event) => { event.preventDefault(); onClose(); }}>{children}</dialog>;
 }
 
 export function Onboarding({ client }: { readonly client: CoquiClient }): React.JSX.Element | null {
@@ -44,13 +73,11 @@ export function Onboarding({ client }: { readonly client: CoquiClient }): React.
   const [clearClipboard, setClearClipboard] = useState(true);
   const [robinhoodSetup, setRobinhoodSetup] = useState<RobinhoodSetup | null>(null);
   const [advisorSample, setAdvisorSample] = useState<AdvisorSample | 'loading' | 'failed' | null>(null);
-  const dialog = useRef<HTMLElement>(null);
   const close = (): void => { void skip.run({ commandId: crypto.randomUUID() }); };
   const finish = (): void => {
     if (readiness.kind === 'ready' && readiness.value.portfolioReady) void complete.run({ commandId: crypto.randomUUID() });
     else close();
   };
-  useDialogFocus(dialog, close);
   useEffect(() => {
     if (beginRobinhood.state.kind === 'succeeded' && beginRobinhood.value !== null) setRobinhoodSetup(beginRobinhood.value);
   }, [beginRobinhood.state.kind, beginRobinhood.value]);
@@ -74,8 +101,8 @@ export function Onboarding({ client }: { readonly client: CoquiClient }): React.
     (profiles.kind === 'ready' && profiles.value.profiles.length > 1) ||
     (settings.kind === 'ready' && settings.value.source === 'saved');
   const saveName = async (): Promise<void> => {
-    await setPerson.run({ commandId: crypto.randomUUID(), displayName });
-    setStep(returning ? 'done' : 'safety');
+    const outcome = await setPerson.run({ commandId: crypto.randomUUID(), displayName });
+    if (outcome.status === 'ok') setStep(returning ? 'done' : 'safety');
   };
   const connectionError = connectFile.state.kind === 'failed' ? connectFile.state.codes : completeRobinhood.state.kind === 'failed' ? completeRobinhood.state.codes : null;
   const tryAdvisorSample = async (): Promise<void> => {
@@ -89,12 +116,11 @@ export function Onboarding({ client }: { readonly client: CoquiClient }): React.
     setAdvisorSample(generated.status === 'ok' ? generated.value : 'failed');
   };
 
-  return <div className="onboarding-backdrop">
-    <section ref={dialog} className={`onboarding-dialog onboarding-${returning ? 'returning' : step}`} role="dialog" aria-modal="true" aria-labelledby="onboarding-title" onMouseDown={(event) => event.stopPropagation()}>
+  return <SetupDialog variant={returning ? 'returning' : step} onClose={close}>
       <header className="onboarding-header"><div className="onboarding-brand"><img src={new URL('../coqui-mark.png', import.meta.url).href} alt="" /><span><strong>Coqui</strong><small>Paper portfolio workstation</small></span></div><button type="button" className="icon-button" aria-label="Skip setup" onClick={close}><X size={18} /></button></header>
       {!returning && <div className="onboarding-progress" aria-label={`Setup step ${['name','safety','exchange','portfolio','advisor','done'].indexOf(step) + 1} of 6`}>{['name','safety','exchange','portfolio','advisor','done'].map((item) => <span key={item} className={item === step ? 'active' : ''} />)}</div>}
 
-      {step === 'name' && <div className="onboarding-body onboarding-centered"><p className="eyebrow">Welcome</p><h1 id="onboarding-title">What should Coqui call you?</h1><p>Your display name stays on this device. It is separate from portfolio profiles and never enters financial evidence or AI requests.</p><form onSubmit={(event) => { event.preventDefault(); void saveName(); }}><label>Your name<input autoFocus value={displayName} maxLength={40} autoComplete="name" onChange={(event) => setDisplayName(event.target.value)} placeholder="Name" /></label><button className="button-primary" type="submit" disabled={displayName.trim().length === 0 || setPerson.state.kind === 'pending'}>Continue<ChevronRight size={15} /></button></form>{returning && <button type="button" className="button-quiet" onClick={close}>Not now</button>}</div>}
+      {step === 'name' && <div className="onboarding-body onboarding-centered"><p className="eyebrow">Welcome</p><h1 id="onboarding-title">What should Coqui call you?</h1><p>Your display name stays on this device. It is separate from portfolio profiles and never enters financial evidence or AI requests.</p><form onSubmit={(event) => { event.preventDefault(); void saveName(); }}><label>Your name<input autoFocus value={displayName} maxLength={40} autoComplete="name" onChange={(event) => setDisplayName(event.target.value)} placeholder="Name" /></label><button className="button-primary" type="submit" disabled={displayName.trim().length === 0 || (setPerson.state.kind === 'pending' || setPerson.state.kind === 'unknown')}>Continue<ChevronRight size={15} /></button></form>{returning && <button type="button" className="button-quiet" onClick={close}>Not now</button>}</div>}
 
       {step === 'safety' && <div className="onboarding-body"><p className="eyebrow">Before connecting</p><h1 id="onboarding-title">You stay in control</h1><div className="onboarding-boundaries"><article><WalletCards aria-hidden="true" /><div><strong>Read-only account visibility</strong><p>Exchange connections show balances and account state. Coqui rejects excessive Coinbase permissions.</p></div></article><article><ShieldCheck aria-hidden="true" /><div><strong>Paper trading only</strong><p>Live order submission remains disabled in the application build.</p></div></article><article><Bot aria-hidden="true" /><div><strong>AI explains recorded facts</strong><p>Optional providers cannot trade, change strategy settings, or approve research candidates.</p></div></article></div><div className="onboarding-actions"><button className="button-secondary" type="button" onClick={() => setStep('name')}><ChevronLeft size={15} />Back</button><button className="button-primary" type="button" onClick={() => setStep('exchange')}>Choose an exchange<ChevronRight size={15} /></button></div></div>}
 
@@ -111,6 +137,8 @@ export function Onboarding({ client }: { readonly client: CoquiClient }): React.
 
       {step === 'done' && <div className="onboarding-body onboarding-centered"><Check className="onboarding-done-icon" size={34} aria-hidden="true" /><p className="eyebrow">Setup saved</p><h1 id="onboarding-title">{readiness.value.portfolioReady ? 'Your portfolio is ready' : 'Continue at your own pace'}</h1><p>Overview will keep a readiness guide visible until Coqui records the first paper decision. Every optional step can be resumed from Settings.</p><button className="button-primary" type="button" onClick={finish}>Open Coqui</button></div>}
       {!returning && step !== 'done' && <button type="button" className="onboarding-skip" onClick={close}>Skip setup</button>}
-    </section>
-  </div>;
+      <SetupOutcome state={setPerson.state} />
+      <SetupOutcome state={skip.state} />
+      <SetupOutcome state={complete.state} />
+    </SetupDialog>;
 }

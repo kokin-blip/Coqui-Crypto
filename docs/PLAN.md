@@ -1,3 +1,5 @@
+Current status: [authoritative evidence index](CURRENT-STATUS.md). Dated completed entries below retain their historical scope.
+
 # PLAN
 
 Phase order, work items, exit criteria.
@@ -47,7 +49,7 @@ The remaining evidence criteria cannot be closed with fixtures or prose:
    leak sweep are all built and green. What is untested is a real key against
    the real venue, and no amount of fixture work substitutes for it.
 
-2. **The prospective collector and real multi-day campaign are implemented and waiting on time.**
+2. **Historical collector/campaign evidence requires current identity and coverage qualification.**
    (`docs/studies/paper-forward-run-2026-08-22.md`). The profitability gate
    now reads only integrity-verified migration 49 evidence. Migration 50 appends
    actual scheduler observations, exact no-trade counterfactuals, current costs,

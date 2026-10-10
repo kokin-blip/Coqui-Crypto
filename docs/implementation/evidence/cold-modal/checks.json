@@ -1,0 +1,198 @@
+{
+  "simulated": true,
+  "profileKind": "disposable",
+  "sourceRevision": "7b17fd3a951dafbf4709375f25b3e5e563ffbd88",
+  "buildIdentity": {
+    "version": "0.1.0-beta.16",
+    "sourceRevision": "7b17fd3a951dafbf4709375f25b3e5e563ffbd88",
+    "dirty": false,
+    "sourceHash": "707932eaed2def304d07175acda7e01c5c6c6e76e1bd0133d200e28d93797696",
+    "channel": "beta-candidate",
+    "builtAtMs": 1791614862853
+  },
+  "environment": {
+    "platform": "darwin",
+    "electron": "43.4.1",
+    "node": "24.18.1"
+  },
+  "startedAtMs": 1791614879889,
+  "completedAtMs": 1791614882776,
+  "workload": {
+    "version": 1,
+    "network": "always_503",
+    "scheduler": "disabled",
+    "coldReadDelayMs": 150,
+    "nameOutcomes": [
+      "blocked",
+      "unknown"
+    ],
+    "skipOutcomes": [
+      "failed",
+      "ok"
+    ],
+    "viewport": [
+      1280,
+      800
+    ],
+    "zoom": [
+      1,
+      2
+    ]
+  },
+  "workloadHash": "9885b42b0cb11f5385a0a7c45a01fbbdb52dae637bc3cb71c7638dbb9929b6f8",
+  "authority": "approved local implementation fixture",
+  "rights": "generated fixture UI only",
+  "checks": [
+    {
+      "name": "delayed cold reads mount a native modal",
+      "passed": true
+    },
+    {
+      "name": "name has initial focus",
+      "passed": true
+    },
+    {
+      "name": "background cannot acquire focus",
+      "passed": true
+    },
+    {
+      "name": "Tab containment forward 0",
+      "passed": true
+    },
+    {
+      "name": "Tab containment forward 1",
+      "passed": true
+    },
+    {
+      "name": "Tab containment forward 2",
+      "passed": true
+    },
+    {
+      "name": "Tab containment forward 3",
+      "passed": true
+    },
+    {
+      "name": "Tab containment forward 4",
+      "passed": true
+    },
+    {
+      "name": "Tab containment forward 5",
+      "passed": true
+    },
+    {
+      "name": "Tab containment forward 6",
+      "passed": true
+    },
+    {
+      "name": "Tab containment forward 7",
+      "passed": true
+    },
+    {
+      "name": "Tab containment forward 8",
+      "passed": true
+    },
+    {
+      "name": "Tab containment forward 9",
+      "passed": true
+    },
+    {
+      "name": "Tab containment forward 10",
+      "passed": true
+    },
+    {
+      "name": "Tab containment forward 11",
+      "passed": true
+    },
+    {
+      "name": "Tab containment reverse 0",
+      "passed": true
+    },
+    {
+      "name": "Tab containment reverse 1",
+      "passed": true
+    },
+    {
+      "name": "Tab containment reverse 2",
+      "passed": true
+    },
+    {
+      "name": "Tab containment reverse 3",
+      "passed": true
+    },
+    {
+      "name": "Tab containment reverse 4",
+      "passed": true
+    },
+    {
+      "name": "Tab containment reverse 5",
+      "passed": true
+    },
+    {
+      "name": "Tab containment reverse 6",
+      "passed": true
+    },
+    {
+      "name": "Tab containment reverse 7",
+      "passed": true
+    },
+    {
+      "name": "Tab containment reverse 8",
+      "passed": true
+    },
+    {
+      "name": "Tab containment reverse 9",
+      "passed": true
+    },
+    {
+      "name": "Tab containment reverse 10",
+      "passed": true
+    },
+    {
+      "name": "Tab containment reverse 11",
+      "passed": true
+    },
+    {
+      "name": "refusal preserves the name and step",
+      "passed": true
+    },
+    {
+      "name": "unknown completion disables blind save retry",
+      "passed": true
+    },
+    {
+      "name": "zoom retains a bounded modal",
+      "passed": true
+    },
+    {
+      "name": "failed Escape skip retains the modal",
+      "passed": true
+    },
+    {
+      "name": "successful skip returns focus to Terminal",
+      "passed": true
+    },
+    {
+      "name": "Recovery/About reads the disposable schema and keeps certification unverified",
+      "passed": true
+    },
+    {
+      "name": "research workspace exposes no transition commands",
+      "passed": true
+    },
+    {
+      "name": "explicit reopen confirmed",
+      "passed": true
+    },
+    {
+      "name": "reopen mounts modal again",
+      "passed": true
+    }
+  ],
+  "excluded": [
+    "VoiceOver",
+    "real account/provider/broker evidence",
+    "actual-profile migration/restore",
+    "installed distributable",
+    "real-market latency"
+  ]
+}

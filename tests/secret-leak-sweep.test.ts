@@ -42,6 +42,7 @@ afterEach(() => {
 
 /** Channels that answer from local state. The rest would reach the network. */
 const LOCAL_CHANNELS: readonly ChannelName[] = [
+  'app.about','app.performance-trace','app.evidence-export','news.report','research.integrity-workspace',
   'news.timeline', 'news.detail', 'news.health', 'news.analysis.set-enabled',
   'research.overlay-shadow.status', 'research.overlay-shadow.set',
   'trading.activity.scopes', 'trading.activity.summary', 'trading.activity.trail',
@@ -74,6 +75,7 @@ const LOCAL_CHANNELS: readonly ChannelName[] = [
 ];
 
 const PAYLOADS: Partial<Record<ChannelName, unknown>> = {
+  'app.evidence-export': {commandId:'11111111-1111-4111-8111-111111111111'},
   'news.timeline': { asOfMs: null, limit: 100 },
   'news.detail': { observationId: 'a'.repeat(64), asOfMs: null },
   'news.analysis.set-enabled': { commandId: '11111111-1111-4111-8111-111111111111', enabled: false },
@@ -222,6 +224,7 @@ describe('the sweep covers the whole registry', () => {
       || channel === 'portfolio.view'
       || channel === 'portfolio.allocation'
       || channel === 'paper.portfolio'
+      || channel === 'paper.execution.preview' // Portfolio refresh is exercised by proposal service fixtures.
       || channel === 'paper.execution.proposal'
       || channel === 'paper.campaign'
       || channel === 'paper.campaign.kill-switch'

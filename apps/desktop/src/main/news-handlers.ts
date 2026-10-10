@@ -2,10 +2,11 @@ import { newsEvidenceHash, type Clock } from '@coqui/core';
 import type { ChannelHandlers } from './dispatch.js';
 import { newsObservationAnalysisSchema } from '@coqui/contracts';
 import { newsAnalysisEnabled, readNewsAnalysisConfiguration, readNewsHostConfiguration, saveNewsAnalysisEnabled } from '@coqui/services';
-import { listNewsObservationsAsOf, readNewsObservation, readNewsCoverage, listNewsFeaturesAsOf, readNewsRegistryEvidence, getSetting, type Db } from '@coqui/storage';
+import { latestAssociatedNewsReport, listNewsObservationsAsOf, readNewsObservation, readNewsCoverage, listNewsFeaturesAsOf, readNewsRegistryEvidence, getSetting, type Db } from '@coqui/storage';
 export function createNewsHandlers(profileId: string, database: Db, clock: Clock): ChannelHandlers {
   const cutoff = (asOf: number | null) => { const value = asOf ?? clock.nowMs(); if (value > clock.nowMs()) throw new TypeError('Future news cutoff.'); return value; };
   return {
+    'news.report': () => ({ ok: true, value: latestAssociatedNewsReport(profileId,clock.nowMs(),database) }),
     'news.timeline': (p: { readonly asOfMs: number | null; readonly limit: number }) => {
       const asOfMs = cutoff(p.asOfMs);
       return { ok: true, value: { asOfMs, observations: listNewsObservationsAsOf(asOfMs, p.limit, database).map(o =>
@@ -36,7 +37,12 @@ export function createNewsHandlers(profileId: string, database: Db, clock: Clock
         providers: (['gdelt', 'marketaux', 'currents'] as const).map(provider => {
           const c = coverage.find(c => c.provider === provider);
           const last = database.prepare('SELECT max(completed_at) AS at FROM news_request_attempts_v1 WHERE provider=? AND completed_at<=?').get(provider, asOfMs) as { at: number | null };
-          return { provider, enabled: profileId === 'main' && provider === 'gdelt' && configuration.gdeltEnabled,
+          const funnel = database.prepare(`SELECT coalesce(sum(parsed),0) AS parsed,coalesce(sum(retained),0) AS retained,
+            coalesce(sum(inserted),0) AS inserted FROM news_ingestion_diagnostics_v1 WHERE provider=? AND completed_at BETWEEN ? AND ?`)
+            .get(provider, asOfMs - 86_400_000, asOfMs) as { parsed: number; retained: number; inserted: number };
+          const useful = database.prepare('SELECT max(completed_at) AS at FROM news_ingestion_diagnostics_v1 WHERE provider=? AND inserted>0 AND completed_at<=?').get(provider, asOfMs) as { at: number | null };
+          const diagnostic = database.prepare('SELECT reason FROM news_ingestion_diagnostics_v1 WHERE provider=? AND completed_at<=? ORDER BY completed_at DESC,rowid DESC LIMIT 1').get(provider,asOfMs) as { reason: string | null } | undefined;
+          return { ...funnel, lastUsefulAtMs: useful.at, latestReason: diagnostic?.reason ?? null, canonicalEligibility: 'unknown', provider, enabled: profileId === 'main' && provider === 'gdelt' && configuration.gdeltEnabled,
             reserved: c?.reserved ?? 0, succeeded: c?.succeeded ?? 0, failed: c?.failed ?? 0, pending: c?.pending ?? 0, lastCompletedAtMs: last.at };
         }) } };
     },

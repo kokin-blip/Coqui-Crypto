@@ -7,7 +7,7 @@ import { buildDecisionMarketDataset, instrumentKey, coinbaseResearchScenarios, i
 import { openDatabase, listIntegrityEvents, claimIntegrityHoldout, appendIntegrityEvent,
   loadTrialRegistry } from '../packages/storage/src/index.js';
 import { registerIntegrityStudy, runIntegrityDevelopment, freezeIntegrityCandidate, runIntegrityFinal,
-  recordMonthlyStrategyHealth, readStrategyHealth } from '../packages/services/src/index.js';
+  readIntegrityWorkspace, recordMonthlyStrategyHealth, readStrategyHealth } from '../packages/services/src/index.js';
 import { paperGrossEdgeLowerBoundPct } from '../apps/desktop/src/main/forward-edge-runtime.js';
 const DAY = 86_400_000, START = Date.UTC(2024, 0, 1);
 const BTC = instrumentKey({ venue: 'coinbase', productId: 'BTC-USD', productType: 'spot' });
@@ -38,6 +38,19 @@ function plan(family: IntegrityStudyPlan['family'] = 'momentum'): IntegrityStudy
 }
 const runtime = { codeRevision: 'fixture', sourceManifestHash: 'a'.repeat(64), lockfileHash: 'b'.repeat(64) };
 const devAt = START + 91 * DAY, freezeAt = START + 92 * DAY, finalAt = START + 161 * DAY;
+describe('read-only governed workspace',()=>{
+  it('shows none and consumed exposure without loading final-performance bodies',()=>{
+    const db=openDatabase(':memory:'),hash=registerIntegrityStudy(plan(),db);
+    expect(readIntegrityWorkspace(db)[0]).toMatchObject({candidateState:'not_frozen',holdoutState:'no_claim_in_this_namespace',prospectiveEnrollment:'not_verified'});
+    const developmentHash=appendIntegrityEvent({namespace:hash,kind:'development_result',key:'fixture',atMs:devAt,body:{fixture:true}},db);
+    appendIntegrityEvent({namespace:hash,kind:'freeze',key:'fixture',atMs:freezeAt,body:{candidateId:null,developmentHash}},db);
+    appendIntegrityEvent({namespace:hash,kind:'final_claim',key:'fixture',atMs:finalAt,body:{fixture:true}},db);
+    // Malformed sealed payload is intentionally never read by this metadata projection.
+    db.prepare('INSERT INTO research_integrity_events(namespace,kind,record_key,at_ms,body_json,content_hash) VALUES(?,?,?,?,?,?)').run(hash,'final_result','fixture',finalAt,'{"sealed":"do not load"}','0'.repeat(64));
+    expect(readIntegrityWorkspace(db)[0]).toMatchObject({candidateState:'none',candidateId:null,holdoutState:'consumed'});
+    db.close();
+  });
+});
 describe('versioned cost and family contracts', () => {
   it('registers exactly two spread-floor candidates and rejects invalid values', () => {
     const baseline = plan('trendvol');

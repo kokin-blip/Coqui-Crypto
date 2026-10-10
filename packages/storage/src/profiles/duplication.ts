@@ -7,7 +7,7 @@ import { backupDatabase } from '../sqlite/index.js';
 import { campaignAuthorityRowCount } from './duplication-transient-counts.js';
 import { dropDecisionDuplicationTriggers, restoreDecisionDuplicationTriggers } from './duplication-decision-triggers.js';
 import { deleteExploratoryCampaignRows, dropExploratoryDuplicationTriggers, restoreExploratoryDuplicationTriggers } from './duplication-exploratory-triggers.js';
-import { dropResearchDuplicationTriggers, restoreResearchDuplicationTriggers } from './duplication-research-triggers.js';
+import { dropResearchDuplicationTriggers, restoreResearchDuplicationTriggers, excludeNewsReportAssociations } from './duplication-research-triggers.js';
 
 export interface DuplicateProfileDatabaseInput {
   readonly sourceProfileId: string; readonly sourceDbFilename: string;
@@ -197,7 +197,7 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
           DROP TRIGGER host_takeover_history_v1_no_update;
           DROP TRIGGER host_takeover_history_v1_no_delete;
         `);
-        const universeRows = dropResearchDuplicationTriggers(target, input.sourceProfileId);
+        const universeRows = excludeNewsReportAssociations(target) + dropResearchDuplicationTriggers(target, input.sourceProfileId);
         for (const tableName of tableNames as string[]) {
           const table = quoteIdentifier(tableName);
           const identities = target.prepare(

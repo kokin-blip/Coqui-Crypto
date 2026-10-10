@@ -17,3 +17,4 @@ export * from './integrity-study.js';
 export * from "./overlay-study.js";
 
 export * from "./overlay-shadow.js";
+export * from './integrity-workspace.js';

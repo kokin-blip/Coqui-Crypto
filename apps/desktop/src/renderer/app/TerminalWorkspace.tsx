@@ -10,6 +10,8 @@ import { ChannelNotice, TerminalTabs } from './TerminalPrimitives.js';
 import { TerminalAssets, TerminalProposals, TerminalResearch } from './TerminalDataTables.js';
 import { ActivityControls, ActivityPositions, ActivityDecisions, useTerminalActivity } from './TerminalActivity.js';
 import { formatLocalTime } from './time-format.js';
+import { useQueryClient } from '@tanstack/react-query';
+import { ReadinessGuide } from './ReadinessGuide.js';
 
 const Performance = lazy(async () => ({ default: (await import('./TerminalPerformance.js')).TerminalPerformance }));
 const CHART_TABS = ['Price Chart', 'Depth Chart'] as const;
@@ -40,6 +42,7 @@ function Workspace({ client }: { readonly client: CoquiClient }): React.JSX.Elem
   };
   return <div className="terminal-workspace">
     <div className="terminal-main">
+      <ReadinessGuide client={client} />
       <div className="terminal-market-row">
         <section ref={chartRef} className="terminal-panel terminal-price-panel">
           <div className="terminal-chart-heading"><TerminalTabs tabs={CHART_TABS} value={chartTab} onChange={setChartTab} label="Chart views" id="terminal-chart" />
@@ -72,6 +75,12 @@ function Workspace({ client }: { readonly client: CoquiClient }): React.JSX.Elem
 
 export function TerminalWorkspace({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const profiles = useChannel(client, 'accounts.profiles', {});
-  if (profiles.kind !== 'ready') return <div className="terminal-empty" role="status">Loading profile…</div>;
+  const queries = useQueryClient();
+  if (profiles.kind !== 'ready') return <div className="terminal-empty">
+    <ChannelNotice state={profiles} label="Profile" />
+    {profiles.kind !== 'loading' && <><button type="button" className="button-secondary"
+      onClick={() => void queries.invalidateQueries({ queryKey: ['accounts.profiles'] })}>Retry profile read</button>
+      <a href="#/settings">Open diagnostics</a></>}
+  </div>;
   return <Workspace key={profiles.kind === 'ready' ? profiles.value.activeProfile.id : 'loading-profile'} client={client} />;
 }

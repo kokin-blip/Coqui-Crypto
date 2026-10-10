@@ -1,3 +1,4 @@
+import { RecoverySettings } from './RecoverySettings.js';
 import { NewsHealth } from './NewsPanels.js';
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { useRef, useState, type KeyboardEvent } from 'react';
@@ -14,7 +15,7 @@ import { useCommand } from '../query/use-command.js';
 import { WorkspaceSettings } from './WorkspaceSettings.js';
 
 type SettingsView = ChannelResponse<'accounts.settings'>;
-type SettingsCategory = 'connections' | 'appearance' | 'workspace' | 'paper' | 'advisor' | 'diagnostics';
+type SettingsCategory = 'connections' | 'appearance' | 'workspace' | 'paper' | 'advisor' | 'diagnostics' | 'recovery';
 
 const CATEGORIES: readonly { readonly id: SettingsCategory; readonly label: string }[] = [
   { id: 'connections', label: 'Connections' },
@@ -22,6 +23,7 @@ const CATEGORIES: readonly { readonly id: SettingsCategory; readonly label: stri
   { id: 'workspace', label: 'Workspace' },
   { id: 'paper', label: 'Paper and safety' },
   { id: 'advisor', label: 'Advisor and retention' },
+  { id: 'recovery', label: 'Recovery and About' },
   { id: 'diagnostics', label: 'Diagnostics' },
 ];
 
@@ -86,6 +88,7 @@ export function Settings({ client }: { readonly client: CoquiClient }): React.JS
         {category === 'workspace' && <section className="settings-section" aria-labelledby="workspace-settings-heading"><div><p className="section-label">Workspace</p><h3 id="workspace-settings-heading">Mode and chart defaults</h3></div><WorkspaceSettings client={client} preferences={view.preferences} /></section>}
         {category === 'paper' && <div className="settings-panel-stack"><ParallelPaperSettings client={client} /><ExploratoryPaperSettings client={client} /><ExecutionPolicySettings client={client} /><PaperCampaignSettings client={client} /></div>}
         {category === 'advisor' && <AdvisorSettingsSummary client={client} />}
+        {category === 'recovery' && <RecoverySettings client={client} />}
         {category === 'diagnostics' && <><NewsHealth client={client} /><DiagnosticsSettings client={client} /></>}
       </div>
     </div>

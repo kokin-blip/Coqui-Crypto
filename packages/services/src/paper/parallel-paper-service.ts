@@ -4,7 +4,7 @@ import { Decimal } from 'decimal.js';
 import { createAlpacaPaperClient, createAlpacaPaperTradeStream, createRequestDeadline, childRequestDeadline, AlpacaPaperError, withinDeadline, type AlpacaPaperCredentials, type AlpacaPaperTradeUpdate, type SecretStore, type RequestDeadline } from '@coqui/adapters';
 import { instrumentKey, sha256Hex, type Clock } from '@coqui/core';
 import {
-  appendParallelEvent, getLatestConnectionAccountSnapshotV2, getSetting,
+  appendParallelEvent, countParallelEvents, getLatestConnectionAccountSnapshotV2, getSetting,
   latestParallelExperiment, listParallelEvents, listProfileConnectionsV2,
   parallelExperimentStatus, saveParallelExperiment, type Db, type ParallelPaperEvent,
   type ParallelPaperExperiment,
@@ -67,6 +67,11 @@ export class ParallelPaperService {
   constructor(input: ParallelPaperDependencies) {
     this.#input = input;
     this.#clientFactory = input.clientFactory ?? createAlpacaPaperClient;
+    const existing = latestParallelExperiment(input.profileId, input.database);
+    if (existing && parallelExperimentStatus(listParallelEvents(existing.id, input.profileId, input.database)) === 'active') {
+      this.#append(existing, 'paused', `startup-pause:${countParallelEvents(existing.id, input.profileId, input.database)}`,
+        { reason: 'runtime_restart', reconciliationRequired: true, manualResumeRequired: true });
+    }
   }
 
   #events(experiment: ParallelPaperExperiment): readonly ParallelPaperEvent[] {
@@ -293,7 +298,15 @@ export class ParallelPaperService {
     await client.latestCryptoQuotes().catch(() => undefined); // Health observation cannot block reconciliation or arm an order.
   }
   suspend(): void { this.#suspended = true; this.#deadline?.dispose(); this.#tradeStream?.close(); this.#tradeStream = undefined; this.#tradeStreamKey = undefined; }
-  resume(): void { this.#suspended = false; }
+  resume(): void {
+    if (this.#suspended) {
+      const existing = latestParallelExperiment(this.#input.profileId, this.#input.database);
+      if (existing && this.status().status === 'active') this.#append(existing, 'paused',
+        `ownership-pause:${countParallelEvents(existing.id, this.#input.profileId, this.#input.database)}`,
+        { reason: 'ownership_transfer', reconciliationRequired: true, manualResumeRequired: true });
+    }
+    this.#suspended = false;
+  }
 
   async tick(deadline?: RequestDeadline): Promise<void> {
     if (this.#checking || this.#suspended) return;

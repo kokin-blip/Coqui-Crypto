@@ -1,3 +1,5 @@
+import { createPaperReviewHandlers } from './paper-review-handlers.js';
+import { createWorkstationHandlers } from './workstation-handlers.js';
 import { createNewsHandlers } from './news-handlers.js';
 import { createRuntimeNewsHost, type NewsHostRuntime } from './news-host-runtime.js'; import type { NewsHostConfiguration, ProfileOperationGate } from '@coqui/services'; import type { WalletNicknameStore, ProfileManifestStore } from '@coqui/storage';
 import { createOverlayShadowRuntime } from './overlay-shadow-runtime.js'; import { createWiderUniverseRuntime } from './wider-universe-runtime.js'; import { createBreakoutRuntime } from './breakout-runtime.js'; import { createRangeRotationRuntime } from './range-rotation-runtime.js'; import { createMarketSelectorRuntime } from './market-selector-runtime.js';
@@ -52,7 +54,7 @@ import {
   listPaperPerformanceDayFacts,
   openDatabase,
   readOperationsFloor, listResearchLineage,
-  registerForwardEdgeStudy,
+  readForwardEdgeStudyStatus,
   setPaperExecutionPolicy,
   type Db,
 } from '@coqui/storage';
@@ -95,6 +97,7 @@ export interface RuntimeOptions extends Partial<Pick<Parameters<typeof createAdv
   readonly readSystemTime?: () => number;
   readonly onUnexpectedError?: (context: string, error: unknown) => void;
   /** Leave the scheduler stopped for smoke tests. */
+  readonly saveEvidence?: (readData: () => string) => Promise<'saved' | 'cancelled'>;
   readonly disableScheduler?: boolean; readonly newsConfiguration?: NewsHostConfiguration; readonly newsQuotaDatabasePath?: string;
   /**
    * A verified CoinGecko Demo key, read from the secret store *before* the
@@ -141,7 +144,7 @@ export interface CoquiRuntime {
  * whichever service happened to need it first.
  */
 export function createRuntime(options: RuntimeOptions): CoquiRuntime {
-  const clock = new SystemClock(options.readSystemTime ?? (() => Date.now())), database = openDatabase(options.databasePath), forwardPlanHash = registerForwardEdgeStudy(SHIPPED_FORWARD_EDGE_PLAN, database), hostId = options.hostId ?? `desktop-${randomUUID()}`;
+  const clock = new SystemClock(options.readSystemTime ?? (() => Date.now())), database = openDatabase(options.databasePath), forwardPlanHash = readForwardEdgeStudyStatus(database).planHash, hostId = options.hostId ?? `desktop-${randomUUID()}`;
 
   // log line always, and an incident row when the fault is durable. Before this,
   // `createStructuredLogger` had no production caller and nothing but the
@@ -243,6 +246,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     market: paperMarket.view,
     state: () => ({
       holdings: paperHoldings,
+      allocationPolicy: getAllocationPolicy(database),
       killSwitchEngaged: resolveKillSwitch(options.profileId, database).engaged ||
         readStrategyHealth(options.profileId, PAPER_TRENDVOL_VERSION, database)?.state === 'paused',
       evidenceVerified: evidence.track().conversationEligible,
@@ -261,6 +265,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     eligibility: () => ({ strategyPaused: readStrategyHealth(options.profileId, PAPER_TRENDVOL_VERSION, database)?.state === 'paused', grossEdgeLowerBoundPct: paperGrossEdgeLowerBoundPct(options.profileId, database, clock.nowMs()) }),
     evidenceVerified: () => evidence.track().conversationEligible, executionOwnerId: hostId,
     captureEvidence: async (summary: Parameters<typeof captureScheduledForwardEvidence>[0]['summary']) => {
+      if (forwardPlanHash === null) return;
       await captureScheduledForwardEvidence({ profileId: options.profileId,
         plan: SHIPPED_FORWARD_EDGE_PLAN, planHash: forwardPlanHash, summary, clock,
         priceSource, market: paperMarket.view, database });
@@ -370,6 +375,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
         },
       };
     },
+    ...createWorkstationHandlers({profileId:options.profileId,database,clock,...(options.saveEvidence?{saveEvidence:options.saveEvidence}:{})}),
     'paper.execution.policy': () => ({ ok: true, value: getPaperExecutionPolicy(options.profileId, database) }),
     'paper.execution.policy.set': (payload: {
       readonly commandId: string;
@@ -436,24 +442,15 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
         }),
       };
     },
-    'paper.execution.review': async (payload: {
-      readonly commandId: string;
-      readonly proposalId: string;
-      readonly proposalHash: string;
-      readonly decision: 'approve' | 'reject';
-      readonly reviewer: string;
-      readonly note: string;
-    }) => {
-      const now = clock.nowMs();
-      await paperMarket.refresh(now);
-      paperHoldings = (await portfolio.portfolioView()).holdings;
-      return { ok: true, value: paperExecution().review(payload) };
-    },
+    ...createPaperReviewHandlers({ service:paperExecution,
+      refreshPreview:async()=>{paperHoldings=(await portfolio.portfolioView()).holdings;},
+      refreshReview:async()=>{await paperMarket.refresh(clock.nowMs());paperHoldings=(await portfolio.portfolioView()).holdings;},
+    }),
     ...createMarketHandlers(marketData, displayData, liveMarket, marketDiagnostics),
     'research.runs': () => research.runs(),
     'research.performance': () => research.performance(),
     'research.edge-study': () => ({ ok: true,
-      value: readForwardEdgeStatus(options.profileId, database) }),
+      value: readForwardEdgeStatus(options.profileId, database, clock.nowMs()) }),
     'research.jobs': (payload: { readonly limit: number }) => research.jobs(payload.limit),
     'research.job': (payload: { readonly id: string }) => research.job(payload.id),
     'portfolio.view': async () => ({ ok: true, value: await portfolio.portfolioView() }),
@@ -478,6 +475,8 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       readonly kind: Parameters<ReconciliationLedgerService['resolve']>[0]['kind'];
       readonly linkedLotId: string | null;
       readonly note: string;
+      readonly previewHash: string | null;
+      readonly previewExpiresAtMs: number;
     }) => {
       const result = reconciliation.resolve({
         profileId: options.profileId,

@@ -7,6 +7,7 @@ import { ProfileSwitcher } from './ProfileSwitcher.js';
 import { CommandMenu } from './CommandMenu.js';
 import { statusSummary } from './workspace-layout.js';
 import { formatLocalTime } from './time-format.js';
+import { ChannelNotice } from './TerminalPrimitives.js';
 
 type RailView = ChannelResponse<'app.status-rail'>;
 
@@ -68,7 +69,7 @@ function StrategyDecision({ client }: { readonly client: CoquiClient }): React.J
   );
 }
 
-function NotificationCenter({ client }: { readonly client: CoquiClient }): React.JSX.Element {
+export function NotificationCenter({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const alerts = useChannel(client, 'alerts.view', {});
   const activity = useChannel(client, 'activity.feed', { limit: 12, cursor: null });
   const alertItems = alerts.kind === 'ready' ? alerts.value.alerts.filter((item) => item.readAt === null)
@@ -82,7 +83,9 @@ function NotificationCenter({ client }: { readonly client: CoquiClient }): React
     <summary aria-label={`Open notifications, ${items.length} recent`} title="Notifications"><Bell size={14} aria-hidden="true" />
       <span>Notifications</span>{items.length > 0 && <strong>{items.length}</strong>}</summary>
     <div className="status-details-panel">
-      {items.length === 0 ? <span>No unread or actionable evidence</span> : items.map((item) =>
+      {alerts.kind !== 'ready' && <ChannelNotice state={alerts} label="Alerts" />}
+      {activity.kind !== 'ready' && <ChannelNotice state={activity} label="Activity" />}
+      {items.length === 0 && alerts.kind === 'ready' && activity.kind === 'ready' ? <span>No unread or actionable evidence in the recent preview</span> : items.map((item) =>
         <a key={item.id} href="#/activity"><span>{item.title}</span><small>{formatLocalTime(item.at)}</small></a>)}
       <a href="#/activity">Open all operational evidence</a>
     </div>

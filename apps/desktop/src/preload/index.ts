@@ -26,16 +26,19 @@ const QUERY_CHANNEL = 'coqui:query';
  * renderer as a plain string built from the error, which is both useless to a
  * surface and a leak risk, so every failure is a typed outcome instead.
  */
-async function query(channel: unknown, payload: unknown): Promise<Outcome<unknown>> {
+async function query(channel: unknown, payload: unknown, suppliedTraceId?: unknown): Promise<Outcome<unknown>> {
   if (!isChannelName(channel)) return transportFailure('unknown_channel');
 
   const schemas = CHANNEL_SCHEMAS[channel as ChannelName];
   const request = schemas.request.safeParse(payload);
   if (!request.success) return transportFailure('invalid_request_payload');
 
+  const tracing = process.env['COQUI_PERFORMANCE_TRACE'] === '1' && channel.startsWith('market-data.');
+  const traceId = tracing ? typeof suppliedTraceId === 'string' && /^[a-f0-9-]{36}$/u.test(suppliedTraceId) ? suppliedTraceId : crypto.randomUUID() : undefined;
+  const started = performance.now();
   let reply: unknown;
   try {
-    reply = await ipcRenderer.invoke(QUERY_CHANNEL, channel, request.data);
+    reply = await ipcRenderer.invoke(QUERY_CHANNEL, channel, request.data, traceId);
   } catch {
     return transportFailure('transport_unavailable');
   }
@@ -44,6 +47,9 @@ async function query(channel: unknown, payload: unknown): Promise<Outcome<unknow
     return transportFailure('invalid_response_payload');
   }
 
+  if (tracing) { performance.mark(`coqui:ipc:${traceId}`, { detail: { channel, durationMs: performance.now()-started, atMs: Date.now() } });
+    const old = performance.getEntriesByType('mark').filter(e => e.name.startsWith('coqui:'));
+    for (const entry of old.slice(0,Math.max(0,old.length-2000))) performance.clearMarks(entry.name); }
   const outcome = reply as Outcome<unknown>;
   if (outcome.status !== 'ok') return outcome;
 
@@ -63,4 +69,4 @@ function onComponentStateChanged(listener: (payload: unknown) => void): () => vo
   };
 }
 
-contextBridge.exposeInMainWorld('coqui', { query, onComponentStateChanged });
+contextBridge.exposeInMainWorld('coqui', { query, onComponentStateChanged, traceEnabled: process.env['COQUI_PERFORMANCE_TRACE'] === '1' });
