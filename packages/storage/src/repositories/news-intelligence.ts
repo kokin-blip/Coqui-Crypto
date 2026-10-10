@@ -2,7 +2,7 @@ import { canonicalJson, instrumentKey, isNewsTimestamp, newsEvidenceHash, type C
   type NewsAnalysisRun, type NewsClusterSnapshot, type NewsFeatureSnapshot, type NewsIntelligenceConfiguration,
   type NewsObservationAnalysis, type NewsRegistryEvidence, type InstrumentIdentity } from '@coqui/core';
 import { newsAnalysisRunSchema, newsClusterSnapshotSchema, newsFeatureSnapshotSchema,
-  newsObservationAnalysisSchema } from '@coqui/contracts';
+  newsObservationAnalysisSchema, newsAnalysisChunkSchema } from '@coqui/contracts';
 import { inTransaction, type Db } from '../sqlite/index.js';
 
 interface EvidenceRow { evidence_json: string; content_hash: string }
@@ -11,8 +11,8 @@ function restore<T>(row: EvidenceRow, parse: (value: unknown) => T): T {
   if (newsEvidenceHash(value) !== row.content_hash) throw new Error('News intelligence evidence failed integrity validation.');
   return parse(value);
 }
-export function newsAnalysisRunId(run: Pick<NewsAnalysisRun, 'inputCutoffMs' | 'configuration' | 'registry' | 'inputObservationIds'>): string {
-  return newsEvidenceHash({ algorithmVersion: 'news-intelligence-v1', ...run });
+export function newsAnalysisRunId(run: Pick<NewsAnalysisRun, 'inputCutoffMs' | 'configuration' | 'registry' | 'inputObservationIds' | 'inputWindowStartMs' | 'chunkIds'>): string {
+  return newsEvidenceHash({ algorithmVersion: run.inputWindowStartMs === undefined ? 'news-intelligence-v1' : 'news-intelligence-window-v2', ...run });
 }
 export function readNewsRegistryEvidence(configuration: NewsIntelligenceConfiguration, cutoff: number,
   database: Db): readonly NewsRegistryEvidence[] {
@@ -37,6 +37,22 @@ export function newsArticleFirstAvailableAt(articleId: string, database: Db): nu
   if (!row) throw new Error('Missing news article identity.');
   return Math.max(row.first_observed_at, row.persisted_at);
 }
+function validateRunChunks(run: NewsAnalysisRun, database: Db): void {
+  if (run.algorithmVersion !== 'news-intelligence-window-v2') return;
+  const ids = run.chunkIds!;
+  if (new Set(ids).size !== ids.length) throw new Error('Duplicate analysis chunks.');
+  const configurationHash = newsEvidenceHash({ configuration: run.configuration, registry: run.registry, algorithmVersion: 'news-intelligence-v1' });
+  for (const id of ids) {
+    const row = database.prepare('SELECT * FROM news_analysis_chunks_v1 WHERE id=?').get(id) as EvidenceRow | undefined;
+    if (!row) throw new Error('Missing analysis chunk.');
+    const chunk = restore(row, value => newsAnalysisChunkSchema.parse(value));
+    if (chunk.configurationHash !== configurationHash || chunk.persistedAtMs > run.inputCutoffMs || id !== newsEvidenceHash({ version: chunk.version, configurationHash, observationIds: chunk.observationIds })) throw new Error('Invalid analysis chunk manifest.');
+  }
+  for (const observationId of run.inputObservationIds) {
+    const cache = database.prepare('SELECT chunk_id FROM news_cached_analyses_v1 WHERE configuration_hash=? AND observation_id=?').get(configurationHash, observationId) as { chunk_id: string } | undefined;
+    if (!cache || !ids.includes(cache.chunk_id)) throw new Error('Analysis input is missing its chunk reference.');
+  }
+}
 export function readNewsAnalysisRun(id: string, database: Db): NewsAnalysisRun | null {
   const row = database.prepare('SELECT * FROM news_analysis_runs_v1 WHERE id=?').get(id) as
     (EvidenceRow & { input_cutoff_at: number; completed_at: number; persisted_at: number }) | undefined;
@@ -44,9 +60,10 @@ export function readNewsAnalysisRun(id: string, database: Db): NewsAnalysisRun |
   const run = restore(row, value => newsAnalysisRunSchema.parse(value));
   if (run.id !== id || run.inputCutoffMs !== row.input_cutoff_at || run.completedAtMs !== row.completed_at ||
     run.persistedAtMs !== row.persisted_at || run.id !== newsAnalysisRunId({ inputCutoffMs: run.inputCutoffMs,
-      configuration: run.configuration, registry: run.registry, inputObservationIds: run.inputObservationIds })) {
+      configuration: run.configuration, registry: run.registry, inputObservationIds: run.inputObservationIds, ...(run.inputWindowStartMs === undefined ? {} : { inputWindowStartMs: run.inputWindowStartMs, chunkIds: run.chunkIds! }) })) {
     throw new Error('News analysis run failed integrity validation.');
   }
+  validateRunChunks(run, database);
   return run;
 }
 export function listNewsRunAnalyses(runId: string, database: Db): readonly NewsObservationAnalysis[] {
@@ -75,14 +92,14 @@ export function listNewsFeaturesAsOf(instrument: InstrumentIdentity, cutoff: num
     return feature;
   });
 }
-export function readNewsDailyBaseline(instrument: InstrumentIdentity, cutoff: number, database: Db): readonly NewsFeatureSnapshot[] {
+export function readNewsDailyBaseline(instrument: InstrumentIdentity, cutoff: number, database: Db, version: NewsFeatureSnapshot['featureVersion'] = 'news-features-v1'): readonly NewsFeatureSnapshot[] {
   // At most one latest eligible revision per daily boundary; a bounded 30-day baseline.
   const rows = database.prepare(`SELECT feature.* FROM news_feature_snapshots_v1 feature
-    WHERE instrument_key=? AND cadence='daily' AND decision_at<=? AND available_at<=? AND reconstruction=0
+    WHERE json_extract(evidence_json,'$.featureVersion')=? AND instrument_key=? AND cadence='daily' AND decision_at<=? AND available_at<=? AND reconstruction=0
     AND id=(SELECT candidate.id FROM news_feature_snapshots_v1 candidate WHERE candidate.instrument_key=feature.instrument_key
-      AND candidate.cadence='daily' AND candidate.decision_at=feature.decision_at AND candidate.available_at<=? AND candidate.reconstruction=0
+      AND json_extract(candidate.evidence_json,'$.featureVersion')=? AND candidate.cadence='daily' AND candidate.decision_at=feature.decision_at AND candidate.available_at<=? AND candidate.reconstruction=0
       ORDER BY candidate.available_at DESC,candidate.id LIMIT 1) ORDER BY decision_at DESC LIMIT 30`)
-    .all(instrumentKey(instrument), cutoff - 86_400_000, cutoff, cutoff) as unknown as EvidenceRow[];
+    .all(version, instrumentKey(instrument), cutoff - 86_400_000, cutoff, version, cutoff) as unknown as EvidenceRow[];
   return rows.map(row => restore(row, value => newsFeatureSnapshotSchema.parse(value)));
 }
 export function readNewsCoverage(cutoff: number, database: Db): NewsFeatureSnapshot['coverage'] {
@@ -97,7 +114,7 @@ export function readNewsCoverage(cutoff: number, database: Db): NewsFeatureSnaps
 }
 export function saveNewsIntelligenceBatch(runValue: NewsAnalysisRun, analysisValues: readonly NewsObservationAnalysis[],
   clusterValues: readonly NewsClusterSnapshot[], featureValues: readonly NewsFeatureSnapshot[], database: Db): boolean {
-  if (analysisValues.length > 10_000 || clusterValues.length > 30_000 || featureValues.length > 6) {
+  if (analysisValues.length > (runValue.algorithmVersion === 'news-intelligence-v1' ? 10_000 : 20_000) || clusterValues.length > (runValue.algorithmVersion === 'news-intelligence-v1' ? 30_000 : 60_000) || featureValues.length > 6) {
     throw new Error('News intelligence output exceeds bound.');
   }
   const run = newsAnalysisRunSchema.parse(runValue);
@@ -105,7 +122,7 @@ export function saveNewsIntelligenceBatch(runValue: NewsAnalysisRun, analysisVal
   const clusters = clusterValues.map(value => newsClusterSnapshotSchema.parse(value));
   const features = featureValues.map(value => newsFeatureSnapshotSchema.parse(value));
   if (run.id !== newsAnalysisRunId({ inputCutoffMs: run.inputCutoffMs, configuration: run.configuration,
-    registry: run.registry, inputObservationIds: run.inputObservationIds }) ||
+    registry: run.registry, inputObservationIds: run.inputObservationIds, ...(run.inputWindowStartMs === undefined ? {} : { inputWindowStartMs: run.inputWindowStartMs, chunkIds: run.chunkIds! }) }) ||
     newsEvidenceHash(analyses.map(a => a.observationId).sort()) !== newsEvidenceHash([...run.inputObservationIds].sort()) ||
     new Set(analyses.map(a => a.observationId)).size !== analyses.length ||
     clusters.some(c => c.inputCutoffMs > run.inputCutoffMs || c.id !== newsEvidenceHash({ version: c.algorithmVersion,
@@ -119,6 +136,7 @@ export function saveNewsIntelligenceBatch(runValue: NewsAnalysisRun, analysisVal
       f.availableAtMs !== run.availableAtMs || !run.registry.some(r =>
       instrumentKey(r.instrument) === instrumentKey(f.instrument)))) throw new Error('Invalid news intelligence batch references.');
   return inTransaction(database, () => {
+    validateRunChunks(run, database);
     const prior = readNewsAnalysisRun(run.id, database);
     if (prior) return false;
     for (const analysis of analyses) {

@@ -48,7 +48,7 @@ function parseFile(value: unknown): MarketBarArchiveFile {
   const row = object(value, 'archive file');
   const productType = text(row['productType'], 'file productType');
   const interval = text(row['interval'], 'file interval');
-  if (productType !== 'spot' || interval !== '1d') throw new TypeError('Invalid file partition.');
+  if (productType !== 'spot' || (interval !== '1d' && interval !== '1h')) throw new TypeError('Invalid file partition.');
   const file = {
     path: text(row['path'], 'file path'),
     sha256: text(row['sha256'], 'file sha256'),
@@ -122,7 +122,7 @@ function parseArchivedRow(value: JsonRecord): ArchivedMarketBar {
   const productType = text(value['product_type'], 'product_type');
   const interval = text(value['interval'], 'interval');
   const quality = text(value['quality'], 'quality');
-  if (productType !== 'spot' || interval !== '1d') throw new TypeError('Invalid archived row kind.');
+  if (productType !== 'spot' || (interval !== '1d' && interval !== '1h')) throw new TypeError('Invalid archived row kind.');
   if (quality !== 'reported_ohlc' && quality !== 'close_only_legacy' &&
       quality !== 'synthetic_ohlc') throw new TypeError('Invalid archived row quality.');
   const volumeValue = value['volume_text'];
@@ -165,6 +165,10 @@ async function readRows(
     validateSafeSegment(query.productId, 'query productId');
     conditions.push(`product_id = ${sqlString(query.productId)}`);
   }
+  if (query.interval !== undefined) {
+    if (query.interval !== '1d' && query.interval !== '1h') throw new TypeError('Invalid archive interval.');
+    conditions.push(`interval = ${sqlString(query.interval)}`);
+  }
   if (query.source !== undefined) {
     validateSafeSegment(query.source, 'query source');
     conditions.push(`source = ${sqlString(query.source)}`);
@@ -184,7 +188,7 @@ async function readRows(
       SELECT ${ARCHIVE_SCHEMA.map(([name]) => name).join(', ')}
       FROM read_parquet([${pathList}], hive_partitioning = false)
       ${where}
-      ORDER BY venue, product_id, source, start_time_ms
+      ORDER BY venue, product_id, source, interval, start_time_ms
     `);
     const expectedColumns = ARCHIVE_SCHEMA.map(([name]) => name);
     if (JSON.stringify(reader.columnNames()) !== JSON.stringify(expectedColumns)) {

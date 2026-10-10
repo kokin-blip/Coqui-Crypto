@@ -125,3 +125,54 @@ jobs:
 
       - name: Load native DuckDB and execute an in-memory query
         run: pnpm --filter @coqui/storage test:native-duckdb
+
+  # Reviewable installers use the release commands without tagging or publishing.
+  packaged-smoke:
+    if: github.event_name == 'pull_request'
+    needs: verify
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            script: package:mac
+            artifact: macos-arm64
+          - os: windows-latest
+            script: package:win
+            artifact: windows-x64
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @coqui/desktop ${{ matrix.script }}
+      - run: pnpm --filter @coqui/desktop smoke:packaged
+      - name: Hash candidate artifacts
+        shell: bash
+        env:
+          ARTIFACT: ${{ matrix.artifact }}
+        run: |
+          cd apps/desktop/release
+          node <<'NODE'
+          const { createHash } = require('node:crypto');
+          const { readdirSync, readFileSync, writeFileSync } = require('node:fs');
+          const files = readdirSync('.').filter(file => /\.(dmg|zip|exe)$/i.test(file)).sort();
+          if (!files.length) throw new Error('No candidate artifacts');
+          const lines = files.map(file => `${createHash('sha256').update(readFileSync(file)).digest('hex')}  ${file}`);
+          writeFileSync(`SHA256SUMS-${process.env.ARTIFACT}.txt`, `${lines.join('\n')}\n`);
+          NODE
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: candidate-${{ matrix.artifact }}
+          path: |
+            apps/desktop/release/*.dmg
+            apps/desktop/release/*.zip
+            apps/desktop/release/*.exe
+            apps/desktop/release/SHA256SUMS-*.txt
+          if-no-files-found: error
+          retention-days: 14

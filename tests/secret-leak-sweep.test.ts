@@ -42,6 +42,7 @@ afterEach(() => {
 
 /** Channels that answer from local state. The rest would reach the network. */
 const LOCAL_CHANNELS: readonly ChannelName[] = [
+  'news.timeline', 'news.detail', 'news.health', 'news.analysis.set-enabled',
   'research.overlay-shadow.status', 'research.overlay-shadow.set',
   'trading.activity.scopes', 'trading.activity.summary', 'trading.activity.trail',
   'activity.feed',
@@ -73,6 +74,9 @@ const LOCAL_CHANNELS: readonly ChannelName[] = [
 ];
 
 const PAYLOADS: Partial<Record<ChannelName, unknown>> = {
+  'news.timeline': { asOfMs: null, limit: 100 },
+  'news.detail': { observationId: 'a'.repeat(64), asOfMs: null },
+  'news.analysis.set-enabled': { commandId: '11111111-1111-4111-8111-111111111111', enabled: false },
   'research.overlay-shadow.set': { commandId: 'shadow-fixture-disable', enabled: false },
   'trading.activity.summary': {scopeId:'ledger',connectionId:null,productId:'BTC-USD'},
   'trading.activity.trail': {scopeId:'ledger',connectionId:null,productId:'BTC-USD',cursor:null,limit:30},

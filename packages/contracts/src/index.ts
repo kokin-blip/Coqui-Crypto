@@ -9,3 +9,5 @@ export * from './rpc.js';
 export * from './schemas/provenance.js';
 export * from './schemas/news.js';
 export * from './schemas/news-intelligence.js';
+
+export * from './schemas/news-archive.js';

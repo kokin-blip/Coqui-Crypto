@@ -65,3 +65,5 @@ export * from './connection-lifecycle.js';
 export * from './news.js';
 export * from './news-quota.js';
 export * from './news-intelligence.js';
+
+export * from "./news-chunks.js";

@@ -1,3 +1,4 @@
+import { newsChannelSchemas } from './schemas/news-channels.js';
 import { overlayShadowChannelSchemas } from './schemas/overlay-shadow.js';
 import * as z from 'zod';
 
@@ -37,6 +38,7 @@ import type { ContractSchema, DeepReadonly } from './messages.js';
  * more than the services can honour.
  */
 export const CHANNEL_SCHEMAS = {
+  ...newsChannelSchemas,
   ...overlayShadowChannelSchemas,
   ...activityChannelSchemas,
   ...tradingActivityChannelSchemas,

@@ -1,8 +1,8 @@
 import { resolve } from 'node:path';
 import type { Clock } from '@coqui/core';
 import { createMemorySecretStore, type FetchLike, type RateLimiterRegistry, type SecretStore } from '@coqui/adapters';
-import { createNewsIntelligenceRuntime, readNewsHostConfiguration, validateNewsHostConfiguration, type NewsHostConfiguration } from '@coqui/services';
-import { isAuthoritativeHost, openDatabase } from '@coqui/storage';
+import { createNewsIntelligenceRuntime, readNewsHostConfiguration, validateNewsHostConfiguration, type NewsHostConfiguration, NewsIntelligenceService, readNewsAnalysisConfiguration, newsAnalysisEnabled, WalletSchedulerService } from '@coqui/services';
+import { isAuthoritativeHost, openDatabase, ensureWalletUtcSchedule } from '@coqui/storage';
 
 type NewsRuntime = Awaited<ReturnType<typeof createNewsIntelligenceRuntime>>;
 export interface NewsHostRuntime {
@@ -27,11 +27,13 @@ export function createNewsHostRuntime(input: { readonly profileId: string; reado
   let collector: NewsRuntime | null = null;
   let database: ReturnType<typeof openDatabase> | null = null;
   let generation = 0;
+  let analysisScheduler: WalletSchedulerService | null = null;
+  let lastAnalysisHour: number | null = null;
   const active = () => !disposed && !suspended && input.profileId === 'main' && database !== null &&
     isAuthoritativeHost('main', input.hostId, database);
-  const release = () => { collector?.destroy(); collector = null; database?.close(); database = null; };
+  const release = () => { collector?.destroy(); collector = null; analysisScheduler?.dispose(); analysisScheduler = null; database?.close(); database = null; };
   const pause = () => {
-    generation += 1; collector?.destroy();
+    generation += 1; collector?.destroy(); analysisScheduler?.dispose(); analysisScheduler = null;
     if (pending === null) release();
   };
   return {
@@ -44,8 +46,8 @@ export function createNewsHostRuntime(input: { readonly profileId: string; reado
           database ??= openDatabase(input.quotaDatabasePath);
           if (!active()) { pause(); return; }
           const configuration = override ?? readNewsHostConfiguration(database);
-          if (!configuration.gdeltEnabled) { pause(); return; }
-          if (collector === null) {
+          if (!configuration.gdeltEnabled && !newsAnalysisEnabled(database!)) { pause(); return; }
+          if (configuration.gdeltEnabled && collector === null) {
             collector = await createNewsIntelligenceRuntime({ quotaDatabase: database, storageDatabase: database,
               clock: input.clock, secrets: input.secrets ?? createMemorySecretStore(), ownerId: input.hostId,
               enabledProviders: ['gdelt'], retentionPermissions: { gdelt: true, marketaux: false, currents: false },
@@ -53,8 +55,23 @@ export function createNewsHostRuntime(input: { readonly profileId: string; reado
               ...(input.fetch ? { fetch: input.fetch } : {}), ...(input.rateLimiters ? { rateLimiters: input.rateLimiters } : {}) });
           }
           if (currentGeneration !== generation || !active()) { pause(); return; }
-          await collector.tick();
-          if (!active()) pause();
+          if (configuration.gdeltEnabled) await collector?.tick();
+          else { collector?.destroy(); collector = null; }
+          if (!active()) { pause(); return; }
+          if (newsAnalysisEnabled(database!)) {
+            const mapping = readNewsAnalysisConfiguration(database!);
+            const hour = Math.floor(input.clock.nowMs() / 3_600_000);
+            if (mapping && lastAnalysisHour !== hour) {
+              analysisScheduler ??= new WalletSchedulerService({ database: database!, clock: input.clock, ownerId: input.hostId });
+              ensureWalletUtcSchedule('news.analysis.v2', 60_000, 0, Math.floor(input.clock.nowMs() / 60_000) * 60_000, database!);
+              await analysisScheduler.tick([{ profileId: 'news.analysis.v2', cadenceMs: 60_000, catchUpPolicy: 'recompute_current',
+                execute: async context => {
+                  const result = await new NewsIntelligenceService({ database: database!, clock: input.clock }).advanceAsync(mapping, context.signal, active);
+                  if (result.state === 'complete') lastAnalysisHour = hour;
+                  return { status: 'completed' };
+                } }]);
+            }
+          }
         } catch {
           pause();
           if (!disposed) input.onUnexpectedError?.('news_host_tick', new Error('News collector failed.'));

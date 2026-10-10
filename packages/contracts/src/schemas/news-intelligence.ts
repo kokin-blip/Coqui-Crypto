@@ -36,8 +36,8 @@ export const newsObservationAnalysisSchema = z.strictObject({ schemaVersion: z.l
   resolutions: z.array(resolution).max(106).readonly(), instruments: z.array(instrumentAnalysis).max(3).readonly(),
 }).refine(a => a.firstAvailableAtMs <= a.availableAtMs && a.observedAtMs <= a.availableAtMs).readonly();
 export const newsClusterSnapshotSchema = z.strictObject({ schemaVersion: z.literal(1), id: hash, algorithmVersion: z.literal('news-syndication-v1'), inputCutoffMs: ms,
-  articleIds: z.array(hash).min(1).max(10_000).readonly(), observationIds: z.array(hash).min(1).max(10_000).readonly(),
-  publishers: z.array(host).min(1).max(10_000).readonly(),
+  articleIds: z.array(hash).min(1).max(20_000).readonly(), observationIds: z.array(hash).min(1).max(20_000).readonly(),
+  publishers: z.array(host).min(1).max(20_000).readonly(),
   matches: z.array(z.strictObject({ leftArticleId: hash, rightArticleId: hash,
     kind: z.enum(['exact_title', 'similar_title']), similarity: z.number().min(0).max(1) }).readonly()).max(50_000).readonly(),
 }).readonly();
@@ -48,19 +48,24 @@ const window = z.strictObject({ windowMs: z.union([z.literal(3_600_000), z.liter
   providerSentimentMean: score, providerSentimentSampleCount: count, eventCounts, dataAgeSeconds: z.number().nonnegative().nullable(),
 }).readonly();
 export const newsFeatureSnapshotSchema = z.strictObject({ schemaVersion: z.literal(1), id: hash, runId: hash,
-  featureVersion: z.literal('news-features-v1'), instrument, cadence: z.enum(['hourly', 'daily']), decisionAtMs: ms,
+  featureVersion: z.enum(['news-features-v1', 'news-features-window-v2']), instrument, cadence: z.enum(['hourly', 'daily']), decisionAtMs: ms,
   availableAtMs: ms, reconstruction: z.boolean(), windows: z.array(window).length(2).readonly(),
-  volumeZScore24h: z.number().nullable(), baselineSnapshotIds: z.array(hash).max(30).readonly(), clusterSnapshotIds: z.array(hash).max(10_000).readonly(), coverageComplete: z.null(),
+  volumeZScore24h: z.number().nullable(), baselineSnapshotIds: z.array(hash).max(30).readonly(), clusterSnapshotIds: z.array(hash).max(20_000).readonly(), coverageComplete: z.null(),
   coverage: z.array(z.strictObject({ provider: newsProviderIdSchema, reserved: count, succeeded: count, failed: count, pending: count })
     .refine(c => c.succeeded + c.failed + c.pending === c.reserved).readonly()).max(3).readonly(),
   missingReasons: z.array(text(128)).max(10).readonly(),
 }).refine(s => s.decisionAtMs % (s.cadence === 'hourly' ? 3_600_000 : 86_400_000) === 0 &&
   s.availableAtMs >= s.decisionAtMs && s.windows[0]?.windowMs === 3_600_000 && s.windows[1]?.windowMs === 86_400_000).readonly();
 export const newsAnalysisRunSchema = z.strictObject({ schemaVersion: z.literal(1), id: hash,
-  algorithmVersion: z.literal('news-intelligence-v1'), inputCutoffMs: ms, completedAtMs: ms, persistedAtMs: ms, availableAtMs: ms,
+  algorithmVersion: z.enum(['news-intelligence-v1', 'news-intelligence-window-v2']), inputWindowStartMs: ms.optional(),
+  chunkIds: z.array(hash).max(20_000).readonly().optional(), inputCutoffMs: ms, completedAtMs: ms, persistedAtMs: ms, availableAtMs: ms,
   configuration: newsIntelligenceConfigurationSchema, registry: z.array(registry).max(3).readonly(),
-  inputObservationIds: z.array(hash).max(10_000).readonly(),
-}).refine(r => r.configuration.reviewedAtMs <= r.inputCutoffMs && r.inputCutoffMs <= r.completedAtMs &&
+  inputObservationIds: z.array(hash).max(20_000).readonly(),
+}).refine(r => (r.algorithmVersion === 'news-intelligence-window-v2' ? r.inputWindowStartMs !== undefined && r.chunkIds !== undefined && r.inputWindowStartMs <= r.inputCutoffMs : r.inputWindowStartMs === undefined && r.chunkIds === undefined && r.inputObservationIds.length <= 10_000) && r.configuration.reviewedAtMs <= r.inputCutoffMs && r.inputCutoffMs <= r.completedAtMs &&
   r.completedAtMs <= r.persistedAtMs && r.availableAtMs === r.persistedAtMs &&
   r.registry.every(i => i.updatedAtMs <= r.inputCutoffMs)).readonly();
 
+
+export const newsAnalysisChunkSchema = z.strictObject({ version: z.literal('news-analysis-chunk-v1'),
+  configurationHash: hash, observationIds: z.array(hash).min(1).max(250).readonly(), completedAtMs: ms, persistedAtMs: ms,
+}).refine(c => c.completedAtMs <= c.persistedAtMs && new Set(c.observationIds).size === c.observationIds.length).readonly();

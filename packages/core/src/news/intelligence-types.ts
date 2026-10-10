@@ -85,7 +85,7 @@ export interface NewsFeatureSnapshot {
   readonly schemaVersion: 1;
   readonly id: string;
   readonly runId: string;
-  readonly featureVersion: 'news-features-v1';
+  readonly featureVersion: 'news-features-v1' | 'news-features-window-v2';
   readonly instrument: NewsInstrumentIdentity;
   readonly cadence: 'hourly' | 'daily';
   readonly decisionAtMs: number;
@@ -103,7 +103,9 @@ export interface NewsFeatureSnapshot {
 export interface NewsAnalysisRun {
   readonly schemaVersion: 1;
   readonly id: string;
-  readonly algorithmVersion: 'news-intelligence-v1';
+  readonly algorithmVersion: 'news-intelligence-v1' | 'news-intelligence-window-v2';
+  readonly inputWindowStartMs?: number | undefined;
+  readonly chunkIds?: readonly string[] | undefined;
   readonly inputCutoffMs: number;
   readonly completedAtMs: number;
   readonly persistedAtMs: number;

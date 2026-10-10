@@ -11,7 +11,7 @@ import { dirname, join, relative, resolve } from 'node:path';
 
 import { DuckDBInstance, version as duckdbVersion } from '@duckdb/node-api';
 
-import type { MarketBarRecord } from '../repositories/market-data.js';
+import type { ArchiveMarketBarInput } from './common.js';
 import {
   ARCHIVE_SCHEMA,
   canonicalRecords,
@@ -32,7 +32,7 @@ import type {
 
 export interface WriteMarketBarArchiveRequest {
   readonly rootDir: string;
-  readonly records: readonly MarketBarRecord[];
+  readonly records: readonly ArchiveMarketBarInput[];
   readonly sourceArtifacts: readonly ArchiveSourceArtifact[];
   readonly codeRevision: string;
   readonly createdAtMs: number;

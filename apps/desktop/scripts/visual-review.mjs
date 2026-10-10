@@ -4,9 +4,10 @@ import { generateKeyPairSync, randomUUID } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createMemorySecretStore } from '@coqui/adapters';
-import { openDatabase, getProfileConnectionV2, setConnectionRemoval } from '@coqui/storage';
+import { openDatabase, getProfileConnectionV2, setConnectionRemoval, saveNewsObservation } from '@coqui/storage';
+import { NewsIntelligenceService } from '@coqui/services';
 import { coinbaseEvidenceDatasetHash } from '@coqui/core';
 import { assertNoTextClipping } from './visual-overflow-audit.mjs';
 
@@ -27,12 +28,16 @@ if (!existsSync(entry)) {
   process.exit(1);
 }
 
-const { createRuntimeProfileController } = await import(join(root, 'dist/main/profile-runtime.js'));
-const { createDispatcher } = await import(join(root, 'dist/main/dispatch.js'));
-const { applyWindowHardening, WEB_PREFERENCES } = await import(join(root, 'dist/main/security.js'));
+const { createRuntimeProfileController } = await import(pathToFileURL(join(root, 'dist/main/profile-runtime.js')).href);
+const { createDispatcher } = await import(pathToFileURL(join(root, 'dist/main/dispatch.js')).href);
+const { applyWindowHardening, WEB_PREFERENCES } = await import(pathToFileURL(join(root, 'dist/main/security.js')).href);
 
 const remainingRoutes = ['settings','portfolio/holdings','portfolio/allocation','portfolio/tax','portfolio/reconciliation','paper/overview','paper/orders','paper/performance','strategies','research','events','activity','risk'];
 const capturePlan = [
+  ...[{route:'events',action:'news-detail'},{route:'settings',action:'news-health'},{route:'research'}].flatMap(item => [
+    {...item,name:`news-${item.route}-desktop`,mode:'advanced',theme:'dark',density:'compact',zoom:1,width:1440,height:900},
+    {...item,name:`news-${item.route}-contrast-zoom`,mode:'advanced',theme:'high-contrast',density:'compact',zoom:2,width:1280,height:800,motion:'reduced'},
+  ]),
   ...remainingRoutes.flatMap(route=>[
     {name:`remaining-${route.replaceAll('/','-')}-desktop`,route,mode:'advanced',theme:'dark',density:'compact',zoom:1,width:1440,height:900},
     {name:`remaining-${route.replaceAll('/','-')}-light`,route,mode:'advanced',theme:'light',density:'compact',zoom:1,width:1280,height:800},
@@ -148,6 +153,15 @@ async function run() {
       },
     },
   });
+  if (captureFilter?.startsWith('news-')) {
+    const database = openDatabase(join(dataDirectory, 'coqui.db')), now = Date.now();
+    database.prepare('INSERT OR IGNORE INTO canonical_instruments VALUES (?,?,?,?,?,?,?,?,?)').run('coinbase','BTC-USD','spot','BTC','Bitcoin','BTC','USD',now-600000,now-600000);
+    saveNewsObservation({ schemaVersion:1,provider:'gdelt',providerArticleId:null,title:'Synthetic research fixture: Bitcoin upgrade approved; Ethereum outage',
+      url:'https://synthetic.example/research-fixture',sourceDomain:'synthetic.example',description:'Synthetic metadata for visual verification. Bitcoin adoption gains while Ethereum declines.',
+      publishedAtMs:null,providerObservedAtMs:null,observedAtMs:now-60000,language:'English',entities:[] },now-60000,database);
+    new NewsIntelligenceService({database,clock:{nowMs:()=>now}}).analyze({schemaVersion:1,reviewedAtMs:now-600000,instruments:[{asset:'BTC',instrument:{venue:'coinbase',productId:'BTC-USD',productType:'spot'}}],publisherAliases:[]});
+    database.close();
+  }
   const dispatch = createDispatcher({ handlers: () => runtime.handlers() });
   if (process.env['COQUI_VISUAL_DISMISS_ONBOARDING'] === '1') {
     const skipped = await dispatch('app.onboarding.skip', { commandId: randomUUID() });
@@ -167,7 +181,7 @@ async function run() {
       backgroundThrottling: false,
     },
   });
-  applyWindowHardening(window.webContents, `file://${entry}`, shell);
+  applyWindowHardening(window.webContents, pathToFileURL(entry).href, shell);
 
   for (const [index, capture] of captures.entries()) {
     window.setContentSize(capture.width ?? 1536, capture.height ?? 1024);
@@ -299,6 +313,21 @@ async function run() {
       `);
       await delay(capture.action === 'local-facts' || capture.action === 'coinbase-sync' || capture.action === 'remove-connector' ? 250 : 80);
       if(capture.action==='remove-connector'&&!await window.webContents.executeJavaScript('document.querySelector("dialog[open]") !== null'))throw new Error('Removal dialog missing from visual capture');
+    }
+    if (capture.action === 'news-detail') {
+      window.show(); window.focus(); window.webContents.focus();
+      await delay(80);
+      const focused = await window.webContents.executeJavaScript(`(() => { const b = [...document.querySelectorAll('button')].find(b => b.textContent === 'Inspect news evidence'); b?.focus(); return !!b && document.activeElement === b; })()`);
+      if (!focused) throw new Error('News evidence keyboard control missing');
+      window.webContents.sendInputEvent({ type: 'keyDown', keyCode: 'Enter' });
+      window.webContents.sendInputEvent({ type: 'char', keyCode: '\r' });
+      window.webContents.sendInputEvent({ type: 'keyUp', keyCode: 'Enter' });
+      await delay(100);
+      if (!await window.webContents.executeJavaScript(`document.activeElement?.getAttribute('aria-expanded') === 'true'`)) throw new Error('News evidence keyboard expansion failed');
+    }
+    if (capture.action === 'news-health') {
+      await window.webContents.executeJavaScript(`[...document.querySelectorAll('button')].find(b => b.textContent === 'Diagnostics')?.click()`);
+      await delay(100);
     }
     await delay(50);
     const appearanceMatches = await window.webContents.executeJavaScript(`document.documentElement.dataset.theme === ${JSON.stringify(capture.theme)} && document.documentElement.dataset.density === ${JSON.stringify(capture.density)}`);

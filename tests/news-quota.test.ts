@@ -94,7 +94,7 @@ describe('persistent news quota reservations', () => {
     const path = join(directory, 'profile.db'), old = openDatabase(path, { migrations: migrations.slice(0, 88) });
     old.prepare("INSERT INTO app_settings(key,value) VALUES ('synthetic-preserved','yes')").run(); old.close();
     const database = db(path);
-    expect(database.prepare('PRAGMA user_version').get()?.['user_version']).toBe(90);
+    expect(database.prepare('PRAGMA user_version').get()?.['user_version']).toBe(91);
     expect(database.prepare("SELECT value FROM app_settings WHERE key='synthetic-preserved'").get()?.['value']).toBe('yes');
     expect(readdirSync(directory).some(name => name.includes('pre-migration-v88'))).toBe(true);
     const reserved = reserveNewsRequest({ provider: 'marketaux', scope, now: NEWS_NOW, budget: 1, spacingMs: 1 }, database);
