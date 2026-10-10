@@ -53,6 +53,7 @@ export function newsContentJson(observation: NewsObservation): string {
     url: observation.url, sourceDomain: observation.sourceDomain, description: observation.description,
     publishedAtMs: observation.publishedAtMs, providerObservedAtMs: observation.providerObservedAtMs,
     language: observation.language, entities: observation.entities,
+    ...(observation.schemaVersion === 2 ? { transportProtocol: observation.transportProtocol } : {}),
   };
   return canonicalJson(metadata as unknown as CanonicalJsonValue);
 }

@@ -55,6 +55,16 @@ describe('opt-in news runtime', () => {
       .toContain('provider_schema_failure');
     expect(listNewsObservationsAsOf(NEWS_NOW, 100, database)).toHaveLength(0);
   });
+  it('keeps metered requests on HTTPS when GDELT HTTP is explicitly selected', async () => {
+    const database = db(), urls: string[] = [];
+    const service = await runtime({ quotaDatabase: database, storageDatabase: database, secrets: syntheticSecrets(),
+      clock: { nowMs: () => NEWS_NOW }, gdeltTransport: 'http', enabledProviders: ['gdelt', 'marketaux'], rateLimiters: newsPassThrough,
+      fetch: async url => { urls.push(url); return newsResponse(url.includes('gdelt') ? gdeltPayload : marketauxPayload); } });
+    expect(await service.manualRefresh('gdelt', { persist: true })).toMatchObject({ ok: true });
+    expect(await service.manualRefresh('marketaux')).toMatchObject({ ok: true });
+    expect(new URL(urls[0]!).protocol).toBe('http:'); expect(new URL(urls[1]!).protocol).toBe('https:');
+    expect(listNewsObservationsAsOf(NEWS_NOW, 100, database)[0]?.observation).toMatchObject({ schemaVersion: 2, transportProtocol: 'http' });
+  });
   it('defaults off without reading secrets or dispatching requests', async () => {
     const database = db(), secrets = syntheticSecrets(), read = vi.spyOn(secrets, 'read'), fetch = vi.fn<FetchLike>();
     const service = await runtime({ quotaDatabase: database, storageDatabase: database, secrets, clock: { nowMs: () => NEWS_NOW }, fetch });

@@ -60,6 +60,16 @@ describe('synthetic news provider adapters', () => {
     expect(new URL(request.mock.calls[1]![0]).searchParams.get('mode')).toBe('timelinevolraw');
     expect(coverage.points).toEqual([{ startTimeMs: NEWS_NOW - 3_600_000, articleCount: 12, totalArticleCount: 1000 }]);
   });
+  it('uses HTTP only when explicitly selected and retains the protocol in immutable metadata', async () => {
+    const request = vi.fn(fixtureTransport(gdeltPayload).request);
+    const defaultProvider = createGdeltNewsProvider({ clock, transport: { request, destroy() {} } });
+    expect((await defaultProvider.fetchLatest(query)).articles[0]).toMatchObject({ schemaVersion: 2, transportProtocol: 'https' });
+    expect(new URL(request.mock.calls[0]![0]).protocol).toBe('https:');
+    const optIn = createGdeltNewsProvider({ clock, transport: { request, destroy() {} }, transportProtocol: 'http' });
+    expect((await optIn.fetchLatest(query)).articles[0]).toMatchObject({ schemaVersion: 2, transportProtocol: 'http' });
+    expect(new URL(request.mock.calls[1]![0]).origin).toBe('http://api.gdeltproject.org');
+    expect(() => createGdeltNewsProvider({ clock, transport: fixtureTransport(gdeltPayload), transportProtocol: 'ftp' as never })).toThrow('Invalid GDELT transport');
+  });
   it('quotes phrases but leaves keywords bare and rejects query operators', async () => {
     const request = vi.fn(fixtureTransport(gdeltPayload).request);
     const provider = createGdeltNewsProvider({ clock, transport: { request, destroy() {} } });
@@ -148,6 +158,21 @@ describe('safe news transport diagnostics', () => {
     const http = createNewsHttpTransport({ clock, rateLimiters: newsPassThrough, fetch: async () => newsResponse({}, 503) });
     expect(await http.request('https://api.example')).toMatchObject({ ok: false, diagnostic: { code: 'http_failure' } });
     http.destroy();
+  });
+  it.each([
+    ['UND_ERR_CONNECT_TIMEOUT', 'connection_timeout'], ['ENOTFOUND', 'dns_failure'],
+    ['CERT_HAS_EXPIRED', 'tls_failure'], ['ECONNREFUSED', 'connection_refused'],
+    ['ECONNRESET', 'connection_reset'], ['ENETUNREACH', 'network_unreachable'],
+    ['synthetic-secret', 'unknown'],
+  ])('allowlists native network causes (%s) without exposing error details', async (nativeCode, expected) => {
+    const transport = createNewsHttpTransport({ clock, rateLimiters: newsPassThrough,
+      fetch: async () => { throw new Error('https://api.example?api_token=synthetic-secret',
+        { cause: { code: nativeCode, address: 'synthetic-secret', message: 'synthetic-secret' } }); } });
+    const result = await transport.request('https://api.example?api_token=synthetic-secret');
+    expect(result).toMatchObject({ ok: false, reason: 'network', attempts: 1,
+      diagnostic: { stage: 'headers', code: 'network', networkCode: expected } });
+    expect(JSON.stringify(result)).not.toContain('synthetic-secret');
+    transport.destroy();
   });
   it('bounds a stalled body by the total deadline and aborts its wire signal', async () => {
     vi.useFakeTimers();

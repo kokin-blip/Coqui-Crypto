@@ -6,6 +6,24 @@ export interface NewsHttpDiagnostic {
   readonly stage: 'headers' | 'body' | 'complete';
   readonly code: 'succeeded' | 'header_timeout' | 'body_timeout' | 'http_failure' | 'invalid_json' | 'response_too_large' | 'network' | 'canceled' | 'shutdown' | 'transport_failure';
   readonly elapsedMs: number;
+  readonly networkCode?: 'connection_timeout' | 'dns_failure' | 'tls_failure' | 'connection_refused' | 'connection_reset' | 'network_unreachable' | 'unknown';
+}
+
+/** Never persist native error messages, addresses, URLs or arbitrary error properties. */
+function newsNetworkCode(error: unknown): NonNullable<NewsHttpDiagnostic['networkCode']> {
+  const cause = error instanceof Error ? error.cause : null;
+  const code = typeof cause === 'object' && cause !== null && 'code' in cause ? cause.code
+    : typeof error === 'object' && error !== null && 'code' in error ? error.code : null;
+  switch (code) {
+    case 'UND_ERR_CONNECT_TIMEOUT': case 'ETIMEDOUT': return 'connection_timeout';
+    case 'ENOTFOUND': case 'EAI_AGAIN': return 'dns_failure';
+    case 'CERT_HAS_EXPIRED': case 'ERR_TLS_CERT_ALTNAME_INVALID':
+    case 'DEPTH_ZERO_SELF_SIGNED_CERT': case 'UNABLE_TO_VERIFY_LEAF_SIGNATURE': return 'tls_failure';
+    case 'ECONNREFUSED': return 'connection_refused';
+    case 'ECONNRESET': return 'connection_reset';
+    case 'ENETUNREACH': case 'EHOSTUNREACH': return 'network_unreachable';
+    default: return 'unknown';
+  }
 }
 
 export type NewsHttpResult =
@@ -35,11 +53,15 @@ export function createNewsHttpTransport(input: { readonly clock: Clock; readonly
       const startedAt = performance.now();
       let stage: NewsHttpDiagnostic['stage'] = 'headers';
       let parseCode: NewsHttpDiagnostic['code'] | null = null;
+      let networkCode: NewsHttpDiagnostic['networkCode'];
       const client = createHttpClient({ maxRetries: 0, timeoutMs: input.timeoutMs ?? 10_000,
         maxElapsedMs: input.maxElapsedMs ?? 15_000, rateLimiters: input.rateLimiters ?? owned!,
         fetch: async (target, request) => {
           attempts += 1;
-          const response = await (input.fetch ?? fetch)(target, { ...request, redirect: 'error' });
+          const response = await (input.fetch ?? fetch)(target, { ...request, redirect: 'error' }).catch((error: unknown) => {
+            networkCode = newsNetworkCode(error);
+            throw new Error('news_network');
+          });
           const raw = response.headers.get('retry-after');
           if (raw !== null) {
             const seconds = Number(raw);
@@ -81,7 +103,8 @@ export function createNewsHttpTransport(input: { readonly clock: Clock; readonly
               : parseCode ?? (['network', 'canceled', 'shutdown'].includes(result.reason)
                 ? result.reason as 'network' | 'canceled' | 'shutdown' : 'transport_failure');
         const diagnostic: NewsHttpDiagnostic = { stage: result.ok ? 'complete' : stage, code,
-          elapsedMs: Math.min(86_400_000, Math.max(0, Math.ceil(performance.now() - startedAt))) };
+          elapsedMs: Math.min(86_400_000, Math.max(0, Math.ceil(performance.now() - startedAt))),
+          ...(result.ok || result.reason !== 'network' ? {} : { networkCode: networkCode ?? 'unknown' }) };
         return result.ok
           ? { ok: true, data: result.data, receivedAtMs: input.clock.nowMs(), attempts, diagnostic }
           : { ok: false, status: result.status, reason: result.reason, retryAfterMs, attempts, diagnostic };

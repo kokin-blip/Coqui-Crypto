@@ -30,6 +30,8 @@ export async function createNewsIntelligenceRuntime(input: {
   readonly quotaDatabase: Db;
   readonly storageDatabase: Db;
   readonly enabledProviders?: readonly NewsProviderId[];
+  /** Explicit GDELT-only public metadata transport. Default remains HTTPS; no automatic downgrade. */
+  readonly gdeltTransport?: 'https' | 'http';
   readonly retentionPermissions?: Partial<Readonly<Record<NewsProviderId, boolean>>>;
   readonly ownerId?: string;
   readonly fetch?: FetchLike;
@@ -40,6 +42,7 @@ export async function createNewsIntelligenceRuntime(input: {
   readonly sleep?: (ms: number, signal?: AbortSignal | null) => Promise<void>;
 }) {
   if (input.enabledProviders?.some(provider => !IDS.includes(provider))) throw new TypeError('Invalid news provider configuration.');
+  if (input.gdeltTransport !== undefined && !['http', 'https'].includes(input.gdeltTransport)) throw new TypeError('Invalid GDELT transport protocol.');
   const enabled = new Set(input.enabledProviders ?? []);
   const providers = new Map<NewsProviderId, NewsProvider>(), scopes = new Map<NewsProviderId, string>();
   const unavailable = new Map<NewsProviderId, string>(), transports: NewsHttpTransport[] = [];
@@ -64,7 +67,7 @@ export async function createNewsIntelligenceRuntime(input: {
     try {
       const source = provider === 'marketaux' ? createMarketauxNewsProvider({ transport, token: key!, clock: input.clock })
         : provider === 'currents' ? createCurrentsNewsProvider({ transport, key: key!, clock: input.clock })
-          : createGdeltNewsProvider({ transport, clock: input.clock });
+          : createGdeltNewsProvider({ transport, clock: input.clock, transportProtocol: input.gdeltTransport ?? 'https' });
       providers.set(provider, source); scopes.set(provider, scope); transports.push(transport);
     } catch { raw.destroy(); unavailable.set(provider, 'invalid_credentials'); }
   }

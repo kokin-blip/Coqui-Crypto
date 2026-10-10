@@ -50,7 +50,7 @@ export function createNewsHostRuntime(input: { readonly profileId: string; reado
           if (configuration.gdeltEnabled && collector === null) {
             collector = await createNewsIntelligenceRuntime({ quotaDatabase: database, storageDatabase: database,
               clock: input.clock, secrets: input.secrets ?? createMemorySecretStore(), ownerId: input.hostId,
-              enabledProviders: ['gdelt'], retentionPermissions: { gdelt: true, marketaux: false, currents: false },
+              enabledProviders: ['gdelt'], gdeltTransport: configuration.gdeltTransport ?? 'https', retentionPermissions: { gdelt: true, marketaux: false, currents: false },
               startCurrentSlot: true, canCollect: active,
               ...(input.fetch ? { fetch: input.fetch } : {}), ...(input.rateLimiters ? { rateLimiters: input.rateLimiters } : {}) });
           }
