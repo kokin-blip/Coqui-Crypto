@@ -62,6 +62,21 @@ describe('canonical provider mapping repository', () => {
     database.close();
   });
 
+  it('replays an identical reviewed registration without duplicating mapping evidence', () => {
+    const database = openDatabase(':memory:');
+    try {
+      const mapping = { provider: 'coinbase' as const, providerAssetId: 'BTC-USD', status: 'verified' as const,
+        platform: null, network: null, contractAddress: null,
+        evidenceJson: '{"source":"reviewed_coinbase_public_product","receivedAtMs":100}' };
+      upsertInstrumentProviderMapping(canonical(btc), mapping, 101, database);
+      const evidence = database.prepare('SELECT * FROM instrument_mapping_events_v2').all();
+      upsertInstrumentProviderMapping(canonical(btc), mapping, 101, database);
+      expect(database.prepare('SELECT * FROM instrument_mapping_events_v2').all()).toEqual(evidence);
+      expect(database.prepare('SELECT count(*) AS count FROM canonical_instruments').get()).toEqual({ count: 1 });
+      expect(resolveVerifiedProviderInstrument('coinbase', 'BTC-USD', database)).toEqual(btc);
+    } finally { database.close(); }
+  });
+
   it('isolates legacy symbol-era rows as explicit migration exceptions', () => {
     const database = openDatabase(':memory:', { migrations: migrations.slice(0, 30) });
     database.prepare(

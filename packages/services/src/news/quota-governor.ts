@@ -2,7 +2,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 import type { Clock, NewsProviderId } from '@coqui/core';
 import type { NewsHttpResult, NewsHttpTransport } from '@coqui/adapters';
 import { deferNewsRequests, finishNewsRequest, nextNewsQuotaReset, reserveNewsRequest,
-  type Db } from '@coqui/storage';
+  setSetting, type Db } from '@coqui/storage';
 
 /** Counts every attempt, including retries; an interrupted reservation is never refunded. */
 export function createGovernedNewsTransport(input: { readonly provider: NewsProviderId; readonly scope: string;
@@ -28,6 +28,8 @@ export function createGovernedNewsTransport(input: { readonly provider: NewsProv
       catch { result = { ok: false, status: 0, reason: 'network', retryAfterMs: null, attempts: 1 }; }
       if (destroyed) return failed('shutdown');
       const now = input.clock.nowMs();
+      if (result.diagnostic) setSetting(`news_transport_diagnostic_v1.${input.provider}`,
+        JSON.stringify({ schemaVersion: 1, atMs: now, ...result.diagnostic }), input.database);
       finishNewsRequest(reservation.id, result.ok, result.ok ? 200 : result.status,
         result.ok ? 'succeeded' : result.reason.replaceAll('-', '_'), now, input.database);
       if (result.ok) return { ...result, attempts };

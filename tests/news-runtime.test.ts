@@ -3,6 +3,16 @@ import { createMemorySecretStore, secretAccountForScope, type FetchLike } from '
 import { createNewsIntelligenceRuntime, NEWS_POLL_INTERVALS_MS } from '@coqui/services';
 import { listNewsObservationsAsOf, openDatabase, type Db } from '@coqui/storage';
 import { currentsPayload, gdeltPayload, marketauxPayload, NEWS_NOW, newsPassThrough, newsResponse } from './fixtures/news/providers.js';
+// The shared HTTP client imports Node timers; route them through the controlled test clock.
+vi.mock('node:timers', async importOriginal => ({
+  ...await importOriginal<typeof import('node:timers')>(),
+  setTimeout: (callback: () => void, ms: number) => globalThis.setTimeout(callback, ms),
+  clearTimeout: (timer: ReturnType<typeof setTimeout>) => globalThis.clearTimeout(timer),
+}));
+vi.mock('node:perf_hooks', async importOriginal => ({
+  ...await importOriginal<typeof import('node:perf_hooks')>(),
+  performance: { now: () => globalThis.performance.now() },
+}));
 const databases: Db[] = [], runtimes: Awaited<ReturnType<typeof createNewsIntelligenceRuntime>>[] = [];
 function db() { const database = openDatabase(':memory:'); databases.push(database); return database; }
 afterEach(() => { for (const runtime of runtimes.splice(0)) runtime.destroy(); for (const database of databases.splice(0)) database.close(); });
@@ -12,6 +22,39 @@ async function runtime(input: Parameters<typeof createNewsIntelligenceRuntime>[0
 }
 
 describe('opt-in news runtime', () => {
+  it('allows a slow GDELT response while retaining metered deadlines and recording safe diagnostics', async () => {
+    const database = db();
+    const fetch: FetchLike = async url => {
+      if (!String(url).includes('gdelt')) return await new Promise(() => {});
+      await new Promise(resolve => setTimeout(resolve, 12_000));
+      return newsResponse(gdeltPayload);
+    };
+    const service = await runtime({ quotaDatabase: database, storageDatabase: database, secrets: syntheticSecrets(),
+      clock: { nowMs: () => NEWS_NOW }, enabledProviders: ['gdelt', 'marketaux'], fetch, rateLimiters: newsPassThrough, maxRetries: 0 });
+    vi.useFakeTimers();
+    try {
+      const gdelt = service.manualRefresh('gdelt', { persist: true });
+      await vi.advanceTimersByTimeAsync(12_001);
+      expect(await gdelt).toMatchObject({ ok: true, articles: 1, inserted: 1 });
+      const metered = service.manualRefresh('marketaux');
+      await vi.runAllTimersAsync();
+      expect(await metered).toMatchObject({ ok: false, reason: 'timeout', requestCost: 1 });
+      const diagnostics = database.prepare("SELECT value FROM app_settings WHERE key LIKE 'news_%diagnostic_v1.%'").all();
+      expect(JSON.stringify(diagnostics)).toContain('header_timeout');
+      const meteredDiagnostic = JSON.parse(String(database.prepare("SELECT value FROM app_settings WHERE key='news_transport_diagnostic_v1.marketaux'").get()?.['value']));
+      expect(meteredDiagnostic.elapsedMs).toBe(10_000);
+      expect(JSON.stringify(diagnostics)).not.toMatch(/synthetic-ma-key|api_token|https:/u);
+    } finally { service.destroy(); vi.useRealTimers(); }
+  });
+  it('records schema rejection separately from successful HTTP transport', async () => {
+    const database = db();
+    const service = await runtime({ quotaDatabase: database, storageDatabase: database, secrets: syntheticSecrets(),
+      clock: { nowMs: () => NEWS_NOW }, enabledProviders: ['gdelt'], fetch: async () => newsResponse({ articles: [{}] }), rateLimiters: newsPassThrough });
+    expect(await service.manualRefresh('gdelt', { persist: true })).toMatchObject({ ok: false, reason: 'invalid_response' });
+    expect(database.prepare("SELECT value FROM app_settings WHERE key='news_ingestion_diagnostic_v1.gdelt'").get()?.['value'])
+      .toContain('provider_schema_failure');
+    expect(listNewsObservationsAsOf(NEWS_NOW, 100, database)).toHaveLength(0);
+  });
   it('defaults off without reading secrets or dispatching requests', async () => {
     const database = db(), secrets = syntheticSecrets(), read = vi.spyOn(secrets, 'read'), fetch = vi.fn<FetchLike>();
     const service = await runtime({ quotaDatabase: database, storageDatabase: database, secrets, clock: { nowMs: () => NEWS_NOW }, fetch });

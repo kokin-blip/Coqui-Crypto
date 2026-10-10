@@ -3,6 +3,16 @@ import { createCurrentsNewsProvider, createGdeltNewsProvider, createMarketauxNew
   createNewsHttpTransport, type FetchLike, type NewsHttpTransport } from '@coqui/adapters';
 import { coveragePayload, currentsPayload, fixtureTransport, gdeltPayload, marketauxPayload,
   NEWS_NOW, newsPassThrough, newsResponse } from './fixtures/news/providers.js';
+// The shared HTTP client imports Node timers; route them through the controlled test clock.
+vi.mock('node:timers', async importOriginal => ({
+  ...await importOriginal<typeof import('node:timers')>(),
+  setTimeout: (callback: () => void, ms: number) => globalThis.setTimeout(callback, ms),
+  clearTimeout: (timer: ReturnType<typeof setTimeout>) => globalThis.clearTimeout(timer),
+}));
+vi.mock('node:perf_hooks', async importOriginal => ({
+  ...await importOriginal<typeof import('node:perf_hooks')>(),
+  performance: { now: () => globalThis.performance.now() },
+}));
 const clock = { nowMs: () => NEWS_NOW };
 const query = { keywords: ['Bitcoin'], limit: 100 };
 
@@ -43,11 +53,23 @@ describe('synthetic news provider adapters', () => {
     const provider = createGdeltNewsProvider({ clock, transport: { request, destroy() {} } });
     const result = await provider.fetchLatest(query);
     expect(new URL(request.mock.calls[0]![0]).searchParams.get('mode')).toBe('artlist');
+    expect(new URL(request.mock.calls[0]![0]).searchParams.get('query')).toBe('(Bitcoin)');
     expect(result.articles[0]).toMatchObject({ providerArticleId: null, publishedAtMs: null, providerObservedAtMs: NEWS_NOW - 3_600_000, observedAtMs: NEWS_NOW, entities: [] });
     request.mockImplementation(fixtureTransport(coveragePayload).request);
     const coverage = await provider.fetchCoverage(query);
     expect(new URL(request.mock.calls[1]![0]).searchParams.get('mode')).toBe('timelinevolraw');
     expect(coverage.points).toEqual([{ startTimeMs: NEWS_NOW - 3_600_000, articleCount: 12, totalArticleCount: 1000 }]);
+  });
+  it('quotes phrases but leaves keywords bare and rejects query operators', async () => {
+    const request = vi.fn(fixtureTransport(gdeltPayload).request);
+    const provider = createGdeltNewsProvider({ clock, transport: { request, destroy() {} } });
+    await provider.fetchLatest({ keywords: [' Bitcoin ', 'Federal Reserve', 'cryptocurrency'], limit: 100 });
+    expect(new URL(request.mock.calls[0]![0]).searchParams.get('query'))
+      .toBe('(Bitcoin OR "Federal Reserve" OR cryptocurrency)');
+    for (const keyword of ['domain:example.com', '(Bitcoin)', '-Bitcoin', 'OR', '"Bitcoin"']) {
+      await expect(provider.fetchLatest({ keywords: [keyword], limit: 100 })).rejects.toThrow('invalid_query');
+    }
+    expect(request).toHaveBeenCalledTimes(1);
   });
   it.each([
     { ...gdeltPayload, articles: [{ ...gdeltPayload.articles[0], seendate: '20260231T110000Z' }] },
@@ -101,7 +123,7 @@ describe('news response resource bounds', () => {
     try {
       const pending = transport.request('https://api.example');
       await vi.advanceTimersByTimeAsync(10);
-      expect(await pending).toMatchObject({ ok: false, reason: 'timeout', attempts: 1 });
+      expect(await pending).toMatchObject({ ok: false, reason: 'timeout', attempts: 1, diagnostic: { code: 'header_timeout', stage: 'headers', elapsedMs: 10 } });
       expect(signal?.aborted).toBe(true);
     } finally { transport.destroy(); vi.useRealTimers(); }
   });
@@ -112,5 +134,39 @@ describe('news response resource bounds', () => {
       fetch: async () => ({ ...newsResponse({}), body }) });
     expect(await transport.request('https://api.example')).toMatchObject({ ok: false, reason: 'parse', attempts: 1 });
     expect(canceled).toBe(true); transport.destroy();
+  });
+});
+
+describe('safe news transport diagnostics', () => {
+  it('distinguishes invalid JSON from HTTP failure without returning response text', async () => {
+    const transport = createNewsHttpTransport({ clock, rateLimiters: newsPassThrough,
+      fetch: async () => ({ ...newsResponse({}), text: async () => 'synthetic-secret upstream error' }) });
+    const result = await transport.request('https://api.example?api_token=synthetic-secret');
+    expect(result).toMatchObject({ ok: false, reason: 'parse', diagnostic: { code: 'invalid_json', stage: 'body' } });
+    expect(JSON.stringify(result)).not.toContain('synthetic-secret');
+    transport.destroy();
+    const http = createNewsHttpTransport({ clock, rateLimiters: newsPassThrough, fetch: async () => newsResponse({}, 503) });
+    expect(await http.request('https://api.example')).toMatchObject({ ok: false, diagnostic: { code: 'http_failure' } });
+    http.destroy();
+  });
+  it('bounds a stalled body by the total deadline and aborts its wire signal', async () => {
+    vi.useFakeTimers();
+    let signal: AbortSignal | null | undefined;
+    const transport = createNewsHttpTransport({ clock, rateLimiters: newsPassThrough, timeoutMs: 10, maxElapsedMs: 35,
+      fetch: async (_url, init) => { signal = init?.signal; return { ...newsResponse({}), text: async () => await new Promise(() => {}) }; } });
+    try {
+      const pending = transport.request('https://api.example');
+      await vi.advanceTimersByTimeAsync(35);
+      expect(await pending).toMatchObject({ ok: false, diagnostic: { code: 'body_timeout', elapsedMs: 35 } });
+      expect(signal?.aborted).toBe(true);
+    } finally { transport.destroy(); vi.useRealTimers(); }
+  });
+  it('aborts shutdown during a body read and returns a safe diagnostic', async () => {
+    const transport = createNewsHttpTransport({ clock, rateLimiters: newsPassThrough,
+      fetch: async () => ({ ...newsResponse({}), text: async () => await new Promise(() => {}) }) });
+    const pending = transport.request('https://api.example?api_token=synthetic-secret');
+    await new Promise(resolve => setTimeout(resolve, 0));
+    transport.destroy();
+    expect(await pending).toMatchObject({ ok: false, diagnostic: { code: 'shutdown' } });
   });
 });

@@ -3,7 +3,7 @@ import { type Clock, type NewsProvider, type NewsProviderId, type NewsQuery } fr
 import { createCurrentsNewsProvider, createGdeltNewsProvider, createMarketauxNewsProvider,
   createNewsHttpTransport, NewsProviderError, type FetchLike, type GdeltNewsProvider,
   type NewsHttpTransport, type SecretStore, type RateLimiterRegistry } from '@coqui/adapters';
-import { ensureWalletUtcSchedule, newsProviderQuotaScope, type Db } from '@coqui/storage';
+import { ensureWalletUtcSchedule, newsProviderQuotaScope, setSetting, type Db } from '@coqui/storage';
 import { WalletSchedulerService, type WalletSchedulerTask } from '../scheduler/index.js';
 import { createGovernedNewsTransport } from './quota-governor.js';
 import { NewsStorageService } from './service.js';
@@ -57,7 +57,8 @@ export async function createNewsIntelligenceRuntime(input: {
     }
     const scope = newsProviderQuotaScope(provider);
     const raw = createNewsHttpTransport({ clock: input.clock, ...(input.fetch ? { fetch: input.fetch } : {}),
-      ...(input.rateLimiters ? { rateLimiters: input.rateLimiters } : {}) });
+      ...(input.rateLimiters ? { rateLimiters: input.rateLimiters } : {}),
+      ...(provider === 'gdelt' ? { timeoutMs: 30_000, maxElapsedMs: 35_000 } : {}) });
     const transport = createGovernedNewsTransport({ provider, scope, database: input.quotaDatabase, clock: input.clock,
       transport: raw, budget: NEWS_DAILY_BUDGETS[provider], ...(input.canCollect ? { canRequest: input.canCollect } : {}), ...(input.maxRetries === undefined ? {} : { maxRetries: input.maxRetries }), ...(input.sleep ? { sleep: input.sleep } : {}) });
     try {
@@ -77,6 +78,13 @@ export async function createNewsIntelligenceRuntime(input: {
     const source = providers.get(provider);
     if (!source) return failure(unavailable.get(provider) ?? 'provider_unavailable');
     let requestCost = 0;
+    const startedAt = performance.now();
+    const record = (code: string, articles: number) => {
+      if (shutdown.signal.aborted || (input.canCollect && !input.canCollect())) return;
+      setSetting(`news_ingestion_diagnostic_v1.${provider}`, JSON.stringify({ schemaVersion: 1,
+        atMs: input.clock.nowMs(), code, articles,
+        elapsedMs: Math.min(86_400_000, Math.max(0, Math.ceil(performance.now() - startedAt))) }), input.storageDatabase);
+    };
     try {
       const signal = options.signal ? AbortSignal.any([options.signal, shutdown.signal]) : shutdown.signal;
       const result = await source.fetchLatest(options.query ?? defaultNewsQuery(provider,
@@ -85,8 +93,10 @@ export async function createNewsIntelligenceRuntime(input: {
       if (signal.aborted) return failure('canceled', requestCost);
       if (input.canCollect && !input.canCollect()) return failure('host_inactive', requestCost);
       const inserted = options.persist && result.articles.length ? storage.ingest(result.articles).filter(row => row.inserted).length : 0;
+      record('succeeded', result.articles.length);
       return { provider, ok: true, reason: null, articles: result.articles.length, inserted, requestCost: result.requestCost };
     } catch (error) {
+      record(error instanceof NewsProviderError && error.code === 'invalid_response' ? 'provider_schema_failure' : 'ingestion_failed', 0);
       return failure(error instanceof NewsProviderError && /^[a-z][a-z0-9_]{0,63}$/u.test(error.code)
         ? error.code : 'ingestion_failed', error instanceof NewsProviderError ? error.requestCost : requestCost);
     }

@@ -14,9 +14,9 @@ export function createGdeltNewsProvider(input: { readonly transport: NewsHttpTra
   function urlFor(query: NewsQuery, mode: string): string {
     const now = input.clock.nowMs(); validNewsQuery(query, now);
     if (query.symbols !== undefined) throw new NewsProviderError('unsupported_symbols');
-    if (!query.keywords?.length || query.keywords.some(term => /["\\]/u.test(term))) throw new NewsProviderError('invalid_query');
+    if (!query.keywords?.length || query.keywords.some(term => /["\\():]/u.test(term) || /^[-+]|^(?:OR|AND|NOT)$/u.test(term.trim()))) throw new NewsProviderError('invalid_query');
     const url = new URL('https://api.gdeltproject.org/api/v2/doc/doc');
-    url.searchParams.set('query', `(${query.keywords.map(term => `"${term}"`).join(' OR ')})`);
+    url.searchParams.set('query', `(${query.keywords.map(term => /\s/u.test(term.trim()) ? `"${term.trim()}"` : term.trim()).join(' OR ')})`);
     url.searchParams.set('mode', mode); url.searchParams.set('format', 'json');
     url.searchParams.set('maxrecords', String(query.limit)); url.searchParams.set('sort', 'datedesc');
     if (query.publishedAfterMs === undefined) url.searchParams.set('timespan', '1day');

@@ -169,7 +169,7 @@
       ],
       [
         "packages/adapters/src/http/news.ts",
-        "f39814bf2370e6569a93d9dd1de0c7684fa4e8126139d54f5247626faf3ac84e"
+        "04364f3185a52d6881a5656e4da4f79c1750b61ae9b879bd85d06f8deea9e5cf"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -201,7 +201,7 @@
       ],
       [
         "packages/adapters/src/news/gdelt.ts",
-        "831dcbde3c93178a4783369a05e57a93752d05f15dbf7376c25b3e0b4f21bf38"
+        "7bb19fccfba1a09133e39a26cc372d40d9d805c366b5b01b903de58c344cd8e6"
       ],
       [
         "packages/adapters/src/news/index.ts",
@@ -1137,11 +1137,11 @@
       ],
       [
         "packages/services/src/news/quota-governor.ts",
-        "3751133132b0460d4ed5f85cbd29dcb2b355e38506e70912f14c67ca490a2d01"
+        "fedfa14aed24bdfbb1ec7c947e17aa8d389435038cfe67357248e8047a30a159"
       ],
       [
         "packages/services/src/news/runtime.ts",
-        "3765e620ada22896abdf49de01f0d84d88cddab8cc2f32f1480937d2a751a5d4"
+        "07dd295409a29f43d95164240984a763246330bccb945021928976937a6f6afe"
       ],
       [
         "packages/services/src/news/service.ts",
@@ -2148,7 +2148,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "b1bc098f2cf51cf3259e372e023ae775849aba0c23dd2aac055a54676f37e7f3"
+    "hash": "1c691ac202f9669be3ab6ddcb1a5fab1cebfa1d6cef8eafdf8539c0b61ba27b9"
   },
   "wider-breakout-v1": {
     "version": 1,
@@ -2320,7 +2320,7 @@
       ],
       [
         "packages/adapters/src/http/news.ts",
-        "f39814bf2370e6569a93d9dd1de0c7684fa4e8126139d54f5247626faf3ac84e"
+        "04364f3185a52d6881a5656e4da4f79c1750b61ae9b879bd85d06f8deea9e5cf"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -2352,7 +2352,7 @@
       ],
       [
         "packages/adapters/src/news/gdelt.ts",
-        "831dcbde3c93178a4783369a05e57a93752d05f15dbf7376c25b3e0b4f21bf38"
+        "7bb19fccfba1a09133e39a26cc372d40d9d805c366b5b01b903de58c344cd8e6"
       ],
       [
         "packages/adapters/src/news/index.ts",
@@ -3288,11 +3288,11 @@
       ],
       [
         "packages/services/src/news/quota-governor.ts",
-        "3751133132b0460d4ed5f85cbd29dcb2b355e38506e70912f14c67ca490a2d01"
+        "fedfa14aed24bdfbb1ec7c947e17aa8d389435038cfe67357248e8047a30a159"
       ],
       [
         "packages/services/src/news/runtime.ts",
-        "3765e620ada22896abdf49de01f0d84d88cddab8cc2f32f1480937d2a751a5d4"
+        "07dd295409a29f43d95164240984a763246330bccb945021928976937a6f6afe"
       ],
       [
         "packages/services/src/news/service.ts",
@@ -4299,7 +4299,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "2f5ef2b297510177f68420f5d645e13aca7b034d06f23a9d62961007506d8a89"
+    "hash": "841d1fbe95341e92d15403a62aeba69fc97332d18e5d2bf789e051250c108c1e"
   },
   "wider-range-rotation-v1": {
     "version": 1,
@@ -4471,7 +4471,7 @@
       ],
       [
         "packages/adapters/src/http/news.ts",
-        "f39814bf2370e6569a93d9dd1de0c7684fa4e8126139d54f5247626faf3ac84e"
+        "04364f3185a52d6881a5656e4da4f79c1750b61ae9b879bd85d06f8deea9e5cf"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -4503,7 +4503,7 @@
       ],
       [
         "packages/adapters/src/news/gdelt.ts",
-        "831dcbde3c93178a4783369a05e57a93752d05f15dbf7376c25b3e0b4f21bf38"
+        "7bb19fccfba1a09133e39a26cc372d40d9d805c366b5b01b903de58c344cd8e6"
       ],
       [
         "packages/adapters/src/news/index.ts",
@@ -5439,11 +5439,11 @@
       ],
       [
         "packages/services/src/news/quota-governor.ts",
-        "3751133132b0460d4ed5f85cbd29dcb2b355e38506e70912f14c67ca490a2d01"
+        "fedfa14aed24bdfbb1ec7c947e17aa8d389435038cfe67357248e8047a30a159"
       ],
       [
         "packages/services/src/news/runtime.ts",
-        "3765e620ada22896abdf49de01f0d84d88cddab8cc2f32f1480937d2a751a5d4"
+        "07dd295409a29f43d95164240984a763246330bccb945021928976937a6f6afe"
       ],
       [
         "packages/services/src/news/service.ts",
@@ -6450,7 +6450,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "271c3ca019bea5fd765da3c5c45f7b43e9e5a532bffaba13e45108c2775223f6"
+    "hash": "2d0a6888a7f0a9244a3e72de0e983db0eab761ad2dd95f9714599134b63aabfb"
   },
   "paper-market-selector-v1": {
     "version": 1,
@@ -6622,7 +6622,7 @@
       ],
       [
         "packages/adapters/src/http/news.ts",
-        "f39814bf2370e6569a93d9dd1de0c7684fa4e8126139d54f5247626faf3ac84e"
+        "04364f3185a52d6881a5656e4da4f79c1750b61ae9b879bd85d06f8deea9e5cf"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -6654,7 +6654,7 @@
       ],
       [
         "packages/adapters/src/news/gdelt.ts",
-        "831dcbde3c93178a4783369a05e57a93752d05f15dbf7376c25b3e0b4f21bf38"
+        "7bb19fccfba1a09133e39a26cc372d40d9d805c366b5b01b903de58c344cd8e6"
       ],
       [
         "packages/adapters/src/news/index.ts",
@@ -7590,11 +7590,11 @@
       ],
       [
         "packages/services/src/news/quota-governor.ts",
-        "3751133132b0460d4ed5f85cbd29dcb2b355e38506e70912f14c67ca490a2d01"
+        "fedfa14aed24bdfbb1ec7c947e17aa8d389435038cfe67357248e8047a30a159"
       ],
       [
         "packages/services/src/news/runtime.ts",
-        "3765e620ada22896abdf49de01f0d84d88cddab8cc2f32f1480937d2a751a5d4"
+        "07dd295409a29f43d95164240984a763246330bccb945021928976937a6f6afe"
       ],
       [
         "packages/services/src/news/service.ts",
@@ -8601,7 +8601,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "c00b79321d76b22dcee8dd653faab4989e1487b25b4d1c79130f3d936511c445"
+    "hash": "e462005183b0fca5d89bbffe6ef5aae5eeeece4357aae054111f502fd69a90be"
   },
   "trendvol-hourly-execution-v1": {
     "version": 1,
@@ -8761,7 +8761,7 @@
       ],
       [
         "packages/adapters/src/http/news.ts",
-        "f39814bf2370e6569a93d9dd1de0c7684fa4e8126139d54f5247626faf3ac84e"
+        "04364f3185a52d6881a5656e4da4f79c1750b61ae9b879bd85d06f8deea9e5cf"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -8793,7 +8793,7 @@
       ],
       [
         "packages/adapters/src/news/gdelt.ts",
-        "831dcbde3c93178a4783369a05e57a93752d05f15dbf7376c25b3e0b4f21bf38"
+        "7bb19fccfba1a09133e39a26cc372d40d9d805c366b5b01b903de58c344cd8e6"
       ],
       [
         "packages/adapters/src/news/index.ts",
@@ -10192,7 +10192,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "c8b4eab46cd17c73406bc01a130875dbfa5c7538b1148bdaa3aa7870291a58fd"
+    "hash": "9eca923dd0df82373a1e2e0b6555728f81d99d4c90b552dfc6406c9a33274733"
   },
   "trendvol-execution-remediation-v1": {
     "version": 1,
@@ -10352,7 +10352,7 @@
       ],
       [
         "packages/adapters/src/http/news.ts",
-        "f39814bf2370e6569a93d9dd1de0c7684fa4e8126139d54f5247626faf3ac84e"
+        "04364f3185a52d6881a5656e4da4f79c1750b61ae9b879bd85d06f8deea9e5cf"
       ],
       [
         "packages/adapters/src/http/rate-limiter.ts",
@@ -10384,7 +10384,7 @@
       ],
       [
         "packages/adapters/src/news/gdelt.ts",
-        "831dcbde3c93178a4783369a05e57a93752d05f15dbf7376c25b3e0b4f21bf38"
+        "7bb19fccfba1a09133e39a26cc372d40d9d805c366b5b01b903de58c344cd8e6"
       ],
       [
         "packages/adapters/src/news/index.ts",
@@ -11775,6 +11775,6 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "8a727e186e2e62749b5b777d605c4e49db21933b94b89d4fba60381468962256"
+    "hash": "27e77b1f388e4334211c7c32417b8a521fca601e070a210bd97bf8027fd11951"
   }
 }
