@@ -128,7 +128,7 @@ describe('news storage foundation', () => {
     prior.exec('CREATE TABLE synthetic_existing_record(value TEXT); INSERT INTO synthetic_existing_record VALUES (\'preserved\')');
     prior.close();
     const upgraded = db(path);
-    expect(upgraded.prepare('PRAGMA user_version').get()?.['user_version']).toBe(91);
+    expect(upgraded.prepare('PRAGMA user_version').get()?.['user_version']).toBe(92);
     expect(upgraded.prepare('SELECT value FROM synthetic_existing_record').get()?.['value']).toBe('preserved');
     expect(readdirSync(directory).some(name => name.includes('pre-migration-v87') && name.endsWith('.bak'))).toBe(true);
     expect(counts(upgraded)).toEqual([0, 0, 0]);

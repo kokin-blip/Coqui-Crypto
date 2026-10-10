@@ -67,3 +67,4 @@ export * from './news-quota.js';
 export * from './news-intelligence.js';
 
 export * from "./news-chunks.js";
+export * from './news-reports.js';

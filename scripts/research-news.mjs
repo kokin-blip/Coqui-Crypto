@@ -4,12 +4,13 @@ import { randomUUID } from 'node:crypto';
 import { parseArgs } from 'node:util';
 import { DEFAULT_VENUE_COST_PROFILE, instrumentKey, newsEvidenceHash, runNewsStudy } from '../packages/core/dist/index.js';
 import { newsFeatureSnapshotSchema } from '../packages/contracts/dist/index.js';
-import { openDatabase, readNewsArchive, queryMarketBarArchive, verifyMarketBarArchive, setSetting } from '../packages/storage/dist/index.js';
+import { openDatabase, readNewsArchive, queryMarketBarArchive, verifyMarketBarArchive, setSetting, associateNewsReport } from '../packages/storage/dist/index.js';
 const { values } = parseArgs({ options: { 'news-archive': { type: 'string', multiple: true }, 'market-archive': { type: 'string', multiple: true },
-  output: { type: 'string' }, database: { type: 'string' }, 'code-revision': { type: 'string' } } });
+  output: { type: 'string' }, database: { type: 'string' }, 'code-revision': { type: 'string' }, 'profile-id': { type: 'string' } } });
 let database;
 try {
   if (!values.output || !values['code-revision'] || !values['news-archive']?.length && !values.database) throw new Error('Verified news and market archives required.');
+  if (values.database && !values['profile-id']) throw new Error('Explicit profile identity required for report association.');
   if (values.database && !existsSync(values.database)) throw new Error('An existing database is required.');
   const hashes = [], bars = [], features = [];
   let inputDiagnostics = null;
@@ -57,6 +58,7 @@ try {
   if (savedHash !== reportHash || newsEvidenceHash(savedBody) !== reportHash) throw new Error('Report integrity failure.');
   if (values.database) {
     database = openDatabase(values.database);
+    associateNewsReport({ profileId: values['profile-id'], path: join(destination, 'report.json'), atMs: Date.now() }, database);
     setSetting('news_study_status_v1', reports.every(r => r.status === 'evaluated') ? 'evaluated' : 'insufficient_evidence', database);
   }
   console.log(JSON.stringify({ reportHash, directory: destination, studies: reports.map(r => ({ status: r.status, cadence: r.manifest.spec.cadence,

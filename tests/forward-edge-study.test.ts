@@ -1,3 +1,4 @@
+import { readForwardEdgeStatus } from '../apps/desktop/src/main/forward-edge-runtime.js';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -42,6 +43,14 @@ function passing(planHash: string): ForwardEdgeStudyResult {
 }
 
 describe('prospective edge scoring', () => {
+  it('does not register during a status read and preserves incompatible historical registration', () => {
+    const db=openDatabase(':memory:');
+    expect(readForwardEdgeStatus('main',db).lifecycle).toBe('not_registered');
+    const hash=registerForwardEdgeStudy(SHIPPED_FORWARD_EDGE_PLAN,db);
+    const status=readForwardEdgeStatus('main',db);
+    expect(status).toMatchObject({planHash:hash,lifecycle:'retired_incompatible',activated:false,eligibleDays:0});
+    db.close();
+  });
   it('values the no-trade counterfactual from the exact pre-decision state', () => {
     expect(deriveForwardCounterfactual({
       preDecisionBalances: [

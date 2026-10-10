@@ -69,7 +69,14 @@ export async function createNewsIntelligenceRuntime(input: {
   }
   async function manualRefresh(provider: NewsProviderId, options: { readonly persist?: boolean;
     readonly query?: NewsQuery; readonly signal?: AbortSignal } = {}): Promise<NewsRefreshResult> {
-    const failure = (reason: string, requestCost = 0): NewsRefreshResult => ({ provider, ok: false, reason, articles: 0, inserted: 0, requestCost });
+    const record = (result: NewsRefreshResult, retainedCount = 0): NewsRefreshResult => {
+      input.storageDatabase.prepare(`INSERT INTO news_ingestion_diagnostics_v1
+        (id,provider,completed_at,ok,reason,parsed,retained,inserted,request_cost) VALUES(?,?,?,?,?,?,?,?,?)`)
+        .run(randomUUID(), provider, input.clock.nowMs(), result.ok ? 1 : 0, result.reason,
+          result.articles, retainedCount, result.inserted, result.requestCost);
+      return result;
+    };
+    const failure = (reason: string, requestCost = 0): NewsRefreshResult => record({ provider, ok: false, reason, articles: 0, inserted: 0, requestCost });
     if (shutdown.signal.aborted) return failure('shutdown');
     if (input.canCollect && !input.canCollect()) return failure('host_inactive');
     if (!enabled.has(provider)) return failure('provider_disabled');
@@ -85,7 +92,7 @@ export async function createNewsIntelligenceRuntime(input: {
       if (signal.aborted) return failure('canceled', requestCost);
       if (input.canCollect && !input.canCollect()) return failure('host_inactive', requestCost);
       const inserted = options.persist && result.articles.length ? storage.ingest(result.articles).filter(row => row.inserted).length : 0;
-      return { provider, ok: true, reason: null, articles: result.articles.length, inserted, requestCost: result.requestCost };
+      return record({ provider, ok: true, reason: null, articles: result.articles.length, inserted, requestCost: result.requestCost }, options.persist ? result.articles.length : 0);
     } catch (error) {
       return failure(error instanceof NewsProviderError && /^[a-z][a-z0-9_]{0,63}$/u.test(error.code)
         ? error.code : 'ingestion_failed', error instanceof NewsProviderError ? error.requestCost : requestCost);
