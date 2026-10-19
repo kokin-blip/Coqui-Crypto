@@ -21,9 +21,13 @@ function WorkspaceApp({ client }: { readonly client: CoquiClient }): React.JSX.E
   const { inspectorVisible, shellState } = workspace;
 
   useEffect(() => {
-    window.requestAnimationFrame(() => {
-      document.querySelector<HTMLElement>('[data-route-heading]')?.focus({ preventScroll: true });
+    const frame = window.requestAnimationFrame(() => {
+      const main = document.querySelector<HTMLElement>('#main-content');
+      // Async route content may already have accepted a keyboard action before this frame.
+      if (document.activeElement !== main && main?.contains(document.activeElement)) return;
+      main?.querySelector<HTMLElement>('[data-route-heading]')?.focus({ preventScroll: true });
     });
+    return () => window.cancelAnimationFrame(frame);
   }, [route]);
 
   useEffect(() => {

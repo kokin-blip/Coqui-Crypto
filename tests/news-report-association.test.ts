@@ -1,9 +1,9 @@
-import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, rmSync, copyFileSync, renameSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe,it,expect } from 'vitest';
 import { newsEvidenceHash,runNewsStudy,DEFAULT_TRADE_COST_CONFIG } from '../packages/core/src/index.js';
-import { openDatabase,associateNewsReport,latestAssociatedNewsReport,appendNewsExportPermission } from '../packages/storage/src/index.js';
+import { openDatabase,associateNewsReport,selectNewsReportLocation,latestAssociatedNewsReport,appendNewsExportPermission,migrations } from '../packages/storage/src/index.js';
 import { newsExportFields } from '../packages/contracts/src/index.js';
 import { buildEvidenceBundle } from '../apps/desktop/src/main/evidence-export.js';
 import { createWorkstationHandlers } from '../apps/desktop/src/main/workstation-handlers.js';
@@ -15,6 +15,41 @@ function report() {
   return {...body,reportHash:newsEvidenceHash(body)};
 }
 describe('explicit news report identity',()=>{
+  it('upgrades immutable associations and selects copies explicitly without fallback or history loss',()=>{
+    const dir=mkdtempSync(join(tmpdir(),'coqui-relocation-')),file=join(dir,'profile.db'),original=join(dir,'original.json'),copy=join(dir,'copy.json');
+    let db=openDatabase(file,{migrations:migrations.filter(m=>m.version<=93)});
+    try {
+      writeFileSync(original,JSON.stringify(report()));associateNewsReport({path:original,profileId:'main',atMs:20},db);
+      db.close();db=openDatabase(file);
+      copyFileSync(original,copy);renameSync(original,join(dir,'quarantined.json'));
+      expect(latestAssociatedNewsReport('main',30,db).association).toBe('unavailable');
+      expect(()=>associateNewsReport({path:copy,profileId:'main',atMs:30},db)).toThrow('explicit_report_relocation_required');
+      const select={profileId:'main',reportHash:report().reportHash,path:copy,atMs:30};
+      expect(()=>selectNewsReportLocation({...select,profileId:'b'.repeat(8)+'-bbbb-bbbb-bbbb-'+ 'b'.repeat(12)},db)).toThrow('report_profile_association_missing');
+      expect(()=>selectNewsReportLocation({...select,reportHash:'a'.repeat(64)},db)).toThrow('report_profile_association_missing');
+      expect(selectNewsReportLocation(select,db).status).toBe('recorded');
+      expect(selectNewsReportLocation(select,db).status).toBe('already_selected');
+      expect(db.prepare('SELECT count(*) AS n FROM news_report_locations_v1').get()?.['n']).toBe(1);
+      expect(latestAssociatedNewsReport('main',29,db).association).toBe('unavailable');
+      for(let restart=0;restart<2;restart++){
+        db.close();db=openDatabase(file);expect(latestAssociatedNewsReport('main',31,db).report?.reportHash).toBe(select.reportHash);
+      }
+      expect(db.prepare('SELECT report_path FROM news_report_associations_v1').get()?.['report_path']).toBe(original);
+      expect(()=>db.exec("UPDATE news_report_locations_v1 SET report_path='overwritten'" )).toThrow('immutable');
+      expect(()=>db.exec('DELETE FROM news_report_locations_v1')).toThrow('immutable');
+      writeFileSync(copy,'{corrupt');
+      expect(()=>selectNewsReportLocation(select,db)).toThrow();
+      expect(latestAssociatedNewsReport('main',31,db).association).toBe('unavailable');
+      copyFileSync(join(dir,'quarantined.json'),original); // An invalid selection cannot silently fall back to the original.
+      expect(latestAssociatedNewsReport('main',31,db).association).toBe('unavailable');
+      const wrong={...report(),completedAtMs:11};writeFileSync(copy,JSON.stringify(wrong));
+      expect(()=>selectNewsReportLocation(select,db)).toThrow('report_integrity_mismatch');
+      writeFileSync(copy,JSON.stringify({...report(),version:'future-report-v2'}));expect(()=>selectNewsReportLocation(select,db)).toThrow();
+      rmSync(copy);expect(()=>selectNewsReportLocation(select,db)).toThrow();
+      expect(db.prepare('SELECT count(*) AS n FROM news_report_locations_v1').get()?.['n']).toBe(1);
+      expect(db.prepare('SELECT count(*) AS n FROM paper_orders_v3').get()?.['n']).toBe(0);
+    }finally{db.close();rmSync(dir,{recursive:true,force:true});}
+  });
   it('withholds arbitrary source strings and rejects unknown report reasons',()=>{
     const dir=mkdtempSync(join(tmpdir(),'coqui-source-redaction-')),path=join(dir,'report.json'),db=openDatabase(':memory:');
     try {

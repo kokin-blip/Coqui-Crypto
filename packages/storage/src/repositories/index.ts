@@ -68,4 +68,5 @@ export * from './news-intelligence.js';
 
 export * from "./news-chunks.js";
 export * from './news-reports.js';
+export * from './news-usefulness.js';
 export * from './news-export-permissions.js';

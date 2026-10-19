@@ -97,6 +97,8 @@ export function isChannelName(value: unknown): value is ChannelName {
  * which changes no balance and no tax lot.
  */
 const WRITE_CHANNELS = [
+  'news.report.select-location',
+  'app.recovery.verify',
   'app.evidence-export',
   'research.overlay-shadow.set',
   'alpaca.paper.connect',

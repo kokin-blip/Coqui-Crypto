@@ -4,6 +4,15 @@ import { newsObservationSchema, newsProviderIdSchema } from './news.js';
 import { newsObservationAnalysisSchema, newsFeatureSnapshotSchema } from './news-intelligence.js';
 const hash = z.string().regex(/^[a-f0-9]{64}$/u), count = z.number().int().nonnegative().safe();
 export const newsChannelSchemas = {
+  'news.report.select-location': { request: z.strictObject({ commandId: z.string().uuid(), reportHash: hash }),
+    response: z.strictObject({ status: z.enum(['recorded','already_selected','cancelled']), reportHash: hash }) },
+  'app.recovery.verify': { request: z.strictObject({ commandId: z.string().uuid(), expectedDatabaseHash: hash }),
+    response: z.strictObject({ status: z.enum(['verified','cancelled']), proof: z.strictObject({
+      version: z.literal('isolated-restore-proof-v1'), schemaVersion: count, buildIdentity: z.string(), databaseHash: hash,
+      ledgerTotalUsd: z.string(), ledgerRows: count, integrityEventKinds: count, artifacts: z.array(z.strictObject({ hash })),
+      credentialsIncluded: z.literal(false), scope: z.literal('explicit_database_and_supplied_artifacts'),
+      exclusions: z.array(z.string()), proofHash: hash,
+    }).nullable() }) },
   'app.evidence-export': { request:z.strictObject({commandId:z.string().uuid()}),response:z.strictObject({status:z.enum(['saved','cancelled']),bundleHash:hash}) },
   'app.about': { request: z.strictObject({}), response: z.strictObject({ build: z.strictObject({ version:z.string(),sourceRevision:z.string(),sourceHash:hash,dirty:z.boolean(),channel:z.string(),builtAtMs:ms }).nullable(),schemaVersion:count,supportedSchemaVersion:count,liveExecutionEnabled:z.literal(false),publication:z.literal('unverified') }) },
   'app.performance-trace': { request: z.strictObject({}), response: z.strictObject({ enabled: z.boolean(), observedAtMs: ms,
@@ -24,9 +33,12 @@ export const newsChannelSchemas = {
     collectionEnabled: z.boolean(), analysisEnabled: z.boolean(), mappingReady: z.boolean(),
     providers: z.array(z.strictObject({ provider: newsProviderIdSchema, enabled: z.boolean(), reserved: count,
       succeeded: count, failed: count, pending: count, lastCompletedAtMs: ms.nullable(),
-      lastUsefulAtMs: ms.nullable(), parsed: count, retained: count, inserted: count,
+      lastSuccessfulIngestionAtMs: ms.nullable(), observationLagMs: ms.nullable(), parsed: count, retained: count, inserted: count,
+      contributingStories: count.nullable(), exclusiveStories: count.nullable(), missingSlots: z.null(),
       latestReason: z.string().nullable(), canonicalEligibility: z.literal('unknown') })).max(3),
-    latestAnalysisAtMs: ms.nullable(), coverageComplete: z.null(), studyStatus: z.enum(['not_run', 'insufficient_evidence', 'evaluated']) }) },
+    latestAnalysisAtMs: ms.nullable(), lastEligibleFeatureAtMs: ms.nullable(), observationAnalysisLagMs: ms.nullable(),
+    featureId: hash.nullable(), uniqueStories: count.nullable(), missingReasons: z.array(z.string()).max(20),
+    contributionScope: z.literal('latest_prospective_feature'), coverageComplete: z.null(), studyStatus: z.enum(['not_run', 'insufficient_evidence', 'evaluated']) }) },
   'news.analysis.set-enabled': { request: z.strictObject({ commandId: z.string().uuid(), enabled: z.boolean() }),
     response: z.strictObject({ enabled: z.boolean() }) },
 } as const;

@@ -2,7 +2,7 @@ import { newsEvidenceHash, type Clock } from '@coqui/core';
 import type { ChannelHandlers } from './dispatch.js';
 import { newsObservationAnalysisSchema } from '@coqui/contracts';
 import { newsAnalysisEnabled, readNewsAnalysisConfiguration, readNewsHostConfiguration, saveNewsAnalysisEnabled } from '@coqui/services';
-import { latestAssociatedNewsReport, listNewsObservationsAsOf, readNewsObservation, readNewsCoverage, listNewsFeaturesAsOf, readNewsRegistryEvidence, getSetting, type Db } from '@coqui/storage';
+import { latestAssociatedNewsReport, listNewsObservationsAsOf, readNewsObservation, readNewsCoverage, readNewsUsefulness, listNewsFeaturesAsOf, readNewsRegistryEvidence, getSetting, type Db } from '@coqui/storage';
 export function createNewsHandlers(profileId: string, database: Db, clock: Clock): ChannelHandlers {
   const cutoff = (asOf: number | null) => { const value = asOf ?? clock.nowMs(); if (value > clock.nowMs()) throw new TypeError('Future news cutoff.'); return value; };
   return {
@@ -28,21 +28,31 @@ export function createNewsHandlers(profileId: string, database: Db, clock: Clock
     'news.health': () => {
       const asOfMs = clock.nowMs(), mapping = readNewsAnalysisConfiguration(database), configuration = readNewsHostConfiguration(database);
       const coverage = readNewsCoverage(asOfMs, database);
+      const usefulness = readNewsUsefulness(asOfMs,database);
       const latest = database.prepare('SELECT max(persisted_at) AS at FROM news_analysis_runs_v1 WHERE persisted_at<=?').get(asOfMs) as { at: number | null };
       const mappingReady = mapping !== null && readNewsRegistryEvidence(mapping, asOfMs, database).length === mapping.instruments.length && mapping.reviewedAtMs <= asOfMs;
       const studyStatus = getSetting('news_study_status_v1', database) ?? 'not_run';
       if (!['not_run', 'insufficient_evidence', 'evaluated'].includes(studyStatus)) throw new TypeError('Invalid study status.');
       return { ok: true, value: { asOfMs, mainProfile: profileId === 'main', collectionEnabled: profileId === 'main' && configuration.gdeltEnabled,
         analysisEnabled: newsAnalysisEnabled(database), mappingReady, latestAnalysisAtMs: latest.at, coverageComplete: null, studyStatus,
+        lastEligibleFeatureAtMs: usefulness.lastEligibleFeatureAtMs, observationAnalysisLagMs: usefulness.observationAnalysisLagMs,
+        featureId: usefulness.featureId, uniqueStories: usefulness.uniqueStories, missingReasons: usefulness.missingReasons,
+        contributionScope: 'latest_prospective_feature',
         providers: (['gdelt', 'marketaux', 'currents'] as const).map(provider => {
           const c = coverage.find(c => c.provider === provider);
           const last = database.prepare('SELECT max(completed_at) AS at FROM news_request_attempts_v1 WHERE provider=? AND completed_at<=?').get(provider, asOfMs) as { at: number | null };
           const funnel = database.prepare(`SELECT coalesce(sum(parsed),0) AS parsed,coalesce(sum(retained),0) AS retained,
             coalesce(sum(inserted),0) AS inserted FROM news_ingestion_diagnostics_v1 WHERE provider=? AND completed_at BETWEEN ? AND ?`)
             .get(provider, asOfMs - 86_400_000, asOfMs) as { parsed: number; retained: number; inserted: number };
-          const useful = database.prepare('SELECT max(completed_at) AS at FROM news_ingestion_diagnostics_v1 WHERE provider=? AND inserted>0 AND completed_at<=?').get(provider, asOfMs) as { at: number | null };
+          const ingestion = database.prepare('SELECT max(completed_at) AS at FROM news_ingestion_diagnostics_v1 WHERE provider=? AND ok=1 AND retained>0 AND completed_at<=?').get(provider, asOfMs) as { at: number | null };
+          const observation = database.prepare(`SELECT o.persisted_at-o.observed_at AS lag FROM news_observations_v1 o
+            JOIN news_provider_records_v1 p ON p.id=o.provider_record_id WHERE p.provider=? AND o.persisted_at<=?
+            ORDER BY o.persisted_at DESC,o.id LIMIT 1`).get(provider,asOfMs) as { lag:number } | undefined;
+          const contribution=usefulness.contribution.find(c=>c.provider===provider);
           const diagnostic = database.prepare('SELECT reason FROM news_ingestion_diagnostics_v1 WHERE provider=? AND completed_at<=? ORDER BY completed_at DESC,rowid DESC LIMIT 1').get(provider,asOfMs) as { reason: string | null } | undefined;
-          return { ...funnel, lastUsefulAtMs: useful.at, latestReason: diagnostic?.reason ?? null, canonicalEligibility: 'unknown', provider, enabled: profileId === 'main' && provider === 'gdelt' && configuration.gdeltEnabled,
+          return { ...funnel, lastSuccessfulIngestionAtMs: ingestion.at, observationLagMs: observation?.lag??null,
+            contributingStories:contribution?.contributingStories??null,exclusiveStories:contribution?.exclusiveStories??null,missingSlots:null,
+            latestReason: diagnostic?.reason ?? null, canonicalEligibility: 'unknown', provider, enabled: profileId === 'main' && provider === 'gdelt' && configuration.gdeltEnabled,
             reserved: c?.reserved ?? 0, succeeded: c?.succeeded ?? 0, failed: c?.failed ?? 0, pending: c?.pending ?? 0, lastCompletedAtMs: last.at };
         }) } };
     },

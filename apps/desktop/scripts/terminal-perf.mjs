@@ -1,5 +1,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
-import { mkdtempSync, rmSync, mkdirSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync, mkdirSync, writeFileSync, readFileSync } from 'node:fs';
+import { monitorEventLoopDelay } from 'node:perf_hooks';
+import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -14,6 +16,11 @@ const { createDispatcher } = await import(pathToFileURL(join(root, 'dist/main/di
 const { CoinbaseMicrostructure } = await import(pathToFileURL(join(root, 'dist/main/coinbase-microstructure.js')).href);
 const { WEB_PREFERENCES } = await import(pathToFileURL(join(root, 'dist/main/security.js')).href);
 const seconds = Number(process.env.COQUI_PERF_SECONDS ?? 60);
+if (!Number.isSafeInteger(seconds) || seconds < 0 || seconds > 3600) throw new Error('Invalid bounded benchmark duration');
+// This harness is synthetic and cannot activate a public feed or access a credential store.
+globalThis.fetch = async () => new globalThis.Response('{}',{status:503});
+globalThis.WebSocket = class { close() {} send() {} };
+const loop = monitorEventLoopDelay({resolution:20}); loop.enable();
 const intervalMs = { '1m': 60000, '5m': 300000, '15m': 900000, '1h': 3600000, '6h': 21600000, '1d': 86400000 };
 app.enableSandbox();
 app.whenReady().then(async () => {
@@ -97,6 +104,23 @@ try {
     navigation.push(Date.now() - start);
   }
   const heapAfterNavigation = await heapSnapshot();
+  const beforeMenu = await evaluate("({scripts:performance.getEntriesByType('resource').filter(e=>e.name.includes('IonicCommandPopover')).map(e=>({url:e.name,durationMs:e.duration,transferBytes:e.transferSize})),now:performance.now()})");
+  const menuMetricsBefore=process.env.COQUI_PERF_AUDIT==='1'?Object.fromEntries((await window.webContents.debugger.sendCommand('Performance.getMetrics')).metrics.map(m=>[m.name,m.value])):null;
+  const menuStart=Date.now();
+  const menuPoint=await evaluate("(()=>{const r=document.querySelector('.command-menu-trigger').getBoundingClientRect();return {x:Math.round(r.x+r.width/2),y:Math.round(r.y+r.height/2)}})()");
+  window.webContents.sendInputEvent({type:'mouseDown',button:'left',clickCount:1,...menuPoint});
+  window.webContents.sendInputEvent({type:'mouseUp',button:'left',clickCount:1,...menuPoint});
+  await wait("document.querySelector('.command-menu-content')?.getBoundingClientRect().width>0");
+  await evaluate("new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))");
+  const firstMenuPaintMs=Date.now()-menuStart;
+  const menuMetricsAfter=menuMetricsBefore?Object.fromEntries((await window.webContents.debugger.sendCommand('Performance.getMetrics')).metrics.map(m=>[m.name,m.value])):null;
+  const ionicResources=await evaluate("performance.getEntriesByType('resource').filter(e=>e.name.includes('IonicCommandPopover')).map(e=>({url:e.name,durationMs:e.duration,transferBytes:e.transferSize}))");
+  await evaluate("document.querySelector('ion-popover')?.dismiss()");
+  const ipcSamples=[];
+  for(let i=0;i<40;i++) ipcSamples.push(await evaluate(`(async()=>{const start=performance.now();await window.coqui.query('app.about',{});return performance.now()-start})()`));
+  const retention=[];
+  const sampleMemory=async elapsedSeconds=>retention.push({elapsedSeconds,main:process.memoryUsage(),renderer:app.getAppMetrics().find(metric=>metric.pid===window.webContents.getOSProcessId())?.memory??null,heap:await heapSnapshot()});
+  await sampleMemory(0);
   if(activity!==null){await evaluate("document.querySelector('#terminal-data-tab-1').click()");await wait("document.querySelector('.chart-evidence-list')?.textContent.includes('+9.00') && document.querySelector('.terminal-execution-trail')?.textContent.includes('fixture-close')");}
   await wait("document.querySelector('.chart-drawing-layer line')!==null");
   const oldX=await evaluate("Number(document.querySelector('.chart-drawing-layer line').getAttribute('x1'))");
@@ -118,7 +142,8 @@ try {
   const auditBefore = await auditMetrics();
   await evaluate('window.__auditRenders && (window.__auditRenders = {})');
   // Each wait is short so the caller can collect progress while the benchmark runs.
-  for (let i = 0; i < seconds; i++) {if(i===Math.floor(seconds/2))await evaluate("document.querySelector('#microstructure-tab-1').click()");await new Promise(resolve => setTimeout(resolve, 1000));}
+  for (let i = 0; i < seconds; i++) {if(i===Math.floor(seconds/2))await evaluate("document.querySelector('#microstructure-tab-1').click()");await new Promise(resolve => setTimeout(resolve, 1000));if((i+1)%60===0){await sampleMemory(i+1);console.error(`Retention progress: ${i+1}/${seconds}s`);}}
+  await sampleMemory(seconds);
   const updates = await evaluate('({removedCanvases:window.__terminalRemoved,longTasks:window.__terminalLongTasks})');
   await evaluate('window.__terminalFrameActive=false');
   const percentile = (values, p) => [...values].sort((a,b)=>a-b)[Math.max(0,Math.ceil(values.length*p)-1)] ?? 0;
@@ -127,6 +152,15 @@ try {
   const viewportDriftPx=Math.abs(finalX-viewportX);
   const p75 = navigation.sort((a,b)=>a-b)[Math.ceil(navigation.length*.75)-1];
   const result = { shellMs, coldChartMs, cachedNavigationP75Ms: p75, feedSeconds: seconds, ticks, feedTicks, bookQueries, tradeQueries, historyQueries, unchangedExtensionEvaluations:extensionEvaluations-evaluationsBeforeFeed, viewportDriftPx, frameP95Ms:percentile(frames,.95), framesOver34Ms:frames.filter(ms=>ms>34).length, ...updates };
+  const workload={version:2,simulated:true,bars:2000,navigationCycles:12,feedIntervalMs:1000,seconds,network:'503_only',scheduler:'disabled'};
+  Object.assign(result,{workload,workloadHash:createHash('sha256').update(JSON.stringify(workload)).digest('hex'),
+    build:JSON.parse(readFileSync(join(root,'dist/main/build-info.json'),'utf8')),
+    environment:{electron:process.versions.electron,node:process.versions.node,platform:process.platform,arch:process.arch},
+    freshProcessToMeasurementMs:globalThis.performance.now(),ipc:{samples:ipcSamples.length,p75Ms:percentile(ipcSamples,.75),p95Ms:percentile(ipcSamples,.95)},
+    mainEventLoop:{p95Ms:loop.percentile(95)/1e6,maxMs:loop.max/1e6},retention});
+  result.ionic={loadedBeforeCommand:beforeMenu.scripts.length>0,firstMenuPaintMs,resources:ionicResources,
+    scriptDurationMs:menuMetricsBefore?(menuMetricsAfter.ScriptDuration-menuMetricsBefore.ScriptDuration)*1000:null,
+    limitation:'First-open total includes import, parse, execution, render and overlay; ScriptDuration is aggregate, not isolated parse time. file: transferSize can be zero.'};
   if (auditBefore !== null) {
     const after = await auditMetrics();
     result.audit = {
@@ -164,7 +198,7 @@ try {
   console.log(JSON.stringify(result));
   if (process.env.COQUI_PERF_BASELINE !== '1' && (p75 > 200 || viewportDriftPx > .5 || extensionEvaluations-evaluationsBeforeFeed > 1 || updates.removedCanvases > 0 || updates.longTasks.some(ms=>ms>200))) process.exitCode = 1;
 } finally {
-  clearInterval(feed); window.destroy(); activity?.dispose(); runtime.dispose(); rmSync(directory, { recursive: true, force: true }); app.exit(process.exitCode ?? 0);
+  loop.disable(); clearInterval(feed); window.destroy(); activity?.dispose(); runtime.dispose(); rmSync(directory, { recursive: true, force: true }); app.exit(process.exitCode ?? 0);
 }
 
 }).catch(error => { console.error(error); app.exit(1); });

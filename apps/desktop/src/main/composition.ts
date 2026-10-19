@@ -1,7 +1,8 @@
 import { createPaperReviewHandlers } from './paper-review-handlers.js';
 import { createWorkstationHandlers } from './workstation-handlers.js';
+import { runtimeRecoveryHandlers, type RecoveryOptions } from './recovery-handlers.js';
 import { createNewsHandlers } from './news-handlers.js';
-import { createRuntimeNewsHost, type NewsHostRuntime } from './news-host-runtime.js'; import type { NewsHostConfiguration, ProfileOperationGate } from '@coqui/services'; import type { WalletNicknameStore, ProfileManifestStore } from '@coqui/storage';
+import { createRuntimeNewsHost, type NewsHostRuntime } from './news-host-runtime.js'; import type { NewsHostConfiguration } from '@coqui/services'; import type { WalletNicknameStore, ProfileManifestStore } from '@coqui/storage';
 import { createOverlayShadowRuntime } from './overlay-shadow-runtime.js'; import { createWiderUniverseRuntime } from './wider-universe-runtime.js'; import { createBreakoutRuntime } from './breakout-runtime.js'; import { createRangeRotationRuntime } from './range-rotation-runtime.js'; import { createMarketSelectorRuntime } from './market-selector-runtime.js';
 import { readStrategyHealth, PAPER_TRENDVOL_VERSION } from '@coqui/services';
 import { randomUUID } from 'node:crypto';
@@ -88,10 +89,9 @@ import { createCandleSource, createDisplayDataService, createReferenceSources } 
 import { startSchedulerRuntime, type SchedulerRuntime } from './scheduler-runtime.js';
 import type { ChannelHandlers } from './dispatch.js';
 
-export interface RuntimeOptions extends Partial<Pick<Parameters<typeof createAdvisorHandlers>[0], 'secrets' | 'saveHistory' |
+export interface RuntimeOptions extends RecoveryOptions, Partial<Pick<Parameters<typeof createAdvisorHandlers>[0], 'secrets' | 'saveHistory' |
   'readClipboardText' | 'clearClipboardIfMatches'>> {
   readonly hostKind?: 'desktop' | 'headless'; readonly databasePath: string; readonly profileId: string; readonly hostId?: string;
-  readonly operationGate?: ProfileOperationGate;
   readonly nicknameStore?: WalletNicknameStore;
   readonly manifestStore?: ProfileManifestStore;
   readonly readSystemTime?: () => number;
@@ -376,6 +376,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       };
     },
     ...createWorkstationHandlers({profileId:options.profileId,database,clock,...(options.saveEvidence?{saveEvidence:options.saveEvidence}:{})}),
+    ...runtimeRecoveryHandlers(options,database,clock),
     'paper.execution.policy': () => ({ ok: true, value: getPaperExecutionPolicy(options.profileId, database) }),
     'paper.execution.policy.set': (payload: {
       readonly commandId: string;

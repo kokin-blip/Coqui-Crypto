@@ -9,7 +9,7 @@ import { parseArgs } from 'node:util';
 import { createMemorySecretStore } from '@coqui/adapters';
 import { newsEvidenceHash } from '@coqui/core';
 import { appendIntegrityEvent, associateNewsReport, createFileProfileBackupStore, createFileWalletNicknameStore,
-  listIntegrityEvents, openDatabase, readProfileDeletionImpact, readVerifiedNewsReport, verifyIsolatedRestore } from '@coqui/storage';
+  listIntegrityEvents, selectNewsReportLocation, openDatabase, readProfileDeletionImpact, readVerifiedNewsReport, verifyIsolatedRestore } from '@coqui/storage';
 import { createRuntimeProfileController } from '../dist/main/profile-runtime.js';
 import { createDispatcher } from '../dist/main/dispatch.js';
 
@@ -64,7 +64,7 @@ async function runtimePhase(phase) {
       } finally { db.close(); }
     }
     const about = await dispatch('app.about', {}), person = await dispatch('app.person', {}), report = await dispatch('news.report', {});
-    check('schema-compatible runtime read', about.status === 'ok' && about.value.schemaVersion === 93 && about.value.liveExecutionEnabled === false);
+    check('schema-compatible runtime read', about.status === 'ok' && about.value.schemaVersion === 94 && about.value.liveExecutionEnabled === false);
     check('person read succeeds', person.status === 'ok');
     check('report read succeeds', report.status === 'ok');
     json(join(root, phase + '.json'), { phase, profileId: controller.activeProfile().id, schema: about.value.schemaVersion,
@@ -92,7 +92,7 @@ async function run() {
     const backup = join(backups, created.backup.artifactName), backupHashes = { database: fileHash(join(backup, 'profile.db')), manifest: fileHash(join(backup, 'manifest.json')) };
     const restored = join(root, 'restored');
     const proof = verifyIsolatedRestore({ sourceDatabase: join(backup, 'profile.db'), destination: restored, disposableRoot: root,
-      expectedDatabaseHash: created.backup.databaseSha256, schemaVersion: 93, buildIdentity: readJson(join(desktop, 'dist/main/build-info.json')).sourceHash,
+      expectedDatabaseHash: created.backup.databaseSha256, schemaVersion: 94, buildIdentity: readJson(join(desktop, 'dist/main/build-info.json')).sourceHash,
       artifacts: [...metadata, 'report.json'].map(name => ({ path: join(source, name), hash: sourceHashes[name] })) });
     check('exact ledger and immutable evidence validated', proof.ledgerTotalUsd === '0' && proof.ledgerRows >= 2 && proof.integrityEventKinds >= 1);
     renameSync(join(restored, 'profile.db'), join(restored, 'coqui.db'));
@@ -104,18 +104,18 @@ async function run() {
     check('unresolved original absolute report path stays unavailable', missing.reportAssociation === 'unavailable');
     // Probe the existing API on generated data only; never rewrite its immutable original association.
     const restoredDb = openDatabase(join(restored, 'coqui.db'));
-    try { associateNewsReport({ profileId: 'main', path: join(restored, 'report.json'), atMs: Date.now() }, restoredDb); } finally { restoredDb.close(); }
+    try { selectNewsReportLocation({ profileId: 'main', reportHash, path: join(restored, 'report.json'), atMs: Date.now() }, restoredDb); } finally { restoredDb.close(); }
     const first = child('restart-1'), second = child('restart-2');
     check('two separate process reconstructions succeed', first.processId !== second.processId && first.processId !== seed.processId);
-    check('relocation remains unavailable across two restarts', [first, second].every(p => p.reportAssociation === 'unavailable' && p.reportHash === null));
+    check('explicit copied location resolves across two restarts', [first, second].every(p => p.reportAssociation === 'verified' && p.reportHash === reportHash));
     check('person and nickname survive reconstruction', JSON.stringify(first.person) === JSON.stringify(seed.person) && JSON.stringify(second.nickname) === JSON.stringify(seed.nickname));
     const finalDb = openDatabase(join(restored, 'coqui.db'));
     let associationCount;
     try {
       associationCount = finalDb.prepare('SELECT count(*) AS n FROM news_report_associations_v1').get().n;
-      check('same-hash reassociation is a no-op; original and negative evidence preserved', associationCount === 1 && listIntegrityEvents('restore-fixture', 'negative_result', finalDb).length === 1);
+      check('original association and negative evidence preserved', associationCount === 1 && listIntegrityEvents('restore-fixture', 'negative_result', finalDb).length === 1);
       check('no orders created by reconstruction', finalDb.prepare('SELECT count(*) AS n FROM paper_orders_v3').get().n === 0);
-      check('schema unchanged on reconstruction', finalDb.prepare('PRAGMA user_version').get().user_version === 93);
+      check('schema unchanged on reconstruction', finalDb.prepare('PRAGMA user_version').get().user_version === 94);
     } finally { finalDb.close(); }
     check('source and backup preserved', Object.entries(sourceHashes).every(([name, hash]) => fileHash(join(root, 'source-quarantined', name)) === hash) &&
       fileHash(join(backup, 'profile.db')) === backupHashes.database && fileHash(join(backup, 'manifest.json')) === backupHashes.manifest);
@@ -125,17 +125,17 @@ async function run() {
     check('corrupt manifest refused', !(await createFileProfileBackupStore(join(root, 'source-quarantined'), corruptRoot).verify(created.backup.artifactName)).ok);
     const workload = { version: 1, generatedProfile: true, metadata, externalReport: 'synthetic_insufficient_four_horizons',
       ledger: 'exact_balanced_decimal', originalIsolation: 'quarantined_source', reconstructions: 3, existingAssociationRelocationProbe: true };
-    const body = { version: 'restore-restart-evidence-v1', simulated: true, profileKind: 'generated_disposable', startedAtMs, completedAtMs: Date.now(),
+    const body = { version: 'restore-restart-evidence-v2', simulated: true, profileKind: 'generated_disposable', startedAtMs, completedAtMs: Date.now(),
       sourceRevision: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repository, encoding: 'utf8' }).trim(),
       build: readJson(join(desktop, 'dist/main/build-info.json')), environment: { platform: process.platform, electron: process.versions.electron, node: process.versions.node },
-      workload, workloadHash: newsEvidenceHash(workload), schemaVersion: 93, backupHashes, reportHash, originalAssociationPreserved: associationCount === 1,
+      workload, workloadHash: newsEvidenceHash(workload), schemaVersion: 94, backupHashes, reportHash, originalAssociationPreserved: associationCount === 1,
       checks, sampleProof: proof, credentialsIncluded: false, actualProfileOpened: false, network: '503_only', scheduler: 'disabled',
       gatesClosed: [], exclusions: ['actual-profile certification', 'multi-profile restore', 'actual archive/publisher content', 'broker/provider operation',
         'automatic relocation of absolute report references', 'installed distributable', 'VoiceOver'],
-      observedLimit: 'Copied reports do not repair stored absolute paths. The existing association API silently ignores relocation for the same report/profile primary key. An explicit append-only relocation design is still required.' };
-    const output = join(repository, 'docs/implementation/evidence/restore-restart'); mkdirSync(output, { recursive: true });
+      observedLimit: 'Disposable fixture only. Actual-profile and installed-artifact recovery certification remain open.' };
+    const output = join(repository, 'docs/implementation/evidence/oct19/restore-restart'); mkdirSync(output, { recursive: true });
     writeFileSync(join(output, 'checks.json'), JSON.stringify({ ...body, evidenceHash: newsEvidenceHash(body) }, null, 2) + '\n');
-    console.log(JSON.stringify({ passed: checks.length, simulated: true, actualProfileCertified: false, reportRelocation: 'blocked_existing_primary_key' }));
+    console.log(JSON.stringify({ passed: checks.length, simulated: true, actualProfileCertified: false, reportRelocation: 'verified_explicit_selection' }));
   } finally { rmSync(root, { recursive: true, force: true }); }
 }
 app.whenReady().then(run).then(() => app.exit(0)).catch(error => { console.error('Disposable restore exercise failed:', error.message); app.exit(1); });

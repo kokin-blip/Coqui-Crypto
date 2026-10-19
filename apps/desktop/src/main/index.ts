@@ -147,6 +147,19 @@ async function start(): Promise<void> {
         finally { await unlink(temporary).catch(()=>{}); }
         return 'saved';
       },
+      async pickRecoveryReport() {
+        const result = await dialog.showOpenDialog({ title: 'Select copied report for the expected hash',
+          properties: ['openFile'], filters: [{ name: 'Report JSON', extensions: ['json'] }] });
+        return result.canceled ? null : result.filePaths[0] ?? null;
+      },
+      async pickRecoveryRestore() {
+        const source = await dialog.showOpenDialog({ title: 'Select a consistent SQLite backup to verify (copy only)', properties: ['openFile'] });
+        if (source.canceled || !source.filePaths[0]) return null;
+        const destination = await dialog.showOpenDialog({ title: 'Select isolated verification directory', properties: ['openDirectory', 'createDirectory'] });
+        return destination.canceled || !destination.filePaths[0] ? null : {
+          sourceDatabase: source.filePaths[0], destinationRoot: destination.filePaths[0],
+        };
+      },
       async saveHistory(data) {
         const result = await dialog.showSaveDialog({ title: 'Export advisor conversation',
           defaultPath: 'coqui-advisor-history.json', filters: [{ name: 'JSON', extensions: ['json'] }] });

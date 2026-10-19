@@ -1,5 +1,5 @@
 import { WalletAttribution } from './WalletNames.js';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Sparkles } from 'lucide-react';
 
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
@@ -28,7 +28,10 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
   const [explaining, setExplaining] = useState<string | null>(null);
   const [detail, setDetail] = useState<DecisionDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState<string | null>(null);
-  const detailHeadingRef = useRef<HTMLHeadingElement>(null);
+  const detailHeadingRef = useCallback((heading: HTMLHeadingElement | null) => {
+    heading?.scrollIntoView({ block: 'start' });
+    heading?.focus({ preventScroll: true });
+  }, []);
   const detailOpenerRef = useRef<HTMLButtonElement | null>(null);
   const payload = useMemo(() => ({ limit: 40, cursor }), [cursor]);
   const feed = useChannel(client, 'activity.feed', payload);
@@ -53,12 +56,6 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
       return [...prior, ...page.events.filter((event) => !known.has(event.id))];
     });
   }, [cursor, page]);
-
-  useEffect(() => {
-    if (detail === null) return;
-    detailHeadingRef.current?.scrollIntoView({ block: 'start' });
-    detailHeadingRef.current?.focus({ preventScroll: true });
-  }, [detail]);
 
   if (feed.kind === 'loading' && events.length === 0) {
     return <SurfaceState kind="loading" title="Loading operational activity" />;
@@ -89,8 +86,10 @@ export function Activity({ client }: { readonly client: CoquiClient }): React.JS
   const closeDetail = (): void => {
     setDetail(null);
     requestAnimationFrame(() => {
-      detailOpenerRef.current?.scrollIntoView({ block: 'center' });
-      detailOpenerRef.current?.focus({ preventScroll: true });
+      const target = detailOpenerRef.current?.isConnected ? detailOpenerRef.current : document.querySelector<HTMLElement>('#activity-feed-heading');
+      if (target?.tagName !== 'BUTTON') target?.setAttribute('tabindex','-1');
+      target?.scrollIntoView({ block: 'center' });
+      target?.focus({ preventScroll: true });
       detailOpenerRef.current = null;
     });
   };
