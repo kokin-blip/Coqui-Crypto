@@ -42,6 +42,7 @@ afterEach(() => {
 
 /** Channels that answer from local state. The rest would reach the network. */
 const LOCAL_CHANNELS: readonly ChannelName[] = [
+  'news.report.select-location', 'app.recovery.verify',
   'app.about','app.performance-trace','app.evidence-export','news.report','research.integrity-workspace',
   'news.timeline', 'news.detail', 'news.health', 'news.analysis.set-enabled',
   'research.overlay-shadow.status', 'research.overlay-shadow.set',
@@ -75,6 +76,8 @@ const LOCAL_CHANNELS: readonly ChannelName[] = [
 ];
 
 const PAYLOADS: Partial<Record<ChannelName, unknown>> = {
+  'news.report.select-location': {commandId:'11111111-1111-4111-8111-111111111111',reportHash:'a'.repeat(64)},
+  'app.recovery.verify': {commandId:'11111111-1111-4111-8111-111111111111',expectedDatabaseHash:'a'.repeat(64)},
   'app.evidence-export': {commandId:'11111111-1111-4111-8111-111111111111'},
   'news.timeline': { asOfMs: null, limit: 100 },
   'news.detail': { observationId: 'a'.repeat(64), asOfMs: null },

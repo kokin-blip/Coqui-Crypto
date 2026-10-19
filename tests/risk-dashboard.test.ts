@@ -115,6 +115,7 @@ describe('the gate cannot be edited from the UI', () => {
     // stronger guarantee than a disabled control, and this test is what keeps
     // one from being added without the reasoning being revisited.
     expect(CHANNEL_KINDS.write).toEqual([
+      'news.report.select-location', 'app.recovery.verify',
       'app.evidence-export',
       'research.overlay-shadow.set',
       'alpaca.paper.connect',

@@ -49,7 +49,7 @@ describe('channel registry', () => {
       'alerts.view', 'alpaca.paper.connect', 'alpaca.paper.disconnect', 'alpaca.paper.refresh', 'alpaca.paper.status',
       'app.about', 'app.chart.snapshot.save', 'app.chart.workspace', 'app.chart.workspace.set', 'app.evidence-export', 'app.incidents',
       'app.onboarding.complete', 'app.onboarding.restart', 'app.onboarding.skip', 'app.onboarding.status',
-      'app.performance-trace', 'app.person', 'app.person.set', 'app.profile-readiness',
+      'app.performance-trace', 'app.person', 'app.person.set', 'app.profile-readiness', 'app.recovery.verify',
       'app.status-rail',
       'chart-extensions.catalog', 'chart-extensions.evaluate', 'chart-extensions.install', 'chart-extensions.install.pick',
       'chart-extensions.remove', 'chart-extensions.set', 'chart-extensions.signer.remove', 'chart-extensions.signer.trust',
@@ -68,7 +68,7 @@ describe('channel registry', () => {
       'market-data.products', 'market-data.recent-trades',
       'market-data.trending',
       'market-data.yields',
-      'market-events.ingest-file', 'market-events.ingest-local', 'market-events.timeline', 'news.analysis.set-enabled', 'news.detail', 'news.health', 'news.report', 'news.timeline', 'operations.floor',
+      'market-events.ingest-file', 'market-events.ingest-local', 'market-events.timeline', 'news.analysis.set-enabled', 'news.detail', 'news.health', 'news.report', 'news.report.select-location', 'news.timeline', 'operations.floor',
       'paper.campaign', 'paper.campaign.connections',
       'paper.campaign.connections.start', 'paper.campaign.kill-switch',
       'paper.execution.policy',
@@ -118,6 +118,7 @@ describe('channel registry', () => {
     expect([...CHANNEL_KINDS.read, ...CHANNEL_KINDS.write].sort())
       .toEqual([...CHANNEL_NAMES].sort());
     expect(CHANNEL_KINDS.write).toEqual([
+      'news.report.select-location', 'app.recovery.verify',
       'app.evidence-export', 'research.overlay-shadow.set',
       'alpaca.paper.connect', 'alpaca.paper.refresh', 'alpaca.paper.disconnect',
       'parallel.paper.start', 'parallel.paper.reconcile', 'parallel.paper.pause', 'parallel.paper.resume', 'parallel.paper.stop',
