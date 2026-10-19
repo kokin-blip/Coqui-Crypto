@@ -88,6 +88,8 @@ try {
   await evaluate("location.hash='/overview'");
   await wait('document.querySelector(".trading-workstation-chart canvas")');
   const coldChartMs = Date.now() - coldStart;
+  const processToUsefulChartMs=globalThis.performance.now();
+  console.log(JSON.stringify({benchmarkReady:true,atMs:Date.now(),shellMs,coldChartMs}));
   const navigation = [];
   const heapSnapshot = async () => {
     if (process.env.COQUI_PERF_AUDIT !== '1') return null;
@@ -156,7 +158,7 @@ try {
   Object.assign(result,{workload,workloadHash:createHash('sha256').update(JSON.stringify(workload)).digest('hex'),
     build:JSON.parse(readFileSync(join(root,'dist/main/build-info.json'),'utf8')),
     environment:{electron:process.versions.electron,node:process.versions.node,platform:process.platform,arch:process.arch},
-    freshProcessToMeasurementMs:globalThis.performance.now(),ipc:{samples:ipcSamples.length,p75Ms:percentile(ipcSamples,.75),p95Ms:percentile(ipcSamples,.95)},
+    processToUsefulChartMs,ipc:{samples:ipcSamples.length,p75Ms:percentile(ipcSamples,.75),p95Ms:percentile(ipcSamples,.95)},
     mainEventLoop:{p95Ms:loop.percentile(95)/1e6,maxMs:loop.max/1e6},retention});
   result.ionic={loadedBeforeCommand:beforeMenu.scripts.length>0,firstMenuPaintMs,resources:ionicResources,
     scriptDurationMs:menuMetricsBefore?(menuMetricsAfter.ScriptDuration-menuMetricsBefore.ScriptDuration)*1000:null,

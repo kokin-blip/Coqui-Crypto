@@ -20,7 +20,9 @@ async function run(name,seconds){
     child.on('exit',(code,signal)=>{
       const lines=stdout.trim().split('\n');
       const line=lines.reverse().find(line=>line.startsWith('{')&&line.includes('shellMs'));
+      const ready=stdout.split('\n').find(line=>line.startsWith('{')&&line.includes('benchmarkReady'));
       const result={name,startedAtMs,completedAtMs:Date.now(),exitCode:code,signal,build,
+        spawnToUsefulChartMs:ready?JSON.parse(ready).atMs-startedAtMs:null,
         measurements:line?JSON.parse(line):null,stderr};
       writeFileSync(join(output,`${name}.json`),JSON.stringify(result,null,2)+'\n');
       console.log(JSON.stringify({name,exitCode:code,shellMs:result.measurements?.shellMs}));
