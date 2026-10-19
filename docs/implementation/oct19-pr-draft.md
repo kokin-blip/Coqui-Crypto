@@ -1,0 +1,13 @@
+# Draft only — local integration candidate
+
+**Proposed title:** Repair restored-report relocation and make operational evidence actionable
+
+**Branch:** `codex/oct19-review-integration` (local only). No PR has been created or published.
+
+Copied reports could validate while their immutable association continued pointing to an unavailable original path. Schema 94 adds append-only, explicitly selected report locations with hash/schema/profile checks and truthful outcomes. Clones discard selected-location authority before excluding source report associations and permissions, leaving the original file unchanged. Recovery now supports native selection, an isolated DB-only proof with clear exclusions, and a visibly simulated learning walkthrough.
+
+The candidate combines the #8–13 ancestry and sibling news recovery work, preserving transport provenance and durable diagnostics, and regenerates integrated behavior manifests. Existing readiness now prioritizes operational blockers after setup, shows paper uncertainty and evidence age, and links safe inspection actions. News diagnostics distinguish retained ingestion from prospective features and relevant syndicated-story contribution. Activity's delayed route focus race is reproduced and fixed; the standard Vitest reporter now prevents agent-mode passing results from appearing silent.
+
+**Validation source:** `b14da3de77df16821d6042d4c446620bc2af1de5`, build source hash `da161324d68a65c1d140ef0a05e493172cb805bcec9f7a675726eac8ccb5ad65`. Full suite: 271 files / 1,815 tests passed; typecheck/lint, root/desktop builds, native module checks, Electron smoke/performance sensitivity and local macOS arm64 package checks pass. Disposable restoration resolves the copied report after two separate process restarts without orders or immutable-history edits. Keyboard, 1280-width, 200% zoom and loading/error/partial UI checks pass. The exact-source 30-minute synthetic retention workload passes existing gates; measured heap growth and instrumentation limits are reported explicitly. See the delivery report for exact receipts.
+
+**Remaining acceptance:** human review and VoiceOver, actual-profile/representative archive restoration, real-data lag/connected-account proof, authorized natural news chain, owner research registration and genuine prospective coverage, effective branch safeguards, Windows matching-host validation and release approval. Nothing here activates providers, accesses credentials, creates broker orders, changes research authority, merges a PR or publishes. The original expired remediation proposal and negative evidence remain preserved.

@@ -1,0 +1,10 @@
+{
+  "command": "pnpm exec vitest list --json --maxWorkers=1",
+  "sourceRevision": "b14da3de77df16821d6042d4c446620bc2af1de5",
+  "startedAtMs": 1792404730902,
+  "completedAtMs": 1792404787325,
+  "wallSeconds": 56.42276096343994,
+  "exitCode": 0,
+  "classification": "discovery_import_and_collection_without_test_execution",
+  "separateFromFullRun": true
+}

@@ -1,0 +1,10 @@
+$ vitest run --maxWorkers=1
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+
+ Test Files  270 passed (270)
+      Tests  1814 passed (1814)
+   Start at  02:10:20
+   Duration  167.22s (transform 2.98s, setup 0ms, import 44.17s, tests 106.12s, environment 11ms)
+

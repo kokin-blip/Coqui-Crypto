@@ -1,0 +1,183 @@
+{
+  "sourceRevision": "b14da3de77df16821d6042d4c446620bc2af1de5",
+  "documentUrl": "https://linear.app/coqui-crypto/document/october-19-local-remediation-evidence-and-acceptance-gates-eb235c7f6613",
+  "comments": [
+    {
+      "issueId": "COQ-5",
+      "commentId": "bc05bca9-8997-4f7d-8fed-91cb492ee38a",
+      "isError": false,
+      "found": true,
+      "exactPromptPresent": true,
+      "creditPresent": true
+    },
+    {
+      "issueId": "COQ-6",
+      "commentId": "04ddc862-8679-43f2-90b0-66be9a1da4c3",
+      "isError": false,
+      "found": true,
+      "exactPromptPresent": true,
+      "creditPresent": true
+    },
+    {
+      "issueId": "COQ-7",
+      "commentId": "3402de49-b53a-45d3-b7e3-5fd252c5a009",
+      "isError": false,
+      "found": true,
+      "exactPromptPresent": true,
+      "creditPresent": true
+    },
+    {
+      "issueId": "COQ-8",
+      "commentId": "b008a17d-f7fa-41d3-8e0a-8f314491046d",
+      "isError": false,
+      "found": true,
+      "exactPromptPresent": true,
+      "creditPresent": true
+    },
+    {
+      "issueId": "COQ-9",
+      "commentId": "88de157b-e1d9-41c8-9469-08783d638cf4",
+      "isError": false,
+      "found": true,
+      "exactPromptPresent": true,
+      "creditPresent": true
+    },
+    {
+      "issueId": "COQ-10",
+      "commentId": "53e45939-6023-4c49-aa26-8adf81c26eea",
+      "isError": false,
+      "found": true,
+      "exactPromptPresent": true,
+      "creditPresent": true
+    },
+    {
+      "issueId": "COQ-12",
+      "commentId": "a3248302-57ce-4c23-ac10-c6df7923f5ea",
+      "isError": false,
+      "found": true,
+      "exactPromptPresent": true,
+      "creditPresent": true
+    },
+    {
+      "issueId": "COQ-13",
+      "commentId": "cd686c4f-0572-4011-baa4-cd3fd1a946b1",
+      "isError": false,
+      "found": true,
+      "exactPromptPresent": true,
+      "creditPresent": true
+    },
+    {
+      "issueId": "COQ-17",
+      "commentId": "eaf5fcee-6993-40c9-8de7-72d06fcd1f01",
+      "isError": false,
+      "found": true,
+      "exactPromptPresent": true,
+      "creditPresent": true
+    },
+    {
+      "issueId": "COQ-18",
+      "commentId": "fd97ac75-9a61-44f4-b466-4c2bea6e3908",
+      "isError": false,
+      "found": true,
+      "exactPromptPresent": true,
+      "creditPresent": true
+    },
+    {
+      "issueId": "COQ-19",
+      "commentId": "2d8bb380-f50d-46fa-8dfc-b331fac5c8c4",
+      "isError": false,
+      "found": true,
+      "exactPromptPresent": true,
+      "creditPresent": true
+    },
+    {
+      "issueId": "COQ-20",
+      "commentId": "bb932869-8766-42cf-9bc5-7d679b016694",
+      "isError": false,
+      "found": true,
+      "exactPromptPresent": true,
+      "creditPresent": true
+    },
+    {
+      "issueId": "COQ-21",
+      "commentId": "97b3e58e-b080-4437-9b70-0dcf2b09bd31",
+      "isError": false,
+      "found": true,
+      "exactPromptPresent": true,
+      "creditPresent": true
+    },
+    {
+      "issueId": "COQ-22",
+      "commentId": "956efc6e-f9f3-472f-aab1-2cfbf620da93",
+      "isError": false,
+      "found": true,
+      "exactPromptPresent": true,
+      "creditPresent": true
+    },
+    {
+      "issueId": "COQ-24",
+      "commentId": "e9049f21-1dd5-4990-8061-bd36e7fef079",
+      "isError": false,
+      "found": true,
+      "exactPromptPresent": true,
+      "creditPresent": true
+    },
+    {
+      "issueId": "COQ-25",
+      "commentId": "68fa08da-3416-481e-abaa-5cf664a9eb9d",
+      "isError": false,
+      "found": true,
+      "exactPromptPresent": true,
+      "creditPresent": true
+    },
+    {
+      "issueId": "COQ-26",
+      "commentId": "ef13916d-6190-40f5-849d-6d9b006981f1",
+      "isError": false,
+      "found": true,
+      "exactPromptPresent": true,
+      "creditPresent": true
+    },
+    {
+      "issueId": "COQ-27",
+      "commentId": "76b6e888-2720-4a4a-9adc-c98cd9bd29ee",
+      "isError": false,
+      "found": true,
+      "exactPromptPresent": true,
+      "creditPresent": true
+    },
+    {
+      "issueId": "COQ-28",
+      "commentId": "6c56533b-a8b6-4b46-81a3-65bf862c6727",
+      "isError": false,
+      "found": true,
+      "exactPromptPresent": true,
+      "creditPresent": true
+    }
+  ],
+  "milestones": [
+    {
+      "milestoneId": "219ba590-2dc1-4e81-aef6-d4b9d2c10893",
+      "commentId": "7a7a1dac-d9d0-430e-a6b2-30c9aff21c28",
+      "isError": false
+    },
+    {
+      "milestoneId": "7c291557-21bc-42fb-9d52-9a58363c3b7e",
+      "commentId": "6facde20-26d2-4c6c-9fbe-a89914503df8",
+      "isError": false
+    },
+    {
+      "milestoneId": "d21bc6a1-3dde-40ea-a98a-a20e20f4d572",
+      "commentId": "eaa67a93-c2ee-4aa0-9d03-1616dd6110bf",
+      "isError": false
+    }
+  ],
+  "readback": {
+    "exactPromptPresent": true,
+    "sourcePresent": true,
+    "coq7Status": "In Review",
+    "coq7Assignee": "Princess Martinezstein",
+    "descriptionExactPromptPresent": true
+  },
+  "unmetGatesMarkedDone": false
+}

@@ -1,0 +1,30 @@
+// Reproducible metadata-only inspection. Copy outside the repository source tree if running.
+// Usage: node query.mjs EXPLICIT_REPOSITORY_ROOT EXPLICIT_EXISTING_DATABASE
+// No default profile path; no runtime, migrations, secrets, network or result/holdout bodies.
+import { DatabaseSync } from 'node:sqlite';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+if (process.argv.length !== 4) throw new Error('Explicit repository and database paths required');
+const repository=resolve(process.argv[2]),database=resolve(process.argv[3]);
+const { listRemediationEvidence }=await import(pathToFileURL(resolve(repository,'packages/storage/dist/index.js')));
+const { createStudyInstance }=await import(pathToFileURL(resolve(repository,'packages/core/dist/index.js')));
+const db=new DatabaseSync(database,{readOnly:true,allowExtension:false});
+try {
+ const profiles=db.prepare("SELECT DISTINCT profile_id FROM remediation_evidence_v1 WHERE namespace='study-instances-v1' AND kind='study'").all();
+ const instances=profiles.flatMap(p=>listRemediationEvidence(p.profile_id,'study-instances-v1','study',db));
+ const registrations=instances.map(row=>{
+   const instance=row.body,d=instance.definition;
+   if(createStudyInstance(d,instance.registeredAtMs,instance.artifactHash).id!==instance.id)throw new Error('registration_identity_mismatch');
+   const cutoff=Math.min(Math.floor(Date.now()/3600000)*3600000,d.foldEndsMs.at(-1));
+   const development=db.prepare("SELECT kind,count(*) AS count,min(at_ms) AS firstAtMs,max(at_ms) AS lastAtMs FROM remediation_evidence_v1 WHERE profile_id=? AND namespace=? AND at_ms>=? AND at_ms<? AND kind IN ('observation','shadow','failure','frame') GROUP BY kind").all(row.profileId,instance.id,d.startMs,cutoff);
+   return {instanceId:instance.id,candidateId:d.candidateId,registeredAtMs:instance.registeredAtMs,
+     startMs:d.startMs,foldEndsMs:d.foldEndsMs,holdoutEndMs:d.holdoutEndMs,behaviorHash:d.behaviorHash,
+     signalVersion:d.signalVersion,policyVersion:d.policyVersion,executionVersion:d.executionVersion,costVersion:d.costVersion,dataVersion:d.dataVersion,development,exclusiveCutoffMs:cutoff};
+ });
+ console.log(JSON.stringify({observedAtMs:Date.now(),schemaVersion:db.prepare('PRAGMA user_version').get().user_version,
+   registrations,newsRequests:db.prepare('SELECT provider,outcome,count(*) AS count,max(completed_at) AS lastCompletedAtMs FROM news_request_attempts_v1 GROUP BY provider,outcome').all(),
+   observations:db.prepare('SELECT count(*) AS count,max(persisted_at) AS lastPersistedAtMs FROM news_observations_v1').get(),
+   analyses:db.prepare('SELECT count(*) AS count,max(persisted_at) AS lastPersistedAtMs FROM news_analysis_runs_v1').get(),
+   features:db.prepare('SELECT count(*) AS count,max(available_at) AS lastAvailableAtMs FROM news_feature_snapshots_v1').get(),
+   scope:'selected_database_only',holdoutBodiesRead:false,credentialsAccessed:false,migrationsRun:false,networkRequests:0},null,2));
+} finally { db.close(); }

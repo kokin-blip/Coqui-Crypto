@@ -1,0 +1,75 @@
+{
+  "simulated": true,
+  "actualProfileOpened": false,
+  "voiceOverCertified": false,
+  "build": {
+    "version": "0.1.0-beta.16",
+    "sourceRevision": "b14da3de77df16821d6042d4c446620bc2af1de5",
+    "dirty": false,
+    "sourceHash": "da161324d68a65c1d140ef0a05e493172cb805bcec9f7a675726eac8ccb5ad65",
+    "channel": "beta-candidate",
+    "builtAtMs": 1792404064655
+  },
+  "checks": [
+    {
+      "name": "operational blocker drives primary action after setup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "paper uncertainty visible without expanding setup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "readiness action fits 1280 window at zoom 1",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "readiness action fits 1280 window at zoom 2",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "keyboard can leave primary action without a trap",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "route focus race was exercised",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "delayed route frame preserves Activity detail focus",
+      "passed": true,
+      "detail": {
+        "retained": true
+      }
+    },
+    {
+      "name": "natural Activity polling returns a later snapshot",
+      "passed": true,
+      "detail": {
+        "activityPollTimes": [
+          1792404932066,
+          1792404932271,
+          1792404933052,
+          1792404992199,
+          1792404993181
+        ]
+      }
+    },
+    {
+      "name": "polling preserves accepted Close control focus",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "detail close returns keyboard focus",
+      "passed": true,
+      "detail": null
+    }
+  ]
+}

@@ -1,0 +1,159 @@
+{
+  "sourceRevision": "b14da3de77df16821d6042d4c446620bc2af1de5",
+  "sourceHash": "da161324d68a65c1d140ef0a05e493172cb805bcec9f7a675726eac8ccb5ad65",
+  "schemaVersion": 94,
+  "classification": "local_unpublished_validation",
+  "fullSuite": {
+    "files": 271,
+    "tests": 1815,
+    "durationSeconds": 158.56,
+    "transformSeconds": 2.99,
+    "importSeconds": 41.66,
+    "testSeconds": 100.93,
+    "revisionStable": true,
+    "firstCompletedFileSeconds": 26.342
+  },
+  "checks": [
+    {
+      "name": "typecheck",
+      "status": "passed",
+      "evidence": "typecheck.log"
+    },
+    {
+      "name": "lint",
+      "status": "passed",
+      "evidence": "lint.log"
+    },
+    {
+      "name": "root-build",
+      "status": "passed",
+      "evidence": "root-build.log"
+    },
+    {
+      "name": "desktop-build",
+      "status": "passed",
+      "evidence": "desktop-build.log"
+    },
+    {
+      "name": "full-suite",
+      "status": "passed",
+      "evidence": "full-suite.log"
+    },
+    {
+      "name": "electron-smoke",
+      "status": "passed",
+      "evidence": "electron-smoke.log"
+    },
+    {
+      "name": "electron-performance-gate",
+      "status": "passed",
+      "evidence": "electron-performance-gate.log"
+    },
+    {
+      "name": "packaged-smoke",
+      "status": "passed",
+      "evidence": "packaged-smoke.log"
+    },
+    {
+      "name": "native-keyring-interface",
+      "status": "passed",
+      "evidence": "native-keyring-interface.log"
+    },
+    {
+      "name": "native-duckdb",
+      "status": "passed",
+      "evidence": "native-duckdb.log"
+    },
+    {
+      "name": "restore-restart",
+      "status": "passed",
+      "evidence": "restore-restart.log"
+    },
+    {
+      "name": "news-chain",
+      "status": "passed",
+      "evidence": "news-chain.log"
+    },
+    {
+      "name": "production-dependency-audit",
+      "status": "passed",
+      "evidence": "production-audit.json"
+    },
+    {
+      "name": "test-discovery-import-collection",
+      "status": "passed",
+      "evidence": "test-collection-timing.json"
+    },
+    {
+      "name": "activity-natural-poll-focus",
+      "status": "passed",
+      "evidence": "ui-poll/checks.json"
+    },
+    {
+      "name": "ui-keyboard-layout-zoom-states",
+      "status": "passed",
+      "evidence": "ui/checks.json"
+    },
+    {
+      "name": "clone-authority-red-green-regression",
+      "status": "passed",
+      "evidence": "clone-green.log"
+    },
+    {
+      "name": "all-inspected-pr-heads-integrated",
+      "status": "passed",
+      "evidence": "integration-ancestry.json"
+    },
+    {
+      "name": "application-identity-and-manifests",
+      "status": "passed",
+      "evidence": "source-identity.json"
+    },
+    {
+      "name": "source-and-nonlog-documentation-diff",
+      "status": "passed",
+      "evidence": "diff-checks.json"
+    }
+  ],
+  "isolatedRetentionSoak": {
+    "status": "passed",
+    "requiredSeconds": 1800,
+    "sourceRevision": "b14da3de77df16821d6042d4c446620bc2af1de5",
+    "evidence": "performance/retention-30min.json",
+    "workloadHash": "06d36da778c8f1d2d3c95b920021f33b0642b423dd20649334f5a7439ae7871a",
+    "classification": "deterministic_synthetic_disposable"
+  },
+  "openGates": [
+    "human review",
+    "VoiceOver/high contrast human walkthrough",
+    "actual-profile/representative archive restoration",
+    "actual live-data lag",
+    "authorized natural news chain",
+    "valid remediation registration and prospective elapsed coverage",
+    "connected accounts",
+    "effective branch safeguards",
+    "Windows matching-host validation",
+    "release approval"
+  ],
+  "sourceChangesAfterValidation": false,
+  "initialFailuresRetained": [
+    "full-integrated-first-run-failures.log",
+    "perf-concurrent-build-failure.log",
+    "news-chain-initial-harness-error.log",
+    "clone-red.log",
+    "clone-lint-failed-attempt.log",
+    "keyring-corrected-failed-attempt.log",
+    "duckdb-corrected-failed-attempt.log"
+  ],
+  "userChangesPreserved": [
+    "AGENTS.md",
+    "prior untracked docs/audit files",
+    "prior output/"
+  ],
+  "linearSynchronization": {
+    "issueComments": 19,
+    "exactPromptReadback": true,
+    "evidence": "linear-final-sync.json",
+    "unmetGatesMarkedDone": false
+  }
+}

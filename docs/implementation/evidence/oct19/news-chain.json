@@ -1,0 +1,116 @@
+{
+  "classification": "deterministic_disposable_fixture",
+  "realProviderRequests": 0,
+  "simulatedScheduledRequests": 1,
+  "actualOperationalChainCertified": false,
+  "sourceRevision": "b14da3de77df16821d6042d4c446620bc2af1de5",
+  "build": {
+    "version": "0.1.0-beta.16",
+    "sourceRevision": "b14da3de77df16821d6042d4c446620bc2af1de5",
+    "dirty": false,
+    "sourceHash": "da161324d68a65c1d140ef0a05e493172cb805bcec9f7a675726eac8ccb5ad65",
+    "channel": "beta-candidate",
+    "builtAtMs": 1792404064655
+  },
+  "checks": [
+    {
+      "name": "normal due fixture slot completes once",
+      "passed": true
+    },
+    {
+      "name": "incremental fixture analysis completes",
+      "passed": true
+    },
+    {
+      "name": "verified prospective fixture feature has unique contribution",
+      "passed": true
+    },
+    {
+      "name": "archive verifies before report evaluation",
+      "passed": true
+    },
+    {
+      "name": "four honest insufficient reports are produced",
+      "passed": true
+    },
+    {
+      "name": "explicit association reads the report",
+      "passed": true
+    },
+    {
+      "name": "no paper orders created",
+      "passed": true
+    }
+  ],
+  "observationCount": 1,
+  "usefulness": {
+    "lastEligibleFeatureAtMs": 1791464400100,
+    "observationAnalysisLagMs": 0,
+    "featureId": "bba3b223f00fa4c6c26d04fe261bac7c594d48e42e027bd71555d677db39c3ba",
+    "uniqueStories": 1,
+    "missingReasons": [
+      "first_page_coverage_unknown",
+      "no_known_sentiment",
+      "volume_baseline_unavailable"
+    ],
+    "contribution": [
+      {
+        "provider": "gdelt",
+        "contributingStories": 1,
+        "exclusiveStories": 1
+      },
+      {
+        "provider": "marketaux",
+        "contributingStories": 0,
+        "exclusiveStories": 0
+      },
+      {
+        "provider": "currents",
+        "contributingStories": 0,
+        "exclusiveStories": 0
+      }
+    ]
+  },
+  "reportHash": "13f7ca2ee49b7a9a27aa033b6e115a08a034ab3ffa106cd5865e1be2fc612d66",
+  "archiveManifestHash": "a0d4fe62a6cf15edfd35b1c96a925010221ec5366c0682f706937b2437e549ca",
+  "reportStatuses": [
+    {
+      "status": "insufficient_evidence",
+      "cadence": "daily",
+      "horizonHours": 24,
+      "reasons": [
+        "no_eligible_prospective_news"
+      ],
+      "prospectiveRows": 0
+    },
+    {
+      "status": "insufficient_evidence",
+      "cadence": "hourly",
+      "horizonHours": 1,
+      "reasons": [
+        "no_eligible_prospective_news"
+      ],
+      "prospectiveRows": 0
+    },
+    {
+      "status": "insufficient_evidence",
+      "cadence": "hourly",
+      "horizonHours": 4,
+      "reasons": [
+        "no_eligible_prospective_news"
+      ],
+      "prospectiveRows": 0
+    },
+    {
+      "status": "insufficient_evidence",
+      "cadence": "hourly",
+      "horizonHours": 24,
+      "reasons": [
+        "no_eligible_prospective_news"
+      ],
+      "prospectiveRows": 0
+    }
+  ],
+  "credentialsAccessed": false,
+  "liveExecutionEnabled": false
+}

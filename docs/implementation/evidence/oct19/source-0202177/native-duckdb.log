@@ -1,0 +1,1 @@
+$ node --input-type=module -e "const {DuckDBConnection,version}=await import('@duckdb/node-api');const c=await DuckDBConnection.create();const r=await c.runAndReadAll('select 42 as answer');if(!version()||r.getRowsJson()[0]?.[0]!==42)process.exit(1);c.closeSync()"

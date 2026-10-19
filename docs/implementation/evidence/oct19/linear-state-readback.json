@@ -1,0 +1,152 @@
+{
+  "issueStates": [
+    {
+      "id": "COQ-5",
+      "status": "In Review",
+      "assignee": null,
+      "milestone": "01 · Beta hardening and next release"
+    },
+    {
+      "id": "COQ-6",
+      "status": "Todo",
+      "assignee": null,
+      "milestone": "01 · Beta hardening and next release"
+    },
+    {
+      "id": "COQ-7",
+      "status": "In Review",
+      "assignee": "Princess Martinezstein",
+      "milestone": "01 · Beta hardening and next release"
+    },
+    {
+      "id": "COQ-8",
+      "status": "In Review",
+      "assignee": null,
+      "milestone": "01 · Beta hardening and next release"
+    },
+    {
+      "id": "COQ-9",
+      "status": "Backlog",
+      "assignee": null,
+      "milestone": "01 · Beta hardening and next release"
+    },
+    {
+      "id": "COQ-10",
+      "status": "Todo",
+      "assignee": null,
+      "milestone": "03 · Prospective studies and data integrity"
+    },
+    {
+      "id": "COQ-12",
+      "status": "In Review",
+      "assignee": null,
+      "milestone": "01 · Beta hardening and next release"
+    },
+    {
+      "id": "COQ-13",
+      "status": "Backlog",
+      "assignee": null,
+      "milestone": "01 · Beta hardening and next release"
+    },
+    {
+      "id": "COQ-17",
+      "status": "Backlog",
+      "assignee": null,
+      "milestone": "03 · Prospective studies and data integrity"
+    },
+    {
+      "id": "COQ-18",
+      "status": "Backlog",
+      "assignee": null,
+      "milestone": "04 · Candidate evaluation and promotion decision"
+    },
+    {
+      "id": "COQ-19",
+      "status": "In Review",
+      "assignee": null,
+      "milestone": "03 · Prospective studies and data integrity"
+    },
+    {
+      "id": "COQ-20",
+      "status": "In Review",
+      "assignee": null,
+      "milestone": "03 · Prospective studies and data integrity"
+    },
+    {
+      "id": "COQ-21",
+      "status": "In Review",
+      "assignee": null,
+      "milestone": "03 · Prospective studies and data integrity"
+    },
+    {
+      "id": "COQ-22",
+      "status": "In Review",
+      "assignee": null,
+      "milestone": "03 · Prospective studies and data integrity"
+    },
+    {
+      "id": "COQ-24",
+      "status": "Done",
+      "assignee": null,
+      "milestone": "01 · Beta hardening and next release"
+    },
+    {
+      "id": "COQ-25",
+      "status": "In Review",
+      "assignee": null,
+      "milestone": "01 · Beta hardening and next release"
+    },
+    {
+      "id": "COQ-26",
+      "status": "In Review",
+      "assignee": null,
+      "milestone": "01 · Beta hardening and next release"
+    },
+    {
+      "id": "COQ-27",
+      "status": "In Review",
+      "assignee": null,
+      "milestone": "01 · Beta hardening and next release"
+    },
+    {
+      "id": "COQ-28",
+      "status": "In Review",
+      "assignee": null,
+      "milestone": "01 · Beta hardening and next release"
+    }
+  ],
+  "projectReadback": {
+    "summary": "Local Oct 19 candidate b14da3d: 271 files/1815 tests and exact-source 30m soak pass; unpublished. Human, actual operations, research coverage, safeguards, Windows and release gates remain open.",
+    "descriptionExactPromptPresent": true,
+    "milestones": [
+      {
+        "id": "219ba590-2dc1-4e81-aef6-d4b9d2c10893",
+        "name": "01 · Beta hardening and next release",
+        "description": "Current delivery focus. Exit: frontend and paper-recovery diffs reviewed and committed; release gates pass on the exact revision; supported artifacts and packaged checks verified; release notes match shipped behavior. Working-tree implementation is not a release. No target date committed.\n\nNews rollout: experimental 0.1.0-beta.16 candidate is prepared in stacked draft PR [kokin-blip/Coqui-Crypto#10](https://linear.app/coqui-crypto/review/complete-news-intelligence-research-tooling-and-desktop-integration-6dd006c65f94) after [kokin-blip/Coqui-Crypto#8](https://linear.app/coqui-crypto/review/add-news-intelligence-foundations-free-providers-and-main-host-1033996d92b2) and [kokin-blip/Coqui-Crypto#9](https://linear.app/coqui-crypto/review/add-news-intelligence-phase-3-research-analysis-and-point-in-time-2795ad0f9c39). Final source 487431cb04ff93213c065bcd1c412968c3fbd1b4 passes all CI jobs, including full verification, macOS/Linux/Windows desktop/performance smoke, native checks and macOS/Windows packaged smoke: [https://github.com/kokin-blip/Coqui-Crypto/actions/runs/38008482341](<https://github.com/kokin-blip/Coqui-Crypto/actions/runs/38008482341>) . All four downloaded final-head distributables match SHA-256 manifests. Local verification passed 262 files / 1,766 tests; targeted rollout/host passed 23. PR [kokin-blip/Coqui-Crypto#8](https://linear.app/coqui-crypto/review/add-news-intelligence-foundations-free-providers-and-main-host-1033996d92b2)/#9 current-head CI passes. No stack merge, release tag or publication has occurred. Human stack review, merged-revision release workflow and publication remain open. Live GDELT attempts failed upstream, metered credentials/rights are absent/unresolved, Main registry mappings are missing and prospective studies report insufficient evidence. These gates remain unmet. [COQ-22](https://linear.app/coqui-crypto/issue/COQ-22/news-intelligence-phase-4-archives-prospective-studies-desktop-views) tracks implementation delivery; dependencies and historical evidence are preserved.",
+        "targetDate": null,
+        "progress": "30%"
+      },
+      {
+        "id": "3912e58c-9923-4c05-9e78-230a6404eeda",
+        "name": "02 · Connected paper operations verified",
+        "description": "Next operational gate. Exit: intended host/keychain and dedicated Alpaca paper evidence recorded for freshness, orders, partial fills, fees, recovery, manual Resume and restart/reconciliation. Coinbase View-only verification remains owner-deferred. Mock tests do not close venue checks.",
+        "targetDate": null,
+        "progress": "0%"
+      },
+      {
+        "id": "7c291557-21bc-42fb-9d52-9a58363c3b7e",
+        "name": "03 · Prospective studies and data integrity",
+        "description": "Evidence collection. Exit: explicit valid registrations with exact behavior/data/cost identities; provenance-complete venue data; actual coverage and duration reported. The August forward-edge registration is retired for identity mismatch. Its 365-day/30-rebalance criteria apply only if explicitly adopted in a valid replacement. Legacy seven-day campaign is a research record, not a gate for the parallel experiment. No backfill or inferred starts.\n\nNews Intelligence roadmap: [COQ-19](<https://linear.app/coqui-crypto/issue/COQ-19/news-intelligence-phase-1-canonical-contracts-and-point-in-time-sqlite>)/20 foundations/providers remain In Review in draft PR [kokin-blip/Coqui-Crypto#8](<https://linear.app/coqui-crypto/review/add-news-intelligence-foundations-free-providers-and-main-host-1033996d92b2>). [COQ-21](<https://linear.app/coqui-crypto/issue/COQ-21/news-intelligence-phase-3-instrument-resolution-and-point-in-time>) Phase 3 research-only intelligence is committed/pushed in 4d7d309 and In Review in stacked draft PR [kokin-blip/Coqui-Crypto#9](<https://linear.app/coqui-crypto/review/add-news-intelligence-phase-3-research-analysis-and-point-in-time-2795ad0f9c39>) ([kokin-blip/Coqui-Crypto#9](<https://linear.app/coqui-crypto/review/add-news-intelligence-phase-3-research-analysis-and-point-in-time-2795ad0f9c39>)). Local verification passed 261 files / 1,750 tests, plus post-build golden/secret/boundary checks and synthetic CLI provenance. Actual computation/persistence eligibility is enforced; historical reconstructions do not establish prospective evidence. GitHub CI, base/review acceptance, merge/release and earlier live-evidence gates remain open. Phase 4 archives, strategy research and desktop views are deferred. No milestone exit or elapsed-evidence requirement is waived.\n\nOctober 9 rollout update: [COQ-22](<https://linear.app/coqui-crypto/issue/COQ-22/news-intelligence-phase-4-archives-prospective-studies-desktop-views>) Phase 4 tooling is implemented and pushed in e173109, In Review in stacked draft PR [kokin-blip/Coqui-Crypto#10](<https://linear.app/coqui-crypto/review/complete-news-intelligence-research-tooling-and-desktop-integration-6dd006c65f94>) against Phase 3. Restartable immutable analysis chunks, fenced opt-in Main analysis, verified news/hourly Parquet, four point-in-time ridge studies and bounded Events/Settings/Research views are available for review. Local verification passed 262 files / 1,764 tests; macOS packaged SQLite/worker checks, keyboard/200% layout and performance sensitivity passed. Remote macOS/Windows CI/artifact checks remain running. Main's naturally due GDELT checks failed (invalid response/timeout), metered credentials are absent and required canonical Coinbase identities are missing; no valid live news or prospective-history requirement is counted. Four real diagnostics report insufficient evidence. Existing human/base review, owner, release, provider-rights and elapsed-evidence gates remain open; no merge or publication. Phase 4 is no longer deferred as tooling, but its operational/evidence/release acceptance is pending. Completed by: kokin\n\nFinal rollout candidate update (October 10 UTC): Phase 4 source 487431c is pushed in draft PR [kokin-blip/Coqui-Crypto#10](https://linear.app/coqui-crypto/review/complete-news-intelligence-research-tooling-and-desktop-integration-6dd006c65f94). Full local verification passes 262 files / 1,766 tests, targeted rollout/host passes 23. Exact-head CI is entirely green, including macOS/Windows packaged checks; all four downloaded distributables match SHA-256 manifests (run 38008482341). PR [kokin-blip/Coqui-Crypto#8](https://linear.app/coqui-crypto/review/add-news-intelligence-foundations-free-providers-and-main-host-1033996d92b2)/#9 current-head CI passes. Final Main diagnostic 9a2eec37 remains insufficient evidence with zero prospective rows. Tooling is implemented; missing registry identities, live GDELT provenance, metered credentials/rights, actual prospective coverage, human review, dependency-order merge and release remain unmet gates. No backfill, reconstructed or synthetic evidence substitutes for them. No merge/tag/publication. Completed by: kokin",
+        "targetDate": null,
+        "progress": "17%"
+      },
+      {
+        "id": "d21bc6a1-3dde-40ea-a98a-a20e20f4d572",
+        "name": "04 · Candidate evaluation and promotion decision",
+        "description": "Future, dependency-gated. Exit: registered development completed, winner/none frozen before opening untouched holdout, cost-stressed final evidence reviewed and explicit governance decision recorded. Wider-universe 60-day/90-day and hourly 30-day-holdout designs remain distinct. Live execution remains disabled.",
+        "targetDate": null,
+        "progress": "0%"
+      }
+    ]
+  }
+}

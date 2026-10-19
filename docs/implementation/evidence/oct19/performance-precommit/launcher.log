@@ -1,0 +1,8 @@
+{"name":"cold-1","exitCode":0,"shellMs":116}
+{"name":"cold-2","exitCode":0,"shellMs":79}
+{"name":"cold-3","exitCode":0,"shellMs":86}
+{"name":"cold-4","exitCode":0,"shellMs":66}
+{"name":"cold-5","exitCode":0,"shellMs":79}
+undefined
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop:
+[ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL] Command was killed with SIGTERM (Termination): node scripts/oct19-performance.mjs

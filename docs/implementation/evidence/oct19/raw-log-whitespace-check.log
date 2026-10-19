@@ -1,0 +1,20 @@
+docs/implementation/evidence/oct19/clone-before-failed-attempt.log:39: new blank line at EOF.
+docs/implementation/evidence/oct19/clone-green.log:12: new blank line at EOF.
+docs/implementation/evidence/oct19/clone-red.log:39: new blank line at EOF.
+docs/implementation/evidence/oct19/desktop-build.log:82: trailing whitespace.
++[plugin builtin:vite-reporter] 
+docs/implementation/evidence/oct19/full-agent-before-reporter-fix.log:10: new blank line at EOF.
+docs/implementation/evidence/oct19/full-standard-reporter-source-0f7d48b.log:369: new blank line at EOF.
+docs/implementation/evidence/oct19/full-suite-during-test-formatting.log:369: new blank line at EOF.
+docs/implementation/evidence/oct19/full-suite.log:368: new blank line at EOF.
+docs/implementation/evidence/oct19/perf-concurrent-build-failure.log:84: trailing whitespace.
++[plugin builtin:vite-reporter] 
+docs/implementation/evidence/oct19/recovery-command-tests.log:9: new blank line at EOF.
+docs/implementation/evidence/oct19/recovery-outcome-boundary.log:11: new blank line at EOF.
+docs/implementation/evidence/oct19/reporter-progress-proof.log:11: new blank line at EOF.
+docs/implementation/evidence/oct19/schema-channel-regressions.log:9: new blank line at EOF.
+docs/implementation/evidence/oct19/source-0202177/desktop-build.log:82: trailing whitespace.
++[plugin builtin:vite-reporter] 
+docs/implementation/evidence/oct19/source-0202177/electron-smoke.log:84: trailing whitespace.
++[plugin builtin:vite-reporter] 
+docs/implementation/evidence/oct19/source-0202177/full-suite.log:368: new blank line at EOF.

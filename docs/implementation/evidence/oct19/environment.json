@@ -1,0 +1,13 @@
+{
+  "platform": "darwin",
+  "arch": "arm64",
+  "cpuModel": "Apple M4 Pro",
+  "logicalCpus": 12,
+  "totalMemoryBytes": 25769803776,
+  "osRelease": "25.6.0",
+  "macOS": "26.6.1",
+  "freshProcessDefinition": "New Electron process, fresh disposable browser/session data and generated application database; OS file caches are not forcibly flushed.",
+  "concurrentValidation": "Final cold launches followed build/package/native/UI work. During the final 30-minute synthetic soak: isolated Ionic trace in the opening minute; exact-HEAD full suite approximately minutes 5\u20138; discovery/import/collection probe approximately minute 10; separate disposable Activity polling fixture approximately minutes 13\u201314. Other local documentation/network-advisory work continued. Host was not reserved exclusively; OS caches were not flushed.",
+  "sourceRevision": "b14da3de77df16821d6042d4c446620bc2af1de5",
+  "measurementLimit": "Measured workload on this Mac only; actual feeds, lower-powered hardware and other GPU/theme/platform combinations remain unverified."
+}

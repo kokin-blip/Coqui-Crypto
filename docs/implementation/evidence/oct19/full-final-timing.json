@@ -1,0 +1,12 @@
+{
+  "command": "pnpm test",
+  "reporter": "explicit_default",
+  "sourceRevision": "b14da3de77df16821d6042d4c446620bc2af1de5",
+  "endRevision": "b14da3de77df16821d6042d4c446620bc2af1de5",
+  "revisionStable": true,
+  "startedAtMs": 1792404485677,
+  "firstOutputAtMs": 1792404485897,
+  "firstCompletedFileAtMs": 1792404512019,
+  "exitCode": 0,
+  "completedAtMs": 1792404644741
+}

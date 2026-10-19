@@ -1,0 +1,133 @@
+{
+  "classification": "simulated_isolated_first_command_open",
+  "build": {
+    "version": "0.1.0-beta.16",
+    "sourceRevision": "0202177bcb7aa960b5f393cd9302f121e9f4d912",
+    "dirty": false,
+    "sourceHash": "b11b5a707b6885a4d766edf84ec9695e0a06d7be91406e3169cd4f7a5f9d8e87",
+    "channel": "beta-candidate",
+    "builtAtMs": 1792402367237
+  },
+  "firstPaintMs": 338,
+  "resources": [],
+  "network": [
+    {
+      "url": "IonicCommandPopover-BI7AlEEF.js",
+      "startedAt": 540110.155972,
+      "finishedAt": 540110.156985,
+      "encodedDataLength": 1067534,
+      "durationMs": 1.0130000300705433
+    }
+  ],
+  "namedScriptEvents": [
+    {
+      "args": {
+        "data": {
+          "requestId": "87961.20",
+          "url": "file://coqui-renderer/assets/IonicCommandPopover-BI7AlEEF.js"
+        }
+      },
+      "cat": "disabled-by-default-v8.compile",
+      "dur": 115,
+      "name": "v8.streamingCompile.start",
+      "ph": "X",
+      "pid": 87961,
+      "tdur": 114,
+      "tid": 14166146,
+      "ts": 540110157633,
+      "tts": 127465
+    },
+    {
+      "args": {
+        "data": {
+          "requestId": "87961.20",
+          "url": "file://coqui-renderer/assets/IonicCommandPopover-BI7AlEEF.js"
+        }
+      },
+      "cat": "v8,devtools.timeline,disabled-by-default-v8.compile",
+      "dur": 7226,
+      "name": "v8.parseOnBackground",
+      "ph": "X",
+      "pid": 87961,
+      "tdur": 6088,
+      "tid": 14166162,
+      "ts": 540110157755,
+      "tts": 11591
+    },
+    {
+      "args": {
+        "data": {
+          "requestId": "87961.20",
+          "url": "file://coqui-renderer/assets/IonicCommandPopover-BI7AlEEF.js"
+        },
+        "streaming_suppressed": false
+      },
+      "cat": "disabled-by-default-v8.compile",
+      "dur": 140,
+      "name": "v8.streamingCompile.complete",
+      "ph": "X",
+      "pid": 87961,
+      "tdur": 132,
+      "tid": 14166146,
+      "ts": 540110165000,
+      "tts": 128870
+    },
+    {
+      "args": {
+        "data": {
+          "columnNumber": 1,
+          "lineNumber": 1,
+          "scriptId": 47,
+          "streamed": true,
+          "url": "file://coqui-renderer/assets/IonicCommandPopover-BI7AlEEF.js"
+        },
+        "fileName": "file://coqui-renderer/assets/IonicCommandPopover-BI7AlEEF.js"
+      },
+      "cat": "v8,devtools.timeline",
+      "dur": 9,
+      "name": "v8.compileModule",
+      "ph": "X",
+      "pid": 87961,
+      "tdur": 4,
+      "tid": 14166146,
+      "ts": 540110165065,
+      "tts": 128934
+    }
+  ],
+  "moduleEvaluationEvents": [
+    {
+      "args": {},
+      "cat": "v8,devtools.timeline",
+      "dur": 8506,
+      "name": "v8.evaluateModule",
+      "ph": "X",
+      "pid": 87961,
+      "tdur": 3682,
+      "tid": 14166146,
+      "ts": 540110165239,
+      "tts": 129088
+    }
+  ],
+  "allCompileEventNames": [
+    "EvaluateScript",
+    "v8.compile",
+    "V8.CompileScript",
+    "V8.CompileCode",
+    "V8.ParseProgram",
+    "V8.Compile",
+    "V8.CompileIgnition",
+    "V8.CompileIgnitionFinalization",
+    "V8.ParseFunction",
+    "v8.streamingCompile.start",
+    "v8.parseOnBackground",
+    "v8.parseOnBackgroundParsing",
+    "BackgroundCompileTask::Run",
+    "V8.PreParse",
+    "V8.CompileCodeBackground",
+    "v8.streamingCompile.complete",
+    "v8.compileModule",
+    "V8.CompileStreamedModule",
+    "v8.evaluateModule"
+  ],
+  "limitation": "Event durations can nest or run on background threads; do not sum them as exclusive main-thread blocking. This is one first-open trace, not a platform benchmark."
+}

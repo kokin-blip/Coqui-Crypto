@@ -1,0 +1,36 @@
+{
+  "sourceRevision": "b14da3de77df16821d6042d4c446620bc2af1de5",
+  "checkedAtMs": 1792405210344,
+  "results": [
+    {
+      "command": [
+        "git",
+        "diff",
+        "e34e07b",
+        "HEAD",
+        "--check",
+        "--",
+        "packages",
+        "apps",
+        "scripts",
+        "tests",
+        "vitest.config.ts"
+      ],
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check",
+        "--",
+        ":(exclude)*.log"
+      ],
+      "exitCode": 0,
+      "output": ""
+    }
+  ],
+  "rawLogWhitespace": "retained; see raw-log-whitespace-check.log"
+}

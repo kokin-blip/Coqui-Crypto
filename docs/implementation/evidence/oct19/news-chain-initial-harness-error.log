@@ -1,0 +1,15 @@
+node:fs:441
+    return binding.readFileUtf8(path, stringToFlags(options.flag));
+                   ^
+
+Error: ENOENT: no such file or directory, open '/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-news-chain-LdJxyP/archives/1cc66379dbdbcba3a7cc54417902c7a31016aeb224a01ee854c15f84c39de058/manifest.json'
+    at readFileSync (node:fs:441:20)
+    at readNewsArchive (file:///Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/packages/storage/dist/archive/news.js:135:91)
+    at file:///private/tmp/coqui-news-chain.mjs:28:81 {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-news-chain-LdJxyP/archives/1cc66379dbdbcba3a7cc54417902c7a31016aeb224a01ee854c15f84c39de058/manifest.json'
+}
+
+Node.js v24.15.0

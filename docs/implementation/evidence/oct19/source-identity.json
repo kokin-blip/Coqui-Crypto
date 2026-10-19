@@ -1,0 +1,23 @@
+{
+  "sourceRevision": "b14da3de77df16821d6042d4c446620bc2af1de5",
+  "build": {
+    "version": "0.1.0-beta.16",
+    "sourceRevision": "b14da3de77df16821d6042d4c446620bc2af1de5",
+    "dirty": false,
+    "sourceHash": "da161324d68a65c1d140ef0a05e493172cb805bcec9f7a675726eac8ccb5ad65",
+    "channel": "beta-candidate",
+    "builtAtMs": 1792404064655
+  },
+  "currentSourceHash": "da161324d68a65c1d140ef0a05e493172cb805bcec9f7a675726eac8ccb5ad65",
+  "matchesBuild": true,
+  "manifestsMatch": true,
+  "rendererUnchangedSinceVisualFixture": true,
+  "originalProposalUnchanged": true,
+  "userAgentsEditPreserved": true,
+  "applicationSourceClean": true,
+  "checkedAtMs": 1792404177289,
+  "originalProposalPath": "docs/studies/execution-remediation-registration-proposal-v1.json",
+  "finalCurrentSourceHash": "da161324d68a65c1d140ef0a05e493172cb805bcec9f7a675726eac8ccb5ad65",
+  "finalMatchesBuild": true,
+  "finalCheckedAtMs": 1792406150828
+}

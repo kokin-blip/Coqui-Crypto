@@ -1,0 +1,163 @@
+{
+  "name": "cold-2",
+  "startedAtMs": 1792401245537,
+  "completedAtMs": 1792401255066,
+  "exitCode": 0,
+  "signal": null,
+  "build": {
+    "version": "0.1.0-beta.16",
+    "sourceRevision": "0f7d48b4eff6a2beb16bd1bb7aaa655eaa1c796f",
+    "dirty": false,
+    "sourceHash": "cdce6e6f4eb2508fe45e1446c51ab95678c78a0a2b9176e553212f6e54e45350",
+    "channel": "beta-candidate",
+    "builtAtMs": 1792401217914
+  },
+  "spawnToUsefulChartMs": 5001,
+  "measurements": {
+    "shellMs": 61,
+    "coldChartMs": 4425,
+    "cachedNavigationP75Ms": 16,
+    "feedSeconds": 0,
+    "ticks": 2,
+    "feedTicks": 6,
+    "bookQueries": 2,
+    "tradeQueries": 0,
+    "historyQueries": 1,
+    "unchangedExtensionEvaluations": 0,
+    "viewportDriftPx": 0,
+    "frameP95Ms": 17.100000000000364,
+    "framesOver34Ms": 0,
+    "removedCanvases": 0,
+    "longTasks": [],
+    "workload": {
+      "version": 2,
+      "simulated": true,
+      "bars": 2000,
+      "navigationCycles": 12,
+      "feedIntervalMs": 1000,
+      "seconds": 0,
+      "network": "503_only",
+      "scheduler": "disabled"
+    },
+    "workloadHash": "0aba1e4afea00ba9303e3add5c8aeaccbebb1760cacd1a2a87ae66bd497bc212",
+    "build": {
+      "version": "0.1.0-beta.16",
+      "sourceRevision": "0f7d48b4eff6a2beb16bd1bb7aaa655eaa1c796f",
+      "dirty": false,
+      "sourceHash": "cdce6e6f4eb2508fe45e1446c51ab95678c78a0a2b9176e553212f6e54e45350",
+      "channel": "beta-candidate",
+      "builtAtMs": 1792401217914
+    },
+    "environment": {
+      "electron": "43.4.1",
+      "node": "24.18.1",
+      "platform": "darwin",
+      "arch": "arm64"
+    },
+    "processToUsefulChartMs": 4974.538375,
+    "ipc": {
+      "samples": 40,
+      "p75Ms": 0.2999999523162842,
+      "p95Ms": 0.5999999046325684
+    },
+    "mainEventLoop": {
+      "p95Ms": 22.233087,
+      "maxMs": 198.836223
+    },
+    "retention": [
+      {
+        "elapsedSeconds": 0,
+        "main": {
+          "rss": 249970688,
+          "heapTotal": 64749568,
+          "heapUsed": 44422628,
+          "external": 3181034,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 210960,
+          "peakWorkingSetSize": 301600
+        },
+        "heap": {
+          "backingStorageSize": 1967448,
+          "embedderHeapUsedSize": 2927480,
+          "totalSize": 27672576,
+          "usedSize": 26793564
+        }
+      },
+      {
+        "elapsedSeconds": 0,
+        "main": {
+          "rss": 249987072,
+          "heapTotal": 64749568,
+          "heapUsed": 44474696,
+          "external": 3181074,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 208512,
+          "peakWorkingSetSize": 301600
+        },
+        "heap": {
+          "backingStorageSize": 1968580,
+          "embedderHeapUsedSize": 3232816,
+          "totalSize": 27934720,
+          "usedSize": 26870420
+        }
+      }
+    ],
+    "ionic": {
+      "loadedBeforeCommand": false,
+      "firstMenuPaintMs": 350,
+      "resources": [],
+      "scriptDurationMs": 15.962000000000032,
+      "limitation": "First-open total includes import, parse, execution, render and overlay; ScriptDuration is aggregate, not isolated parse time. file: transferSize can be zero."
+    },
+    "audit": {
+      "metrics": {
+        "TaskDuration": 0.020326999999999984,
+        "ScriptDuration": 0.00007700000000010476,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 0,
+        "LayoutCount": 0,
+        "RecalcStyleCount": 0
+      },
+      "dom": {
+        "elements": 735,
+        "svg": 63,
+        "svgNodes": 188,
+        "canvases": 7
+      },
+      "heapUsedBytes": 26882556,
+      "navigationHeap": {
+        "before": {
+          "backingStorageSize": 842973,
+          "embedderHeapUsedSize": 3182024,
+          "totalSize": 28196864,
+          "usedSize": 24636840
+        },
+        "after": {
+          "backingStorageSize": 843767,
+          "embedderHeapUsedSize": 3464728,
+          "totalSize": 30031872,
+          "usedSize": 26801256
+        }
+      }
+    },
+    "crosshair": {
+      "samples": 120,
+      "p75Ms": 17,
+      "p95Ms": 18,
+      "scriptSeconds": 0.16450999999999993,
+      "layoutSeconds": 0.044385
+    },
+    "scroll": {
+      "samples": 60,
+      "p75Ms": 17,
+      "p95Ms": 19,
+      "scriptSeconds": 0.017720999999999876,
+      "layoutSeconds": 0.0012729999999999964
+    }
+  },
+  "stderr": ""
+}

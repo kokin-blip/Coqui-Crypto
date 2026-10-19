@@ -1,0 +1,26 @@
+{
+  "classification": "local_unpublished_macos_arm64_candidate",
+  "build": {
+    "version": "0.1.0-beta.16",
+    "sourceRevision": "0202177bcb7aa960b5f393cd9302f121e9f4d912",
+    "dirty": false,
+    "sourceHash": "b11b5a707b6885a4d766edf84ec9695e0a06d7be91406e3169cd4f7a5f9d8e87",
+    "channel": "beta-candidate",
+    "builtAtMs": 1792402264701
+  },
+  "artifacts": [
+    {
+      "name": "Coqui-0.1.0-beta.16-mac-arm64.dmg",
+      "bytes": 185565853,
+      "sha256": "d4e8e98dfb753d30e7d3c9838c8bac0de25bd1c1d6d4856657207bba8d4bf099"
+    },
+    {
+      "name": "Coqui-0.1.0-beta.16-mac-arm64.zip",
+      "bytes": 177975128,
+      "sha256": "6f13118a35f8cfb9960db7d84ef05124ad83d2198d6e65405d237911e722139e"
+    }
+  ],
+  "packagedSmoke": "passed",
+  "windowsMatchingHostChecks": "not_run",
+  "installedActualProfileRestore": "not_run"
+}

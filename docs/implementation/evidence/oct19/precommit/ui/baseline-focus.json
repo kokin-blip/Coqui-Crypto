@@ -1,0 +1,57 @@
+{
+  "simulated": true,
+  "actualProfileOpened": false,
+  "voiceOverCertified": false,
+  "build": {
+    "version": "0.1.0-beta.16",
+    "sourceRevision": "8525f0f514d92d0bb575d6818f8052fe6f55dc74",
+    "dirty": true,
+    "sourceHash": "7076a3478f72ef8461b58d599345f7bf59c518f0f1fd5a855b8c3a02a2fd4b69",
+    "channel": "beta-candidate",
+    "builtAtMs": 1792400243513
+  },
+  "checks": [
+    {
+      "name": "operational blocker drives primary action after setup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "paper uncertainty visible without expanding setup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "readiness action fits 1280 window at zoom 1",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "readiness action fits 1280 window at zoom 2",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "keyboard can leave primary action without a trap",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "route focus race was exercised",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "baseline delayed route frame steals Activity focus",
+      "passed": true,
+      "detail": {
+        "retained": false
+      }
+    },
+    {
+      "name": "detail close returns keyboard focus",
+      "passed": true,
+      "detail": null
+    }
+  ]
+}

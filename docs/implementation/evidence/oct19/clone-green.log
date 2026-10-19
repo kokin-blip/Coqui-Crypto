@@ -1,0 +1,12 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/research-integrity-duplication.test.ts (1 test) 111ms
+ ✓ tests/news-location-clone.test.ts (1 test) 118ms
+ ✓ tests/accounts-profile-duplication.test.ts (9 tests) 683ms
+
+ Test Files  3 passed (3)
+      Tests  11 passed (11)
+   Start at  02:57:08
+   Duration  2.01s (transform 2.10s, setup 0ms, import 3.01s, tests 912ms, environment 0ms)
+

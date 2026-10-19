@@ -1,0 +1,11 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/oct19-readiness.test.ts (4 tests) 2ms
+ ✓ tests/news-usefulness.test.ts (2 tests) 108ms
+
+ Test Files  2 passed (2)
+      Tests  6 passed (6)
+   Start at  02:12:19
+   Duration  1.54s (transform 1.05s, setup 0ms, import 1.39s, tests 110ms, environment 0ms)
+

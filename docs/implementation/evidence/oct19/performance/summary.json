@@ -1,0 +1,36 @@
+{
+  "sourceRevision": "b14da3de77df16821d6042d4c446620bc2af1de5",
+  "sourceHash": "da161324d68a65c1d140ef0a05e493172cb805bcec9f7a675726eac8ccb5ad65",
+  "classification": "completed_synthetic_disposable_workload",
+  "exitCode": 0,
+  "nominalFeedSeconds": 1800,
+  "processWallSeconds": 1808.496,
+  "rawMemorySamples": 32,
+  "uniqueMinuteSamples": 31,
+  "workloadHash": "06d36da778c8f1d2d3c95b920021f33b0642b423dd20649334f5a7439ae7871a",
+  "rendererForcedGcHeapMiB": {
+    "first": 25.570072174072266,
+    "last": 29.554424285888672,
+    "change": 3.9843521118164062
+  },
+  "mainHeapMiB": {
+    "first": 42.33651351928711,
+    "last": 29.52672576904297
+  },
+  "mainRssMiB": {
+    "first": 238.71875,
+    "last": 169.96875
+  },
+  "eventLoop": {
+    "p95Ms": 22.200319,
+    "maxMs": 189.923327
+  },
+  "retentionAttribution": "Includes retained frame-timing instrumentation; growth is not attributed solely to application objects and leak-free operation is not established.",
+  "gatesPassed": {
+    "navigation": true,
+    "viewportPreserved": true,
+    "canvasesRetained": true,
+    "unchangedExtensionCadence": true,
+    "rendererLongTasks": true
+  }
+}

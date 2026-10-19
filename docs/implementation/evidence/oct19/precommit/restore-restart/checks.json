@@ -1,0 +1,146 @@
+{
+  "version": "restore-restart-evidence-v2",
+  "simulated": true,
+  "profileKind": "generated_disposable",
+  "startedAtMs": 1792400589707,
+  "completedAtMs": 1792400591873,
+  "sourceRevision": "8525f0f514d92d0bb575d6818f8052fe6f55dc74",
+  "build": {
+    "version": "0.1.0-beta.16",
+    "sourceRevision": "8525f0f514d92d0bb575d6818f8052fe6f55dc74",
+    "dirty": true,
+    "sourceHash": "9aa8f904d0ac61e2fec6afecf408ce3926f7d7c6725f0108441e3baa6fdaddb1",
+    "channel": "beta-candidate",
+    "builtAtMs": 1792400515217
+  },
+  "environment": {
+    "platform": "darwin",
+    "electron": "43.4.1",
+    "node": "24.18.1"
+  },
+  "workload": {
+    "version": 1,
+    "generatedProfile": true,
+    "metadata": [
+      "wallet-profiles.json",
+      "coqui-person.json",
+      "wallet-nicknames.json"
+    ],
+    "externalReport": "synthetic_insufficient_four_horizons",
+    "ledger": "exact_balanced_decimal",
+    "originalIsolation": "quarantined_source",
+    "reconstructions": 3,
+    "existingAssociationRelocationProbe": true
+  },
+  "workloadHash": "34236c0a10709c429a74e355f9fc307983f24c956c1aee0293f983850d68e27c",
+  "schemaVersion": 94,
+  "backupHashes": {
+    "database": "9bd44ce865f9af21c04bf754ae1554bf3451d09b8057ae9cb61a449943eeb1cb",
+    "manifest": "af2e6c9e3aa2264fa33366579294d576a019392ca7a1aee4a24251bf4bd76372"
+  },
+  "reportHash": "0ac3a688ebdf6f6fd4998e99f38bfedb075ea6fc0f5d5989df7c1e8649d37096",
+  "originalAssociationPreserved": true,
+  "checks": [
+    {
+      "name": "existing backup store creates verified snapshot",
+      "passed": true
+    },
+    {
+      "name": "backup manifest verified",
+      "passed": true
+    },
+    {
+      "name": "exact ledger and immutable evidence validated",
+      "passed": true
+    },
+    {
+      "name": "copied metadata and report match supplied hashes",
+      "passed": true
+    },
+    {
+      "name": "unresolved original absolute report path stays unavailable",
+      "passed": true
+    },
+    {
+      "name": "two separate process reconstructions succeed",
+      "passed": true
+    },
+    {
+      "name": "explicit copied location resolves across two restarts",
+      "passed": true
+    },
+    {
+      "name": "person and nickname survive reconstruction",
+      "passed": true
+    },
+    {
+      "name": "original association and negative evidence preserved",
+      "passed": true
+    },
+    {
+      "name": "no orders created by reconstruction",
+      "passed": true
+    },
+    {
+      "name": "schema unchanged on reconstruction",
+      "passed": true
+    },
+    {
+      "name": "source and backup preserved",
+      "passed": true
+    },
+    {
+      "name": "corrupt manifest refused",
+      "passed": true
+    }
+  ],
+  "sampleProof": {
+    "version": "isolated-restore-proof-v1",
+    "schemaVersion": 94,
+    "buildIdentity": "9aa8f904d0ac61e2fec6afecf408ce3926f7d7c6725f0108441e3baa6fdaddb1",
+    "databaseHash": "9bd44ce865f9af21c04bf754ae1554bf3451d09b8057ae9cb61a449943eeb1cb",
+    "ledgerTotalUsd": "0",
+    "ledgerRows": 2,
+    "integrityEventKinds": 1,
+    "artifacts": [
+      {
+        "hash": "59b0e9e6b29e2cfe8fd9295ca1a2ff7a3b116f288de1042d0f46c5704514acc8"
+      },
+      {
+        "hash": "7a64972aa322a7cae2f510b9755b381352fabce72712308564f357acefe0115f"
+      },
+      {
+        "hash": "161be338ee7d0b5e35c2e7863ae37c2c48dcd1be28e094001730ea8fa4894842"
+      },
+      {
+        "hash": "e834f77b3df597eca702e1a26a453cc77f5963267acbed1f4c33fb50bb0e0991"
+      }
+    ],
+    "credentialsIncluded": false,
+    "scope": "explicit_database_and_supplied_artifacts",
+    "exclusions": [
+      "OS credentials",
+      "person/nickname/profile manifest unless separately supplied",
+      "unsupplied external archives/reports",
+      "broker operation",
+      "application restart"
+    ],
+    "proofHash": "1d597098b3acaf71e5de0788dea70ba207fe8d57b622fa8ad4f58b55caaa6242"
+  },
+  "credentialsIncluded": false,
+  "actualProfileOpened": false,
+  "network": "503_only",
+  "scheduler": "disabled",
+  "gatesClosed": [],
+  "exclusions": [
+    "actual-profile certification",
+    "multi-profile restore",
+    "actual archive/publisher content",
+    "broker/provider operation",
+    "automatic relocation of absolute report references",
+    "installed distributable",
+    "VoiceOver"
+  ],
+  "observedLimit": "Disposable fixture only. Actual-profile and installed-artifact recovery certification remain open.",
+  "evidenceHash": "4c9b44e766d1b920fa8a7e54cc4cc48851d8ded34ad531eb2740cfb57fbbba23"
+}

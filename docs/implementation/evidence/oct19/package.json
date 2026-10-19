@@ -1,0 +1,30 @@
+{
+  "classification": "local_unpublished_macos_arm64_candidate",
+  "build": {
+    "version": "0.1.0-beta.16",
+    "sourceRevision": "b14da3de77df16821d6042d4c446620bc2af1de5",
+    "dirty": false,
+    "sourceHash": "da161324d68a65c1d140ef0a05e493172cb805bcec9f7a675726eac8ccb5ad65",
+    "channel": "beta-candidate",
+    "builtAtMs": 1792404064655
+  },
+  "files": [
+    {
+      "path": "apps/desktop/release/Coqui-0.1.0-beta.16-mac-arm64.dmg",
+      "bytes": 185565821,
+      "sha256": "1cddb8d69016e928f830a1618ed4889e7f28ce14ba46504fc8c888db3212329a",
+      "retainedCopy": "apps/desktop/release/retained-oct19-b14da3d/Coqui-0.1.0-beta.16-mac-arm64.dmg"
+    },
+    {
+      "path": "apps/desktop/release/Coqui-0.1.0-beta.16-mac-arm64.zip",
+      "bytes": 177978673,
+      "sha256": "c9b5eae043e459b2ec4b3d2170cf597f081d587f852cb2fef4188564561af36c",
+      "retainedCopy": "apps/desktop/release/retained-oct19-b14da3d/Coqui-0.1.0-beta.16-mac-arm64.zip"
+    }
+  ],
+  "signature": "ad-hoc",
+  "installed": false,
+  "published": false,
+  "smokePassed": true,
+  "windowsMatchingHostVerified": false
+}

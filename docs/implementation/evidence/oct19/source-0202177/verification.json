@@ -1,0 +1,101 @@
+{
+  "sourceRevision": "0202177bcb7aa960b5f393cd9302f121e9f4d912",
+  "sourceHash": "b11b5a707b6885a4d766edf84ec9695e0a06d7be91406e3169cd4f7a5f9d8e87",
+  "schemaVersion": 94,
+  "classification": "local_unpublished_validation",
+  "fullSuite": {
+    "files": 270,
+    "tests": 1814,
+    "durationSeconds": 172.15
+  },
+  "checks": [
+    {
+      "name": "typecheck",
+      "status": "passed",
+      "evidence": "typecheck.log"
+    },
+    {
+      "name": "lint",
+      "status": "passed",
+      "evidence": "lint.log"
+    },
+    {
+      "name": "root-build",
+      "status": "passed",
+      "evidence": "root-build.log"
+    },
+    {
+      "name": "desktop-build",
+      "status": "passed",
+      "evidence": "desktop-build.log"
+    },
+    {
+      "name": "full-suite",
+      "status": "passed",
+      "evidence": "full-suite.log"
+    },
+    {
+      "name": "electron-smoke",
+      "status": "passed",
+      "evidence": "electron-smoke.log"
+    },
+    {
+      "name": "electron-performance-gate",
+      "status": "passed",
+      "evidence": "electron-performance-gate.log"
+    },
+    {
+      "name": "packaged-smoke",
+      "status": "passed",
+      "evidence": "packaged-smoke.log"
+    },
+    {
+      "name": "native-keyring-interface",
+      "status": "passed",
+      "evidence": "native-keyring-interface.log"
+    },
+    {
+      "name": "native-duckdb",
+      "status": "passed",
+      "evidence": "native-duckdb.log"
+    },
+    {
+      "name": "restore-restart",
+      "status": "passed",
+      "evidence": "restore-restart.log"
+    },
+    {
+      "name": "news-chain",
+      "status": "passed",
+      "evidence": "news-chain.log"
+    }
+  ],
+  "isolatedRetentionSoak": {
+    "status": "running",
+    "requiredSeconds": 1800,
+    "sourceRevision": "0202177bcb7aa960b5f393cd9302f121e9f4d912"
+  },
+  "openGates": [
+    "human review",
+    "VoiceOver/high contrast human walkthrough",
+    "actual-profile/representative archive restoration",
+    "actual live-data lag",
+    "authorized natural news chain",
+    "valid remediation registration and prospective elapsed coverage",
+    "connected accounts",
+    "effective branch safeguards",
+    "Windows matching-host validation",
+    "release approval"
+  ],
+  "sourceChangesAfterValidation": false,
+  "initialFailuresRetained": [
+    "full-integrated-first-run-failures.log",
+    "perf-concurrent-build-failure.log",
+    "news-chain-initial-harness-error.log"
+  ],
+  "userChangesPreserved": [
+    "AGENTS.md",
+    "prior untracked docs/audit files",
+    "prior output/"
+  ]
+}

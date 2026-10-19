@@ -1,0 +1,39 @@
+import { mkdtempSync,rmSync,readFileSync,writeFileSync,mkdirSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { execFileSync } from 'node:child_process';
+const repository='/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto';
+const {openDatabase,writeNewsArchive,readNewsArchive,readNewsUsefulness,latestAssociatedNewsReport}=await import(repository+'/packages/storage/dist/index.js');
+const {createNewsIntelligenceRuntime,NewsIntelligenceService,NEWS_POLL_INTERVALS_MS}=await import(repository+'/packages/services/dist/index.js');
+const {createMemorySecretStore}=await import(repository+'/packages/adapters/dist/index.js');
+const {gdeltPayload,newsResponse,newsPassThrough,NEWS_NOW}=await import(repository+'/tests/fixtures/news/providers.ts');
+const root=mkdtempSync(join(tmpdir(),'coqui-news-chain-')),file=join(root,'fixture.db');
+let db=openDatabase(file),runtime,now=NEWS_NOW,requests=0;
+const checks=[];function check(name,passed){checks.push({name,passed});if(!passed)throw new Error(name);}
+try{
+ const configuration={schemaVersion:1,reviewedAtMs:100,instruments:[{asset:'BTC',instrument:{venue:'coinbase',productType:'spot',productId:'BTC-USD'}}],publisherAliases:[]};
+ db.prepare('INSERT INTO canonical_instruments VALUES (?,?,?,?,?,?,?,?,?)').run('coinbase','BTC-USD','spot','BTC','Bitcoin','BTC','USD',100,100);
+ runtime=await createNewsIntelligenceRuntime({clock:{nowMs:()=>now},secrets:createMemorySecretStore(),quotaDatabase:db,storageDatabase:db,
+  enabledProviders:['gdelt'],rateLimiters:newsPassThrough,maxRetries:0,fetch:async()=>{requests++;return newsResponse(gdeltPayload);}});
+ now+=NEWS_POLL_INTERVALS_MS.gdelt;
+ const tick=await runtime.tick();check('normal due fixture slot completes once',tick.results.filter(r=>r.outcome==='completed').length===1&&requests===1);
+ runtime.destroy();runtime=null;
+ now=Math.ceil(now/3600000)*3600000+100;
+ const service=new NewsIntelligenceService({database:db,clock:{nowMs:()=>now}});let step;
+ for(let i=0;i<5;i++){step=service.advance(configuration);if(step.state==='complete')break;}
+ check('incremental fixture analysis completes',step.state==='complete');
+ const usefulness=readNewsUsefulness(now,db);check('verified prospective fixture feature has unique contribution',usefulness.uniqueStories===1);
+ const revision=execFileSync('git',['rev-parse','HEAD'],{cwd:repository,encoding:'utf8'}).trim();
+ const manifest=await writeNewsArchive({database:db,rootDir:join(root,'archives'),cutoffMs:now,createdAtMs:now,codeRevision:revision});
+ const archive=join(root,'archives','news',manifest.datasetHash);const verified=await readNewsArchive(archive);check('archive verifies before report evaluation',verified.manifest.manifestHash===manifest.manifestHash);
+ db.close();db=null;
+ const output=execFileSync(process.execPath,['scripts/research-news.mjs','--news-archive',archive,'--output',join(root,'reports'),'--database',file,'--profile-id','main','--code-revision',revision],{cwd:repository,encoding:'utf8'});
+ const report=JSON.parse(output.trim());check('four honest insufficient reports are produced',report.studies.length===4&&report.studies.every(r=>r.status==='insufficient_evidence'));
+ db=openDatabase(file);check('explicit association reads the report',latestAssociatedNewsReport('main',Date.now(),db).report?.reportHash===report.reportHash);
+ check('no paper orders created',db.prepare('SELECT count(*) AS n FROM paper_orders_v3').get().n===0);
+ const result={classification:'deterministic_disposable_fixture',realProviderRequests:0,simulatedScheduledRequests:requests,actualOperationalChainCertified:false,
+  sourceRevision:revision,build:JSON.parse(readFileSync(repository+'/apps/desktop/dist/main/build-info.json','utf8')),checks,
+  observationCount:db.prepare('SELECT count(*) AS n FROM news_observations_v1').get().n,usefulness,reportHash:report.reportHash,archiveManifestHash:manifest.manifestHash,
+  reportStatuses:report.studies,credentialsAccessed:false,liveExecutionEnabled:false};
+ mkdirSync(repository+'/docs/implementation/evidence/oct19',{recursive:true});writeFileSync(repository+'/docs/implementation/evidence/oct19/news-chain.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({checks:checks.length,reportHash:report.reportHash}));
+}finally{runtime?.destroy();db?.close();rmSync(root,{recursive:true,force:true});}

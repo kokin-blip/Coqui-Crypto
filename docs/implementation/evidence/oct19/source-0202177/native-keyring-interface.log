@@ -1,0 +1,1 @@
+$ node --input-type=module -e "const m=await import('@napi-rs/keyring/keytar.js');if(typeof m.getPassword!=='function'||typeof m.setPassword!=='function'||typeof m.deletePassword!=='function')process.exit(1)"

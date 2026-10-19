@@ -1,0 +1,141 @@
+{
+  "observedAtMs": 1792400727554,
+  "classification": "actual_read_only_metadata",
+  "scope": "intended_host_main_database_only",
+  "schemaVersion": 91,
+  "deadlineExclusiveMs": 1792022400000,
+  "remediationRegistrations": [],
+  "validPreDeadlineRemediationRegistrationCount": 0,
+  "distinctOtherRegistrations": [
+    {
+      "instanceId": "4a63f0515f397f9a090663f4b1200cc4f5d32a9a0ceb32e597a5ab194c390ec2",
+      "candidateId": "trendvol-hourly-execution-v1",
+      "registeredAtMs": 1791186268716,
+      "startMs": 1791244800000,
+      "foldEndsMs": [
+        1792972800000,
+        1794700800000,
+        1796428800000
+      ],
+      "holdoutEndMs": 1799020800000,
+      "behaviorHash": "732ee97ffcc521dced92d81c6beb5a757a7ae428489feeec7b33981862a142fb",
+      "identityValidated": true,
+      "matchesIntegratedBehavior": false,
+      "developmentMetadata": [],
+      "expectedHourlySlotsBeforeExclusiveCutoff": 321,
+      "exclusiveCutoffMs": 1792400400000,
+      "observedSlots": 0,
+      "collectorHealth": "not_established",
+      "holdoutBodiesRead": false,
+      "signalVersion": "trendvol-qc-v4.2-paper",
+      "policyVersion": "trendvol-hourly-execution-v1",
+      "executionVersion": "hourly_virtual_v1",
+      "costVersion": "hourly_fee_25bps_slippage_15bps_v1",
+      "dataVersion": "coinbase_completed_daily_alpaca_us_quotes_v1"
+    },
+    {
+      "instanceId": "95bf6ebfca8ee541a271f40bf8859304d759a7d1e76d1ed412c633a0f6d5bc52",
+      "candidateId": "trendvol-hourly-execution-v1",
+      "registeredAtMs": 1791227046965,
+      "startMs": 1791244800000,
+      "foldEndsMs": [
+        1792972800000,
+        1794700800000,
+        1796428800000
+      ],
+      "holdoutEndMs": 1799020800000,
+      "behaviorHash": "aea898ea5162f51540c320f9be4da3687d931ae2bd32d1d43959fad2c6ce0a2b",
+      "identityValidated": true,
+      "matchesIntegratedBehavior": false,
+      "developmentMetadata": [],
+      "expectedHourlySlotsBeforeExclusiveCutoff": 321,
+      "exclusiveCutoffMs": 1792400400000,
+      "observedSlots": 0,
+      "collectorHealth": "not_established",
+      "holdoutBodiesRead": false,
+      "signalVersion": "trendvol-qc-v4.2-paper",
+      "policyVersion": "trendvol-hourly-execution-v1",
+      "executionVersion": "hourly_virtual_v1",
+      "costVersion": "hourly_fee_25bps_slippage_15bps_v1",
+      "dataVersion": "coinbase_completed_daily_alpaca_us_quotes_v1"
+    },
+    {
+      "instanceId": "91fb3f9a27b562662c9e5dd85bae99a601b15b1771c1001aff7f876631486309",
+      "candidateId": "trendvol-hourly-execution-v1",
+      "registeredAtMs": 1791231278340,
+      "startMs": 1791244800000,
+      "foldEndsMs": [
+        1792972800000,
+        1794700800000,
+        1796428800000
+      ],
+      "holdoutEndMs": 1799020800000,
+      "behaviorHash": "0f3fdc354018b15cd0ca2add676e98df372ebae1f1166b7a1fa2b6b305c063c7",
+      "identityValidated": true,
+      "matchesIntegratedBehavior": false,
+      "developmentMetadata": [
+        {
+          "kind": "failure",
+          "count": 5,
+          "firstAtMs": 1791334833670,
+          "lastAtMs": 1791662456698
+        }
+      ],
+      "expectedHourlySlotsBeforeExclusiveCutoff": 321,
+      "exclusiveCutoffMs": 1792400400000,
+      "observedSlots": 0,
+      "collectorHealth": "not_established",
+      "holdoutBodiesRead": false,
+      "signalVersion": "trendvol-qc-v4.2-paper",
+      "policyVersion": "trendvol-hourly-execution-v1",
+      "executionVersion": "hourly_virtual_v1",
+      "costVersion": "hourly_fee_25bps_slippage_15bps_v1",
+      "dataVersion": "coinbase_completed_daily_alpaca_us_quotes_v1"
+    }
+  ],
+  "remediationCoverage": "no_registered_remediation_instance_in_inspected_database",
+  "otherDatabasesAndExternalEvidence": "not_certified",
+  "holdoutBodiesRead": false,
+  "news": {
+    "requests": [
+      {
+        "provider": "gdelt",
+        "outcome": "failed",
+        "count": 20,
+        "lastCompletedAtMs": 1791671458633
+      },
+      {
+        "provider": "gdelt",
+        "outcome": "reserved",
+        "count": 1,
+        "lastCompletedAtMs": null
+      },
+      {
+        "provider": "gdelt",
+        "outcome": "succeeded",
+        "count": 2,
+        "lastCompletedAtMs": 1791658420788
+      }
+    ],
+    "observations": {
+      "count": 5,
+      "lastPersistedAtMs": 1791658420791
+    },
+    "analysis": {
+      "count": 0,
+      "lastPersistedAtMs": null
+    },
+    "feature": {
+      "count": 0,
+      "lastAvailableAtMs": null
+    }
+  },
+  "credentialsAccessed": false,
+  "migrationsRun": false,
+  "providerRequestsMade": false,
+  "ordersCreated": false,
+  "coverageObservedAtMs": 1792401588754,
+  "remediationExpectedSlots": null,
+  "remediationValidProspectiveSlots": 0,
+  "remediationExpectedSlotsReason": "No registered remediation instance establishes an authorized clock in the inspected database."
+}

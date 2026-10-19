@@ -1,0 +1,9 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  02:04:32
+   Duration  1.66s (transform 1.15s, setup 0ms, import 1.53s, tests 53ms, environment 0ms)
+

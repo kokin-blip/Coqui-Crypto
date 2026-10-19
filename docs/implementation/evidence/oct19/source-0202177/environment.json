@@ -1,0 +1,11 @@
+{
+  "platform": "darwin",
+  "arch": "arm64",
+  "cpuModel": "Apple M4 Pro",
+  "logicalCpus": 12,
+  "totalMemoryBytes": 25769803776,
+  "osRelease": "25.6.0",
+  "macOS": "26.6.1",
+  "freshProcessDefinition": "New Electron process, fresh disposable browser/session data and generated application database; OS file caches are not forcibly flushed.",
+  "concurrentValidation": "Full-suite/build/package/smoke validation overlaps the first minutes of the soak. Cold-run timestamps and all source/workload identities are retained; lower-powered-machine and actual-feed performance are not certified."
+}

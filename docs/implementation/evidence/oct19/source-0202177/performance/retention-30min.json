@@ -1,0 +1,764 @@
+{
+  "name": "retention-30min",
+  "startedAtMs": 1792402245825,
+  "completedAtMs": 1792404054529,
+  "exitCode": 0,
+  "signal": null,
+  "build": {
+    "version": "0.1.0-beta.16",
+    "sourceRevision": "0202177bcb7aa960b5f393cd9302f121e9f4d912",
+    "dirty": false,
+    "sourceHash": "b11b5a707b6885a4d766edf84ec9695e0a06d7be91406e3169cd4f7a5f9d8e87",
+    "channel": "beta-candidate",
+    "builtAtMs": 1792402201106
+  },
+  "spawnToUsefulChartMs": 960,
+  "measurements": {
+    "shellMs": 65,
+    "coldChartMs": 375,
+    "cachedNavigationP75Ms": 16,
+    "feedSeconds": 1800,
+    "ticks": 1800,
+    "feedTicks": 1802,
+    "bookQueries": 1800,
+    "tradeQueries": 899,
+    "historyQueries": 1,
+    "unchangedExtensionEvaluations": 0,
+    "viewportDriftPx": 0,
+    "frameP95Ms": 10,
+    "framesOver34Ms": 0,
+    "removedCanvases": 0,
+    "longTasks": [],
+    "workload": {
+      "version": 3,
+      "simulated": true,
+      "browserCache": "fresh_disposable",
+      "bars": 2000,
+      "navigationCycles": 12,
+      "feedIntervalMs": 1000,
+      "seconds": 1800,
+      "network": "503_only",
+      "scheduler": "disabled"
+    },
+    "workloadHash": "06d36da778c8f1d2d3c95b920021f33b0642b423dd20649334f5a7439ae7871a",
+    "build": {
+      "version": "0.1.0-beta.16",
+      "sourceRevision": "0202177bcb7aa960b5f393cd9302f121e9f4d912",
+      "dirty": false,
+      "sourceHash": "b11b5a707b6885a4d766edf84ec9695e0a06d7be91406e3169cd4f7a5f9d8e87",
+      "channel": "beta-candidate",
+      "builtAtMs": 1792402367237
+    },
+    "environment": {
+      "electron": "43.4.1",
+      "node": "24.18.1",
+      "platform": "darwin",
+      "arch": "arm64"
+    },
+    "processToUsefulChartMs": 933.186541,
+    "ipc": {
+      "samples": 40,
+      "p75Ms": 0.2999999523162842,
+      "p95Ms": 0.5
+    },
+    "mainEventLoop": {
+      "p95Ms": 22.216703,
+      "maxMs": 326.631423
+    },
+    "retention": [
+      {
+        "elapsedSeconds": 0,
+        "main": {
+          "rss": 250150912,
+          "heapTotal": 65011712,
+          "heapUsed": 44188116,
+          "external": 3181034,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 212336,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1967448,
+          "embedderHeapUsedSize": 2918048,
+          "totalSize": 27410432,
+          "usedSize": 26788476
+        }
+      },
+      {
+        "elapsedSeconds": 60,
+        "main": {
+          "rss": 141377536,
+          "heapTotal": 33554432,
+          "heapUsed": 30698848,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 173936,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1968580,
+          "embedderHeapUsedSize": 3311424,
+          "totalSize": 28983296,
+          "usedSize": 27669412
+        }
+      },
+      {
+        "elapsedSeconds": 120,
+        "main": {
+          "rss": 122306560,
+          "heapTotal": 33030144,
+          "heapUsed": 31330172,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 135392,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1968580,
+          "embedderHeapUsedSize": 3413384,
+          "totalSize": 28983296,
+          "usedSize": 28023528
+        }
+      },
+      {
+        "elapsedSeconds": 180,
+        "main": {
+          "rss": 129073152,
+          "heapTotal": 32505856,
+          "heapUsed": 31214804,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 181728,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1968658,
+          "embedderHeapUsedSize": 3292584,
+          "totalSize": 29704192,
+          "usedSize": 28280336
+        }
+      },
+      {
+        "elapsedSeconds": 240,
+        "main": {
+          "rss": 128499712,
+          "heapTotal": 33030144,
+          "heapUsed": 31894128,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 177904,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964496,
+          "embedderHeapUsedSize": 3267272,
+          "totalSize": 30048256,
+          "usedSize": 28174088
+        }
+      },
+      {
+        "elapsedSeconds": 300,
+        "main": {
+          "rss": 130826240,
+          "heapTotal": 32768000,
+          "heapUsed": 31774100,
+          "external": 3049641,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 181968,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964652,
+          "embedderHeapUsedSize": 3296888,
+          "totalSize": 29917184,
+          "usedSize": 28365732
+        }
+      },
+      {
+        "elapsedSeconds": 360,
+        "main": {
+          "rss": 132202496,
+          "heapTotal": 34340864,
+          "heapUsed": 32313868,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 183312,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964574,
+          "embedderHeapUsedSize": 3333744,
+          "totalSize": 30179328,
+          "usedSize": 28424296
+        }
+      },
+      {
+        "elapsedSeconds": 420,
+        "main": {
+          "rss": 130154496,
+          "heapTotal": 34078720,
+          "heapUsed": 32709924,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 182992,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964496,
+          "embedderHeapUsedSize": 3362424,
+          "totalSize": 30179328,
+          "usedSize": 28462212
+        }
+      },
+      {
+        "elapsedSeconds": 480,
+        "main": {
+          "rss": 131596288,
+          "heapTotal": 34340864,
+          "heapUsed": 33315992,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 184432,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964496,
+          "embedderHeapUsedSize": 3298392,
+          "totalSize": 30392320,
+          "usedSize": 28827440
+        }
+      },
+      {
+        "elapsedSeconds": 540,
+        "main": {
+          "rss": 133120000,
+          "heapTotal": 34865152,
+          "heapUsed": 33723768,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 184672,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964496,
+          "embedderHeapUsedSize": 3275744,
+          "totalSize": 30392320,
+          "usedSize": 28861740
+        }
+      },
+      {
+        "elapsedSeconds": 600,
+        "main": {
+          "rss": 133840896,
+          "heapTotal": 34078720,
+          "heapUsed": 33312804,
+          "external": 3049641,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 184288,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964496,
+          "embedderHeapUsedSize": 3289536,
+          "totalSize": 30392320,
+          "usedSize": 28896464
+        }
+      },
+      {
+        "elapsedSeconds": 660,
+        "main": {
+          "rss": 121307136,
+          "heapTotal": 35389440,
+          "heapUsed": 33597168,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 180832,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964496,
+          "embedderHeapUsedSize": 3305680,
+          "totalSize": 30687232,
+          "usedSize": 29209788
+        }
+      },
+      {
+        "elapsedSeconds": 720,
+        "main": {
+          "rss": 122585088,
+          "heapTotal": 34865152,
+          "heapUsed": 33902880,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 181520,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964574,
+          "embedderHeapUsedSize": 3295176,
+          "totalSize": 30687232,
+          "usedSize": 29210976
+        }
+      },
+      {
+        "elapsedSeconds": 780,
+        "main": {
+          "rss": 122388480,
+          "heapTotal": 35274752,
+          "heapUsed": 34354336,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 177616,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964496,
+          "embedderHeapUsedSize": 3281528,
+          "totalSize": 30949376,
+          "usedSize": 29218504
+        }
+      },
+      {
+        "elapsedSeconds": 840,
+        "main": {
+          "rss": 123551744,
+          "heapTotal": 35274752,
+          "heapUsed": 34659584,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 180016,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964496,
+          "embedderHeapUsedSize": 3266944,
+          "totalSize": 30949376,
+          "usedSize": 29206572
+        }
+      },
+      {
+        "elapsedSeconds": 900,
+        "main": {
+          "rss": 124895232,
+          "heapTotal": 35536896,
+          "heapUsed": 34976608,
+          "external": 3049641,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 180880,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964496,
+          "embedderHeapUsedSize": 3304064,
+          "totalSize": 30687232,
+          "usedSize": 29222460
+        }
+      },
+      {
+        "elapsedSeconds": 960,
+        "main": {
+          "rss": 126910464,
+          "heapTotal": 36847616,
+          "heapUsed": 34813196,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 189216,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964514,
+          "embedderHeapUsedSize": 4025272,
+          "totalSize": 31408128,
+          "usedSize": 29977004
+        }
+      },
+      {
+        "elapsedSeconds": 1020,
+        "main": {
+          "rss": 123142144,
+          "heapTotal": 36061184,
+          "heapUsed": 35368724,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 187280,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964592,
+          "embedderHeapUsedSize": 4046152,
+          "totalSize": 31670272,
+          "usedSize": 30030432
+        }
+      },
+      {
+        "elapsedSeconds": 1080,
+        "main": {
+          "rss": 123600896,
+          "heapTotal": 36847616,
+          "heapUsed": 35893644,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 186176,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964514,
+          "embedderHeapUsedSize": 4058824,
+          "totalSize": 31408128,
+          "usedSize": 30046336
+        }
+      },
+      {
+        "elapsedSeconds": 1140,
+        "main": {
+          "rss": 125960192,
+          "heapTotal": 36847616,
+          "heapUsed": 35702092,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 188688,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964674,
+          "embedderHeapUsedSize": 4014192,
+          "totalSize": 31670272,
+          "usedSize": 30048496
+        }
+      },
+      {
+        "elapsedSeconds": 1200,
+        "main": {
+          "rss": 127729664,
+          "heapTotal": 37371904,
+          "heapUsed": 36191232,
+          "external": 3049641,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 188640,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964674,
+          "embedderHeapUsedSize": 4008848,
+          "totalSize": 31670272,
+          "usedSize": 30064208
+        }
+      },
+      {
+        "elapsedSeconds": 1260,
+        "main": {
+          "rss": 121978880,
+          "heapTotal": 38158336,
+          "heapUsed": 36637668,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 186224,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964749,
+          "embedderHeapUsedSize": 4112240,
+          "totalSize": 31670272,
+          "usedSize": 30346500
+        }
+      },
+      {
+        "elapsedSeconds": 1320,
+        "main": {
+          "rss": 124370944,
+          "heapTotal": 38420480,
+          "heapUsed": 37111584,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 186592,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964518,
+          "embedderHeapUsedSize": 4071848,
+          "totalSize": 31670272,
+          "usedSize": 30058344
+        }
+      },
+      {
+        "elapsedSeconds": 1380,
+        "main": {
+          "rss": 124469248,
+          "heapTotal": 38158336,
+          "heapUsed": 36897208,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 188448,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964674,
+          "embedderHeapUsedSize": 4120224,
+          "totalSize": 31670272,
+          "usedSize": 30081600
+        }
+      },
+      {
+        "elapsedSeconds": 1440,
+        "main": {
+          "rss": 124452864,
+          "heapTotal": 38699008,
+          "heapUsed": 37602212,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 187104,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964518,
+          "embedderHeapUsedSize": 4091408,
+          "totalSize": 32358400,
+          "usedSize": 30759740
+        }
+      },
+      {
+        "elapsedSeconds": 1500,
+        "main": {
+          "rss": 128974848,
+          "heapTotal": 40271872,
+          "heapUsed": 38057520,
+          "external": 3049641,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 190512,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964518,
+          "embedderHeapUsedSize": 4096152,
+          "totalSize": 32096256,
+          "usedSize": 30778908
+        }
+      },
+      {
+        "elapsedSeconds": 1560,
+        "main": {
+          "rss": 128696320,
+          "heapTotal": 39747584,
+          "heapUsed": 38494416,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 188032,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964518,
+          "embedderHeapUsedSize": 4092360,
+          "totalSize": 32358400,
+          "usedSize": 30787932
+        }
+      },
+      {
+        "elapsedSeconds": 1620,
+        "main": {
+          "rss": 118718464,
+          "heapTotal": 39485440,
+          "heapUsed": 38247100,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 164288,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964674,
+          "embedderHeapUsedSize": 4116000,
+          "totalSize": 32358400,
+          "usedSize": 30800092
+        }
+      },
+      {
+        "elapsedSeconds": 1680,
+        "main": {
+          "rss": 147603456,
+          "heapTotal": 39862272,
+          "heapUsed": 30242148,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 185632,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964674,
+          "embedderHeapUsedSize": 4078104,
+          "totalSize": 32882688,
+          "usedSize": 30990268
+        }
+      },
+      {
+        "elapsedSeconds": 1740,
+        "main": {
+          "rss": 144834560,
+          "heapTotal": 40124416,
+          "heapUsed": 30658152,
+          "external": 3048910,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 184512,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964596,
+          "embedderHeapUsedSize": 4083168,
+          "totalSize": 32620544,
+          "usedSize": 30975624
+        }
+      },
+      {
+        "elapsedSeconds": 1800,
+        "main": {
+          "rss": 141852672,
+          "heapTotal": 40386560,
+          "heapUsed": 31133504,
+          "external": 3049641,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 184544,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964674,
+          "embedderHeapUsedSize": 4052944,
+          "totalSize": 32882688,
+          "usedSize": 30990200
+        }
+      },
+      {
+        "elapsedSeconds": 1800,
+        "main": {
+          "rss": 141950976,
+          "heapTotal": 40386560,
+          "heapUsed": 31136160,
+          "external": 3049641,
+          "arrayBuffers": 0
+        },
+        "renderer": {
+          "workingSetSize": 152464,
+          "peakWorkingSetSize": 302544
+        },
+        "heap": {
+          "backingStorageSize": 1964674,
+          "embedderHeapUsedSize": 4083800,
+          "totalSize": 32620544,
+          "usedSize": 30990200
+        }
+      }
+    ],
+    "ionic": {
+      "loadedBeforeCommand": false,
+      "firstMenuPaintMs": 349,
+      "resources": [],
+      "scriptDurationMs": 14.867000000000019,
+      "limitation": "First-open total includes import, parse, execution, render and overlay; ScriptDuration is aggregate, not isolated parse time. file: transferSize can be zero."
+    },
+    "audit": {
+      "metrics": {
+        "TaskDuration": 72.681026,
+        "ScriptDuration": 24.151169999999997,
+        "LayoutDuration": 2.380188,
+        "RecalcStyleDuration": 0.24773,
+        "LayoutCount": 4870,
+        "RecalcStyleCount": 1798
+      },
+      "dom": {
+        "elements": 1115,
+        "svg": 63,
+        "svgNodes": 188,
+        "canvases": 7
+      },
+      "heapUsedBytes": 35101492,
+      "navigationHeap": {
+        "before": {
+          "backingStorageSize": 843045,
+          "embedderHeapUsedSize": 3171096,
+          "totalSize": 26886144,
+          "usedSize": 24694284
+        },
+        "after": {
+          "backingStorageSize": 843767,
+          "embedderHeapUsedSize": 3507904,
+          "totalSize": 30294016,
+          "usedSize": 26794524
+        }
+      }
+    },
+    "crosshair": {
+      "samples": 120,
+      "p75Ms": 17,
+      "p95Ms": 18,
+      "scriptSeconds": 0.1306200000000004,
+      "layoutSeconds": 0.03792300000000015
+    },
+    "scroll": {
+      "samples": 60,
+      "p75Ms": 18,
+      "p95Ms": 19,
+      "scriptSeconds": 0.019286000000001025,
+      "layoutSeconds": 0.0016729999999998135
+    }
+  },
+  "stderr": "Retention progress: 60/1800s\nRetention progress: 120/1800s\nRetention progress: 180/1800s\nRetention progress: 240/1800s\nRetention progress: 300/1800s\nRetention progress: 360/1800s\nRetention progress: 420/1800s\nRetention progress: 480/1800s\nRetention progress: 540/1800s\nRetention progress: 600/1800s\nRetention progress: 660/1800s\nRetention progress: 720/1800s\nRetention progress: 780/1800s\nRetention progress: 840/1800s\nRetention progress: 900/1800s\nRetention progress: 960/1800s\nRetention progress: 1020/1800s\nRetention progress: 1080/1800s\nRetention progress: 1140/1800s\nRetention progress: 1200/1800s\nRetention progress: 1260/1800s\nRetention progress: 1320/1800s\nRetention progress: 1380/1800s\nRetention progress: 1440/1800s\nRetention progress: 1500/1800s\nRetention progress: 1560/1800s\nRetention progress: 1620/1800s\nRetention progress: 1680/1800s\nRetention progress: 1740/1800s\nRetention progress: 1800/1800s\n"
+}

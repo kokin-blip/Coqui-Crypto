@@ -1,0 +1,8 @@
+$ eslint .
+
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/tests/contracts-channels.test.ts
+  543:1  error  File has too many lines (501). Maximum allowed is 500  max-lines
+
+✖ 1 problem (1 error, 0 warnings)
+
+[ELIFECYCLE] Command failed with exit code 1.

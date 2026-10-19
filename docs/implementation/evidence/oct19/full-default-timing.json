@@ -1,0 +1,8 @@
+{
+  "command": "pnpm test",
+  "reporter": "default",
+  "startedAtMs": 1792401019822,
+  "firstOutputAtMs": 1792401020028,
+  "exitCode": 0,
+  "completedAtMs": 1792401187485
+}

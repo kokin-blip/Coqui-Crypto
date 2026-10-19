@@ -1,0 +1,19 @@
+{
+  "sourceRevision": "0202177bcb7aa960b5f393cd9302f121e9f4d912",
+  "build": {
+    "version": "0.1.0-beta.16",
+    "sourceRevision": "0202177bcb7aa960b5f393cd9302f121e9f4d912",
+    "dirty": false,
+    "sourceHash": "b11b5a707b6885a4d766edf84ec9695e0a06d7be91406e3169cd4f7a5f9d8e87",
+    "channel": "beta-candidate",
+    "builtAtMs": 1792402367237
+  },
+  "currentSourceHash": "b11b5a707b6885a4d766edf84ec9695e0a06d7be91406e3169cd4f7a5f9d8e87",
+  "matchesBuild": true,
+  "manifestsMatch": true,
+  "rendererUnchangedSinceVisualFixture": true,
+  "originalProposalUnchanged": true,
+  "userAgentsEditPreserved": true,
+  "applicationSourceClean": true,
+  "checkedAtMs": 1792403087066
+}

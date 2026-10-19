@@ -1,0 +1,224 @@
+{
+  "inspectedAt": "2026-10-19T09:16:06.196Z",
+  "results": [
+    {
+      "path": "pulls?state=open&per_page=20",
+      "result": [
+        {
+          "number": 14,
+          "head": "3f0a376d62aaaac1eaeacd78f6a0c479bad1ceb8",
+          "base": "main",
+          "draft": false,
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/pull/14"
+        },
+        {
+          "number": 13,
+          "head": "e34e07bc5305f94987b97c247212317b37bd64b6",
+          "base": "codex/trustworthy-workstation",
+          "draft": true,
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/pull/13"
+        },
+        {
+          "number": 12,
+          "head": "6cde2c6ec955c15e2f06eaf4f0246f8e0e9cc035",
+          "base": "feature/news-intelligence-phase4",
+          "draft": true,
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/pull/12"
+        },
+        {
+          "number": 11,
+          "head": "64e8fc6c9d407d5a963330fcc28f4347eba9e6e2",
+          "base": "feature/news-intelligence-phase4",
+          "draft": true,
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/pull/11"
+        },
+        {
+          "number": 10,
+          "head": "487431cb04ff93213c065bcd1c412968c3fbd1b4",
+          "base": "feature/news-intelligence-phase3",
+          "draft": false,
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/pull/10"
+        },
+        {
+          "number": 9,
+          "head": "3123b7015bc74cf3df43ec47e162c767aba66d10",
+          "base": "feature/news-intelligence",
+          "draft": false,
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/pull/9"
+        },
+        {
+          "number": 8,
+          "head": "945229f5fcf7c3c6a2aac297b8b5f916e66b6bec",
+          "base": "p5-shell-and-ui",
+          "draft": false,
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/pull/8"
+        },
+        {
+          "number": 7,
+          "head": "47b4325f334624cc8fa7862d41e75f4c8df75e21",
+          "base": "main",
+          "draft": false,
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/pull/7"
+        },
+        {
+          "number": 6,
+          "head": "1ccf3eac8a41292babc83ab4064719bcb6aabda5",
+          "base": "main",
+          "draft": false,
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/pull/6"
+        },
+        {
+          "number": 5,
+          "head": "29a10c77602df951a91a2c861fbfba1642c9422f",
+          "base": "main",
+          "draft": false,
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/pull/5"
+        },
+        {
+          "number": 4,
+          "head": "84a6e39c3b20ad54ef8f0895780cd46847f8ec70",
+          "base": "main",
+          "draft": false,
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/pull/4"
+        },
+        {
+          "number": 3,
+          "head": "23bfe18452114e7b9d1644ef284d6a1204b6c5af",
+          "base": "main",
+          "draft": false,
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/pull/3"
+        },
+        {
+          "number": 2,
+          "head": "bad4a47edf7e3d7b13b94f3021549859639908e5",
+          "base": "main",
+          "draft": false,
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/pull/2"
+        }
+      ]
+    },
+    {
+      "path": "rulesets",
+      "result": []
+    },
+    {
+      "path": "branches/main/protection",
+      "result": [
+        {
+          "type": "text",
+          "text": "GitHub API error 403: {\"message\":\"Resource not accessible by integration\",\"documentation_url\":\"https://docs.github.com/rest/branches/branch-protection#get-branch-protection\",\"status\":\"403\"}"
+        }
+      ]
+    },
+    {
+      "path": "actions/runs?per_page=15",
+      "result": [
+        {
+          "id": 38537184272,
+          "head": "3f0a376d62aaaac1eaeacd78f6a0c479bad1ceb8",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/actions/runs/38537184272"
+        },
+        {
+          "id": 38537173850,
+          "head": "3f0a376d62aaaac1eaeacd78f6a0c479bad1ceb8",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/actions/runs/38537173850"
+        },
+        {
+          "id": 38537087066,
+          "head": "f7fc8ed29f4e2c79fe6201e17d08d4cf8b7d3d5e",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/actions/runs/38537087066"
+        },
+        {
+          "id": 38317069991,
+          "head": "f7fc8ed29f4e2c79fe6201e17d08d4cf8b7d3d5e",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/actions/runs/38317069991"
+        },
+        {
+          "id": 38035247290,
+          "head": "6cde2c6ec955c15e2f06eaf4f0246f8e0e9cc035",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/actions/runs/38035247290"
+        },
+        {
+          "id": 38035244781,
+          "head": "6cde2c6ec955c15e2f06eaf4f0246f8e0e9cc035",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/actions/runs/38035244781"
+        },
+        {
+          "id": 38034850428,
+          "head": "e1c91a4396f9a0be415dd93b00e262c59c3e3195",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/actions/runs/38034850428"
+        },
+        {
+          "id": 38034847971,
+          "head": "e1c91a4396f9a0be415dd93b00e262c59c3e3195",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/actions/runs/38034847971"
+        },
+        {
+          "id": 38034339323,
+          "head": "e34e07bc5305f94987b97c247212317b37bd64b6",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/actions/runs/38034339323"
+        },
+        {
+          "id": 38034306731,
+          "head": "e34e07bc5305f94987b97c247212317b37bd64b6",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/actions/runs/38034306731"
+        },
+        {
+          "id": 38033163614,
+          "head": "a7954093614a5efd67bcec458700b0522d6150f3",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/actions/runs/38033163614"
+        },
+        {
+          "id": 38033139091,
+          "head": "a7954093614a5efd67bcec458700b0522d6150f3",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/actions/runs/38033139091"
+        },
+        {
+          "id": 38032229899,
+          "head": "64e8fc6c9d407d5a963330fcc28f4347eba9e6e2",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/actions/runs/38032229899"
+        },
+        {
+          "id": 38032227723,
+          "head": "64e8fc6c9d407d5a963330fcc28f4347eba9e6e2",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/actions/runs/38032227723"
+        },
+        {
+          "id": 38030066480,
+          "head": "95f5e701fb1455597b75681e62f5ae23209463d0",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/kokin-blip/Coqui-Crypto/actions/runs/38030066480"
+        }
+      ]
+    }
+  ]
+}
