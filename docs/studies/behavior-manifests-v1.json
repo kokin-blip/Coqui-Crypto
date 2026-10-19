@@ -2045,7 +2045,7 @@
       ],
       [
         "packages/storage/src/repositories/news-usefulness.ts",
-        "af657ce41319aaa242368a456486c3329e68138dc5aa13a33d9470e67e86a337"
+        "a7824cddaf531b161285adcefc08366973809faac6cd4aa0ab9783765c132b1c"
       ],
       [
         "packages/storage/src/repositories/news.ts",
@@ -2192,7 +2192,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "f718060f903092b27d4abf252752d99ac611ed761190a1e859fd6fa5d3488fd3"
+    "hash": "e63334de2e44d25f3f484ff60dfa0ec19b181e878e7cee46b35d0f93e10eb07c"
   },
   "wider-breakout-v1": {
     "version": 1,
@@ -4240,7 +4240,7 @@
       ],
       [
         "packages/storage/src/repositories/news-usefulness.ts",
-        "af657ce41319aaa242368a456486c3329e68138dc5aa13a33d9470e67e86a337"
+        "a7824cddaf531b161285adcefc08366973809faac6cd4aa0ab9783765c132b1c"
       ],
       [
         "packages/storage/src/repositories/news.ts",
@@ -4387,7 +4387,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "9c8a8e2af74b14e1ad597f08a469f3771da6b7054b6a2389c7a96c73e7b885ed"
+    "hash": "30c9926e9923a7ebe44beb81096051a145ff475b27eae706d0bfd3d9b3e14b98"
   },
   "wider-range-rotation-v1": {
     "version": 1,
@@ -6435,7 +6435,7 @@
       ],
       [
         "packages/storage/src/repositories/news-usefulness.ts",
-        "af657ce41319aaa242368a456486c3329e68138dc5aa13a33d9470e67e86a337"
+        "a7824cddaf531b161285adcefc08366973809faac6cd4aa0ab9783765c132b1c"
       ],
       [
         "packages/storage/src/repositories/news.ts",
@@ -6582,7 +6582,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "6bf38322e7ebc3a7ef0a09929a00d111aba5072f0fdf35aeb8bcc5f78d2f679b"
+    "hash": "be61e69d8251256b280251bed81494f7e4f803b24ce4a4d9da7b1e2d39bd2bb5"
   },
   "paper-market-selector-v1": {
     "version": 1,
@@ -8630,7 +8630,7 @@
       ],
       [
         "packages/storage/src/repositories/news-usefulness.ts",
-        "af657ce41319aaa242368a456486c3329e68138dc5aa13a33d9470e67e86a337"
+        "a7824cddaf531b161285adcefc08366973809faac6cd4aa0ab9783765c132b1c"
       ],
       [
         "packages/storage/src/repositories/news.ts",
@@ -8777,7 +8777,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "f6897abaf6f33f5b994a2a898a6d3d7b22f3a74709a11ea0afd3f1f03472742c"
+    "hash": "fe2a8331e3d14dc43670e572852a9ffa02b8a0f6ac64cf8f81a6fc62f34a79fc"
   },
   "trendvol-hourly-execution-v1": {
     "version": 1,
@@ -10257,7 +10257,7 @@
       ],
       [
         "packages/storage/src/repositories/news-usefulness.ts",
-        "af657ce41319aaa242368a456486c3329e68138dc5aa13a33d9470e67e86a337"
+        "a7824cddaf531b161285adcefc08366973809faac6cd4aa0ab9783765c132b1c"
       ],
       [
         "packages/storage/src/repositories/news.ts",
@@ -10404,7 +10404,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "9144065900141699238a588ae5cac2c7f51b1238d02649d809bbf00e0132db12"
+    "hash": "6a2b0dd05bc2bcdd70011b6ece4abc3c73a01b9750c8f8ce0c522688203bf701"
   },
   "trendvol-execution-remediation-v1": {
     "version": 1,
@@ -11876,7 +11876,7 @@
       ],
       [
         "packages/storage/src/repositories/news-usefulness.ts",
-        "af657ce41319aaa242368a456486c3329e68138dc5aa13a33d9470e67e86a337"
+        "a7824cddaf531b161285adcefc08366973809faac6cd4aa0ab9783765c132b1c"
       ],
       [
         "packages/storage/src/repositories/news.ts",
@@ -12023,6 +12023,6 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "b4fc56bdea320f2c3dd048a5fe8b31ffdf81bbad420b3bcb47483ab3522a5b5e"
+    "hash": "e410b2df033078808e7b0362798487ec7d7e8ed6f104b9619273e3cc97ab9705"
   }
 }
