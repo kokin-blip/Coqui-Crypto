@@ -129,8 +129,7 @@ describe('channel registry', () => {
       'connections.connect-file',
       'connections.robinhood.keypair.begin', 'connections.robinhood.keypair.complete', 'connections.robinhood.keypair.cancel',
       'connections.remove', 'wallets.nickname.set', 'connections.rename',
-      'connections.disconnect',
-      'connections.sync',
+      'connections.disconnect', 'connections.sync',
       'app.chart.snapshot.save',
       'app.chart.workspace.set',
       'advisor.chat.history.delete', 'advisor.chat.history.export',
@@ -535,8 +534,7 @@ describe('status rail contract', () => {
       assessedAtMs: 1_724_000_000_000,
     };
     expect(schema.safeParse(base).success).toBe(true);
-    // Invariant 1: this build has no other executable mode, and the wire type
-    // refuses to describe one.
+    // Invariant 1: the wire type refuses any other executable mode.
     expect(schema.safeParse({ ...base, mode: 'live' }).success).toBe(false);
     expect(schema.safeParse({ ...base, mode: 'off' }).success).toBe(false);
   });
