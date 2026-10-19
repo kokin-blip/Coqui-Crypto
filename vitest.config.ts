@@ -16,6 +16,8 @@ export default defineConfig({
     },
   },
   test: {
+    // Vitest 4's auto-selected agent reporter suppresses all passing-file progress.
+    reporters: ['default'],
     include: ['tests/**/*.test.ts'],
     exclude: ['.migration-source/**', 'node_modules/**', 'dist/**'],
     // Bound parallel filesystem/SQLite work so Windows CI does not starve

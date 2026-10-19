@@ -863,3 +863,7 @@ input[type='checkbox'] {
   .readiness-guide ol { grid-template-columns: 1fr; }
   .readiness-now dl { grid-template-columns: 1fr; }
 }
+
+.recovery-artifact-fields { display: grid; gap: 8px; min-width: 0; padding: 12px 0; border: 0; border-top: 1px solid var(--coqui-border); }
+.recovery-artifact-fields > p { margin: 0; overflow-wrap: anywhere; }
+.recovery-artifact-fields > button { justify-self: start; white-space: normal; }
