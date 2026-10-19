@@ -10,13 +10,15 @@ export interface GdeltCoverageResult {
 export interface GdeltNewsProvider extends NewsProvider {
   fetchCoverage(query: NewsQuery, signal?: NewsAbortSignal): Promise<GdeltCoverageResult>;
 }
-export function createGdeltNewsProvider(input: { readonly transport: NewsHttpTransport; readonly clock: Clock }): GdeltNewsProvider {
+export function createGdeltNewsProvider(input: { readonly transport: NewsHttpTransport; readonly clock: Clock; readonly transportProtocol?: 'https' | 'http' }): GdeltNewsProvider {
+  const transportProtocol = input.transportProtocol ?? 'https';
+  if (!['https', 'http'].includes(transportProtocol)) throw new TypeError('Invalid GDELT transport protocol.');
   function urlFor(query: NewsQuery, mode: string): string {
     const now = input.clock.nowMs(); validNewsQuery(query, now);
     if (query.symbols !== undefined) throw new NewsProviderError('unsupported_symbols');
-    if (!query.keywords?.length || query.keywords.some(term => /["\\]/u.test(term))) throw new NewsProviderError('invalid_query');
-    const url = new URL('https://api.gdeltproject.org/api/v2/doc/doc');
-    url.searchParams.set('query', `(${query.keywords.map(term => `"${term}"`).join(' OR ')})`);
+    if (!query.keywords?.length || query.keywords.some(term => /["\\():]/u.test(term) || /^[-+]|^(?:OR|AND|NOT)$/u.test(term.trim()))) throw new NewsProviderError('invalid_query');
+    const url = new URL(`${transportProtocol}://api.gdeltproject.org/api/v2/doc/doc`);
+    url.searchParams.set('query', `(${query.keywords.map(term => /\s/u.test(term.trim()) ? `"${term.trim()}"` : term.trim()).join(' OR ')})`);
     url.searchParams.set('mode', mode); url.searchParams.set('format', 'json');
     url.searchParams.set('maxrecords', String(query.limit)); url.searchParams.set('sort', 'datedesc');
     if (query.publishedAfterMs === undefined) url.searchParams.set('timespan', '1day');
@@ -31,7 +33,7 @@ export function createGdeltNewsProvider(input: { readonly transport: NewsHttpTra
       if (!Array.isArray(body['articles']) || body['articles'].length > 250) return invalidNewsResponse();
       const articles = body['articles'].slice(0, query.limit).map(raw => {
         const article = newsRecord(raw);
-        return safeNewsObservation({ schemaVersion: 1, provider: 'gdelt', providerArticleId: null,
+        return safeNewsObservation({ schemaVersion: 2, transportProtocol, provider: 'gdelt', providerArticleId: null,
           title: newsText(article['title']), url: newsText(article['url']), sourceDomain: newsText(article['domain']),
           description: null, language: nullableNewsText(article['language']), publishedAtMs: null,
           providerObservedAtMs: newsTimestamp(article['seendate'], true), observedAtMs: response.receivedAtMs, entities: [] });

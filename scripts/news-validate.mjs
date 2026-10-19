@@ -13,14 +13,15 @@ try {
   else {
     if (!values.database || !existsSync(values.database)) throw new Error();
     database = openDatabase(values.database);
-    if (!readNewsHostConfiguration(database).gdeltEnabled) throw new Error();
+    const configuration = readNewsHostConfiguration(database);
+    if (!configuration.gdeltEnabled) throw new Error();
     const clock = new SystemClock(Date.now), authority = getAuthoritativeHost('main', database);
     // Validation participates in existing authority; it never assigns or takes over a host.
     const ownerId = 'news-live-validation';
     const ownsMain = authority === null || authority.status === 'relinquished' || authority.hostId === ownerId;
     const secrets = createOsKeyringSecretStore();
     runtime = await createNewsIntelligenceRuntime({ clock, secrets, quotaDatabase: database, storageDatabase: database,
-      enabledProviders: ['gdelt'], ownerId, startCurrentSlot: true, maxRetries: 0,
+      enabledProviders: ['gdelt'], gdeltTransport: configuration.gdeltTransport ?? 'https', ownerId, startCurrentSlot: true, maxRetries: 0,
       canCollect: () => isAuthoritativeHost('main', ownerId, database) });
     const tick = ownsMain ? await runtime.tick() : { results: [] };
     const scope = newsProviderQuotaScope('gdelt');
@@ -34,7 +35,7 @@ try {
     runtime.destroy(); runtime = undefined; database.close();
     database = openDatabase(values.database);
     runtime = await createNewsIntelligenceRuntime({ clock, secrets, quotaDatabase: database, storageDatabase: database,
-      enabledProviders: ['gdelt'], ownerId, startCurrentSlot: true, maxRetries: 0,
+      enabledProviders: ['gdelt'], gdeltTransport: configuration.gdeltTransport ?? 'https', ownerId, startCurrentSlot: true, maxRetries: 0,
       canCollect: () => isAuthoritativeHost('main', ownerId, database) });
     // Inspect restart state; do not trigger another fetch or adjust any clock/schedule.
     const after = database.prepare('SELECT next_run_at FROM wallet_schedule_lease WHERE profile_id=?').get(scheduleId)?.next_run_at;

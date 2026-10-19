@@ -34,6 +34,21 @@ describe('news storage foundation', () => {
     expect(first.stored.availableAtMs).toBe(300);
   });
 
+  it('preserves v1 evidence and appends v2 protocol changes with actual availability', () => {
+    const database = db(), legacy = newsFixture({ provider: 'gdelt', providerArticleId: null });
+    const first = saveNewsObservation(legacy, 300, database);
+    const http = { ...legacy, schemaVersion: 2 as const, transportProtocol: 'http' as const, observedAtMs: 400 };
+    const plain = saveNewsObservation(http, 500, database);
+    expect(plain.stored.articleId).toBe(first.stored.articleId);
+    expect(plain.stored.observationId).not.toBe(first.stored.observationId);
+    expect(saveNewsObservation({ ...http, observedAtMs: 600 }, 700, database).inserted).toBe(false);
+    const secure = saveNewsObservation({ ...http, transportProtocol: 'https', observedAtMs: 800 }, 900, database);
+    expect(secure.stored.observationId).not.toBe(plain.stored.observationId);
+    expect(listNewsObservationsAsOf(499, 100, database).map(o => o.observation.schemaVersion)).toEqual([1]);
+    expect(listNewsObservationsAsOf(500, 100, database).some(o => o.observation.schemaVersion === 2 && o.observation.transportProtocol === 'http')).toBe(true);
+    expect(counts(database)).toEqual([1, 1, 3]);
+  });
+
   it('deduplicates missing IDs by provider and canonical URL', () => {
     const database = db(), value = newsFixture({ provider: 'gdelt', providerArticleId: null });
     expect(saveNewsObservation(value, 300, database).inserted).toBe(true);

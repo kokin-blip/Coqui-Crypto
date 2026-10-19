@@ -39,6 +39,14 @@ describe('Main news host integration', () => {
     test.database.prepare("INSERT INTO app_settings(key,value) VALUES ('news_intelligence_host_v1','invalid')").run();
     expect(() => readNewsHostConfiguration(test.database)).toThrow(/^Invalid news host configuration\.$/u);
   });
+  it('validates explicit GDELT transport and carries its provenance through the host', async () => {
+    const test = fixture();
+    expect(() => saveNewsHostConfiguration({ schemaVersion: 1, gdeltEnabled: true, gdeltTransport: 'ftp' }, test.database)).toThrow();
+    saveNewsHostConfiguration({ schemaVersion: 1, gdeltEnabled: true, gdeltTransport: 'http' }, test.database);
+    const host = test.host(); await host.tick();
+    expect(new URL(test.fetch.mock.calls[0]![0]).protocol).toBe('http:');
+    expect(observations(test.database)[0]?.observation).toMatchObject({ schemaVersion: 2, transportProtocol: 'http' });
+  });
   it('collects one initial UTC slot and preserves next slot across restart without another request', async () => {
     const test = fixture(); saveNewsHostConfiguration({ schemaVersion: 1, gdeltEnabled: true }, test.database);
     const first = test.host(); await first.tick(); expect(test.fetch).toHaveBeenCalledTimes(1);

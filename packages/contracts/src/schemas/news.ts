@@ -20,7 +20,7 @@ export const newsEntitySchema = z.strictObject({
   sentimentScore: z.number().min(-1).max(1).nullable(),
 }).readonly();
 
-export const newsObservationSchema = z.strictObject({
+const newsObservationV1Schema = z.strictObject({
   schemaVersion: z.literal(1),
   provider: newsProviderIdSchema,
   providerArticleId: text(256).nullable(),
@@ -34,6 +34,13 @@ export const newsObservationSchema = z.strictObject({
   language: text(64).nullable(),
   entities: z.array(newsEntitySchema).max(100).readonly(),
 }).readonly();
+
+export const newsObservationSchema = z.union([
+  newsObservationV1Schema,
+  z.strictObject({ ...newsObservationV1Schema.unwrap().shape, schemaVersion: z.literal(2),
+    transportProtocol: z.enum(['https', 'http']), }).readonly(),
+]).refine(value => value.schemaVersion !== 2 || value.transportProtocol !== 'http' || value.provider === 'gdelt',
+  'Only credential-free GDELT may use explicitly selected HTTP transport.');
 
 export const newsQuerySchema = z.strictObject({
   symbols: z.array(text(128)).min(1).max(100).readonly().optional(),
@@ -51,4 +58,5 @@ export const newsFetchResultSchema = z.strictObject({
 /** Internal host settings only; deliberately absent from renderer channels. */
 export const newsHostConfigurationSchema = z.object({
   schemaVersion: z.literal(1), gdeltEnabled: z.boolean(),
+  gdeltTransport: z.enum(['https', 'http']).optional(),
 }).strict().readonly();

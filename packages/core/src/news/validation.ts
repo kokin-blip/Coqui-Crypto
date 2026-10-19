@@ -21,10 +21,11 @@ function nullableText(value: unknown, max: number): boolean {
 /** Repository guard: no casts or extra payload fields can bypass the storage boundary. */
 export function assertNewsObservation(value: unknown): asserts value is NewsObservation {
   const invalid = () => { throw new TypeError('Invalid news observation.'); };
+  const version2 = typeof value === 'object' && value !== null && 'schemaVersion' in value && value.schemaVersion === 2;
   if (!record(value, ['schemaVersion', 'provider', 'providerArticleId', 'title', 'url',
     'sourceDomain', 'description', 'publishedAtMs', 'providerObservedAtMs', 'observedAtMs',
-    'language', 'entities'])) return invalid();
-  if (value['schemaVersion'] !== 1 || typeof value['provider'] !== 'string' ||
+    'language', 'entities', ...(version2 ? ['transportProtocol'] : [])])) return invalid();
+  if ((value['schemaVersion'] !== 1 && value['schemaVersion'] !== 2) || typeof value['provider'] !== 'string' ||
     !['marketaux', 'currents', 'gdelt'].includes(value['provider']) ||
     !nullableText(value['providerArticleId'], 256) || !text(value['title'], 1_000) ||
     !text(value['url'], 4_096) || !text(value['sourceDomain'], 253) ||
@@ -34,6 +35,8 @@ export function assertNewsObservation(value: unknown): asserts value is NewsObse
     !(value['publishedAtMs'] === null || isNewsTimestamp(value['publishedAtMs'])) ||
     !(value['providerObservedAtMs'] === null || isNewsTimestamp(value['providerObservedAtMs'])) ||
     !Array.isArray(value['entities']) || value['entities'].length > 100) return invalid();
+  if (version2 && (typeof value['transportProtocol'] !== 'string' || !['https', 'http'].includes(value['transportProtocol']) ||
+    (value['transportProtocol'] === 'http' && value['provider'] !== 'gdelt'))) return invalid();
   try { canonicalNewsUrl(value['url']); } catch { return invalid(); }
   for (const entity of value['entities']) {
     if (!record(entity, ['symbol', 'assetClass', 'providerEntityType', 'exchange', 'matchScore', 'sentimentScore']) ||

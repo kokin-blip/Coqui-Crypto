@@ -20,6 +20,21 @@ describe('news contracts and conservative exact identity', () => {
     expect(newsFetchResultSchema.safeParse({ articles: [], requestCost: -1 }).success).toBe(false);
   });
 
+  it('validates versioned transport evidence and preserves legacy hashes', () => {
+    const legacy = newsFixture({ provider: 'gdelt' });
+    const https = { ...legacy, schemaVersion: 2 as const, transportProtocol: 'https' as const };
+    const http = { ...https, transportProtocol: 'http' as const };
+    for (const value of [legacy, https, http]) { expect(newsObservationSchema.safeParse(value).success).toBe(true); expect(() => assertNewsObservation(value)).not.toThrow(); }
+    expect(newsContentHash(https)).not.toBe(newsContentHash(http));
+    expect(newsContentHash(legacy)).not.toBe(newsContentHash(https));
+    expect(newsContentHash({ ...http, observedAtMs: 999 })).toBe(newsContentHash(http));
+    for (const value of [{ ...legacy, transportProtocol: 'http' }, { ...legacy, schemaVersion: 2 },
+      { ...http, provider: 'marketaux' }, { ...http, transportProtocol: 'ftp' }]) {
+      expect(newsObservationSchema.safeParse(value).success).toBe(false);
+      expect(() => assertNewsObservation(value)).toThrow('Invalid news observation');
+    }
+  });
+
   it('accepts raw match scores above one, null sentiment and independent timestamps', () => {
     const value = newsFixture({ publishedAtMs: 300, providerObservedAtMs: 250 });
     expect(newsObservationSchema.parse(value)).toEqual(value);
