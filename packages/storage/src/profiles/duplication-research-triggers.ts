@@ -127,7 +127,8 @@ export function restoreResearchDuplicationTriggers(database:DatabaseSync):void {
 /** A clone needs its own explicit report association; original report files/history stay untouched. */
 export function excludeNewsReportAssociations(db: DatabaseSync): number {
   let count=0;
-  for(const table of ['news_report_associations_v1','news_export_permissions_v1']) {
+  // Remove selected locations first: their immutable association belongs to the source profile.
+  for(const table of ['news_report_locations_v1','news_report_associations_v1','news_export_permissions_v1']) {
     if(!db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name=?").get(table))continue;
     count+=db.prepare(`SELECT count(*) AS n FROM ${table}`).get()!['n'] as number;
     db.exec(`DROP TRIGGER ${table}_no_delete; DELETE FROM ${table};
