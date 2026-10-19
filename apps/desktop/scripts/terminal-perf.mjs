@@ -22,6 +22,10 @@ globalThis.fetch = async () => new globalThis.Response('{}',{status:503});
 globalThis.WebSocket = class { close() {} send() {} };
 const loop = monitorEventLoopDelay({resolution:20}); loop.enable();
 const intervalMs = { '1m': 60000, '5m': 300000, '15m': 900000, '1h': 3600000, '6h': 21600000, '1d': 86400000 };
+// A shared Electron storage service can block the first sessionStorage read.
+// Isolate Chromium data as well as the application DB for reproducible fresh-process runs.
+const browserDirectory=mkdtempSync(join(tmpdir(),'coqui-perf-browser-'));
+app.setPath('userData',browserDirectory); app.setPath('sessionData',browserDirectory);
 app.enableSandbox();
 app.whenReady().then(async () => {
 const directory = mkdtempSync(join(tmpdir(), 'coqui-terminal-perf-'));
@@ -154,7 +158,7 @@ try {
   const viewportDriftPx=Math.abs(finalX-viewportX);
   const p75 = navigation.sort((a,b)=>a-b)[Math.ceil(navigation.length*.75)-1];
   const result = { shellMs, coldChartMs, cachedNavigationP75Ms: p75, feedSeconds: seconds, ticks, feedTicks, bookQueries, tradeQueries, historyQueries, unchangedExtensionEvaluations:extensionEvaluations-evaluationsBeforeFeed, viewportDriftPx, frameP95Ms:percentile(frames,.95), framesOver34Ms:frames.filter(ms=>ms>34).length, ...updates };
-  const workload={version:2,simulated:true,bars:2000,navigationCycles:12,feedIntervalMs:1000,seconds,network:'503_only',scheduler:'disabled'};
+  const workload={version:3,simulated:true,browserCache:'fresh_disposable',bars:2000,navigationCycles:12,feedIntervalMs:1000,seconds,network:'503_only',scheduler:'disabled'};
   Object.assign(result,{workload,workloadHash:createHash('sha256').update(JSON.stringify(workload)).digest('hex'),
     build:JSON.parse(readFileSync(join(root,'dist/main/build-info.json'),'utf8')),
     environment:{electron:process.versions.electron,node:process.versions.node,platform:process.platform,arch:process.arch},
@@ -200,7 +204,7 @@ try {
   console.log(JSON.stringify(result));
   if (process.env.COQUI_PERF_BASELINE !== '1' && (p75 > 200 || viewportDriftPx > .5 || extensionEvaluations-evaluationsBeforeFeed > 1 || updates.removedCanvases > 0 || updates.longTasks.some(ms=>ms>200))) process.exitCode = 1;
 } finally {
-  loop.disable(); clearInterval(feed); window.destroy(); activity?.dispose(); runtime.dispose(); rmSync(directory, { recursive: true, force: true }); app.exit(process.exitCode ?? 0);
+  loop.disable(); clearInterval(feed); window.destroy(); activity?.dispose(); runtime.dispose(); rmSync(directory, { recursive: true, force: true }); rmSync(browserDirectory,{recursive:true,force:true}); app.exit(process.exitCode ?? 0);
 }
 
 }).catch(error => { console.error(error); app.exit(1); });
