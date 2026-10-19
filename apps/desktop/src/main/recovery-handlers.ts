@@ -47,7 +47,8 @@ export function createRecoveryHandlers(input: {
           // Validation happens before insertion; never forward file paths or raw parser errors.
           const code = error instanceof Error && ['report_profile_association_missing', 'report_location_time_conflict',
             'future_report', 'report_integrity_mismatch', 'report_horizons_invalid', 'report_unavailable'].includes(error.message)
-            ? error.message : error instanceof Error && ('code' in error || error.name === 'ZodError' || error instanceof SyntaxError)
+            ? error.message : error instanceof Error && ((Object.hasOwn(error,'code') &&
+              ['ENOENT','EACCES','EPERM','ENOTDIR','EISDIR','ELOOP'].includes(String((error as NodeJS.ErrnoException).code))) || error.name === 'ZodError' || error instanceof SyntaxError)
               ? 'report_artifact_invalid' : 'ambiguous_outcome';
           return { ok: false, issues: [{ code }] };
         }

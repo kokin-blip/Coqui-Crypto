@@ -21,6 +21,10 @@ describe('operator-selected recovery command outcomes',()=>{
    expect(await command()).toMatchObject({status:'ok',value:{status:'cancelled'}});expect(gate.isBusy()).toBe(false);
    selected=path;expect(await command()).toMatchObject({status:'ok',value:{status:'already_selected'}});
    selected=join(root,'missing.json');expect(await command()).toMatchObject({status:'failed',issues:[{code:'report_artifact_invalid'}]});
+   selected=join(root,'copied.json');writeFileSync(selected,JSON.stringify({...body,reportHash}));
+   db.exec("CREATE TRIGGER reject_fixture_location BEFORE INSERT ON news_report_locations_v1 BEGIN SELECT RAISE(ABORT,'fixture write failure'); END");
+   expect(await command()).toMatchObject({status:'unknown',issues:[{code:'ambiguous_outcome'}]});
+   expect(db.prepare('SELECT count(*) AS n FROM news_report_locations_v1').get()?.['n']).toBe(0);
    expect(await dispatch('app.recovery.verify',{commandId:crypto.randomUUID(),expectedDatabaseHash:'a'.repeat(64)})).toMatchObject({status:'ok',value:{status:'cancelled',proof:null}});
    expect(gate.isBusy()).toBe(false);expect(db.prepare('SELECT count(*) AS n FROM news_report_locations_v1').get()?.['n']).toBe(0);
   }finally{db.close();rmSync(root,{recursive:true,force:true});}
