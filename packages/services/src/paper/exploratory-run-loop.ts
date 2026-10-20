@@ -1,3 +1,4 @@
+import { startOperationsActivity } from '../operations/activity.js';
 import { Decimal } from 'decimal.js';
 
 import {
@@ -76,7 +77,7 @@ function holdingsForCampaign(
     });
 }
 
-export function runExploratoryPaperDecision(
+function evaluateExploratoryPaperDecision(
   dependencies: PaperRunLoopDependencies,
   scheduledForMs: number,
 ): PaperRunSummary {
@@ -251,4 +252,22 @@ export function runExploratoryPaperDecision(
     outcome.reasonCode === 'kill_switch_engaged' ? 'kill_switch_engaged' : 'gates_refused',
     0, outcome.refusedCount);
   return finish(null, outcome.filledCount, outcome.refusedCount);
+}
+
+export function runExploratoryPaperDecision(dependencies: PaperRunLoopDependencies, scheduledForMs: number): PaperRunSummary {
+  const decisionId=strategyDecisionId(dependencies.profileId,scheduledForMs);
+  const existing=dependencies.database.prepare(`SELECT 1 FROM strategy_decisions_v1 d JOIN wallet_decision_runs w ON w.id=d.run_id WHERE d.decision_id=? AND d.profile_id=? AND w.status='completed'`)
+    .get(decisionId,dependencies.profileId);
+  if(existing!==undefined)return evaluateExploratoryPaperDecision(dependencies,scheduledForMs);
+  const work=startOperationsActivity({database:dependencies.database,profileId:dependencies.profileId,
+    workId:`decision:${decisionId}`,worker:'host',source:'exploratory',phase:'evaluation_started',
+    now:()=>dependencies.clock.nowMs(),facts:{decisionId},
+    ...(dependencies.onUnexpectedError===undefined?{}:{onUnexpectedError:dependencies.onUnexpectedError})});
+  try {
+    const result=evaluateExploratoryPaperDecision(dependencies,scheduledForMs);
+    work.finish('evaluation_finished',result.standDown==='execution_unknown'?'unknown':
+      result.standDown===null||result.standDown==='no_intents'?'completed':result.standDown==='pending_settlement'||result.standDown==='pending_review'?'waiting':'blocked',
+      {reasonCode:result.standDown,runId:result.runId,filledCount:result.filledCount,submittedCount:result.submittedCount});
+    return result;
+  } catch(error) { work.finish('evaluation_finished','failed',{reasonCode:'paper_run_failed'});throw error; }
 }

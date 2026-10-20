@@ -1,6 +1,6 @@
 import { createRequestDeadline, type HttpClient, type SecretStore } from '@coqui/adapters';
 import { STUDY_BEHAVIOR_HASHES, type Clock } from '@coqui/core';
-import { ParallelPaperService, PARALLEL_INSTRUMENTS, resolveKillSwitch } from '@coqui/services';
+import { startOperationsActivity, ParallelPaperService, PARALLEL_INSTRUMENTS, resolveKillSwitch } from '@coqui/services';
 import { appendParallelEvent, countParallelEvents, latestParallelExperiment, listParallelEvents, parallelExperimentStatus, type Db } from '@coqui/storage';
 
 import { createPaperMarketFeed, type PaperMarketFeedDependencies } from './paper-market.js';
@@ -32,7 +32,7 @@ export function createParallelPaperRuntime(input: {
     instruments: () => PARALLEL_INSTRUMENTS, bars: input.bars,
     onUnexpectedError: input.onUnexpectedError });
   const service = new ParallelPaperService({ profileId: input.profileId,
-    database: input.database, clock: input.clock,
+    database: input.database, clock: input.clock,onUnexpectedError:input.onUnexpectedError,
     ...(input.hostId ? { hostId: input.hostId } : {}),
     ...(input.hostKind ? { hostKind: input.hostKind } : {}),
     ...(input.secrets === undefined ? {} : { secrets: input.secrets }),
@@ -40,14 +40,25 @@ export function createParallelPaperRuntime(input: {
       const experiment = latestParallelExperiment(input.profileId, input.database);
       const started = performance.now(), budgetMs = deadline?.remainingMs() ?? null;
       const record = (kind: string) => {
-        if (experiment) appendParallelEvent({ experimentId: experiment.id, profileId: input.profileId,
+        if (experiment) return appendParallelEvent({ experimentId: experiment.id, profileId: input.profileId,
           kind, key: `${kind}:${nowMs}:${countParallelEvents(experiment.id, input.profileId, input.database)}`,
           at: input.clock.nowMs(), detail: { operation: 'market_preparation', startedAtMs: nowMs,
             elapsedMs: performance.now() - started, budgetMs, remainingMs: deadline?.remainingMs() ?? null } }, input.database);
       };
-      record('market_refresh_started');
-      try { return await market.refresh(nowMs, deadline); }
-      finally { record('market_refresh_finished'); }
+      const start=record('market_refresh_started');
+      const activity=experiment===null||start===undefined?null:startOperationsActivity({database:input.database,
+        profileId:input.profileId,workId:service.operationsWorkId()??`parallel:${experiment.id}:refresh:${start.id}`,
+        worker:'market',source:'parallel',phase:'market_refresh_started',now:()=>input.clock.nowMs(),
+        ...(deadline===undefined?{}:{deadlineAtMs:deadline.expiresAtMs}),
+        facts:{campaignId:experiment.id,instruments:PARALLEL_INSTRUMENTS.map(item=>item.productId).join(', '),sourceRecord:`parallel:${start.id}`},
+        onUnexpectedError:input.onUnexpectedError});
+      let result:ReturnType<typeof market.preparation>|null=null;
+      try { result=await market.refresh(nowMs, deadline);return result; }
+      finally { const end=record('market_refresh_finished');
+        activity?.finish('market_refresh_finished',result?.ok===true?'completed':'blocked',{
+          reasonCode:result===null?'market_fetch_failed':result.ok?null:result.code,
+          ...(end===undefined?{}:{sourceRecord:`parallel:${end.id}`})}); }
+
     },
     killSwitchEngaged: () => resolveKillSwitch(input.profileId, input.database).engaged,
     ...(input.mlSignal === undefined ? {} : { mlSignal: input.mlSignal.current }) });

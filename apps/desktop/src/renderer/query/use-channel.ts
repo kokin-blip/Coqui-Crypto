@@ -12,6 +12,7 @@ import type {
 } from '@coqui/contracts';
 
 import { CHANNEL_POLICIES } from './refetch.js';
+import { useForeground } from './foreground.js';
 
 /**
  * What a component receives. Deliberately not a raw `Outcome`.
@@ -51,13 +52,15 @@ export function useChannel<TChannel extends ChannelName>(
   channel: TChannel,
   payload: ChannelRequest<TChannel>,
   enabled = true,
+  cacheScope?: string,
 ): ChannelState<ChannelResponse<TChannel>> {
   const policy = CHANNEL_POLICIES[channel];
-  const key = useMemo(() => [channel, payload] as const, [channel, payload]);
+  const foreground=useForeground(policy.foregroundOnly===true);
+  const key = useMemo(() => cacheScope===undefined?[channel,payload] as const:[channel,payload,cacheScope] as const, [channel,payload,cacheScope]);
 
   const query = useQuery<Outcome<ChannelResponse<TChannel>>, Error>({
     queryKey: key,
-    enabled,
+    enabled:enabled&&foreground,
     queryFn: ({ signal }) => client.query(channel, payload, { signal }),
     refetchInterval: policy.refetchIntervalMs,
     staleTime: policy.staleTimeMs,
@@ -65,6 +68,7 @@ export function useChannel<TChannel extends ChannelName>(
     // re-run a call the main process already declined, and for a non-idempotent
     // channel it would be a duplicate command.
     retry: false,
+    ...(policy.gcTimeMs===undefined?{}:{gcTime:policy.gcTimeMs}),
     // TanStack keeps current-key data during refresh. Do not carry another
     // payload's data across instruments or profiles while the new key loads.
   });

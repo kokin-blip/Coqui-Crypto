@@ -1,3 +1,4 @@
+import { startOperationsActivity } from '../operations/activity.js';
 import { proposalPreview } from './proposal-preview.js';
 import {
   sha256Hex,
@@ -174,7 +175,12 @@ export class PaperExecutionService {
       reasonCode = 'evidence_not_verified';
     }
 
-    const gates = reasonCode === null
+    const observation=startOperationsActivity({database:this.#database,profileId:this.#profileId,
+      workId:action.pending===undefined?`run:${action.runId}`:`decision:${action.pending.decisionId}`,
+      worker:'risk',source:snapshot.admissionMode==='exploratory'?'exploratory':'paper_ledger',phase:'gates_started',recordStart:reasonCode===null,
+      now:this.#nowMs,onUnexpectedError:this.#onUnexpectedError,facts:{runId:action.runId,proposalId:action.proposalId,
+        ...(action.pending===undefined?{}:{decisionId:action.pending.decisionId})}});
+    const gates = (()=>{try {return reasonCode === null
       ? runExecutionGates({
           profileId: this.#profileId,
           runId: action.runId,
@@ -189,8 +195,12 @@ export class PaperExecutionService {
           ...(snapshot.riskInput === undefined ? {} : { riskInput: snapshot.riskInput }),
           ...(snapshot.marketQuality === undefined ? {} : { marketQuality: snapshot.marketQuality }),
         })
-      : null;
+      : null; } catch(error){observation.finish('gates_finished','failed',{reasonCode:'execution_checks_failed'});throw error;} })();
     if (gates !== null && !isApproved(gates)) reasonCode = gates.code;
+    observation.finish(gates===null?'eligibility':'gates_finished',reasonCode===null?'completed':'blocked',{
+      reasonCode,gate:gates!==null&&!isApproved(gates)?gates.gate:null,
+      gatesPassed:gates!==null&&isApproved(gates)?gates.gatesPassed.join(', '):null});
+
 
     const proposal = savePaperExecutionProposal({
       id: action.proposalId,

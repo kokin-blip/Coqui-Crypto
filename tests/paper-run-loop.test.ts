@@ -488,3 +488,20 @@ describe('scheduler task contract', () => {
     db.close();
   });
 });
+
+
+describe('Operations observations preserve execution',()=>{
+  it('returns identical decisions and financial records when observation writes fail',()=>{
+    const observed=seeded(),unobserved=seeded();
+    unobserved.exec(`CREATE TRIGGER reject_operations BEFORE INSERT ON operations_activity_events_v1
+      BEGIN SELECT RAISE(ABORT,'observation unavailable'); END;`);
+    const a=runPaperDecision(deps(observed,new FixedClock(T0+DAY)),T0+DAY);
+    const b=runPaperDecision(deps(unobserved,new FixedClock(T0+DAY)),T0+DAY);
+    expect(a).toEqual(b);
+    for(const table of ['strategy_decisions_v1','decision_evidence_events_v1','paper_orders_v3','paper_fills_v3','paper_balances_v3','paper_ledger_entries_v3']) {
+      expect(observed.prepare(`SELECT * FROM ${table} ORDER BY rowid`).all()).toEqual(unobserved.prepare(`SELECT * FROM ${table} ORDER BY rowid`).all());
+    }
+    expect(observed.prepare("SELECT COUNT(*) AS count FROM operations_activity_events_v1 WHERE worker='risk' AND phase='gates_finished'").get()).toMatchObject({count:1});
+    observed.close();unobserved.close();
+  });
+});

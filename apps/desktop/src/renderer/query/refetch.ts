@@ -22,6 +22,8 @@ export interface ChannelPolicy {
   readonly refetchIntervalMs: number | false;
   /** How long a cached value is served without a background refetch. */
   readonly staleTimeMs: number;
+  readonly gcTimeMs?: number;
+  readonly foregroundOnly?: boolean;
 }
 
 export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
@@ -106,6 +108,8 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'paper.campaign.connections': { refetchIntervalMs: false, staleTimeMs: 30_000 },
   'paper.campaign.connections.start': { refetchIntervalMs: false, staleTimeMs: 0 },
   'activity.feed': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
+  'operations.journal': { foregroundOnly:true, refetchIntervalMs:2 * SECOND,staleTimeMs:500,gcTimeMs:0 },
+  'operations.journal.group': { foregroundOnly:true, refetchIntervalMs:2 * SECOND,staleTimeMs:500,gcTimeMs:0 },
   'operations.floor': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
   // Profile metadata changes only through explicit account commands.
   'accounts.profiles': { refetchIntervalMs: false, staleTimeMs: Number.POSITIVE_INFINITY },

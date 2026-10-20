@@ -204,7 +204,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   const tax = new PortfolioTaxService({ database, clock }), reconciliation = new ReconciliationLedgerService({ database, clock }), settings = new AccountSettingsService({ database, clock });
 
   const research = new ResearchReadModelService({ database,profileId:options.profileId }), scoreboard = new ResearchScoreboardService({ database });
-  const researchHost = new ResearchHostCoordinator({ profileId: options.profileId, database, clock,
+  const researchHost = new ResearchHostCoordinator({ profileId: options.profileId, database, clock,onUnexpectedError:report,
     ...(options.researchRegistrations===undefined?{}:{registrations:options.researchRegistrations}) });
   const evidence = new RiskEvidenceTrackerService({ database, clock });
   const alerts = new AlertsService({
@@ -216,7 +216,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   const statusRail = new StatusRailService({ database, clock });
   const profileReadiness = new ProfileReadinessService(database, clock);
   const exploratoryCampaigns = new ExploratoryPaperCampaignService(database);
-  const paperInstruments = () => resolvePaperInstruments(options.profileId, database), paperMarket = createPaperMarketFeed({
+  const paperInstruments = () => resolvePaperInstruments(options.profileId, database), paperMarket = createPaperMarketFeed({ profileId:options.profileId,
     database,
     http,
     instruments: paperInstruments,
@@ -311,7 +311,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
       ...(options.pickConnectionFile === undefined ? {} : { pickConnectionFile: options.pickConnectionFile }), ...(options.coinbaseAcquirer === undefined ? {} : { coinbaseAcquirer: options.coinbaseAcquirer }),
       ...(options.coinbaseVerifier === undefined ? {} : { coinbaseVerifier: options.coinbaseVerifier }),
       ...(options.readClipboardText === undefined ? {} : { readClipboardText: options.readClipboardText }) }),
-    ...createAdvisorHandlers({ profileId: options.profileId, database, clock, http,
+    ...createAdvisorHandlers({ profileId: options.profileId, database, clock, http,onUnexpectedError:report,
       ...(options.secrets === undefined ? {} : { secrets: options.secrets }), ...(options.saveHistory === undefined ? {} : { saveHistory: options.saveHistory }),
       ...(options.readClipboardText === undefined ? {} : { readClipboardText: options.readClipboardText }), ...(options.clearClipboardIfMatches === undefined ? {} : { clearClipboardIfMatches: options.clearClipboardIfMatches }) }),
     ...createChartExtensionHandlers({ profileId: options.profileId, database, clock, ...(options.pickChartExtension === undefined ? {} : { pickPackage: options.pickChartExtension }) }),
@@ -333,7 +333,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
         asOfMs: clock.nowMs(),
       },
     }),
-    'operations.floor': () => ({ ok: true, value: { asOfMs: clock.nowMs(), subsystems: readOperationsFloor(options.profileId, database) } }),
+    'operations.floor': () => ({ ok: true, value: { asOfMs: clock.nowMs(), subsystems: readOperationsFloor(options.profileId, database, clock.nowMs()) } }),
     'paper.performance': () => {
       const valuations = listPaperDailyValuationEvidence(options.profileId, database);
       const fills = listPaperFillPerformanceFacts(options.profileId, database);

@@ -1,0 +1,39 @@
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: '1b078ea10997b788a03b530da0a55f2504f88838d25c5692eae01198a3000e60'
+}
+PASS journal IPC to painted frame stays within200ms p75 8.5
+PASS journal is between the six bots and decision feed
+PASS all six workers have readable messages
+PASS latest group is expanded and older groups are compact
+PASS technical evidence expands without starting an Advisor request
+PASS polling retains open evidence and keyboard focus
+PASS jump to latest restores the top and a stable keyboard destination
+PASS pause freezes displayed messages while collecting updates
+PASS resume catches up with actual recorded evidence
+PASS backgrounding the window stops journal polling
+PASS collapse stops journal polling
+PASS crew filter applies to grouped entries
+PASS dark appearance command succeeds
+PASS dark journal fits without horizontal clipping
+PASS dark reuses Figma component mappings
+PASS light appearance command succeeds
+PASS light journal fits without horizontal clipping
+PASS light reuses Figma component mappings
+PASS contrast appearance command succeeds
+PASS contrast journal fits without horizontal clipping
+PASS contrast reuses Figma component mappings
+PASS zoom appearance command succeeds
+PASS zoom journal fits without horizontal clipping
+PASS zoom reuses Figma component mappings
+PASS entry history stays bounded at200 with older history disclosed
+PASS sustained updates keep rendered entries and retained heap bounded
+PASS profile switch fixture has a delayed prior-profile read
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: '1b078ea10997b788a03b530da0a55f2504f88838d25c5692eae01198a3000e60'
+}
+PASS profile switch rejects late prior-profile journal evidence
+{"timestamp":"2026-10-20T10:24:49.801Z","level":"warn","event":"coinbase_candles.fetch_failed","context":{"profileId":"00000000-0000-4000-8000-000000000001","source":"public","productId":"BTC-USD","interval":"1d","status":503,"reason":"http"}}
+PASS navigation away removes journal polling
+PASS opening the journal created no evaluations or fills

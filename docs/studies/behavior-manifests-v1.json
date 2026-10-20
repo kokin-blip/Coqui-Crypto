@@ -261,7 +261,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "4518df380b01669bdbb94109c9cb9bbe29860d85cc221a5950a8a2f77b5d4d51"
+        "fe81989c84201f7b4b382578e7523312d8410997558c4bd00eeb0f1498d8cb52"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -350,6 +350,10 @@
       [
         "packages/contracts/src/schemas/news.ts",
         "d4733ea51d4027aeedc9b561b10061c1fa197ade97985401892d27a117c59ec3"
+      ],
+      [
+        "packages/contracts/src/schemas/operations-journal.ts",
+        "d5a131d0cb94571cb81b7b4d69a2dde5e55fc6b19a1f6080b7431bec833ed41e"
       ],
       [
         "packages/contracts/src/schemas/operations.ts",
@@ -1021,11 +1025,11 @@
       ],
       [
         "packages/services/src/advisor/analyst.ts",
-        "f93a5647f92cca130e7b75406a4d579968009822927ce3c9146c1bae4b2477e8"
+        "5106da5b6026388591678dde7fe626ac95367663d2d11b8bb51222516af36cb4"
       ],
       [
         "packages/services/src/advisor/decision-evidence.ts",
-        "1450ef61dd07c88c57684bf124cc16a51b04dab71f9484f62b770ef14e4fbd4f"
+        "919f808ac1ab87d391be7c02a0a2315a1b332629fca1899da649fc0971afc9ac"
       ],
       [
         "packages/services/src/advisor/index.ts",
@@ -1053,7 +1057,7 @@
       ],
       [
         "packages/services/src/index.ts",
-        "e81e1cd867f3816fbce7743e4efb76c4ed6b185a565ce2a1a9a706cbdd011eb1"
+        "f99baf82d8260ba42e4ef370faf96d0e9d1480e4313238697c135b669defc66b"
       ],
       [
         "packages/services/src/market-data/acquisition/artifacts.ts",
@@ -1156,6 +1160,18 @@
         "b2ca625cb4d376cb10778e2c62e9f8b0748c3f46830bb2a424db11175225656d"
       ],
       [
+        "packages/services/src/operations/activity.ts",
+        "f72091b56144c5cc6ef9c335e00e2e8fd0c8e10b9898ff983f85c31f9f3f4224"
+      ],
+      [
+        "packages/services/src/operations/advisor-activity.ts",
+        "e5f9618d68bd6128f6fa3a6f413c93476a90ddbaa2c8f217edff413038b864b5"
+      ],
+      [
+        "packages/services/src/operations/parallel-activity.ts",
+        "061d577e0964433a1f0775ea90ed936bbaf822f771515ff22229790f37464070"
+      ],
+      [
         "packages/services/src/paper/connection-campaign.ts",
         "d5a80aa953543f8ccdf3d2f9d4706d7cdb68a9d0f416890e0f17afc40a2ce1e6"
       ],
@@ -1173,7 +1189,7 @@
       ],
       [
         "packages/services/src/paper/execution-service.ts",
-        "c79e197b2ae384eb26f82b8fa064fae4bf58a1621ebcef38b15c4554c86212ae"
+        "ddeee8bcaa060e793559a0e28a6f69dba7da6ea253c54926544eeea91f84fa6c"
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
@@ -1185,7 +1201,7 @@
       ],
       [
         "packages/services/src/paper/exploratory-run-loop.ts",
-        "1e235ac7ffeaa5a3d5ece9f2a50e80fcfb94a644159acde1656abe1db284e9e1"
+        "05088a95df2589bcf8a9d914c8c4850b3e763f26abfec2678bfaa021b046fe9f"
       ],
       [
         "packages/services/src/paper/forward-evidence.ts",
@@ -1305,7 +1321,7 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-service.ts",
-        "8f944445030d33781a64bd81017529a8e543e06b81ceec54badf78b2a1dd85e7"
+        "ad45390f037f8b4f0b36907c98ebdf6b20515160a36883fc22577f9379fb135b"
       ],
       [
         "packages/services/src/paper/parallel-paper-slots.ts",
@@ -1337,7 +1353,7 @@
       ],
       [
         "packages/services/src/paper/run-loop.ts",
-        "6a9515dce86df6fb6b8e66b3b92c920619d25f837f024bd9c00a4555b2b74ae0"
+        "704bb975713654c611b8b99899f060b7a0ee3c2149a8816a25cf523ab01d6c83"
       ],
       [
         "packages/services/src/paper/runtime-model.ts",
@@ -1393,7 +1409,7 @@
       ],
       [
         "packages/services/src/research/host-coordinator.ts",
-        "d94bbb94bab90880eb4f08f88a69ba80937e5aa71bd346dbb99539eaa6c943f7"
+        "0b501773b40f0e25d0e8e6ae44f84ffea5dafee50f086bf647430511de139b0d"
       ],
       [
         "packages/services/src/research/index.ts",
@@ -1453,7 +1469,7 @@
       ],
       [
         "packages/services/src/research/worker-pool.ts",
-        "2e77a2cdaa64fd6de5d4077a76f1db72f9a5869cb56d5a8141f11cffd7fc3d8d"
+        "8fc1d8a617de1ffa41e93093e2d8abd21f6b19d99f386541ac566d5a51802c18"
       ],
       [
         "packages/services/src/research/worker-protocol.ts",
@@ -1549,7 +1565,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "5519352f42d960c176bc2a48ad84192e177adb0574264054869fc6e3d55e2cc6"
+        "199b6dbb20dbc443de54ab6b39478aa797f8f32a8cafde6ce8554d8a30c9c337"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -1836,6 +1852,10 @@
         "ff4b014dfbfec444ebc2ba4ed7f8ab3a8b67b9ae15db5787935c636e21df84d6"
       ],
       [
+        "packages/storage/src/migrations/v95.ts",
+        "77c6075bed5f3876e7844c6268f1b5cbf14b75b08815d6b280a70c9ebb0d736e"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -1861,7 +1881,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "ee47b25f29b06cfcd56181907097a2be49b2901f0d9a559b188bc36468d7a850"
+        "23b62521a212764237be81a3b47516853559569624cb242c7209764064a92a4f"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -1878,6 +1898,10 @@
       [
         "packages/storage/src/profiles/manifest.ts",
         "507251d230dc85d05cf08ff66843aee8741eeb353a8a779d7771210fbac31b9d"
+      ],
+      [
+        "packages/storage/src/profiles/operations-activity-duplication.ts",
+        "d950e25ccc8f196a1838d7dadf3c852e816e7116c8e8232ea01604e517723849"
       ],
       [
         "packages/storage/src/profiles/person.ts",
@@ -1904,12 +1928,16 @@
         "be5739a486dd63aef001a64fc06c721bfc7e878b9a7bf494e17f710b69c1fc3f"
       ],
       [
+        "packages/storage/src/repositories/advisor-audit-context.ts",
+        "a30714ea416a686e2bbb6b5d4f0a23748e4c337a40dfb823be49fb032c953107"
+      ],
+      [
         "packages/storage/src/repositories/advisor-evidence.ts",
         "053bc7adda5f52eb51b56bb4b5f9c72adb9ca1d7004cf82242ab35be5b4e25db"
       ],
       [
         "packages/storage/src/repositories/advisor-history.ts",
-        "c2fe414f04a0a14f0992ffbaf4f83debed41f47575bc6aa2c7903cadd8de9d45"
+        "6f46f1e6cbfc529b0ac8d579e0ff76171c322705780e60ad93c62e43177ebb50"
       ],
       [
         "packages/storage/src/repositories/advisor.ts",
@@ -2001,7 +2029,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "6364dcdad9a7730be91031b23e1099651856224f635d107eed038af2774de430"
+        "1665780b937e5d83b2470ce97fcb4af7bc0398af6cc013c00a475d27100aebe9"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -2056,8 +2084,28 @@
         "7148df6608eb44604e56db81b50aed810579a686283c62ee28c7ca14d481d77c"
       ],
       [
+        "packages/storage/src/repositories/operations-activity.ts",
+        "649176c6d7947ab2bcff79c5efd049ad0ed5b946e18f25944cbb021dc69189f2"
+      ],
+      [
+        "packages/storage/src/repositories/operations-floor-activity.ts",
+        "f296a7395447dda33fc437246295d3aaeb2f9eed5ea180d9aa6829ca9370b4ac"
+      ],
+      [
         "packages/storage/src/repositories/operations-floor.ts",
-        "44ab4f410147e33730d80f4a43d35f75ffe3832ad608fabe5a8f3689d4a0933f"
+        "a4b4262901477811712c9de93470e2148b8bbc16d13fdbd765e91d959991aec2"
+      ],
+      [
+        "packages/storage/src/repositories/operations-journal-copy.ts",
+        "c5b73a082055d0b365c40118f7a9a8cc1ad2313dde5a1535e680ba2fee4b1ec4"
+      ],
+      [
+        "packages/storage/src/repositories/operations-journal-sources.ts",
+        "f8590a183188459e3e03b22a9bbab9792e7d06def35a52552eea19703109deed"
+      ],
+      [
+        "packages/storage/src/repositories/operations-journal.ts",
+        "7af88aef6b793a751ee49a261f48db5ae84df43ab2a13cef948a32b3d42bac05"
       ],
       [
         "packages/storage/src/repositories/paper-connection-books.ts",
@@ -2192,7 +2240,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "c443fa7a53bf4cf4a8502342a5071e13add0331d2d4829e3919da2e66c7f5456"
+    "hash": "13a922d3984592a73a5685c7d29026cf559f94a6e5401d51a337263283ff659a"
   },
   "wider-breakout-v1": {
     "version": 1,
@@ -2456,7 +2504,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "4518df380b01669bdbb94109c9cb9bbe29860d85cc221a5950a8a2f77b5d4d51"
+        "fe81989c84201f7b4b382578e7523312d8410997558c4bd00eeb0f1498d8cb52"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -2545,6 +2593,10 @@
       [
         "packages/contracts/src/schemas/news.ts",
         "d4733ea51d4027aeedc9b561b10061c1fa197ade97985401892d27a117c59ec3"
+      ],
+      [
+        "packages/contracts/src/schemas/operations-journal.ts",
+        "d5a131d0cb94571cb81b7b4d69a2dde5e55fc6b19a1f6080b7431bec833ed41e"
       ],
       [
         "packages/contracts/src/schemas/operations.ts",
@@ -3216,11 +3268,11 @@
       ],
       [
         "packages/services/src/advisor/analyst.ts",
-        "f93a5647f92cca130e7b75406a4d579968009822927ce3c9146c1bae4b2477e8"
+        "5106da5b6026388591678dde7fe626ac95367663d2d11b8bb51222516af36cb4"
       ],
       [
         "packages/services/src/advisor/decision-evidence.ts",
-        "1450ef61dd07c88c57684bf124cc16a51b04dab71f9484f62b770ef14e4fbd4f"
+        "919f808ac1ab87d391be7c02a0a2315a1b332629fca1899da649fc0971afc9ac"
       ],
       [
         "packages/services/src/advisor/index.ts",
@@ -3248,7 +3300,7 @@
       ],
       [
         "packages/services/src/index.ts",
-        "e81e1cd867f3816fbce7743e4efb76c4ed6b185a565ce2a1a9a706cbdd011eb1"
+        "f99baf82d8260ba42e4ef370faf96d0e9d1480e4313238697c135b669defc66b"
       ],
       [
         "packages/services/src/market-data/acquisition/artifacts.ts",
@@ -3351,6 +3403,18 @@
         "b2ca625cb4d376cb10778e2c62e9f8b0748c3f46830bb2a424db11175225656d"
       ],
       [
+        "packages/services/src/operations/activity.ts",
+        "f72091b56144c5cc6ef9c335e00e2e8fd0c8e10b9898ff983f85c31f9f3f4224"
+      ],
+      [
+        "packages/services/src/operations/advisor-activity.ts",
+        "e5f9618d68bd6128f6fa3a6f413c93476a90ddbaa2c8f217edff413038b864b5"
+      ],
+      [
+        "packages/services/src/operations/parallel-activity.ts",
+        "061d577e0964433a1f0775ea90ed936bbaf822f771515ff22229790f37464070"
+      ],
+      [
         "packages/services/src/paper/connection-campaign.ts",
         "d5a80aa953543f8ccdf3d2f9d4706d7cdb68a9d0f416890e0f17afc40a2ce1e6"
       ],
@@ -3368,7 +3432,7 @@
       ],
       [
         "packages/services/src/paper/execution-service.ts",
-        "c79e197b2ae384eb26f82b8fa064fae4bf58a1621ebcef38b15c4554c86212ae"
+        "ddeee8bcaa060e793559a0e28a6f69dba7da6ea253c54926544eeea91f84fa6c"
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
@@ -3380,7 +3444,7 @@
       ],
       [
         "packages/services/src/paper/exploratory-run-loop.ts",
-        "1e235ac7ffeaa5a3d5ece9f2a50e80fcfb94a644159acde1656abe1db284e9e1"
+        "05088a95df2589bcf8a9d914c8c4850b3e763f26abfec2678bfaa021b046fe9f"
       ],
       [
         "packages/services/src/paper/forward-evidence.ts",
@@ -3500,7 +3564,7 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-service.ts",
-        "8f944445030d33781a64bd81017529a8e543e06b81ceec54badf78b2a1dd85e7"
+        "ad45390f037f8b4f0b36907c98ebdf6b20515160a36883fc22577f9379fb135b"
       ],
       [
         "packages/services/src/paper/parallel-paper-slots.ts",
@@ -3532,7 +3596,7 @@
       ],
       [
         "packages/services/src/paper/run-loop.ts",
-        "6a9515dce86df6fb6b8e66b3b92c920619d25f837f024bd9c00a4555b2b74ae0"
+        "704bb975713654c611b8b99899f060b7a0ee3c2149a8816a25cf523ab01d6c83"
       ],
       [
         "packages/services/src/paper/runtime-model.ts",
@@ -3588,7 +3652,7 @@
       ],
       [
         "packages/services/src/research/host-coordinator.ts",
-        "d94bbb94bab90880eb4f08f88a69ba80937e5aa71bd346dbb99539eaa6c943f7"
+        "0b501773b40f0e25d0e8e6ae44f84ffea5dafee50f086bf647430511de139b0d"
       ],
       [
         "packages/services/src/research/index.ts",
@@ -3648,7 +3712,7 @@
       ],
       [
         "packages/services/src/research/worker-pool.ts",
-        "2e77a2cdaa64fd6de5d4077a76f1db72f9a5869cb56d5a8141f11cffd7fc3d8d"
+        "8fc1d8a617de1ffa41e93093e2d8abd21f6b19d99f386541ac566d5a51802c18"
       ],
       [
         "packages/services/src/research/worker-protocol.ts",
@@ -3744,7 +3808,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "5519352f42d960c176bc2a48ad84192e177adb0574264054869fc6e3d55e2cc6"
+        "199b6dbb20dbc443de54ab6b39478aa797f8f32a8cafde6ce8554d8a30c9c337"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -4031,6 +4095,10 @@
         "ff4b014dfbfec444ebc2ba4ed7f8ab3a8b67b9ae15db5787935c636e21df84d6"
       ],
       [
+        "packages/storage/src/migrations/v95.ts",
+        "77c6075bed5f3876e7844c6268f1b5cbf14b75b08815d6b280a70c9ebb0d736e"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -4056,7 +4124,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "ee47b25f29b06cfcd56181907097a2be49b2901f0d9a559b188bc36468d7a850"
+        "23b62521a212764237be81a3b47516853559569624cb242c7209764064a92a4f"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -4073,6 +4141,10 @@
       [
         "packages/storage/src/profiles/manifest.ts",
         "507251d230dc85d05cf08ff66843aee8741eeb353a8a779d7771210fbac31b9d"
+      ],
+      [
+        "packages/storage/src/profiles/operations-activity-duplication.ts",
+        "d950e25ccc8f196a1838d7dadf3c852e816e7116c8e8232ea01604e517723849"
       ],
       [
         "packages/storage/src/profiles/person.ts",
@@ -4099,12 +4171,16 @@
         "be5739a486dd63aef001a64fc06c721bfc7e878b9a7bf494e17f710b69c1fc3f"
       ],
       [
+        "packages/storage/src/repositories/advisor-audit-context.ts",
+        "a30714ea416a686e2bbb6b5d4f0a23748e4c337a40dfb823be49fb032c953107"
+      ],
+      [
         "packages/storage/src/repositories/advisor-evidence.ts",
         "053bc7adda5f52eb51b56bb4b5f9c72adb9ca1d7004cf82242ab35be5b4e25db"
       ],
       [
         "packages/storage/src/repositories/advisor-history.ts",
-        "c2fe414f04a0a14f0992ffbaf4f83debed41f47575bc6aa2c7903cadd8de9d45"
+        "6f46f1e6cbfc529b0ac8d579e0ff76171c322705780e60ad93c62e43177ebb50"
       ],
       [
         "packages/storage/src/repositories/advisor.ts",
@@ -4196,7 +4272,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "6364dcdad9a7730be91031b23e1099651856224f635d107eed038af2774de430"
+        "1665780b937e5d83b2470ce97fcb4af7bc0398af6cc013c00a475d27100aebe9"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -4251,8 +4327,28 @@
         "7148df6608eb44604e56db81b50aed810579a686283c62ee28c7ca14d481d77c"
       ],
       [
+        "packages/storage/src/repositories/operations-activity.ts",
+        "649176c6d7947ab2bcff79c5efd049ad0ed5b946e18f25944cbb021dc69189f2"
+      ],
+      [
+        "packages/storage/src/repositories/operations-floor-activity.ts",
+        "f296a7395447dda33fc437246295d3aaeb2f9eed5ea180d9aa6829ca9370b4ac"
+      ],
+      [
         "packages/storage/src/repositories/operations-floor.ts",
-        "44ab4f410147e33730d80f4a43d35f75ffe3832ad608fabe5a8f3689d4a0933f"
+        "a4b4262901477811712c9de93470e2148b8bbc16d13fdbd765e91d959991aec2"
+      ],
+      [
+        "packages/storage/src/repositories/operations-journal-copy.ts",
+        "c5b73a082055d0b365c40118f7a9a8cc1ad2313dde5a1535e680ba2fee4b1ec4"
+      ],
+      [
+        "packages/storage/src/repositories/operations-journal-sources.ts",
+        "f8590a183188459e3e03b22a9bbab9792e7d06def35a52552eea19703109deed"
+      ],
+      [
+        "packages/storage/src/repositories/operations-journal.ts",
+        "7af88aef6b793a751ee49a261f48db5ae84df43ab2a13cef948a32b3d42bac05"
       ],
       [
         "packages/storage/src/repositories/paper-connection-books.ts",
@@ -4387,7 +4483,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "2af5371f1fab4c1a7a52080300cda5c10828dbc637794366e8f1dd4d5917dcd4"
+    "hash": "da95d152eeb1e61321250118f89b16578dc435f936c2b023aad8e1cc87a77b71"
   },
   "wider-range-rotation-v1": {
     "version": 1,
@@ -4651,7 +4747,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "4518df380b01669bdbb94109c9cb9bbe29860d85cc221a5950a8a2f77b5d4d51"
+        "fe81989c84201f7b4b382578e7523312d8410997558c4bd00eeb0f1498d8cb52"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -4740,6 +4836,10 @@
       [
         "packages/contracts/src/schemas/news.ts",
         "d4733ea51d4027aeedc9b561b10061c1fa197ade97985401892d27a117c59ec3"
+      ],
+      [
+        "packages/contracts/src/schemas/operations-journal.ts",
+        "d5a131d0cb94571cb81b7b4d69a2dde5e55fc6b19a1f6080b7431bec833ed41e"
       ],
       [
         "packages/contracts/src/schemas/operations.ts",
@@ -5411,11 +5511,11 @@
       ],
       [
         "packages/services/src/advisor/analyst.ts",
-        "f93a5647f92cca130e7b75406a4d579968009822927ce3c9146c1bae4b2477e8"
+        "5106da5b6026388591678dde7fe626ac95367663d2d11b8bb51222516af36cb4"
       ],
       [
         "packages/services/src/advisor/decision-evidence.ts",
-        "1450ef61dd07c88c57684bf124cc16a51b04dab71f9484f62b770ef14e4fbd4f"
+        "919f808ac1ab87d391be7c02a0a2315a1b332629fca1899da649fc0971afc9ac"
       ],
       [
         "packages/services/src/advisor/index.ts",
@@ -5443,7 +5543,7 @@
       ],
       [
         "packages/services/src/index.ts",
-        "e81e1cd867f3816fbce7743e4efb76c4ed6b185a565ce2a1a9a706cbdd011eb1"
+        "f99baf82d8260ba42e4ef370faf96d0e9d1480e4313238697c135b669defc66b"
       ],
       [
         "packages/services/src/market-data/acquisition/artifacts.ts",
@@ -5546,6 +5646,18 @@
         "b2ca625cb4d376cb10778e2c62e9f8b0748c3f46830bb2a424db11175225656d"
       ],
       [
+        "packages/services/src/operations/activity.ts",
+        "f72091b56144c5cc6ef9c335e00e2e8fd0c8e10b9898ff983f85c31f9f3f4224"
+      ],
+      [
+        "packages/services/src/operations/advisor-activity.ts",
+        "e5f9618d68bd6128f6fa3a6f413c93476a90ddbaa2c8f217edff413038b864b5"
+      ],
+      [
+        "packages/services/src/operations/parallel-activity.ts",
+        "061d577e0964433a1f0775ea90ed936bbaf822f771515ff22229790f37464070"
+      ],
+      [
         "packages/services/src/paper/connection-campaign.ts",
         "d5a80aa953543f8ccdf3d2f9d4706d7cdb68a9d0f416890e0f17afc40a2ce1e6"
       ],
@@ -5563,7 +5675,7 @@
       ],
       [
         "packages/services/src/paper/execution-service.ts",
-        "c79e197b2ae384eb26f82b8fa064fae4bf58a1621ebcef38b15c4554c86212ae"
+        "ddeee8bcaa060e793559a0e28a6f69dba7da6ea253c54926544eeea91f84fa6c"
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
@@ -5575,7 +5687,7 @@
       ],
       [
         "packages/services/src/paper/exploratory-run-loop.ts",
-        "1e235ac7ffeaa5a3d5ece9f2a50e80fcfb94a644159acde1656abe1db284e9e1"
+        "05088a95df2589bcf8a9d914c8c4850b3e763f26abfec2678bfaa021b046fe9f"
       ],
       [
         "packages/services/src/paper/forward-evidence.ts",
@@ -5695,7 +5807,7 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-service.ts",
-        "8f944445030d33781a64bd81017529a8e543e06b81ceec54badf78b2a1dd85e7"
+        "ad45390f037f8b4f0b36907c98ebdf6b20515160a36883fc22577f9379fb135b"
       ],
       [
         "packages/services/src/paper/parallel-paper-slots.ts",
@@ -5727,7 +5839,7 @@
       ],
       [
         "packages/services/src/paper/run-loop.ts",
-        "6a9515dce86df6fb6b8e66b3b92c920619d25f837f024bd9c00a4555b2b74ae0"
+        "704bb975713654c611b8b99899f060b7a0ee3c2149a8816a25cf523ab01d6c83"
       ],
       [
         "packages/services/src/paper/runtime-model.ts",
@@ -5783,7 +5895,7 @@
       ],
       [
         "packages/services/src/research/host-coordinator.ts",
-        "d94bbb94bab90880eb4f08f88a69ba80937e5aa71bd346dbb99539eaa6c943f7"
+        "0b501773b40f0e25d0e8e6ae44f84ffea5dafee50f086bf647430511de139b0d"
       ],
       [
         "packages/services/src/research/index.ts",
@@ -5843,7 +5955,7 @@
       ],
       [
         "packages/services/src/research/worker-pool.ts",
-        "2e77a2cdaa64fd6de5d4077a76f1db72f9a5869cb56d5a8141f11cffd7fc3d8d"
+        "8fc1d8a617de1ffa41e93093e2d8abd21f6b19d99f386541ac566d5a51802c18"
       ],
       [
         "packages/services/src/research/worker-protocol.ts",
@@ -5939,7 +6051,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "5519352f42d960c176bc2a48ad84192e177adb0574264054869fc6e3d55e2cc6"
+        "199b6dbb20dbc443de54ab6b39478aa797f8f32a8cafde6ce8554d8a30c9c337"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -6226,6 +6338,10 @@
         "ff4b014dfbfec444ebc2ba4ed7f8ab3a8b67b9ae15db5787935c636e21df84d6"
       ],
       [
+        "packages/storage/src/migrations/v95.ts",
+        "77c6075bed5f3876e7844c6268f1b5cbf14b75b08815d6b280a70c9ebb0d736e"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -6251,7 +6367,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "ee47b25f29b06cfcd56181907097a2be49b2901f0d9a559b188bc36468d7a850"
+        "23b62521a212764237be81a3b47516853559569624cb242c7209764064a92a4f"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -6268,6 +6384,10 @@
       [
         "packages/storage/src/profiles/manifest.ts",
         "507251d230dc85d05cf08ff66843aee8741eeb353a8a779d7771210fbac31b9d"
+      ],
+      [
+        "packages/storage/src/profiles/operations-activity-duplication.ts",
+        "d950e25ccc8f196a1838d7dadf3c852e816e7116c8e8232ea01604e517723849"
       ],
       [
         "packages/storage/src/profiles/person.ts",
@@ -6294,12 +6414,16 @@
         "be5739a486dd63aef001a64fc06c721bfc7e878b9a7bf494e17f710b69c1fc3f"
       ],
       [
+        "packages/storage/src/repositories/advisor-audit-context.ts",
+        "a30714ea416a686e2bbb6b5d4f0a23748e4c337a40dfb823be49fb032c953107"
+      ],
+      [
         "packages/storage/src/repositories/advisor-evidence.ts",
         "053bc7adda5f52eb51b56bb4b5f9c72adb9ca1d7004cf82242ab35be5b4e25db"
       ],
       [
         "packages/storage/src/repositories/advisor-history.ts",
-        "c2fe414f04a0a14f0992ffbaf4f83debed41f47575bc6aa2c7903cadd8de9d45"
+        "6f46f1e6cbfc529b0ac8d579e0ff76171c322705780e60ad93c62e43177ebb50"
       ],
       [
         "packages/storage/src/repositories/advisor.ts",
@@ -6391,7 +6515,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "6364dcdad9a7730be91031b23e1099651856224f635d107eed038af2774de430"
+        "1665780b937e5d83b2470ce97fcb4af7bc0398af6cc013c00a475d27100aebe9"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -6446,8 +6570,28 @@
         "7148df6608eb44604e56db81b50aed810579a686283c62ee28c7ca14d481d77c"
       ],
       [
+        "packages/storage/src/repositories/operations-activity.ts",
+        "649176c6d7947ab2bcff79c5efd049ad0ed5b946e18f25944cbb021dc69189f2"
+      ],
+      [
+        "packages/storage/src/repositories/operations-floor-activity.ts",
+        "f296a7395447dda33fc437246295d3aaeb2f9eed5ea180d9aa6829ca9370b4ac"
+      ],
+      [
         "packages/storage/src/repositories/operations-floor.ts",
-        "44ab4f410147e33730d80f4a43d35f75ffe3832ad608fabe5a8f3689d4a0933f"
+        "a4b4262901477811712c9de93470e2148b8bbc16d13fdbd765e91d959991aec2"
+      ],
+      [
+        "packages/storage/src/repositories/operations-journal-copy.ts",
+        "c5b73a082055d0b365c40118f7a9a8cc1ad2313dde5a1535e680ba2fee4b1ec4"
+      ],
+      [
+        "packages/storage/src/repositories/operations-journal-sources.ts",
+        "f8590a183188459e3e03b22a9bbab9792e7d06def35a52552eea19703109deed"
+      ],
+      [
+        "packages/storage/src/repositories/operations-journal.ts",
+        "7af88aef6b793a751ee49a261f48db5ae84df43ab2a13cef948a32b3d42bac05"
       ],
       [
         "packages/storage/src/repositories/paper-connection-books.ts",
@@ -6582,7 +6726,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "432a23d447a7eb5cb153a833eba7056ad931cf80a8003b22cba6ff47aa26dc50"
+    "hash": "3f5741689c98e4fbcd75bec733d66768e21fa7a343fa904010d4d3d26f287e67"
   },
   "paper-market-selector-v1": {
     "version": 1,
@@ -6846,7 +6990,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "4518df380b01669bdbb94109c9cb9bbe29860d85cc221a5950a8a2f77b5d4d51"
+        "fe81989c84201f7b4b382578e7523312d8410997558c4bd00eeb0f1498d8cb52"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -6935,6 +7079,10 @@
       [
         "packages/contracts/src/schemas/news.ts",
         "d4733ea51d4027aeedc9b561b10061c1fa197ade97985401892d27a117c59ec3"
+      ],
+      [
+        "packages/contracts/src/schemas/operations-journal.ts",
+        "d5a131d0cb94571cb81b7b4d69a2dde5e55fc6b19a1f6080b7431bec833ed41e"
       ],
       [
         "packages/contracts/src/schemas/operations.ts",
@@ -7606,11 +7754,11 @@
       ],
       [
         "packages/services/src/advisor/analyst.ts",
-        "f93a5647f92cca130e7b75406a4d579968009822927ce3c9146c1bae4b2477e8"
+        "5106da5b6026388591678dde7fe626ac95367663d2d11b8bb51222516af36cb4"
       ],
       [
         "packages/services/src/advisor/decision-evidence.ts",
-        "1450ef61dd07c88c57684bf124cc16a51b04dab71f9484f62b770ef14e4fbd4f"
+        "919f808ac1ab87d391be7c02a0a2315a1b332629fca1899da649fc0971afc9ac"
       ],
       [
         "packages/services/src/advisor/index.ts",
@@ -7638,7 +7786,7 @@
       ],
       [
         "packages/services/src/index.ts",
-        "e81e1cd867f3816fbce7743e4efb76c4ed6b185a565ce2a1a9a706cbdd011eb1"
+        "f99baf82d8260ba42e4ef370faf96d0e9d1480e4313238697c135b669defc66b"
       ],
       [
         "packages/services/src/market-data/acquisition/artifacts.ts",
@@ -7741,6 +7889,18 @@
         "b2ca625cb4d376cb10778e2c62e9f8b0748c3f46830bb2a424db11175225656d"
       ],
       [
+        "packages/services/src/operations/activity.ts",
+        "f72091b56144c5cc6ef9c335e00e2e8fd0c8e10b9898ff983f85c31f9f3f4224"
+      ],
+      [
+        "packages/services/src/operations/advisor-activity.ts",
+        "e5f9618d68bd6128f6fa3a6f413c93476a90ddbaa2c8f217edff413038b864b5"
+      ],
+      [
+        "packages/services/src/operations/parallel-activity.ts",
+        "061d577e0964433a1f0775ea90ed936bbaf822f771515ff22229790f37464070"
+      ],
+      [
         "packages/services/src/paper/connection-campaign.ts",
         "d5a80aa953543f8ccdf3d2f9d4706d7cdb68a9d0f416890e0f17afc40a2ce1e6"
       ],
@@ -7758,7 +7918,7 @@
       ],
       [
         "packages/services/src/paper/execution-service.ts",
-        "c79e197b2ae384eb26f82b8fa064fae4bf58a1621ebcef38b15c4554c86212ae"
+        "ddeee8bcaa060e793559a0e28a6f69dba7da6ea253c54926544eeea91f84fa6c"
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
@@ -7770,7 +7930,7 @@
       ],
       [
         "packages/services/src/paper/exploratory-run-loop.ts",
-        "1e235ac7ffeaa5a3d5ece9f2a50e80fcfb94a644159acde1656abe1db284e9e1"
+        "05088a95df2589bcf8a9d914c8c4850b3e763f26abfec2678bfaa021b046fe9f"
       ],
       [
         "packages/services/src/paper/forward-evidence.ts",
@@ -7890,7 +8050,7 @@
       ],
       [
         "packages/services/src/paper/parallel-paper-service.ts",
-        "8f944445030d33781a64bd81017529a8e543e06b81ceec54badf78b2a1dd85e7"
+        "ad45390f037f8b4f0b36907c98ebdf6b20515160a36883fc22577f9379fb135b"
       ],
       [
         "packages/services/src/paper/parallel-paper-slots.ts",
@@ -7922,7 +8082,7 @@
       ],
       [
         "packages/services/src/paper/run-loop.ts",
-        "6a9515dce86df6fb6b8e66b3b92c920619d25f837f024bd9c00a4555b2b74ae0"
+        "704bb975713654c611b8b99899f060b7a0ee3c2149a8816a25cf523ab01d6c83"
       ],
       [
         "packages/services/src/paper/runtime-model.ts",
@@ -7978,7 +8138,7 @@
       ],
       [
         "packages/services/src/research/host-coordinator.ts",
-        "d94bbb94bab90880eb4f08f88a69ba80937e5aa71bd346dbb99539eaa6c943f7"
+        "0b501773b40f0e25d0e8e6ae44f84ffea5dafee50f086bf647430511de139b0d"
       ],
       [
         "packages/services/src/research/index.ts",
@@ -8038,7 +8198,7 @@
       ],
       [
         "packages/services/src/research/worker-pool.ts",
-        "2e77a2cdaa64fd6de5d4077a76f1db72f9a5869cb56d5a8141f11cffd7fc3d8d"
+        "8fc1d8a617de1ffa41e93093e2d8abd21f6b19d99f386541ac566d5a51802c18"
       ],
       [
         "packages/services/src/research/worker-protocol.ts",
@@ -8134,7 +8294,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "5519352f42d960c176bc2a48ad84192e177adb0574264054869fc6e3d55e2cc6"
+        "199b6dbb20dbc443de54ab6b39478aa797f8f32a8cafde6ce8554d8a30c9c337"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -8421,6 +8581,10 @@
         "ff4b014dfbfec444ebc2ba4ed7f8ab3a8b67b9ae15db5787935c636e21df84d6"
       ],
       [
+        "packages/storage/src/migrations/v95.ts",
+        "77c6075bed5f3876e7844c6268f1b5cbf14b75b08815d6b280a70c9ebb0d736e"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -8446,7 +8610,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "ee47b25f29b06cfcd56181907097a2be49b2901f0d9a559b188bc36468d7a850"
+        "23b62521a212764237be81a3b47516853559569624cb242c7209764064a92a4f"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -8463,6 +8627,10 @@
       [
         "packages/storage/src/profiles/manifest.ts",
         "507251d230dc85d05cf08ff66843aee8741eeb353a8a779d7771210fbac31b9d"
+      ],
+      [
+        "packages/storage/src/profiles/operations-activity-duplication.ts",
+        "d950e25ccc8f196a1838d7dadf3c852e816e7116c8e8232ea01604e517723849"
       ],
       [
         "packages/storage/src/profiles/person.ts",
@@ -8489,12 +8657,16 @@
         "be5739a486dd63aef001a64fc06c721bfc7e878b9a7bf494e17f710b69c1fc3f"
       ],
       [
+        "packages/storage/src/repositories/advisor-audit-context.ts",
+        "a30714ea416a686e2bbb6b5d4f0a23748e4c337a40dfb823be49fb032c953107"
+      ],
+      [
         "packages/storage/src/repositories/advisor-evidence.ts",
         "053bc7adda5f52eb51b56bb4b5f9c72adb9ca1d7004cf82242ab35be5b4e25db"
       ],
       [
         "packages/storage/src/repositories/advisor-history.ts",
-        "c2fe414f04a0a14f0992ffbaf4f83debed41f47575bc6aa2c7903cadd8de9d45"
+        "6f46f1e6cbfc529b0ac8d579e0ff76171c322705780e60ad93c62e43177ebb50"
       ],
       [
         "packages/storage/src/repositories/advisor.ts",
@@ -8586,7 +8758,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "6364dcdad9a7730be91031b23e1099651856224f635d107eed038af2774de430"
+        "1665780b937e5d83b2470ce97fcb4af7bc0398af6cc013c00a475d27100aebe9"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -8641,8 +8813,28 @@
         "7148df6608eb44604e56db81b50aed810579a686283c62ee28c7ca14d481d77c"
       ],
       [
+        "packages/storage/src/repositories/operations-activity.ts",
+        "649176c6d7947ab2bcff79c5efd049ad0ed5b946e18f25944cbb021dc69189f2"
+      ],
+      [
+        "packages/storage/src/repositories/operations-floor-activity.ts",
+        "f296a7395447dda33fc437246295d3aaeb2f9eed5ea180d9aa6829ca9370b4ac"
+      ],
+      [
         "packages/storage/src/repositories/operations-floor.ts",
-        "44ab4f410147e33730d80f4a43d35f75ffe3832ad608fabe5a8f3689d4a0933f"
+        "a4b4262901477811712c9de93470e2148b8bbc16d13fdbd765e91d959991aec2"
+      ],
+      [
+        "packages/storage/src/repositories/operations-journal-copy.ts",
+        "c5b73a082055d0b365c40118f7a9a8cc1ad2313dde5a1535e680ba2fee4b1ec4"
+      ],
+      [
+        "packages/storage/src/repositories/operations-journal-sources.ts",
+        "f8590a183188459e3e03b22a9bbab9792e7d06def35a52552eea19703109deed"
+      ],
+      [
+        "packages/storage/src/repositories/operations-journal.ts",
+        "7af88aef6b793a751ee49a261f48db5ae84df43ab2a13cef948a32b3d42bac05"
       ],
       [
         "packages/storage/src/repositories/paper-connection-books.ts",
@@ -8777,7 +8969,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "c33364c9b036d861d97d69cd0dd4d9de9e961b96b3e8b4bf87efce095d674cdc"
+    "hash": "75cbb4a0185745137c7dc8e22f263e1a56fbff4d20d159801ad449c5b4032b9f"
   },
   "trendvol-hourly-execution-v1": {
     "version": 1,
@@ -9029,7 +9221,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "4518df380b01669bdbb94109c9cb9bbe29860d85cc221a5950a8a2f77b5d4d51"
+        "fe81989c84201f7b4b382578e7523312d8410997558c4bd00eeb0f1498d8cb52"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -9118,6 +9310,10 @@
       [
         "packages/contracts/src/schemas/news.ts",
         "d4733ea51d4027aeedc9b561b10061c1fa197ade97985401892d27a117c59ec3"
+      ],
+      [
+        "packages/contracts/src/schemas/operations-journal.ts",
+        "d5a131d0cb94571cb81b7b4d69a2dde5e55fc6b19a1f6080b7431bec833ed41e"
       ],
       [
         "packages/contracts/src/schemas/operations.ts",
@@ -9761,7 +9957,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "5519352f42d960c176bc2a48ad84192e177adb0574264054869fc6e3d55e2cc6"
+        "199b6dbb20dbc443de54ab6b39478aa797f8f32a8cafde6ce8554d8a30c9c337"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -10048,6 +10244,10 @@
         "ff4b014dfbfec444ebc2ba4ed7f8ab3a8b67b9ae15db5787935c636e21df84d6"
       ],
       [
+        "packages/storage/src/migrations/v95.ts",
+        "77c6075bed5f3876e7844c6268f1b5cbf14b75b08815d6b280a70c9ebb0d736e"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -10073,7 +10273,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "ee47b25f29b06cfcd56181907097a2be49b2901f0d9a559b188bc36468d7a850"
+        "23b62521a212764237be81a3b47516853559569624cb242c7209764064a92a4f"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -10090,6 +10290,10 @@
       [
         "packages/storage/src/profiles/manifest.ts",
         "507251d230dc85d05cf08ff66843aee8741eeb353a8a779d7771210fbac31b9d"
+      ],
+      [
+        "packages/storage/src/profiles/operations-activity-duplication.ts",
+        "d950e25ccc8f196a1838d7dadf3c852e816e7116c8e8232ea01604e517723849"
       ],
       [
         "packages/storage/src/profiles/person.ts",
@@ -10116,12 +10320,16 @@
         "be5739a486dd63aef001a64fc06c721bfc7e878b9a7bf494e17f710b69c1fc3f"
       ],
       [
+        "packages/storage/src/repositories/advisor-audit-context.ts",
+        "a30714ea416a686e2bbb6b5d4f0a23748e4c337a40dfb823be49fb032c953107"
+      ],
+      [
         "packages/storage/src/repositories/advisor-evidence.ts",
         "053bc7adda5f52eb51b56bb4b5f9c72adb9ca1d7004cf82242ab35be5b4e25db"
       ],
       [
         "packages/storage/src/repositories/advisor-history.ts",
-        "c2fe414f04a0a14f0992ffbaf4f83debed41f47575bc6aa2c7903cadd8de9d45"
+        "6f46f1e6cbfc529b0ac8d579e0ff76171c322705780e60ad93c62e43177ebb50"
       ],
       [
         "packages/storage/src/repositories/advisor.ts",
@@ -10213,7 +10421,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "6364dcdad9a7730be91031b23e1099651856224f635d107eed038af2774de430"
+        "1665780b937e5d83b2470ce97fcb4af7bc0398af6cc013c00a475d27100aebe9"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -10268,8 +10476,28 @@
         "7148df6608eb44604e56db81b50aed810579a686283c62ee28c7ca14d481d77c"
       ],
       [
+        "packages/storage/src/repositories/operations-activity.ts",
+        "649176c6d7947ab2bcff79c5efd049ad0ed5b946e18f25944cbb021dc69189f2"
+      ],
+      [
+        "packages/storage/src/repositories/operations-floor-activity.ts",
+        "f296a7395447dda33fc437246295d3aaeb2f9eed5ea180d9aa6829ca9370b4ac"
+      ],
+      [
         "packages/storage/src/repositories/operations-floor.ts",
-        "44ab4f410147e33730d80f4a43d35f75ffe3832ad608fabe5a8f3689d4a0933f"
+        "a4b4262901477811712c9de93470e2148b8bbc16d13fdbd765e91d959991aec2"
+      ],
+      [
+        "packages/storage/src/repositories/operations-journal-copy.ts",
+        "c5b73a082055d0b365c40118f7a9a8cc1ad2313dde5a1535e680ba2fee4b1ec4"
+      ],
+      [
+        "packages/storage/src/repositories/operations-journal-sources.ts",
+        "f8590a183188459e3e03b22a9bbab9792e7d06def35a52552eea19703109deed"
+      ],
+      [
+        "packages/storage/src/repositories/operations-journal.ts",
+        "7af88aef6b793a751ee49a261f48db5ae84df43ab2a13cef948a32b3d42bac05"
       ],
       [
         "packages/storage/src/repositories/paper-connection-books.ts",
@@ -10404,7 +10632,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "084946f441a8da89b5d351777f0587c461d36abf94033dee2baa9b3a8f8ba984"
+    "hash": "1b078ea10997b788a03b530da0a55f2504f88838d25c5692eae01198a3000e60"
   },
   "trendvol-execution-remediation-v1": {
     "version": 1,
@@ -10656,7 +10884,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "4518df380b01669bdbb94109c9cb9bbe29860d85cc221a5950a8a2f77b5d4d51"
+        "fe81989c84201f7b4b382578e7523312d8410997558c4bd00eeb0f1498d8cb52"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -10745,6 +10973,10 @@
       [
         "packages/contracts/src/schemas/news.ts",
         "d4733ea51d4027aeedc9b561b10061c1fa197ade97985401892d27a117c59ec3"
+      ],
+      [
+        "packages/contracts/src/schemas/operations-journal.ts",
+        "d5a131d0cb94571cb81b7b4d69a2dde5e55fc6b19a1f6080b7431bec833ed41e"
       ],
       [
         "packages/contracts/src/schemas/operations.ts",
@@ -11380,7 +11612,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "5519352f42d960c176bc2a48ad84192e177adb0574264054869fc6e3d55e2cc6"
+        "199b6dbb20dbc443de54ab6b39478aa797f8f32a8cafde6ce8554d8a30c9c337"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -11667,6 +11899,10 @@
         "ff4b014dfbfec444ebc2ba4ed7f8ab3a8b67b9ae15db5787935c636e21df84d6"
       ],
       [
+        "packages/storage/src/migrations/v95.ts",
+        "77c6075bed5f3876e7844c6268f1b5cbf14b75b08815d6b280a70c9ebb0d736e"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -11692,7 +11928,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-research-triggers.ts",
-        "ee47b25f29b06cfcd56181907097a2be49b2901f0d9a559b188bc36468d7a850"
+        "23b62521a212764237be81a3b47516853559569624cb242c7209764064a92a4f"
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
@@ -11709,6 +11945,10 @@
       [
         "packages/storage/src/profiles/manifest.ts",
         "507251d230dc85d05cf08ff66843aee8741eeb353a8a779d7771210fbac31b9d"
+      ],
+      [
+        "packages/storage/src/profiles/operations-activity-duplication.ts",
+        "d950e25ccc8f196a1838d7dadf3c852e816e7116c8e8232ea01604e517723849"
       ],
       [
         "packages/storage/src/profiles/person.ts",
@@ -11735,12 +11975,16 @@
         "be5739a486dd63aef001a64fc06c721bfc7e878b9a7bf494e17f710b69c1fc3f"
       ],
       [
+        "packages/storage/src/repositories/advisor-audit-context.ts",
+        "a30714ea416a686e2bbb6b5d4f0a23748e4c337a40dfb823be49fb032c953107"
+      ],
+      [
         "packages/storage/src/repositories/advisor-evidence.ts",
         "053bc7adda5f52eb51b56bb4b5f9c72adb9ca1d7004cf82242ab35be5b4e25db"
       ],
       [
         "packages/storage/src/repositories/advisor-history.ts",
-        "c2fe414f04a0a14f0992ffbaf4f83debed41f47575bc6aa2c7903cadd8de9d45"
+        "6f46f1e6cbfc529b0ac8d579e0ff76171c322705780e60ad93c62e43177ebb50"
       ],
       [
         "packages/storage/src/repositories/advisor.ts",
@@ -11832,7 +12076,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "6364dcdad9a7730be91031b23e1099651856224f635d107eed038af2774de430"
+        "1665780b937e5d83b2470ce97fcb4af7bc0398af6cc013c00a475d27100aebe9"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -11887,8 +12131,28 @@
         "7148df6608eb44604e56db81b50aed810579a686283c62ee28c7ca14d481d77c"
       ],
       [
+        "packages/storage/src/repositories/operations-activity.ts",
+        "649176c6d7947ab2bcff79c5efd049ad0ed5b946e18f25944cbb021dc69189f2"
+      ],
+      [
+        "packages/storage/src/repositories/operations-floor-activity.ts",
+        "f296a7395447dda33fc437246295d3aaeb2f9eed5ea180d9aa6829ca9370b4ac"
+      ],
+      [
         "packages/storage/src/repositories/operations-floor.ts",
-        "44ab4f410147e33730d80f4a43d35f75ffe3832ad608fabe5a8f3689d4a0933f"
+        "a4b4262901477811712c9de93470e2148b8bbc16d13fdbd765e91d959991aec2"
+      ],
+      [
+        "packages/storage/src/repositories/operations-journal-copy.ts",
+        "c5b73a082055d0b365c40118f7a9a8cc1ad2313dde5a1535e680ba2fee4b1ec4"
+      ],
+      [
+        "packages/storage/src/repositories/operations-journal-sources.ts",
+        "f8590a183188459e3e03b22a9bbab9792e7d06def35a52552eea19703109deed"
+      ],
+      [
+        "packages/storage/src/repositories/operations-journal.ts",
+        "7af88aef6b793a751ee49a261f48db5ae84df43ab2a13cef948a32b3d42bac05"
       ],
       [
         "packages/storage/src/repositories/paper-connection-books.ts",
@@ -12023,6 +12287,6 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "4b576b09ce83d872150b3325c1506b08374d6950ef65ac015083b7e141ad9f80"
+    "hash": "548495c6075b8a1e57bf18f63d46246ad2d779240e6e1319cb40e99cb61c3f52"
   }
 }

@@ -1,3 +1,4 @@
+import { startOperationsActivity } from '../operations/activity.js';
 import {
   canonicalJson,
   DEFAULT_MOMENTUM_CONFIG,
@@ -78,7 +79,7 @@ export {
  * drive it directly with a controlled clock, which is how the 7-day exit
  * criterion is verified in CI.
  */
-export function runPaperDecision(
+function evaluatePaperDecision(
   dependencies: PaperRunLoopDependencies,
   scheduledForMs: number,
 ): PaperRunSummary {
@@ -481,4 +482,22 @@ export function runPaperDecision(
     );
   }
   return finish(null, outcome.filledCount, outcome.refusedCount);
+}
+
+export function runPaperDecision(dependencies: PaperRunLoopDependencies, scheduledForMs: number): PaperRunSummary {
+  const decisionId=strategyDecisionId(dependencies.profileId,scheduledForMs);
+  const existing=dependencies.database.prepare(`SELECT 1 FROM strategy_decisions_v1 d JOIN wallet_decision_runs w ON w.id=d.run_id WHERE d.decision_id=? AND d.profile_id=? AND w.status='completed'`)
+    .get(decisionId,dependencies.profileId);
+  if(existing!==undefined)return evaluatePaperDecision(dependencies,scheduledForMs);
+  const work=startOperationsActivity({database:dependencies.database,profileId:dependencies.profileId,
+    workId:`decision:${decisionId}`,worker:'host',source:'paper_ledger',phase:'evaluation_started',
+    now:()=>dependencies.clock.nowMs(),facts:{decisionId},
+    ...(dependencies.onUnexpectedError===undefined?{}:{onUnexpectedError:dependencies.onUnexpectedError})});
+  try {
+    const result=evaluatePaperDecision(dependencies,scheduledForMs);
+    work.finish('evaluation_finished',result.standDown==='execution_unknown'?'unknown':
+      result.standDown===null||result.standDown==='no_intents'?'completed':result.standDown==='pending_settlement'||result.standDown==='pending_review'?'waiting':'blocked',
+      {reasonCode:result.standDown,runId:result.runId,filledCount:result.filledCount,submittedCount:result.submittedCount});
+    return result;
+  } catch(error) { work.finish('evaluation_finished','failed',{reasonCode:'paper_run_failed'});throw error; }
 }

@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { fetchCoinbaseProductRules, deadlineHttp, type RequestDeadline, type HttpClient } from '@coqui/adapters';
 import {
   canonicalJson,
@@ -8,6 +9,7 @@ import {
   type MarketBar,
 } from '@coqui/core';
 import {
+  startOperationsActivity,
   latestExpectedCoinbaseCompleteStart,
   syncCoinbaseDecisionDataset,
   type PaperDecisionPreparation,
@@ -44,6 +46,7 @@ const LOOKBACK_DAYS = 400;
 
 export interface PaperMarketFeedDependencies {
   readonly database: Db;
+  readonly profileId?: string;
   readonly now?: () => number;
   readonly http: HttpClient;
   /** The instruments the engine may trade — the policy's targets. */
@@ -162,6 +165,11 @@ export function createPaperMarketFeed(
   ): Promise<PaperDecisionPreparation> => {
       if (instruments.length === 0) return latestPreparation;
 
+      const activity=dependencies.profileId===undefined?null:startOperationsActivity({database:dependencies.database,
+        profileId:dependencies.profileId,workId:`market:${randomUUID()}`,worker:'market',source:'market',
+        phase:'market_refresh_started',now:dependencies.now??(()=>nowMs),
+        facts:{instruments:instruments.map(item=>item.productId).join(', ').slice(0,512)},
+        ...(dependencies.onUnexpectedError===undefined?{}:{onUnexpectedError:dependencies.onUnexpectedError})});
       try {
         const [rulesHash, dataset] = await Promise.all([
           observe('coinbase_rules', refreshRules(nowMs, instruments, deadline), (result) => result !== null, nowMs),
@@ -229,6 +237,8 @@ export function createPaperMarketFeed(
         report('paper_market_refresh', error);
         latestPreparation = { ok: false, code: 'market_fetch_failed' };
       }
+      activity?.finish('market_refresh_finished',latestPreparation.ok?'completed':'blocked',{
+        reasonCode:latestPreparation.ok?null:latestPreparation.code});
       return latestPreparation;
   };
 

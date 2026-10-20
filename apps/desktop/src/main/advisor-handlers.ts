@@ -11,7 +11,7 @@ const ADVISOR_FAILURE_CODES = new Set([
   'billing_required', 'rate_limited', 'provider_unavailable', 'verification_inconclusive',
 ]);
 export function createAdvisorHandlers(input: { readonly profileId: string; readonly database: Db;
-  readonly clock: Clock; readonly http: HttpClient; readonly secrets?: SecretStore;
+  readonly onUnexpectedError?: (context:string,error:unknown)=>void; readonly clock: Clock; readonly http: HttpClient; readonly secrets?: SecretStore;
   readonly saveHistory?: (data: string) => Promise<'saved' | 'cancelled'>;
   readonly readClipboardText?: () => string;
   readonly clearClipboardIfMatches?: (expected: string) => void }): ChannelHandlers {

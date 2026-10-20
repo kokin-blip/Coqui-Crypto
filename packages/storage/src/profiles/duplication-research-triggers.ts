@@ -1,6 +1,8 @@
+import { excludeOperationsActivity } from './operations-activity-duplication.js';
 import { DatabaseSync } from 'node:sqlite';
 
 export function dropResearchDuplicationTriggers(database:DatabaseSync, sourceProfileId: string):number {
+  const operationsRows=excludeOperationsActivity(database);
   if (database.prepare('SELECT 1 FROM wider_universe_records_v1 WHERE profile_id<>? LIMIT 1').get(sourceProfileId)) {
     throw new RangeError('Foreign profile identity detected.');
   }
@@ -66,7 +68,7 @@ export function dropResearchDuplicationTriggers(database:DatabaseSync, sourcePro
       ('binding','health_review','health_policy','health_requalification',
        'shadow_refusal','shadow_binding','shadow_setting','shadow_pending','shadow_settlement','shadow_book');
   `);
-  return excluded;
+  return excluded+operationsRows;
 }
 
 export function restoreResearchDuplicationTriggers(database:DatabaseSync):void {

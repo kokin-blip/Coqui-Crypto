@@ -68,7 +68,7 @@ describe('channel registry', () => {
       'market-data.products', 'market-data.recent-trades',
       'market-data.trending',
       'market-data.yields',
-      'market-events.ingest-file', 'market-events.ingest-local', 'market-events.timeline', 'news.analysis.set-enabled', 'news.detail', 'news.health', 'news.report', 'news.report.select-location', 'news.timeline', 'operations.floor',
+      'market-events.ingest-file', 'market-events.ingest-local', 'market-events.timeline', 'news.analysis.set-enabled', 'news.detail', 'news.health', 'news.report', 'news.report.select-location', 'news.timeline', 'operations.floor', 'operations.journal', 'operations.journal.group',
       'paper.campaign', 'paper.campaign.connections',
       'paper.campaign.connections.start', 'paper.campaign.kill-switch',
       'paper.execution.policy',

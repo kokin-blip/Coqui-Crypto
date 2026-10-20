@@ -1,0 +1,312 @@
+{
+  "fixtureOnly": true,
+  "checks": [
+    {
+      "name": "journal IPC to painted frame stays within200ms p75",
+      "pass": true,
+      "detail": "8.5"
+    },
+    {
+      "name": "journal is between the six bots and decision feed",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "all six workers have readable messages",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "latest group is expanded and older groups are compact",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "technical evidence expands without starting an Advisor request",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "polling retains open evidence and keyboard focus",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "jump to latest restores the top and a stable keyboard destination",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "pause freezes displayed messages while collecting updates",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "resume catches up with actual recorded evidence",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "backgrounding the window stops journal polling",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "collapse stops journal polling",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "crew filter applies to grouped entries",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "dark appearance command succeeds",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "dark journal fits without horizontal clipping",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "dark reuses Figma component mappings",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "light appearance command succeeds",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "light journal fits without horizontal clipping",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "light reuses Figma component mappings",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast appearance command succeeds",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast journal fits without horizontal clipping",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast reuses Figma component mappings",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "zoom appearance command succeeds",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "zoom journal fits without horizontal clipping",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "zoom reuses Figma component mappings",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "entry history stays bounded at200 with older history disclosed",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "sustained updates keep rendered entries and retained heap bounded",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "profile switch fixture has a delayed prior-profile read",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "profile switch rejects late prior-profile journal evidence",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "navigation away removes journal polling",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "opening the journal created no evaluations or fills",
+      "pass": true,
+      "detail": ""
+    }
+  ],
+  "measurements": [
+    {
+      "name": "dark",
+      "width": 1414,
+      "scrollWidth": 1414,
+      "overflow": false,
+      "figma": [
+        "3:66",
+        "3:37",
+        "3:56",
+        "3:37",
+        "3:37",
+        "3:46",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:46",
+        "3:46",
+        "3:46",
+        "3:46",
+        "3:37"
+      ]
+    },
+    {
+      "name": "light",
+      "width": 1254,
+      "scrollWidth": 1254,
+      "overflow": false,
+      "figma": [
+        "3:66",
+        "3:37",
+        "3:56",
+        "3:37",
+        "3:37",
+        "3:46",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:46",
+        "3:46",
+        "3:46",
+        "3:46",
+        "3:37"
+      ]
+    },
+    {
+      "name": "contrast",
+      "width": 1254,
+      "scrollWidth": 1254,
+      "overflow": false,
+      "figma": [
+        "3:66",
+        "3:37",
+        "3:56",
+        "3:37",
+        "3:37",
+        "3:46",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:46",
+        "3:46",
+        "3:46",
+        "3:46",
+        "3:37"
+      ]
+    },
+    {
+      "name": "zoom",
+      "width": 626,
+      "scrollWidth": 626,
+      "overflow": false,
+      "figma": [
+        "3:66",
+        "3:37",
+        "3:56",
+        "3:37",
+        "3:37",
+        "3:46",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:37",
+        "3:46",
+        "3:46",
+        "3:46",
+        "3:46",
+        "3:37"
+      ]
+    }
+  ],
+  "performance": {
+    "journalPaintP75Ms": 8.5,
+    "heapBaselineBytes": 19532636,
+    "heapSamplesBytes": [
+      20667844,
+      20676496,
+      20698216,
+      20800528
+    ]
+  },
+  "requests": {
+    "accounts.settings": 6,
+    "app.onboarding.status": 8,
+    "app.profile-readiness": 8,
+    "advisor.providers": 8,
+    "accounts.profiles": 7,
+    "connections.robinhood.keypair.status": 13,
+    "app.status-rail": 6,
+    "accounts.workspace": 6,
+    "paper.execution.policy": 7,
+    "market-data.live": 40,
+    "risk.evidence-gate": 7,
+    "alerts.view": 6,
+    "activity.feed": 14,
+    "operations.floor": 21,
+    "operations.journal": 49,
+    "operations.journal.group": 22,
+    "accounts.profile.switch": 1,
+    "research.edge-study": 1,
+    "parallel.paper.status": 1,
+    "market-data.live-candles": 3,
+    "market-data.display-bars": 1,
+    "app.chart.workspace": 1,
+    "portfolio.current": 1,
+    "market-data.products": 2,
+    "chart-extensions.catalog": 1,
+    "decision.timeline": 1,
+    "market-events.timeline": 1,
+    "wallets.list": 1,
+    "trading.activity.scopes": 1,
+    "market-data.order-book": 3,
+    "trading.activity.summary": 1
+  }
+}

@@ -1,7 +1,8 @@
+import { operationsFloorActivity } from './operations-floor-activity.js';
 import { getStrategyDecision } from './decision-evidence.js';
 import { getExecutionPlan, listExecutionRoutes } from './execution-routing.js';
 import { currentExploratoryPaperCampaign } from './exploratory-paper.js';
-import { listResearchJobs } from './research.js';
+import { getResearchJob } from './research.js';
 import type { Db } from '../sqlite/index.js';
 
 export type OperationsSubsystem = 'host' | 'market' | 'risk' | 'research' | 'execution' | 'advisor';
@@ -24,7 +25,7 @@ function unavailable(subsystem: OperationsSubsystem, title: string, detail: stri
 }
 
 /** Six fixed, bounded read models. Every populated cell cites one persisted row. */
-export function readOperationsFloor(profileId: string, database: Db): readonly OperationsFloorItem[] {
+export function readOperationsFloor(profileId: string, database: Db, nowMs=Date.now()): readonly OperationsFloorItem[] {
   const hostRow = database.prepare(`SELECT id, kind, at FROM scheduler_lease_events_v1
     WHERE profile_id=? ORDER BY at DESC, id DESC LIMIT 1`).get(profileId) as
     { id: string; kind: 'acquired'|'renewed'|'released'|'lost'|'cancelled'; at: number } | undefined;
@@ -84,8 +85,10 @@ export function readOperationsFloor(profileId: string, database: Db): readonly O
     } catch { risk = { ...risk, state: 'attention', detail: 'Latest risk evidence could not be decoded.' }; }
   }
 
-  const jobs = listResearchJobs(database, 1);
-  const job = jobs[0];
+  const eligibleJob=database.prepare(`SELECT j.id FROM research_jobs j LEFT JOIN research_trigger_job_links_v1 l ON l.job_id=j.id
+    WHERE l.profile_id IS NULL OR l.profile_id=? ORDER BY coalesce(j.completed_at,j.started_at,j.created_at) DESC,j.id DESC LIMIT 1`)
+    .get(profileId) as {id:string}|undefined;
+  const job=eligibleJob===undefined?undefined:getResearchJob(eligibleJob.id,database)??undefined;
   const research = job === undefined ? unavailable('research', 'Research lab',
     'No persisted worker job.', 'global') : {
     subsystem: 'research' as const,
@@ -152,5 +155,5 @@ export function readOperationsFloor(profileId: string, database: Db): readonly O
       title: 'Evidence advisor', detail: `Latest navigation to ${navigation.target} was ${navigation.outcome}.`,
       evidenceAtMs: navigation.at, evidenceId: navigation.id, decisionId: null, scope: 'profile' };
   }
-  return Object.freeze([host, market, risk, research, courier, advisor]);
+  return Object.freeze(operationsFloorActivity([host, market, risk, research, courier, advisor],profileId,database,nowMs));
 }

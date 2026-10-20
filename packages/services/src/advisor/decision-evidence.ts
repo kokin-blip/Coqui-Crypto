@@ -1,3 +1,5 @@
+import { observeAdvisorActivity } from '../operations/advisor-activity.js';
+import { randomUUID } from 'node:crypto';
 import type { AdvisorProvider, AdvisorProviderName, SecretKey, SecretStore } from '@coqui/adapters';
 import { canonicalJson, sha256Hex, type CanonicalJsonValue, type Clock, type DecisionEvidenceEventV1 } from '@coqui/core';
 import { appendAdvisorAuditEvent, appendAdvisorNavigationAudit, getMarketEvent,getResearchCandidate,getResearchTrigger,
@@ -70,7 +72,7 @@ export function deterministicDecisionExplanation(pack: StoredAdvisorEvidencePack
 
 export class AdvisorDecisionEvidenceService {
   constructor(private readonly input: { readonly profileId: string; readonly database: Db;
-    readonly clock: Clock; readonly secrets: SecretStore;
+    readonly onUnexpectedError?: (context:string,error:unknown)=>void; readonly clock: Clock; readonly secrets: SecretStore;
     readonly providers: Readonly<Record<AdvisorProviderName, AdvisorProvider>>;
     readonly maxAgeMs?: number }) {}
 
@@ -111,6 +113,12 @@ export class AdvisorDecisionEvidenceService {
   }
 
   async explain(decisionId: string, providerName: AdvisorProviderName | null) {
+    return observeAdvisorActivity({database:this.input.database,profileId:this.input.profileId,onUnexpectedError:this.input.onUnexpectedError,
+      workId:`decision:${decisionId}`,now:()=>this.input.clock.nowMs(),provider:providerName,operation:'facts',
+      facts:{decisionId}},()=>this.#explain(decisionId,providerName));
+  }
+
+  async #explain(decisionId: string, providerName: AdvisorProviderName | null) {
     const pack = this.prepare(decisionId), local = deterministicDecisionExplanation(pack);
     if (providerName === null) {
       appendAdvisorAuditEvent(this.input.profileId, 'local', 'facts', 'succeeded',
@@ -135,6 +143,13 @@ export class AdvisorDecisionEvidenceService {
   }
 
   async explainEvidence(subject:{readonly kind:'research_candidate'|'research_trigger'|'market_event';readonly id:string},
+    providerName:AdvisorProviderName|null) {
+    return observeAdvisorActivity({database:this.input.database,profileId:this.input.profileId,onUnexpectedError:this.input.onUnexpectedError,
+      workId:`advisor:${subject.kind}:${subject.id}:${randomUUID()}`,now:()=>this.input.clock.nowMs(),provider:providerName,
+      operation:'facts'},()=>this.#explainEvidence(subject,providerName));
+  }
+
+  async #explainEvidence(subject:{readonly kind:'research_candidate'|'research_trigger'|'market_event';readonly id:string},
     providerName:AdvisorProviderName|null) {
     const at=this.input.clock.nowMs(); let facts:CanonicalJsonValue; let local:string;
     if(subject.kind==='research_candidate') {

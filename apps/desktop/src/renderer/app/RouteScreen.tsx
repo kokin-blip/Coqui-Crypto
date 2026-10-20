@@ -8,6 +8,7 @@ const Alerts = lazy(async () => ({ default: (await import('./Alerts.js')).Alerts
 const Activity = lazy(async () => ({ default: (await import('./Activity.js')).Activity }));
 const Allocation = lazy(async () => ({ default: (await import('./Allocation.js')).Allocation }));
 const Events = lazy(async () => ({ default: (await import('./Events.js')).Events }));
+const OperationsJournal = lazy(async () => ({ default: (await import('./OperationsJournal.js')).OperationsJournal }));
 const OperationsFloor = lazy(async () => ({ default: (await import('./OperationsFloor.js')).OperationsFloor }));
 const PaperTrading = lazy(async () => ({ default: (await import('./PaperTrading.js')).PaperTrading }));
 const Portfolio = lazy(async () => ({ default: (await import('./Portfolio.js')).Portfolio }));
@@ -66,7 +67,7 @@ function ScreenBody({
     case 'paper/performance': return <PaperTrading client={client} route={route} />;
     case 'strategies': return <Scoreboard client={client} />;
     case 'research': return <Research client={client} />;
-    case 'activity': return <div className="screen-stack"><OperationsFloor client={client} /><Activity client={client} /><Alerts client={client} /></div>;
+    case 'activity': return <div className="screen-stack"><OperationsFloor client={client} /><OperationsJournal client={client} /><Activity client={client} /><Alerts client={client} /></div>;
     case 'risk': return <Risk client={client} />;
     case 'settings': return <Settings client={client} />;
   }

@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs';
 import { Worker } from 'node:worker_threads';
 import { fileURLToPath } from 'node:url';
 import { canonicalJson, createSemaphore, sha256Hex, type CanonicalJsonValue, type Clock, type Semaphore } from '@coqui/core';
-import { appendResearchJobEvent, finishResearchWorkerAttempt, getResearchJob,
+import { setOperationsAttemptActive, appendResearchJobEvent, finishResearchWorkerAttempt, getResearchJob,
   recoverInterruptedResearchJobs, recoverResearchWorkerAttempts, saveResearchJob,
   startResearchWorkerAttempt, type Db, type StoredResearchJob } from '@coqui/storage';
 import { createResearchWorkerEnvelope, researchWorkerEnvelopeJson, validateResearchWorkerResult,
@@ -24,14 +24,14 @@ function updateJob(job: StoredResearchJob, values: Partial<StoredResearchJob>, d
 
 export interface ResearchWorkerPoolOptions {
   readonly database: Db; readonly clock: Clock; readonly concurrency?: number;
-  readonly timeoutMs?: number; readonly maxOldGenerationSizeMb?: number;
+  readonly onUnexpectedError?: (context:string,error:unknown)=>void; readonly timeoutMs?: number; readonly maxOldGenerationSizeMb?: number;
 }
 
 export class ResearchWorkerPool {
   readonly #database: Db; readonly #clock: Clock; readonly #slots: Semaphore;
-  readonly #timeoutMs: number; readonly #memoryMb: number;
+  readonly #report: ResearchWorkerPoolOptions['onUnexpectedError']; readonly #timeoutMs: number; readonly #memoryMb: number;
   constructor(options: ResearchWorkerPoolOptions) {
-    this.#database = options.database; this.#clock = options.clock;
+    this.#report=options.onUnexpectedError; this.#database = options.database; this.#clock = options.clock;
     this.#slots = createSemaphore(options.concurrency ?? 2);
     this.#timeoutMs = options.timeoutMs ?? 30_000;
     this.#memoryMb = options.maxOldGenerationSizeMb ?? 64;
@@ -43,8 +43,16 @@ export class ResearchWorkerPool {
   pending(): number { return this.#slots.pending(); }
   recover(): { readonly attemptsFailed: number; readonly jobsRequeued: number; readonly jobsFailed: number } {
     const now = this.#clock.nowMs();
+    const interrupted=this.#database.prepare("SELECT id FROM research_jobs WHERE status='running'").all() as Array<{id:string}>;
     const attemptsFailed = recoverResearchWorkerAttempts(now, this.#database);
     const jobs = recoverInterruptedResearchJobs(now, this.#database);
+    for(const prior of interrupted){
+      const current=getResearchJob(prior.id,this.#database);
+      if(current?.status==='queued'||current?.status==='failed'){
+        try {appendResearchJobEvent(prior.id,current.status==='queued'?'worker_requeued':'worker_failed',
+          JSON.stringify({code:'worker_interrupted'}),now,this.#database);} catch {try {this.#report?.('operations_observation',new Error('Research recovery evidence could not be recorded.'));}catch {/* Reporting cannot affect recovery. */}}
+      }
+    }
     return { attemptsFailed, jobsRequeued: jobs.requeued, jobsFailed: jobs.failed };
   }
 
@@ -67,8 +75,10 @@ export class ResearchWorkerPool {
         deadlineAt: startedAt + timeoutMs,
         progressJson: '{"phase":"running","percent":0}' }, this.#database);
       appendResearchJobEvent(jobId, 'worker_started', JSON.stringify({ attemptId: attempt.id }), startedAt, this.#database);
+      setOperationsAttemptActive(this.#database,attempt.id,true);
       try {
         const result = await this.#execute(envelope, envelopeHash, timeoutMs, signal);
+        setOperationsAttemptActive(this.#database,attempt.id,false);
         const resultJson = canonicalJson(result as unknown as CanonicalJsonValue), resultHash = sha256Hex(resultJson);
         if (!finishResearchWorkerAttempt(attempt.id, 'completed', this.#clock.nowMs(), resultJson, resultHash, null, this.#database)) {
           throw new ResearchWorkerFailure('stale_result');
@@ -80,6 +90,7 @@ export class ResearchWorkerPool {
         appendResearchJobEvent(jobId, 'worker_completed', JSON.stringify({ attemptId: attempt.id, resultHash }), completedAt, this.#database);
         return result;
       } catch (error) {
+        setOperationsAttemptActive(this.#database,attempt.id,false);
         const failure = error instanceof ResearchWorkerFailure ? error : new ResearchWorkerFailure('worker_crashed');
         if (failure.code === 'stale_result') {
           appendResearchJobEvent(jobId, 'worker_failed', JSON.stringify({ attemptId: attempt.id,

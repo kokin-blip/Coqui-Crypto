@@ -65,9 +65,9 @@ export class ResearchHostCoordinator {
   readonly #trigger:ResearchTriggerCoordinator; readonly #pool:ResearchWorkerPool;
   readonly #evolution:EvolutionCoordinator; readonly #registrations:Map<string,RegisteredResearchDefinitionV1>;
   constructor(private readonly input:{readonly profileId:string;readonly database:Db;readonly clock:Clock;
-    readonly registrations?:readonly RegisteredResearchDefinitionV1[];readonly concurrency?:number}) {
+    readonly onUnexpectedError?: (context:string,error:unknown)=>void; readonly registrations?:readonly RegisteredResearchDefinitionV1[];readonly concurrency?:number}) {
     this.#trigger=new ResearchTriggerCoordinator(input.database);
-    this.#pool=new ResearchWorkerPool({database:input.database,clock:input.clock,concurrency:input.concurrency??2});
+    this.#pool=new ResearchWorkerPool({database:input.database,clock:input.clock,concurrency:input.concurrency??2,...(input.onUnexpectedError===undefined?{}:{onUnexpectedError:input.onUnexpectedError})});
     this.#evolution=new EvolutionCoordinator(input.database);
     this.#registrations=new Map((input.registrations??[]).map((item)=>[item.triggerId,item]));
     for(const item of this.#registrations.values()) {

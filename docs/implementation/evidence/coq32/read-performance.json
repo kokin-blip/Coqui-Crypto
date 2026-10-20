@@ -1,0 +1,23 @@
+{
+  "fixtureOnly": true,
+  "eventCount": 5000,
+  "groupCount": 500,
+  "metrics": {
+    "uncachedIndex": {
+      "samples": 20,
+      "p50Ms": 19.37579199999999,
+      "p95Ms": 22.639791000000002
+    },
+    "uncachedGroup": {
+      "samples": 20,
+      "p50Ms": 4.597791000000029,
+      "p95Ms": 5.817125000000033
+    },
+    "cachedIndex": {
+      "samples": 30,
+      "p50Ms": 0.02216699999996763,
+      "p95Ms": 0.03999999999996362
+    }
+  },
+  "passed": true
+}

@@ -70,3 +70,7 @@ export * from "./news-chunks.js";
 export * from './news-reports.js';
 export * from './news-usefulness.js';
 export * from './news-export-permissions.js';
+
+export * from './operations-activity.js';
+export * from './operations-journal.js';
+export * from './advisor-audit-context.js';

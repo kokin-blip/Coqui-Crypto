@@ -1,3 +1,4 @@
+import { createOperationsJournalHandlers } from './operations-journal-handlers.js';
 import type { Clock } from '@coqui/core';
 import { getDecisionDetail, listDecisionTimeline, type Db } from '@coqui/storage';
 
@@ -7,6 +8,7 @@ export function createDecisionHandlers(
   profileId: string, clock: Clock, database: Db,
 ): ChannelHandlers {
   return {
+    ...createOperationsJournalHandlers({profileId,database,now:()=>clock.nowMs()}),
     'decision.timeline': (payload: {
       readonly assetScope: string | null; readonly asOfMs: number | null; readonly limit: number;
     }) => ({ ok: true, value: { items: listDecisionTimeline({

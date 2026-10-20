@@ -1,0 +1,23 @@
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: '1b078ea10997b788a03b530da0a55f2504f88838d25c5692eae01198a3000e60'
+}
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: '1b078ea10997b788a03b530da0a55f2504f88838d25c5692eae01198a3000e60'
+}
+
+=== PERFORMANCE HARNESS ===
+reference machine  darwin/arm64  electron 43.4.1
+
+baseline (production build)
+warm useful shell             201.0ms   budget 1500ms  ok
+interaction p50                 8.4ms
+interaction p75                 8.5ms   budget 200ms  ok
+interaction p95                10.0ms
+
+control: 250ms synthetic long task before each interaction
+interaction p75               250.5ms   budget 200ms  OVER
+control breached the budget as required — harness is sensitive
+
+=== ALL PASS ===

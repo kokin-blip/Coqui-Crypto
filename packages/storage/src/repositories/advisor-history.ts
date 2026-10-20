@@ -1,3 +1,4 @@
+import { correlateAdvisorAudit } from './advisor-audit-context.js';
 import { inTransaction, type Db } from '../sqlite/index.js';
 
 export interface StoredAdvisorConversation { readonly id: string; readonly profileId: string;
@@ -44,7 +45,8 @@ export function deleteAdvisorConversation(profileId: string, conversationId: str
 }
 export function appendAdvisorAuditEvent(profileId: string, provider: string, operation: string,
   outcome: string, contextHash: string, atMs: number, database: Db): void {
-  database.prepare(`INSERT INTO advisor_audit_events_v1
+  const result=database.prepare(`INSERT INTO advisor_audit_events_v1
     (profile_id, provider, operation, outcome, context_hash, occurred_at_ms) VALUES (?, ?, ?, ?, ?, ?)`)
     .run(profileId, provider, operation, outcome, contextHash, atMs);
+  correlateAdvisorAudit(String(result.lastInsertRowid),outcome);
 }

@@ -1,3 +1,4 @@
+import { observeAdvisorActivity } from '../operations/advisor-activity.js';
 import { createCipheriv, createDecipheriv, randomBytes, randomUUID } from 'node:crypto';
 
 import type { AdvisorProvider, AdvisorProviderName, SecretKey, SecretStore } from '@coqui/adapters';
@@ -50,7 +51,7 @@ export class AdvisorAnalystService {
   readonly #contexts = new Map<string, PreparedContext>();
   readonly #sessions = new Map<string, ConversationView>();
   constructor(private readonly input: { readonly profileId: string; readonly database: Db;
-    readonly clock: Clock; readonly providers: Readonly<Record<AnalystProvider, AdvisorProvider>>;
+    readonly onUnexpectedError?: (context:string,error:unknown)=>void; readonly clock: Clock; readonly providers: Readonly<Record<AnalystProvider, AdvisorProvider>>;
     readonly secrets: SecretStore }) {}
 
   async providers() {
@@ -101,7 +102,19 @@ export class AdvisorAnalystService {
     return context;
   }
 
-  async generate(contextHash: string, provider: AnalystProvider | null) {
+  async generate(contextHash:string,provider:AnalystProvider|null) {
+    return observeAdvisorActivity({database:this.input.database,profileId:this.input.profileId,onUnexpectedError:this.input.onUnexpectedError,
+      workId:`advisor:${randomUUID()}`,now:()=>this.input.clock.nowMs(),provider,operation:'facts'},
+      ()=>this.#generate(contextHash,provider));
+  }
+  async send(value:{readonly contextHash:string;readonly provider:AnalystProvider;readonly mode:AnalystMode;
+    readonly message:string;readonly conversationId:string|null;readonly retention:'session'|'encrypted'}) {
+    return observeAdvisorActivity({database:this.input.database,profileId:this.input.profileId,onUnexpectedError:this.input.onUnexpectedError,
+      workId:`advisor:${randomUUID()}`,now:()=>this.input.clock.nowMs(),provider:value.provider,operation:'chat'},
+      ()=>this.#send(value));
+  }
+
+  async #generate(contextHash: string, provider: AnalystProvider | null) {
     const context = this.#requireContext(contextHash);
     if (provider === null) return this.#answer(context, 'local', 'deterministic-v1', 'analysis', context.localFacts.map((fact) => `${fact.label}: ${fact.value}`).join('\n'));
     try {
@@ -115,7 +128,7 @@ export class AdvisorAnalystService {
     }
   }
 
-  async send(value: { readonly contextHash: string; readonly provider: AnalystProvider; readonly mode: AnalystMode; readonly message: string; readonly conversationId: string | null; readonly retention: 'session' | 'encrypted' }) {
+  async #send(value: { readonly contextHash: string; readonly provider: AnalystProvider; readonly mode: AnalystMode; readonly message: string; readonly conversationId: string | null; readonly retention: 'session' | 'encrypted' }) {
     const context = this.#requireContext(value.contextHash);
     let answerText: string, answerProvider: AnalystProvider | 'local' = value.provider;
     let providerSucceeded = true;

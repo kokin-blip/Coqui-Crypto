@@ -1,3 +1,6 @@
+import { randomUUID } from 'node:crypto';
+import { startOperationsActivity } from '../operations/activity.js';
+import { recordParallelOperationsActivity } from '../operations/parallel-activity.js';
 import { connectionEligible, getProfileConnectionV2, getConnectionAccountSnapshotV2 } from '@coqui/storage';
 import { Decimal } from 'decimal.js';
 
@@ -48,10 +51,13 @@ export interface ParallelPaperDependencies {
   readonly refreshFor: (nowMs: number, deadline?: RequestDeadline) => Promise<PaperDecisionPreparation>;
   readonly clientFactory?: (credentials: AlpacaPaperCredentials) => Client;
   readonly killSwitchEngaged: () => boolean;
+  readonly onUnexpectedError?: (context:string,error:unknown)=>void;
   readonly mlSignal?: () => MlSignalSnapshot | null;
 }
 
 export class ParallelPaperService {
+  #operations: ReturnType<typeof startOperationsActivity>|null=null;
+  operationsWorkId(): string|null { return this.#operations?.workId??null; }
   readonly #input: ParallelPaperDependencies;
   readonly #clientFactory: (credentials: AlpacaPaperCredentials) => Client;
   #lastCheckAtMs: number | null = null;
@@ -83,8 +89,9 @@ export class ParallelPaperService {
       const state = this.#events(experiment).findLast((event) => ['paused', 'resumed', 'started', 'stopped'].includes(event.kind));
       if (state?.kind === 'paused' && state.detail['reason'] === 'user_action') kind = 'reconciliation_error';
     }
-    appendParallelEvent({ experimentId: experiment.id, profileId: this.#input.profileId,
+    const observed=appendParallelEvent({ experimentId: experiment.id, profileId: this.#input.profileId,
       kind, key, at: this.#input.clock.nowMs(), detail }, this.#input.database);
+    recordParallelOperationsActivity(observed,this.operationsWorkId(),this.#input.database,this.#input.onUnexpectedError);
   }
 
   async #client(): Promise<Client> {
@@ -310,23 +317,35 @@ export class ParallelPaperService {
 
   async tick(deadline?: RequestDeadline): Promise<void> {
     if (this.#checking || this.#suspended) return;
+    const experiment=latestParallelExperiment(this.#input.profileId,this.#input.database);
+    if(experiment!==null)this.#operations=startOperationsActivity({database:this.#input.database,profileId:this.#input.profileId,
+      workId:`parallel:${experiment.id}:pass:${randomUUID()}`,worker:'host',source:'parallel',phase:'paper_pass_started',onUnexpectedError:this.#input.onUnexpectedError,
+      now:()=>this.#input.clock.nowMs(),facts:{campaignId:experiment.id}});
     this.#lastCheckAtMs = this.#input.clock.nowMs(); this.#checking = true;
     this.#deadline = deadline;
     this.#pass = new ParallelPaperPass(this.#input.profileId, this.#input.database, this.#input.clock, deadline);
+    let passFailed=false;
     try {
       this.#claim = parallelExecutionClaim(this.#input.profileId, this.#input.hostId ?? 'desktop-main-test',
         this.#input.database, () => this.#input.clock.nowMs(), deadline, this.#input.hostKind);
       await this.#tick();
-    } finally {
+    } catch(error){passFailed=true;throw error;} finally {
       try {
         const current = this.status();
         if (current.experiment) finalizeParallelSlots(current.experiment, current.events, this.#input.clock.nowMs(),
           (kind, key, detail) => this.#append(current.experiment!, kind, key, detail));
-      } finally { this.#claim?.release(); this.#claim = undefined; this.#deadline = undefined; this.#checking = false; this.#pass = undefined; }
+        let outcome:'failed'|'blocked'|'waiting'|'completed'|'unknown';
+        try {outcome=passFailed?'failed':current.status==='paused'?'blocked':parallelAttemptsResolved(current.events)?'completed':'waiting';}catch{outcome='unknown';}
+        this.#operations?.finish('paper_pass_finished',outcome);this.#operations=null;
+      } finally { this.#operations?.finish('paper_pass_finished','unknown'); this.#operations=null; this.#claim?.release(); this.#claim = undefined; this.#deadline = undefined; this.#checking = false; this.#pass = undefined; }
     }
   }
 
   #beforeSubmit(): void {
+    const observation=startOperationsActivity({database:this.#input.database,profileId:this.#input.profileId,
+      workId:this.operationsWorkId()??`parallel:preflight:${randomUUID()}`,worker:'risk',source:'parallel',
+      phase:'gates_started',onUnexpectedError:this.#input.onUnexpectedError,now:()=>this.#input.clock.nowMs()});
+    try {
     if (this.#pass) this.#pass.phase = 'pre_submission';
     if (this.#suspended) throw new Error('host_unavailable');
     this.#deadline?.check(); this.#claim?.check();
@@ -334,6 +353,10 @@ export class ParallelPaperService {
     if (this.#input.killSwitchEngaged()) throw new Error('kill_switch_engaged');
     if (this.status().status !== 'active') throw new Error('explicit_pause_preserved');
     if (!this.#input.preparation().ok) throw new Error('stale_market_data');
+
+      observation.finish('gates_finished','completed',{gatesPassed:'deadline, host authority, execution lease, safety stop, active workflow, market preparation'});
+    } catch(error){observation.finish('gates_finished','blocked',{
+      reasonCode:parallelPaperFailureDetail(error,'paper_preflight_failed').reason});throw error;}
   }
 
   async #tick(): Promise<void> {
