@@ -1,0 +1,667 @@
+verify	Set up job	﻿2026-10-20T08:15:13.3377587Z Current runner version: '2.337.0'
+verify	Set up job	2026-10-20T08:15:13.3398783Z ##[group]Runner Image Provisioner
+verify	Set up job	2026-10-20T08:15:13.3399611Z Hosted Compute Agent
+verify	Set up job	2026-10-20T08:15:13.3400111Z Version: 20261012.601
+verify	Set up job	2026-10-20T08:15:13.3400682Z Commit: f3dc54e1fb89da6852db922499a0233137369e1d
+verify	Set up job	2026-10-20T08:15:13.3401296Z Build Date: 2026-10-12T17:48:21Z
+verify	Set up job	2026-10-20T08:15:13.3401838Z Worker ID: {575afa53-4a81-4433-aebe-53ccca4eae22}
+verify	Set up job	2026-10-20T08:15:13.3402537Z Region: westus3
+verify	Set up job	2026-10-20T08:15:13.3402986Z Cloud: Azure
+verify	Set up job	2026-10-20T08:15:13.3403603Z ##[endgroup]
+verify	Set up job	2026-10-20T08:15:13.3404837Z ##[group]Operating System
+verify	Set up job	2026-10-20T08:15:13.3405346Z Ubuntu
+verify	Set up job	2026-10-20T08:15:13.3405841Z 24.04.5
+verify	Set up job	2026-10-20T08:15:13.3406260Z LTS
+verify	Set up job	2026-10-20T08:15:13.3406707Z ##[endgroup]
+verify	Set up job	2026-10-20T08:15:13.3407205Z ##[group]Runner Image
+verify	Set up job	2026-10-20T08:15:13.3407710Z Image: ubuntu-24.04
+verify	Set up job	2026-10-20T08:15:13.3408272Z Version: 20261012.334.1
+verify	Set up job	2026-10-20T08:15:13.3409149Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261012.334/images/ubuntu/Ubuntu2404-Readme.md
+verify	Set up job	2026-10-20T08:15:13.3410563Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261012.334
+verify	Set up job	2026-10-20T08:15:13.3411334Z ##[endgroup]
+verify	Set up job	2026-10-20T08:15:13.3412278Z ##[group]GITHUB_TOKEN Permissions
+verify	Set up job	2026-10-20T08:15:13.3414100Z Contents: read
+verify	Set up job	2026-10-20T08:15:13.3414706Z Metadata: read
+verify	Set up job	2026-10-20T08:15:13.3415168Z ##[endgroup]
+verify	Set up job	2026-10-20T08:15:13.3417202Z Secret source: Actions
+verify	Set up job	2026-10-20T08:15:13.3418002Z Cache mode: write
+verify	Set up job	2026-10-20T08:15:13.3418639Z Prepare workflow directory
+verify	Set up job	2026-10-20T08:15:13.3680287Z Prepare all required actions
+verify	Set up job	2026-10-20T08:15:13.3733406Z Getting action download info
+verify	Set up job	2026-10-20T08:15:13.6812314Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+verify	Set up job	2026-10-20T08:15:14.0674103Z Download action repository 'pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271' (SHA:0ebf47130e4866e96fce0953f49152a61190b271)
+verify	Set up job	2026-10-20T08:15:14.6019610Z Download action repository 'actions/setup-node@820762786026740c76f36085b0efc47a31fe5020' (SHA:820762786026740c76f36085b0efc47a31fe5020)
+verify	Set up job	2026-10-20T08:15:14.8251064Z Complete job name: verify
+verify	Check out repository	﻿2026-10-20T08:15:14.8869968Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+verify	Check out repository	2026-10-20T08:15:14.8870900Z with:
+verify	Check out repository	2026-10-20T08:15:14.8871273Z   repository: kokin-blip/Coqui-Crypto
+verify	Check out repository	2026-10-20T08:15:14.8874803Z   token: ***
+verify	Check out repository	2026-10-20T08:15:14.8875187Z   ssh-strict: true
+verify	Check out repository	2026-10-20T08:15:14.8875540Z   ssh-user: git
+verify	Check out repository	2026-10-20T08:15:14.8875904Z   persist-credentials: true
+verify	Check out repository	2026-10-20T08:15:14.8876363Z   clean: true
+verify	Check out repository	2026-10-20T08:15:14.8876832Z   sparse-checkout-cone-mode: true
+verify	Check out repository	2026-10-20T08:15:14.8877258Z   fetch-depth: 1
+verify	Check out repository	2026-10-20T08:15:14.8877605Z   fetch-tags: false
+verify	Check out repository	2026-10-20T08:15:14.8877957Z   show-progress: true
+verify	Check out repository	2026-10-20T08:15:14.8878325Z   lfs: false
+verify	Check out repository	2026-10-20T08:15:14.8878664Z   submodules: false
+verify	Check out repository	2026-10-20T08:15:14.8879017Z   set-safe-directory: true
+verify	Check out repository	2026-10-20T08:15:14.8879412Z   allow-unsafe-pr-checkout: false
+verify	Check out repository	2026-10-20T08:15:14.8880097Z ##[endgroup]
+verify	Check out repository	2026-10-20T08:15:14.9700751Z Syncing repository: kokin-blip/Coqui-Crypto
+verify	Check out repository	2026-10-20T08:15:14.9702576Z ##[group]Getting Git version info
+verify	Check out repository	2026-10-20T08:15:14.9703613Z Working directory is '/home/runner/work/Coqui-Crypto/Coqui-Crypto'
+verify	Check out repository	2026-10-20T08:15:14.9704918Z [command]/usr/bin/git version
+verify	Check out repository	2026-10-20T08:15:14.9760400Z git version 2.55.0
+verify	Check out repository	2026-10-20T08:15:14.9778011Z ##[endgroup]
+verify	Check out repository	2026-10-20T08:15:14.9794996Z Temporarily overriding HOME='/home/runner/work/_temp/abca996a-ed9d-4fb5-82e7-f71f03c15740' before making global git config changes
+verify	Check out repository	2026-10-20T08:15:14.9801318Z Adding repository directory to the temporary git global config as a safe directory
+verify	Check out repository	2026-10-20T08:15:14.9802647Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Coqui-Crypto/Coqui-Crypto
+verify	Check out repository	2026-10-20T08:15:14.9839478Z Deleting the contents of '/home/runner/work/Coqui-Crypto/Coqui-Crypto'
+verify	Check out repository	2026-10-20T08:15:14.9842327Z ##[group]Determining repository object format
+verify	Check out repository	2026-10-20T08:15:14.9843805Z ##[endgroup]
+verify	Check out repository	2026-10-20T08:15:14.9844606Z ##[group]Initializing the repository
+verify	Check out repository	2026-10-20T08:15:14.9847386Z [command]/usr/bin/git init /home/runner/work/Coqui-Crypto/Coqui-Crypto
+verify	Check out repository	2026-10-20T08:15:15.0119237Z hint: Using 'master' as the name for the initial branch. This default branch name
+verify	Check out repository	2026-10-20T08:15:15.0120837Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+verify	Check out repository	2026-10-20T08:15:15.0122352Z hint: to use in all of your new repositories, which will suppress this warning,
+verify	Check out repository	2026-10-20T08:15:15.0123419Z hint: call:
+verify	Check out repository	2026-10-20T08:15:15.0124032Z hint:
+verify	Check out repository	2026-10-20T08:15:15.0124819Z hint: 	git config --global init.defaultBranch <name>
+verify	Check out repository	2026-10-20T08:15:15.0125762Z hint:
+verify	Check out repository	2026-10-20T08:15:15.0126625Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+verify	Check out repository	2026-10-20T08:15:15.0127876Z hint: 'development'. The just-created branch can be renamed via this command:
+verify	Check out repository	2026-10-20T08:15:15.0128923Z hint:
+verify	Check out repository	2026-10-20T08:15:15.0129535Z hint: 	git branch -m <name>
+verify	Check out repository	2026-10-20T08:15:15.0130270Z hint:
+verify	Check out repository	2026-10-20T08:15:15.0131470Z hint: Disable this message with "git config set advice.defaultBranchName false"
+verify	Check out repository	2026-10-20T08:15:15.0134033Z Initialized empty Git repository in /home/runner/work/Coqui-Crypto/Coqui-Crypto/.git/
+verify	Check out repository	2026-10-20T08:15:15.0135576Z [command]/usr/bin/git remote add origin https://github.com/kokin-blip/Coqui-Crypto
+verify	Check out repository	2026-10-20T08:15:15.0182872Z ##[endgroup]
+verify	Check out repository	2026-10-20T08:15:15.0184059Z ##[group]Disabling automatic garbage collection
+verify	Check out repository	2026-10-20T08:15:15.0185289Z [command]/usr/bin/git config --local gc.auto 0
+verify	Check out repository	2026-10-20T08:15:15.0216283Z ##[endgroup]
+verify	Check out repository	2026-10-20T08:15:15.0217493Z ##[group]Setting up auth
+verify	Check out repository	2026-10-20T08:15:15.0218391Z Removing SSH command configuration
+verify	Check out repository	2026-10-20T08:15:15.0220572Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+verify	Check out repository	2026-10-20T08:15:15.0251363Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+verify	Check out repository	2026-10-20T08:15:15.0888489Z Removing HTTP extra header
+verify	Check out repository	2026-10-20T08:15:15.0893352Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+verify	Check out repository	2026-10-20T08:15:15.0925715Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+verify	Check out repository	2026-10-20T08:15:15.1115107Z Removing includeIf entries pointing to credentials config files
+verify	Check out repository	2026-10-20T08:15:15.1115958Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+verify	Check out repository	2026-10-20T08:15:15.1143891Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+verify	Check out repository	2026-10-20T08:15:15.1429748Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-912bad4a-faea-4a1d-81d5-51ccd708b8e9.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+verify	Check out repository	2026-10-20T08:15:15.1472213Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Coqui-Crypto/Coqui-Crypto/.git.path /home/runner/work/_temp/git-credentials-912bad4a-faea-4a1d-81d5-51ccd708b8e9.config
+verify	Check out repository	2026-10-20T08:15:15.1507388Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Coqui-Crypto/Coqui-Crypto/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-912bad4a-faea-4a1d-81d5-51ccd708b8e9.config
+verify	Check out repository	2026-10-20T08:15:15.1540909Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-912bad4a-faea-4a1d-81d5-51ccd708b8e9.config
+verify	Check out repository	2026-10-20T08:15:15.1572230Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-912bad4a-faea-4a1d-81d5-51ccd708b8e9.config
+verify	Check out repository	2026-10-20T08:15:15.1600482Z ##[endgroup]
+verify	Check out repository	2026-10-20T08:15:15.1601415Z ##[group]Fetching the repository
+verify	Check out repository	2026-10-20T08:15:15.1606648Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +refs/tags/experimental-v0.1.0-beta.16:refs/tags/experimental-v0.1.0-beta.16
+verify	Check out repository	2026-10-20T08:15:19.3247438Z From https://github.com/kokin-blip/Coqui-Crypto
+verify	Check out repository	2026-10-20T08:15:19.3249275Z  * [new tag]         experimental-v0.1.0-beta.16 -> experimental-v0.1.0-beta.16
+verify	Check out repository	2026-10-20T08:15:19.3256217Z [command]/usr/bin/git tag --list experimental-v0.1.0-beta.16
+verify	Check out repository	2026-10-20T08:15:19.3285007Z experimental-v0.1.0-beta.16
+verify	Check out repository	2026-10-20T08:15:19.3291135Z [command]/usr/bin/git rev-parse refs/tags/experimental-v0.1.0-beta.16^{commit}
+verify	Check out repository	2026-10-20T08:15:19.3315346Z 4c0caf6efbaee27c8c22ad184419af8e96114daa
+verify	Check out repository	2026-10-20T08:15:19.3318750Z ##[endgroup]
+verify	Check out repository	2026-10-20T08:15:19.3319314Z ##[group]Determining the checkout info
+verify	Check out repository	2026-10-20T08:15:19.3319962Z ##[endgroup]
+verify	Check out repository	2026-10-20T08:15:19.3322867Z [command]/usr/bin/git sparse-checkout disable
+verify	Check out repository	2026-10-20T08:15:19.3370765Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+verify	Check out repository	2026-10-20T08:15:19.3400073Z ##[group]Checking out the ref
+verify	Check out repository	2026-10-20T08:15:19.3403901Z [command]/usr/bin/git checkout --progress --force refs/tags/experimental-v0.1.0-beta.16
+verify	Check out repository	2026-10-20T08:15:19.8082740Z Note: switching to 'refs/tags/experimental-v0.1.0-beta.16'.
+verify	Check out repository	2026-10-20T08:15:19.8083528Z 
+verify	Check out repository	2026-10-20T08:15:19.8083861Z You are in 'detached HEAD' state. You can look around, make experimental
+verify	Check out repository	2026-10-20T08:15:19.8084527Z changes and commit them, and you can discard any commits you make in this
+verify	Check out repository	2026-10-20T08:15:19.8085109Z state without impacting any branches by switching back to a branch.
+verify	Check out repository	2026-10-20T08:15:19.8085432Z 
+verify	Check out repository	2026-10-20T08:15:19.8085689Z If you want to create a new branch to retain commits you create, you may
+verify	Check out repository	2026-10-20T08:15:19.8086282Z do so (now or later) by using -c with the switch command. Example:
+verify	Check out repository	2026-10-20T08:15:19.8086587Z 
+verify	Check out repository	2026-10-20T08:15:19.8086788Z   git switch -c <new-branch-name>
+verify	Check out repository	2026-10-20T08:15:19.8087016Z 
+verify	Check out repository	2026-10-20T08:15:19.8087152Z Or undo this operation with:
+verify	Check out repository	2026-10-20T08:15:19.8087355Z 
+verify	Check out repository	2026-10-20T08:15:19.8087474Z   git switch -
+verify	Check out repository	2026-10-20T08:15:19.8087636Z 
+verify	Check out repository	2026-10-20T08:15:19.8087903Z Turn off this advice by setting config variable advice.detachedHead to false
+verify	Check out repository	2026-10-20T08:15:19.8088343Z 
+verify	Check out repository	2026-10-20T08:15:19.8089025Z HEAD is now at 4c0caf6 Prepare macOS-only beta.16 release and commit review artifacts
+verify	Check out repository	2026-10-20T08:15:19.8106830Z ##[endgroup]
+verify	Check out repository	2026-10-20T08:15:19.8150850Z [command]/usr/bin/git log -1 --format=%H
+verify	Check out repository	2026-10-20T08:15:19.8176170Z 4c0caf6efbaee27c8c22ad184419af8e96114daa
+verify	Install pnpm	﻿2026-10-20T08:15:19.9021358Z ##[group]Run pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271
+verify	Install pnpm	2026-10-20T08:15:19.9021696Z with:
+verify	Install pnpm	2026-10-20T08:15:19.9021871Z   dest: ~/setup-pnpm
+verify	Install pnpm	2026-10-20T08:15:19.9022082Z   run_install: null
+verify	Install pnpm	2026-10-20T08:15:19.9022254Z   cache: false
+verify	Install pnpm	2026-10-20T08:15:19.9022447Z   cache_dependency_path: pnpm-lock.yaml
+verify	Install pnpm	2026-10-20T08:15:19.9022688Z   package_json_file: package.json
+verify	Install pnpm	2026-10-20T08:15:19.9022905Z   standalone: false
+verify	Install pnpm	2026-10-20T08:15:19.9023218Z ##[endgroup]
+verify	Install pnpm	2026-10-20T08:15:20.0201168Z ##[group]Running self-installer...
+verify	Install pnpm	2026-10-20T08:15:27.0278379Z 
+verify	Install pnpm	2026-10-20T08:15:27.0278960Z added 1 package, and audited 2 packages in 2s
+verify	Install pnpm	2026-10-20T08:15:27.0279328Z 
+verify	Install pnpm	2026-10-20T08:15:27.0279423Z 1 package is looking for funding
+verify	Install pnpm	2026-10-20T08:15:27.0279696Z   run `npm fund` for details
+verify	Install pnpm	2026-10-20T08:15:27.0378874Z 
+verify	Install pnpm	2026-10-20T08:15:27.0379349Z 1 high severity vulnerability
+verify	Install pnpm	2026-10-20T08:15:27.0379606Z 
+verify	Install pnpm	2026-10-20T08:15:27.0379728Z To address all issues, run:
+verify	Install pnpm	2026-10-20T08:15:27.0379988Z   npm audit fix --force
+verify	Install pnpm	2026-10-20T08:15:27.0380213Z 
+verify	Install pnpm	2026-10-20T08:15:27.0380300Z Run `npm audit` for details.
+verify	Install pnpm	2026-10-20T08:15:27.5088356Z Checking for updates...
+verify	Install pnpm	2026-10-20T08:15:27.6756874Z Switching pnpm from v11.7.0 to v11.9.0...
+verify	Install pnpm	2026-10-20T08:15:28.4229311Z .../.bin/global/v11/844-1a158613617      | Progress: resolved 1, reused 0, downloaded 0, added 0
+verify	Install pnpm	2026-10-20T08:15:28.4243779Z .../.bin/global/v11/844-1a158613617      |   +1 +
+verify	Install pnpm	2026-10-20T08:15:28.6013860Z .../.bin/global/v11/844-1a158613617      | Progress: resolved 1, reused 0, downloaded 1, added 1, done
+verify	Install pnpm	2026-10-20T08:15:28.7055141Z [WARN] Detected a pnpm v10 installation layout at PNPM_HOME. The pnpm shims at PNPM_HOME have been refreshed so the new version is active, but pnpm v11 expects bins in PNPM_HOME/bin. Run "pnpm setup" to migrate your PATH to the v11 layout.
+verify	Install pnpm	2026-10-20T08:15:28.7076177Z Successfully updated pnpm to v11.9.0
+verify	Install pnpm	2026-10-20T08:15:28.7298438Z ##[endgroup]
+verify	Install pnpm	2026-10-20T08:15:28.7298801Z Installation Completed!
+verify	Set up Node.js	﻿2026-10-20T08:15:28.7467612Z ##[group]Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+verify	Set up Node.js	2026-10-20T08:15:28.7467936Z with:
+verify	Set up Node.js	2026-10-20T08:15:28.7468110Z   node-version: 24
+verify	Set up Node.js	2026-10-20T08:15:28.7468290Z   cache: pnpm
+verify	Set up Node.js	2026-10-20T08:15:28.7468468Z   check-latest: false
+verify	Set up Node.js	2026-10-20T08:15:28.7470656Z   token: ***
+verify	Set up Node.js	2026-10-20T08:15:28.7470854Z   package-manager-cache: true
+verify	Set up Node.js	2026-10-20T08:15:28.7471066Z env:
+verify	Set up Node.js	2026-10-20T08:15:28.7471274Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+verify	Set up Node.js	2026-10-20T08:15:28.7471535Z ##[endgroup]
+verify	Set up Node.js	2026-10-20T08:15:28.8486436Z Found in cache @ /opt/hostedtoolcache/node/24.21.0/x64
+verify	Set up Node.js	2026-10-20T08:15:28.8487109Z ##[group]Environment details
+verify	Set up Node.js	2026-10-20T08:15:32.1594301Z node: v24.21.0
+verify	Set up Node.js	2026-10-20T08:15:32.1594666Z npm: 11.19.0
+verify	Set up Node.js	2026-10-20T08:15:32.1594900Z yarn: 1.22.22
+verify	Set up Node.js	2026-10-20T08:15:32.1595727Z ##[endgroup]
+verify	Set up Node.js	2026-10-20T08:15:32.1611980Z [command]/home/runner/setup-pnpm/node_modules/.bin/bin/pnpm store path --silent
+verify	Set up Node.js	2026-10-20T08:15:33.0251038Z /home/runner/setup-pnpm/node_modules/.bin/store/v11
+verify	Set up Node.js	2026-10-20T08:15:33.2696490Z pnpm cache is not found
+verify	Install dependencies	﻿2026-10-20T08:15:33.2800863Z ##[group]Run pnpm install --frozen-lockfile
+verify	Install dependencies	2026-10-20T08:15:33.2801197Z ^[[36;1mpnpm install --frozen-lockfile^[[0m
+verify	Install dependencies	2026-10-20T08:15:33.3464761Z shell: /usr/bin/bash -e {0}
+verify	Install dependencies	2026-10-20T08:15:33.3465023Z env:
+verify	Install dependencies	2026-10-20T08:15:33.3465249Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+verify	Install dependencies	2026-10-20T08:15:33.3465517Z ##[endgroup]
+verify	Install dependencies	2026-10-20T08:15:33.6999576Z Scope: all 10 workspace projects
+verify	Install dependencies	2026-10-20T08:15:33.8407898Z ? Verifying lockfile against supply-chain policies (723 entries)...
+verify	Install dependencies	2026-10-20T08:15:33.8468579Z Lockfile is up to date, resolution step is skipped
+verify	Install dependencies	2026-10-20T08:15:34.0138935Z Progress: resolved 1, reused 0, downloaded 0, added 0
+verify	Install dependencies	2026-10-20T08:15:34.0667287Z Packages: +547
+verify	Install dependencies	2026-10-20T08:15:34.0667978Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+verify	Install dependencies	2026-10-20T08:15:35.0149173Z Progress: resolved 547, reused 0, downloaded 63, added 2
+verify	Install dependencies	2026-10-20T08:15:36.0232242Z Progress: resolved 547, reused 0, downloaded 224, added 18
+verify	Install dependencies	2026-10-20T08:15:37.0284854Z Progress: resolved 547, reused 0, downloaded 311, added 25
+verify	Install dependencies	2026-10-20T08:15:38.0327869Z Progress: resolved 547, reused 0, downloaded 544, added 194
+verify	Install dependencies	2026-10-20T08:15:39.0336589Z Progress: resolved 547, reused 0, downloaded 547, added 546
+verify	Install dependencies	2026-10-20T08:15:39.0390167Z Progress: resolved 547, reused 0, downloaded 547, added 547, done
+verify	Install dependencies	2026-10-20T08:15:39.7568889Z ✓ Lockfile passes supply-chain policies (723 entries in 5.9s)
+verify	Install dependencies	2026-10-20T08:15:40.0035017Z 
+verify	Install dependencies	2026-10-20T08:15:40.0035643Z devDependencies:
+verify	Install dependencies	2026-10-20T08:15:40.0036065Z + @emnapi/runtime 2.0.0-alpha.3
+verify	Install dependencies	2026-10-20T08:15:40.0036431Z + @eslint/js 10.0.1
+verify	Install dependencies	2026-10-20T08:15:40.0036733Z + @napi-rs/cli 3.8.0
+verify	Install dependencies	2026-10-20T08:15:40.0037037Z + @types/node 25.9.3
+verify	Install dependencies	2026-10-20T08:15:40.0037318Z + eslint 10.5.0
+verify	Install dependencies	2026-10-20T08:15:40.0037578Z + fast-check 4.9.0
+verify	Install dependencies	2026-10-20T08:15:40.0037858Z + typescript 6.0.3
+verify	Install dependencies	2026-10-20T08:15:40.0038166Z + typescript-eslint 8.61.0
+verify	Install dependencies	2026-10-20T08:15:40.0038466Z + vitest 4.1.8
+verify	Install dependencies	2026-10-20T08:15:40.0038619Z 
+verify	Install dependencies	2026-10-20T08:15:40.1058001Z Done in 6.7s using pnpm v11.9.0
+verify	Select release platforms	﻿2026-10-20T08:15:40.3415885Z ##[group]Run # beta.16 is intentionally macOS-only; future tags retain both platforms.
+verify	Select release platforms	2026-10-20T08:15:40.3416467Z ^[[36;1m# beta.16 is intentionally macOS-only; future tags retain both platforms.^[[0m
+verify	Select release platforms	2026-10-20T08:15:40.3416894Z ^[[36;1mif [[ "$GITHUB_REF_NAME" == "experimental-v0.1.0-beta.16" ]]; then^[[0m
+verify	Select release platforms	2026-10-20T08:15:40.3417405Z ^[[36;1m  echo 'matrix={"include":[{"os":"macos-latest","script":"package:mac","artifact":"macos-arm64"}]}' >> "$GITHUB_OUTPUT"^[[0m
+verify	Select release platforms	2026-10-20T08:15:40.3417984Z ^[[36;1melse^[[0m
+verify	Select release platforms	2026-10-20T08:15:40.3418511Z ^[[36;1m  echo 'matrix={"include":[{"os":"macos-latest","script":"package:mac","artifact":"macos-arm64"},{"os":"windows-latest","script":"package:win","artifact":"windows-x64"}]}' >> "$GITHUB_OUTPUT"^[[0m
+verify	Select release platforms	2026-10-20T08:15:40.3419073Z ^[[36;1mfi^[[0m
+verify	Select release platforms	2026-10-20T08:15:40.3477338Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+verify	Select release platforms	2026-10-20T08:15:40.3477650Z env:
+verify	Select release platforms	2026-10-20T08:15:40.3477899Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+verify	Select release platforms	2026-10-20T08:15:40.3478182Z ##[endgroup]
+verify	Verify	﻿2026-10-20T08:15:40.3589910Z ##[group]Run pnpm verify
+verify	Verify	2026-10-20T08:15:40.3590132Z ^[[36;1mpnpm verify^[[0m
+verify	Verify	2026-10-20T08:15:40.3639590Z shell: /usr/bin/bash -e {0}
+verify	Verify	2026-10-20T08:15:40.3639798Z env:
+verify	Verify	2026-10-20T08:15:40.3640007Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+verify	Verify	2026-10-20T08:15:40.3640263Z ##[endgroup]
+verify	Verify	2026-10-20T08:15:40.6929243Z $ pnpm typecheck && pnpm lint && pnpm test && pnpm build
+verify	Verify	2026-10-20T08:15:41.0292945Z $ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.renderer.json --noEmit
+verify	Verify	2026-10-20T08:16:01.3480134Z $ eslint .
+verify	Verify	2026-10-20T08:16:10.6660338Z $ vitest run --maxWorkers=1
+verify	Verify	2026-10-20T08:16:10.9087490Z 
+verify	Verify	2026-10-20T08:16:10.9090168Z ^[[1m^[[30m^[[46m RUN ^[[49m^[[39m^[[22m ^[[36mv4.1.8 ^[[39m^[[90m/home/runner/work/Coqui-Crypto/Coqui-Crypto^[[39m
+verify	Verify	2026-10-20T08:16:10.9090779Z 
+verify	Verify	2026-10-20T08:16:14.3959117Z  ^[[32m✓^[[39m tests/parallel-paper.test.ts ^[[2m(^[[22m^[[2m16 tests^[[22m^[[2m)^[[22m^[[33m 1273^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:16.7991320Z  ^[[32m✓^[[39m tests/accounts-profile-duplication.test.ts ^[[2m(^[[22m^[[2m9 tests^[[22m^[[2m)^[[22m^[[33m 1783^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:16.7992814Z      ^[[33m^[[2m✓^[[22m^[[39m copies universe policy but excludes account evidence, study qualification and shadow history ^[[33m 488^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:16.7994276Z      ^[[33m^[[2m✓^[[22m^[[39m rewrites a registered ML study and its hourly bars without weakening study immutability ^[[33m 403^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:18.2080273Z  ^[[32m✓^[[39m tests/parallel-paper-execution.test.ts ^[[2m(^[[22m^[[2m9 tests^[[22m^[[2m)^[[22m^[[33m 799^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:23.9262293Z  ^[[32m✓^[[39m tests/parallel-paper-deadlines.test.ts ^[[2m(^[[22m^[[2m14 tests^[[22m^[[2m)^[[22m^[[33m 5118^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:23.9264052Z      ^[[33m^[[2m✓^[[22m^[[39m recovers a paused large journal after slow reconciliation without reserving submission time ^[[33m 2251^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:23.9265747Z      ^[[33m^[[2m✓^[[22m^[[39m reconciles paginated fills and fees with 40,000 diagnostic events using one history read ^[[33m 1925^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:24.2405970Z  ^[[32m✓^[[39m tests/contracts-channels.test.ts ^[[2m(^[[22m^[[2m21 tests^[[22m^[[2m)^[[22m^[[32m 23^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:26.1817048Z  ^[[32m✓^[[39m tests/paper-run-loop.test.ts ^[[2m(^[[22m^[[2m16 tests^[[22m^[[2m)^[[22m^[[33m 1335^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:26.6130849Z  ^[[32m✓^[[39m tests/parallel-paper-ui.test.ts ^[[2m(^[[22m^[[2m10 tests^[[22m^[[2m)^[[22m^[[32m 138^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:30.0209450Z  ^[[32m✓^[[39m tests/news-intelligence.test.ts ^[[2m(^[[22m^[[2m24 tests^[[22m^[[2m)^[[22m^[[33m 2765^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:30.0210755Z      ^[[33m^[[2m✓^[[22m^[[39m pages over 250 records and fails atomically on a bound instead of truncating ^[[33m 302^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:31.8385667Z  ^[[32m✓^[[39m tests/connector-removal.test.ts ^[[2m(^[[22m^[[2m14 tests^[[22m^[[2m)^[[22m^[[33m 1171^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:40.4088497Z  ^[[32m✓^[[39m tests/news-rollout.test.ts ^[[2m(^[[22m^[[2m15 tests^[[22m^[[2m)^[[22m^[[33m 7951^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:40.4089910Z      ^[[33m^[[2m✓^[[22m^[[39m processes over 250 observations across restarts and overlapping connections, retaining actual availability ^[[33m 864^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:40.4093910Z      ^[[33m^[[2m✓^[[22m^[[39m finishes more than ten thousand historical observations without a full-history batch ^[[33m 4824^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:40.4095091Z      ^[[33m^[[2m✓^[[22m^[[39m evaluates synthetic daily and hourly studies without fitting on test outcomes ^[[33m 1174^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:42.5965729Z  ^[[32m✓^[[39m tests/desktop-scheduler-runtime.test.ts ^[[2m(^[[22m^[[2m16 tests^[[22m^[[2m)^[[22m^[[33m 1535^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:52.1116845Z  ^[[32m✓^[[39m tests/research-integrity-governance.test.ts ^[[2m(^[[22m^[[2m14 tests^[[22m^[[2m)^[[22m^[[33m 8900^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:52.1117859Z      ^[[33m^[[2m✓^[[22m^[[39m registers exactly two spread-floor candidates and rejects invalid values ^[[33m 1171^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:52.1119054Z      ^[[33m^[[2m✓^[[22m^[[39m supports all four existing families with chronological embargo and all candidates reported ^[[33m 3768^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:52.1121027Z      ^[[33m^[[2m✓^[[22m^[[39m claims before reading, records failure and prevents renamed plans reopening overlapping data ^[[33m 1085^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:52.1122503Z      ^[[33m^[[2m✓^[[22m^[[39m allows only one concurrent loader and returns completed evidence without reopening data ^[[33m 1199^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:52.1123958Z      ^[[33m^[[2m✓^[[22m^[[39m freezes none without loading a holdout and refuses freezes after it starts ^[[33m 1073^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:54.3377910Z  ^[[32m✓^[[39m tests/accounts-profiles-service.test.ts ^[[2m(^[[22m^[[2m12 tests^[[22m^[[2m)^[[22m^[[33m 1610^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:54.3378752Z      ^[[33m^[[2m✓^[[22m^[[39m requires an exact reorder permutation and preserves state after failure ^[[33m 505^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:54.7911382Z  ^[[32m✓^[[39m tests/parallel-paper-recovery-reporting.test.ts ^[[2m(^[[22m^[[2m16 tests^[[22m^[[2m)^[[22m^[[32m 49^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:55.3355506Z  ^[[32m✓^[[39m tests/strategy-backtest.test.ts ^[[2m(^[[22m^[[2m21 tests^[[22m^[[2m)^[[22m^[[32m 64^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:55.9632203Z  ^[[32m✓^[[39m tests/accounts-coinbase-connection.test.ts ^[[2m(^[[22m^[[2m13 tests^[[22m^[[2m)^[[22m^[[32m 29^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:57.4581748Z  ^[[32m✓^[[39m tests/wallet-scheduler-service.test.ts ^[[2m(^[[22m^[[2m10 tests^[[22m^[[2m)^[[22m^[[33m 898^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:58.6374654Z  ^[[32m✓^[[39m tests/connection-handlers.test.ts ^[[2m(^[[22m^[[2m8 tests^[[22m^[[2m)^[[22m^[[33m 573^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:59.8511422Z  ^[[32m✓^[[39m tests/wider-universe-runtime.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[33m 571^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:16:59.8524703Z      ^[[33m^[[2m✓^[[22m^[[39m waits for prior-day evidence, collects four assets, persists shadow only, and resumes without duplicates ^[[33m 477^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:17:00.8548613Z  ^[[32m✓^[[39m tests/exploratory-paper-campaign.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[33m 403^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:17:01.1296415Z  ^[[32m✓^[[39m tests/news-providers.test.ts ^[[2m(^[[22m^[[2m26 tests^[[22m^[[2m)^[[22m^[[32m 30^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:17:02.4764199Z  ^[[32m✓^[[39m tests/accounts-profile-dashboard.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[33m 747^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:17:02.4765503Z      ^[[33m^[[2m✓^[[22m^[[39m aggregates exact valuation and sanitized operational evidence without secret reads ^[[33m 450^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:17:03.8389758Z  ^[[32m✓^[[39m tests/portfolio-read-models.test.ts ^[[2m(^[[22m^[[2m11 tests^[[22m^[[2m)^[[22m^[[33m 758^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:17:04.3626507Z  ^[[32m✓^[[39m tests/http-client.test.ts ^[[2m(^[[22m^[[2m17 tests^[[22m^[[2m)^[[22m^[[32m 277^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:17:11.8863886Z  ^[[32m✓^[[39m tests/accounts-profile-deletion.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[33m 6925^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:17:11.8865432Z      ^[[33m^[[2m✓^[[22m^[[39m commits manifest removal, deletes only the target database and credentials, and retains the backup ^[[33m 5059^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:17:11.8866895Z      ^[[33m^[[2m✓^[[22m^[[39m rejects missing confirmation, tampered backups, and stale profile revisions without mutation ^[[33m 461^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:17:11.8868154Z      ^[[33m^[[2m✓^[[22m^[[39m requires a new backup when evidence or credential-category inspection changed ^[[33m 339^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:17:11.8869702Z      ^[[33m^[[2m✓^[[22m^[[39m reports committed cleanup as pending and resumes idempotently after keychain recovery ^[[33m 570^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:17:19.4510485Z  ^[[32m✓^[[39m tests/storage-migrations.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[33m 7065^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:17:19.4511286Z      ^[[33m^[[2m✓^[[22m^[[39m preserves exact rows when upgrading from every preceding schema version ^[[33m 6218^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:17:19.4511989Z      ^[[33m^[[2m✓^[[22m^[[39m creates a restorable VACUUM backup before migrating a file database ^[[33m 632^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:17:19.7032904Z  ^[[32m✓^[[39m tests/secrets.test.ts ^[[2m(^[[22m^[[2m18 tests^[[22m^[[2m)^[[22m^[[32m 11^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:17:19.8241948Z  ^[[32m✓^[[39m tests/desktop-security.test.ts ^[[2m(^[[22m^[[2m24 tests^[[22m^[[2m)^[[22m^[[32m 10^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:17:20.7187367Z  ^[[32m✓^[[39m tests/contracts-service-conformance.test.ts ^[[2m(^[[22m^[[2m8 tests^[[22m^[[2m)^[[22m^[[32m 293^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:17:22.0940032Z  ^[[32m✓^[[39m tests/accounts-profile-comparison.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[33m 774^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:17:23.5100972Z  ^[[32m✓^[[39m tests/research-read-models.test.ts ^[[2m(^[[22m^[[2m12 tests^[[22m^[[2m)^[[22m^[[33m 820^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:17:24.7924706Z  ^[[32m✓^[[39m tests/accounts-profile-deletion-preview.test.ts ^[[2m(^[[22m^[[2m7 tests^[[22m^[[2m)^[[22m^[[33m 700^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:17:25.8511115Z  ^[[32m✓^[[39m tests/exploratory-paper-evaluate.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[33m 474^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:17:27.3356229Z  ^[[32m✓^[[39m tests/news-runtime.test.ts ^[[2m(^[[22m^[[2m10 tests^[[22m^[[2m)^[[22m^[[33m 859^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:02.8175359Z  ^[[32m✓^[[39m tests/wider-universe.test.ts ^[[2m(^[[22m^[[2m14 tests^[[22m^[[2m)^[[22m^[[33m 34877^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:02.8176198Z      ^[[33m^[[2m✓^[[22m^[[39m compares all three candidates at both costs on a complete registered development calendar ^[[33m 34614^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:04.4721695Z  ^[[32m✓^[[39m tests/paper-seven-day-run.test.ts ^[[2m(^[[22m^[[2m8 tests^[[22m^[[2m)^[[22m^[[33m 1050^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:08.4049944Z  ^[[32m✓^[[39m tests/market-selector.test.ts ^[[2m(^[[22m^[[2m7 tests^[[22m^[[2m)^[[22m^[[33m 3462^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:08.4051108Z      ^[[33m^[[2m✓^[[22m^[[39m requires consecutive intraday slots and carries the confirmed strategy through midnight ^[[33m 437^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:08.4052299Z      ^[[33m^[[2m✓^[[22m^[[39m stores profile-scoped immutable studies and reports only matched, completed evidence ^[[33m 2336^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:10.7374997Z  ^[[32m✓^[[39m tests/parallel-ml-runtime.test.ts ^[[2m(^[[22m^[[2m7 tests^[[22m^[[2m)^[[22m^[[33m 1726^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:10.7384306Z      ^[[33m^[[2m✓^[[22m^[[39m records a late-arriving shadow proposal while preserving operational events and the user pause ^[[33m 406^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:12.0340322Z  ^[[32m✓^[[39m tests/accounts-settings.test.ts ^[[2m(^[[22m^[[2m10 tests^[[22m^[[2m)^[[22m^[[33m 695^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:12.9034281Z  ^[[32m✓^[[39m tests/coinbase-authenticated-candles.test.ts ^[[2m(^[[22m^[[2m7 tests^[[22m^[[2m)^[[22m^[[32m 265^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:14.0968263Z  ^[[32m✓^[[39m tests/paper-execution-service.test.ts ^[[2m(^[[22m^[[2m8 tests^[[22m^[[2m)^[[22m^[[33m 589^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:14.9008530Z ^[[90mstdout^[[2m | tests/secret-leak-sweep.test.ts^[[2m > ^[[22m^[[2ma connected key never reaches the renderer^[[2m > ^[[22m^[[2mappears in no channel response
+verify	Verify	2026-10-20T08:18:14.9009214Z ^[[22m^[[39mCoqui paper runtime loaded {
+verify	Verify	2026-10-20T08:18:14.9009593Z   schedulerVersion: ^[[32m'paper-recovery-budget-v3'^[[39m,
+verify	Verify	2026-10-20T08:18:14.9010150Z   behaviorHash: ^[[32m'084946f441a8da89b5d351777f0587c461d36abf94033dee2baa9b3a8f8ba984'^[[39m
+verify	Verify	2026-10-20T08:18:14.9010506Z }
+verify	Verify	2026-10-20T08:18:14.9010596Z 
+verify	Verify	2026-10-20T08:18:15.0275890Z ^[[90mstdout^[[2m | tests/secret-leak-sweep.test.ts^[[2m > ^[[22m^[[2ma connected key never reaches the renderer^[[2m > ^[[22m^[[2mappears in no column of the database
+verify	Verify	2026-10-20T08:18:15.0276856Z ^[[22m^[[39mCoqui paper runtime loaded {
+verify	Verify	2026-10-20T08:18:15.0277226Z   schedulerVersion: ^[[32m'paper-recovery-budget-v3'^[[39m,
+verify	Verify	2026-10-20T08:18:15.0277744Z   behaviorHash: ^[[32m'084946f441a8da89b5d351777f0587c461d36abf94033dee2baa9b3a8f8ba984'^[[39m
+verify	Verify	2026-10-20T08:18:15.0278101Z }
+verify	Verify	2026-10-20T08:18:15.0278185Z 
+verify	Verify	2026-10-20T08:18:15.0333186Z  ^[[32m✓^[[39m tests/secret-leak-sweep.test.ts ^[[2m(^[[22m^[[2m7 tests^[[22m^[[2m)^[[22m^[[32m 221^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:16.8659616Z  ^[[32m✓^[[39m tests/news-quota.test.ts ^[[2m(^[[22m^[[2m15 tests^[[22m^[[2m)^[[22m^[[33m 1227^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:18.2515329Z  ^[[32m✓^[[39m tests/paper-reconciliation.test.ts ^[[2m(^[[22m^[[2m10 tests^[[22m^[[2m)^[[22m^[[33m 780^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:19.2277819Z  ^[[32m✓^[[39m tests/market-acquisition.test.ts ^[[2m(^[[22m^[[2m9 tests^[[22m^[[2m)^[[22m^[[33m 372^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:20.8102457Z  ^[[32m✓^[[39m tests/accounts-coinbase-sync.test.ts ^[[2m(^[[22m^[[2m14 tests^[[22m^[[2m)^[[22m^[[33m 971^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:21.0688877Z  ^[[32m✓^[[39m tests/coinbase-account-evidence-adapter.test.ts ^[[2m(^[[22m^[[2m15 tests^[[22m^[[2m)^[[22m^[[32m 24^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:21.8286743Z  ^[[32m✓^[[39m tests/execution-routing.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 166^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:22.4419891Z  ^[[32m✓^[[39m tests/market-display-queries.test.ts ^[[2m(^[[22m^[[2m13 tests^[[22m^[[2m)^[[22m^[[32m 7^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:23.8903650Z  ^[[32m✓^[[39m tests/accounts-profile-backup.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[33m 863^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:24.5020882Z  ^[[32m✓^[[39m tests/ui-kit.test.ts ^[[2m(^[[22m^[[2m24 tests^[[22m^[[2m)^[[22m^[[32m 8^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:25.8392259Z  ^[[32m✓^[[39m tests/risk-evidence-tracker-service.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[33m 748^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:25.8393665Z      ^[[33m^[[2m✓^[[22m^[[39m distinguishes missing, integrity-failed, and unsupported verified evidence ^[[33m 334^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:27.2624711Z  ^[[32m✓^[[39m tests/portfolio-reconciliation-ledger.test.ts ^[[2m(^[[22m^[[2m13 tests^[[22m^[[2m)^[[22m^[[33m 826^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:28.6366744Z  ^[[32m✓^[[39m tests/research-scoreboard.test.ts ^[[2m(^[[22m^[[2m11 tests^[[22m^[[2m)^[[22m^[[33m 758^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:30.6844607Z  ^[[32m✓^[[39m tests/news-storage.test.ts ^[[2m(^[[22m^[[2m11 tests^[[22m^[[2m)^[[22m^[[33m 1456^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:30.6845813Z      ^[[33m^[[2m✓^[[22m^[[39m isolates profile databases and keeps deterministic IDs after restart ^[[33m 495^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:30.6846989Z      ^[[33m^[[2m✓^[[22m^[[39m upgrades version 87 with a backup and preserves existing operational rows ^[[33m 325^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:30.9306309Z  ^[[32m✓^[[39m tests/coinbase-product-rules.test.ts ^[[2m(^[[22m^[[2m16 tests^[[22m^[[2m)^[[22m^[[32m 12^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:31.8104379Z  ^[[32m✓^[[39m tests/execution-gate.test.ts ^[[2m(^[[22m^[[2m17 tests^[[22m^[[2m)^[[22m^[[32m 284^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:33.0316320Z  ^[[32m✓^[[39m tests/paper-oms.test.ts ^[[2m(^[[22m^[[2m8 tests^[[22m^[[2m)^[[22m^[[33m 633^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:35.3868626Z  ^[[32m✓^[[39m tests/news-host-runtime.test.ts ^[[2m(^[[22m^[[2m9 tests^[[22m^[[2m)^[[22m^[[33m 1752^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:36.4169753Z  ^[[32m✓^[[39m tests/forward-edge-study.test.ts ^[[2m(^[[22m^[[2m12 tests^[[22m^[[2m)^[[22m^[[33m 437^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:37.3725519Z  ^[[32m✓^[[39m tests/advisor-decision-evidence.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[33m 359^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:37.6157097Z  ^[[32m✓^[[39m tests/coingecko-public.test.ts ^[[2m(^[[22m^[[2m11 tests^[[22m^[[2m)^[[22m^[[32m 8^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:37.8537471Z  ^[[32m✓^[[39m tests/reference-feeds.test.ts ^[[2m(^[[22m^[[2m12 tests^[[22m^[[2m)^[[22m^[[32m 8^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:38.1147169Z  ^[[32m✓^[[39m tests/coinbase-auth.test.ts ^[[2m(^[[22m^[[2m11 tests^[[22m^[[2m)^[[22m^[[32m 29^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:39.2845194Z  ^[[32m✓^[[39m tests/news-report-association.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[33m 571^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:39.2847610Z      ^[[33m^[[2m✓^[[22m^[[39m upgrades immutable associations and selects copies explicitly without fallback or history loss ^[[33m 340^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:40.1765216Z  ^[[32m✓^[[39m tests/connections.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 298^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:41.3677391Z  ^[[32m✓^[[39m tests/paper-portfolio-view.test.ts ^[[2m(^[[22m^[[2m8 tests^[[22m^[[2m)^[[22m^[[33m 584^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:42.3059687Z  ^[[32m✓^[[39m tests/alerts-service.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[33m 347^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:43.1230743Z  ^[[32m✓^[[39m tests/portfolio-snapshot-evidence.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 220^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:43.7322749Z  ^[[32m✓^[[39m tests/accounts-profile-refresh.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 14^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:44.7483813Z  ^[[32m✓^[[39m tests/display-universe-service.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[33m 417^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:45.6534910Z  ^[[32m✓^[[39m tests/activity-feed.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[33m 433^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:46.3387489Z  ^[[32m✓^[[39m tests/remediation-integrity.test.ts ^[[2m(^[[22m^[[2m10 tests^[[22m^[[2m)^[[22m^[[32m 157^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:47.5819773Z  ^[[32m✓^[[39m tests/overlay-replay.test.ts ^[[2m(^[[22m^[[2m9 tests^[[22m^[[2m)^[[22m^[[33m 1047^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:47.5821051Z      ^[[33m^[[2m✓^[[22m^[[39m future scrambling and appending cannot change prior targets, orders or books ^[[33m 564^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:47.5821971Z      ^[[33m^[[2m✓^[[22m^[[39m missing models retain exactly the ungated book and common risk/accounting semantics ^[[33m 350^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:48.0805159Z  ^[[32m✓^[[39m tests/realism.test.ts ^[[2m(^[[22m^[[2m11 tests^[[22m^[[2m)^[[22m^[[32m 11^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:49.2469679Z ^[[90mstdout^[[2m | tests/market-events.test.ts^[[2m > ^[[22m^[[2mimmutable market-event dataset^[[2m > ^[[22m^[[2mvalidates local ingestion and temporal reads across the renderer boundary
+verify	Verify	2026-10-20T08:18:49.2470582Z ^[[22m^[[39mCoqui paper runtime loaded {
+verify	Verify	2026-10-20T08:18:49.2471142Z   schedulerVersion: ^[[32m'paper-recovery-budget-v3'^[[39m,
+verify	Verify	2026-10-20T08:18:49.2471703Z   behaviorHash: ^[[32m'084946f441a8da89b5d351777f0587c461d36abf94033dee2baa9b3a8f8ba984'^[[39m
+verify	Verify	2026-10-20T08:18:49.2472146Z }
+verify	Verify	2026-10-20T08:18:49.2472248Z 
+verify	Verify	2026-10-20T08:18:49.3200401Z ^[[90mstdout^[[2m | tests/market-events.test.ts^[[2m > ^[[22m^[[2mimmutable market-event dataset^[[2m > ^[[22m^[[2mselects and reads a local fixture in main before ingestion
+verify	Verify	2026-10-20T08:18:49.3201246Z ^[[22m^[[39mCoqui paper runtime loaded {
+verify	Verify	2026-10-20T08:18:49.3201810Z   schedulerVersion: ^[[32m'paper-recovery-budget-v3'^[[39m,
+verify	Verify	2026-10-20T08:18:49.3202577Z   behaviorHash: ^[[32m'084946f441a8da89b5d351777f0587c461d36abf94033dee2baa9b3a8f8ba984'^[[39m
+verify	Verify	2026-10-20T08:18:49.3203386Z }
+verify	Verify	2026-10-20T08:18:49.3203510Z 
+verify	Verify	2026-10-20T08:18:49.3317178Z  ^[[32m✓^[[39m tests/market-events.test.ts ^[[2m(^[[22m^[[2m10 tests^[[22m^[[2m)^[[22m^[[33m 632^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:50.0747308Z  ^[[32m✓^[[39m tests/trading-activity.test.ts ^[[2m(^[[22m^[[2m7 tests^[[22m^[[2m)^[[22m^[[32m 257^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:51.2499522Z  ^[[32m✓^[[39m tests/decision-dataset-service.test.ts ^[[2m(^[[22m^[[2m7 tests^[[22m^[[2m)^[[22m^[[33m 565^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:51.8712081Z  ^[[32m✓^[[39m tests/paper-venue.test.ts ^[[2m(^[[22m^[[2m16 tests^[[22m^[[2m)^[[22m^[[32m 12^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:54.3115793Z  ^[[32m✓^[[39m tests/range-rotation.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[33m 1957^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:54.3116594Z      ^[[33m^[[2m✓^[[22m^[[39m requires complete matched evidence and never promotes a replay result ^[[33m 1358^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:55.0134870Z  ^[[32m✓^[[39m tests/hourly-execution.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 172^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:56.0365745Z  ^[[32m✓^[[39m tests/portfolio-tax-service.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[33m 425^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:56.7132851Z  ^[[32m✓^[[39m tests/binance-bulk.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 80^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:57.5841190Z  ^[[32m✓^[[39m tests/research-nested-study.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 278^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:58.6703298Z  ^[[32m✓^[[39m tests/advisor-analyst.test.ts ^[[2m(^[[22m^[[2m7 tests^[[22m^[[2m)^[[22m^[[33m 486^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:18:59.8101001Z  ^[[32m✓^[[39m tests/overlay-shadow.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[33m 536^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:00.0094063Z  ^[[32m✓^[[39m tests/allocation.test.ts ^[[2m(^[[22m^[[2m12 tests^[[22m^[[2m)^[[22m^[[32m 9^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:00.5524528Z  ^[[32m✓^[[39m tests/parallel-execution-reliability.test.ts ^[[2m(^[[22m^[[2m9 tests^[[22m^[[2m)^[[22m^[[32m 28^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:01.7038154Z  ^[[32m✓^[[39m tests/risk-dashboard.test.ts ^[[2m(^[[22m^[[2m9 tests^[[22m^[[2m)^[[22m^[[33m 550^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:02.6612869Z  ^[[32m✓^[[39m tests/research-trial-registry.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[33m 368^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:02.8275109Z  ^[[32m✓^[[39m tests/terminal-market-depth.test.ts ^[[2m(^[[22m^[[2m8 tests^[[22m^[[2m)^[[22m^[[32m 12^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:03.0950503Z  ^[[32m✓^[[39m tests/desktop-dispatch.test.ts ^[[2m(^[[22m^[[2m13 tests^[[22m^[[2m)^[[22m^[[32m 13^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:03.4806440Z  ^[[32m✓^[[39m tests/research-integrity-engine.test.ts ^[[2m(^[[22m^[[2m9 tests^[[22m^[[2m)^[[22m^[[32m 188^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:04.8100831Z  ^[[32m✓^[[39m tests/breakout.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[33m 861^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:04.8101770Z      ^[[33m^[[2m✓^[[22m^[[39m replays a complete matched calendar without changing the real paper portfolio ^[[33m 607^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:05.0565876Z  ^[[32m✓^[[39m tests/coinbase-public.test.ts ^[[2m(^[[22m^[[2m8 tests^[[22m^[[2m)^[[22m^[[32m 14^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:05.8025182Z  ^[[32m✓^[[39m tests/alpaca-paper.test.ts ^[[2m(^[[22m^[[2m7 tests^[[22m^[[2m)^[[22m^[[32m 233^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:06.0041861Z  ^[[32m✓^[[39m tests/autotrade.test.ts ^[[2m(^[[22m^[[2m11 tests^[[22m^[[2m)^[[22m^[[32m 10^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:07.0039243Z  ^[[32m✓^[[39m tests/advisor-service.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[33m 411^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:08.0203686Z  ^[[32m✓^[[39m tests/portfolio-ledger-service.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[33m 413^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:08.5677988Z  ^[[32m✓^[[39m tests/remediation-planner.test.ts ^[[2m(^[[22m^[[2m11 tests^[[22m^[[2m)^[[22m^[[32m 17^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:09.3318711Z  ^[[32m✓^[[39m tests/decision-evidence.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 292^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:10.2147625Z  ^[[32m✓^[[39m tests/desktop-notifications.test.ts ^[[2m(^[[22m^[[2m12 tests^[[22m^[[2m)^[[22m^[[32m 278^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:10.9634945Z  ^[[32m✓^[[39m tests/storage-paper-repository.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 278^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:11.7891280Z  ^[[32m✓^[[39m tests/storage-wallet-repository.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[33m 347^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:12.4609980Z  ^[[32m✓^[[39m tests/kraken-bulk.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 79^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:13.4105564Z  ^[[32m✓^[[39m tests/paper-attainable-open.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[33m 364^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:14.4483590Z  ^[[32m✓^[[39m tests/paper-campaign-control.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[33m 418^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:15.9291495Z  ^[[32m✓^[[39m tests/news-intelligence-storage.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[33m 866^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:15.9292566Z      ^[[33m^[[2m✓^[[22m^[[39m reopens analysis evidence and replays across overlapping database connections ^[[33m 472^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:17.0254708Z  ^[[32m✓^[[39m tests/research-worker-pool.test.ts ^[[2m(^[[22m^[[2m7 tests^[[22m^[[2m)^[[22m^[[33m 492^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:18.1134259Z  ^[[32m✓^[[39m tests/chart-extension-service.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[33m 478^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:19.2414924Z  ^[[32m✓^[[39m tests/prepared-decision-dataset.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[33m 647^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:20.0589461Z  ^[[32m✓^[[39m tests/storage-coinbase-evidence.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[33m 348^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:20.6394702Z  ^[[32m✓^[[39m tests/paper-performance.test.ts ^[[2m(^[[22m^[[2m10 tests^[[22m^[[2m)^[[22m^[[32m 84^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:20.8453307Z  ^[[32m✓^[[39m tests/costbasis.test.ts ^[[2m(^[[22m^[[2m7 tests^[[22m^[[2m)^[[22m^[[32m 8^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:21.8465389Z  ^[[32m✓^[[39m tests/wallet-nicknames.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[33m 398^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:22.0517024Z  ^[[32m✓^[[39m tests/import-csv-plan.test.ts ^[[2m(^[[22m^[[2m11 tests^[[22m^[[2m)^[[22m^[[32m 9^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:22.6652856Z  ^[[32m✓^[[39m tests/service-runtime.test.ts ^[[2m(^[[22m^[[2m8 tests^[[22m^[[2m)^[[22m^[[32m 13^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:23.2622417Z  ^[[32m✓^[[39m tests/risk-long-term-service.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 7^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:23.9828690Z  ^[[32m✓^[[39m tests/remediation-evaluation.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[32m 189^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:25.1707056Z  ^[[32m✓^[[39m tests/desktop-diagnostics.test.ts ^[[2m(^[[22m^[[2m10 tests^[[22m^[[2m)^[[22m^[[33m 688^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:25.5340982Z  ^[[32m✓^[[39m tests/market-download.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 125^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:25.8173284Z  ^[[32m✓^[[39m tests/coinbase-market-diagnostics.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 25^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:26.6424216Z  ^[[32m✓^[[39m tests/storage-display-universe.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[33m 351^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:26.7564807Z  ^[[32m✓^[[39m tests/mockup-fidelity-ui.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[32m 5^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:27.2973175Z  ^[[32m✓^[[39m tests/parallel-paper-quote-scope.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 12^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:27.6666787Z  ^[[32m✓^[[39m tests/news-contracts.test.ts ^[[2m(^[[22m^[[2m23 tests^[[22m^[[2m)^[[22m^[[32m 23^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:27.8730392Z  ^[[32m✓^[[39m tests/momentum-spread-floor.test.ts ^[[2m(^[[22m^[[2m11 tests^[[22m^[[2m)^[[22m^[[32m 9^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:28.7665184Z  ^[[32m✓^[[39m tests/storage-portfolio-repository.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[33m 417^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:29.7236629Z  ^[[32m✓^[[39m tests/research-host-coordinator.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[33m 355^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:30.4717885Z  ^[[32m✓^[[39m tests/paper-connection-campaign.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 158^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:32.0898885Z  ^[[32m✓^[[39m tests/desktop-profile-contexts.test.ts ^[[2m(^[[22m^[[2m8 tests^[[22m^[[2m)^[[22m^[[33m 1145^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:32.0899807Z      ^[[33m^[[2m✓^[[22m^[[39m closes the previous context when the next commits ^[[33m 344^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:32.9152256Z  ^[[32m✓^[[39m tests/research-evolution.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 216^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:33.5190198Z  ^[[32m✓^[[39m tests/risk-reality-check-service.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 7^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:33.6402136Z  ^[[32m✓^[[39m tests/coinbase-settings-ui.test.ts ^[[2m(^[[22m^[[2m8 tests^[[22m^[[2m)^[[22m^[[32m 8^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:34.7887434Z  ^[[32m✓^[[39m tests/status-rail.test.ts ^[[2m(^[[22m^[[2m8 tests^[[22m^[[2m)^[[22m^[[33m 546^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:35.6979647Z  ^[[32m✓^[[39m tests/storage-market-research.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[33m 427^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:40.6573887Z  ^[[32m✓^[[39m tests/overlay-governance.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[33m 4365^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:40.6575375Z      ^[[33m^[[2m✓^[[22m^[[39m retains permanent controls and refuses qualification without account costs or enough eligible actions ^[[33m 4174^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:41.3014801Z  ^[[32m✓^[[39m tests/trading-activity-sources.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 157^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:42.3229896Z  ^[[32m✓^[[39m tests/parallel-ml-inference.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[33m 784^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:42.4984299Z  ^[[32m✓^[[39m tests/alpaca-paper-stream.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 62^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:42.7507355Z  ^[[32m✓^[[39m tests/parallel-paper-minor-recovery.test.ts ^[[2m(^[[22m^[[2m9 tests^[[22m^[[2m)^[[22m^[[32m 17^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:42.9499705Z  ^[[32m✓^[[39m tests/buy-candidates.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 6^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:44.1036504Z  ^[[32m✓^[[39m tests/portfolio-csv-import-service.test.ts ^[[2m(^[[22m^[[2m8 tests^[[22m^[[2m)^[[22m^[[33m 553^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:45.0001239Z  ^[[32m✓^[[39m tests/predecessor-vault-recovery.test.ts ^[[2m(^[[22m^[[2m8 tests^[[22m^[[2m)^[[22m^[[32m 298^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:45.2390973Z  ^[[32m✓^[[39m tests/coinbase-permission-probe.test.ts ^[[2m(^[[22m^[[2m14 tests^[[22m^[[2m)^[[22m^[[32m 7^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:45.9453852Z  ^[[32m✓^[[39m tests/chart-workspace-handlers.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 219^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:46.8367099Z  ^[[32m✓^[[39m tests/universe-storage-service.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 292^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:47.9943317Z  ^[[32m✓^[[39m tests/forward-evidence.test.ts ^[[2m(^[[22m^[[2m8 tests^[[22m^[[2m)^[[22m^[[33m 550^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:48.2008562Z  ^[[32m✓^[[39m tests/momentum.test.ts ^[[2m(^[[22m^[[2m8 tests^[[22m^[[2m)^[[22m^[[32m 5^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:49.4944356Z  ^[[32m✓^[[39m tests/rate-limiter.test.ts ^[[2m(^[[22m^[[2m7 tests^[[22m^[[2m)^[[22m^[[33m 1053^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:49.4945128Z      ^[[33m^[[2m✓^[[22m^[[39m grants tokens immediately and queues overflow in FIFO order ^[[33m 1002^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:49.6944806Z  ^[[32m✓^[[39m tests/signal-tilt.test.ts ^[[2m(^[[22m^[[2m12 tests^[[22m^[[2m)^[[22m^[[32m 5^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:49.9383869Z  ^[[32m✓^[[39m tests/coinbase-catalog-adapter.test.ts ^[[2m(^[[22m^[[2m8 tests^[[22m^[[2m)^[[22m^[[32m 14^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:50.2250832Z  ^[[32m✓^[[39m tests/overlay-audit.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[32m 66^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:50.8376752Z  ^[[32m✓^[[39m tests/coingecko-connection.test.ts ^[[2m(^[[22m^[[2m10 tests^[[22m^[[2m)^[[22m^[[32m 6^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:51.0477788Z  ^[[32m✓^[[39m tests/market-bars.test.ts ^[[2m(^[[22m^[[2m8 tests^[[22m^[[2m)^[[22m^[[32m 7^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:51.9907314Z  ^[[32m✓^[[39m tests/parallel-ml-signal.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[33m 344^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:52.6812167Z  ^[[32m✓^[[39m tests/research-pre-registration.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 81^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:53.4446135Z  ^[[32m✓^[[39m tests/storage-canonical-assets.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 282^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:53.5666646Z  ^[[32m✓^[[39m tests/coinbase-market-stream.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 6^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:54.1301818Z  ^[[32m✓^[[39m tests/ui-evidence-refinement.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 79^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:54.3263628Z  ^[[32m✓^[[39m tests/trendvol-targets.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 6^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:54.9055516Z  ^[[32m✓^[[39m tests/market-bar-archive.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 101^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:55.1455311Z  ^[[32m✓^[[39m tests/overlay-models.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 41^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:55.4044089Z  ^[[32m✓^[[39m tests/robinhood-crypto.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 27^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:56.1243744Z ^[[90mstdout^[[2m | tests/advisor-handlers.test.ts^[[2m > ^[[22m^[[2madvisor IPC boundary^[[2m > ^[[22m^[[2mprepares bounded context and deduplicates explicit local generation
+verify	Verify	2026-10-20T08:19:56.1244648Z ^[[22m^[[39mCoqui paper runtime loaded {
+verify	Verify	2026-10-20T08:19:56.1245732Z   schedulerVersion: ^[[32m'paper-recovery-budget-v3'^[[39m,
+verify	Verify	2026-10-20T08:19:56.1246378Z   behaviorHash: ^[[32m'084946f441a8da89b5d351777f0587c461d36abf94033dee2baa9b3a8f8ba984'^[[39m
+verify	Verify	2026-10-20T08:19:56.1247000Z }
+verify	Verify	2026-10-20T08:19:56.1247158Z 
+verify	Verify	2026-10-20T08:19:56.1971787Z ^[[90mstdout^[[2m | tests/advisor-handlers.test.ts^[[2m > ^[[22m^[[2madvisor IPC boundary^[[2m > ^[[22m^[[2mreports three provider states without returning secret fields
+verify	Verify	2026-10-20T08:19:56.1972865Z ^[[22m^[[39mCoqui paper runtime loaded {
+verify	Verify	2026-10-20T08:19:56.1973604Z   schedulerVersion: ^[[32m'paper-recovery-budget-v3'^[[39m,
+verify	Verify	2026-10-20T08:19:56.1975007Z   behaviorHash: ^[[32m'084946f441a8da89b5d351777f0587c461d36abf94033dee2baa9b3a8f8ba984'^[[39m
+verify	Verify	2026-10-20T08:19:56.1975610Z }
+verify	Verify	2026-10-20T08:19:56.1975748Z 
+verify	Verify	2026-10-20T08:19:56.2694333Z ^[[90mstdout^[[2m | tests/advisor-handlers.test.ts^[[2m > ^[[22m^[[2madvisor IPC boundary^[[2m > ^[[22m^[[2mexplains a decision from storage and accepts only typed navigation
+verify	Verify	2026-10-20T08:19:56.2695533Z ^[[22m^[[39mCoqui paper runtime loaded {
+verify	Verify	2026-10-20T08:19:56.2696078Z   schedulerVersion: ^[[32m'paper-recovery-budget-v3'^[[39m,
+verify	Verify	2026-10-20T08:19:56.2696895Z   behaviorHash: ^[[32m'084946f441a8da89b5d351777f0587c461d36abf94033dee2baa9b3a8f8ba984'^[[39m
+verify	Verify	2026-10-20T08:19:56.2697461Z }
+verify	Verify	2026-10-20T08:19:56.2697593Z 
+verify	Verify	2026-10-20T08:19:56.2733355Z  ^[[32m✓^[[39m tests/advisor-handlers.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 233^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:56.4851765Z  ^[[32m✓^[[39m tests/contribution.test.ts ^[[2m(^[[22m^[[2m8 tests^[[22m^[[2m)^[[22m^[[32m 12^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:56.7212313Z  ^[[32m✓^[[39m tests/provider-market-data.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 6^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:56.9698717Z  ^[[32m✓^[[39m tests/coinbase-archive.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 17^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:57.0933867Z  ^[[32m✓^[[39m tests/significance.test.ts ^[[2m(^[[22m^[[2m16 tests^[[22m^[[2m)^[[22m^[[32m 5^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:57.8476854Z  ^[[32m✓^[[39m tests/market-data-observability.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 152^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:58.1232947Z  ^[[32m✓^[[39m tests/kraken-market-download.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 40^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:58.3171710Z  ^[[32m✓^[[39m tests/rotation.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[32m 5^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:58.5163507Z  ^[[32m✓^[[39m tests/risk-budget.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[32m 6^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:58.7125258Z  ^[[32m✓^[[39m tests/long-term.test.ts ^[[2m(^[[22m^[[2m8 tests^[[22m^[[2m)^[[22m^[[32m 5^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:58.8752379Z  ^[[32m✓^[[39m tests/monte-carlo.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[32m 49^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:59.5337949Z  ^[[32m✓^[[39m tests/host-authority.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 147^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:59.7841799Z  ^[[32m✓^[[39m tests/coinbase-transaction-evidence.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 6^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:19:59.9844006Z  ^[[32m✓^[[39m tests/allocation-policy.test.ts ^[[2m(^[[22m^[[2m9 tests^[[22m^[[2m)^[[22m^[[32m 10^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:00.1964167Z  ^[[32m✓^[[39m tests/paper-orders.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 5^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:12.3472988Z  ^[[32m✓^[[39m tests/overlay-development.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[33m 11959^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:12.3474088Z      ^[[33m^[[2m✓^[[22m^[[39m reports every treatment and scenario without loading a holdout; insufficient ML cannot earn selection ^[[33m 10651^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:12.3475505Z      ^[[33m^[[2m✓^[[22m^[[39m uses disjoint training/calibration windows and future perturbations cannot alter fitted parameters ^[[33m 1269^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:13.0360961Z  ^[[32m✓^[[39m tests/onboarding.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 80^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:13.9289713Z  ^[[32m✓^[[39m tests/portfolio-allocation-policy-service.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 284^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:14.1354549Z  ^[[32m✓^[[39m tests/point-in-time-universe.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 13^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:14.2526487Z  ^[[32m✓^[[39m tests/observability-logger.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 7^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:15.0394942Z  ^[[32m✓^[[39m tests/news-location-clone.test.ts ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[33m 306^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:15.0395796Z      ^[[33m^[[2m✓^[[22m^[[39m excludes location authority before associations without changing original history ^[[33m 305^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:15.8375354Z  ^[[32m✓^[[39m tests/boundaries.test.ts ^[[2m(^[[22m^[[2m11 tests^[[22m^[[2m)^[[22m^[[33m 598^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:15.8376294Z      ^[[33m^[[2m✓^[[22m^[[39m rejects Electron in core ^[[33m 525^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:15.9598209Z  ^[[32m✓^[[39m tests/trade-costs.test.ts ^[[2m(^[[22m^[[2m7 tests^[[22m^[[2m)^[[22m^[[32m 6^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:16.5545165Z  ^[[32m✓^[[39m tests/operational-metrics.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 97^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:17.0914055Z  ^[[32m✓^[[39m tests/evidence.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 13^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:17.6010431Z  ^[[32m✓^[[39m tests/service-dependencies.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 185^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:18.5178847Z  ^[[32m✓^[[39m tests/isolated-restore.test.ts ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[33m 436^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:18.5180058Z      ^[[33m^[[2m✓^[[22m^[[39m preserves the original snapshot, verifies supplied artifacts and refuses corruption and overwrite ^[[33m 435^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:18.7265048Z  ^[[32m✓^[[39m tests/coinbase-evidence-core.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 12^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:18.9298446Z  ^[[32m✓^[[39m tests/tax-aware.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 7^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:19.0464292Z  ^[[32m✓^[[39m tests/help-copy.test.ts ^[[2m(^[[22m^[[2m7 tests^[[22m^[[2m)^[[22m^[[32m 5^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:19.8098829Z ^[[90mstdout^[[2m | tests/coinbase-runtime-wiring.test.ts^[[2m > ^[[22m^[[2mCoinbase desktop runtime wiring^[[2m > ^[[22m^[[2mconnects, reports status, synchronizes evidence, and disconnects through IPC contracts
+verify	Verify	2026-10-20T08:20:19.8099657Z ^[[22m^[[39mCoqui paper runtime loaded {
+verify	Verify	2026-10-20T08:20:19.8100036Z   schedulerVersion: ^[[32m'paper-recovery-budget-v3'^[[39m,
+verify	Verify	2026-10-20T08:20:19.8100567Z   behaviorHash: ^[[32m'084946f441a8da89b5d351777f0587c461d36abf94033dee2baa9b3a8f8ba984'^[[39m
+verify	Verify	2026-10-20T08:20:19.8100948Z }
+verify	Verify	2026-10-20T08:20:19.8101037Z 
+verify	Verify	2026-10-20T08:20:19.8391972Z  ^[[32m✓^[[39m tests/coinbase-runtime-wiring.test.ts ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 134^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:20.0395440Z  ^[[32m✓^[[39m tests/harvest.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 5^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:20.8256760Z  ^[[32m✓^[[39m tests/news-usefulness.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 176^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:20.9548300Z  ^[[32m✓^[[39m tests/command-outcomes.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[32m 5^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:21.1566734Z  ^[[32m✓^[[39m tests/negative-findings.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[32m 6^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:21.8494006Z  ^[[32m✓^[[39m tests/recovery-commands.test.ts ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 87^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:22.4533895Z  ^[[32m✓^[[39m tests/provider-comparison.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 4^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:22.6596168Z  ^[[32m✓^[[39m tests/trials.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 6^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:22.8633942Z  ^[[32m✓^[[39m tests/vol-target.test.ts ^[[2m(^[[22m^[[2m7 tests^[[22m^[[2m)^[[22m^[[32m 4^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:22.9765110Z  ^[[32m✓^[[39m tests/chart-advisor-architecture.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 5^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:23.7286404Z  ^[[32m✓^[[39m tests/display-workstation-data.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 143^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:23.9754551Z  ^[[32m✓^[[39m tests/coinbase-fee-evidence.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 5^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:24.7231360Z  ^[[32m✓^[[39m tests/advisor-copied-key.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 145^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:24.9281298Z  ^[[32m✓^[[39m tests/reality-check.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[32m 5^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:25.1835044Z  ^[[32m✓^[[39m tests/provider-auth.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 19^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:25.3826437Z  ^[[32m✓^[[39m tests/portfolio-sizing.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:25.5007446Z  ^[[32m✓^[[39m tests/walk-forward.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 5^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:25.6980571Z  ^[[32m✓^[[39m tests/import-csv.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 6^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:26.1986624Z  ^[[32m✓^[[39m tests/golden-backtest.test.ts ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 11^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:26.4044996Z  ^[[32m✓^[[39m tests/risk-controls.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 5^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:26.9309513Z  ^[[32m✓^[[39m tests/trendvol-research-evaluator.test.ts ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[33m 333^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:26.9310338Z      ^[[33m^[[2m✓^[[22m^[[39m matches the authoritative full engine for every retained track and cost ^[[33m 331^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:27.1296066Z  ^[[32m✓^[[39m tests/tax.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 5^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:27.8349134Z ^[[90mstdout^[[2m | tests/chart-snapshot-save.test.ts^[[2m > ^[[22m^[[2mvalidated chart snapshot boundary^[[2m > ^[[22m^[[2msaves a valid PNG once and durably replays a duplicate command
+verify	Verify	2026-10-20T08:20:27.8349894Z ^[[22m^[[39mCoqui paper runtime loaded {
+verify	Verify	2026-10-20T08:20:27.8350413Z   schedulerVersion: ^[[32m'paper-recovery-budget-v3'^[[39m,
+verify	Verify	2026-10-20T08:20:27.8351052Z   behaviorHash: ^[[32m'084946f441a8da89b5d351777f0587c461d36abf94033dee2baa9b3a8f8ba984'^[[39m
+verify	Verify	2026-10-20T08:20:27.8351467Z }
+verify	Verify	2026-10-20T08:20:27.8351565Z 
+verify	Verify	2026-10-20T08:20:27.9215780Z ^[[90mstdout^[[2m | tests/chart-snapshot-save.test.ts^[[2m > ^[[22m^[[2mvalidated chart snapshot boundary^[[2m > ^[[22m^[[2mrejects invalid PNG content and command reuse with changed input
+verify	Verify	2026-10-20T08:20:27.9216553Z ^[[22m^[[39mCoqui paper runtime loaded {
+verify	Verify	2026-10-20T08:20:27.9216933Z   schedulerVersion: ^[[32m'paper-recovery-budget-v3'^[[39m,
+verify	Verify	2026-10-20T08:20:27.9217459Z   behaviorHash: ^[[32m'084946f441a8da89b5d351777f0587c461d36abf94033dee2baa9b3a8f8ba984'^[[39m
+verify	Verify	2026-10-20T08:20:27.9217858Z }
+verify	Verify	2026-10-20T08:20:27.9217953Z 
+verify	Verify	2026-10-20T08:20:28.0342608Z  ^[[32m✓^[[39m tests/chart-snapshot-save.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 287^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:28.6641943Z  ^[[32m✓^[[39m tests/news-export-permissions.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 148^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:32.2064717Z  ^[[32m✓^[[39m tests/remediation-manifest.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[33m 3264^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:32.2065841Z      ^[[33m^[[2m✓^[[22m^[[39m binds the ML worker boundary and inference implementation to the shadow candidate ^[[33m 1249^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:32.2067263Z      ^[[33m^[[2m✓^[[22m^[[39m covers signal, sizing, timestamp validation, venue parsers, costs, storage, and locking dependencies ^[[33m 337^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:32.2068733Z      ^[[33m^[[2m✓^[[22m^[[39m invalidates relevant changes but ignores an unrelated renderer change and diagnostic manifest output ^[[33m 1676^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:32.3737759Z  ^[[32m✓^[[39m tests/indexed-research.test.ts ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 36^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:32.5710056Z  ^[[32m✓^[[39m tests/cscv-pbo.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 5^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:32.7676628Z  ^[[32m✓^[[39m tests/performance.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 5^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:32.8782222Z  ^[[32m✓^[[39m tests/handler-inventory.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 5^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:32.9967899Z  ^[[32m✓^[[39m tests/execution-replay.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 8^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:33.6395732Z  ^[[32m✓^[[39m tests/research-integrity-duplication.test.ts ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 164^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:33.8768474Z  ^[[32m✓^[[39m tests/coinbase-universe.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 4^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:33.9895511Z  ^[[32m✓^[[39m tests/oct19-readiness.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:34.2664205Z  ^[[32m✓^[[39m tests/contracts-messages.test.ts ^[[2m(^[[22m^[[2m7 tests^[[22m^[[2m)^[[22m^[[32m 9^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:34.3816625Z  ^[[32m✓^[[39m tests/allocation-ring.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 4^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:34.5104070Z  ^[[32m✓^[[39m tests/workspace-recovery-ui.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:34.7377064Z  ^[[32m✓^[[39m tests/benchmark-confidence.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 35^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:35.4825788Z  ^[[32m✓^[[39m tests/paper-runtime-storage.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 276^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:35.5909592Z  ^[[32m✓^[[39m tests/connected-portfolio-ui.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:35.8572622Z  ^[[32m✓^[[39m tests/profile-runtime-boundary.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 5^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:35.9823619Z  ^[[32m✓^[[39m tests/chart-observations.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:36.1768289Z  ^[[32m✓^[[39m tests/semaphore.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 4^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:36.4066951Z  ^[[32m✓^[[39m tests/advisor-provider-adapters.test.ts ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:36.5148170Z  ^[[32m✓^[[39m tests/settings-information-architecture.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:36.6296992Z  ^[[32m✓^[[39m tests/paper-execution-boundary.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 9^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:36.7403311Z  ^[[32m✓^[[39m tests/responsive-shell.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 4^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:36.9309984Z  ^[[32m✓^[[39m tests/cache.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:37.1218637Z  ^[[32m✓^[[39m tests/clock.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[32m 4^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:37.2329834Z  ^[[32m✓^[[39m tests/chart-indicators.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 4^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:37.7813963Z  ^[[32m✓^[[39m tests/execution-authority.test.ts ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 76^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:38.0426678Z  ^[[32m✓^[[39m tests/notification-truth.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 11^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:38.1526212Z  ^[[32m✓^[[39m tests/responsive-markets-ui.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:38.3454696Z  ^[[32m✓^[[39m tests/core-types.test.ts ^[[2m(^[[22m^[[2m11 tests^[[22m^[[2m)^[[22m^[[32m 4^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:38.4543579Z  ^[[32m✓^[[39m tests/advanced-overview-layout.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:38.5656656Z  ^[[32m✓^[[39m tests/coinbase-view-only-harness.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:38.7999446Z  ^[[32m✓^[[39m tests/overlay-observer-adapter.test.ts ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 4^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:38.9095815Z  ^[[32m✓^[[39m tests/renderer-routes.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 4^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:39.0946995Z  ^[[32m✓^[[39m tests/action-notices.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:39.2027162Z  ^[[32m✓^[[39m tests/purged-cv.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 4^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:39.3148509Z  ^[[32m✓^[[39m tests/overview-presets.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 4^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:39.9804957Z  ^[[32m✓^[[39m tests/chart-extension-pick.test.ts ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 75^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:40.5857331Z  ^[[32m✓^[[39m tests/host-lifecycle.test.ts ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 4^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:40.6940339Z  ^[[32m✓^[[39m tests/news-intelligence-contracts.test.ts ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 2^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:40.8801223Z  ^[[32m✓^[[39m tests/indicators.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:41.0773931Z  ^[[32m✓^[[39m tests/algorithm-report.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 4^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:41.1864620Z  ^[[32m✓^[[39m tests/chart-range-control.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:41.2948711Z  ^[[32m✓^[[39m tests/evidence-visualization.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:41.4025984Z  ^[[32m✓^[[39m tests/crew-robot.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:41.5140309Z  ^[[32m✓^[[39m tests/chart-link-controller.test.ts ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:41.6832386Z  ^[[32m✓^[[39m tests/tradingview-boundary.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 34^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:41.9482466Z  ^[[32m✓^[[39m tests/icon-assets.test.ts ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 151^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:42.0544048Z  ^[[32m✓^[[39m tests/operations-assets.test.ts ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:42.1607943Z  ^[[32m✓^[[39m tests/chart-history-range.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:42.2745043Z  ^[[32m✓^[[39m tests/time-format.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:42.4677844Z  ^[[32m✓^[[39m tests/execution-permissions.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:42.7252978Z  ^[[32m✓^[[39m tests/contracts-transport.test.ts ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 4^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:42.8314243Z  ^[[32m✓^[[39m tests/sha256.test.ts ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
+verify	Verify	2026-10-20T08:20:42.8375680Z 
+verify	Verify	2026-10-20T08:20:42.8382581Z ^[[2m Test Files ^[[22m ^[[1m^[[32m271 passed^[[39m^[[22m^[[90m (271)^[[39m
+verify	Verify	2026-10-20T08:20:42.8390857Z ^[[2m      Tests ^[[22m ^[[1m^[[32m1815 passed^[[39m^[[22m^[[90m (1815)^[[39m
+verify	Verify	2026-10-20T08:20:42.8391474Z ^[[2m   Start at ^[[22m 08:16:10
+verify	Verify	2026-10-20T08:20:42.8394573Z ^[[2m   Duration ^[[22m 271.90s^[[2m (transform 4.37s, setup 0ms, import 81.50s, tests 164.05s, environment 20ms)^[[22m
+verify	Verify	2026-10-20T08:20:42.8396214Z 
+verify	Verify	2026-10-20T08:20:43.2645600Z $ node scripts/build-study-manifests.mjs && tsc -b
+verify	Post Set up Node.js	﻿2026-10-20T08:21:05.8163332Z Post job cleanup.
+verify	Post Set up Node.js	2026-10-20T08:21:05.9204427Z [command]/usr/bin/tar --posix -cf cache.tzst --exclude cache.tzst -P -C /home/runner/work/Coqui-Crypto/Coqui-Crypto --files-from manifest.txt --use-compress-program zstdmt
+verify	Post Set up Node.js	2026-10-20T08:21:07.4751257Z Failed to save: Unable to reserve cache with key node-cache-Linux-x64-pnpm-eba0eca8c1fcf7fdf574a5cb575a5faf620efabfa0719f79365a2acd499e4f4e, another job may be creating this cache.
+verify	Post Install pnpm	﻿2026-10-20T08:21:07.4936480Z Post job cleanup.
+verify	Post Install pnpm	2026-10-20T08:21:07.6053832Z Pruning is unnecessary.
+verify	Post Check out repository	﻿2026-10-20T08:21:07.6188935Z Post job cleanup.
+verify	Post Check out repository	2026-10-20T08:21:07.6867274Z [command]/usr/bin/git version
+verify	Post Check out repository	2026-10-20T08:21:07.6902150Z git version 2.55.0
+verify	Post Check out repository	2026-10-20T08:21:07.6946733Z Temporarily overriding HOME='/home/runner/work/_temp/b5d067d2-045f-4734-9084-19e0f66952e9' before making global git config changes
+verify	Post Check out repository	2026-10-20T08:21:07.6948084Z Adding repository directory to the temporary git global config as a safe directory
+verify	Post Check out repository	2026-10-20T08:21:07.6950590Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Coqui-Crypto/Coqui-Crypto
+verify	Post Check out repository	2026-10-20T08:21:07.6990303Z Removing SSH command configuration
+verify	Post Check out repository	2026-10-20T08:21:07.6994077Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+verify	Post Check out repository	2026-10-20T08:21:07.7045348Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+verify	Post Check out repository	2026-10-20T08:21:07.7303336Z Removing HTTP extra header
+verify	Post Check out repository	2026-10-20T08:21:07.7309586Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+verify	Post Check out repository	2026-10-20T08:21:07.7352552Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+verify	Post Check out repository	2026-10-20T08:21:07.7559708Z Removing includeIf entries pointing to credentials config files
+verify	Post Check out repository	2026-10-20T08:21:07.7567362Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+verify	Post Check out repository	2026-10-20T08:21:07.7595966Z includeif.gitdir:/home/runner/work/Coqui-Crypto/Coqui-Crypto/.git.path
+verify	Post Check out repository	2026-10-20T08:21:07.7596956Z includeif.gitdir:/home/runner/work/Coqui-Crypto/Coqui-Crypto/.git/worktrees/*.path
+verify	Post Check out repository	2026-10-20T08:21:07.7597780Z includeif.gitdir:/github/workspace/.git.path
+verify	Post Check out repository	2026-10-20T08:21:07.7598476Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+verify	Post Check out repository	2026-10-20T08:21:07.7602698Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Coqui-Crypto/Coqui-Crypto/.git.path
+verify	Post Check out repository	2026-10-20T08:21:07.7631964Z /home/runner/work/_temp/git-credentials-912bad4a-faea-4a1d-81d5-51ccd708b8e9.config
+verify	Post Check out repository	2026-10-20T08:21:07.7646642Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Coqui-Crypto/Coqui-Crypto/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-912bad4a\-faea\-4a1d\-81d5\-51ccd708b8e9\.config
+verify	Post Check out repository	2026-10-20T08:21:07.7688250Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Coqui-Crypto/Coqui-Crypto/.git/worktrees/*.path
+verify	Post Check out repository	2026-10-20T08:21:07.7712651Z /home/runner/work/_temp/git-credentials-912bad4a-faea-4a1d-81d5-51ccd708b8e9.config
+verify	Post Check out repository	2026-10-20T08:21:07.7720478Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Coqui-Crypto/Coqui-Crypto/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-912bad4a\-faea\-4a1d\-81d5\-51ccd708b8e9\.config
+verify	Post Check out repository	2026-10-20T08:21:07.7755316Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+verify	Post Check out repository	2026-10-20T08:21:07.7780858Z /github/runner_temp/git-credentials-912bad4a-faea-4a1d-81d5-51ccd708b8e9.config
+verify	Post Check out repository	2026-10-20T08:21:07.7787141Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-912bad4a\-faea\-4a1d\-81d5\-51ccd708b8e9\.config
+verify	Post Check out repository	2026-10-20T08:21:07.7819260Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+verify	Post Check out repository	2026-10-20T08:21:07.7841921Z /github/runner_temp/git-credentials-912bad4a-faea-4a1d-81d5-51ccd708b8e9.config
+verify	Post Check out repository	2026-10-20T08:21:07.7854190Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-912bad4a\-faea\-4a1d\-81d5\-51ccd708b8e9\.config
+verify	Post Check out repository	2026-10-20T08:21:07.7881163Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+verify	Post Check out repository	2026-10-20T08:21:07.8072289Z Removing credentials config '/home/runner/work/_temp/git-credentials-912bad4a-faea-4a1d-81d5-51ccd708b8e9.config'
+verify	Complete job	﻿2026-10-20T08:21:07.8198610Z Evaluate and set job outputs
+verify	Complete job	2026-10-20T08:21:07.8204607Z Set output 'matrix'
+verify	Complete job	2026-10-20T08:21:07.8206018Z Cleaning up orphan processes

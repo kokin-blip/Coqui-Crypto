@@ -1,0 +1,8 @@
+{
+  "commit": "4c0caf6efbaee27c8c22ad184419af8e96114daa",
+  "summaryLines": [
+    "verify\tVerify\t2026-10-20T08:20:42.8382581Z  Test Files  271 passed (271)",
+    "verify\tVerify\t2026-10-20T08:20:42.8390857Z       Tests  1815 passed (1815)",
+    "verify\tVerify\t2026-10-20T08:20:42.8394573Z    Duration  271.90s (transform 4.37s, setup 0ms, import 81.50s, tests 164.05s, environment 20ms)"
+  ]
+}

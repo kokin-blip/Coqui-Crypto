@@ -1,0 +1,23 @@
+{
+  "anonymous": true,
+  "assets": [
+    {
+      "name": "Coqui-0.1.0-beta.16-mac-arm64.dmg",
+      "url": "https://github.com/kokin-blip/Coqui-Crypto/releases/download/experimental-v0.1.0-beta.16/Coqui-0.1.0-beta.16-mac-arm64.dmg",
+      "httpStatus": "200",
+      "exitCode": 0
+    },
+    {
+      "name": "Coqui-0.1.0-beta.16-mac-arm64.zip",
+      "url": "https://github.com/kokin-blip/Coqui-Crypto/releases/download/experimental-v0.1.0-beta.16/Coqui-0.1.0-beta.16-mac-arm64.zip",
+      "httpStatus": "200",
+      "exitCode": 0
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "url": "https://github.com/kokin-blip/Coqui-Crypto/releases/download/experimental-v0.1.0-beta.16/SHA256SUMS.txt",
+      "httpStatus": "200",
+      "exitCode": 0
+    }
+  ]
+}

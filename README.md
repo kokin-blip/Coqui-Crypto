@@ -8,6 +8,8 @@ Coqui is not a live-trading application. `liveExecutionPermitted` is a contract-
 
 ## Current status
 
+Current experimental download: [beta.16 — macOS Apple Silicon only](https://github.com/kokin-blip/Coqui-Crypto/releases/tag/experimental-v0.1.0-beta.16) (DMG/ZIP, ad-hoc signed). See [release verification and remaining gates](docs/implementation/oct20-beta16-release.md). Windows is not included in this release.
+
 The active implementation continues from `p5-shell-and-ui` at the P5–P9 baseline. It includes a routed desktop shell, active-profile isolation, research and risk evidence surfaces, Coinbase read-only infrastructure, scheduler/recovery/reconciliation, and an authoritative paper-execution service.
 
 Paper proposals are system-generated rebalances only:

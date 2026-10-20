@@ -1,0 +1,13 @@
+import {mkdtempSync,rmSync,writeFileSync} from 'node:fs';import {tmpdir} from 'node:os';import {join} from 'node:path';import {spawnSync} from 'node:child_process';
+import {extractFile} from '/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/.pnpm/@electron+asar@3.4.1/node_modules/@electron/asar/lib/asar.js';
+const repository='/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto',root=mkdtempSync(join(tmpdir(),'coqui-beta16-dmg-')),data=mkdtempSync(join(tmpdir(),'coqui-beta16-dmg-data-'));let mounted=false;
+try{
+ const attach=spawnSync('hdiutil',['attach','-readonly','-nobrowse','-quiet','-mountpoint',root,join(repository,'apps/desktop/release/beta16-published-download/Coqui-0.1.0-beta.16-mac-arm64.dmg')],{encoding:'utf8',timeout:60000});if(attach.status!==0)throw Error('dmg_mount_failed');mounted=true;
+ const bundle=join(root,'Coqui.app'),build=JSON.parse(extractFile(join(bundle,'Contents/Resources/app.asar'),'dist/main/build-info.json').toString());if(build.sourceRevision!=='4c0caf6efbaee27c8c22ad184419af8e96114daa'||build.dirty||build.sourceHash!=='da161324d68a65c1d140ef0a05e493172cb805bcec9f7a675726eac8ccb5ad65')throw Error('dmg_identity_mismatch');
+ const sign=spawnSync('codesign',['--verify','--deep','--strict',bundle],{encoding:'utf8'});if(sign.status!==0)throw Error('dmg_signature_invalid');
+ const run=spawnSync(join(bundle,'Contents/MacOS/Coqui'),['--packaged-smoke',`--user-data-dir=${data}`],{encoding:'utf8',timeout:120000,env:{...process.env,COQUI_DATA_DIR:data}});const match=/COQUI_PACKAGED_SMOKE (\{.*\})/.exec(`${run.stdout??''}${run.stderr??''}`),result=match?JSON.parse(match[1]):null;if(run.status!==0||!result?.opened||!result?.workerLoaded||result?.schemaVersion!==94)throw Error('dmg_smoke_failed');
+ const proof={classification:'published_dmg_readonly_disposable_smoke',build,signatureVerified:true,readonlyMount:true,packagedSmoke:result,actualProfileOpened:false,installed:false,credentialsAccessed:false};writeFileSync(join(repository,'docs/implementation/evidence/beta16-release/dmg-verification.json'),JSON.stringify(proof,null,2)+'\n');console.log(JSON.stringify(proof));
+}finally{
+ if(mounted){const detach=spawnSync('hdiutil',['detach','-quiet',root],{encoding:'utf8',timeout:60000});if(detach.status!==0)throw Error('dmg_detach_failed');}
+ rmSync(root,{recursive:true,force:true});rmSync(data,{recursive:true,force:true});
+}

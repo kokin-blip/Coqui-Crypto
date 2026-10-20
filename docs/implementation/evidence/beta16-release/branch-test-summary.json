@@ -1,0 +1,9 @@
+{
+  "sourceRevision": "4c0caf6efbaee27c8c22ad184419af8e96114daa",
+  "source": "branch-verify.log",
+  "summaryLines": [
+    "verify\tTest\t2026-10-20T08:11:46.4340728Z  Test Files  271 passed (271)",
+    "verify\tTest\t2026-10-20T08:11:46.4351372Z       Tests  1815 passed (1815)",
+    "verify\tTest\t2026-10-20T08:11:46.4355840Z    Duration  349.58s (transform 5.61s, setup 0ms, import 106.82s, tests 209.12s, environment 30ms)"
+  ]
+}

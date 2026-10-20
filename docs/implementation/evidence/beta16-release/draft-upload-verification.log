@@ -1,0 +1,223 @@
+publish	Set up job	﻿2026-10-20T08:26:36.2073804Z Current runner version: '2.337.0'
+publish	Set up job	2026-10-20T08:26:36.2092828Z ##[group]Runner Image Provisioner
+publish	Set up job	2026-10-20T08:26:36.2093381Z Hosted Compute Agent
+publish	Set up job	2026-10-20T08:26:36.2093823Z Version: 20261012.601
+publish	Set up job	2026-10-20T08:26:36.2094236Z Commit: f3dc54e1fb89da6852db922499a0233137369e1d
+publish	Set up job	2026-10-20T08:26:36.2094662Z Build Date: 2026-10-12T17:48:21Z
+publish	Set up job	2026-10-20T08:26:36.2095138Z Worker ID: {085dd8ea-52f4-47c5-9a62-cb6a45afc6d8}
+publish	Set up job	2026-10-20T08:26:36.2095568Z Region: southcentralus
+publish	Set up job	2026-10-20T08:26:36.2095942Z Cloud: Azure
+publish	Set up job	2026-10-20T08:26:36.2096324Z ##[endgroup]
+publish	Set up job	2026-10-20T08:26:36.2097394Z ##[group]Operating System
+publish	Set up job	2026-10-20T08:26:36.2097963Z Ubuntu
+publish	Set up job	2026-10-20T08:26:36.2098279Z 24.04.5
+publish	Set up job	2026-10-20T08:26:36.2098642Z LTS
+publish	Set up job	2026-10-20T08:26:36.2099000Z ##[endgroup]
+publish	Set up job	2026-10-20T08:26:36.2099334Z ##[group]Runner Image
+publish	Set up job	2026-10-20T08:26:36.2099723Z Image: ubuntu-24.04
+publish	Set up job	2026-10-20T08:26:36.2100065Z Version: 20261012.334.1
+publish	Set up job	2026-10-20T08:26:36.2100675Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261012.334/images/ubuntu/Ubuntu2404-Readme.md
+publish	Set up job	2026-10-20T08:26:36.2101767Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261012.334
+publish	Set up job	2026-10-20T08:26:36.2102357Z ##[endgroup]
+publish	Set up job	2026-10-20T08:26:36.2103023Z ##[group]GITHUB_TOKEN Permissions
+publish	Set up job	2026-10-20T08:26:36.2104370Z Contents: write
+publish	Set up job	2026-10-20T08:26:36.2104761Z Metadata: read
+publish	Set up job	2026-10-20T08:26:36.2105347Z ##[endgroup]
+publish	Set up job	2026-10-20T08:26:36.2106721Z Secret source: Actions
+publish	Set up job	2026-10-20T08:26:36.2107270Z Cache mode: write
+publish	Set up job	2026-10-20T08:26:36.2107938Z Prepare workflow directory
+publish	Set up job	2026-10-20T08:26:36.2836859Z Prepare all required actions
+publish	Set up job	2026-10-20T08:26:36.2879835Z Getting action download info
+publish	Set up job	2026-10-20T08:26:36.5260231Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+publish	Set up job	2026-10-20T08:26:36.8834169Z Download action repository 'actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53' (SHA:018cc2cf5baa6db3ef3c5f8a56943fffe632ef53)
+publish	Set up job	2026-10-20T08:26:37.8989835Z Complete job name: publish
+publish	Check out repository	﻿2026-10-20T08:26:37.9593919Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+publish	Check out repository	2026-10-20T08:26:37.9595025Z with:
+publish	Check out repository	2026-10-20T08:26:37.9595620Z   repository: kokin-blip/Coqui-Crypto
+publish	Check out repository	2026-10-20T08:26:37.9601332Z   token: ***
+publish	Check out repository	2026-10-20T08:26:37.9601876Z   ssh-strict: true
+publish	Check out repository	2026-10-20T08:26:37.9602431Z   ssh-user: git
+publish	Check out repository	2026-10-20T08:26:37.9603003Z   persist-credentials: true
+publish	Check out repository	2026-10-20T08:26:37.9603624Z   clean: true
+publish	Check out repository	2026-10-20T08:26:37.9604200Z   sparse-checkout-cone-mode: true
+publish	Check out repository	2026-10-20T08:26:37.9604874Z   fetch-depth: 1
+publish	Check out repository	2026-10-20T08:26:37.9605428Z   fetch-tags: false
+publish	Check out repository	2026-10-20T08:26:37.9605984Z   show-progress: true
+publish	Check out repository	2026-10-20T08:26:37.9606552Z   lfs: false
+publish	Check out repository	2026-10-20T08:26:37.9607080Z   submodules: false
+publish	Check out repository	2026-10-20T08:26:37.9607944Z   set-safe-directory: true
+publish	Check out repository	2026-10-20T08:26:37.9608900Z   allow-unsafe-pr-checkout: false
+publish	Check out repository	2026-10-20T08:26:37.9610026Z ##[endgroup]
+publish	Check out repository	2026-10-20T08:26:38.0362825Z Syncing repository: kokin-blip/Coqui-Crypto
+publish	Check out repository	2026-10-20T08:26:38.0365676Z ##[group]Getting Git version info
+publish	Check out repository	2026-10-20T08:26:38.0367062Z Working directory is '/home/runner/work/Coqui-Crypto/Coqui-Crypto'
+publish	Check out repository	2026-10-20T08:26:38.0369296Z [command]/usr/bin/git version
+publish	Check out repository	2026-10-20T08:26:38.0402296Z git version 2.55.0
+publish	Check out repository	2026-10-20T08:26:38.0422966Z ##[endgroup]
+publish	Check out repository	2026-10-20T08:26:38.0431164Z Temporarily overriding HOME='/home/runner/work/_temp/e20158a4-cdcc-4815-b003-7e39585f2c2b' before making global git config changes
+publish	Check out repository	2026-10-20T08:26:38.0434004Z Adding repository directory to the temporary git global config as a safe directory
+publish	Check out repository	2026-10-20T08:26:38.0436206Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Coqui-Crypto/Coqui-Crypto
+publish	Check out repository	2026-10-20T08:26:38.0483705Z Deleting the contents of '/home/runner/work/Coqui-Crypto/Coqui-Crypto'
+publish	Check out repository	2026-10-20T08:26:38.0486226Z ##[group]Determining repository object format
+publish	Check out repository	2026-10-20T08:26:38.0488160Z ##[endgroup]
+publish	Check out repository	2026-10-20T08:26:38.0489624Z ##[group]Initializing the repository
+publish	Check out repository	2026-10-20T08:26:38.0491075Z [command]/usr/bin/git init /home/runner/work/Coqui-Crypto/Coqui-Crypto
+publish	Check out repository	2026-10-20T08:26:38.0591518Z hint: Using 'master' as the name for the initial branch. This default branch name
+publish	Check out repository	2026-10-20T08:26:38.0593801Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+publish	Check out repository	2026-10-20T08:26:38.0596328Z hint: to use in all of your new repositories, which will suppress this warning,
+publish	Check out repository	2026-10-20T08:26:38.0598007Z hint: call:
+publish	Check out repository	2026-10-20T08:26:38.0598895Z hint:
+publish	Check out repository	2026-10-20T08:26:38.0600377Z hint: 	git config --global init.defaultBranch <name>
+publish	Check out repository	2026-10-20T08:26:38.0601680Z hint:
+publish	Check out repository	2026-10-20T08:26:38.0602649Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+publish	Check out repository	2026-10-20T08:26:38.0603888Z hint: 'development'. The just-created branch can be renamed via this command:
+publish	Check out repository	2026-10-20T08:26:38.0604867Z hint:
+publish	Check out repository	2026-10-20T08:26:38.0605422Z hint: 	git branch -m <name>
+publish	Check out repository	2026-10-20T08:26:38.0606016Z hint:
+publish	Check out repository	2026-10-20T08:26:38.0606832Z hint: Disable this message with "git config set advice.defaultBranchName false"
+publish	Check out repository	2026-10-20T08:26:38.0608546Z Initialized empty Git repository in /home/runner/work/Coqui-Crypto/Coqui-Crypto/.git/
+publish	Check out repository	2026-10-20T08:26:38.0610993Z [command]/usr/bin/git remote add origin https://github.com/kokin-blip/Coqui-Crypto
+publish	Check out repository	2026-10-20T08:26:38.0665008Z ##[endgroup]
+publish	Check out repository	2026-10-20T08:26:38.0666592Z ##[group]Disabling automatic garbage collection
+publish	Check out repository	2026-10-20T08:26:38.0668174Z [command]/usr/bin/git config --local gc.auto 0
+publish	Check out repository	2026-10-20T08:26:38.0701727Z ##[endgroup]
+publish	Check out repository	2026-10-20T08:26:38.0703218Z ##[group]Setting up auth
+publish	Check out repository	2026-10-20T08:26:38.0704536Z Removing SSH command configuration
+publish	Check out repository	2026-10-20T08:26:38.0706882Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+publish	Check out repository	2026-10-20T08:26:38.0742956Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+publish	Check out repository	2026-10-20T08:26:38.1040549Z Removing HTTP extra header
+publish	Check out repository	2026-10-20T08:26:38.1044352Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+publish	Check out repository	2026-10-20T08:26:38.1075725Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+publish	Check out repository	2026-10-20T08:26:38.1256611Z Removing includeIf entries pointing to credentials config files
+publish	Check out repository	2026-10-20T08:26:38.1260689Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+publish	Check out repository	2026-10-20T08:26:38.1292095Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+publish	Check out repository	2026-10-20T08:26:38.1480873Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-55bb9ef0-0dae-406d-9a6b-cb5ea2474bbd.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+publish	Check out repository	2026-10-20T08:26:38.1514250Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Coqui-Crypto/Coqui-Crypto/.git.path /home/runner/work/_temp/git-credentials-55bb9ef0-0dae-406d-9a6b-cb5ea2474bbd.config
+publish	Check out repository	2026-10-20T08:26:38.1542949Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Coqui-Crypto/Coqui-Crypto/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-55bb9ef0-0dae-406d-9a6b-cb5ea2474bbd.config
+publish	Check out repository	2026-10-20T08:26:38.1573499Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-55bb9ef0-0dae-406d-9a6b-cb5ea2474bbd.config
+publish	Check out repository	2026-10-20T08:26:38.1602390Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-55bb9ef0-0dae-406d-9a6b-cb5ea2474bbd.config
+publish	Check out repository	2026-10-20T08:26:38.1629468Z ##[endgroup]
+publish	Check out repository	2026-10-20T08:26:38.1630409Z ##[group]Fetching the repository
+publish	Check out repository	2026-10-20T08:26:38.1634543Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +refs/tags/experimental-v0.1.0-beta.16:refs/tags/experimental-v0.1.0-beta.16
+publish	Check out repository	2026-10-20T08:26:41.7920837Z From https://github.com/kokin-blip/Coqui-Crypto
+publish	Check out repository	2026-10-20T08:26:41.7922199Z  * [new tag]         experimental-v0.1.0-beta.16 -> experimental-v0.1.0-beta.16
+publish	Check out repository	2026-10-20T08:26:41.7927722Z [command]/usr/bin/git tag --list experimental-v0.1.0-beta.16
+publish	Check out repository	2026-10-20T08:26:41.7954546Z experimental-v0.1.0-beta.16
+publish	Check out repository	2026-10-20T08:26:41.7960548Z [command]/usr/bin/git rev-parse refs/tags/experimental-v0.1.0-beta.16^{commit}
+publish	Check out repository	2026-10-20T08:26:41.7983962Z 4c0caf6efbaee27c8c22ad184419af8e96114daa
+publish	Check out repository	2026-10-20T08:26:41.7986985Z ##[endgroup]
+publish	Check out repository	2026-10-20T08:26:41.7987405Z ##[group]Determining the checkout info
+publish	Check out repository	2026-10-20T08:26:41.7990763Z ##[endgroup]
+publish	Check out repository	2026-10-20T08:26:41.7996720Z [command]/usr/bin/git sparse-checkout disable
+publish	Check out repository	2026-10-20T08:26:41.8033233Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+publish	Check out repository	2026-10-20T08:26:41.8060271Z ##[group]Checking out the ref
+publish	Check out repository	2026-10-20T08:26:41.8062819Z [command]/usr/bin/git checkout --progress --force refs/tags/experimental-v0.1.0-beta.16
+publish	Check out repository	2026-10-20T08:26:42.2181825Z Note: switching to 'refs/tags/experimental-v0.1.0-beta.16'.
+publish	Check out repository	2026-10-20T08:26:42.2188258Z 
+publish	Check out repository	2026-10-20T08:26:42.2188672Z You are in 'detached HEAD' state. You can look around, make experimental
+publish	Check out repository	2026-10-20T08:26:42.2189181Z changes and commit them, and you can discard any commits you make in this
+publish	Check out repository	2026-10-20T08:26:42.2189529Z state without impacting any branches by switching back to a branch.
+publish	Check out repository	2026-10-20T08:26:42.2189692Z 
+publish	Check out repository	2026-10-20T08:26:42.2189823Z If you want to create a new branch to retain commits you create, you may
+publish	Check out repository	2026-10-20T08:26:42.2190302Z do so (now or later) by using -c with the switch command. Example:
+publish	Check out repository	2026-10-20T08:26:42.2190598Z 
+publish	Check out repository	2026-10-20T08:26:42.2190821Z   git switch -c <new-branch-name>
+publish	Check out repository	2026-10-20T08:26:42.2190991Z 
+publish	Check out repository	2026-10-20T08:26:42.2191153Z Or undo this operation with:
+publish	Check out repository	2026-10-20T08:26:42.2191356Z 
+publish	Check out repository	2026-10-20T08:26:42.2193603Z   git switch -
+publish	Check out repository	2026-10-20T08:26:42.2193995Z 
+publish	Check out repository	2026-10-20T08:26:42.2194223Z Turn off this advice by setting config variable advice.detachedHead to false
+publish	Check out repository	2026-10-20T08:26:42.2194548Z 
+publish	Check out repository	2026-10-20T08:26:42.2195044Z HEAD is now at 4c0caf6 Prepare macOS-only beta.16 release and commit review artifacts
+publish	Check out repository	2026-10-20T08:26:42.2210504Z ##[endgroup]
+publish	Check out repository	2026-10-20T08:26:42.2252988Z [command]/usr/bin/git log -1 --format=%H
+publish	Check out repository	2026-10-20T08:26:42.2278712Z 4c0caf6efbaee27c8c22ad184419af8e96114daa
+publish	Download artifacts	﻿2026-10-20T08:26:42.2513588Z ##[group]Run actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53
+publish	Download artifacts	2026-10-20T08:26:42.2513870Z with:
+publish	Download artifacts	2026-10-20T08:26:42.2513985Z   path: artifacts
+publish	Download artifacts	2026-10-20T08:26:42.2514142Z   merge-multiple: true
+publish	Download artifacts	2026-10-20T08:26:42.2514278Z   repository: kokin-blip/Coqui-Crypto
+publish	Download artifacts	2026-10-20T08:26:42.2514427Z   run-id: 39392051731
+publish	Download artifacts	2026-10-20T08:26:42.2514547Z ##[endgroup]
+publish	Download artifacts	2026-10-20T08:26:42.3665343Z (node:2100) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+publish	Download artifacts	2026-10-20T08:26:42.3666049Z (Use `node --trace-deprecation ...` to show where the warning was created)
+publish	Download artifacts	2026-10-20T08:26:42.5398142Z Found 1 artifact(s)
+publish	Download artifacts	2026-10-20T08:26:42.5398778Z No input name, artifact-ids or pattern filtered specified, downloading all artifacts
+publish	Download artifacts	2026-10-20T08:26:42.5399178Z Preparing to download the following artifacts:
+publish	Download artifacts	2026-10-20T08:26:42.5399730Z - coqui-macos-arm64 (ID: 12250208781, Size: 362492860, Expected Digest: sha256:9c3507ae476559db1868245ef442782f401c5fdd8ffab0218f20c6d8daa3aead)
+publish	Download artifacts	2026-10-20T08:26:42.7281614Z Redirecting to blob download url: https://productionresultssa16.blob.core.windows.net/actions-results/d953b1a7-fe1f-823f-bc64-6f07068a80d6/workflow-job-run-3cff392f-3a81-57be-adc6-b6150149042b/artifacts/8548b6e18f5dc3aa57a6ed48001fca704041d39b9a26709b0522595b28c0b1de.zip
+publish	Download artifacts	2026-10-20T08:26:42.7282387Z Starting download of artifact to: /home/runner/work/Coqui-Crypto/Coqui-Crypto/artifacts
+publish	Download artifacts	2026-10-20T08:26:42.9458452Z (node:2100) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+publish	Download artifacts	2026-10-20T08:26:49.2963456Z SHA256 digest of downloaded artifact is 9c3507ae476559db1868245ef442782f401c5fdd8ffab0218f20c6d8daa3aead
+publish	Download artifacts	2026-10-20T08:26:49.2964044Z Artifact download completed successfully.
+publish	Download artifacts	2026-10-20T08:26:49.2964309Z Total of 1 artifact(s) downloaded
+publish	Download artifacts	2026-10-20T08:26:49.2969044Z Download artifact has finished successfully
+publish	Combine checksums	﻿2026-10-20T08:26:49.3160546Z ##[group]Run cd artifacts
+publish	Combine checksums	2026-10-20T08:26:49.3160767Z ^[[36;1mcd artifacts^[[0m
+publish	Combine checksums	2026-10-20T08:26:49.3160925Z ^[[36;1mcat SHA256SUMS-*.txt > SHA256SUMS.txt^[[0m
+publish	Combine checksums	2026-10-20T08:26:49.3161099Z ^[[36;1mrm SHA256SUMS-*.txt^[[0m
+publish	Combine checksums	2026-10-20T08:26:49.3161239Z ^[[36;1mcat SHA256SUMS.txt^[[0m
+publish	Combine checksums	2026-10-20T08:26:49.3406264Z shell: /usr/bin/bash -e {0}
+publish	Combine checksums	2026-10-20T08:26:49.3406461Z ##[endgroup]
+publish	Combine checksums	2026-10-20T08:26:49.3513186Z d65b94cc27e6f8aa2c669e682e3afe78c96221edd6fced566acf1a936f7bd7b6  Coqui-0.1.0-beta.16-mac-arm64.dmg
+publish	Combine checksums	2026-10-20T08:26:49.3513736Z 0f07832d073ffdf31e3754510326cb7f5a41ee88abdfa2ea229410f46059e0bd  Coqui-0.1.0-beta.16-mac-arm64.zip
+publish	Create release	﻿2026-10-20T08:26:49.3560112Z ##[group]Run release_notes="docs/RELEASE-NOTES-${GITHUB_REF_NAME#experimental-v0.1.0-}.md"
+publish	Create release	2026-10-20T08:26:49.3560493Z ^[[36;1mrelease_notes="docs/RELEASE-NOTES-${GITHUB_REF_NAME#experimental-v0.1.0-}.md"^[[0m
+publish	Create release	2026-10-20T08:26:49.3560819Z ^[[36;1mif [[ ! -f "$release_notes" ]]; then release_notes=docs/RELEASE-NOTES-TEMPLATE.md; fi^[[0m
+publish	Create release	2026-10-20T08:26:49.3561090Z ^[[36;1mgh release create "experimental-v0.1.0-beta.16" \^[[0m
+publish	Create release	2026-10-20T08:26:49.3561297Z ^[[36;1m  --repo "kokin-blip/Coqui-Crypto" \^[[0m
+publish	Create release	2026-10-20T08:26:49.3561486Z ^[[36;1m  --title "experimental-v0.1.0-beta.16" \^[[0m
+publish	Create release	2026-10-20T08:26:49.3561668Z ^[[36;1m  --notes-file "$release_notes" \^[[0m
+publish	Create release	2026-10-20T08:26:49.3561821Z ^[[36;1m  --draft \^[[0m
+publish	Create release	2026-10-20T08:26:49.3561949Z ^[[36;1m  artifacts/*^[[0m
+publish	Create release	2026-10-20T08:26:49.3610483Z shell: /usr/bin/bash -e {0}
+publish	Create release	2026-10-20T08:26:49.3610625Z env:
+publish	Create release	2026-10-20T08:26:49.3612167Z   GH_TOKEN: ***
+publish	Create release	2026-10-20T08:26:49.3612291Z ##[endgroup]
+publish	Create release	2026-10-20T08:26:59.1978857Z https://github.com/kokin-blip/Coqui-Crypto/releases/tag/untagged-969e0455d30a85f0f8d6
+publish	Verify the published assets	﻿2026-10-20T08:26:59.2361653Z ##[group]Run mkdir -p verify && cd verify
+publish	Verify the published assets	2026-10-20T08:26:59.2361994Z ^[[36;1mmkdir -p verify && cd verify^[[0m
+publish	Verify the published assets	2026-10-20T08:26:59.2362330Z ^[[36;1mgh release download "experimental-v0.1.0-beta.16" \^[[0m
+publish	Verify the published assets	2026-10-20T08:26:59.2362646Z ^[[36;1m  --repo "kokin-blip/Coqui-Crypto" --pattern '*' --clobber^[[0m
+publish	Verify the published assets	2026-10-20T08:26:59.2362853Z ^[[36;1mshasum -a 256 -c SHA256SUMS.txt^[[0m
+publish	Verify the published assets	2026-10-20T08:26:59.2414708Z shell: /usr/bin/bash -e {0}
+publish	Verify the published assets	2026-10-20T08:26:59.2414931Z env:
+publish	Verify the published assets	2026-10-20T08:26:59.2416476Z   GH_TOKEN: ***
+publish	Verify the published assets	2026-10-20T08:26:59.2416598Z ##[endgroup]
+publish	Verify the published assets	2026-10-20T08:27:04.2752286Z Coqui-0.1.0-beta.16-mac-arm64.dmg: OK
+publish	Verify the published assets	2026-10-20T08:27:04.6313408Z Coqui-0.1.0-beta.16-mac-arm64.zip: OK
+publish	Post Check out repository	﻿2026-10-20T08:27:04.6407675Z Post job cleanup.
+publish	Post Check out repository	2026-10-20T08:27:04.6924000Z [command]/usr/bin/git version
+publish	Post Check out repository	2026-10-20T08:27:04.6955065Z git version 2.55.0
+publish	Post Check out repository	2026-10-20T08:27:04.6981960Z Temporarily overriding HOME='/home/runner/work/_temp/91080def-f627-48a0-b545-4bc860a76c7a' before making global git config changes
+publish	Post Check out repository	2026-10-20T08:27:04.6982784Z Adding repository directory to the temporary git global config as a safe directory
+publish	Post Check out repository	2026-10-20T08:27:04.6985072Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Coqui-Crypto/Coqui-Crypto
+publish	Post Check out repository	2026-10-20T08:27:04.7012176Z Removing SSH command configuration
+publish	Post Check out repository	2026-10-20T08:27:04.7016469Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+publish	Post Check out repository	2026-10-20T08:27:04.7054653Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+publish	Post Check out repository	2026-10-20T08:27:04.7245819Z Removing HTTP extra header
+publish	Post Check out repository	2026-10-20T08:27:04.7250818Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+publish	Post Check out repository	2026-10-20T08:27:04.7282988Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+publish	Post Check out repository	2026-10-20T08:27:04.7479457Z Removing includeIf entries pointing to credentials config files
+publish	Post Check out repository	2026-10-20T08:27:04.7484824Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+publish	Post Check out repository	2026-10-20T08:27:04.7511464Z includeif.gitdir:/home/runner/work/Coqui-Crypto/Coqui-Crypto/.git.path
+publish	Post Check out repository	2026-10-20T08:27:04.7511789Z includeif.gitdir:/home/runner/work/Coqui-Crypto/Coqui-Crypto/.git/worktrees/*.path
+publish	Post Check out repository	2026-10-20T08:27:04.7512110Z includeif.gitdir:/github/workspace/.git.path
+publish	Post Check out repository	2026-10-20T08:27:04.7512469Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+publish	Post Check out repository	2026-10-20T08:27:04.7518337Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Coqui-Crypto/Coqui-Crypto/.git.path
+publish	Post Check out repository	2026-10-20T08:27:04.7540359Z /home/runner/work/_temp/git-credentials-55bb9ef0-0dae-406d-9a6b-cb5ea2474bbd.config
+publish	Post Check out repository	2026-10-20T08:27:04.7548048Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Coqui-Crypto/Coqui-Crypto/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-55bb9ef0\-0dae\-406d\-9a6b\-cb5ea2474bbd\.config
+publish	Post Check out repository	2026-10-20T08:27:04.7580089Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Coqui-Crypto/Coqui-Crypto/.git/worktrees/*.path
+publish	Post Check out repository	2026-10-20T08:27:04.7600880Z /home/runner/work/_temp/git-credentials-55bb9ef0-0dae-406d-9a6b-cb5ea2474bbd.config
+publish	Post Check out repository	2026-10-20T08:27:04.7606592Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Coqui-Crypto/Coqui-Crypto/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-55bb9ef0\-0dae\-406d\-9a6b\-cb5ea2474bbd\.config
+publish	Post Check out repository	2026-10-20T08:27:04.7636824Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+publish	Post Check out repository	2026-10-20T08:27:04.7658154Z /github/runner_temp/git-credentials-55bb9ef0-0dae-406d-9a6b-cb5ea2474bbd.config
+publish	Post Check out repository	2026-10-20T08:27:04.7663453Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-55bb9ef0\-0dae\-406d\-9a6b\-cb5ea2474bbd\.config
+publish	Post Check out repository	2026-10-20T08:27:04.7692329Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+publish	Post Check out repository	2026-10-20T08:27:04.7713176Z /github/runner_temp/git-credentials-55bb9ef0-0dae-406d-9a6b-cb5ea2474bbd.config
+publish	Post Check out repository	2026-10-20T08:27:04.7718843Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-55bb9ef0\-0dae\-406d\-9a6b\-cb5ea2474bbd\.config
+publish	Post Check out repository	2026-10-20T08:27:04.7748036Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+publish	Post Check out repository	2026-10-20T08:27:04.7919473Z Removing credentials config '/home/runner/work/_temp/git-credentials-55bb9ef0-0dae-406d-9a6b-cb5ea2474bbd.config'
+publish	Complete job	﻿2026-10-20T08:27:04.8042606Z Cleaning up orphan processes
+publish	Complete job	2026-10-20T08:27:04.8250305Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

@@ -1,0 +1,33 @@
+{
+  "classification": "downloaded_macos_arm64_disposable_smoke",
+  "build": {
+    "version": "0.1.0-beta.16",
+    "sourceRevision": "4c0caf6efbaee27c8c22ad184419af8e96114daa",
+    "dirty": false,
+    "sourceHash": "da161324d68a65c1d140ef0a05e493172cb805bcec9f7a675726eac8ccb5ad65",
+    "channel": "beta-candidate",
+    "builtAtMs": 1792484566202
+  },
+  "checksums": [
+    {
+      "sha256": "d65b94cc27e6f8aa2c669e682e3afe78c96221edd6fced566acf1a936f7bd7b6",
+      "name": "Coqui-0.1.0-beta.16-mac-arm64.dmg"
+    },
+    {
+      "sha256": "0f07832d073ffdf31e3754510326cb7f5a41ee88abdfa2ea229410f46059e0bd",
+      "name": "Coqui-0.1.0-beta.16-mac-arm64.zip"
+    }
+  ],
+  "signatureVerified": true,
+  "packagedSmoke": {
+    "opened": true,
+    "schemaVersion": 94,
+    "workerLoaded": true,
+    "error": null
+  },
+  "exitCode": 0,
+  "actualProfileOpened": false,
+  "credentialsAccessed": false,
+  "installed": false,
+  "liveExecutionEnabled": false
+}

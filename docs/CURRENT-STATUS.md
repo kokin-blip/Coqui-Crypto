@@ -1,31 +1,21 @@
 # Current implementation status
 
-This index supersedes current-state claims in older handoffs. Dated study reports
-remain historical evidence. The reliability branch is local implementation,
-requires review and does not certify integrations, recovery or release.
+[Experimental beta.16](https://github.com/kokin-blip/Coqui-Crypto/releases/tag/experimental-v0.1.0-beta.16) is published for **macOS Apple Silicon arm64 only**. Release source: [4c0caf6efbaee27c8c22ad184419af8e96114daa](https://github.com/kokin-blip/Coqui-Crypto/commit/4c0caf6efbaee27c8c22ad184419af8e96114daa). The integrated branch includes the inspected #8–13 heads; main and the stacked PRs were not merged. Publication is distinct from human, connected-account, research and actual-profile certification.
 
-- Baseline candidate: `487431cb04ff93213c065bcd1c412968c3fbd1b4`.
-- Review stack: draft PRs #8/#9/#10 were open at reconciliation; beta.16 was not published.
-- Original source-review identifiers: F01–F14, with F12A/B and F14A/B subdivisions.
-- [Package ledger and validation boundaries](implementation/workstation-ledger.md).
-- [Exact approved implementation prompt](implementation/workstation-prompt.md).
+- [October 20 release receipt, downloads and exact-source CI](implementation/oct20-beta16-release.md).
+- [October 19 implementation delivery and acceptance gates](implementation/oct19-delivery.md).
+- [Measured startup, Ionic loading and completed synthetic retention workload](implementation/oct19-measurements.md).
+- [Specific remaining owner-session scopes](implementation/oct19-owner-sessions.md).
+- Original source-review identifiers remain F01–F14, including F12A/B and F14A/B.
+- [Historical workstation package ledger](implementation/workstation-ledger.md).
+- [Original workstation implementation prompt](implementation/workstation-prompt.md).
 - [Operational proof protocols and deferred opportunities](implementation/operational-protocols.md).
 - [Installation and isolated recovery guidance](INSTALL.md).
-- [October 9 news rollout evidence](studies/news-intelligence-rollout-2026-10-09.md).
+- [Historical October 9 news rollout evidence](studies/news-intelligence-rollout-2026-10-09.md).
 - [Spread-floor qualification blocker](studies/trendvol-spread-floor-v1-2026-10-03.md).
 
-Study installation no longer registers the shipped legacy plan. Retired identity
-is displayed as incompatible. Existing observations are preserved and cannot
-qualify a changed executable. No replacement study, holdout read, promotion or
-prospective start-date change is authorized by this implementation.
+Schema 94 preserves earlier immutable diagnostics, report associations and export permissions, and adds explicit append-only report-location selections. Clones exclude report locations before associations/permissions and require independent authority. Preserve backups, metadata and referenced report/archive files; a DB-only proof does not certify a complete restore. Release validation used disposable data and did not migrate or restore actual profiles.
 
-Schema 92 adds immutable numeric ingestion diagnostics and explicit validated
-news report associations. Schema 93 adds immutable, scoped export permission
-records; grants and report associations are excluded from profile clones.
-Only disposable test databases have been migrated. Do not open a schema-93
-database with an older executable. No actual export permission has been granted.
+Installation does not register a study. Existing observations and trial history remain preserved. No qualifying remediation registration was found in the authorized October 19 metadata inspection; uninspected stores remain unknown. The original proposal is unchanged, and its original window cannot qualify from that evidence. The separate future proposal remains unregistered with dates/profile/approval pending owner selection. No sealed performance body, holdout, promotion or prospective date was changed.
 
-External evidence stays open: cold macOS VoiceOver, real-market stutter and soak,
-licensed useful provider observations, connected Alpaca paper recovery,
-actual-profile restore certification, review/branch enforcement, merged artifact
-verification and publication. Local fixtures and CI are not substitutes.
+External evidence remains open: human VoiceOver/high contrast, actual-market lag and other hardware, natural useful provider observations and rights, connected paper recovery, representative actual-profile/installed restore, effective branch safeguards and human review. Windows release artifacts are intentionally deferred for beta.16. Successful publication, fixtures and CI do not close these gates. Dated reports retain their original historical status.

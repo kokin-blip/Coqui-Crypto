@@ -1,0 +1,96 @@
+{
+  "commit": "4c0caf6efbaee27c8c22ad184419af8e96114daa",
+  "files": [
+    {
+      "path": "output/pdf/coqui-app-review-deep-research-2026-10-09.pdf",
+      "sha256": "5c3339086012bd27ccc2f17358f004612d8928d2464104c51b82e17c756ba105",
+      "committedBytesMatchOriginal": true
+    },
+    {
+      "path": "output/pdf/coqui-app-review-evidence-2026-10-09.zip",
+      "sha256": "25558ed64780e02155f31a9e465fa05294036227e64e5fab804aa5153b728647",
+      "committedBytesMatchOriginal": true
+    },
+    {
+      "path": "docs/audit/coqui-app-review-2026-10-09/04-connections.png",
+      "sha256": "7a88bf97213a29d17e8612861c15d70cffe3990c2450aa959e7b1d1f3f8839d2",
+      "committedBytesMatchOriginal": true
+    },
+    {
+      "path": "docs/audit/coqui-app-review-2026-10-09/11-operations.png",
+      "sha256": "8e4e64fa8a3c62fe56a495da68b05eee8e3ed6c9b3f065770b086e127a2bf112",
+      "committedBytesMatchOriginal": true
+    },
+    {
+      "path": "docs/audit/coqui-app-review-2026-10-09/06-reconciliation.png",
+      "sha256": "6251d7933b6c155622c58d1ae08ee1232f5b3d0a93434524be87583c59d7057c",
+      "committedBytesMatchOriginal": true
+    },
+    {
+      "path": "docs/audit/coqui-app-review-2026-10-09/02-terminal-laptop.png",
+      "sha256": "7f01f773a9c6c23a9961385d32db3c507ab2faaa0fcbc13cca7351f7a31b423f",
+      "committedBytesMatchOriginal": true
+    },
+    {
+      "path": "docs/audit/coqui-app-review-2026-10-09/13-risk.png",
+      "sha256": "bd7d7ecb3db4ba8123d169c9fcc064a99d40fa41fedbfa4f4f110453a7ff6217",
+      "committedBytesMatchOriginal": true
+    },
+    {
+      "path": "docs/audit/coqui-app-review-2026-10-09/evidence-manifest.json",
+      "sha256": "434f9d54727239fb3750861f5618ddc469a55c2269813efba05c3df88966b5a8",
+      "committedBytesMatchOriginal": true
+    },
+    {
+      "path": "docs/audit/coqui-app-review-2026-10-09/07-paper.png",
+      "sha256": "046143677e53b6e7f5ff8d5319a537b5c96680dbfefc808a1896d20721d33a6b",
+      "committedBytesMatchOriginal": true
+    },
+    {
+      "path": "docs/audit/coqui-app-review-2026-10-09/03-terminal-wide.png",
+      "sha256": "835ff39354fa96114d21bbd676ad68c6eac1f294204f80395a50f4aa4e66d1b7",
+      "committedBytesMatchOriginal": true
+    },
+    {
+      "path": "docs/audit/coqui-app-review-2026-10-09/12-performance.png",
+      "sha256": "f41148fd5d1b2e898865809cc2a8e21a56f9b23fe1272f1b5eb3be3587ba7775",
+      "committedBytesMatchOriginal": true
+    },
+    {
+      "path": "docs/audit/coqui-app-review-2026-10-09/static-detector.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "committedBytesMatchOriginal": true
+    },
+    {
+      "path": "docs/audit/coqui-app-review-2026-10-09/14-research-zoom.png",
+      "sha256": "2fdef3a0aec4acfd76a30b195c3eea073586686b428d75a5bb8f3da379368bbb",
+      "committedBytesMatchOriginal": true
+    },
+    {
+      "path": "docs/audit/coqui-app-review-2026-10-09/08-research.png",
+      "sha256": "8f1362f6260312ad17714c3e69b177119e76925bf6e45296e6be524111775d34",
+      "committedBytesMatchOriginal": true
+    },
+    {
+      "path": "docs/audit/coqui-app-review-2026-10-09/09-news.png",
+      "sha256": "869760d892b63a1257fd3ba00d6853bd6186dd1fa771882fe3a8534a025f6b33",
+      "committedBytesMatchOriginal": true
+    },
+    {
+      "path": "docs/audit/coqui-app-review-2026-10-09/05-portfolio.png",
+      "sha256": "aa1cb927100ba40a45bd5fce9719712df3bb3708246f8af864c03ddf99e6edef",
+      "committedBytesMatchOriginal": true
+    },
+    {
+      "path": "docs/audit/coqui-app-review-2026-10-09/01-setup.png",
+      "sha256": "617a311447930329b8764b5c1690c1b23fd4f04b5ca5f12bba95358d0af49b10",
+      "committedBytesMatchOriginal": true
+    },
+    {
+      "path": "docs/audit/coqui-app-review-2026-10-09/10-news-health.png",
+      "sha256": "5bdc4acd63fd6bf809a6366339b0ed3763dda47f4b14399b2089fd5a6c8439d5",
+      "committedBytesMatchOriginal": true
+    }
+  ],
+  "zipPdfMatchesStandalone": true
+}

@@ -1,0 +1,490 @@
+build (macos-latest, package:mac, macos-arm64)	Set up job	﻿2026-10-20T08:21:20.0558960Z Current runner version: '2.337.0'
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0582920Z ##[group]Runner Image Provisioner
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0583750Z Hosted Compute Agent
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0584220Z Version: 20261012.601
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0584710Z Commit: f3dc54e1fb89da6852db922499a0233137369e1d
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0585480Z Build Date: 2026-10-12T17:48:21Z
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0586120Z Worker ID: {8be4f527-301f-40f4-ad5d-a1c7de5a437e}
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0586630Z Region: westus
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0587030Z Cloud: MacCloud
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0587450Z ##[endgroup]
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0588590Z ##[group]Operating System
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0589020Z macOS
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0589360Z 26.6.2
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0589700Z 25G83
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0590070Z ##[endgroup]
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0590590Z ##[group]Runner Image
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0591060Z Image: macos-26-arm64
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0591470Z Version: 20261013.0424.1
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0592390Z Included Software: https://github.com/actions/runner-images/blob/macos-26-arm64/20261013.0424/images/macos/macos-26-arm64-Readme.md
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0593850Z Image Release: https://github.com/actions/runner-images/releases/tag/macos-26-arm64%2F20261013.0424
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0594650Z ##[endgroup]
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0595510Z ##[group]GITHUB_TOKEN Permissions
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0597530Z Contents: read
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0597920Z Metadata: read
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0598320Z ##[endgroup]
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0600170Z Secret source: Actions
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0600800Z Cache mode: write
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.0601290Z Prepare workflow directory
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.1144750Z Prepare all required actions
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.1217440Z Getting action download info
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:20.5899260Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:21.0397130Z Download action repository 'pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271' (SHA:0ebf47130e4866e96fce0953f49152a61190b271)
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:21.5035800Z Download action repository 'actions/setup-node@820762786026740c76f36085b0efc47a31fe5020' (SHA:820762786026740c76f36085b0efc47a31fe5020)
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:21.6839370Z Download action repository 'actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4' (SHA:330a01c490aca151604b8cf639adc76d48f6c5d4)
+build (macos-latest, package:mac, macos-arm64)	Set up job	2026-10-20T08:21:21.9890740Z Complete job name: build (macos-latest, package:mac, macos-arm64)
+build (macos-latest, package:mac, macos-arm64)	Check out repository	﻿2026-10-20T08:21:22.0904660Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.0905850Z with:
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.0906490Z   repository: kokin-blip/Coqui-Crypto
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.0912290Z   token: ***
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.0912880Z   ssh-strict: true
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.0913480Z   ssh-user: git
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.0914100Z   persist-credentials: true
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.0914770Z   clean: true
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.0915380Z   sparse-checkout-cone-mode: true
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.0916110Z   fetch-depth: 1
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.0916710Z   fetch-tags: false
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.0917490Z   show-progress: true
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.0918120Z   lfs: false
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.0918690Z   submodules: false
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.0919320Z   set-safe-directory: true
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.0920030Z   allow-unsafe-pr-checkout: false
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.0921040Z ##[endgroup]
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.7581890Z Syncing repository: kokin-blip/Coqui-Crypto
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.7589360Z ##[group]Getting Git version info
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.7592310Z Working directory is '/Users/runner/work/Coqui-Crypto/Coqui-Crypto'
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.7596880Z [command]/opt/homebrew/bin/git version
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.7964390Z git version 2.56.0
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.7997580Z ##[endgroup]
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8005120Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/eac18f0b-3e4c-4a39-9587-6ae658079a75/.gitconfig'
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8016480Z Temporarily overriding HOME='/Users/runner/work/_temp/eac18f0b-3e4c-4a39-9587-6ae658079a75' before making global git config changes
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8018560Z Adding repository directory to the temporary git global config as a safe directory
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8024930Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/Coqui-Crypto/Coqui-Crypto
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8218030Z Deleting the contents of '/Users/runner/work/Coqui-Crypto/Coqui-Crypto'
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8231510Z ##[group]Determining repository object format
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8234700Z ##[endgroup]
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8236010Z ##[group]Initializing the repository
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8237150Z [command]/opt/homebrew/bin/git init /Users/runner/work/Coqui-Crypto/Coqui-Crypto
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8648320Z hint: Using 'master' as the name for the initial branch. This default branch name
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8650030Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8651420Z hint: to use in all of your new repositories, which will suppress this warning,
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8652460Z hint: call:
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8653010Z hint:
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8653870Z hint: 	git config --global init.defaultBranch <name>
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8654710Z hint:
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8655470Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8656700Z hint: 'development'. The just-created branch can be renamed via this command:
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8657690Z hint:
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8658280Z hint: 	git branch -m <name>
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8659000Z hint:
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8659880Z hint: Disable this message with "git config set advice.defaultBranchName false"
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8682410Z Initialized empty Git repository in /Users/runner/work/Coqui-Crypto/Coqui-Crypto/.git/
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8700370Z [command]/opt/homebrew/bin/git remote add origin https://github.com/kokin-blip/Coqui-Crypto
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8821780Z ##[endgroup]
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8825380Z ##[group]Disabling automatic garbage collection
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8828180Z [command]/opt/homebrew/bin/git config --local gc.auto 0
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8952160Z ##[endgroup]
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8955210Z ##[group]Setting up auth
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8956120Z Removing SSH command configuration
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.8957250Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:22.9053050Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:23.0895290Z Removing HTTP extra header
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:23.0899140Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:23.0974260Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:23.2617700Z Removing includeIf entries pointing to credentials config files
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:23.2625390Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:23.2720890Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:23.6296530Z [command]/opt/homebrew/bin/git config --file /Users/runner/work/_temp/git-credentials-cb7106ca-7742-401f-8d98-ea3de64f7dc5.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:23.6299470Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/Users/runner/work/Coqui-Crypto/Coqui-Crypto/.git.path /Users/runner/work/_temp/git-credentials-cb7106ca-7742-401f-8d98-ea3de64f7dc5.config
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:23.6301720Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/Users/runner/work/Coqui-Crypto/Coqui-Crypto/.git/worktrees/*.path /Users/runner/work/_temp/git-credentials-cb7106ca-7742-401f-8d98-ea3de64f7dc5.config
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:23.6440520Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-cb7106ca-7742-401f-8d98-ea3de64f7dc5.config
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:23.6601650Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-cb7106ca-7742-401f-8d98-ea3de64f7dc5.config
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:23.6703700Z ##[endgroup]
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:23.6704420Z ##[group]Fetching the repository
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:23.6709570Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +refs/tags/experimental-v0.1.0-beta.16:refs/tags/experimental-v0.1.0-beta.16
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:28.0610330Z From https://github.com/kokin-blip/Coqui-Crypto
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:28.0611700Z  * [new tag]         experimental-v0.1.0-beta.16 -> experimental-v0.1.0-beta.16
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:28.0719020Z [command]/opt/homebrew/bin/git tag --list experimental-v0.1.0-beta.16
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:28.0882020Z experimental-v0.1.0-beta.16
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:28.0898660Z [command]/opt/homebrew/bin/git rev-parse refs/tags/experimental-v0.1.0-beta.16^{commit}
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:28.1019900Z 4c0caf6efbaee27c8c22ad184419af8e96114daa
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:28.1059410Z ##[endgroup]
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:28.1136740Z ##[group]Determining the checkout info
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:28.1212950Z ##[endgroup]
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:28.1214970Z [command]/opt/homebrew/bin/git sparse-checkout disable
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:28.1306710Z [command]/opt/homebrew/bin/git config --local --unset-all extensions.worktreeConfig
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:28.1394010Z ##[group]Checking out the ref
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:28.1399230Z [command]/opt/homebrew/bin/git checkout --progress --force refs/tags/experimental-v0.1.0-beta.16
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:29.2248820Z HEAD is now at 4c0caf6 Prepare macOS-only beta.16 release and commit review artifacts
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:29.2265550Z ##[endgroup]
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:29.2442850Z [command]/opt/homebrew/bin/git log -1 --format=%H
+build (macos-latest, package:mac, macos-arm64)	Check out repository	2026-10-20T08:21:29.2546050Z 4c0caf6efbaee27c8c22ad184419af8e96114daa
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	﻿2026-10-20T08:21:29.5673060Z ##[group]Run pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:29.5673800Z with:
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:29.5674140Z   dest: ~/setup-pnpm
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:29.5674730Z   run_install: null
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:29.5674930Z   cache: false
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:29.5675120Z   cache_dependency_path: pnpm-lock.yaml
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:29.5675840Z   package_json_file: package.json
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:29.5676790Z   standalone: false
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:29.5677590Z ##[endgroup]
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:29.9780460Z ##[group]Running self-installer...
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:32.6509280Z 
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:32.6532860Z added 1 package, and audited 2 packages in 2s
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:32.6536020Z 
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:32.6536590Z 1 package is looking for funding
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:32.6537410Z   run `npm fund` for details
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:32.6613700Z 
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:32.6615290Z 1 high severity vulnerability
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:32.6615860Z 
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:32.6616130Z To address all issues, run:
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:32.6616660Z   npm audit fix --force
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:32.6617880Z 
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:32.6618130Z Run `npm audit` for details.
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:33.8791390Z Checking for updates...
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:34.0905730Z Switching pnpm from v11.7.0 to v11.9.0...
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:34.7002630Z .../.bin/global/v11/503-1a15866ccb7      | Progress: resolved 1, reused 0, downloaded 0, added 0
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:34.7030520Z .../.bin/global/v11/503-1a15866ccb7      |   +1 +
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:35.1167610Z .../.bin/global/v11/503-1a15866ccb7      | Progress: resolved 1, reused 0, downloaded 1, added 1, done
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:35.1700100Z [WARN] Detected a pnpm v10 installation layout at PNPM_HOME. The pnpm shims at PNPM_HOME have been refreshed so the new version is active, but pnpm v11 expects bins in PNPM_HOME/bin. Run "pnpm setup" to migrate your PATH to the v11 layout.
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:35.1760480Z Successfully updated pnpm to v11.9.0
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:35.2023340Z ##[endgroup]
+build (macos-latest, package:mac, macos-arm64)	Install pnpm	2026-10-20T08:21:35.2023950Z Installation Completed!
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	﻿2026-10-20T08:21:35.2574140Z ##[group]Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:35.2575530Z with:
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:35.2575950Z   node-version: 24
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:35.2576750Z   cache: pnpm
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:35.2577170Z   check-latest: false
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:35.2582340Z   token: ***
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:35.2583000Z   package-manager-cache: true
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:35.2584010Z env:
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:35.2584860Z   PNPM_HOME: /Users/runner/setup-pnpm/node_modules/.bin
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:35.2585520Z ##[endgroup]
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:35.5267510Z Found in cache @ /Users/runner/hostedtoolcache/node/24.21.0/arm64
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:35.5276270Z ##[group]Environment details
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:36.2534740Z node: v24.21.0
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:36.2566230Z npm: 11.19.0
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:36.2567770Z yarn: 1.22.22
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:36.2569890Z ##[endgroup]
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:36.2570800Z [command]/Users/runner/setup-pnpm/node_modules/.bin/bin/pnpm store path --silent
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:36.8968380Z /Users/runner/setup-pnpm/node_modules/.bin/store/v11
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:37.2070610Z Cache hit for: node-cache-macOS-arm64-pnpm-eba0eca8c1fcf7fdf574a5cb575a5faf620efabfa0719f79365a2acd499e4f4e
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:38.5256310Z Received 0 of 141878051 (0.0%), 0.0 MBs/sec
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:39.5263810Z Received 54525952 of 141878051 (38.4%), 25.9 MBs/sec
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:40.5280390Z Received 134217728 of 141878051 (94.6%), 42.6 MBs/sec
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:40.8358530Z Received 141878051 of 141878051 (100.0%), 40.8 MBs/sec
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:40.8375900Z Cache Size: ~135 MB (141878051 B)
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:40.8437830Z [command]/opt/homebrew/bin/gtar -xf /Users/runner/work/_temp/cd18a8ee-2267-4971-bd3d-1975fbb18877/cache.tzst -P -C /Users/runner/work/Coqui-Crypto/Coqui-Crypto --delay-directory-restore --use-compress-program unzstd
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:48.4071600Z Cache restored successfully
+build (macos-latest, package:mac, macos-arm64)	Set up Node.js	2026-10-20T08:21:48.4129860Z Cache restored from key: node-cache-macOS-arm64-pnpm-eba0eca8c1fcf7fdf574a5cb575a5faf620efabfa0719f79365a2acd499e4f4e
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	﻿2026-10-20T08:21:48.4689690Z ##[group]Run pnpm install --frozen-lockfile
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:21:48.4690480Z ^[[36;1mpnpm install --frozen-lockfile^[[0m
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:21:48.5044210Z shell: /bin/bash -e {0}
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:21:48.5044570Z env:
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:21:48.5044890Z   PNPM_HOME: /Users/runner/setup-pnpm/node_modules/.bin
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:21:48.5045310Z ##[endgroup]
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:21:49.6907030Z Scope: all 10 workspace projects
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:21:49.8299330Z ? Verifying lockfile against supply-chain policies (723 entries)...
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:21:49.8468930Z Lockfile is up to date, resolution step is skipped
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:21:50.0053940Z Progress: resolved 1, reused 0, downloaded 0, added 0
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:21:50.1244820Z Packages: +548
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:21:50.1300330Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:21:50.9950250Z Progress: resolved 548, reused 132, downloaded 0, added 0
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:21:51.9952740Z Progress: resolved 548, reused 319, downloaded 0, added 0
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:21:53.1203310Z Progress: resolved 548, reused 548, downloaded 0, added 3
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:21:54.1361860Z Progress: resolved 548, reused 548, downloaded 0, added 141
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:21:55.1803860Z Progress: resolved 548, reused 548, downloaded 0, added 175
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:21:56.1881950Z Progress: resolved 548, reused 548, downloaded 0, added 213
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:21:57.1823490Z Progress: resolved 548, reused 548, downloaded 0, added 217
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:21:58.3577670Z ✓ Lockfile passes supply-chain policies (723 entries in 8.5s)
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:21:58.3694710Z Progress: resolved 548, reused 548, downloaded 0, added 246
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:21:59.3698570Z Progress: resolved 548, reused 548, downloaded 0, added 310
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:22:00.3708260Z Progress: resolved 548, reused 548, downloaded 0, added 544
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:22:00.4546480Z Progress: resolved 548, reused 548, downloaded 0, added 548, done
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:22:00.8986170Z 
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:22:00.8987820Z devDependencies:
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:22:00.8989160Z + @emnapi/runtime 2.0.0-alpha.3
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:22:00.8989450Z + @eslint/js 10.0.1
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:22:00.9019310Z + @napi-rs/cli 3.8.0
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:22:00.9224940Z + @types/node 25.9.3
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:22:00.9225210Z + eslint 10.5.0
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:22:00.9225440Z + fast-check 4.9.0
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:22:00.9225650Z + typescript 6.0.3
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:22:00.9226390Z + typescript-eslint 8.61.0
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:22:00.9226610Z + vitest 4.1.8
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:22:00.9226700Z 
+build (macos-latest, package:mac, macos-arm64)	Install dependencies	2026-10-20T08:22:00.9653010Z Done in 11.9s using pnpm v11.9.0
+build (macos-latest, package:mac, macos-arm64)	Package	﻿2026-10-20T08:22:01.0376690Z ##[group]Run pnpm --filter @coqui/desktop package:mac
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:01.0377580Z ^[[36;1mpnpm --filter @coqui/desktop package:mac^[[0m
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:01.2634580Z shell: /bin/bash -e {0}
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:01.2634910Z env:
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:01.2635310Z   PNPM_HOME: /Users/runner/setup-pnpm/node_modules/.bin
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:01.2635700Z ##[endgroup]
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:02.0602610Z $ pnpm build && electron-builder --config electron-builder.yml --mac --arm64
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:02.7169140Z $ tsc -b && node scripts/build-preload.mjs && vite build && node scripts/build-metadata.mjs
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:40.6537290Z ^[[36mvite v8.2.2 ^[[32mbuilding client environment for production...^[[36m^[[39m
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:40.6708070Z transforming...
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:43.1138730Z ✓ 2741 modules transformed.
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:43.6123290Z rendering chunks...
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.0687470Z computing gzip size...
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.1118080Z dist/renderer/assets/LINK-DJpGk1Iv.svg                                          0.39 kB │ gzip:   0.25 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.1237380Z ^[[33m[plugin builtin:vite-reporter] 
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.1238460Z dist/renderer/assets/ETH-Bm67nEK8.svg                                           0.91 kB │ gzip:   0.36 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.1253550Z (!) Some chunks are larger than 500 kB after minification. Consider:
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.1254410Z dist/renderer/assets/DOGE-Dzd7iX0A.svg                                          1.41 kB │ gzip:   0.61 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.1362890Z - Using dynamic import() to code-split the application
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.1367470Z dist/renderer/index.html                                                        1.49 kB │ gzip:   0.70 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.1524190Z - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.1526630Z dist/renderer/assets/BTC-B8KjHMa1.svg                                           1.88 kB │ gzip:   0.93 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.1628610Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.^[[39m
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.1629560Z dist/renderer/assets/ADA-C5ZswnYe.svg                                           5.93 kB │ gzip:   2.65 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.1735360Z dist/renderer/assets/coqui-mark-7AG2SAQ7.png                                    7.89 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.1852740Z dist/renderer/assets/ibm-plex-sans-vietnamese-wght-normal-Dg1JeJN0.woff2       13.16 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.1978800Z dist/renderer/assets/ibm-plex-sans-greek-wght-normal-CmyJS8uq.woff2            19.50 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2096360Z dist/renderer/assets/ibm-plex-sans-cyrillic-ext-wght-normal-d45eAU9y.woff2     23.56 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2178200Z dist/renderer/assets/ibm-plex-sans-cyrillic-wght-normal-BAAhND-U.woff2         29.51 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2179370Z dist/renderer/assets/ibm-plex-sans-latin-ext-wght-normal-CIII54If.woff2        30.96 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2180790Z dist/renderer/assets/ibm-plex-sans-latin-wght-normal-IvpUvPa2.woff2            45.71 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2181890Z dist/renderer/assets/dot-accent-C6sXN3aP.png                                   77.86 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2183230Z dist/renderer/assets/index-CB_9MDzQ.css                                       171.73 kB │ gzip:  29.02 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2256410Z dist/renderer/assets/Markets-CGbrL3Gn.js                                        0.07 kB │ gzip:   0.08 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2259250Z dist/renderer/assets/p-D0YpjgON-DNVVLun_.js                                     0.08 kB │ gzip:   0.09 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2261210Z dist/renderer/assets/p-BmVRXR1y-BVnbUAoR.js                                     0.08 kB │ gzip:   0.10 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2422310Z dist/renderer/assets/p-D7-vHX0A-C2GqeOpw.js                                     0.08 kB │ gzip:   0.10 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2461890Z dist/renderer/assets/p-CG_zZq_I-CI_RIBBE.js                                     0.08 kB │ gzip:   0.10 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2463830Z dist/renderer/assets/p-5ldEpNdG-B8Z7ZbTs.js                                     0.09 kB │ gzip:   0.10 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2896170Z dist/renderer/assets/p-ZjP4CjeZ-DJ1DGIsW.js                                     0.14 kB │ gzip:   0.13 kB │ map:     0.49 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2897130Z dist/renderer/assets/p-BWoa-cki-Df1-if4E.js                                     0.24 kB │ gzip:   0.18 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2898490Z dist/renderer/assets/evidence-visualization-DsDSJ95F.js                         0.33 kB │ gzip:   0.24 kB │ map:     1.33 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2899500Z dist/renderer/assets/file-up-BoS012Kv.js                                        0.38 kB │ gzip:   0.27 kB │ map:     1.24 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2900450Z dist/renderer/assets/DeferredPanel-Ctaeyo4u.js                                  0.43 kB │ gzip:   0.31 kB │ map:     1.36 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2903410Z dist/renderer/assets/ChartViewControl-CCRT9QUh.js                               0.47 kB │ gzip:   0.33 kB │ map:     1.87 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2904620Z dist/renderer/assets/sparkles-DB5Les6e.js                                       0.52 kB │ gzip:   0.31 kB │ map:     1.42 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2918190Z dist/renderer/assets/p-BT9-hMMz-BG2Sdyik.js                                     0.55 kB │ gzip:   0.39 kB │ map:     1.16 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2919160Z dist/renderer/assets/p-BMPN55of-C0P_qWS_.js                                     0.58 kB │ gzip:   0.40 kB │ map:     1.60 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2920160Z dist/renderer/assets/p-CWuIRJQN-Cnzdt-xl.js                                     0.67 kB │ gzip:   0.49 kB │ map:     1.76 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2921250Z dist/renderer/assets/advisor-navigation-CyDrCgPY.js                             0.91 kB │ gzip:   0.51 kB │ map:     2.70 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2922300Z dist/renderer/assets/EvidenceExplainButton-lDcIZ6ts.js                          1.12 kB │ gzip:   0.68 kB │ map:     2.62 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2923340Z dist/renderer/assets/badges-jU54efrw.js                                         1.31 kB │ gzip:   0.61 kB │ map:     4.71 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2924380Z dist/renderer/assets/format-B9VBX1wM.js                                         1.57 kB │ gzip:   0.81 kB │ map:     7.45 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2947380Z dist/renderer/assets/p-BQyuFxYc-BP5sUz4F.js                                     1.62 kB │ gzip:   0.84 kB │ map:     3.88 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2968360Z dist/renderer/assets/AllocationLegend-lMY95dLS.js                               1.67 kB │ gzip:   0.84 kB │ map:     4.89 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2969610Z dist/renderer/assets/FinancialChart-DejZ6_7r.js                                 2.05 kB │ gzip:   1.07 kB │ map:     6.71 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2971630Z dist/renderer/assets/OperationsFloor-DEphuqbi.js                                2.24 kB │ gzip:   0.92 kB │ map:     4.99 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2972620Z dist/renderer/assets/use-command-DUovdu9o.js                                    2.27 kB │ gzip:   0.94 kB │ map:    10.29 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2973780Z dist/renderer/assets/Alerts-J2ssVRO1.js                                         2.68 kB │ gzip:   1.16 kB │ map:     6.93 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2974840Z dist/renderer/assets/p-C09TXohi-BME7HMRv.js                                     3.24 kB │ gzip:   1.55 kB │ map:     6.95 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2975800Z dist/renderer/assets/CoinbaseMarketContext-p6fQufn5.js                          3.52 kB │ gzip:   1.33 kB │ map:     8.02 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2976690Z dist/renderer/assets/WalletNames-DrHJK8VP.js                                    3.66 kB │ gzip:   1.56 kB │ map:     8.41 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2977690Z dist/renderer/assets/CrewRobot-CyvlOeIU.js                                      3.79 kB │ gzip:   1.20 kB │ map:     8.34 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2979260Z dist/renderer/assets/Tax-BkDygkoh.js                                            4.09 kB │ gzip:   1.41 kB │ map:     8.72 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2980280Z dist/renderer/assets/TerminalPerformance-CCYgdrMf.js                            4.24 kB │ gzip:   1.69 kB │ map:     7.32 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2981170Z dist/renderer/assets/Events-CJ84fZGJ.js                                         4.67 kB │ gzip:   1.85 kB │ map:     9.10 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2982630Z dist/renderer/assets/p-C-NbvXu4-CV7i-D5s.js                                     4.78 kB │ gzip:   2.11 kB │ map:    10.78 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2983600Z dist/renderer/assets/Allocation-BsjQp0pj.js                                     5.46 kB │ gzip:   2.04 kB │ map:    12.52 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2988530Z dist/renderer/assets/Reconciliation-C41xz8l1.js                                 5.56 kB │ gzip:   2.23 kB │ map:    15.51 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2989510Z dist/renderer/assets/PaperProposalReview-B97mcZYZ.js                            5.70 kB │ gzip:   2.10 kB │ map:    12.44 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2990460Z dist/renderer/assets/Risk-Cxgb0BLP.js                                           7.83 kB │ gzip:   2.61 kB │ map:    17.97 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2991560Z dist/renderer/assets/Scoreboard-Cz-zPvh-.js                                     8.01 kB │ gzip:   2.60 kB │ map:    19.97 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.2996570Z dist/renderer/assets/ParallelPaperRecovery-DyvLEy2k.js                          8.53 kB │ gzip:   2.79 kB │ map:    15.62 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.3000020Z dist/renderer/assets/jsx-runtime-B-hcVAMW.js                                    8.60 kB │ gzip:   3.31 kB │ map:    29.16 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.3000950Z dist/renderer/assets/NewsPanels-WHe6Vq1V.js                                     9.01 kB │ gzip:   3.00 kB │ map:    16.49 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.3001860Z dist/renderer/assets/dist-HZ_C_A0A.js                                           9.36 kB │ gzip:   4.18 kB │ map:    16.18 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.3002980Z dist/renderer/assets/p-C4VpVfrJ-DboYWWZy.js                                     9.61 kB │ gzip:   3.89 kB │ map:    21.16 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.3003920Z dist/renderer/assets/Activity-Cl4UfyAE.js                                      10.75 kB │ gzip:   3.28 kB │ map:    25.04 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.3005220Z dist/renderer/assets/Performance-CdxgLgfe.js                                   14.92 kB │ gzip:   4.00 kB │ map:    33.47 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.3006470Z dist/renderer/assets/Portfolio-DxdizbPx.js                                     17.20 kB │ gzip:   4.73 kB │ map:    33.99 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.3007500Z dist/renderer/assets/Research-r5jpsyfz.js                                      17.78 kB │ gzip:   5.29 kB │ map:    38.62 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.3010730Z dist/renderer/assets/PaperTrading-CjfsD9My.js                                  27.59 kB │ gzip:   7.53 kB │ map:    55.74 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.3021270Z dist/renderer/assets/use-channel-CrPZehh-.js                                   34.96 kB │ gzip:   9.96 kB │ map:   128.85 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.3022220Z dist/renderer/assets/p-1sJ0ZDPe-YkMm5iKi.js                                    36.61 kB │ gzip:  13.92 kB │ map:    88.55 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.3025550Z dist/renderer/assets/Overview-BrjhgHd4.js                                      43.82 kB │ gzip:  11.91 kB │ map:    86.24 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.3026780Z dist/renderer/assets/Settings-BOtVSTFw.js                                      55.07 kB │ gzip:  13.14 kB │ map:   117.03 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.3028040Z dist/renderer/assets/AdvancedMarkets-CXG9cyR3.js                               72.91 kB │ gzip:  22.05 kB │ map:   226.18 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.3029030Z dist/renderer/assets/chart-lifecycle-DW7gbIQd.js                              178.32 kB │ gzip:  57.67 kB │ map:   474.88 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.3030200Z dist/renderer/assets/index-Dt0hL_pF.js                                        248.24 kB │ gzip:  76.64 kB │ map:   982.24 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.3031290Z dist/renderer/assets/AllocationRingChart-CU-vLFDb.js                          357.11 kB │ gzip:  95.14 kB │ map: 1,517.64 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.3063040Z dist/renderer/assets/IonicCommandPopover-BI7AlEEF.js                        1,067.53 kB │ gzip: 212.91 kB │ map: 1,779.38 kB
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.3064110Z 
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:45.3066110Z ^[[32m✓ built in 4.46s^[[39m
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:47.5962300Z   • electron-builder  version=26.15.7 os=25.6.0
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:47.5964580Z   • Implicit publishing triggered by git tag. This behavior will be disabled in electron-builder v27. Please use --publish explicitly.  tag=experimental-v0.1.0-beta.16
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:47.6111860Z   • loaded configuration  file=/Users/runner/work/Coqui-Crypto/Coqui-Crypto/apps/desktop/electron-builder.yml
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:48.2350590Z   • packageManager not detected by file, falling back to environment detection  resolvedPackageManager=pnpm detected=/Users/runner/work/Coqui-Crypto/Coqui-Crypto/apps/desktop
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:48.8612370Z   • detected workspace root for project using packageManager field  pm=pnpm config=pnpm@11.9.0 resolved=/Users/runner/work/Coqui-Crypto/Coqui-Crypto projectDir=/Users/runner/work/Coqui-Crypto/Coqui-Crypto/apps/desktop
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:48.8799220Z   • executing @electron/rebuild  electronVersion=43.4.1 arch=arm64 buildFromSource=false workspaceRoot=/Users/runner/work/Coqui-Crypto/Coqui-Crypto projectDir=./ appDir=./
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:48.8802420Z   • installing native dependencies  arch=arm64
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:49.2824290Z   • completed installing native dependencies
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:49.2840720Z   • packaging       platform=darwin arch=arm64 electron=43.4.1 appOutDir=release/mac-arm64
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:49.5126420Z   • downloaded      label=electron progress=100%
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:54.8406960Z   • downloaded electron zip extracted successfully  output=/Users/runner/work/Coqui-Crypto/Coqui-Crypto/apps/desktop/release/mac-arm64
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:54.8759390Z   • searching for node modules  pm=pnpm searchDir=/Users/runner/work/Coqui-Crypto/Coqui-Crypto/apps/desktop
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:57.0223140Z   • duplicate dependency references  dependencies=["@coqui/core@link:../../packages/core","@coqui/storage@link:../../packages/storage","react-dom@19.2.8","use-sync-external-store@1.6.0","ionicons@8.1.0","d3-time@3.1.0","@stencil/core@4.44.2"]
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:22:57.0240950Z   • platform-specific optional dependencies not bundled — add them to your project's optionalDependencies if your app requires them (pnpm 10+ does not auto-install transitive platform binaries)  dependencies=["@rollup/rollup-darwin-x64@4.44.0","@rollup/rollup-linux-arm64-gnu@4.44.0","@rollup/rollup-linux-arm64-musl@4.44.0","@rollup/rollup-linux-x64-gnu@4.44.0","@rollup/rollup-linux-x64-musl@4.44.0","@rollup/rollup-win32-arm64-msvc@4.44.0","@rollup/rollup-win32-x64-msvc@4.44.0","@napi-rs/keyring-darwin-x64@1.3.0","@napi-rs/keyring-freebsd-x64@1.3.0","@napi-rs/keyring-linux-arm-gnueabihf@1.3.0","@napi-rs/keyring-linux-arm64-gnu@1.3.0","@napi-rs/keyring-linux-arm64-musl@1.3.0","@napi-rs/keyring-linux-riscv64-gnu@1.3.0","@napi-rs/keyring-linux-x64-gnu@1.3.0","@napi-rs/keyring-linux-x64-musl@1.3.0","@napi-rs/keyring-win32-arm64-msvc@1.3.0","@napi-rs/keyring-win32-ia32-msvc@1.3.0","@napi-rs/keyring-win32-x64-msvc@1.3.0","@duckdb/node-bindings-darwin-x64@1.5.5-r.3","@duckdb/node-bindings-linux-arm64@1.5.5-r.3","@duckdb/node-bindings-linux-arm64-musl@1.5.5-r.3","@duckdb/node-bindings-linux-x64@1.5.5-r.3","@duckdb/node-bindings-linux-x64-musl@1.5.5-r.3","@duckdb/node-bindings-win32-arm64@1.5.5-r.3","@duckdb/node-bindings-win32-x64@1.5.5-r.3"]
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:23:59.4384650Z   • skipped macOS code signing  reason=identity explicitly is set to null
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:23:59.4816570Z /Users/runner/work/Coqui-Crypto/Coqui-Crypto/apps/desktop/release/mac-arm64/Coqui.app: replacing existing signature
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:24:03.0404980Z   • building        target=macOS zip arch=arm64 file=release/Coqui-0.1.0-beta.16-mac-arm64.zip
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:24:03.0799390Z   • building        target=DMG arch=arm64 file=release/Coqui-0.1.0-beta.16-mac-arm64.dmg
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:24:03.2146410Z   • downloaded      label=7zip-darwin-arm64.tar.gz progress=100%
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:24:03.2319890Z   • downloaded      label=dmgbuild-bundle-arm64-75c8a6c.tar.gz progress=100%
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:25:19.7514720Z   • building block map  blockMapFile=release/Coqui-0.1.0-beta.16-mac-arm64.dmg.blockmap
+build (macos-latest, package:mac, macos-arm64)	Package	2026-10-20T08:25:39.4711280Z   • building block map  blockMapFile=release/Coqui-0.1.0-beta.16-mac-arm64.zip.blockmap
+build (macos-latest, package:mac, macos-arm64)	Packaged smoke (ADR-0003 gate)	﻿2026-10-20T08:25:52.2873360Z ##[group]Run pnpm --filter @coqui/desktop smoke:packaged
+build (macos-latest, package:mac, macos-arm64)	Packaged smoke (ADR-0003 gate)	2026-10-20T08:25:52.2876020Z ^[[36;1mpnpm --filter @coqui/desktop smoke:packaged^[[0m
+build (macos-latest, package:mac, macos-arm64)	Packaged smoke (ADR-0003 gate)	2026-10-20T08:25:52.3756160Z shell: /bin/bash -e {0}
+build (macos-latest, package:mac, macos-arm64)	Packaged smoke (ADR-0003 gate)	2026-10-20T08:25:52.3756600Z env:
+build (macos-latest, package:mac, macos-arm64)	Packaged smoke (ADR-0003 gate)	2026-10-20T08:25:52.3757000Z   PNPM_HOME: /Users/runner/setup-pnpm/node_modules/.bin
+build (macos-latest, package:mac, macos-arm64)	Packaged smoke (ADR-0003 gate)	2026-10-20T08:25:52.3757320Z ##[endgroup]
+build (macos-latest, package:mac, macos-arm64)	Packaged smoke (ADR-0003 gate)	2026-10-20T08:25:53.7126330Z $ node scripts/packaged-smoke.mjs
+build (macos-latest, package:mac, macos-arm64)	Packaged smoke (ADR-0003 gate)	2026-10-20T08:25:53.8357700Z PASS  packaged application located  (./release/mac-arm64/Coqui.app/Contents/MacOS/Coqui)
+build (macos-latest, package:mac, macos-arm64)	Packaged smoke (ADR-0003 gate)	2026-10-20T08:25:53.9848210Z PASS  bundle carries an ad-hoc signature  (Apple Silicon refuses an unsigned bundle outright)
+build (macos-latest, package:mac, macos-arm64)	Packaged smoke (ADR-0003 gate)	2026-10-20T08:25:54.0116720Z PASS  arbitrary loads are denied  (afterPackHardening)
+build (macos-latest, package:mac, macos-arm64)	Packaged smoke (ADR-0003 gate)	2026-10-20T08:25:54.0292960Z PASS  NSCameraUsageDescription stripped  (a declared capability is one macOS will prompt for)
+build (macos-latest, package:mac, macos-arm64)	Packaged smoke (ADR-0003 gate)	2026-10-20T08:25:54.0404070Z PASS  NSMicrophoneUsageDescription stripped  (a declared capability is one macOS will prompt for)
+build (macos-latest, package:mac, macos-arm64)	Packaged smoke (ADR-0003 gate)	2026-10-20T08:26:02.4532390Z PASS  packaged process ran the smoke and exited  (exit=0)
+build (macos-latest, package:mac, macos-arm64)	Packaged smoke (ADR-0003 gate)	2026-10-20T08:26:02.4535340Z PASS  node:sqlite opened a database under asar  (Coqui paper runtime loaded {
+build (macos-latest, package:mac, macos-arm64)	Packaged smoke (ADR-0003 gate)	2026-10-20T08:26:02.4536140Z   schedulerVersion: 'paper-recovery-budget-v3',
+build (macos-latest, package:mac, macos-arm64)	Packaged smoke (ADR-0003 gate)	2026-10-20T08:26:02.4536770Z   behaviorHash: '084946f441a8da89b5d351777f0587c461d36abf94033dee2baa9b3a8f8ba984'
+build (macos-latest, package:mac, macos-arm64)	Packaged smoke (ADR-0003 gate)	2026-10-20T08:26:02.4537270Z }
+build (macos-latest, package:mac, macos-arm64)	Packaged smoke (ADR-0003 gate)	2026-10-20T08:26:02.4537960Z COQUI_PACKAGED_SMOKE {"opened":true,"schemaVersion":94,"workerLoaded":true,"error":null})
+build (macos-latest, package:mac, macos-arm64)	Packaged smoke (ADR-0003 gate)	2026-10-20T08:26:02.4538600Z PASS  news analysis worker loaded inside the package
+build (macos-latest, package:mac, macos-arm64)	Packaged smoke (ADR-0003 gate)	2026-10-20T08:26:02.4539290Z PASS  migrations applied inside the package  (user_version=94)
+build (macos-latest, package:mac, macos-arm64)	Packaged smoke (ADR-0003 gate)	2026-10-20T08:26:02.4541400Z 
+build (macos-latest, package:mac, macos-arm64)	Packaged smoke (ADR-0003 gate)	2026-10-20T08:26:02.4541750Z === PACKAGED SMOKE (ADR-0003 gate) ===
+build (macos-latest, package:mac, macos-arm64)	Packaged smoke (ADR-0003 gate)	2026-10-20T08:26:02.4563790Z === ALL PASS ===
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	﻿2026-10-20T08:26:02.5673650Z ##[group]Run cd apps/desktop/release
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	2026-10-20T08:26:02.5675040Z ^[[36;1mcd apps/desktop/release^[[0m
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	2026-10-20T08:26:02.5675490Z ^[[36;1mnode <<'NODE'^[[0m
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	2026-10-20T08:26:02.5677710Z ^[[36;1mconst { createHash } = require('node:crypto');^[[0m
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	2026-10-20T08:26:02.5678260Z ^[[36;1mconst { readdirSync, readFileSync, writeFileSync } = require('node:fs');^[[0m
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	2026-10-20T08:26:02.5678810Z ^[[36;1mconst files = readdirSync('.')^[[0m
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	2026-10-20T08:26:02.5679300Z ^[[36;1m  .filter((file) => /\.(dmg|zip|exe)$/i.test(file))^[[0m
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	2026-10-20T08:26:02.5679680Z ^[[36;1m  .sort();^[[0m
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	2026-10-20T08:26:02.5680200Z ^[[36;1mif (files.length === 0) throw new Error('No distributable artifacts found');^[[0m
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	2026-10-20T08:26:02.5680660Z ^[[36;1mconst lines = files.map((file) => {^[[0m
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	2026-10-20T08:26:02.5681760Z ^[[36;1m  const hash = createHash('sha256').update(readFileSync(file)).digest('hex');^[[0m
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	2026-10-20T08:26:02.5682220Z ^[[36;1m  return `${hash}  ${file}`;^[[0m
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	2026-10-20T08:26:02.5694290Z ^[[36;1m});^[[0m
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	2026-10-20T08:26:02.5697920Z ^[[36;1mconst manifest = `SHA256SUMS-${process.env.ARTIFACT}.txt`;^[[0m
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	2026-10-20T08:26:02.5698760Z ^[[36;1mwriteFileSync(manifest, `${lines.join('\n')}\n`);^[[0m
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	2026-10-20T08:26:02.5699120Z ^[[36;1mconsole.log(lines.join('\n'));^[[0m
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	2026-10-20T08:26:02.5699520Z ^[[36;1mNODE^[[0m
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	2026-10-20T08:26:02.6044890Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	2026-10-20T08:26:02.6045310Z env:
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	2026-10-20T08:26:02.6045690Z   PNPM_HOME: /Users/runner/setup-pnpm/node_modules/.bin
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	2026-10-20T08:26:02.6046110Z   ARTIFACT: macos-arm64
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	2026-10-20T08:26:02.6046460Z ##[endgroup]
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	2026-10-20T08:26:04.0685470Z d65b94cc27e6f8aa2c669e682e3afe78c96221edd6fced566acf1a936f7bd7b6  Coqui-0.1.0-beta.16-mac-arm64.dmg
+build (macos-latest, package:mac, macos-arm64)	Hash the artifacts	2026-10-20T08:26:04.0789020Z 0f07832d073ffdf31e3754510326cb7f5a41ee88abdfa2ea229410f46059e0bd  Coqui-0.1.0-beta.16-mac-arm64.zip
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	﻿2026-10-20T08:26:04.1243970Z ##[group]Run actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:04.1244590Z with:
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:04.1244860Z   name: coqui-macos-arm64
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:04.1245370Z   path: apps/desktop/release/*.dmg
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	apps/desktop/release/*.zip
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	apps/desktop/release/*.exe
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	apps/desktop/release/SHA256SUMS-*.txt
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:04.1245940Z   if-no-files-found: error
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:04.1246160Z   retention-days: 14
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:04.1246350Z   compression-level: 6
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:04.1246520Z   overwrite: false
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:04.1246890Z   include-hidden-files: false
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:04.1247140Z env:
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:04.1251210Z   PNPM_HOME: /Users/runner/setup-pnpm/node_modules/.bin
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:04.1252200Z ##[endgroup]
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:04.8835010Z (node:6408) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:04.8891800Z (Use `node --trace-deprecation ...` to show where the warning was created)
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:04.9019510Z With the provided path, there will be 3 files uploaded
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:04.9022710Z Artifact name is valid!
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:04.9024180Z Root directory input is valid!
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:05.5734480Z Beginning upload of artifact content to blob storage
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:06.1941980Z (node:6408) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:07.1964560Z Uploaded bytes 8388608
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:07.8098660Z Uploaded bytes 16777216
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:08.3009250Z Uploaded bytes 25165824
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:08.6369110Z Uploaded bytes 33554432
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:08.8819380Z Uploaded bytes 41943040
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:09.1432790Z Uploaded bytes 50331648
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:09.5031300Z Uploaded bytes 58720256
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:09.9877630Z Uploaded bytes 67108864
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:10.9395230Z Uploaded bytes 75497472
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:11.0474530Z Uploaded bytes 83886080
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:11.4540010Z Uploaded bytes 92274688
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:11.7774840Z Uploaded bytes 100663296
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:12.1548490Z Uploaded bytes 109051904
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:12.4736180Z Uploaded bytes 117440512
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:12.7328110Z Uploaded bytes 125829120
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:13.1451570Z Uploaded bytes 134217728
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:13.3519400Z Uploaded bytes 142606336
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:14.0225810Z Uploaded bytes 150994944
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:14.0777370Z Uploaded bytes 159383552
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:14.4086770Z Uploaded bytes 167772160
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:14.7635400Z Uploaded bytes 176160768
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:15.0898000Z Uploaded bytes 184549376
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:15.7402570Z Uploaded bytes 192937984
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:16.1395080Z Uploaded bytes 201326592
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:16.1968420Z Uploaded bytes 209715200
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:16.7613170Z Uploaded bytes 218103808
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:17.0361930Z Uploaded bytes 226492416
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:17.6172760Z Uploaded bytes 234881024
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:18.6551310Z Uploaded bytes 243269632
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:18.6889040Z Uploaded bytes 251658240
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:19.1608870Z Uploaded bytes 260046848
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:19.5462940Z Uploaded bytes 268435456
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:19.9792470Z Uploaded bytes 276824064
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:20.2749300Z Uploaded bytes 285212672
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:20.8597110Z Uploaded bytes 293601280
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:21.6481560Z Uploaded bytes 301989888
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:21.7073390Z Uploaded bytes 310378496
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:22.6321930Z Uploaded bytes 318767104
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:22.6659910Z Uploaded bytes 327155712
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:23.1360950Z Uploaded bytes 335544320
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:23.6143910Z Uploaded bytes 343932928
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:24.1059480Z Uploaded bytes 352321536
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:24.4624290Z Uploaded bytes 360710144
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:25.2200640Z Uploaded bytes 362492860
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:25.2879880Z Finished uploading artifact content to blob storage!
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:25.3354170Z SHA256 digest of uploaded artifact zip is 9c3507ae476559db1868245ef442782f401c5fdd8ffab0218f20c6d8daa3aead
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:25.3366700Z Finalizing artifact upload
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:25.7981000Z Artifact coqui-macos-arm64.zip successfully finalized. Artifact ID 12250208781
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:25.7982020Z Artifact coqui-macos-arm64 has been successfully uploaded! Final size is 362492860 bytes. Artifact ID is 12250208781
+build (macos-latest, package:mac, macos-arm64)	Upload artifacts	2026-10-20T08:26:25.8154910Z Artifact download URL: https://github.com/kokin-blip/Coqui-Crypto/actions/runs/39392051731/artifacts/12250208781
+build (macos-latest, package:mac, macos-arm64)	Post Set up Node.js	﻿2026-10-20T08:26:25.9155510Z Post job cleanup.
+build (macos-latest, package:mac, macos-arm64)	Post Set up Node.js	2026-10-20T08:26:26.3202750Z Cache hit occurred on the primary key node-cache-macOS-arm64-pnpm-eba0eca8c1fcf7fdf574a5cb575a5faf620efabfa0719f79365a2acd499e4f4e, not saving cache.
+build (macos-latest, package:mac, macos-arm64)	Post Install pnpm	﻿2026-10-20T08:26:26.3468580Z Post job cleanup.
+build (macos-latest, package:mac, macos-arm64)	Post Install pnpm	2026-10-20T08:26:26.5845420Z Pruning is unnecessary.
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	﻿2026-10-20T08:26:26.6144800Z Post job cleanup.
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:26.7799650Z [command]/opt/homebrew/bin/git version
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:26.8213980Z git version 2.56.0
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:26.8239830Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/cabecf3d-9595-4f7a-923d-7abd5e890ff4/.gitconfig'
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:26.8250870Z Temporarily overriding HOME='/Users/runner/work/_temp/cabecf3d-9595-4f7a-923d-7abd5e890ff4' before making global git config changes
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:26.8253220Z Adding repository directory to the temporary git global config as a safe directory
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:26.8259880Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/Coqui-Crypto/Coqui-Crypto
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:26.8526790Z Removing SSH command configuration
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:26.8537650Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:26.8665670Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:27.0490430Z Removing HTTP extra header
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:27.0494820Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:27.0594030Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:27.2139110Z Removing includeIf entries pointing to credentials config files
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:27.2252200Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:27.2358260Z includeif.gitdir:/Users/runner/work/Coqui-Crypto/Coqui-Crypto/.git.path
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:27.2463100Z includeif.gitdir:/Users/runner/work/Coqui-Crypto/Coqui-Crypto/.git/worktrees/*.path
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:27.2566200Z includeif.gitdir:/github/workspace/.git.path
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:27.2602660Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:27.2610750Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/Coqui-Crypto/Coqui-Crypto/.git.path
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:27.2611840Z /Users/runner/work/_temp/git-credentials-cb7106ca-7742-401f-8d98-ea3de64f7dc5.config
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:27.2614730Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/Users/runner/work/Coqui-Crypto/Coqui-Crypto/.git.path \/Users\/runner\/work\/_temp\/git\-credentials\-cb7106ca\-7742\-401f\-8d98\-ea3de64f7dc5\.config
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:27.2617190Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/Coqui-Crypto/Coqui-Crypto/.git/worktrees/*.path
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:27.2727790Z /Users/runner/work/_temp/git-credentials-cb7106ca-7742-401f-8d98-ea3de64f7dc5.config
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:27.2758240Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/Users/runner/work/Coqui-Crypto/Coqui-Crypto/.git/worktrees/*.path \/Users\/runner\/work\/_temp\/git\-credentials\-cb7106ca\-7742\-401f\-8d98\-ea3de64f7dc5\.config
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:27.2865420Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:27.2917520Z /github/runner_temp/git-credentials-cb7106ca-7742-401f-8d98-ea3de64f7dc5.config
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:27.2937480Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-cb7106ca\-7742\-401f\-8d98\-ea3de64f7dc5\.config
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:27.2997500Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:27.3124820Z /github/runner_temp/git-credentials-cb7106ca-7742-401f-8d98-ea3de64f7dc5.config
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:27.3140620Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-cb7106ca\-7742\-401f\-8d98\-ea3de64f7dc5\.config
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:27.3232830Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+build (macos-latest, package:mac, macos-arm64)	Post Check out repository	2026-10-20T08:26:27.5005420Z Removing credentials config '/Users/runner/work/_temp/git-credentials-cb7106ca-7742-401f-8d98-ea3de64f7dc5.config'
+build (macos-latest, package:mac, macos-arm64)	Complete job	﻿2026-10-20T08:26:27.5664620Z Cleaning up orphan processes
+build (macos-latest, package:mac, macos-arm64)	Complete job	2026-10-20T08:26:31.0460130Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

@@ -1,0 +1,28 @@
+{
+  "releaseTag": "experimental-v0.1.0-beta.16",
+  "releaseCommit": "4c0caf6efbaee27c8c22ad184419af8e96114daa",
+  "applicationSourceHash": "da161324d68a65c1d140ef0a05e493172cb805bcec9f7a675726eac8ccb5ad65",
+  "published": true,
+  "experimentalPrerelease": true,
+  "platform": "macOS arm64 only",
+  "ciPassed": true,
+  "downloadHashesPassed": true,
+  "zipSignatureAndSmokePassed": true,
+  "readonlyDmgSignatureAndSmokePassed": true,
+  "anonymousDownloadsPassed": true,
+  "reviewArtifactsBytePreserved": true,
+  "actualProfileOpened": false,
+  "installed": false,
+  "credentialsAccessed": false,
+  "ordersCreated": 0,
+  "mainOrStackedPRsMerged": false,
+  "remainingGates": [
+    "human VoiceOver/high contrast",
+    "representative actual-profile/installed recovery",
+    "actual-market lag and connected-account proof",
+    "natural useful news and rights",
+    "research registration/elapsed coverage/holdout/promotion",
+    "effective branch safeguards and human review",
+    "Windows release validation deferred for this version"
+  ]
+}
