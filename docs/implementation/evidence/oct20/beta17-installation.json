@@ -1,0 +1,20 @@
+{
+  "installedApp": "/Applications/Coqui.app",
+  "bundleVersion": "0.1.0-beta.17",
+  "build": {
+    "version": "0.1.0-beta.17",
+    "sourceRevision": "05be901e50600b8f77512e28a62659bbf4a73e5b",
+    "dirty": true,
+    "sourceHash": "c098f325a0209ba4c8a7010a40ce9b6a0c22d6deaf300e94d39663d8de30d299",
+    "channel": "beta-candidate",
+    "builtAtMs": 1792518640316
+  },
+  "asarSha256": "b6a3d2b2ca641e49b880ce23f982825223a798d09114667501aae06889b06d9c",
+  "rollbackApp": "/Applications/.Coqui-beta16-backup-2026-10-20.app",
+  "profileBackup": "apps/desktop/release/install-backups/beta16-profile-before-beta17.db",
+  "installed": true,
+  "published": false,
+  "sourceCommitted": false,
+  "signatureVerified": true,
+  "packagedSmokePassed": true
+}

@@ -89,6 +89,40 @@ function mockClient(submitFailure = false, fillStatus = 'filled', quoteAtMs: num
 }
 
 describe('paper execution diagnostics and recovery', () => {
+  it('waits for delayed fees, deduplicates partial publication, and requires manual resume after exact recovery',async()=>{
+    const {database,clock,secrets}=await setup();
+    const mock=mockClient(false,'filled',()=>clock.nowMs());
+    const grossPositions=mock.client.positions, fills=mock.client.activities;
+    let deducted=false, published=0;
+    mock.client.positions=async()=>Promise.all((await grossPositions()).map(row=>({...row,
+      qty:deducted?money(row.qty).mul('0.9975').toString():row.qty})));
+    mock.client.activities=async()=>[...await fills(),...(await grossPositions()).slice(0,published).map(row=>({
+      id:`fee-${row.symbol}`,activity_type:'CFEE',symbol:row.symbol,qty:money(row.qty).mul('-0.0025').toString(),
+      price:'100',date:'2026-09-26',created_at:new Date(clock.nowMs()).toISOString()}))] as Awaited<ReturnType<typeof fills>>;
+    const ready={ok:true as const,dataset:dataset(),datasetHash:sha256Hex('data'),latestCompletedStartMs:TODAY-DAY,
+      expectedCompletedStartMs:TODAY-DAY,ruleSnapshotHash:sha256Hex('rules')};
+    const service=new ParallelPaperService({profileId:'main',database,clock,secrets,preparation:()=>ready,
+      refreshFor:async()=>ready,clientFactory:()=>mock.client as never,killSwitchEngaged:()=>false});
+    try{
+      await service.start('delayed-fees',true);
+      for(let i=0;i<3;i++){await service.tick();clock.set(clock.nowMs()+60000);}
+      const attempts=mock.submit.mock.calls.length;expect(attempts).toBeGreaterThan(0);
+      deducted=true;await service.tick();
+      expect(service.summary()).toMatchObject({state:'paused',reconciliationAttention:{blocked:true,
+        latestFailure:{pendingFeeEvidence:{status:'awaiting'}}}});
+      expect(service.transition('resumed','premature')).toBe(false);
+      await service.retryReconciliation();
+      published=1;await service.retryReconciliation();await service.retryReconciliation();
+      expect(service.summary().reconciliationAttention.blocked).toBe(true);
+      expect(service.status().events.filter(e=>e.kind==='external_fee')).toHaveLength(1);
+      published=3;await service.retryReconciliation();await service.retryReconciliation();
+      expect(service.summary()).toMatchObject({state:'paused',reconciliationAttention:{blocked:false}});
+      expect(service.status().events.filter(e=>e.kind==='external_fee')).toHaveLength(3);
+      expect(service.status().events.some(e=>e.kind==='paper_position_resolution'||e.kind==='resumed')).toBe(false);
+      expect(mock.submit).toHaveBeenCalledTimes(attempts);
+      expect(service.transition('resumed','manual-after-fees')).toBe(true);
+    }finally{database.close();}
+  });
   it('reconciles a frozen client before preparation and safely recovers the legacy wrapper pause', async () => {
     const { database, clock, secrets } = await setup();
     const mock = mockClient(false, 'filled', () => clock.nowMs());

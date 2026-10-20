@@ -1,6 +1,7 @@
 import { Decimal } from 'decimal.js';
 import type { RequestDeadline } from './deadline.js';
 import { alpacaUniverseSymbols, parseAlpacaUniverseAssets } from './alpaca-universe.js';
+import { alpacaNetworkFailureCode, type AlpacaNetworkCode } from './alpaca-network.js';
 /** Alpaca Trading API client. The host is intentionally not configurable: paper only. */
 export const ALPACA_PAPER_ORIGIN = 'https://paper-api.alpaca.markets/v2' as const;
 const ALPACA_CRYPTO_DATA_ORIGIN = 'https://data.alpaca.markets' as const;
@@ -65,7 +66,8 @@ export interface AlpacaPaperAsset {
 export class AlpacaPaperError extends Error {
   constructor(readonly code: 'unauthorized' | 'forbidden' | 'not_found' | 'rate_limited' | 'unavailable' | 'invalid_response' | 'timeout' | 'deadline_exceeded',
     readonly operation: string = 'unknown', readonly httpStatus: number | null = null, readonly attemptCount = 0,
-    readonly elapsedMs = 0, readonly budgetMs: number | null = null, readonly remainingMs: number | null = null) {
+    readonly elapsedMs = 0, readonly budgetMs: number | null = null, readonly remainingMs: number | null = null,
+    readonly networkCode: AlpacaNetworkCode | null = null) {
     super(`Alpaca paper ${code}`);
   }
 }
@@ -79,6 +81,7 @@ export interface AlpacaPaperReadAttempt {
   readonly elapsedMs: number;
   readonly budgetMs: number;
   readonly remainingMs: number;
+  readonly networkCode?: AlpacaNetworkCode | null;
 }
 
 type Fetcher = typeof fetch;
@@ -96,8 +99,8 @@ export function createAlpacaPaperClient(credentials: AlpacaPaperCredentials, fet
     const method = options.method ?? 'GET';
     let attemptCount = 0, status: number | null = null;
     const remaining = () => Math.max(0, Math.min(budgetMs - (performance.now() - started), deadline?.remainingMs() ?? Infinity));
-    const fail = (code: AlpacaPaperError['code']) => new AlpacaPaperError(code, options.operation, status,
-      attemptCount, performance.now() - started, budgetMs, remaining());
+    const fail = (code: AlpacaPaperError['code'], networkCode: AlpacaNetworkCode | null = null) => new AlpacaPaperError(code, options.operation, status,
+      attemptCount, performance.now() - started, budgetMs, remaining(), networkCode);
     for (let attempt = 0; attempt < (method === 'GET' ? 2 : 1); attempt += 1) {
       if (deadline?.signal.aborted || (deadline && deadline.remainingMs() <= 0)) throw fail('deadline_exceeded');
       if (remaining() <= 0) throw fail('timeout');
@@ -125,7 +128,10 @@ export function createAlpacaPaperClient(credentials: AlpacaPaperCredentials, fet
             : response.status === 404 ? 'not_found' : response.status === 429 ? 'rate_limited' : 'unavailable');
           if (response.status === 204) return undefined as T;
           try { return await response.json() as T; }
-          catch { throw fail('invalid_response'); }
+          catch (error) {
+            if (signal.aborted) throw fail(deadline?.signal.aborted ? 'deadline_exceeded' : 'timeout');
+            throw fail(error instanceof SyntaxError ? 'invalid_response' : 'unavailable', alpacaNetworkFailureCode(error));
+          }
         })();
         const result = await Promise.race([operation, expired]);
         if (deadline?.signal.aborted || (deadline && deadline.remainingMs() <= 0)) throw fail('deadline_exceeded');
@@ -134,12 +140,12 @@ export function createAlpacaPaperClient(credentials: AlpacaPaperCredentials, fet
         return result;
       } catch (error) {
         const failure = deadline && (deadline.signal.aborted || deadline.remainingMs() <= 0) ? fail('deadline_exceeded') :
-          error instanceof AlpacaPaperError ? error : fail('unavailable');
+          error instanceof AlpacaPaperError ? error : fail('unavailable', alpacaNetworkFailureCode(error));
         if (method === 'GET') onReadAttempt?.({ operation: options.operation, attemptCount, status: 'unavailable',
-          reason: `alpaca_${failure.code}`, httpStatus: failure.httpStatus,
+          reason: `alpaca_${failure.code}`, httpStatus: failure.httpStatus, networkCode: failure.networkCode,
           elapsedMs: performance.now() - started, budgetMs, remainingMs: remaining() });
         if (method === 'GET' && attempt === 0 && remaining() > 0 && !deadline?.signal.aborted &&
-            (failure.code === 'timeout' || (failure.code === 'unavailable' && (status === null || status >= 500)))) continue;
+            (failure.code === 'timeout' || (failure.code === 'unavailable' && (status === null || status >= 500 || failure.networkCode !== null)))) continue;
         throw failure;
       } finally { if (timer !== undefined) clearTimeout(timer); removeAbort(); controller.abort(); }
     }

@@ -1,0 +1,469 @@
+{
+  "evidence_id": "ev_c0221ef0bedea3197bd3700857633d380af61c79484276620cc65e6602565bdf",
+  "subject": null,
+  "provider": {
+    "id": "rea-process",
+    "name": "REA process capture",
+    "version": "3"
+  },
+  "analysis_profile": null,
+  "predicate_type": "rea.process-capture",
+  "operation": "capture_process_scenario",
+  "parameters": {
+    "executable_name": "Electron",
+    "argument_count": 1,
+    "event_count": 0,
+    "filesystem_observation_path_count": 0,
+    "normalization": {
+      "paths": false,
+      "pids": true,
+      "ports": true,
+      "time_bucket_ms": 10,
+      "patterns": []
+    }
+  },
+  "raw_result": null,
+  "normalized_result": {
+    "manifest": {
+      "rea_version": "6.4.0",
+      "provider_version": "3",
+      "platform": "darwin",
+      "architecture": "arm64",
+      "pty_backend": "node-pty",
+      "started_at": "2026-10-20T18:35:02.947Z",
+      "completed_at": "2026-10-20T18:35:07.424Z",
+      "scenario": {
+        "executable": "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron",
+        "arguments": [
+          "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/docs/implementation/evidence/oct20/beta18-installed-checks.mjs"
+        ],
+        "working_directory": "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto",
+        "environment": {},
+        "filesystem_observation_paths": [],
+        "terminal": {
+          "columns": 180,
+          "rows": 30,
+          "scrollback": 150
+        },
+        "events": [],
+        "timeout_ms": 60000,
+        "idle_timeout_ms": 30000,
+        "settle_ms": 100,
+        "limits": {
+          "output_bytes": 20000,
+          "files": 10000,
+          "file_bytes": 10000000,
+          "processes": 1000,
+          "filesystem_depth": 16
+        },
+        "normalization": {
+          "paths": false,
+          "pids": true,
+          "ports": true,
+          "time_bucket_ms": 10,
+          "patterns": []
+        },
+        "finalization_ms": 1000,
+        "executable_sha256": "221d5695ab9eb2263b9107e4a5bb3f5780adc35963530e322673d5535e8eeae5"
+      },
+      "comparison_contract": {
+        "working_directory": "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto",
+        "environment": {},
+        "ambient_environment": "unknown",
+        "filesystem_observation_paths": [],
+        "terminal": {
+          "columns": 180,
+          "rows": 30,
+          "scrollback": 150
+        },
+        "events": [],
+        "timeout_ms": 60000,
+        "idle_timeout_ms": 30000,
+        "settle_ms": 100,
+        "finalization_ms": 1000,
+        "limits": {
+          "output_bytes": 20000,
+          "files": 10000,
+          "file_bytes": 10000000,
+          "processes": 1000,
+          "filesystem_depth": 16
+        },
+        "normalization": {
+          "paths": false,
+          "pids": true,
+          "ports": true,
+          "time_bucket_ms": 10,
+          "patterns": []
+        },
+        "port_normalization_version": "contextual-endpoints-v2",
+        "rendered_line_format": "trailing-spaces-trimmed-v1"
+      },
+      "full_scenario_sha256": "98dd6cede5cec43e2cf736c43d8ddebaf7b103d26c476fc25d6c790d3729bfcc",
+      "comparison_contract_sha256": "0329dc64d0b4dc32b2afa5e5785f525f503f0625a57f89d487a6c7e9f734d6a4",
+      "selected_executable_sha256": "221d5695ab9eb2263b9107e4a5bb3f5780adc35963530e322673d5535e8eeae5",
+      "executable_sha256": "221d5695ab9eb2263b9107e4a5bb3f5780adc35963530e322673d5535e8eeae5",
+      "executable_identity": {
+        "state": "path_metadata_unchanged",
+        "reason": null
+      },
+      "normalization_sha256": "5c58aa1aa890197f15f9c59ef755d01120e6e07f356fa1ef2f20787e63b6fa87"
+    },
+    "normalization": {
+      "paths": false,
+      "pids": true,
+      "ports": true,
+      "time_bucket_ms": 10,
+      "patterns": []
+    },
+    "frames": [
+      {
+        "sequence": 0,
+        "at_ms": 1190,
+        "data": "Coqui paper runtime loaded {\r\n  schedulerVersion: \u001b[32m'paper-recovery-budget-v3'\u001b[39m,\r\n  behaviorHash: \u001b[32m'9cbe3cfd8010f2dbed64bbfec15561253779eaea13f4e53630c0718fda65d454'\u001b[39m\r\n}\r\n"
+      },
+      {
+        "sequence": 1,
+        "at_ms": 4150,
+        "data": "{\"checks\":[{\"code\":\"awaiting\",\"messageRendered\":true,\"installedRendererAndPreload\":true,\"noTextClipping\":true},{\"code\":\"overdue\",\"messageRendered\":true,\"installedRendererAndPreload\":true,\"noTextClipping\":true},{\"code\":\"exact\",\"messageRendered\":true,\"installedRendererAndPreload\":true,\"noTextClipping\":true},{\"code\":\"ENOTFOUND\",\"messageRendered\":true,\"installedRendererAndPreload\":true,\"noTextClipping\":true},{\"code\":\"ECONNRESET\",\"messageRendered\":true,\"installedRendererAndPreload\":true,\"noTextClipping\":true},{\"code\":\"CERT_HAS_EXPIRED\",\"messageRendered\":true,\"installedRendererAndPreload\":true,\"noTextClipping\":true}],\"actualProfileAccess\":false,\"providerRequests\":0,\"legacyCheckpointRejected\":true,\"cashFeeDoesNotClear\":true,\"partialFeesBlocked\":true,\"exactFeesReconcile\":true,\"manualResumeRequired\":true}\r\n"
+      }
+    ],
+    "rendered_frames": [
+      {
+        "sequence": 0,
+        "at_ms": 1190,
+        "columns": 180,
+        "rows": 30,
+        "cursor_x": 0,
+        "cursor_y": 4,
+        "active_buffer": "normal",
+        "lines": [
+          "Coqui paper runtime loaded {",
+          "  schedulerVersion: 'paper-recovery-budget-v3',",
+          "  behaviorHash: '9cbe3cfd8010f2dbed64bbfec15561253779eaea13f4e53630c0718fda65d454'",
+          "}",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "serialized_state": "Coqui paper runtime loaded {\r\n  schedulerVersion: \u001b[32m'paper-recovery-budget-v3'\u001b[0m,\r\n  behaviorHash: \u001b[32m'9cbe3cfd8010f2dbed64bbfec15561253779eaea13f4e53630c0718fda65d454'\r\n\u001b[0m}\u001b[1B\u001b[1D"
+      },
+      {
+        "sequence": 1,
+        "at_ms": 4150,
+        "columns": 180,
+        "rows": 30,
+        "cursor_x": 0,
+        "cursor_y": 9,
+        "active_buffer": "normal",
+        "lines": [
+          "Coqui paper runtime loaded {",
+          "  schedulerVersion: 'paper-recovery-budget-v3',",
+          "  behaviorHash: '9cbe3cfd8010f2dbed64bbfec15561253779eaea13f4e53630c0718fda65d454'",
+          "}",
+          "{\"checks\":[{\"code\":\"awaiting\",\"messageRendered\":true,\"installedRendererAndPreload\":true,\"noTextClipping\":true},{\"code\":\"overdue\",\"messageRendered\":true,\"installedRendererAndPreload",
+          "\":true,\"noTextClipping\":true},{\"code\":\"exact\",\"messageRendered\":true,\"installedRendererAndPreload\":true,\"noTextClipping\":true},{\"code\":\"ENOTFOUND\",\"messageRendered\":true,\"installed",
+          "RendererAndPreload\":true,\"noTextClipping\":true},{\"code\":\"ECONNRESET\",\"messageRendered\":true,\"installedRendererAndPreload\":true,\"noTextClipping\":true},{\"code\":\"CERT_HAS_EXPIRED\",\"me",
+          "ssageRendered\":true,\"installedRendererAndPreload\":true,\"noTextClipping\":true}],\"actualProfileAccess\":false,\"providerRequests\":0,\"legacyCheckpointRejected\":true,\"cashFeeDoesNotClear",
+          "\":true,\"partialFeesBlocked\":true,\"exactFeesReconcile\":true,\"manualResumeRequired\":true}",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "serialized_state": "Coqui paper runtime loaded {\r\n  schedulerVersion: \u001b[32m'paper-recovery-budget-v3'\u001b[0m,\r\n  behaviorHash: \u001b[32m'9cbe3cfd8010f2dbed64bbfec15561253779eaea13f4e53630c0718fda65d454'\r\n\u001b[0m}\r\n{\"checks\":[{\"code\":\"awaiting\",\"messageRendered\":true,\"installedRendererAndPreload\":true,\"noTextClipping\":true},{\"code\":\"overdue\",\"messageRendered\":true,\"installedRendererAndPreload\":true,\"noTextClipping\":true},{\"code\":\"exact\",\"messageRendered\":true,\"installedRendererAndPreload\":true,\"noTextClipping\":true},{\"code\":\"ENOTFOUND\",\"messageRendered\":true,\"installedRendererAndPreload\":true,\"noTextClipping\":true},{\"code\":\"ECONNRESET\",\"messageRendered\":true,\"installedRendererAndPreload\":true,\"noTextClipping\":true},{\"code\":\"CERT_HAS_EXPIRED\",\"messageRendered\":true,\"installedRendererAndPreload\":true,\"noTextClipping\":true}],\"actualProfileAccess\":false,\"providerRequests\":0,\"legacyCheckpointRejected\":true,\"cashFeeDoesNotClear\":true,\"partialFeesBlocked\":true,\"exactFeesReconcile\":true,\"manualResumeRequired\":true}\u001b[1B\u001b[87D"
+      }
+    ],
+    "interaction_events": [],
+    "exit": {
+      "code": 0,
+      "signal": 0,
+      "reason": "exited"
+    },
+    "settlement": {
+      "state": "quiesced",
+      "elapsed_ms": 200,
+      "cleanup_outcome": "not_required"
+    },
+    "process_samples": [
+      {
+        "at_ms": 220,
+        "pid": 1,
+        "parent_pid": 2,
+        "command": "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/docs/implementation/evidence/oct20/beta18-installed-checks.mjs",
+        "process_group_id": 1,
+        "session_id": null
+      },
+      {
+        "at_ms": 780,
+        "pid": 3,
+        "parent_pid": 1,
+        "command": "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/.pnpm/electron@43.4.1_supports-color@7.2.0/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper --type=gpu-process --user-data-dir=/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-beta18-installed-ui-P4HJQv/electron --gpu-preferences=UAAAAAAAAAAgAQAEAAAAAAAAAAAAAGAAOAAAAAAAAAADAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAABgAAAAAAAAAGAAAAAAAAAAIAAAAAAAAAAgAAAAAAAAACAAAAAAAAAA= --shared-files --field-trial-handle=1718379636,r,2661062959123520396,7084178665951905543,262144 --enable-features=PdfUseShowSaveFilePicker,ScreenCaptureKitPickerScreen,ScreenCaptureKitStreamPickerSonoma --disable-features=DropInputEventsWhilePaintHolding,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TimeoutHangingVideoCaptureStarts,TraceSiteInstanceGetProcessCreation --variations-seed-version --pseudonymization-salt-handle=1935764596,r,1148313194878006056,355759711616288353,4 --trace-process-track-uuid=3190708988185955192 --seatbelt-client=34",
+        "process_group_id": 1,
+        "session_id": null
+      },
+      {
+        "at_ms": 780,
+        "pid": 4,
+        "parent_pid": 1,
+        "command": "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/.pnpm/electron@43.4.1_supports-color@7.2.0/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=network --user-data-dir=/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-beta18-installed-ui-P4HJQv/electron --shared-files --field-trial-handle=1718379636,r,2661062959123520396,7084178665951905543,262144 --enable-features=PdfUseShowSaveFilePicker,ScreenCaptureKitPickerScreen,ScreenCaptureKitStreamPickerSonoma --disable-features=DropInputEventsWhilePaintHolding,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TimeoutHangingVideoCaptureStarts,TraceSiteInstanceGetProcessCreation --variations-seed-version --pseudonymization-salt-handle=1935764596,r,1148313194878006056,355759711616288353,4 --trace-process-track-uuid=3190708989122997041 --seatbelt-client=34",
+        "process_group_id": 1,
+        "session_id": null
+      },
+      {
+        "at_ms": 1540,
+        "pid": 5,
+        "parent_pid": 1,
+        "command": "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/.pnpm/electron@43.4.1_supports-color@7.2.0/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer) --type=renderer --user-data-dir=/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-beta18-installed-ui-P4HJQv/electron --app-path=/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/docs/implementation/evidence/oct20 --enable-sandbox --lang=en-US --num-raster-threads=4 --enable-zero-copy --enable-gpu-memory-buffer-compositor-resources --enable-main-frame-before-activation --renderer-client-id=4 --time-ticks-at-unix-epoch=-1792477242548715 --launch-time-ticks=44061790847 --shared-files --field-trial-handle=1718379636,r,2661062959123520396,7084178665951905543,262144 --enable-features=PdfUseShowSaveFilePicker,ScreenCaptureKitPickerScreen,ScreenCaptureKitStreamPickerSonoma --disable-features=DropInputEventsWhilePaintHolding,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TimeoutHangingVideoCaptureStarts,TraceSiteInstanceGetProcessCreation --variations-seed-version --pseudonymization-salt-handle=1935764596,r,1148313194878006056,355759711616288353,4 --trace-process-track-uuid=3190708990060038890 --seatbelt-client=54",
+        "process_group_id": 1,
+        "session_id": null
+      },
+      {
+        "at_ms": 4040,
+        "pid": 5,
+        "parent_pid": 1,
+        "command": "(Electron Helper )",
+        "process_group_id": 1,
+        "session_id": null
+      }
+    ],
+    "filesystem_checkpoints": [
+      {
+        "name": "before",
+        "at_ms": 0,
+        "files": [],
+        "effects": [],
+        "truncated": false
+      },
+      {
+        "name": "after_settlement",
+        "at_ms": 4477,
+        "files": [],
+        "effects": [],
+        "truncated": false
+      }
+    ],
+    "event_journal": [
+      {
+        "capture_order": 0,
+        "collection": "filesystem_checkpoints",
+        "index": 0
+      },
+      {
+        "capture_order": 1,
+        "collection": "process_samples",
+        "index": 0
+      },
+      {
+        "capture_order": 2,
+        "collection": "process_samples",
+        "index": 1
+      },
+      {
+        "capture_order": 3,
+        "collection": "process_samples",
+        "index": 2
+      },
+      {
+        "capture_order": 4,
+        "collection": "frames",
+        "index": 0
+      },
+      {
+        "capture_order": 5,
+        "collection": "rendered_frames",
+        "index": 0
+      },
+      {
+        "capture_order": 6,
+        "collection": "process_samples",
+        "index": 3
+      },
+      {
+        "capture_order": 7,
+        "collection": "frames",
+        "index": 1
+      },
+      {
+        "capture_order": 8,
+        "collection": "rendered_frames",
+        "index": 1
+      },
+      {
+        "capture_order": 9,
+        "collection": "process_samples",
+        "index": 4
+      },
+      {
+        "capture_order": 10,
+        "collection": "lifecycle",
+        "index": 0
+      },
+      {
+        "capture_order": 11,
+        "collection": "lifecycle",
+        "index": 1
+      },
+      {
+        "capture_order": 12,
+        "collection": "filesystem_checkpoints",
+        "index": 1
+      }
+    ],
+    "files_before": [],
+    "files_after": [],
+    "filesystem_effects": [],
+    "truncated": false,
+    "truncation_details": {
+      "raw_terminal": {
+        "budget_bytes": 20000,
+        "observed_bytes": 995,
+        "retained_bytes": 995,
+        "observed_frames": 2,
+        "retained_frames": 2
+      },
+      "rendered_terminal": {
+        "budget_bytes": 20000,
+        "observed_bytes": 2313,
+        "retained_bytes": 2313,
+        "observed_frames": 2,
+        "retained_frames": 2
+      },
+      "filesystem_before": {
+        "files_limit": 10000,
+        "depth_limit": 16,
+        "enumeration_truncated": false,
+        "enumeration_reasons": [],
+        "hash_budget_bytes": 10000000,
+        "hashed_bytes": 0,
+        "hash_omissions": []
+      },
+      "filesystem_after": {
+        "files_limit": 10000,
+        "depth_limit": 16,
+        "enumeration_truncated": false,
+        "enumeration_reasons": [],
+        "hash_budget_bytes": 10000000,
+        "hashed_bytes": 0,
+        "hash_omissions": []
+      },
+      "process": {
+        "sample_limit": 1000,
+        "sampling_partial": false,
+        "retained_samples": 5,
+        "sample_limit_reached": false,
+        "sampling_failures": 0,
+        "first_sampling_failure": null,
+        "coverage": "sampled"
+      }
+    },
+    "limitations": [
+      "The executable digest is a prelaunch file sample; matching path metadata immediately after spawn does not prove an atomic operating-system image binding.",
+      "Process trees are sampled and may omit short-lived descendants.",
+      "Filesystem observations are before/after snapshots, not syscall traces.",
+      "Inherited host environment variables are not recorded and may affect results.",
+      "No filesystem observation paths were selected; filesystem effects remain unknown."
+    ],
+    "residual_unknowns": [
+      {
+        "scope": "process",
+        "reason": "Process trees are sampled and may omit short-lived descendants."
+      },
+      {
+        "scope": "process",
+        "reason": "The executable digest is a prelaunch file sample; operating-system image binding is not atomically observed."
+      },
+      {
+        "scope": "environment",
+        "reason": "Inherited host environment variables are not recorded."
+      },
+      {
+        "scope": "network",
+        "reason": "Network activity is not observed by this capture."
+      },
+      {
+        "scope": "filesystem",
+        "reason": "No filesystem observation paths were selected; filesystem effects remain unknown."
+      },
+      {
+        "scope": "process",
+        "reason": "Ownership of unrelated process 65413 could not be verified; it was left untouched: platform_binary_environment_withheld"
+      },
+      {
+        "scope": "process",
+        "reason": "Ownership of unrelated process 65426 could not be verified; it was left untouched: platform_binary_environment_withheld"
+      }
+    ],
+    "cleanup": {
+      "owned_process_group": "verified",
+      "temporary_root": "removed",
+      "unverified_processes": [
+        {
+          "pid": 65413,
+          "reason": "platform_binary_environment_withheld"
+        },
+        {
+          "pid": 65426,
+          "reason": "platform_binary_environment_withheld"
+        }
+      ]
+    }
+  },
+  "confidence": "observed",
+  "authority": "controlled-replay",
+  "environment": {
+    "id": "darwin-arm64",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "isolation": "process"
+  },
+  "limitations": [
+    "Artifact identity is unavailable for this observation.",
+    "The executable digest is a prelaunch file sample; matching path metadata immediately after spawn does not prove an atomic operating-system image binding.",
+    "Process trees are sampled and may omit short-lived descendants.",
+    "Filesystem observations are before/after snapshots, not syscall traces.",
+    "Inherited host environment variables are not recorded and may affect results.",
+    "No filesystem observation paths were selected; filesystem effects remain unknown."
+  ],
+  "locations": [],
+  "evidence_links": []
+}

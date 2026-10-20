@@ -1,0 +1,32 @@
+{
+  "installedBuild": {
+    "version": "0.1.0-beta.17",
+    "sourceRevision": "05be901e50600b8f77512e28a62659bbf4a73e5b",
+    "dirty": true,
+    "sourceHash": "c098f325a0209ba4c8a7010a40ce9b6a0c22d6deaf300e94d39663d8de30d299",
+    "channel": "beta-candidate",
+    "builtAtMs": 1792518640316
+  },
+  "feeLimitBlockPassed": true,
+  "exactDelayedFeeRecoveryPassed": true,
+  "networkResults": [
+    {
+      "code": "ENOTFOUND",
+      "throughStatusContract": true,
+      "secretRedactionPassed": true
+    },
+    {
+      "code": "ECONNRESET",
+      "throughStatusContract": true,
+      "secretRedactionPassed": true
+    },
+    {
+      "code": "CERT_HAS_EXPIRED",
+      "throughStatusContract": true,
+      "secretRedactionPassed": true
+    }
+  ],
+  "installedRendererMessagesPresent": true,
+  "profileWrites": 0,
+  "networkRequests": 0
+}

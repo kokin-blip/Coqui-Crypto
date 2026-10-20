@@ -10,3 +10,4 @@ export * from './alpaca-universe.js';
 export * from './deadline.js';
 export * from './download.js';
 export * from './news.js';
+export * from './alpaca-network.js';

@@ -1,0 +1,18 @@
+[
+  {
+    "name": "fee-desktop",
+    "noTextClipping": true
+  },
+  {
+    "name": "fee-zoom",
+    "noTextClipping": true
+  },
+  {
+    "name": "network-desktop",
+    "noTextClipping": true
+  },
+  {
+    "name": "network-zoom",
+    "noTextClipping": true
+  }
+]

@@ -1,3 +1,4 @@
+import { createActivityOverviewHandlers } from './activity-overview-handlers.js';
 import { projectPaperPosition, allocationPercent, samePaperQuantity, markPaperPosition } from '@coqui/core';
 import type { ChannelRequest, ChannelResponse } from '@coqui/contracts';
 import { readTradingActivity, tradingActivityScopes, tradingActivityRevision, type Db, type DecisionDetailV1, type TradingActivityFacts } from '@coqui/storage';
@@ -31,6 +32,7 @@ export function createTradingActivityHandlers(input:{profileId:string;database:D
   };
   const failure=()=>({ok:false as const,issues:[{path:[],code:'activity_scope_unavailable'}]});
   return {
+    ...createActivityOverviewHandlers(input),
     'trading.activity.scopes':()=>({ok:true,value:{profileId:input.profileId,...tradingActivityScopes(input.profileId,input.database),asOfMs:input.now()}}),
     'trading.activity.summary':(payload:ChannelRequest<'trading.activity.summary'>)=>{
       const result=read(payload);if(result===null)return failure();const {scope,facts}=result;

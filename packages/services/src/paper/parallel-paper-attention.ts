@@ -1,6 +1,7 @@
 import type { ParallelPaperEvent } from '@coqui/storage';
 import { parallelAttemptsResolved } from './parallel-paper-recovery.js';
-import { parallelPaperFailureDetail, parallelSafeOperation } from './parallel-paper-utils.js';
+import { parallelPaperFailureDetail, parallelSafeOperation, paperFeeLimitDetail, paperPendingFeeDetail } from './parallel-paper-utils.js';
+import { safeAlpacaNetworkCode } from '@coqui/adapters';
 import type { PaperPositionDifference } from './parallel-paper-utils.js';
 import { currentPaperPositionResolution } from './parallel-paper-resolution.js';
 
@@ -32,6 +33,8 @@ export function parallelReconciliationAttention(events: readonly ParallelPaperEv
     lastSuccessfulAtMs: successful?.at ?? null,
     latestFailure: failure ? { atMs: failure.at, operation, reason,
       httpStatus: number('httpStatus'), attemptCount: number('attemptCount'), remainingMs: number('remainingMs'),
+      networkCode: safeAlpacaNetworkCode(failure.detail['networkCode']), feeReconciliation: paperFeeLimitDetail(failure.detail['feeReconciliation']),
+      pendingFeeEvidence: paperPendingFeeDetail(failure.detail['pendingFeeEvidence']),
       elapsedMs: number('elapsedMs'), budgetMs: number('budgetMs'), positionDifferences } : null,
     unresolvedOrders };
 }

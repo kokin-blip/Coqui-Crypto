@@ -1,0 +1,37 @@
+[
+  {
+    "path": "dist/main/build-info.json",
+    "sha256": "d7ead9861c93d1990d9910ac43088e3da869b6d78474ab75d0e41a19bdc122b5",
+    "integrityPassed": true
+  },
+  {
+    "path": "node_modules/@coqui/services/dist/paper/parallel-paper-minor-recovery.js",
+    "sha256": "72aee48767562cc236dc3f88ea78e1fa3bbbaf6966a058df1db9b79233c9b013",
+    "integrityPassed": true
+  },
+  {
+    "path": "node_modules/@coqui/services/dist/paper/parallel-execution-safety.js",
+    "sha256": "2612025c42ef51ca70923338adb596715c44adcc83388e990c59ce78d4b53055",
+    "integrityPassed": true
+  },
+  {
+    "path": "node_modules/@coqui/services/dist/paper/parallel-paper-activity.js",
+    "sha256": "23540a62fa104e566067bc66c6f74ecaab942ef5a1b39e319fa48dcbd523790b",
+    "integrityPassed": true
+  },
+  {
+    "path": "node_modules/@coqui/adapters/dist/http/alpaca-paper.js",
+    "sha256": "df03983abe11759c228148ece2dd7badf8093075d0d956699167b9740c0c93aa",
+    "integrityPassed": true
+  },
+  {
+    "path": "node_modules/@coqui/adapters/dist/http/alpaca-network.js",
+    "sha256": "3ecb8fa94f0f55733036d6e378d8b6268dedfa2d26b60fb103c4fe4e5f40470a",
+    "integrityPassed": true
+  },
+  {
+    "path": "node_modules/@coqui/contracts/dist/schemas/parallel-paper.js",
+    "sha256": "128e73ebb473c545a8ae46b6e872bf091d98ae543a2a87ef196a6376d8f182fd",
+    "integrityPassed": true
+  }
+]

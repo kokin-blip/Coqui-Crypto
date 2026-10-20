@@ -1,0 +1,92 @@
+{
+  "shellMs": 223,
+  "coldChartMs": 409,
+  "cachedNavigationP75Ms": 15,
+  "feedSeconds": 15,
+  "ticks": 17,
+  "feedTicks": 17,
+  "bookQueries": 17,
+  "tradeQueries": 0,
+  "historyQueries": 1,
+  "unchangedExtensionEvaluations": 0,
+  "viewportDriftPx": 0,
+  "frameP95Ms": 10.100000000000364,
+  "framesOver34Ms": 0,
+  "removedCanvases": 0,
+  "longTasks": [],
+  "workload": {
+    "version": 3,
+    "simulated": true,
+    "browserCache": "fresh_disposable",
+    "bars": 2000,
+    "navigationCycles": 12,
+    "feedIntervalMs": 1000,
+    "seconds": 15,
+    "network": "503_only",
+    "scheduler": "disabled"
+  },
+  "workloadHash": "8b6e1087e7ea441015f611cbd11303538f4dff19fedc1fb0741834d9d17cd3fd",
+  "build": {
+    "version": "0.1.0-beta.18",
+    "sourceRevision": "05be901e50600b8f77512e28a62659bbf4a73e5b",
+    "dirty": true,
+    "sourceHash": "ef15357fd5e9d35a9dbabffb09722a4d4347653b70593af32ba88dc2197bc2c1",
+    "channel": "beta-candidate",
+    "builtAtMs": 1792521426839
+  },
+  "environment": {
+    "electron": "43.4.1",
+    "node": "24.18.1",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "processToUsefulChartMs": 1384.420541,
+  "ipc": {
+    "samples": 40,
+    "p75Ms": 0.20000000298023224,
+    "p95Ms": 0.3999999985098839
+  },
+  "mainEventLoop": {
+    "p95Ms": 22.462463,
+    "maxMs": 311.689215
+  },
+  "retention": [
+    {
+      "elapsedSeconds": 0,
+      "main": {
+        "rss": 256180224,
+        "heapTotal": 65798144,
+        "heapUsed": 47235840,
+        "external": 3186083,
+        "arrayBuffers": 0
+      },
+      "renderer": {
+        "workingSetSize": 320480,
+        "peakWorkingSetSize": 322432
+      },
+      "heap": null
+    },
+    {
+      "elapsedSeconds": 15,
+      "main": {
+        "rss": 208797696,
+        "heapTotal": 66060288,
+        "heapUsed": 48252212,
+        "external": 3186123,
+        "arrayBuffers": 0
+      },
+      "renderer": {
+        "workingSetSize": 306000,
+        "peakWorkingSetSize": 322672
+      },
+      "heap": null
+    }
+  ],
+  "ionic": {
+    "loadedBeforeCommand": false,
+    "firstMenuPaintMs": 358,
+    "resources": [],
+    "scriptDurationMs": null,
+    "limitation": "First-open total includes import, parse, execution, render and overlay; ScriptDuration is aggregate, not isolated parse time. file: transferSize can be zero."
+  }
+}

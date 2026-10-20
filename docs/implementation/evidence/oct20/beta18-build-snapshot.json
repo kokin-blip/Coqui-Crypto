@@ -1,0 +1,30 @@
+{
+  "worktree": "/Users/kokinmartinez/.codex/worktrees/delayed-fee-beta18/Coqui-Crypto",
+  "sourceFilesCopied": [
+    "package.json",
+    "apps/desktop/package.json",
+    "apps/desktop/src/renderer/app/ParallelPaperRecovery.tsx",
+    "apps/desktop/src/renderer/app/paper-network-message.ts",
+    "packages/adapters/src/http/alpaca-paper.ts",
+    "packages/adapters/src/http/alpaca-network.ts",
+    "packages/adapters/src/http/index.ts",
+    "packages/contracts/src/schemas/parallel-paper.ts",
+    "packages/services/src/paper/parallel-execution-safety.ts",
+    "packages/services/src/paper/parallel-paper-activity.ts",
+    "packages/services/src/paper/parallel-paper-attention.ts",
+    "packages/services/src/paper/parallel-paper-minor-recovery.ts",
+    "packages/services/src/paper/parallel-paper-recovery.ts",
+    "packages/services/src/paper/parallel-paper-service.ts",
+    "packages/services/src/paper/parallel-paper-utils.ts",
+    "tests/alpaca-paper.test.ts",
+    "tests/parallel-paper-execution.test.ts",
+    "tests/parallel-paper-minor-recovery.test.ts",
+    "tests/parallel-paper-recovery-reporting.test.ts",
+    "tests/parallel-paper-ui.test.ts",
+    "docs/parallel-paper.md"
+  ],
+  "excludedConcurrentWork": [
+    "trading activity contracts/storage/core/UI"
+  ],
+  "baseCommit": "05be901e50600b8f77512e28a62659bbf4a73e5b"
+}

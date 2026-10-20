@@ -103,7 +103,7 @@ describe('channel registry', () => {
       'research.performance',
       'research.runs',
       'research.scoreboard', 'research.trigger-status', 'risk.dashboard',
-      'risk.evidence-gate', 'trading.activity.scopes', 'trading.activity.shared', 'trading.activity.summary', 'trading.activity.trail', 'wallets.list', 'wallets.nickname.set',
+      'risk.evidence-gate', 'trading.activity.order-detail', 'trading.activity.orders', 'trading.activity.overview', 'trading.activity.scopes', 'trading.activity.shared', 'trading.activity.summary', 'trading.activity.trail', 'wallets.list', 'wallets.nickname.set',
     ]);
   });
 

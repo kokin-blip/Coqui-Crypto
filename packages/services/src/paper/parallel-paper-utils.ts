@@ -1,6 +1,6 @@
 import { Decimal } from 'decimal.js';
 
-import { AlpacaPaperError, type RequestDeadline, type AlpacaPaperAsset } from '@coqui/adapters';
+import { AlpacaPaperError, safeAlpacaNetworkCode, type AlpacaNetworkCode, type RequestDeadline, type AlpacaPaperAsset } from '@coqui/adapters';
 import { instrumentKey } from '@coqui/core';
 import type { ParallelPaperEvent } from '@coqui/storage';
 
@@ -42,6 +42,42 @@ export interface PaperPositionDifference {
   readonly differenceQty: string;
 }
 
+export interface PaperFeeLimitDetail {
+  readonly kind: 'fee_shaped_limit_exceeded';
+  readonly observedValueUsd: string;
+  readonly maxAbsoluteValueUsd: '25';
+  readonly maxEquityValueUsd: string;
+}
+export interface PaperPendingFeeDetail {
+  readonly status: 'awaiting' | 'overdue';
+  readonly oldestFillAtMs: number;
+  readonly latestFillAtMs: number;
+  readonly reviewAfterMs: number;
+}
+export function paperPendingFeeDetail(value: unknown): PaperPendingFeeDetail | null {
+  if (!value || typeof value !== 'object') return null;
+  const detail = value as Record<string, unknown>;
+  if (!['awaiting', 'overdue'].includes(String(detail['status']))) return null;
+  for (const key of ['oldestFillAtMs', 'latestFillAtMs', 'reviewAfterMs'])
+    if (typeof detail[key] !== 'number' || !Number.isSafeInteger(detail[key]) || detail[key] < 0) return null;
+  if (Number(detail['latestFillAtMs']) < Number(detail['oldestFillAtMs']) ||
+      Number(detail['reviewAfterMs']) <= Number(detail['oldestFillAtMs'])) return null;
+  return { status: detail['status'] as PaperPendingFeeDetail['status'], oldestFillAtMs: Number(detail['oldestFillAtMs']),
+    latestFillAtMs: Number(detail['latestFillAtMs']), reviewAfterMs: Number(detail['reviewAfterMs']) };
+}
+export function paperFeeLimitDetail(value: unknown): PaperFeeLimitDetail | null {
+  if (!value || typeof value !== 'object') return null;
+  const detail = value as Record<string, unknown>;
+  if (detail['kind'] !== 'fee_shaped_limit_exceeded' || detail['maxAbsoluteValueUsd'] !== '25') return null;
+  try {
+    for (const key of ['observedValueUsd', 'maxEquityValueUsd']) {
+      if (typeof detail[key] !== 'string' || detail[key].length > 128 || money(detail[key]).lt(0)) return null;
+    }
+  } catch { return null; }
+  return { kind: 'fee_shaped_limit_exceeded', observedValueUsd: detail['observedValueUsd'] as string,
+    maxAbsoluteValueUsd: '25', maxEquityValueUsd: detail['maxEquityValueUsd'] as string };
+}
+
 export class ParallelBudgetError extends Error {
   readonly remainingMs: number;
   constructor(readonly operation: string, deadline: RequestDeadline, readonly requiredReservationMs: number,
@@ -52,11 +88,12 @@ export class ParallelBudgetError extends Error {
 
 export class ParallelReconciliationError extends Error {
   constructor(reason: string, readonly operation: string, readonly failure?: AlpacaPaperError,
-    readonly positionDifferences: readonly PaperPositionDifference[] = []) { super(reason); }
+    readonly positionDifferences: readonly PaperPositionDifference[] = [], readonly feeReconciliation?: PaperFeeLimitDetail,
+    readonly pendingFeeEvidence?: PaperPendingFeeDetail) { super(reason); }
 }
 
 export function parallelPaperFailureDetail(error: unknown, fallback: string):
-  { reason: string; operation?: string; httpStatus?: number; attemptCount?: number; elapsedMs?: number; budgetMs?: number | null; remainingMs?: number | null; positionDifferences?: readonly PaperPositionDifference[]; requiredReservationMs?: number } {
+  { reason: string; operation?: string; httpStatus?: number; attemptCount?: number; elapsedMs?: number; budgetMs?: number | null; remainingMs?: number | null; positionDifferences?: readonly PaperPositionDifference[]; requiredReservationMs?: number; networkCode?: AlpacaNetworkCode; feeReconciliation?: PaperFeeLimitDetail; pendingFeeEvidence?: PaperPendingFeeDetail } {
   if (error instanceof ParallelBudgetError) return { reason: error.message, operation: error.operation,
     remainingMs: error.remainingMs, requiredReservationMs: error.requiredReservationMs,
     ...(error.elapsedMs === undefined ? {} : { elapsedMs: error.elapsedMs }),
@@ -65,10 +102,13 @@ export function parallelPaperFailureDetail(error: unknown, fallback: string):
     reason: error.code === 'deadline_exceeded' ? 'deadline_exceeded' : `alpaca_${error.code}`, operation: parallelSafeOperation(error.operation),
     attemptCount: error.attemptCount, elapsedMs: error.elapsedMs, budgetMs: error.budgetMs, remainingMs: error.remainingMs,
     ...(error.httpStatus === null ? {} : { httpStatus: error.httpStatus }),
+    ...(safeAlpacaNetworkCode(error.networkCode) ? { networkCode: safeAlpacaNetworkCode(error.networkCode)! } : {}),
   };
   return { ...(error instanceof ParallelReconciliationError && error.failure ? parallelPaperFailureDetail(error.failure, fallback) : {}),
     reason: parallelSafeFailureReason(error, fallback),
     ...(error instanceof ParallelReconciliationError ? { operation: parallelSafeOperation(error.operation),
+      ...(error.feeReconciliation ? { feeReconciliation: error.feeReconciliation } : {}),
+      ...(error.pendingFeeEvidence ? { pendingFeeEvidence: error.pendingFeeEvidence } : {}),
       ...(error.positionDifferences.length > 0 ? { positionDifferences: error.positionDifferences } : {}) } : {}) };
 }
 

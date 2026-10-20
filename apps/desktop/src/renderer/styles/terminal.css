@@ -193,3 +193,62 @@
 .chart-paper-notes { padding: 8px 12px; border-top: 1px solid var(--coqui-border); color: var(--coqui-text-muted); font-size: 12px; overflow-wrap: anywhere; }
 .chart-paper-notes p { margin: 0; }
 .chart-paper-notes p + p { margin-top: 4px; }
+
+/* Coqui Figma panel/tab/table primitives: compact algorithm activity. */
+.terminal-activity-controls-compact { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px; padding: 6px 8px; min-height: 0; }
+.terminal-activity-controls-compact label { display: block; min-width: 0; }
+.terminal-activity-controls-compact label > span { display: block; margin-bottom: 3px; font-size: 10px; }
+.terminal-activity-controls-compact select { width: 100%; max-width: 100%; font-size: 11px; }
+.terminal-activity-controls-compact select:disabled { opacity: 1; color: var(--coqui-text-muted); }
+.terminal-algo-filters { display: flex; align-items: center; gap: 6px; padding: 0 8px 6px; border-bottom: 1px solid var(--coqui-border); }
+.terminal-algo-filters label:first-child { flex: 1; min-width: 0; }
+.terminal-algo-filters select { width: 100%; font-size: 11px; }
+.terminal-algo-activity { min-width: 0; font-size: 12px; font-variant-numeric: tabular-nums; }
+.terminal-algo-context { display: flex; align-items: flex-start; gap: 6px; padding: 6px 8px 2px; color: var(--coqui-text-muted); font-size: 10px; }
+.terminal-algo-context > span:last-child { min-width: 0; overflow-wrap: anywhere; }
+.terminal-algo-context .coqui-component-badge { flex: none; min-height: 18px; padding: 0 4px; font-size: 10px; }
+.terminal-algo-metrics { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px 12px; margin: 0; padding: 6px 8px 10px; }
+.terminal-algo-metrics .terminal-metric { display: block; padding: 0; border: 0; min-width: 0; }
+.terminal-algo-metrics dt { color: var(--coqui-text-muted); font-size: 10px; }
+.terminal-algo-metrics dd { margin: 2px 0 0; font-size: 14px; font-weight: 500; overflow-wrap: anywhere; }
+.terminal-algo-caveat, .terminal-algo-evidence { margin: 0; padding: 3px 8px 6px; color: var(--coqui-text-muted); font-size: 10px; overflow-wrap: anywhere; }
+.terminal-algo-chart-heading, .terminal-algo-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 5px 8px; border-top: 1px solid var(--coqui-border); }
+.terminal-algo-chart-heading strong, .terminal-algo-section-heading strong { font-size: 11px; font-weight: 500; }
+.terminal-algo-chart-heading > div { display: flex; gap: 2px; }
+.terminal-algo-chart-heading button { min-height: 24px; padding: 2px 6px; font-size: 10px; }
+.terminal-algo-chart-heading button[aria-pressed='true'] { color: var(--coqui-text); background: var(--coqui-surface-3); }
+.terminal-pnl-figure { margin: 0; padding: 0 8px 5px; }
+.terminal-pnl-canvas { height: 80px; width: 100%; }
+.terminal-pnl-figure figcaption { min-height: 15px; color: var(--coqui-text-muted); font-size: 10px; }
+.terminal-pnl-unavailable { min-height: 80px; margin: 0; padding: 14px 0; font-size: 11px; }
+.terminal-algo-section-heading > span { color: var(--coqui-text-muted); font-size: 10px; }
+.terminal-algo-order { border-bottom: 1px solid var(--coqui-border); }
+.terminal-algo-order-row { display: grid; grid-template-columns: minmax(78px, 1fr) minmax(40px, auto) minmax(52px, auto) 24px; align-items: center; gap: 5px; min-height: 32px; line-height: 1.15; padding: 3px 6px 3px 8px; }
+.terminal-algo-asset { min-width: 0; padding: 0; text-align: left; border: 0; color: var(--coqui-text); font: inherit; background: transparent; cursor: pointer; }
+.terminal-algo-asset span, .terminal-algo-order-row time { font-size: 11px; }
+.terminal-algo-asset:hover span { text-decoration: underline; }
+.terminal-algo-order-row small { display: block; color: var(--coqui-text-muted); font-size: 9px; }
+.terminal-algo-order-row time { color: var(--coqui-text-muted); white-space: nowrap; }
+.terminal-algo-outcome { text-align: right; font-size: 11px; overflow-wrap: anywhere; }
+.terminal-algo-order-row > button:last-child { min-height: 24px; padding: 2px; justify-content: center; }
+.terminal-algo-pagination { display: flex; justify-content: space-between; gap: 6px; padding: 6px 8px; }
+.terminal-algo-pagination button { min-height: 26px; padding: 3px 6px; font-size: 10px; }
+.terminal-algo-order-detail { padding: 6px 8px; background: var(--coqui-surface-2); overflow-wrap: anywhere; }
+.terminal-algo-order-detail dl { margin: 0; }
+.terminal-algo-order-detail .terminal-metric { grid-template-columns: 104px minmax(0, 1fr); gap: 6px; font-size: 10px; }
+.terminal-algo-order-detail details { font-size: 10px; }
+.terminal-algo-fills { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 10px; }
+.terminal-algo-fills caption { padding: 6px 0; text-align: left; color: var(--coqui-text-muted); }
+.terminal-algo-fills :is(th,td) { padding: 4px 2px; text-align: right; border-bottom: 1px solid var(--coqui-border); overflow-wrap: anywhere; }
+.terminal-algo-fills :is(th,td):first-child { text-align: left; }
+.terminal-algo-fills th { font-weight: 400; color: var(--coqui-text-muted); }
+.terminal-algo-fills small { display: block; color: var(--coqui-text-muted); }
+.terminal-algo-performance-strip { display: block; width: 100%; padding: 6px 8px; text-align: left; font: inherit; font-size: 11px; color: var(--coqui-text); background: var(--coqui-surface-2); border: 0; border-top: 1px solid var(--coqui-border); cursor: pointer; }
+.terminal-algo-performance-strip > span { display: block; }
+.terminal-algo-performance-strip > span:first-child, .terminal-algo-performance-strip > small { color: var(--coqui-text-muted); font-size: 10px; overflow-wrap: anywhere; }
+.terminal-algo-performance-strip strong { font-weight: 500; }
+.terminal-algo-performance-strip:hover { background: var(--coqui-surface-3); }
+.terminal-pnl-canvas:focus-visible, .terminal-algo-activity button:focus-visible, .terminal-algo-performance-strip:focus-visible { outline: 2px solid var(--coqui-positive); outline-offset: -2px; }
+@media (max-width: 1279px) {
+  .terminal-microstructure { max-height: 560px; }
+}

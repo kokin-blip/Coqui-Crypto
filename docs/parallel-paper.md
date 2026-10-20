@@ -418,32 +418,41 @@ namespace with a common $100,000 virtual opening. It does not replay observation
 edit old results, reset the paper account, or unseal the prior holdout. Status reads
 the newest study namespace instead of continuing to display legacy coverage.
 
-## Manual resume and minor paper exceptions
+## Manual resume and delayed fee evidence
 
 Scheduler retries never append a resumed event. A successful recovery leaves the
 experiment paused and shows Ready to resume. Resume performs a fresh full broker
-audit, position checks, current completed-market preparation, and kill-switch
-checks before arming the scheduler. Quote freshness is an independent gate at
-each order: only the submitted asset is requested and validated. Intraday
-planning requires fresh prices for assets held or assigned positive targets;
-assets with no holdings and no target do not block that plan. No order is submitted by recovery.
+audit, exact position checks, current completed-market preparation, and kill-switch
+checks before arming the scheduler. Quote freshness remains an independent gate at
+each order. No order is submitted by recovery.
 
-The owner-authorized minor policy accepts only negative residuals matching the
-frozen 0.25% taker fee on known buys after the latest reported fee creation time,
-within three billionths of an asset per fill for classification rounding. The
-total discrepancy at fresh ask prices for only the discrepant assets must be at most $25 and 0.05% of paper
-equity. An unchanged account, no open orders, resolved own fills, a full activity
-audit, and repeat stable position reads are required. Missing fee timestamps,
-unknown assets, foreign fills, credits, larger losses, stale quotes, and ambiguous
-orders remain blocked.
+A quantity mismatch triggers a full-history activity audit and a fresh exact
+position comparison, including during an active pass. Newly published asset fees
+can reconcile quantities without a pricing estimate. Cash-only reports do not
+establish missing crypto quantities. Repeated fee IDs remain deduplicated; fills,
+fees, tax lots and prior journal records are never rewritten.
 
-An accepted quantity is recorded as an explicit paper_position_resolution, not a
-fee or tax lot. It records the original discrepancy, account, policy, value and
-exact ledger fingerprint. Changes to fills, fees or orders invalidate it. When
-the delayed actual fee arrives, the original ledger is checked again without
-subtracting the exception a second time. Fee attribution stays unconfirmed. This
-policy changes only the isolated Alpaca paper simulation; Coinbase lots and
-financial entries are untouched.
+From beta.18, unconfirmed fee-shaped gaps at every value remain blocked until
+actual activities explain the holdings exactly. New minor-exception checkpoints
+are no longer created, and historical paper_position_resolution records cannot
+clear a position check. This tightens the prior policy; neither its $25 nor its
+0.05%-equity ceiling has been raised. Prior records remain historical evidence.
+
+For diagnosis only, negative residuals in BTC/ETH/LTC can be identified as possible
+delayed fees when they match 0.25% of known buys on each affected asset's latest
+UTC trade day, within three billionths of an asset per fill. Unsupported assets,
+future/invalid timestamps, mixed buy/sell days, different fee rates and unmatched
+partial reports remain ordinary unexplained mismatches. Classification uses
+Decimal quantities and never books a modeled fee, changes a balance, or enables
+orders. It does not depend on fresh quotes or a previously published fee, so a
+first trade and stale quote health cannot hide the pending-evidence explanation.
+
+The UI shows affected fill age and a deterministic review threshold: the second
+UTC midnight after the oldest affected trade day. This is a review reminder, not
+an Alpaca SLA. At or beyond that threshold the message becomes overdue; time
+never grants permission or dismisses the difference. A restart derives the same
+threshold from immutable fill timestamps. Full-history audits continue while
+open, including after UTC rollover. Exact recovery still requires manual Resume.
 
 After recovery, a best-effort quote health read updates diagnostics. An unavailable
 or old health quote does not invalidate a successful broker reconciliation.
@@ -473,6 +482,15 @@ deferred, or blocked pass independently from position reconciliation.
 Recovery activity and the recovery panel identify the failing phase and display
 elapsed and remaining budget. A market-preparation timeout is labeled separately
 from an Alpaca read failure; older records without a phase remain unknown.
+Position comparison failures are labeled reconciliation mismatches rather than
+failed reads. Subsecond failures display milliseconds. Alpaca fetch errors keep
+only an allowlisted transport code (DNS, connection, timeout, or certificate
+failure) through the read-attempt journal, observation wrapper, status contract,
+and recovery panel. Unknown causes remain unknown; exception messages, URLs,
+headers, and credentials are never copied into diagnostics. Broken response
+streams are distinguished from malformed JSON. GET reads retain the same bounded
+retry budget; submissions are never blindly retried. Certificate verification
+is not disabled to work around a TLS failure.
 
 Hourly shadow status revalidates the current registration. Obsolete provenance
 failures remain in history but do not replace valid current provenance; current

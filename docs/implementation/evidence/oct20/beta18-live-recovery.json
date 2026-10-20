@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 95,
+  "paperState": "paused",
+  "latestRecoveryAtMs": 1792521150172,
+  "reason": "broker_positions_mismatch",
+  "pendingFeeEvidence": {
+    "latestFillAtMs": 1792497660986,
+    "oldestFillAtMs": 1792497660392,
+    "reviewAfterMs": 1792627200000,
+    "status": "awaiting"
+  },
+  "submissionAttemptsBefore": 14,
+  "submissionAttemptsAfter": 14,
+  "newResumedEvents": 0,
+  "newPositionAllowances": 0,
+  "historicalJournalEventsUnchanged": true,
+  "automaticRecheckObservedAfterManualRetry": true,
+  "quickCheck": "ok",
+  "foreignKeyViolations": 0
+}

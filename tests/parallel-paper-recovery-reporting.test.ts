@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { ParallelPaperEvent, ParallelPaperExperiment } from '../packages/storage/src/index.js';
 import { validateParallelPositions, parallelAttemptsResolved } from '../packages/services/src/paper/parallel-paper-recovery.js';
 import { reconcileParallelPaper } from '../packages/services/src/paper/parallel-paper-reconciliation.js';
-import { parallelPaperFailureDetail } from '../packages/services/src/paper/parallel-paper-utils.js';
+import { parallelPaperFailureDetail, ParallelReconciliationError } from '../packages/services/src/paper/parallel-paper-utils.js';
 import { finalizeParallelSlots } from '../packages/services/src/paper/parallel-paper-slots.js';
 import { activeParallelEvents, supersedeUnsubmittedParallelPlans } from '../packages/services/src/paper/parallel-paper-plans.js';
 import { parallelReconciliationAttention } from '../packages/services/src/paper/parallel-paper-attention.js';
@@ -10,6 +10,8 @@ import { CHANNEL_SCHEMAS } from '../packages/contracts/src/index.js';
 import { parallelFeeAccounting } from '../packages/services/src/paper/parallel-fee-accounting.js';
 import { parallelBrokerEvidence } from '../packages/services/src/paper/parallel-broker-evidence.js';
 import { projectParallelPaperActivity } from '../packages/services/src/paper/parallel-paper-activity.js';
+import { AlpacaPaperError, createAlpacaPaperClient } from '../packages/adapters/src/index.js';
+import { observedParallelClient } from '../packages/services/src/paper/parallel-execution-safety.js';
 
 const start = Date.parse('2026-10-02T00:00:00Z');
 const experiment = { id: 'e', profileId: 'main', startedAt: start } as ParallelPaperExperiment;
@@ -25,6 +27,59 @@ function filledHistory() {
 }
 
 describe('complete paper recovery evidence', () => {
+  it('round-trips pending fee diagnostics safely and clears attention only after successful checks',()=>{
+    const pendingFeeEvidence={status:'awaiting' as const,oldestFillAtMs:start,latestFillAtMs:start,reviewAfterMs:start+2*86_400_000};
+    const detail=parallelPaperFailureDetail(new ParallelReconciliationError('broker_positions_mismatch','positions',undefined,[],undefined,pendingFeeEvidence),'unknown');
+    const history=[event('paused',{reason:'broker_positions_mismatch'}),event('reconciliation_error',detail)];
+    const attention=parallelReconciliationAttention(history,'paused');
+    expect(attention).toMatchObject({blocked:true,latestFailure:{pendingFeeEvidence}});
+    const schema=CHANNEL_SCHEMAS['parallel.paper.status'].response.unwrap().shape.reconciliationAttention;
+    expect(schema.safeParse(attention).success).toBe(true);
+    history.push(event('reconciliation_error',{...detail,pendingFeeEvidence:{...pendingFeeEvidence,oldestFillAtMs:'secret'}}));
+    expect(parallelReconciliationAttention(history,'paused').latestFailure?.pendingFeeEvidence).toBeNull();
+    history.push(event('readiness',{operation:'broker_reconciliation',status:'validated'}));
+    expect(parallelReconciliationAttention(history,'paused').blocked).toBe(false);
+  });
+  it('labels successful position reads as mismatches and preserves safe transport diagnostics',()=>{
+    const mismatch=event('reconciliation_error',{reason:'broker_positions_mismatch',operation:'positions'});
+    const detail=parallelPaperFailureDetail(new AlpacaPaperError('unavailable','account',null,2,3.2,10000,9996.8,'ENOTFOUND'),'unknown');
+    const history=[mismatch,event('reconciliation_error',detail)];
+    expect(projectParallelPaperActivity(history).activity).toEqual(expect.arrayContaining([
+      expect.objectContaining({title:'Alpaca position reconciliation mismatch'}),
+      expect.objectContaining({detail:expect.stringContaining('ENOTFOUND · 3ms elapsed')})]));
+    const attention=parallelReconciliationAttention(history,'paused');
+    expect(attention.latestFailure).toMatchObject({networkCode:'ENOTFOUND'});
+    history.push(event('reconciliation_error',{...detail,networkCode:'private-url-and-secret',
+      feeReconciliation:{kind:'fee_shaped_limit_exceeded',observedValueUsd:'private-secret',maxAbsoluteValueUsd:'25',maxEquityValueUsd:'50'}}));
+    expect(parallelReconciliationAttention(history,'paused').latestFailure).toMatchObject({networkCode:null,feeReconciliation:null});
+    expect(projectParallelPaperActivity(history).activity[0]!.detail).not.toContain('private-url-and-secret');
+  });
+  it('passes recovery-limit evidence through the error, projection, and response contract',()=>{
+    const feeReconciliation={kind:'fee_shaped_limit_exceeded',observedValueUsd:'80.06',maxAbsoluteValueUsd:'25',maxEquityValueUsd:'51.45'};
+    const history=[event('reconciliation_error',{reason:'broker_positions_mismatch',operation:'positions',feeReconciliation})];
+    const attention=parallelReconciliationAttention(history,'paused');
+    expect(attention.latestFailure?.feeReconciliation).toEqual(feeReconciliation);
+    const schema=CHANNEL_SCHEMAS['parallel.paper.status'].response.unwrap().shape.reconciliationAttention;
+    expect(schema.safeParse(attention).success).toBe(true);
+    expect(schema.safeParse({...attention,latestFailure:{...attention.latestFailure,networkCode:'private-secret'}}).success).toBe(false);
+  });
+  it('retains a network failure through the production observation wrapper and channel contract',async()=>{
+    const history:ParallelPaperEvent[]=[];
+    const client=createAlpacaPaperClient({keyId:'test',secretKey:'test'},async()=>{
+      throw new TypeError('private-credential',{cause:{code:'ENOTFOUND'}});
+    },undefined,attempt=>history.push(event('broker_read_attempt',{...attempt})));
+    const observed=observedParallelClient(client,()=>start,(kind,_key,detail)=>history.push(event(kind,detail)));
+    try{await observed.account();throw new Error('expected_failure');}catch(error){
+      const detail=parallelPaperFailureDetail(error,'unknown');
+      expect(detail).toMatchObject({reason:'alpaca_unavailable',operation:'account',networkCode:'ENOTFOUND',attemptCount:2});
+      history.push(event('reconciliation_error',detail));
+    }
+    expect(history.find(row=>row.kind==='readiness')?.detail).toMatchObject({networkCode:'ENOTFOUND'});
+    const attention=parallelReconciliationAttention(history,'paused');
+    expect(CHANNEL_SCHEMAS['parallel.paper.status'].response.unwrap().shape.reconciliationAttention.safeParse(attention).success).toBe(true);
+    expect(attention.latestFailure).toMatchObject({networkCode:'ENOTFOUND'});
+    expect(JSON.stringify(history)).not.toContain('private-credential');
+  });
   it('labels failures by their actual phase and keeps historical unknown phases honest', () => {
     const history = [event('reconciliation_error', { reason: 'deadline_exceeded', operation: 'market_preparation', elapsedMs: 1_254, remainingMs: 0 }),
       event('reconciliation_error', { reason: 'alpaca_unavailable', operation: 'activities', httpStatus: 503 }),

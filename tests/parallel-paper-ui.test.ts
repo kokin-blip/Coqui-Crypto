@@ -195,9 +195,25 @@ it('shows exact broker quantity differences in recovery while retaining the paus
   }}));
   expect(html).toContain('Paper position differences');
   expect(html).toContain('0.999');expect(html).toContain('-0.001');
-  expect(html).toContain('larger or unexplained differences remain blocked');
+  expect(html).toContain('unexplained differences remain blocked');
   expect(html).toContain('Last failed recovery check');
   expect(html).toContain('Coqui rechecks the broker while this app is running');
+});
+
+it('explains pending and overdue fee evidence without offering an automatic waiver', async () => {
+  // @ts-expect-error TS6142: the root test compiler intentionally omits JSX support.
+  const {ParallelPaperRecovery}=await import('../apps/desktop/src/renderer/app/ParallelPaperRecovery.js');
+  for(const status of ['awaiting','overdue']){
+    const html=server.renderToStaticMarkup(react.createElement(ParallelPaperRecovery,{client:{},data:{state:'paused',experimentId:'paper',
+      reconciliationAttention:{blocked:true,lastSuccessfulAtMs:null,unresolvedOrders:[],latestFailure:{atMs:Date.parse('2026-10-22T00:00:00Z'),
+        operation:'positions',reason:'broker_positions_mismatch',pendingFeeEvidence:{status,oldestFillAtMs:Date.parse('2026-10-20T12:00:00Z'),
+          latestFillAtMs:Date.parse('2026-10-20T12:00:00Z'),reviewAfterMs:Date.parse('2026-10-22T00:00:00Z')}}}}}));
+    expect(html).toContain(status==='awaiting'?'Waiting for fee evidence':'Fee evidence overdue');
+    expect(html).toContain('not booked estimated fees');expect(html).toContain('36h before the latest check');
+    expect(html).toContain('never resumes trading automatically');expect(html).toContain('Retry reconciliation');
+    expect(html).not.toContain('Recovery complete');
+    if(status==='overdue')expect(html).toContain('elapsed time does not clear this block');
+  }
 });
 
 it('identifies market preparation timeouts and displays the recorded budget', async () => {
@@ -213,6 +229,26 @@ it('identifies market preparation timeouts and displays the recorded budget', as
   expect(html).toContain('Remaining budget'); expect(html).toContain('0.0s');
   expect(html).toContain('Trading remains paused');
   expect(html).not.toContain('Alpaca reconciliation read failed');
+});
+
+it('explains unchanged fee limits and precise network failures without enabling trading',async()=>{
+  // @ts-expect-error TS6142: the root test compiler intentionally omits JSX support.
+  const { ParallelPaperRecovery }=await import('../apps/desktop/src/renderer/app/ParallelPaperRecovery.js');
+  const failure={atMs:Date.now(),operation:'positions',reason:'broker_positions_mismatch',httpStatus:null,
+    attemptCount:null,remainingMs:null,feeReconciliation:{kind:'fee_shaped_limit_exceeded',observedValueUsd:'80.06',
+      maxAbsoluteValueUsd:'25',maxEquityValueUsd:'51.45'}};
+  const data={state:'paused',experimentId:'paper',reconciliationAttention:{blocked:true,lastSuccessfulAtMs:null,
+    unresolvedOrders:[],latestFailure:failure}};
+  const html=server.renderToStaticMarkup(react.createElement(ParallelPaperRecovery,{client:{},data}));
+  expect(html).toContain('Position gap exceeds recovery limits');expect(html).toContain('80.06');
+  expect(html).toContain('0.05%');expect(html).toContain('51.45');
+  expect(html).toContain('Fee attribution remains unconfirmed');expect(html).toContain('trading remains paused');
+  const network=server.renderToStaticMarkup(react.createElement(ParallelPaperRecovery,{client:{},data:{...data,
+    reconciliationAttention:{...data.reconciliationAttention,latestFailure:{...failure,feeReconciliation:null,
+      operation:'account',reason:'alpaca_unavailable',networkCode:'ENOTFOUND',elapsedMs:3.2}}}}));
+  expect(network).toContain('ENOTFOUND');expect(network).toContain('3ms');
+  expect(network).toContain('could not be resolved');expect(network).toContain('DNS settings');
+  expect(network).not.toContain('0.0s');expect(network).not.toContain('network or timeout');
 });
 
 it('shows ready to resume after recovery without claiming that trading was enabled', async () => {

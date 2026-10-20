@@ -36,6 +36,16 @@ describe('persisted activity sources',()=>{
       expect(summary).toMatchObject({status:'ok',value:{positions:[{quantity:'1',markUsd:'125',realizedPnlUsd:'17',unrealizedPnlUsd:'23',entryAtMs:null}]}});
       expect(await dispatch('trading.activity.summary',{scopeId:broker.id,connectionId:'alpaca:broker',productId:'BTC-USD'})).toMatchObject({status:'ok',value:{positions:[{quantity:'3',basisComplete:false,valuation:'partial',unrealizedPnlUsd:null}]}});
       expect(await dispatch('trading.activity.summary',{scopeId:`parallel_coqui:${sha256Hex('foreign')}`,connectionId:null,productId:'BTC-USD'})).toMatchObject({status:'failed'});
+      const filter={scopeId:local.id,connectionId:null,productId:null,period:'all',timeZone:'UTC'} as const;
+      expect(scopes.accounts).toEqual(expect.arrayContaining([{scopeId:local.id,connectionId:null,label:'Combined simulation'},
+        {scopeId:broker.id,connectionId:'alpaca:broker',label:'Alpaca paper · broker'}]));
+      expect(await dispatch('trading.activity.overview',filter)).toMatchObject({status:'ok',value:{realizedPnlUsd:'17',unrealizedPnlUsd:'23',executedOrders:2}});
+      expect(await dispatch('trading.activity.overview',{...filter,scopeId:broker.id})).toMatchObject({status:'ok',value:{connectionId:'alpaca:broker',realizedPnlUsd:'0',unrealizedPnlUsd:null,executedOrders:1}});
+      expect(await dispatch('trading.activity.overview',{...filter,scopeId:broker.id,connectionId:connection.id})).toMatchObject({status:'failed'});
+      appendParallelEvent({profileId:'main',experimentId:experiment,kind:'account_mark',key:'later-mark',at:120,
+        detail:{markedAtMs:120,positions:[{symbol:'BTCUSD',coquiQty:'1',coquiValueUsd:'130',alpacaQty:'3',alpacaValueUsd:'390'}]}},db);
+      expect(await dispatch('trading.activity.overview',filter)).toMatchObject({status:'ok',value:{totalChart:{available:true,points:[{atMs:110,valueUsd:'0'},{atMs:120,valueUsd:'5'}]}}});
+
     }finally{db.close();}
   });
   it('does not subtract spread and slippage again from embedded execution prices',async()=>{

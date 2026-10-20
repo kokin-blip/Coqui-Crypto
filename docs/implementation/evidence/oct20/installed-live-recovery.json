@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 95,
+  "paperState": "paused",
+  "latestRecoveryAtUtc": "2026-10-20T17:56:42.009000+00:00",
+  "latestReason": "broker_positions_mismatch",
+  "feeReconciliation": {
+    "kind": "fee_shaped_limit_exceeded",
+    "maxAbsoluteValueUsd": "25",
+    "maxEquityValueUsd": "52.64324",
+    "observedValueUsd": "81.921963956096"
+  },
+  "submissionAttemptsBefore": 14,
+  "submissionAttemptsAfter": 14,
+  "newSubmissionAttempts": 0,
+  "runtimeBuild": {
+    "behaviorHash": "eaa745c0301af610f2af96fbc9787a595e071ca9375add31ffbc4a8e7497a2ee",
+    "schedulerVersion": "paper-recovery-budget-v3"
+  },
+  "profileStructuralCheck": "ok",
+  "foreignKeyViolations": 0
+}

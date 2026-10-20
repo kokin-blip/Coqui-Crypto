@@ -17,3 +17,5 @@ export * from './contribution.js';
 export * from './import-csv.js';
 
 export * from "./paper-activity.js";
+
+export * from "./activity-overview.js";

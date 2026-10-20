@@ -1,0 +1,10 @@
+{
+  "replay": "passed",
+  "approximateGapUsd": "80.06",
+  "blockedAboveBothRecoveryLimits": true,
+  "hypotheticalMatchingFeesReconcile": true,
+  "lowerMockPricesPassClassification": true,
+  "activityLabelsReconciliationMismatch": true,
+  "databaseWrites": 0,
+  "networkRequests": 0
+}

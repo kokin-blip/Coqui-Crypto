@@ -1,0 +1,45 @@
+[WARN] Unsupported engine: wanted: {"node":">=24"} (current: {"node":"v22.20.0","pnpm":"11.9.0"})
+$ pnpm typecheck && pnpm lint && pnpm test && pnpm build
+[WARN] Unsupported engine: wanted: {"node":">=24"} (current: {"node":"v22.20.0","pnpm":"11.9.0"})
+$ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.renderer.json --noEmit
+[WARN] Unsupported engine: wanted: {"node":">=24"} (current: {"node":"v22.20.0","pnpm":"11.9.0"})
+$ eslint .
+[WARN] Unsupported engine: wanted: {"node":">=24"} (current: {"node":"v22.20.0","pnpm":"11.9.0"})
+$ vitest run --maxWorkers=1
+
+ RUN  v4.1.8 /Users/kokinmartinez/.codex/worktrees/delayed-fee-beta18/Coqui-Crypto
+
+(node:88222) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/wider-universe.test.ts (14 tests) 27025ms
+     ✓ compares all three candidates at both costs on a complete registered development calendar  26862ms
+ ✓ tests/overlay-development.test.ts (4 tests) 9430ms
+     ✓ reports every treatment and scenario without loading a holdout; insufficient ML cannot earn selection  8356ms
+     ✓ uses disjoint training/calibration windows and future perturbations cannot alter fitted parameters  1050ms
+(node:88257) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/research-integrity-governance.test.ts (14 tests) 8453ms
+     ✓ registers exactly two spread-floor candidates and rejects invalid values  1240ms
+     ✓ passes the spread floor through the research runner into target decisions  451ms
+     ✓ supports all four existing families with chronological embargo and all candidates reported  3531ms
+     ✓ claims before reading, records failure and prevents renamed plans reopening overlapping data  1039ms
+     ✓ allows only one concurrent loader and returns completed evidence without reopening data  989ms
+     ✓ freezes none without loading a holdout and refuses freezes after it starts  957ms
+(node:88586) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/news-rollout.test.ts (15 tests) 4476ms
+     ✓ processes over 250 observations across restarts and overlapping connections, retaining actual availability  554ms
+     ✓ finishes more than ten thousand historical observations without a full-history batch  2569ms
+     ✓ evaluates synthetic daily and hourly studies without fitting on test outcomes  640ms
+(node:88633) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/storage-migrations.test.ts (6 tests) 4015ms
+     ✓ preserves exact rows when upgrading from every preceding schema version  3806ms
+(node:88636) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/accounts-profile-deletion.test.ts (6 tests) 3842ms
+     ✓ commits manifest removal, deletes only the target database and credentials, and retains the backup  3154ms
+(node:88660) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+[ELIFECYCLE] Command failed.
+[ELIFECYCLE] Test failed. See above for more details.

@@ -39,6 +39,38 @@ describe('Alpaca paper boundary', () => {
       expect(JSON.stringify(error)).not.toContain(SECRET);
     }
   });
+  it.each(['ENOTFOUND','EAI_AGAIN','ECONNRESET','ECONNREFUSED','ENETUNREACH','ETIMEDOUT',
+    'UND_ERR_CONNECT_TIMEOUT','UND_ERR_BODY_TIMEOUT','CERT_HAS_EXPIRED','ERR_TLS_CERT_ALTNAME_INVALID'])(
+    'retains only the allowlisted network code %s across attempts',async(code)=>{
+      const attempts: unknown[]=[];
+      const raw=new TypeError(`fetch failed ${SECRET}`,{cause:Object.assign(new Error(`https://${SECRET}`),{code})});
+      const fetcher=vi.fn(async()=>{throw raw;});
+      const client=createAlpacaPaperClient({keyId:KEY_ID,secretKey:SECRET},fetcher,undefined,attempt=>attempts.push(attempt));
+      await expect(client.account()).rejects.toMatchObject({code:'unavailable',operation:'account',attemptCount:2,networkCode:code});
+      expect(fetcher).toHaveBeenCalledTimes(2);
+      expect(attempts).toHaveLength(2);expect(attempts[0]).toMatchObject({networkCode:code});
+      try{await client.account();}catch(error){expect(JSON.stringify(error)).not.toContain(SECRET);}
+      expect(JSON.stringify(attempts)).not.toContain(SECRET);
+    });
+  it('drops arbitrary codes and nested error messages and never retries an ambiguous submission',async()=>{
+    const raw=new TypeError(SECRET,{cause:{code:SECRET,message:SECRET}});
+    const fetcher=vi.fn(async()=>{throw raw;}),attempts:unknown[]=[];
+    const client=createAlpacaPaperClient({keyId:KEY_ID,secretKey:SECRET},fetcher,undefined,item=>attempts.push(item));
+    await expect(client.submit({symbol:'BTCUSD',side:'buy',qty:'1',client_order_id:'id'}))
+      .rejects.toMatchObject({code:'unavailable',attemptCount:1,networkCode:null});
+    expect(fetcher).toHaveBeenCalledTimes(1);expect(attempts).toHaveLength(0);
+    await expect(client.positions()).rejects.toMatchObject({networkCode:null});
+    expect(JSON.stringify(attempts)).not.toContain(SECRET);
+  });
+  it('distinguishes a broken response stream from malformed JSON',async()=>{
+    const bodyError=new TypeError('private message',{cause:{code:'UND_ERR_SOCKET'}});
+    const fetcher=vi.fn(async()=>Object.assign(Response.json({}),{json:async()=>{throw bodyError;}}));
+    const client=createAlpacaPaperClient({keyId:KEY_ID,secretKey:SECRET},fetcher);
+    await expect(client.positions()).rejects.toMatchObject({code:'unavailable',httpStatus:200,networkCode:'UND_ERR_SOCKET',attemptCount:2});
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    const malformed=createAlpacaPaperClient({keyId:KEY_ID,secretKey:SECRET},async()=>new Response('{'));
+    await expect(malformed.positions()).rejects.toMatchObject({code:'invalid_response',networkCode:null,attemptCount:1});
+  });
   it('always targets the paper host with the documented header pair', async () => {
     const fetcher = vi.fn(async (...args: Parameters<typeof fetch>) => {
       void args;

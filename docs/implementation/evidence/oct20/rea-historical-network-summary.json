@@ -1,0 +1,101 @@
+{
+  "networkFailureCountInLast4000Failures": 304,
+  "latestNetworkFailures": [
+    {
+      "at": 1792517158928,
+      "kind": "reconciliation_error",
+      "reason": "alpaca_unavailable",
+      "operation": "orders",
+      "networkCode": null,
+      "elapsedMs": 3.713415998965502,
+      "budgetMs": 10000,
+      "remainingMs": 9996.286458998919,
+      "attemptCount": 2,
+      "httpStatus": null
+    },
+    {
+      "at": 1792516318792,
+      "kind": "reconciliation_error",
+      "reason": "alpaca_unavailable",
+      "operation": "orders",
+      "networkCode": null,
+      "elapsedMs": 4.082166999578476,
+      "budgetMs": 10000,
+      "remainingMs": 9995.917707998306,
+      "attemptCount": 2,
+      "httpStatus": null
+    },
+    {
+      "at": 1792516258784,
+      "kind": "reconciliation_error",
+      "reason": "alpaca_unavailable",
+      "operation": "account",
+      "networkCode": null,
+      "elapsedMs": 4.415041998028755,
+      "budgetMs": 10000,
+      "remainingMs": 9995.584874998778,
+      "attemptCount": 2,
+      "httpStatus": null
+    },
+    {
+      "at": 1792516198786,
+      "kind": "reconciliation_error",
+      "reason": "alpaca_unavailable",
+      "operation": "account",
+      "networkCode": null,
+      "elapsedMs": 4.327583998441696,
+      "budgetMs": 10000,
+      "remainingMs": 9995.67233300209,
+      "attemptCount": 2,
+      "httpStatus": null
+    },
+    {
+      "at": 1792516138833,
+      "kind": "reconciliation_error",
+      "reason": "alpaca_unavailable",
+      "operation": "orders",
+      "networkCode": null,
+      "elapsedMs": 3.9126669988036156,
+      "budgetMs": 10000,
+      "remainingMs": 9996.08720799908,
+      "attemptCount": 2,
+      "httpStatus": null
+    },
+    {
+      "at": 1792516078794,
+      "kind": "reconciliation_error",
+      "reason": "alpaca_unavailable",
+      "operation": "orders",
+      "networkCode": null,
+      "elapsedMs": 9.3709169998765,
+      "budgetMs": 10000,
+      "remainingMs": 9990.629000000656,
+      "attemptCount": 2,
+      "httpStatus": null
+    },
+    {
+      "at": 1792516018782,
+      "kind": "reconciliation_error",
+      "reason": "alpaca_unavailable",
+      "operation": "account",
+      "networkCode": null,
+      "elapsedMs": 4.362041998654604,
+      "budgetMs": 10000,
+      "remainingMs": 9995.6379170008,
+      "attemptCount": 2,
+      "httpStatus": null
+    },
+    {
+      "at": 1792515958776,
+      "kind": "reconciliation_error",
+      "reason": "alpaca_unavailable",
+      "operation": "account",
+      "networkCode": null,
+      "elapsedMs": 2.5474999994039536,
+      "budgetMs": 10000,
+      "remainingMs": 9997.452415999025,
+      "attemptCount": 2,
+      "httpStatus": null
+    }
+  ]
+}

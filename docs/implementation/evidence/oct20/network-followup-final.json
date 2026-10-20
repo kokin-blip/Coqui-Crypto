@@ -1,0 +1,44 @@
+{
+  "observedAtUtc": "2026-10-20T19:14:18.923149+00:00",
+  "firstMatchingRuntimeUtc": "2026-10-20T18:30:28.766000+00:00",
+  "latestReadAtMs": 1792523635244,
+  "runtimeBehaviorHash": "9cbe3cfd8010f2dbed64bbfec15561253779eaea13f4e53630c0718fda65d454",
+  "operations": {
+    "orders": {
+      "received": 40,
+      "unavailable": 0
+    },
+    "account": {
+      "received": 40,
+      "unavailable": 0
+    },
+    "activities": {
+      "received": 80,
+      "unavailable": 0
+    },
+    "positions": {
+      "received": 80,
+      "unavailable": 0
+    }
+  },
+  "receivedReadCount": 240,
+  "readFailures": [],
+  "transportReconciliationFailures": [],
+  "latestStream": {
+    "atMs": 1792523536995,
+    "status": "listening"
+  },
+  "latestReconciliation": {
+    "atMs": 1792523635266,
+    "reason": "broker_positions_mismatch",
+    "operation": "positions",
+    "pendingFeeEvidence": {
+      "latestFillAtMs": 1792497660986,
+      "oldestFillAtMs": 1792497660392,
+      "reviewAfterMs": 1792627200000,
+      "status": "awaiting"
+    }
+  },
+  "paperState": "paused",
+  "submissionAttempts": 14
+}

@@ -1,0 +1,7 @@
+{
+  "version": "0.1.0-beta.18",
+  "installedApp": "/Applications/Coqui.app",
+  "rollbackApp": "/Applications/.Coqui-beta17-backup-before-beta18-2026-10-20.app",
+  "installedAsarSha256": "fe2646829fa5a08a8533144991b516d08358339706b61f9ab136664dda19bb61",
+  "matchesPackagedArchive": true
+}

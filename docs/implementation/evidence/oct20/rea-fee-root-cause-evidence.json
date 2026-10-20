@@ -1,0 +1,3998 @@
+{
+  "capturedAt": "2026-10-20T18:11:23.774Z",
+  "staticAnalysis": {
+    "evidence_id": "ev_463f591d6eb9803cc25c00dc65fa3bdb4efa8b8f44a7935b6ede2889763c9a1c",
+    "subject": {
+      "name": "rea-beta17-fee-slice",
+      "digest": {
+        "sha256": "712dbad905dbac07c4641d5c858c503eea1120e626fe49193fe7421edd409b0a"
+      },
+      "format": "directory",
+      "architecture": null,
+      "local_path": "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/release/rea-beta17-fee-slice"
+    },
+    "provider": {
+      "id": "rea-analysis-view",
+      "name": "REA analysis view projection",
+      "version": "1"
+    },
+    "analysis_profile": null,
+    "predicate_type": "rea.analysis-view",
+    "operation": "inspect_analysis_view",
+    "parameters": {
+      "parent_evidence_id": "ev_b444e7a982ae9b97a269ffc792b38eceeb781d6b0b0e53aa20ec2f84aa85a05e",
+      "view": {
+        "kind": "summary"
+      }
+    },
+    "raw_result": null,
+    "normalized_result": {
+      "kind": "summary",
+      "view": {
+        "kind": "summary"
+      },
+      "summary": {
+        "input_path": "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/release/rea-beta17-fee-slice",
+        "format": "directory",
+        "root_artifact_sha256": "712dbad905dbac07c4641d5c858c503eea1120e626fe49193fe7421edd409b0a",
+        "statistics": {
+          "relevant_files": 5,
+          "nested_asar_containers": 0,
+          "text_bytes_read": 30697,
+          "invalid_utf8_files": 0,
+          "parsed_javascript_files": 4,
+          "visited_ast_nodes": 4301,
+          "findings": 59,
+          "modules": 0,
+          "parse_failures": 0
+        },
+        "electron": {
+          "browser_windows": 0,
+          "explicit_web_preferences": 0,
+          "preload_entrypoints": 0,
+          "context_bridge_apis": 0,
+          "exposed_api_members": 0,
+          "ipc": {
+            "operations": 0,
+            "literal_channels": 0,
+            "dynamic_channel_operations": 0,
+            "renderer_transmissions": 0,
+            "renderer_listeners": 0,
+            "main_handlers": 0,
+            "paired_renderer_transmissions": 0,
+            "ambiguous_renderer_transmissions": 0,
+            "unpaired_literal_renderer_transmissions": 0
+          },
+          "sender_validation_observations": 0,
+          "utility_processes": 0,
+          "resolved_utility_entrypoints": 0,
+          "native_addon_bindings": 0,
+          "resolved_native_addon_bindings": 0
+        },
+        "coverage": {
+          "application": {
+            "status": "complete",
+            "truncated": false,
+            "omitted_count": 0,
+            "limits": []
+          },
+          "semantic": {
+            "status": "unknown",
+            "truncated": false,
+            "omitted_nodes": 0,
+            "omitted_relations": 0,
+            "limits": [],
+            "families": [
+              {
+                "family": "boundary",
+                "status": "partial",
+                "retained_relations": 21,
+                "omitted_relations": 0,
+                "unknown_count": 4
+              },
+              {
+                "family": "call-flow",
+                "status": "partial",
+                "retained_relations": 132,
+                "omitted_relations": 0,
+                "unknown_count": 332
+              },
+              {
+                "family": "child-process",
+                "status": "partial",
+                "retained_relations": 0,
+                "omitted_relations": 0,
+                "unknown_count": 0
+              },
+              {
+                "family": "closure",
+                "status": "partial",
+                "retained_relations": 150,
+                "omitted_relations": 0,
+                "unknown_count": 0
+              },
+              {
+                "family": "configuration",
+                "status": "partial",
+                "retained_relations": 0,
+                "omitted_relations": 0,
+                "unknown_count": 0
+              },
+              {
+                "family": "data-flow",
+                "status": "partial",
+                "retained_relations": 1811,
+                "omitted_relations": 0,
+                "unknown_count": 231
+              },
+              {
+                "family": "event",
+                "status": "partial",
+                "retained_relations": 0,
+                "omitted_relations": 0,
+                "unknown_count": 0
+              },
+              {
+                "family": "object-flow",
+                "status": "partial",
+                "retained_relations": 376,
+                "omitted_relations": 0,
+                "unknown_count": 476
+              },
+              {
+                "family": "promise-ownership",
+                "status": "partial",
+                "retained_relations": 19,
+                "omitted_relations": 0,
+                "unknown_count": 15
+              },
+              {
+                "family": "request",
+                "status": "partial",
+                "retained_relations": 0,
+                "omitted_relations": 0,
+                "unknown_count": 0
+              },
+              {
+                "family": "resource-lifecycle",
+                "status": "partial",
+                "retained_relations": 0,
+                "omitted_relations": 0,
+                "unknown_count": 0
+              },
+              {
+                "family": "timer",
+                "status": "partial",
+                "retained_relations": 2,
+                "omitted_relations": 0,
+                "unknown_count": 0
+              }
+            ]
+          },
+          "application_unknowns": 0,
+          "semantic_unknowns": 1058
+        },
+        "limitation_count": 5
+      },
+      "parent_evidence_id": "ev_b444e7a982ae9b97a269ffc792b38eceeb781d6b0b0e53aa20ec2f84aa85a05e",
+      "parent_operation": "analyze_javascript_application",
+      "parent_digest": "b444e7a982ae9b97a269ffc792b38eceeb781d6b0b0e53aa20ec2f84aa85a05e",
+      "view_digest": "d2bc7dbbfa9c7cba3d10093a12165fbc7d36181e3e2c91bdab0f7207874f0d8f",
+      "artifact": {
+        "path": "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/release/rea-beta17-fee-slice",
+        "sha256": "712dbad905dbac07c4641d5c858c503eea1120e626fe49193fe7421edd409b0a"
+      },
+      "coverage": {
+        "status": "complete-within-view",
+        "examined": 53,
+        "total": 64,
+        "next_offset": null,
+        "exhausted": true
+      },
+      "limitations": [
+        "Boundary extraction covers unshadowed JSON/global coercions plus parse and validation method candidates.",
+        "Child-process extraction covers asynchronous node:child_process creation, literal argv/env/stdio options, exit/error listeners, and kill signals.",
+        "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+        "Configuration extraction covers process.env, process.argv, node:fs reads, and direct logical defaults.",
+        "Event extraction covers EventEmitter-style literal registrations, removals, and dispatch candidates; dynamic names remain unknown.",
+        "Function fingerprints are static candidates; equal digests can remain ambiguous and do not prove behavioral equivalence.",
+        "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+        "Local data flow does not claim control-flow-sensitive reaching definitions or arbitrary dynamic property resolution.",
+        "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+        "Request extraction covers fetch, WebSocket, node:http/node:https construction, direct option fields, and exact local response consumers.",
+        "Resource extraction covers built-in filesystem/network acquisition and exact local close/destroy/end handles.",
+        "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+        "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+        "The semantic graph contains static syntax observations and conservative relationship candidates; it does not claim runtime execution.",
+        "Timer extraction covers global or node:timers scheduling and exact local-handle cancellation.",
+        "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code."
+      ],
+      "unknowns": [
+        "1058 semantic graph unknowns remain in the parent Evidence.",
+        "Boundary extraction covers unshadowed JSON/global coercions plus parse and validation method candidates.",
+        "Child-process extraction covers asynchronous node:child_process creation, literal argv/env/stdio options, exit/error listeners, and kill signals.",
+        "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+        "Configuration extraction covers process.env, process.argv, node:fs reads, and direct logical defaults.",
+        "Event extraction covers EventEmitter-style literal registrations, removals, and dispatch candidates; dynamic names remain unknown.",
+        "Function fingerprints are static candidates; equal digests can remain ambiguous and do not prove behavioral equivalence.",
+        "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+        "Local data flow does not claim control-flow-sensitive reaching definitions or arbitrary dynamic property resolution.",
+        "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+        "Request extraction covers fetch, WebSocket, node:http/node:https construction, direct option fields, and exact local response consumers.",
+        "Resource extraction covers built-in filesystem/network acquisition and exact local close/destroy/end handles.",
+        "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+        "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+        "The semantic graph contains static syntax observations and conservative relationship candidates; it does not claim runtime execution.",
+        "Timer extraction covers global or node:timers scheduling and exact local-handle cancellation.",
+        "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code.",
+        "semantic_graph.coverage.status is unknown"
+      ]
+    },
+    "confidence": "derived",
+    "authority": "shipped-artifact",
+    "environment": null,
+    "limitations": [
+      "Boundary extraction covers unshadowed JSON/global coercions plus parse and validation method candidates.",
+      "Child-process extraction covers asynchronous node:child_process creation, literal argv/env/stdio options, exit/error listeners, and kill signals.",
+      "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+      "Configuration extraction covers process.env, process.argv, node:fs reads, and direct logical defaults.",
+      "Event extraction covers EventEmitter-style literal registrations, removals, and dispatch candidates; dynamic names remain unknown.",
+      "Function fingerprints are static candidates; equal digests can remain ambiguous and do not prove behavioral equivalence.",
+      "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+      "Local data flow does not claim control-flow-sensitive reaching definitions or arbitrary dynamic property resolution.",
+      "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+      "Request extraction covers fetch, WebSocket, node:http/node:https construction, direct option fields, and exact local response consumers.",
+      "Resource extraction covers built-in filesystem/network acquisition and exact local close/destroy/end handles.",
+      "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+      "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+      "The semantic graph contains static syntax observations and conservative relationship candidates; it does not claim runtime execution.",
+      "Timer extraction covers global or node:timers scheduling and exact local-handle cancellation.",
+      "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code."
+    ],
+    "locations": [
+      {
+        "kind": "artifact-path",
+        "path": "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/release/rea-beta17-fee-slice"
+      }
+    ],
+    "evidence_links": [
+      "ev_b444e7a982ae9b97a269ffc792b38eceeb781d6b0b0e53aa20ec2f84aa85a05e"
+    ]
+  },
+  "featureTrace": {
+    "evidence_id": "ev_b342e7691f224e481f0bfbf413441305c4ae59007125a553a49061dc9112e5e2",
+    "subject": null,
+    "provider": {
+      "id": "rea-javascript-application-workflows",
+      "name": "REA JavaScript application workflows",
+      "version": "1"
+    },
+    "analysis_profile": null,
+    "predicate_type": "rea.application-feature-trace",
+    "operation": "trace_application_feature",
+    "parameters": {
+      "application_evidence_id": "ev_b444e7a982ae9b97a269ffc792b38eceeb781d6b0b0e53aa20ec2f84aa85a05e",
+      "native_evidence_ids": [],
+      "seed": {
+        "kind": "node-id",
+        "value": "jag_node_dd9ef77b2f874b6d4ed0881a36e65c1c07279a13649f56f7f5335ac8bd6bf3f4",
+        "match": null,
+        "case_sensitive": false
+      },
+      "direction": "outgoing"
+    },
+    "raw_result": null,
+    "normalized_result": {
+      "trace_id": "jatr_14bfbde108712b0968100203c05c4394c671e35d31acee0b26083a9cc80cd979",
+      "source_evidence_id": "ev_b444e7a982ae9b97a269ffc792b38eceeb781d6b0b0e53aa20ec2f84aa85a05e",
+      "source_graph_id": "jag_f2d2f7bc8b87cb6a3d649190cf811b36253f418bcfff100fbe7095592b5c60fc",
+      "seed": {
+        "kind": "node-id",
+        "value": "jag_node_dd9ef77b2f874b6d4ed0881a36e65c1c07279a13649f56f7f5335ac8bd6bf3f4",
+        "match": null,
+        "case_sensitive": false
+      },
+      "direction": "outgoing",
+      "seed_matches": [
+        {
+          "node_id": "jag_node_dd9ef77b2f874b6d4ed0881a36e65c1c07279a13649f56f7f5335ac8bd6bf3f4",
+          "kind": "javascript-asset",
+          "basis": "node-id",
+          "field": "node_id"
+        }
+      ],
+      "graph": {
+        "schema": "JavaScriptApplicationGraph",
+        "root_node_ids": [
+          "jag_node_dd9ef77b2f874b6d4ed0881a36e65c1c07279a13649f56f7f5335ac8bd6bf3f4"
+        ],
+        "nodes": [
+          {
+            "node_id": "jag_node_042cb2b2ea20c86734f01441c39e73919b973d74124154fb76d8b99230be5180",
+            "kind": "javascript-module",
+            "identity": {
+              "strategy": "artifact-local-key",
+              "stability": "artifact-version",
+              "artifact_sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+              "namespace": "module-export",
+              "key": "[\"712dbad905dbac07c4641d5c858c503eea1120e626fe49193fe7421edd409b0a\",\"parallel-paper-recovery.js\",\"parallelAttemptsResolved\"]"
+            },
+            "observations": [
+              {
+                "label": "parallel-paper-recovery.js:parallelAttemptsResolved",
+                "source_map_reference": null,
+                "properties": {
+                  "semantic_role": "export-binding",
+                  "module_path": "parallel-paper-recovery.js",
+                  "relationship_kind": "export",
+                  "exported_name": "parallelAttemptsResolved",
+                  "local_name": "parallelAttemptsResolved",
+                  "imported_name": null,
+                  "declared_specifier": null
+                },
+                "evidence": {
+                  "authority": "ast-static-analysis",
+                  "state": "observed",
+                  "confidence": "exact",
+                  "artifact": {
+                    "available": true,
+                    "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                    "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+                  },
+                  "location": {
+                    "available": true,
+                    "value": {
+                      "kind": "source-range",
+                      "source": "parallel-paper-recovery.js",
+                      "start": {
+                        "line": 5,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 19,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "extractor": {
+                    "name": "rea-javascript-artifact-reconstruction",
+                    "version": "1",
+                    "operation": "recover-module-export",
+                    "executable_sha256": null
+                  },
+                  "coverage": {
+                    "status": "complete",
+                    "truncated": false,
+                    "omitted_count": 0,
+                    "limits": []
+                  },
+                  "limitations": [
+                    "Cross-function mutation and dynamic property resolution remain unknown.",
+                    "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                    "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                    "Return sites include only direct callable returns; nested callable returns remain separate.",
+                    "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+                  ],
+                  "evidence_ids": []
+                },
+                "observation_id": "jag_observation_15c32d3504e66f8c1bc9abe1dc0ac2d821c8f14cd1d991d8e5d8fa0e3a0f3413",
+                "identifier_strategy": {
+                  "strategy": "semantic-content-sha256",
+                  "stability": "observation-exact"
+                }
+              },
+              {
+                "label": "parallel-paper-recovery.js:parallelAttemptsResolved:return-shapes",
+                "source_map_reference": null,
+                "properties": {
+                  "semantic_role": "export-return-shapes",
+                  "module_path": "parallel-paper-recovery.js",
+                  "exported_name": "parallelAttemptsResolved",
+                  "callable_id": "callable:function:292:1055",
+                  "callable_kind": "function",
+                  "static_return_shapes": [
+                    {
+                      "source_range": {
+                        "start": {
+                          "line": 15,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 18,
+                          "column": 7
+                        }
+                      },
+                      "value_status": "unknown",
+                      "fields": [
+                        {
+                          "path": "",
+                          "presence": "present",
+                          "state": "unknown",
+                          "value": null,
+                          "reason": "Unsupported CallExpression value."
+                        }
+                      ],
+                      "property_coverage": []
+                    }
+                  ],
+                  "return_shape_coverage": {
+                    "status": "complete",
+                    "retained_return_sites": 1,
+                    "omitted_return_sites": 0,
+                    "omitted_fields": 0,
+                    "omitted_property_coverage": 0,
+                    "projection_complete": true
+                  }
+                },
+                "evidence": {
+                  "authority": "static-relationship-inference",
+                  "state": "inferred",
+                  "confidence": "high",
+                  "artifact": {
+                    "available": true,
+                    "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                    "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+                  },
+                  "location": {
+                    "available": true,
+                    "value": {
+                      "kind": "source-range",
+                      "source": "parallel-paper-recovery.js",
+                      "start": {
+                        "line": 5,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 19,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "extractor": {
+                    "name": "rea-javascript-artifact-reconstruction",
+                    "version": "1",
+                    "operation": "recover-export-return-shapes",
+                    "executable_sha256": null
+                  },
+                  "coverage": {
+                    "status": "complete",
+                    "truncated": false,
+                    "omitted_count": 0,
+                    "limits": []
+                  },
+                  "limitations": [
+                    "Cross-function mutation and dynamic property resolution remain unknown.",
+                    "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                    "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                    "Return shapes are inferred from inert syntax and do not prove runtime behavior.",
+                    "Return sites include only direct callable returns; nested callable returns remain separate.",
+                    "Static syntax does not prove that this relationship executes at runtime.",
+                    "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+                  ],
+                  "evidence_ids": []
+                },
+                "observation_id": "jag_observation_cb827f0d8d84be930b0acd954b55c747733d61d4de9d48bab78269211aeedb1d",
+                "identifier_strategy": {
+                  "strategy": "semantic-content-sha256",
+                  "stability": "observation-exact"
+                }
+              }
+            ]
+          },
+          {
+            "node_id": "jag_node_67c43a0141875a3bf8c6dde1f0d8c4e50f9322c62204a2168d99052e0767a996",
+            "kind": "javascript-module",
+            "identity": {
+              "strategy": "artifact-local-key",
+              "stability": "artifact-version",
+              "artifact_sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+              "namespace": "unresolved-semantic-module",
+              "key": "not-found:./parallel-paper-utils.js"
+            },
+            "observations": [
+              {
+                "label": "./parallel-paper-utils.js",
+                "source_map_reference": null,
+                "properties": {
+                  "semantic_role": "module-reference",
+                  "declared_specifier": "./parallel-paper-utils.js",
+                  "resolution_status": "not-found"
+                },
+                "evidence": {
+                  "authority": "static-relationship-inference",
+                  "state": "inferred",
+                  "confidence": "low",
+                  "artifact": {
+                    "available": true,
+                    "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                    "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+                  },
+                  "location": {
+                    "available": true,
+                    "value": {
+                      "kind": "source-range",
+                      "source": "parallel-paper-recovery.js",
+                      "start": {
+                        "line": 3,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 3,
+                        "column": 28
+                      }
+                    }
+                  },
+                  "extractor": {
+                    "name": "rea-javascript-artifact-reconstruction",
+                    "version": "1",
+                    "operation": "retain-unresolved-semantic-module",
+                    "executable_sha256": null
+                  },
+                  "coverage": {
+                    "status": "complete",
+                    "truncated": false,
+                    "omitted_count": 0,
+                    "limits": []
+                  },
+                  "limitations": [
+                    "Cross-function mutation and dynamic property resolution remain unknown.",
+                    "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                    "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                    "Return sites include only direct callable returns; nested callable returns remain separate.",
+                    "Static syntax does not prove that this relationship executes at runtime.",
+                    "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+                  ],
+                  "evidence_ids": []
+                },
+                "observation_id": "jag_observation_47d5d0dfa1758ba62bf36157bc0ee615086985e800be886ce98bf2ff3dbb0b64",
+                "identifier_strategy": {
+                  "strategy": "semantic-content-sha256",
+                  "stability": "observation-exact"
+                }
+              },
+              {
+                "label": "./parallel-paper-utils.js",
+                "source_map_reference": null,
+                "properties": {
+                  "semantic_role": "module-reference",
+                  "declared_specifier": "./parallel-paper-utils.js",
+                  "resolution_status": "not-found"
+                },
+                "evidence": {
+                  "authority": "static-relationship-inference",
+                  "state": "inferred",
+                  "confidence": "low",
+                  "artifact": {
+                    "available": true,
+                    "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                    "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+                  },
+                  "location": {
+                    "available": true,
+                    "value": {
+                      "kind": "source-range",
+                      "source": "parallel-paper-recovery.js",
+                      "start": {
+                        "line": 3,
+                        "column": 30
+                      },
+                      "end": {
+                        "line": 3,
+                        "column": 57
+                      }
+                    }
+                  },
+                  "extractor": {
+                    "name": "rea-javascript-artifact-reconstruction",
+                    "version": "1",
+                    "operation": "retain-unresolved-semantic-module",
+                    "executable_sha256": null
+                  },
+                  "coverage": {
+                    "status": "complete",
+                    "truncated": false,
+                    "omitted_count": 0,
+                    "limits": []
+                  },
+                  "limitations": [
+                    "Cross-function mutation and dynamic property resolution remain unknown.",
+                    "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                    "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                    "Return sites include only direct callable returns; nested callable returns remain separate.",
+                    "Static syntax does not prove that this relationship executes at runtime.",
+                    "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+                  ],
+                  "evidence_ids": []
+                },
+                "observation_id": "jag_observation_538b0fc5d4b2e0e6c03b20cae3a6a618d48a433ff234d62e8f698437579412c7",
+                "identifier_strategy": {
+                  "strategy": "semantic-content-sha256",
+                  "stability": "observation-exact"
+                }
+              }
+            ]
+          },
+          {
+            "node_id": "jag_node_6ddcceaa0e8ea04b92ce9b51679ba286958190f27d90dd5259a7c93b2cba9637",
+            "kind": "javascript-module",
+            "identity": {
+              "strategy": "artifact-local-key",
+              "stability": "artifact-version",
+              "artifact_sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+              "namespace": "unresolved-semantic-module",
+              "key": "external:@coqui/adapters"
+            },
+            "observations": [
+              {
+                "label": "@coqui/adapters",
+                "source_map_reference": null,
+                "properties": {
+                  "semantic_role": "module-reference",
+                  "declared_specifier": "@coqui/adapters",
+                  "resolution_status": "external"
+                },
+                "evidence": {
+                  "authority": "static-relationship-inference",
+                  "state": "inferred",
+                  "confidence": "low",
+                  "artifact": {
+                    "available": true,
+                    "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                    "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+                  },
+                  "location": {
+                    "available": true,
+                    "value": {
+                      "kind": "source-range",
+                      "source": "parallel-paper-recovery.js",
+                      "start": {
+                        "line": 1,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 1,
+                        "column": 29
+                      }
+                    }
+                  },
+                  "extractor": {
+                    "name": "rea-javascript-artifact-reconstruction",
+                    "version": "1",
+                    "operation": "retain-unresolved-semantic-module",
+                    "executable_sha256": null
+                  },
+                  "coverage": {
+                    "status": "complete",
+                    "truncated": false,
+                    "omitted_count": 0,
+                    "limits": []
+                  },
+                  "limitations": [
+                    "Cross-function mutation and dynamic property resolution remain unknown.",
+                    "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                    "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                    "Return sites include only direct callable returns; nested callable returns remain separate.",
+                    "Static syntax does not prove that this relationship executes at runtime.",
+                    "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+                  ],
+                  "evidence_ids": []
+                },
+                "observation_id": "jag_observation_55eae1a47f9ae78b30dadcaa2ebcc6e4ae20d3b7e3688e3e4de88ac797201330",
+                "identifier_strategy": {
+                  "strategy": "semantic-content-sha256",
+                  "stability": "observation-exact"
+                }
+              },
+              {
+                "label": "@coqui/adapters",
+                "source_map_reference": null,
+                "properties": {
+                  "semantic_role": "module-reference",
+                  "declared_specifier": "@coqui/adapters",
+                  "resolution_status": "external"
+                },
+                "evidence": {
+                  "authority": "static-relationship-inference",
+                  "state": "inferred",
+                  "confidence": "low",
+                  "artifact": {
+                    "available": true,
+                    "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                    "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+                  },
+                  "location": {
+                    "available": true,
+                    "value": {
+                      "kind": "source-range",
+                      "source": "parallel-paper-recovery.js",
+                      "start": {
+                        "line": 1,
+                        "column": 31
+                      },
+                      "end": {
+                        "line": 1,
+                        "column": 45
+                      }
+                    }
+                  },
+                  "extractor": {
+                    "name": "rea-javascript-artifact-reconstruction",
+                    "version": "1",
+                    "operation": "retain-unresolved-semantic-module",
+                    "executable_sha256": null
+                  },
+                  "coverage": {
+                    "status": "complete",
+                    "truncated": false,
+                    "omitted_count": 0,
+                    "limits": []
+                  },
+                  "limitations": [
+                    "Cross-function mutation and dynamic property resolution remain unknown.",
+                    "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                    "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                    "Return sites include only direct callable returns; nested callable returns remain separate.",
+                    "Static syntax does not prove that this relationship executes at runtime.",
+                    "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+                  ],
+                  "evidence_ids": []
+                },
+                "observation_id": "jag_observation_63a031d88f6efb318e54fffba5137adb0a7999db526de0b52732a1d31b936e61",
+                "identifier_strategy": {
+                  "strategy": "semantic-content-sha256",
+                  "stability": "observation-exact"
+                }
+              }
+            ]
+          },
+          {
+            "node_id": "jag_node_766c1ed3919e3e9e2b75b0e31bacb38bc5631fdc281e104b7648981889ab89b2",
+            "kind": "javascript-module",
+            "identity": {
+              "strategy": "artifact-local-key",
+              "stability": "artifact-version",
+              "artifact_sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+              "namespace": "module-export",
+              "key": "[\"712dbad905dbac07c4641d5c858c503eea1120e626fe49193fe7421edd409b0a\",\"parallel-paper-recovery.js\",\"prepareParallelPass\"]"
+            },
+            "observations": [
+              {
+                "label": "parallel-paper-recovery.js:prepareParallelPass:return-shapes",
+                "source_map_reference": null,
+                "properties": {
+                  "semantic_role": "export-return-shapes",
+                  "module_path": "parallel-paper-recovery.js",
+                  "exported_name": "prepareParallelPass",
+                  "callable_id": "callable:function:1843:2790",
+                  "callable_kind": "function",
+                  "static_return_shapes": [
+                    {
+                      "source_range": {
+                        "start": {
+                          "line": 32,
+                          "column": 8
+                        },
+                        "end": {
+                          "line": 32,
+                          "column": 35
+                        }
+                      },
+                      "value_status": "unknown",
+                      "fields": [
+                        {
+                          "path": "",
+                          "presence": "present",
+                          "state": "unknown",
+                          "value": null,
+                          "reason": "Unsupported CallExpression value."
+                        }
+                      ],
+                      "property_coverage": []
+                    },
+                    {
+                      "source_range": {
+                        "start": {
+                          "line": 40,
+                          "column": 8
+                        },
+                        "end": {
+                          "line": 40,
+                          "column": 117
+                        }
+                      },
+                      "value_status": "unknown",
+                      "fields": [
+                        {
+                          "path": "",
+                          "presence": "present",
+                          "state": "unknown",
+                          "value": null,
+                          "reason": "Unsupported AwaitExpression value."
+                        }
+                      ],
+                      "property_coverage": []
+                    }
+                  ],
+                  "return_shape_coverage": {
+                    "status": "complete",
+                    "retained_return_sites": 2,
+                    "omitted_return_sites": 0,
+                    "omitted_fields": 0,
+                    "omitted_property_coverage": 0,
+                    "projection_complete": true
+                  }
+                },
+                "evidence": {
+                  "authority": "static-relationship-inference",
+                  "state": "inferred",
+                  "confidence": "high",
+                  "artifact": {
+                    "available": true,
+                    "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                    "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+                  },
+                  "location": {
+                    "available": true,
+                    "value": {
+                      "kind": "source-range",
+                      "source": "parallel-paper-recovery.js",
+                      "start": {
+                        "line": 30,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 50,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "extractor": {
+                    "name": "rea-javascript-artifact-reconstruction",
+                    "version": "1",
+                    "operation": "recover-export-return-shapes",
+                    "executable_sha256": null
+                  },
+                  "coverage": {
+                    "status": "complete",
+                    "truncated": false,
+                    "omitted_count": 0,
+                    "limits": []
+                  },
+                  "limitations": [
+                    "Cross-function mutation and dynamic property resolution remain unknown.",
+                    "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                    "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                    "Return shapes are inferred from inert syntax and do not prove runtime behavior.",
+                    "Return sites include only direct callable returns; nested callable returns remain separate.",
+                    "Static syntax does not prove that this relationship executes at runtime.",
+                    "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+                  ],
+                  "evidence_ids": []
+                },
+                "observation_id": "jag_observation_6c524ae0d1a1d0668559627698782990bcd7730dea5b65de192b3cbaf6465bb4",
+                "identifier_strategy": {
+                  "strategy": "semantic-content-sha256",
+                  "stability": "observation-exact"
+                }
+              },
+              {
+                "label": "parallel-paper-recovery.js:prepareParallelPass",
+                "source_map_reference": null,
+                "properties": {
+                  "semantic_role": "export-binding",
+                  "module_path": "parallel-paper-recovery.js",
+                  "relationship_kind": "export",
+                  "exported_name": "prepareParallelPass",
+                  "local_name": "prepareParallelPass",
+                  "imported_name": null,
+                  "declared_specifier": null
+                },
+                "evidence": {
+                  "authority": "ast-static-analysis",
+                  "state": "observed",
+                  "confidence": "exact",
+                  "artifact": {
+                    "available": true,
+                    "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                    "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+                  },
+                  "location": {
+                    "available": true,
+                    "value": {
+                      "kind": "source-range",
+                      "source": "parallel-paper-recovery.js",
+                      "start": {
+                        "line": 30,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 50,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "extractor": {
+                    "name": "rea-javascript-artifact-reconstruction",
+                    "version": "1",
+                    "operation": "recover-module-export",
+                    "executable_sha256": null
+                  },
+                  "coverage": {
+                    "status": "complete",
+                    "truncated": false,
+                    "omitted_count": 0,
+                    "limits": []
+                  },
+                  "limitations": [
+                    "Cross-function mutation and dynamic property resolution remain unknown.",
+                    "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                    "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                    "Return sites include only direct callable returns; nested callable returns remain separate.",
+                    "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+                  ],
+                  "evidence_ids": []
+                },
+                "observation_id": "jag_observation_9f79238935dd28108575e62002f0aef803a0aeb58cb0f7cd04ab01f4c0b396d9",
+                "identifier_strategy": {
+                  "strategy": "semantic-content-sha256",
+                  "stability": "observation-exact"
+                }
+              }
+            ]
+          },
+          {
+            "node_id": "jag_node_78bfb5f4d99518e5b8387bddce52d429669820184ac9b8ee03a84cdbc63c0f3d",
+            "kind": "javascript-module",
+            "identity": {
+              "strategy": "artifact-local-key",
+              "stability": "artifact-version",
+              "artifact_sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+              "namespace": "module-export",
+              "key": "[\"712dbad905dbac07c4641d5c858c503eea1120e626fe49193fe7421edd409b0a\",\"parallel-paper-recovery.js\",\"validateParallelPositions\"]"
+            },
+            "observations": [
+              {
+                "label": "parallel-paper-recovery.js:validateParallelPositions",
+                "source_map_reference": null,
+                "properties": {
+                  "semantic_role": "export-binding",
+                  "module_path": "parallel-paper-recovery.js",
+                  "relationship_kind": "export",
+                  "exported_name": "validateParallelPositions",
+                  "local_name": "validateParallelPositions",
+                  "imported_name": null,
+                  "declared_specifier": null
+                },
+                "evidence": {
+                  "authority": "ast-static-analysis",
+                  "state": "observed",
+                  "confidence": "exact",
+                  "artifact": {
+                    "available": true,
+                    "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                    "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+                  },
+                  "location": {
+                    "available": true,
+                    "value": {
+                      "kind": "source-range",
+                      "source": "parallel-paper-recovery.js",
+                      "start": {
+                        "line": 52,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 113,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "extractor": {
+                    "name": "rea-javascript-artifact-reconstruction",
+                    "version": "1",
+                    "operation": "recover-module-export",
+                    "executable_sha256": null
+                  },
+                  "coverage": {
+                    "status": "complete",
+                    "truncated": false,
+                    "omitted_count": 0,
+                    "limits": []
+                  },
+                  "limitations": [
+                    "Cross-function mutation and dynamic property resolution remain unknown.",
+                    "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                    "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                    "Return sites include only direct callable returns; nested callable returns remain separate.",
+                    "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+                  ],
+                  "evidence_ids": []
+                },
+                "observation_id": "jag_observation_21c28be309eca85a5e8c2c28caa6343cd8a333a1e9252c383de23773f9d9e049",
+                "identifier_strategy": {
+                  "strategy": "semantic-content-sha256",
+                  "stability": "observation-exact"
+                }
+              },
+              {
+                "label": "parallel-paper-recovery.js:validateParallelPositions:return-shapes",
+                "source_map_reference": null,
+                "properties": {
+                  "semantic_role": "export-return-shapes",
+                  "module_path": "parallel-paper-recovery.js",
+                  "exported_name": "validateParallelPositions",
+                  "callable_id": "callable:function:2891:6166",
+                  "callable_kind": "function",
+                  "static_return_shapes": [],
+                  "return_shape_coverage": {
+                    "status": "complete",
+                    "retained_return_sites": 0,
+                    "omitted_return_sites": 0,
+                    "omitted_fields": 0,
+                    "omitted_property_coverage": 0,
+                    "projection_complete": true
+                  }
+                },
+                "evidence": {
+                  "authority": "static-relationship-inference",
+                  "state": "inferred",
+                  "confidence": "high",
+                  "artifact": {
+                    "available": true,
+                    "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                    "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+                  },
+                  "location": {
+                    "available": true,
+                    "value": {
+                      "kind": "source-range",
+                      "source": "parallel-paper-recovery.js",
+                      "start": {
+                        "line": 52,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 113,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "extractor": {
+                    "name": "rea-javascript-artifact-reconstruction",
+                    "version": "1",
+                    "operation": "recover-export-return-shapes",
+                    "executable_sha256": null
+                  },
+                  "coverage": {
+                    "status": "complete",
+                    "truncated": false,
+                    "omitted_count": 0,
+                    "limits": []
+                  },
+                  "limitations": [
+                    "Cross-function mutation and dynamic property resolution remain unknown.",
+                    "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                    "No direct return value was retained; runtime return behavior remains unknown.",
+                    "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                    "Return shapes are inferred from inert syntax and do not prove runtime behavior.",
+                    "Return sites include only direct callable returns; nested callable returns remain separate.",
+                    "Static syntax does not prove that this relationship executes at runtime.",
+                    "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+                  ],
+                  "evidence_ids": []
+                },
+                "observation_id": "jag_observation_a969ad67b536575ccc4b9df5a4a3ac9797bc9e6dfced8fc54d4a152aa4e299a8",
+                "identifier_strategy": {
+                  "strategy": "semantic-content-sha256",
+                  "stability": "observation-exact"
+                }
+              }
+            ]
+          },
+          {
+            "node_id": "jag_node_894bd8da5ead0222bc9886d298ac968d2dec8df03ed47b12eca9c4ca15cdc292",
+            "kind": "javascript-module",
+            "identity": {
+              "strategy": "artifact-local-key",
+              "stability": "artifact-version",
+              "artifact_sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+              "namespace": "unresolved-semantic-module",
+              "key": "external:decimal.js"
+            },
+            "observations": [
+              {
+                "label": "decimal.js",
+                "source_map_reference": null,
+                "properties": {
+                  "semantic_role": "module-reference",
+                  "declared_specifier": "decimal.js",
+                  "resolution_status": "external"
+                },
+                "evidence": {
+                  "authority": "static-relationship-inference",
+                  "state": "inferred",
+                  "confidence": "low",
+                  "artifact": {
+                    "available": true,
+                    "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                    "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+                  },
+                  "location": {
+                    "available": true,
+                    "value": {
+                      "kind": "source-range",
+                      "source": "parallel-paper-recovery.js",
+                      "start": {
+                        "line": 2,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 2,
+                        "column": 16
+                      }
+                    }
+                  },
+                  "extractor": {
+                    "name": "rea-javascript-artifact-reconstruction",
+                    "version": "1",
+                    "operation": "retain-unresolved-semantic-module",
+                    "executable_sha256": null
+                  },
+                  "coverage": {
+                    "status": "complete",
+                    "truncated": false,
+                    "omitted_count": 0,
+                    "limits": []
+                  },
+                  "limitations": [
+                    "Cross-function mutation and dynamic property resolution remain unknown.",
+                    "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                    "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                    "Return sites include only direct callable returns; nested callable returns remain separate.",
+                    "Static syntax does not prove that this relationship executes at runtime.",
+                    "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+                  ],
+                  "evidence_ids": []
+                },
+                "observation_id": "jag_observation_702338e9fb16a42bd6f4753fd736e3de3404b90c380ead2bb6c9233ed6292fde",
+                "identifier_strategy": {
+                  "strategy": "semantic-content-sha256",
+                  "stability": "observation-exact"
+                }
+              }
+            ]
+          },
+          {
+            "node_id": "jag_node_9836f524479efce45ef307726ce36227f5564ebd26faf0440b382c66f3a12c87",
+            "kind": "javascript-module",
+            "identity": {
+              "strategy": "artifact-local-key",
+              "stability": "artifact-version",
+              "artifact_sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+              "namespace": "module-export",
+              "key": "[\"712dbad905dbac07c4641d5c858c503eea1120e626fe49193fe7421edd409b0a\",\"parallel-paper-recovery.js\",\"validateParallelBroker\"]"
+            },
+            "observations": [
+              {
+                "label": "parallel-paper-recovery.js:validateParallelBroker",
+                "source_map_reference": null,
+                "properties": {
+                  "semantic_role": "export-binding",
+                  "module_path": "parallel-paper-recovery.js",
+                  "relationship_kind": "export",
+                  "exported_name": "validateParallelBroker",
+                  "local_name": "validateParallelBroker",
+                  "imported_name": null,
+                  "declared_specifier": null
+                },
+                "evidence": {
+                  "authority": "ast-static-analysis",
+                  "state": "observed",
+                  "confidence": "exact",
+                  "artifact": {
+                    "available": true,
+                    "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                    "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+                  },
+                  "location": {
+                    "available": true,
+                    "value": {
+                      "kind": "source-range",
+                      "source": "parallel-paper-recovery.js",
+                      "start": {
+                        "line": 20,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 29,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "extractor": {
+                    "name": "rea-javascript-artifact-reconstruction",
+                    "version": "1",
+                    "operation": "recover-module-export",
+                    "executable_sha256": null
+                  },
+                  "coverage": {
+                    "status": "complete",
+                    "truncated": false,
+                    "omitted_count": 0,
+                    "limits": []
+                  },
+                  "limitations": [
+                    "Cross-function mutation and dynamic property resolution remain unknown.",
+                    "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                    "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                    "Return sites include only direct callable returns; nested callable returns remain separate.",
+                    "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+                  ],
+                  "evidence_ids": []
+                },
+                "observation_id": "jag_observation_11f455a80a91e7d3d35188cc9cf4183081c93fa5bc2f223de4b8ae983977d34c",
+                "identifier_strategy": {
+                  "strategy": "semantic-content-sha256",
+                  "stability": "observation-exact"
+                }
+              },
+              {
+                "label": "parallel-paper-recovery.js:validateParallelBroker:return-shapes",
+                "source_map_reference": null,
+                "properties": {
+                  "semantic_role": "export-return-shapes",
+                  "module_path": "parallel-paper-recovery.js",
+                  "exported_name": "validateParallelBroker",
+                  "callable_id": "callable:function:1063:1835",
+                  "callable_kind": "function",
+                  "static_return_shapes": [
+                    {
+                      "source_range": {
+                        "start": {
+                          "line": 28,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 28,
+                          "column": 29
+                        }
+                      },
+                      "value_status": "unknown",
+                      "fields": [
+                        {
+                          "path": "",
+                          "presence": "present",
+                          "state": "unknown",
+                          "value": null,
+                          "reason": "Unsupported BinaryExpression value."
+                        }
+                      ],
+                      "property_coverage": []
+                    }
+                  ],
+                  "return_shape_coverage": {
+                    "status": "complete",
+                    "retained_return_sites": 1,
+                    "omitted_return_sites": 0,
+                    "omitted_fields": 0,
+                    "omitted_property_coverage": 0,
+                    "projection_complete": true
+                  }
+                },
+                "evidence": {
+                  "authority": "static-relationship-inference",
+                  "state": "inferred",
+                  "confidence": "high",
+                  "artifact": {
+                    "available": true,
+                    "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                    "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+                  },
+                  "location": {
+                    "available": true,
+                    "value": {
+                      "kind": "source-range",
+                      "source": "parallel-paper-recovery.js",
+                      "start": {
+                        "line": 20,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 29,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "extractor": {
+                    "name": "rea-javascript-artifact-reconstruction",
+                    "version": "1",
+                    "operation": "recover-export-return-shapes",
+                    "executable_sha256": null
+                  },
+                  "coverage": {
+                    "status": "complete",
+                    "truncated": false,
+                    "omitted_count": 0,
+                    "limits": []
+                  },
+                  "limitations": [
+                    "Cross-function mutation and dynamic property resolution remain unknown.",
+                    "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                    "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                    "Return shapes are inferred from inert syntax and do not prove runtime behavior.",
+                    "Return sites include only direct callable returns; nested callable returns remain separate.",
+                    "Static syntax does not prove that this relationship executes at runtime.",
+                    "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+                  ],
+                  "evidence_ids": []
+                },
+                "observation_id": "jag_observation_8901cfbf9b6f9bb56e9b391997e1bec98941198ec759b1031e2ecd44e673dce1",
+                "identifier_strategy": {
+                  "strategy": "semantic-content-sha256",
+                  "stability": "observation-exact"
+                }
+              }
+            ]
+          },
+          {
+            "node_id": "jag_node_9d85e1fc86875e506646ba160910687a69d7363273a6ec086c3851b76be2ae7d",
+            "kind": "javascript-module",
+            "identity": {
+              "strategy": "artifact-local-key",
+              "stability": "artifact-version",
+              "artifact_sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+              "namespace": "unresolved-reference",
+              "key": "static-import:decimal.js"
+            },
+            "observations": [
+              {
+                "label": "decimal.js",
+                "source_map_reference": null,
+                "properties": {
+                  "reference_kind": "static-import",
+                  "specifier": "decimal.js",
+                  "expression": null,
+                  "resolution": "unresolved"
+                },
+                "evidence": {
+                  "authority": "static-relationship-inference",
+                  "state": "inferred",
+                  "confidence": "low",
+                  "artifact": {
+                    "available": true,
+                    "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                    "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+                  },
+                  "location": {
+                    "available": true,
+                    "value": {
+                      "kind": "source-range",
+                      "source": "parallel-paper-recovery.js",
+                      "start": {
+                        "line": 2,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 2,
+                        "column": 37
+                      }
+                    }
+                  },
+                  "extractor": {
+                    "name": "rea-javascript-artifact-reconstruction",
+                    "version": "1",
+                    "operation": "resolve-static-reference",
+                    "executable_sha256": null
+                  },
+                  "coverage": {
+                    "status": "complete",
+                    "truncated": false,
+                    "omitted_count": 0,
+                    "limits": []
+                  },
+                  "limitations": [
+                    "Static syntax does not prove that this relationship executes at runtime.",
+                    "The static reference could not be resolved within the inventoried artifact."
+                  ],
+                  "evidence_ids": []
+                },
+                "observation_id": "jag_observation_117dbebad210fc05f0e43b6fb5e0d14b716eeb06acf31817928f354b46bf2423",
+                "identifier_strategy": {
+                  "strategy": "semantic-content-sha256",
+                  "stability": "observation-exact"
+                }
+              }
+            ]
+          },
+          {
+            "node_id": "jag_node_c02573f9eb3afb679894b74b4f062414d581ae46292dd591bb33c44008cf1c07",
+            "kind": "javascript-module",
+            "identity": {
+              "strategy": "artifact-local-key",
+              "stability": "artifact-version",
+              "artifact_sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+              "namespace": "unresolved-reference",
+              "key": "static-import:@coqui/adapters"
+            },
+            "observations": [
+              {
+                "label": "@coqui/adapters",
+                "source_map_reference": null,
+                "properties": {
+                  "reference_kind": "static-import",
+                  "specifier": "@coqui/adapters",
+                  "expression": null,
+                  "resolution": "unresolved"
+                },
+                "evidence": {
+                  "authority": "static-relationship-inference",
+                  "state": "inferred",
+                  "confidence": "low",
+                  "artifact": {
+                    "available": true,
+                    "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                    "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+                  },
+                  "location": {
+                    "available": true,
+                    "value": {
+                      "kind": "source-range",
+                      "source": "parallel-paper-recovery.js",
+                      "start": {
+                        "line": 1,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 1,
+                        "column": 71
+                      }
+                    }
+                  },
+                  "extractor": {
+                    "name": "rea-javascript-artifact-reconstruction",
+                    "version": "1",
+                    "operation": "resolve-static-reference",
+                    "executable_sha256": null
+                  },
+                  "coverage": {
+                    "status": "complete",
+                    "truncated": false,
+                    "omitted_count": 0,
+                    "limits": []
+                  },
+                  "limitations": [
+                    "Static syntax does not prove that this relationship executes at runtime.",
+                    "The static reference could not be resolved within the inventoried artifact."
+                  ],
+                  "evidence_ids": []
+                },
+                "observation_id": "jag_observation_350553d81b625f715a1f93a4e7b6ec5248ded83e1a4a1945e228df06d5a7b990",
+                "identifier_strategy": {
+                  "strategy": "semantic-content-sha256",
+                  "stability": "observation-exact"
+                }
+              }
+            ]
+          },
+          {
+            "node_id": "jag_node_c11b3d37fc1f0014aac8a44122d60562f7d0543fb64fded6428d08d59c82855c",
+            "kind": "source-map",
+            "identity": {
+              "strategy": "artifact-local-key",
+              "stability": "artifact-version",
+              "artifact_sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+              "namespace": "unresolved-source-map",
+              "key": "ccfa4f3c068626fed9b3fd6237f5bb36b0727ad04a3304a8668feff3b028b1d3"
+            },
+            "observations": [
+              {
+                "label": "source map reference",
+                "source_map_reference": null,
+                "properties": {
+                  "declared_url": "parallel-paper-recovery.js.map",
+                  "declared_url_sha256": "ccfa4f3c068626fed9b3fd6237f5bb36b0727ad04a3304a8668feff3b028b1d3",
+                  "resolved_path": null,
+                  "available": false
+                },
+                "evidence": {
+                  "authority": "static-relationship-inference",
+                  "state": "inferred",
+                  "confidence": "medium",
+                  "artifact": {
+                    "available": true,
+                    "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                    "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+                  },
+                  "location": {
+                    "available": true,
+                    "value": {
+                      "kind": "source-range",
+                      "source": "parallel-paper-recovery.js",
+                      "start": {
+                        "line": 114,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 114,
+                        "column": 51
+                      }
+                    }
+                  },
+                  "extractor": {
+                    "name": "rea-javascript-artifact-reconstruction",
+                    "version": "1",
+                    "operation": "discover-source-map",
+                    "executable_sha256": null
+                  },
+                  "coverage": {
+                    "status": "complete",
+                    "truncated": false,
+                    "omitted_count": 0,
+                    "limits": []
+                  },
+                  "limitations": [
+                    "Static syntax does not prove that this relationship executes at runtime.",
+                    "The declared source map was not present in the inventoried artifact."
+                  ],
+                  "evidence_ids": []
+                },
+                "observation_id": "jag_observation_1a82a3069e9550ad3c88f18eb97fcbf0588a588f5f8cb86376f82145b84eb993",
+                "identifier_strategy": {
+                  "strategy": "semantic-content-sha256",
+                  "stability": "observation-exact"
+                }
+              }
+            ]
+          },
+          {
+            "node_id": "jag_node_c7d6c2f07dff7151f411b9abb79596d6363a8807005b0cb8bd1079fb4e5b1903",
+            "kind": "javascript-module",
+            "identity": {
+              "strategy": "artifact-local-key",
+              "stability": "artifact-version",
+              "artifact_sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+              "namespace": "unresolved-reference",
+              "key": "static-import:./parallel-paper-utils.js"
+            },
+            "observations": [
+              {
+                "label": "./parallel-paper-utils.js",
+                "source_map_reference": null,
+                "properties": {
+                  "reference_kind": "static-import",
+                  "specifier": "./parallel-paper-utils.js",
+                  "expression": null,
+                  "resolution": "unresolved"
+                },
+                "evidence": {
+                  "authority": "static-relationship-inference",
+                  "state": "inferred",
+                  "confidence": "low",
+                  "artifact": {
+                    "available": true,
+                    "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                    "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+                  },
+                  "location": {
+                    "available": true,
+                    "value": {
+                      "kind": "source-range",
+                      "source": "parallel-paper-recovery.js",
+                      "start": {
+                        "line": 3,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 3,
+                        "column": 93
+                      }
+                    }
+                  },
+                  "extractor": {
+                    "name": "rea-javascript-artifact-reconstruction",
+                    "version": "1",
+                    "operation": "resolve-static-reference",
+                    "executable_sha256": null
+                  },
+                  "coverage": {
+                    "status": "complete",
+                    "truncated": false,
+                    "omitted_count": 0,
+                    "limits": []
+                  },
+                  "limitations": [
+                    "Static syntax does not prove that this relationship executes at runtime.",
+                    "The static reference could not be resolved within the inventoried artifact."
+                  ],
+                  "evidence_ids": []
+                },
+                "observation_id": "jag_observation_03a1ec929ab4c696ac700f8fa5c4da08484e7056edbfd13311758bf528c124ff",
+                "identifier_strategy": {
+                  "strategy": "semantic-content-sha256",
+                  "stability": "observation-exact"
+                }
+              }
+            ]
+          },
+          {
+            "node_id": "jag_node_dbe2a5fb39caaa6b4a99067b597450f73f0ef2e801510960c1245849508da380",
+            "kind": "javascript-module",
+            "identity": {
+              "strategy": "artifact-local-key",
+              "stability": "artifact-version",
+              "artifact_sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+              "namespace": "source-module",
+              "key": "712dbad905dbac07c4641d5c858c503eea1120e626fe49193fe7421edd409b0a:parallel-paper-recovery.js"
+            },
+            "observations": [
+              {
+                "label": "parallel-paper-recovery.js",
+                "source_map_reference": null,
+                "properties": {
+                  "semantic_role": "source-module",
+                  "path": "parallel-paper-recovery.js",
+                  "container_sha256": "712dbad905dbac07c4641d5c858c503eea1120e626fe49193fe7421edd409b0a",
+                  "logical_module_key": "parallel-paper-recovery.js",
+                  "module_format": "esm",
+                  "import_relationships": 6,
+                  "export_relationships": 4,
+                  "export_names": [
+                    "parallelAttemptsResolved",
+                    "prepareParallelPass",
+                    "validateParallelBroker",
+                    "validateParallelPositions"
+                  ],
+                  "omitted_export_names": 0
+                },
+                "evidence": {
+                  "authority": "ast-static-analysis",
+                  "state": "observed",
+                  "confidence": "exact",
+                  "artifact": {
+                    "available": true,
+                    "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                    "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+                  },
+                  "location": {
+                    "available": true,
+                    "value": {
+                      "kind": "source-range",
+                      "source": "parallel-paper-recovery.js",
+                      "start": {
+                        "line": 1,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 114,
+                        "column": 51
+                      }
+                    }
+                  },
+                  "extractor": {
+                    "name": "rea-javascript-artifact-reconstruction",
+                    "version": "1",
+                    "operation": "recover-source-module",
+                    "executable_sha256": null
+                  },
+                  "coverage": {
+                    "status": "complete",
+                    "truncated": false,
+                    "omitted_count": 0,
+                    "limits": []
+                  },
+                  "limitations": [
+                    "Cross-function mutation and dynamic property resolution remain unknown.",
+                    "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                    "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                    "Return sites include only direct callable returns; nested callable returns remain separate.",
+                    "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+                  ],
+                  "evidence_ids": []
+                },
+                "observation_id": "jag_observation_4637d6543be3307d0623f03c7c2f07452b33a6645dfd5fa670d450d57f689139",
+                "identifier_strategy": {
+                  "strategy": "semantic-content-sha256",
+                  "stability": "observation-exact"
+                }
+              }
+            ]
+          },
+          {
+            "node_id": "jag_node_dd9ef77b2f874b6d4ed0881a36e65c1c07279a13649f56f7f5335ac8bd6bf3f4",
+            "kind": "javascript-asset",
+            "identity": {
+              "strategy": "content-digest",
+              "stability": "global-exact",
+              "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+            },
+            "observations": [
+              {
+                "label": "parallel-paper-recovery.js",
+                "source_map_reference": null,
+                "properties": {
+                  "path": "parallel-paper-recovery.js",
+                  "bytes": 6218,
+                  "inventory_artifact_id": "art_2401e84d6b23a86f8ff4e27da3dc45cc7402d34c32f5f7b9f72ec360c454e1b9",
+                  "unpacked": false,
+                  "file_kind": "javascript",
+                  "text_status": "included",
+                  "parse_status": "complete",
+                  "json_parse_status": null,
+                  "json_top_level_keys": [],
+                  "omitted_json_top_level_keys": 0,
+                  "vendor_markers": []
+                },
+                "evidence": {
+                  "authority": "artifact-bytes",
+                  "state": "observed",
+                  "confidence": "exact",
+                  "artifact": {
+                    "available": true,
+                    "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                    "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+                  },
+                  "location": {
+                    "available": true,
+                    "value": {
+                      "kind": "artifact-path",
+                      "path": "parallel-paper-recovery.js"
+                    }
+                  },
+                  "extractor": {
+                    "name": "rea-javascript-artifact-reconstruction",
+                    "version": "1",
+                    "operation": "inventory-relevant-file",
+                    "executable_sha256": null
+                  },
+                  "coverage": {
+                    "status": "complete",
+                    "truncated": false,
+                    "omitted_count": 0,
+                    "limits": []
+                  },
+                  "limitations": [],
+                  "evidence_ids": []
+                },
+                "observation_id": "jag_observation_b18039bb69f0dae1b9139b13b9ee2d51b3a29b2aeb7da67db1d4c6d72c2d7698",
+                "identifier_strategy": {
+                  "strategy": "semantic-content-sha256",
+                  "stability": "observation-exact"
+                }
+              }
+            ]
+          },
+          {
+            "node_id": "jag_node_ea183e7353831856e6e3935ade1b2cb3f9bae943e0c639df4fce6ab8aae25cca",
+            "kind": "javascript-module",
+            "identity": {
+              "strategy": "artifact-local-key",
+              "stability": "artifact-version",
+              "artifact_sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+              "namespace": "unresolved-reference",
+              "key": "static-import:./parallel-paper-resolution.js"
+            },
+            "observations": [
+              {
+                "label": "./parallel-paper-resolution.js",
+                "source_map_reference": null,
+                "properties": {
+                  "reference_kind": "static-import",
+                  "specifier": "./parallel-paper-resolution.js",
+                  "expression": null,
+                  "resolution": "unresolved"
+                },
+                "evidence": {
+                  "authority": "static-relationship-inference",
+                  "state": "inferred",
+                  "confidence": "low",
+                  "artifact": {
+                    "available": true,
+                    "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                    "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+                  },
+                  "location": {
+                    "available": true,
+                    "value": {
+                      "kind": "source-range",
+                      "source": "parallel-paper-recovery.js",
+                      "start": {
+                        "line": 4,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 4,
+                        "column": 80
+                      }
+                    }
+                  },
+                  "extractor": {
+                    "name": "rea-javascript-artifact-reconstruction",
+                    "version": "1",
+                    "operation": "resolve-static-reference",
+                    "executable_sha256": null
+                  },
+                  "coverage": {
+                    "status": "complete",
+                    "truncated": false,
+                    "omitted_count": 0,
+                    "limits": []
+                  },
+                  "limitations": [
+                    "Static syntax does not prove that this relationship executes at runtime.",
+                    "The static reference could not be resolved within the inventoried artifact."
+                  ],
+                  "evidence_ids": []
+                },
+                "observation_id": "jag_observation_797dabb304239fc9c4f9865c127ec97e28aa420f41ed0a8647d852d5b82212f1",
+                "identifier_strategy": {
+                  "strategy": "semantic-content-sha256",
+                  "stability": "observation-exact"
+                }
+              }
+            ]
+          },
+          {
+            "node_id": "jag_node_fbc8b006316dcc56ad7eef782e1ceb5b24a8ea565ad0ac4771c3f377c9837f6b",
+            "kind": "javascript-module",
+            "identity": {
+              "strategy": "artifact-local-key",
+              "stability": "artifact-version",
+              "artifact_sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+              "namespace": "unresolved-semantic-module",
+              "key": "not-found:./parallel-paper-resolution.js"
+            },
+            "observations": [
+              {
+                "label": "./parallel-paper-resolution.js",
+                "source_map_reference": null,
+                "properties": {
+                  "semantic_role": "module-reference",
+                  "declared_specifier": "./parallel-paper-resolution.js",
+                  "resolution_status": "not-found"
+                },
+                "evidence": {
+                  "authority": "static-relationship-inference",
+                  "state": "inferred",
+                  "confidence": "low",
+                  "artifact": {
+                    "available": true,
+                    "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                    "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+                  },
+                  "location": {
+                    "available": true,
+                    "value": {
+                      "kind": "source-range",
+                      "source": "parallel-paper-recovery.js",
+                      "start": {
+                        "line": 4,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 4,
+                        "column": 39
+                      }
+                    }
+                  },
+                  "extractor": {
+                    "name": "rea-javascript-artifact-reconstruction",
+                    "version": "1",
+                    "operation": "retain-unresolved-semantic-module",
+                    "executable_sha256": null
+                  },
+                  "coverage": {
+                    "status": "complete",
+                    "truncated": false,
+                    "omitted_count": 0,
+                    "limits": []
+                  },
+                  "limitations": [
+                    "Cross-function mutation and dynamic property resolution remain unknown.",
+                    "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                    "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                    "Return sites include only direct callable returns; nested callable returns remain separate.",
+                    "Static syntax does not prove that this relationship executes at runtime.",
+                    "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+                  ],
+                  "evidence_ids": []
+                },
+                "observation_id": "jag_observation_1521c0b435d7b5fabf0eb8859cceeefccbdf6a2e2aeb3cc4ba139ad380cd116a",
+                "identifier_strategy": {
+                  "strategy": "semantic-content-sha256",
+                  "stability": "observation-exact"
+                }
+              }
+            ]
+          }
+        ],
+        "edges": [
+          {
+            "source_node_id": "jag_node_dbe2a5fb39caaa6b4a99067b597450f73f0ef2e801510960c1245849508da380",
+            "target_node_id": "jag_node_78bfb5f4d99518e5b8387bddce52d429669820184ac9b8ee03a84cdbc63c0f3d",
+            "relation": "exposes",
+            "properties": {
+              "module_link_kind": "export",
+              "specifier": null,
+              "imported_name": null,
+              "imported_path": [],
+              "local_name": "validateParallelPositions",
+              "exported_name": "validateParallelPositions",
+              "resolved_path": null,
+              "resolution_status": null,
+              "target_file_kind": null,
+              "target_json_status": null
+            },
+            "evidence": {
+              "authority": "static-relationship-inference",
+              "state": "inferred",
+              "confidence": "high",
+              "artifact": {
+                "available": true,
+                "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+              },
+              "location": {
+                "available": true,
+                "value": {
+                  "kind": "source-range",
+                  "source": "parallel-paper-recovery.js",
+                  "start": {
+                    "line": 52,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 113,
+                    "column": 1
+                  }
+                }
+              },
+              "extractor": {
+                "name": "rea-javascript-artifact-reconstruction",
+                "version": "1",
+                "operation": "expose-module-export",
+                "executable_sha256": null
+              },
+              "coverage": {
+                "status": "complete",
+                "truncated": false,
+                "omitted_count": 0,
+                "limits": []
+              },
+              "limitations": [
+                "Cross-function mutation and dynamic property resolution remain unknown.",
+                "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                "Return sites include only direct callable returns; nested callable returns remain separate.",
+                "Static syntax does not prove that this relationship executes at runtime.",
+                "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+              ],
+              "evidence_ids": []
+            },
+            "edge_id": "jag_edge_03b9bc404b2cbe52b71e7c45536d021fda08f59ab49f2171d23489ab1e5e648e",
+            "identifier_strategy": {
+              "strategy": "semantic-content-sha256",
+              "stability": "relationship-exact"
+            }
+          },
+          {
+            "source_node_id": "jag_node_dbe2a5fb39caaa6b4a99067b597450f73f0ef2e801510960c1245849508da380",
+            "target_node_id": "jag_node_9836f524479efce45ef307726ce36227f5564ebd26faf0440b382c66f3a12c87",
+            "relation": "exposes",
+            "properties": {
+              "module_link_kind": "export",
+              "specifier": null,
+              "imported_name": null,
+              "imported_path": [],
+              "local_name": "validateParallelBroker",
+              "exported_name": "validateParallelBroker",
+              "resolved_path": null,
+              "resolution_status": null,
+              "target_file_kind": null,
+              "target_json_status": null
+            },
+            "evidence": {
+              "authority": "static-relationship-inference",
+              "state": "inferred",
+              "confidence": "high",
+              "artifact": {
+                "available": true,
+                "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+              },
+              "location": {
+                "available": true,
+                "value": {
+                  "kind": "source-range",
+                  "source": "parallel-paper-recovery.js",
+                  "start": {
+                    "line": 20,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 29,
+                    "column": 1
+                  }
+                }
+              },
+              "extractor": {
+                "name": "rea-javascript-artifact-reconstruction",
+                "version": "1",
+                "operation": "expose-module-export",
+                "executable_sha256": null
+              },
+              "coverage": {
+                "status": "complete",
+                "truncated": false,
+                "omitted_count": 0,
+                "limits": []
+              },
+              "limitations": [
+                "Cross-function mutation and dynamic property resolution remain unknown.",
+                "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                "Return sites include only direct callable returns; nested callable returns remain separate.",
+                "Static syntax does not prove that this relationship executes at runtime.",
+                "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+              ],
+              "evidence_ids": []
+            },
+            "edge_id": "jag_edge_0570fa2deda6f1263303d3878cb838163fa4c0793e4ec01b828b9ac9a1e7f8b5",
+            "identifier_strategy": {
+              "strategy": "semantic-content-sha256",
+              "stability": "relationship-exact"
+            }
+          },
+          {
+            "source_node_id": "jag_node_dbe2a5fb39caaa6b4a99067b597450f73f0ef2e801510960c1245849508da380",
+            "target_node_id": "jag_node_c02573f9eb3afb679894b74b4f062414d581ae46292dd591bb33c44008cf1c07",
+            "relation": "imports",
+            "properties": {
+              "kind": "static-import",
+              "specifier": "@coqui/adapters",
+              "expression": null,
+              "resolved_path": null
+            },
+            "evidence": {
+              "authority": "static-relationship-inference",
+              "state": "inferred",
+              "confidence": "high",
+              "artifact": {
+                "available": true,
+                "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+              },
+              "location": {
+                "available": true,
+                "value": {
+                  "kind": "source-range",
+                  "source": "parallel-paper-recovery.js",
+                  "start": {
+                    "line": 1,
+                    "column": 0
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 71
+                  }
+                }
+              },
+              "extractor": {
+                "name": "rea-javascript-artifact-reconstruction",
+                "version": "1",
+                "operation": "map-static-relationship",
+                "executable_sha256": null
+              },
+              "coverage": {
+                "status": "complete",
+                "truncated": false,
+                "omitted_count": 0,
+                "limits": []
+              },
+              "limitations": [
+                "Static syntax does not prove that this relationship executes at runtime."
+              ],
+              "evidence_ids": []
+            },
+            "edge_id": "jag_edge_1ef7d8310c1dd175ed3cce1ed3e10e108a71f858c91f0a6c74baf4ddd102636b",
+            "identifier_strategy": {
+              "strategy": "semantic-content-sha256",
+              "stability": "relationship-exact"
+            }
+          },
+          {
+            "source_node_id": "jag_node_dbe2a5fb39caaa6b4a99067b597450f73f0ef2e801510960c1245849508da380",
+            "target_node_id": "jag_node_c7d6c2f07dff7151f411b9abb79596d6363a8807005b0cb8bd1079fb4e5b1903",
+            "relation": "imports",
+            "properties": {
+              "kind": "static-import",
+              "specifier": "./parallel-paper-utils.js",
+              "expression": null,
+              "resolved_path": null
+            },
+            "evidence": {
+              "authority": "static-relationship-inference",
+              "state": "inferred",
+              "confidence": "high",
+              "artifact": {
+                "available": true,
+                "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+              },
+              "location": {
+                "available": true,
+                "value": {
+                  "kind": "source-range",
+                  "source": "parallel-paper-recovery.js",
+                  "start": {
+                    "line": 3,
+                    "column": 0
+                  },
+                  "end": {
+                    "line": 3,
+                    "column": 93
+                  }
+                }
+              },
+              "extractor": {
+                "name": "rea-javascript-artifact-reconstruction",
+                "version": "1",
+                "operation": "map-static-relationship",
+                "executable_sha256": null
+              },
+              "coverage": {
+                "status": "complete",
+                "truncated": false,
+                "omitted_count": 0,
+                "limits": []
+              },
+              "limitations": [
+                "Static syntax does not prove that this relationship executes at runtime."
+              ],
+              "evidence_ids": []
+            },
+            "edge_id": "jag_edge_2d02fb6a2ce39750a0acd1368d5f9a0e70ae2c51098c34a88ab00d87dd4ce1bc",
+            "identifier_strategy": {
+              "strategy": "semantic-content-sha256",
+              "stability": "relationship-exact"
+            }
+          },
+          {
+            "source_node_id": "jag_node_dbe2a5fb39caaa6b4a99067b597450f73f0ef2e801510960c1245849508da380",
+            "target_node_id": "jag_node_766c1ed3919e3e9e2b75b0e31bacb38bc5631fdc281e104b7648981889ab89b2",
+            "relation": "exposes",
+            "properties": {
+              "module_link_kind": "export",
+              "specifier": null,
+              "imported_name": null,
+              "imported_path": [],
+              "local_name": "prepareParallelPass",
+              "exported_name": "prepareParallelPass",
+              "resolved_path": null,
+              "resolution_status": null,
+              "target_file_kind": null,
+              "target_json_status": null
+            },
+            "evidence": {
+              "authority": "static-relationship-inference",
+              "state": "inferred",
+              "confidence": "high",
+              "artifact": {
+                "available": true,
+                "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+              },
+              "location": {
+                "available": true,
+                "value": {
+                  "kind": "source-range",
+                  "source": "parallel-paper-recovery.js",
+                  "start": {
+                    "line": 30,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 50,
+                    "column": 1
+                  }
+                }
+              },
+              "extractor": {
+                "name": "rea-javascript-artifact-reconstruction",
+                "version": "1",
+                "operation": "expose-module-export",
+                "executable_sha256": null
+              },
+              "coverage": {
+                "status": "complete",
+                "truncated": false,
+                "omitted_count": 0,
+                "limits": []
+              },
+              "limitations": [
+                "Cross-function mutation and dynamic property resolution remain unknown.",
+                "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                "Return sites include only direct callable returns; nested callable returns remain separate.",
+                "Static syntax does not prove that this relationship executes at runtime.",
+                "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+              ],
+              "evidence_ids": []
+            },
+            "edge_id": "jag_edge_4270feb745899e03b3d748a0a7cc69f5a0bdd8916b9ffb4e15061a0fec8954bb",
+            "identifier_strategy": {
+              "strategy": "semantic-content-sha256",
+              "stability": "relationship-exact"
+            }
+          },
+          {
+            "source_node_id": "jag_node_dbe2a5fb39caaa6b4a99067b597450f73f0ef2e801510960c1245849508da380",
+            "target_node_id": "jag_node_ea183e7353831856e6e3935ade1b2cb3f9bae943e0c639df4fce6ab8aae25cca",
+            "relation": "imports",
+            "properties": {
+              "kind": "static-import",
+              "specifier": "./parallel-paper-resolution.js",
+              "expression": null,
+              "resolved_path": null
+            },
+            "evidence": {
+              "authority": "static-relationship-inference",
+              "state": "inferred",
+              "confidence": "high",
+              "artifact": {
+                "available": true,
+                "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+              },
+              "location": {
+                "available": true,
+                "value": {
+                  "kind": "source-range",
+                  "source": "parallel-paper-recovery.js",
+                  "start": {
+                    "line": 4,
+                    "column": 0
+                  },
+                  "end": {
+                    "line": 4,
+                    "column": 80
+                  }
+                }
+              },
+              "extractor": {
+                "name": "rea-javascript-artifact-reconstruction",
+                "version": "1",
+                "operation": "map-static-relationship",
+                "executable_sha256": null
+              },
+              "coverage": {
+                "status": "complete",
+                "truncated": false,
+                "omitted_count": 0,
+                "limits": []
+              },
+              "limitations": [
+                "Static syntax does not prove that this relationship executes at runtime."
+              ],
+              "evidence_ids": []
+            },
+            "edge_id": "jag_edge_43a4636c6e4acc1015abc68fd3a192102a46b20e592a748cc9f82006bf081922",
+            "identifier_strategy": {
+              "strategy": "semantic-content-sha256",
+              "stability": "relationship-exact"
+            }
+          },
+          {
+            "source_node_id": "jag_node_dbe2a5fb39caaa6b4a99067b597450f73f0ef2e801510960c1245849508da380",
+            "target_node_id": "jag_node_6ddcceaa0e8ea04b92ce9b51679ba286958190f27d90dd5259a7c93b2cba9637",
+            "relation": "imports",
+            "properties": {
+              "module_link_kind": "import",
+              "specifier": "@coqui/adapters",
+              "imported_name": "withinDeadline",
+              "imported_path": [
+                "withinDeadline"
+              ],
+              "local_name": "withinDeadline",
+              "exported_name": null,
+              "resolved_path": null,
+              "resolution_status": "external",
+              "target_file_kind": null,
+              "target_json_status": null
+            },
+            "evidence": {
+              "authority": "static-relationship-inference",
+              "state": "inferred",
+              "confidence": "medium",
+              "artifact": {
+                "available": true,
+                "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+              },
+              "location": {
+                "available": true,
+                "value": {
+                  "kind": "source-range",
+                  "source": "parallel-paper-recovery.js",
+                  "start": {
+                    "line": 1,
+                    "column": 31
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 45
+                  }
+                }
+              },
+              "extractor": {
+                "name": "rea-javascript-artifact-reconstruction",
+                "version": "1",
+                "operation": "resolve-semantic-module-relationship",
+                "executable_sha256": null
+              },
+              "coverage": {
+                "status": "complete",
+                "truncated": false,
+                "omitted_count": 0,
+                "limits": []
+              },
+              "limitations": [
+                "Cross-function mutation and dynamic property resolution remain unknown.",
+                "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                "No matching bare package was inventoried in an enclosing node_modules directory.",
+                "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                "Return sites include only direct callable returns; nested callable returns remain separate.",
+                "Static syntax does not prove that this relationship executes at runtime.",
+                "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+              ],
+              "evidence_ids": []
+            },
+            "edge_id": "jag_edge_4aaea9916463ff8254c72ff89c6c6576331b1d40f7ceb87a5d30693a03d00896",
+            "identifier_strategy": {
+              "strategy": "semantic-content-sha256",
+              "stability": "relationship-exact"
+            }
+          },
+          {
+            "source_node_id": "jag_node_dbe2a5fb39caaa6b4a99067b597450f73f0ef2e801510960c1245849508da380",
+            "target_node_id": "jag_node_042cb2b2ea20c86734f01441c39e73919b973d74124154fb76d8b99230be5180",
+            "relation": "exposes",
+            "properties": {
+              "module_link_kind": "export",
+              "specifier": null,
+              "imported_name": null,
+              "imported_path": [],
+              "local_name": "parallelAttemptsResolved",
+              "exported_name": "parallelAttemptsResolved",
+              "resolved_path": null,
+              "resolution_status": null,
+              "target_file_kind": null,
+              "target_json_status": null
+            },
+            "evidence": {
+              "authority": "static-relationship-inference",
+              "state": "inferred",
+              "confidence": "high",
+              "artifact": {
+                "available": true,
+                "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+              },
+              "location": {
+                "available": true,
+                "value": {
+                  "kind": "source-range",
+                  "source": "parallel-paper-recovery.js",
+                  "start": {
+                    "line": 5,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 19,
+                    "column": 1
+                  }
+                }
+              },
+              "extractor": {
+                "name": "rea-javascript-artifact-reconstruction",
+                "version": "1",
+                "operation": "expose-module-export",
+                "executable_sha256": null
+              },
+              "coverage": {
+                "status": "complete",
+                "truncated": false,
+                "omitted_count": 0,
+                "limits": []
+              },
+              "limitations": [
+                "Cross-function mutation and dynamic property resolution remain unknown.",
+                "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                "Return sites include only direct callable returns; nested callable returns remain separate.",
+                "Static syntax does not prove that this relationship executes at runtime.",
+                "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+              ],
+              "evidence_ids": []
+            },
+            "edge_id": "jag_edge_652451924672a8e338219bcaed8047c92d30f7d2440a8afc2cba0aff60e90dc6",
+            "identifier_strategy": {
+              "strategy": "semantic-content-sha256",
+              "stability": "relationship-exact"
+            }
+          },
+          {
+            "source_node_id": "jag_node_dbe2a5fb39caaa6b4a99067b597450f73f0ef2e801510960c1245849508da380",
+            "target_node_id": "jag_node_fbc8b006316dcc56ad7eef782e1ceb5b24a8ea565ad0ac4771c3f377c9837f6b",
+            "relation": "imports",
+            "properties": {
+              "module_link_kind": "import",
+              "specifier": "./parallel-paper-resolution.js",
+              "imported_name": "currentPaperPositionResolution",
+              "imported_path": [
+                "currentPaperPositionResolution"
+              ],
+              "local_name": "currentPaperPositionResolution",
+              "exported_name": null,
+              "resolved_path": null,
+              "resolution_status": "not-found",
+              "target_file_kind": null,
+              "target_json_status": null
+            },
+            "evidence": {
+              "authority": "static-relationship-inference",
+              "state": "inferred",
+              "confidence": "low",
+              "artifact": {
+                "available": true,
+                "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+              },
+              "location": {
+                "available": true,
+                "value": {
+                  "kind": "source-range",
+                  "source": "parallel-paper-recovery.js",
+                  "start": {
+                    "line": 4,
+                    "column": 9
+                  },
+                  "end": {
+                    "line": 4,
+                    "column": 39
+                  }
+                }
+              },
+              "extractor": {
+                "name": "rea-javascript-artifact-reconstruction",
+                "version": "1",
+                "operation": "resolve-semantic-module-relationship",
+                "executable_sha256": null
+              },
+              "coverage": {
+                "status": "complete",
+                "truncated": false,
+                "omitted_count": 0,
+                "limits": []
+              },
+              "limitations": [
+                "Cross-function mutation and dynamic property resolution remain unknown.",
+                "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                "No extension, directory package, or index candidate exists in the inventoried artifact container.",
+                "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                "Return sites include only direct callable returns; nested callable returns remain separate.",
+                "Static syntax does not prove that this relationship executes at runtime.",
+                "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+              ],
+              "evidence_ids": []
+            },
+            "edge_id": "jag_edge_84f8370a6d22700eb46ded95a559c48b08be98cb090ab8a10707d7ffd58b8da5",
+            "identifier_strategy": {
+              "strategy": "semantic-content-sha256",
+              "stability": "relationship-exact"
+            }
+          },
+          {
+            "source_node_id": "jag_node_dbe2a5fb39caaa6b4a99067b597450f73f0ef2e801510960c1245849508da380",
+            "target_node_id": "jag_node_894bd8da5ead0222bc9886d298ac968d2dec8df03ed47b12eca9c4ca15cdc292",
+            "relation": "imports",
+            "properties": {
+              "module_link_kind": "import",
+              "specifier": "decimal.js",
+              "imported_name": "Decimal",
+              "imported_path": [
+                "Decimal"
+              ],
+              "local_name": "Decimal",
+              "exported_name": null,
+              "resolved_path": null,
+              "resolution_status": "external",
+              "target_file_kind": null,
+              "target_json_status": null
+            },
+            "evidence": {
+              "authority": "static-relationship-inference",
+              "state": "inferred",
+              "confidence": "medium",
+              "artifact": {
+                "available": true,
+                "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+              },
+              "location": {
+                "available": true,
+                "value": {
+                  "kind": "source-range",
+                  "source": "parallel-paper-recovery.js",
+                  "start": {
+                    "line": 2,
+                    "column": 9
+                  },
+                  "end": {
+                    "line": 2,
+                    "column": 16
+                  }
+                }
+              },
+              "extractor": {
+                "name": "rea-javascript-artifact-reconstruction",
+                "version": "1",
+                "operation": "resolve-semantic-module-relationship",
+                "executable_sha256": null
+              },
+              "coverage": {
+                "status": "complete",
+                "truncated": false,
+                "omitted_count": 0,
+                "limits": []
+              },
+              "limitations": [
+                "Cross-function mutation and dynamic property resolution remain unknown.",
+                "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                "No matching bare package was inventoried in an enclosing node_modules directory.",
+                "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                "Return sites include only direct callable returns; nested callable returns remain separate.",
+                "Static syntax does not prove that this relationship executes at runtime.",
+                "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+              ],
+              "evidence_ids": []
+            },
+            "edge_id": "jag_edge_8ba93fedc5f70aaeb5ad2a08be28e7c62745136428d44c8f8dffb8c48dc6ae18",
+            "identifier_strategy": {
+              "strategy": "semantic-content-sha256",
+              "stability": "relationship-exact"
+            }
+          },
+          {
+            "source_node_id": "jag_node_dbe2a5fb39caaa6b4a99067b597450f73f0ef2e801510960c1245849508da380",
+            "target_node_id": "jag_node_6ddcceaa0e8ea04b92ce9b51679ba286958190f27d90dd5259a7c93b2cba9637",
+            "relation": "imports",
+            "properties": {
+              "module_link_kind": "import",
+              "specifier": "@coqui/adapters",
+              "imported_name": "childRequestDeadline",
+              "imported_path": [
+                "childRequestDeadline"
+              ],
+              "local_name": "childRequestDeadline",
+              "exported_name": null,
+              "resolved_path": null,
+              "resolution_status": "external",
+              "target_file_kind": null,
+              "target_json_status": null
+            },
+            "evidence": {
+              "authority": "static-relationship-inference",
+              "state": "inferred",
+              "confidence": "medium",
+              "artifact": {
+                "available": true,
+                "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+              },
+              "location": {
+                "available": true,
+                "value": {
+                  "kind": "source-range",
+                  "source": "parallel-paper-recovery.js",
+                  "start": {
+                    "line": 1,
+                    "column": 9
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 29
+                  }
+                }
+              },
+              "extractor": {
+                "name": "rea-javascript-artifact-reconstruction",
+                "version": "1",
+                "operation": "resolve-semantic-module-relationship",
+                "executable_sha256": null
+              },
+              "coverage": {
+                "status": "complete",
+                "truncated": false,
+                "omitted_count": 0,
+                "limits": []
+              },
+              "limitations": [
+                "Cross-function mutation and dynamic property resolution remain unknown.",
+                "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                "No matching bare package was inventoried in an enclosing node_modules directory.",
+                "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                "Return sites include only direct callable returns; nested callable returns remain separate.",
+                "Static syntax does not prove that this relationship executes at runtime.",
+                "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+              ],
+              "evidence_ids": []
+            },
+            "edge_id": "jag_edge_8d36da4491616db387239b49a5bd59af7c40641f624f5f6d854568bb7d3406dd",
+            "identifier_strategy": {
+              "strategy": "semantic-content-sha256",
+              "stability": "relationship-exact"
+            }
+          },
+          {
+            "source_node_id": "jag_node_dbe2a5fb39caaa6b4a99067b597450f73f0ef2e801510960c1245849508da380",
+            "target_node_id": "jag_node_67c43a0141875a3bf8c6dde1f0d8c4e50f9322c62204a2168d99052e0767a996",
+            "relation": "imports",
+            "properties": {
+              "module_link_kind": "import",
+              "specifier": "./parallel-paper-utils.js",
+              "imported_name": "ParallelBudgetError",
+              "imported_path": [
+                "ParallelBudgetError"
+              ],
+              "local_name": "ParallelBudgetError",
+              "exported_name": null,
+              "resolved_path": null,
+              "resolution_status": "not-found",
+              "target_file_kind": null,
+              "target_json_status": null
+            },
+            "evidence": {
+              "authority": "static-relationship-inference",
+              "state": "inferred",
+              "confidence": "low",
+              "artifact": {
+                "available": true,
+                "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+              },
+              "location": {
+                "available": true,
+                "value": {
+                  "kind": "source-range",
+                  "source": "parallel-paper-recovery.js",
+                  "start": {
+                    "line": 3,
+                    "column": 9
+                  },
+                  "end": {
+                    "line": 3,
+                    "column": 28
+                  }
+                }
+              },
+              "extractor": {
+                "name": "rea-javascript-artifact-reconstruction",
+                "version": "1",
+                "operation": "resolve-semantic-module-relationship",
+                "executable_sha256": null
+              },
+              "coverage": {
+                "status": "complete",
+                "truncated": false,
+                "omitted_count": 0,
+                "limits": []
+              },
+              "limitations": [
+                "Cross-function mutation and dynamic property resolution remain unknown.",
+                "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                "No extension, directory package, or index candidate exists in the inventoried artifact container.",
+                "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                "Return sites include only direct callable returns; nested callable returns remain separate.",
+                "Static syntax does not prove that this relationship executes at runtime.",
+                "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+              ],
+              "evidence_ids": []
+            },
+            "edge_id": "jag_edge_9561f0919df0ecf80757b28cfd9a202f485177a59025267810a7b9a87fde1fd0",
+            "identifier_strategy": {
+              "strategy": "semantic-content-sha256",
+              "stability": "relationship-exact"
+            }
+          },
+          {
+            "source_node_id": "jag_node_dbe2a5fb39caaa6b4a99067b597450f73f0ef2e801510960c1245849508da380",
+            "target_node_id": "jag_node_67c43a0141875a3bf8c6dde1f0d8c4e50f9322c62204a2168d99052e0767a996",
+            "relation": "imports",
+            "properties": {
+              "module_link_kind": "import",
+              "specifier": "./parallel-paper-utils.js",
+              "imported_name": "ParallelReconciliationError",
+              "imported_path": [
+                "ParallelReconciliationError"
+              ],
+              "local_name": "ParallelReconciliationError",
+              "exported_name": null,
+              "resolved_path": null,
+              "resolution_status": "not-found",
+              "target_file_kind": null,
+              "target_json_status": null
+            },
+            "evidence": {
+              "authority": "static-relationship-inference",
+              "state": "inferred",
+              "confidence": "low",
+              "artifact": {
+                "available": true,
+                "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+              },
+              "location": {
+                "available": true,
+                "value": {
+                  "kind": "source-range",
+                  "source": "parallel-paper-recovery.js",
+                  "start": {
+                    "line": 3,
+                    "column": 30
+                  },
+                  "end": {
+                    "line": 3,
+                    "column": 57
+                  }
+                }
+              },
+              "extractor": {
+                "name": "rea-javascript-artifact-reconstruction",
+                "version": "1",
+                "operation": "resolve-semantic-module-relationship",
+                "executable_sha256": null
+              },
+              "coverage": {
+                "status": "complete",
+                "truncated": false,
+                "omitted_count": 0,
+                "limits": []
+              },
+              "limitations": [
+                "Cross-function mutation and dynamic property resolution remain unknown.",
+                "Local call, argument, return, and closure relations are static candidates and do not prove runtime invocation.",
+                "No extension, directory package, or index candidate exists in the inventoried artifact container.",
+                "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+                "Return sites include only direct callable returns; nested callable returns remain separate.",
+                "Static syntax does not prove that this relationship executes at runtime.",
+                "Values and aliases were recovered from inert syntax only; no JavaScript was executed."
+              ],
+              "evidence_ids": []
+            },
+            "edge_id": "jag_edge_a21fca58aedf8007d9992a8a11d9ed6bbefff055b99155db52a20a5a5fffd387",
+            "identifier_strategy": {
+              "strategy": "semantic-content-sha256",
+              "stability": "relationship-exact"
+            }
+          },
+          {
+            "source_node_id": "jag_node_dd9ef77b2f874b6d4ed0881a36e65c1c07279a13649f56f7f5335ac8bd6bf3f4",
+            "target_node_id": "jag_node_dbe2a5fb39caaa6b4a99067b597450f73f0ef2e801510960c1245849508da380",
+            "relation": "contains",
+            "properties": {
+              "logical_module_key": "parallel-paper-recovery.js"
+            },
+            "evidence": {
+              "authority": "ast-static-analysis",
+              "state": "observed",
+              "confidence": "exact",
+              "artifact": {
+                "available": true,
+                "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+              },
+              "location": {
+                "available": true,
+                "value": {
+                  "kind": "source-range",
+                  "source": "parallel-paper-recovery.js",
+                  "start": {
+                    "line": 1,
+                    "column": 0
+                  },
+                  "end": {
+                    "line": 114,
+                    "column": 51
+                  }
+                }
+              },
+              "extractor": {
+                "name": "rea-javascript-artifact-reconstruction",
+                "version": "1",
+                "operation": "map-bundler-structure",
+                "executable_sha256": null
+              },
+              "coverage": {
+                "status": "complete",
+                "truncated": false,
+                "omitted_count": 0,
+                "limits": []
+              },
+              "limitations": [],
+              "evidence_ids": []
+            },
+            "edge_id": "jag_edge_b2844daec7b1458b8ee794dc9a1fb65b5d8a6a4ee1285eb46a7dc983070b6bd1",
+            "identifier_strategy": {
+              "strategy": "semantic-content-sha256",
+              "stability": "relationship-exact"
+            }
+          },
+          {
+            "source_node_id": "jag_node_dd9ef77b2f874b6d4ed0881a36e65c1c07279a13649f56f7f5335ac8bd6bf3f4",
+            "target_node_id": "jag_node_c11b3d37fc1f0014aac8a44122d60562f7d0543fb64fded6428d08d59c82855c",
+            "relation": "maps_to",
+            "properties": {
+              "declared_url_sha256": "ccfa4f3c068626fed9b3fd6237f5bb36b0727ad04a3304a8668feff3b028b1d3",
+              "resolved_path": null
+            },
+            "evidence": {
+              "authority": "static-relationship-inference",
+              "state": "inferred",
+              "confidence": "high",
+              "artifact": {
+                "available": true,
+                "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+              },
+              "location": {
+                "available": true,
+                "value": {
+                  "kind": "source-range",
+                  "source": "parallel-paper-recovery.js",
+                  "start": {
+                    "line": 114,
+                    "column": 0
+                  },
+                  "end": {
+                    "line": 114,
+                    "column": 51
+                  }
+                }
+              },
+              "extractor": {
+                "name": "rea-javascript-artifact-reconstruction",
+                "version": "1",
+                "operation": "map-static-relationship",
+                "executable_sha256": null
+              },
+              "coverage": {
+                "status": "complete",
+                "truncated": false,
+                "omitted_count": 0,
+                "limits": []
+              },
+              "limitations": [
+                "Static syntax does not prove that this relationship executes at runtime."
+              ],
+              "evidence_ids": []
+            },
+            "edge_id": "jag_edge_b64e2047c488abb28232ed154faa357f8db279abbffbfafca4f78a19b3c34287",
+            "identifier_strategy": {
+              "strategy": "semantic-content-sha256",
+              "stability": "relationship-exact"
+            }
+          },
+          {
+            "source_node_id": "jag_node_dbe2a5fb39caaa6b4a99067b597450f73f0ef2e801510960c1245849508da380",
+            "target_node_id": "jag_node_9d85e1fc86875e506646ba160910687a69d7363273a6ec086c3851b76be2ae7d",
+            "relation": "imports",
+            "properties": {
+              "kind": "static-import",
+              "specifier": "decimal.js",
+              "expression": null,
+              "resolved_path": null
+            },
+            "evidence": {
+              "authority": "static-relationship-inference",
+              "state": "inferred",
+              "confidence": "high",
+              "artifact": {
+                "available": true,
+                "artifact_id": "art_4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c",
+                "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+              },
+              "location": {
+                "available": true,
+                "value": {
+                  "kind": "source-range",
+                  "source": "parallel-paper-recovery.js",
+                  "start": {
+                    "line": 2,
+                    "column": 0
+                  },
+                  "end": {
+                    "line": 2,
+                    "column": 37
+                  }
+                }
+              },
+              "extractor": {
+                "name": "rea-javascript-artifact-reconstruction",
+                "version": "1",
+                "operation": "map-static-relationship",
+                "executable_sha256": null
+              },
+              "coverage": {
+                "status": "complete",
+                "truncated": false,
+                "omitted_count": 0,
+                "limits": []
+              },
+              "limitations": [
+                "Static syntax does not prove that this relationship executes at runtime."
+              ],
+              "evidence_ids": []
+            },
+            "edge_id": "jag_edge_dd584a7a45d04078b78779caea92b95584f6ec61254d961f036a815487004ec9",
+            "identifier_strategy": {
+              "strategy": "semantic-content-sha256",
+              "stability": "relationship-exact"
+            }
+          }
+        ],
+        "coverage": {
+          "status": "complete",
+          "truncated": false,
+          "omitted_count": 0,
+          "limits": []
+        },
+        "limitations": [
+          "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+          "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+          "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+          "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+          "Trace edges retain their source authority; graph connectivity does not prove runtime execution or reachability.",
+          "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code."
+        ],
+        "graph_id": "jag_2b5557f5e90fbf6f1009e4375bbe5761e238bfa06717226a3c367b3ab053e3d1"
+      },
+      "paths": [],
+      "native_handoffs": [],
+      "summary": {
+        "matched_seeds": 1,
+        "traced_nodes": 15,
+        "traced_edges": 16,
+        "terminal_paths": 0,
+        "native_handoffs": 0,
+        "observed_facts": 7,
+        "inferred_facts": 30,
+        "unknown_facts": 0,
+        "unavailable_facts": 0
+      },
+      "coverage": {
+        "status": "complete-within-source",
+        "source_graph_status": "complete",
+        "total_seed_matches": 1
+      },
+      "evidence_links": [
+        "ev_b444e7a982ae9b97a269ffc792b38eceeb781d6b0b0e53aa20ec2f84aa85a05e"
+      ],
+      "limitations": [
+        "A trace reports graph relationships, not proof that code executed or that a feature is reachable in every state.",
+        "Native handoffs never open a binary or invoke a provider automatically; snapshot reuse remains provider/profile/target exact.",
+        "Static, native, passive-runtime, inferred, and unknown facts retain their original authority in the returned graph."
+      ]
+    },
+    "confidence": "inferred",
+    "authority": "analyst-inference",
+    "environment": null,
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "A trace reports graph relationships, not proof that code executed or that a feature is reachable in every state.",
+      "Native handoffs never open a binary or invoke a provider automatically; snapshot reuse remains provider/profile/target exact.",
+      "Static, native, passive-runtime, inferred, and unknown facts retain their original authority in the returned graph."
+    ],
+    "locations": [],
+    "evidence_links": [
+      "ev_b444e7a982ae9b97a269ffc792b38eceeb781d6b0b0e53aa20ec2f84aa85a05e"
+    ]
+  },
+  "liveProbe": {
+    "evidence_id": "ev_ffa0fbd9a16bfea2962ecec7b8960239be8262438437848986c98581de3fc00c",
+    "subject": null,
+    "provider": {
+      "id": "rea-process",
+      "name": "REA process capture",
+      "version": "3"
+    },
+    "analysis_profile": null,
+    "predicate_type": "rea.process-capture",
+    "operation": "capture_process_scenario",
+    "parameters": {
+      "executable_name": "Electron",
+      "argument_count": 1,
+      "event_count": 0,
+      "filesystem_observation_path_count": 0,
+      "normalization": {
+        "paths": false,
+        "pids": true,
+        "ports": true,
+        "time_bucket_ms": 10,
+        "patterns": []
+      }
+    },
+    "raw_result": null,
+    "normalized_result": {
+      "manifest": {
+        "rea_version": "6.4.0",
+        "provider_version": "3",
+        "platform": "darwin",
+        "architecture": "arm64",
+        "pty_backend": "node-pty",
+        "started_at": "2026-10-20T18:11:08.438Z",
+        "completed_at": "2026-10-20T18:11:09.766Z",
+        "scenario": {
+          "executable": "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron",
+          "arguments": [
+            "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/docs/implementation/evidence/oct20/rea-broker-fee-probe.mjs"
+          ],
+          "working_directory": "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto",
+          "environment": {},
+          "filesystem_observation_paths": [],
+          "terminal": {
+            "columns": 180,
+            "rows": 30,
+            "scrollback": 150
+          },
+          "events": [],
+          "timeout_ms": 60000,
+          "idle_timeout_ms": 30000,
+          "settle_ms": 100,
+          "limits": {
+            "output_bytes": 20000,
+            "files": 10000,
+            "file_bytes": 10000000,
+            "processes": 1000,
+            "filesystem_depth": 16
+          },
+          "normalization": {
+            "paths": false,
+            "pids": true,
+            "ports": true,
+            "time_bucket_ms": 10,
+            "patterns": []
+          },
+          "finalization_ms": 1000,
+          "executable_sha256": "221d5695ab9eb2263b9107e4a5bb3f5780adc35963530e322673d5535e8eeae5"
+        },
+        "comparison_contract": {
+          "working_directory": "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto",
+          "environment": {},
+          "ambient_environment": "unknown",
+          "filesystem_observation_paths": [],
+          "terminal": {
+            "columns": 180,
+            "rows": 30,
+            "scrollback": 150
+          },
+          "events": [],
+          "timeout_ms": 60000,
+          "idle_timeout_ms": 30000,
+          "settle_ms": 100,
+          "finalization_ms": 1000,
+          "limits": {
+            "output_bytes": 20000,
+            "files": 10000,
+            "file_bytes": 10000000,
+            "processes": 1000,
+            "filesystem_depth": 16
+          },
+          "normalization": {
+            "paths": false,
+            "pids": true,
+            "ports": true,
+            "time_bucket_ms": 10,
+            "patterns": []
+          },
+          "port_normalization_version": "contextual-endpoints-v2",
+          "rendered_line_format": "trailing-spaces-trimmed-v1"
+        },
+        "full_scenario_sha256": "b767f819d5e432dcbaa0882497b85af50cd39a4247cfa973673fe3a3968710d3",
+        "comparison_contract_sha256": "0329dc64d0b4dc32b2afa5e5785f525f503f0625a57f89d487a6c7e9f734d6a4",
+        "selected_executable_sha256": "221d5695ab9eb2263b9107e4a5bb3f5780adc35963530e322673d5535e8eeae5",
+        "executable_sha256": "221d5695ab9eb2263b9107e4a5bb3f5780adc35963530e322673d5535e8eeae5",
+        "executable_identity": {
+          "state": "path_metadata_unchanged",
+          "reason": null
+        },
+        "normalization_sha256": "5c58aa1aa890197f15f9c59ef755d01120e6e07f356fa1ef2f20787e63b6fa87"
+      },
+      "normalization": {
+        "paths": false,
+        "pids": true,
+        "ports": true,
+        "time_bucket_ms": 10,
+        "patterns": []
+      },
+      "frames": [
+        {
+          "sequence": 0,
+          "at_ms": 1170,
+          "data": "{\"observedAt\":\"2026-10-20T18:11:09.613Z\",\"installedVersion\":\"0.1.0-beta.17\",\"probeElectronVersion\":\"43.4.1\",\"profileWrites\":0,\"orderMutations\":0,\"requestCount\":6,\"accountIdentityMatches\":true,\"after\":\"2026-09-25T00:00:00.000Z\",\"journal\":{\"feeCount\":40,\"fillCount\":46,\"submissionAttempts\":14,\"lastState\":\"paused\"},\"provider\":{\"standardCount\":86,\"feeCount\":40,\"fillCount\":46,\"feeOnlyCount\":40,\"feeWithoutAfterCount\":40,\"feeWithoutAfterMissingFromStandard\":0,\"unfilteredCount\":87,\"unfilteredTypes\":{\"JNLC\":1,\"FILL\":46,\"CFEE\":40},\"feeOnlyMissingFromStandard\":0,\"unfilteredFeesMissingFromStandard\":0,\"feesAbsentFromJournal\":0,\"fillsAbsentFromJournal\":0,\"changedBookedFees\":0,\"latestFeeCreatedAt\":\"2026-10-10T08:01:00.505431Z\",\"currentDayFeeCount\":0,\"feeShapes\":{\"BTCUSD:asset_quantity\":22,\"LTCUSD:asset_quantity\":6,\"ETHUSD:asset_quantity\":4,\"no_symbol:no_quantity\":8}},\"currentDayBuyFillCount\":6,\"currentDayBuyFeeAt25Bps\":{\"BTCUSD\":\"0.000479057795\",\"ETHUSD\":\"0.0117957270375\",\"LTCUSD\":\"0.22232491676\"},\"validationResult\":\"quantit"
+        },
+        {
+          "sequence": 1,
+          "at_ms": 1170,
+          "data": "y_mismatch\",\"currentDifferences\":[{\"symbol\":\"BTCUSD\",\"expectedQty\":\"0.461075154\",\"observedQty\":\"0.460596096\",\"differenceQty\":\"-0.000479058\"},{\"symbol\":\"ETHUSD\",\"expectedQty\":\"19.311201909\",\"observedQty\":\"19.299406181\",\"differenceQty\":\"-0.011795728\"},{\"symbol\":\"LTCUSD\",\"expectedQty\":\"285.229693482\",\"observedQty\":\"285.007368565\",\"differenceQty\":\"-0.222324917\"}],\"historicalDifferences\":[{\"differenceQty\":\"-0.000479058\",\"expectedQty\":\"0.461075154\",\"observedQty\":\"0.460596096\",\"symbol\":\"BTCUSD\"},{\"differenceQty\":\"-0.011795728\",\"expectedQty\":\"19.311201909\",\"observedQty\":\"19.299406181\",\"symbol\":\"ETHUSD\"},{\"differenceQty\":\"-0.222324917\",\"expectedQty\":\"285.229693482\",\"observedQty\":\"285.007368565\",\"symbol\":\"LTCUSD\"}],\"positions\":[{\"symbol\":\"BTCUSD\",\"qty\":\"0.460596096\"},{\"symbol\":\"ETHUSD\",\"qty\":\"19.299406181\"},{\"symbol\":\"LTCUSD\",\"qty\":\"285.007368565\"}],\"limitations\":[\"Separate GET snapshots are not an atomic provider transaction.\",\"Fee percentage is a diagnostic hypothesis, never booked as a financial fact.\",\"No provider "
+        },
+        {
+          "sequence": 2,
+          "at_ms": 1170,
+          "data": "internal settlement diagnostics are available.\"]}\r\n"
+        }
+      ],
+      "rendered_frames": [
+        {
+          "sequence": 0,
+          "at_ms": 1170,
+          "columns": 180,
+          "rows": 30,
+          "cursor_x": 124,
+          "cursor_y": 5,
+          "active_buffer": "normal",
+          "lines": [
+            "{\"observedAt\":\"2026-10-20T18:11:09.613Z\",\"installedVersion\":\"0.1.0-beta.17\",\"probeElectronVersion\":\"43.4.1\",\"profileWrites\":0,\"orderMutations\":0,\"requestCount\":6,\"accountIdentityMa",
+            "tches\":true,\"after\":\"2026-09-25T00:00:00.000Z\",\"journal\":{\"feeCount\":40,\"fillCount\":46,\"submissionAttempts\":14,\"lastState\":\"paused\"},\"provider\":{\"standardCount\":86,\"feeCount\":40,\"f",
+            "illCount\":46,\"feeOnlyCount\":40,\"feeWithoutAfterCount\":40,\"feeWithoutAfterMissingFromStandard\":0,\"unfilteredCount\":87,\"unfilteredTypes\":{\"JNLC\":1,\"FILL\":46,\"CFEE\":40},\"feeOnlyMissin",
+            "gFromStandard\":0,\"unfilteredFeesMissingFromStandard\":0,\"feesAbsentFromJournal\":0,\"fillsAbsentFromJournal\":0,\"changedBookedFees\":0,\"latestFeeCreatedAt\":\"2026-10-10T08:01:00.505431Z\"",
+            ",\"currentDayFeeCount\":0,\"feeShapes\":{\"BTCUSD:asset_quantity\":22,\"LTCUSD:asset_quantity\":6,\"ETHUSD:asset_quantity\":4,\"no_symbol:no_quantity\":8}},\"currentDayBuyFillCount\":6,\"currentD",
+            "ayBuyFeeAt25Bps\":{\"BTCUSD\":\"0.000479057795\",\"ETHUSD\":\"0.0117957270375\",\"LTCUSD\":\"0.22232491676\"},\"validationResult\":\"quantit",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ],
+          "serialized_state": "{\"observedAt\":\"2026-10-20T18:11:09.613Z\",\"installedVersion\":\"0.1.0-beta.17\",\"probeElectronVersion\":\"43.4.1\",\"profileWrites\":0,\"orderMutations\":0,\"requestCount\":6,\"accountIdentityMatches\":true,\"after\":\"2026-09-25T00:00:00.000Z\",\"journal\":{\"feeCount\":40,\"fillCount\":46,\"submissionAttempts\":14,\"lastState\":\"paused\"},\"provider\":{\"standardCount\":86,\"feeCount\":40,\"fillCount\":46,\"feeOnlyCount\":40,\"feeWithoutAfterCount\":40,\"feeWithoutAfterMissingFromStandard\":0,\"unfilteredCount\":87,\"unfilteredTypes\":{\"JNLC\":1,\"FILL\":46,\"CFEE\":40},\"feeOnlyMissingFromStandard\":0,\"unfilteredFeesMissingFromStandard\":0,\"feesAbsentFromJournal\":0,\"fillsAbsentFromJournal\":0,\"changedBookedFees\":0,\"latestFeeCreatedAt\":\"2026-10-10T08:01:00.505431Z\",\"currentDayFeeCount\":0,\"feeShapes\":{\"BTCUSD:asset_quantity\":22,\"LTCUSD:asset_quantity\":6,\"ETHUSD:asset_quantity\":4,\"no_symbol:no_quantity\":8}},\"currentDayBuyFillCount\":6,\"currentDayBuyFeeAt25Bps\":{\"BTCUSD\":\"0.000479057795\",\"ETHUSD\":\"0.0117957270375\",\"LTCUSD\":\"0.22232491676\"},\"validationResult\":\"quantit"
+        },
+        {
+          "sequence": 1,
+          "at_ms": 1170,
+          "columns": 180,
+          "rows": 30,
+          "cursor_x": 68,
+          "cursor_y": 11,
+          "active_buffer": "normal",
+          "lines": [
+            "{\"observedAt\":\"2026-10-20T18:11:09.613Z\",\"installedVersion\":\"0.1.0-beta.17\",\"probeElectronVersion\":\"43.4.1\",\"profileWrites\":0,\"orderMutations\":0,\"requestCount\":6,\"accountIdentityMa",
+            "tches\":true,\"after\":\"2026-09-25T00:00:00.000Z\",\"journal\":{\"feeCount\":40,\"fillCount\":46,\"submissionAttempts\":14,\"lastState\":\"paused\"},\"provider\":{\"standardCount\":86,\"feeCount\":40,\"f",
+            "illCount\":46,\"feeOnlyCount\":40,\"feeWithoutAfterCount\":40,\"feeWithoutAfterMissingFromStandard\":0,\"unfilteredCount\":87,\"unfilteredTypes\":{\"JNLC\":1,\"FILL\":46,\"CFEE\":40},\"feeOnlyMissin",
+            "gFromStandard\":0,\"unfilteredFeesMissingFromStandard\":0,\"feesAbsentFromJournal\":0,\"fillsAbsentFromJournal\":0,\"changedBookedFees\":0,\"latestFeeCreatedAt\":\"2026-10-10T08:01:00.505431Z\"",
+            ",\"currentDayFeeCount\":0,\"feeShapes\":{\"BTCUSD:asset_quantity\":22,\"LTCUSD:asset_quantity\":6,\"ETHUSD:asset_quantity\":4,\"no_symbol:no_quantity\":8}},\"currentDayBuyFillCount\":6,\"currentD",
+            "ayBuyFeeAt25Bps\":{\"BTCUSD\":\"0.000479057795\",\"ETHUSD\":\"0.0117957270375\",\"LTCUSD\":\"0.22232491676\"},\"validationResult\":\"quantity_mismatch\",\"currentDifferences\":[{\"symbol\":\"BTCUSD\",\"ex",
+            "pectedQty\":\"0.461075154\",\"observedQty\":\"0.460596096\",\"differenceQty\":\"-0.000479058\"},{\"symbol\":\"ETHUSD\",\"expectedQty\":\"19.311201909\",\"observedQty\":\"19.299406181\",\"differenceQty\":\"-",
+            "0.011795728\"},{\"symbol\":\"LTCUSD\",\"expectedQty\":\"285.229693482\",\"observedQty\":\"285.007368565\",\"differenceQty\":\"-0.222324917\"}],\"historicalDifferences\":[{\"differenceQty\":\"-0.00047905",
+            "8\",\"expectedQty\":\"0.461075154\",\"observedQty\":\"0.460596096\",\"symbol\":\"BTCUSD\"},{\"differenceQty\":\"-0.011795728\",\"expectedQty\":\"19.311201909\",\"observedQty\":\"19.299406181\",\"symbol\":\"ET",
+            "HUSD\"},{\"differenceQty\":\"-0.222324917\",\"expectedQty\":\"285.229693482\",\"observedQty\":\"285.007368565\",\"symbol\":\"LTCUSD\"}],\"positions\":[{\"symbol\":\"BTCUSD\",\"qty\":\"0.460596096\"},{\"symbol",
+            "\":\"ETHUSD\",\"qty\":\"19.299406181\"},{\"symbol\":\"LTCUSD\",\"qty\":\"285.007368565\"}],\"limitations\":[\"Separate GET snapshots are not an atomic provider transaction.\",\"Fee percentage is a dia",
+            "gnostic hypothesis, never booked as a financial fact.\",\"No provider",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ],
+          "serialized_state": "{\"observedAt\":\"2026-10-20T18:11:09.613Z\",\"installedVersion\":\"0.1.0-beta.17\",\"probeElectronVersion\":\"43.4.1\",\"profileWrites\":0,\"orderMutations\":0,\"requestCount\":6,\"accountIdentityMatches\":true,\"after\":\"2026-09-25T00:00:00.000Z\",\"journal\":{\"feeCount\":40,\"fillCount\":46,\"submissionAttempts\":14,\"lastState\":\"paused\"},\"provider\":{\"standardCount\":86,\"feeCount\":40,\"fillCount\":46,\"feeOnlyCount\":40,\"feeWithoutAfterCount\":40,\"feeWithoutAfterMissingFromStandard\":0,\"unfilteredCount\":87,\"unfilteredTypes\":{\"JNLC\":1,\"FILL\":46,\"CFEE\":40},\"feeOnlyMissingFromStandard\":0,\"unfilteredFeesMissingFromStandard\":0,\"feesAbsentFromJournal\":0,\"fillsAbsentFromJournal\":0,\"changedBookedFees\":0,\"latestFeeCreatedAt\":\"2026-10-10T08:01:00.505431Z\",\"currentDayFeeCount\":0,\"feeShapes\":{\"BTCUSD:asset_quantity\":22,\"LTCUSD:asset_quantity\":6,\"ETHUSD:asset_quantity\":4,\"no_symbol:no_quantity\":8}},\"currentDayBuyFillCount\":6,\"currentDayBuyFeeAt25Bps\":{\"BTCUSD\":\"0.000479057795\",\"ETHUSD\":\"0.0117957270375\",\"LTCUSD\":\"0.22232491676\"},\"validationResult\":\"quantity_mismatch\",\"currentDifferences\":[{\"symbol\":\"BTCUSD\",\"expectedQty\":\"0.461075154\",\"observedQty\":\"0.460596096\",\"differenceQty\":\"-0.000479058\"},{\"symbol\":\"ETHUSD\",\"expectedQty\":\"19.311201909\",\"observedQty\":\"19.299406181\",\"differenceQty\":\"-0.011795728\"},{\"symbol\":\"LTCUSD\",\"expectedQty\":\"285.229693482\",\"observedQty\":\"285.007368565\",\"differenceQty\":\"-0.222324917\"}],\"historicalDifferences\":[{\"differenceQty\":\"-0.000479058\",\"expectedQty\":\"0.461075154\",\"observedQty\":\"0.460596096\",\"symbol\":\"BTCUSD\"},{\"differenceQty\":\"-0.011795728\",\"expectedQty\":\"19.311201909\",\"observedQty\":\"19.299406181\",\"symbol\":\"ETHUSD\"},{\"differenceQty\":\"-0.222324917\",\"expectedQty\":\"285.229693482\",\"observedQty\":\"285.007368565\",\"symbol\":\"LTCUSD\"}],\"positions\":[{\"symbol\":\"BTCUSD\",\"qty\":\"0.460596096\"},{\"symbol\":\"ETHUSD\",\"qty\":\"19.299406181\"},{\"symbol\":\"LTCUSD\",\"qty\":\"285.007368565\"}],\"limitations\":[\"Separate GET snapshots are not an atomic provider transaction.\",\"Fee percentage is a diagnostic hypothesis, never booked as a financial fact.\",\"No provider "
+        },
+        {
+          "sequence": 2,
+          "at_ms": 1170,
+          "columns": 180,
+          "rows": 30,
+          "cursor_x": 0,
+          "cursor_y": 12,
+          "active_buffer": "normal",
+          "lines": [
+            "{\"observedAt\":\"2026-10-20T18:11:09.613Z\",\"installedVersion\":\"0.1.0-beta.17\",\"probeElectronVersion\":\"43.4.1\",\"profileWrites\":0,\"orderMutations\":0,\"requestCount\":6,\"accountIdentityMa",
+            "tches\":true,\"after\":\"2026-09-25T00:00:00.000Z\",\"journal\":{\"feeCount\":40,\"fillCount\":46,\"submissionAttempts\":14,\"lastState\":\"paused\"},\"provider\":{\"standardCount\":86,\"feeCount\":40,\"f",
+            "illCount\":46,\"feeOnlyCount\":40,\"feeWithoutAfterCount\":40,\"feeWithoutAfterMissingFromStandard\":0,\"unfilteredCount\":87,\"unfilteredTypes\":{\"JNLC\":1,\"FILL\":46,\"CFEE\":40},\"feeOnlyMissin",
+            "gFromStandard\":0,\"unfilteredFeesMissingFromStandard\":0,\"feesAbsentFromJournal\":0,\"fillsAbsentFromJournal\":0,\"changedBookedFees\":0,\"latestFeeCreatedAt\":\"2026-10-10T08:01:00.505431Z\"",
+            ",\"currentDayFeeCount\":0,\"feeShapes\":{\"BTCUSD:asset_quantity\":22,\"LTCUSD:asset_quantity\":6,\"ETHUSD:asset_quantity\":4,\"no_symbol:no_quantity\":8}},\"currentDayBuyFillCount\":6,\"currentD",
+            "ayBuyFeeAt25Bps\":{\"BTCUSD\":\"0.000479057795\",\"ETHUSD\":\"0.0117957270375\",\"LTCUSD\":\"0.22232491676\"},\"validationResult\":\"quantity_mismatch\",\"currentDifferences\":[{\"symbol\":\"BTCUSD\",\"ex",
+            "pectedQty\":\"0.461075154\",\"observedQty\":\"0.460596096\",\"differenceQty\":\"-0.000479058\"},{\"symbol\":\"ETHUSD\",\"expectedQty\":\"19.311201909\",\"observedQty\":\"19.299406181\",\"differenceQty\":\"-",
+            "0.011795728\"},{\"symbol\":\"LTCUSD\",\"expectedQty\":\"285.229693482\",\"observedQty\":\"285.007368565\",\"differenceQty\":\"-0.222324917\"}],\"historicalDifferences\":[{\"differenceQty\":\"-0.00047905",
+            "8\",\"expectedQty\":\"0.461075154\",\"observedQty\":\"0.460596096\",\"symbol\":\"BTCUSD\"},{\"differenceQty\":\"-0.011795728\",\"expectedQty\":\"19.311201909\",\"observedQty\":\"19.299406181\",\"symbol\":\"ET",
+            "HUSD\"},{\"differenceQty\":\"-0.222324917\",\"expectedQty\":\"285.229693482\",\"observedQty\":\"285.007368565\",\"symbol\":\"LTCUSD\"}],\"positions\":[{\"symbol\":\"BTCUSD\",\"qty\":\"0.460596096\"},{\"symbol",
+            "\":\"ETHUSD\",\"qty\":\"19.299406181\"},{\"symbol\":\"LTCUSD\",\"qty\":\"285.007368565\"}],\"limitations\":[\"Separate GET snapshots are not an atomic provider transaction.\",\"Fee percentage is a dia",
+            "gnostic hypothesis, never booked as a financial fact.\",\"No provider internal settlement diagnostics are available.\"]}",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ],
+          "serialized_state": "{\"observedAt\":\"2026-10-20T18:11:09.613Z\",\"installedVersion\":\"0.1.0-beta.17\",\"probeElectronVersion\":\"43.4.1\",\"profileWrites\":0,\"orderMutations\":0,\"requestCount\":6,\"accountIdentityMatches\":true,\"after\":\"2026-09-25T00:00:00.000Z\",\"journal\":{\"feeCount\":40,\"fillCount\":46,\"submissionAttempts\":14,\"lastState\":\"paused\"},\"provider\":{\"standardCount\":86,\"feeCount\":40,\"fillCount\":46,\"feeOnlyCount\":40,\"feeWithoutAfterCount\":40,\"feeWithoutAfterMissingFromStandard\":0,\"unfilteredCount\":87,\"unfilteredTypes\":{\"JNLC\":1,\"FILL\":46,\"CFEE\":40},\"feeOnlyMissingFromStandard\":0,\"unfilteredFeesMissingFromStandard\":0,\"feesAbsentFromJournal\":0,\"fillsAbsentFromJournal\":0,\"changedBookedFees\":0,\"latestFeeCreatedAt\":\"2026-10-10T08:01:00.505431Z\",\"currentDayFeeCount\":0,\"feeShapes\":{\"BTCUSD:asset_quantity\":22,\"LTCUSD:asset_quantity\":6,\"ETHUSD:asset_quantity\":4,\"no_symbol:no_quantity\":8}},\"currentDayBuyFillCount\":6,\"currentDayBuyFeeAt25Bps\":{\"BTCUSD\":\"0.000479057795\",\"ETHUSD\":\"0.0117957270375\",\"LTCUSD\":\"0.22232491676\"},\"validationResult\":\"quantity_mismatch\",\"currentDifferences\":[{\"symbol\":\"BTCUSD\",\"expectedQty\":\"0.461075154\",\"observedQty\":\"0.460596096\",\"differenceQty\":\"-0.000479058\"},{\"symbol\":\"ETHUSD\",\"expectedQty\":\"19.311201909\",\"observedQty\":\"19.299406181\",\"differenceQty\":\"-0.011795728\"},{\"symbol\":\"LTCUSD\",\"expectedQty\":\"285.229693482\",\"observedQty\":\"285.007368565\",\"differenceQty\":\"-0.222324917\"}],\"historicalDifferences\":[{\"differenceQty\":\"-0.000479058\",\"expectedQty\":\"0.461075154\",\"observedQty\":\"0.460596096\",\"symbol\":\"BTCUSD\"},{\"differenceQty\":\"-0.011795728\",\"expectedQty\":\"19.311201909\",\"observedQty\":\"19.299406181\",\"symbol\":\"ETHUSD\"},{\"differenceQty\":\"-0.222324917\",\"expectedQty\":\"285.229693482\",\"observedQty\":\"285.007368565\",\"symbol\":\"LTCUSD\"}],\"positions\":[{\"symbol\":\"BTCUSD\",\"qty\":\"0.460596096\"},{\"symbol\":\"ETHUSD\",\"qty\":\"19.299406181\"},{\"symbol\":\"LTCUSD\",\"qty\":\"285.007368565\"}],\"limitations\":[\"Separate GET snapshots are not an atomic provider transaction.\",\"Fee percentage is a diagnostic hypothesis, never booked as a financial fact.\",\"No provider internal settlement diagnostics are available.\"]}\u001b[1B\u001b[117D"
+        }
+      ],
+      "interaction_events": [],
+      "exit": {
+        "code": 0,
+        "signal": 0,
+        "reason": "exited"
+      },
+      "settlement": {
+        "state": "quiesced",
+        "elapsed_ms": 106,
+        "cleanup_outcome": "not_required"
+      },
+      "process_samples": [
+        {
+          "at_ms": 90,
+          "pid": 1,
+          "parent_pid": 2,
+          "command": "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/docs/implementation/evidence/oct20/rea-broker-fee-probe.mjs",
+          "process_group_id": 1,
+          "session_id": null
+        },
+        {
+          "at_ms": 300,
+          "pid": 3,
+          "parent_pid": 1,
+          "command": "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/.pnpm/electron@43.4.1_supports-color@7.2.0/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper --type=gpu-process --user-data-dir=/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-rea-fees-oZgIOg --gpu-preferences=UAAAAAAAAAAgAQAEAAAAAAAAAAAAAGAAOAAAAAAAAAADAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAABgAAAAAAAAAGAAAAAAAAAAIAAAAAAAAAAgAAAAAAAAACAAAAAAAAAA= --shared-files --field-trial-handle=1718379636,r,2930545424173372707,11930456063681262973,262144 --enable-features=PdfUseShowSaveFilePicker,ScreenCaptureKitPickerScreen,ScreenCaptureKitStreamPickerSonoma --disable-features=DropInputEventsWhilePaintHolding,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TimeoutHangingVideoCaptureStarts,TraceSiteInstanceGetProcessCreation --variations-seed-version --pseudonymization-salt-handle=1935764596,r,5082391531622984683,8244771276094179933,4 --trace-process-track-uuid=3190708988185955192 --seatbelt-client=30",
+          "process_group_id": 1,
+          "session_id": null
+        },
+        {
+          "at_ms": 300,
+          "pid": 4,
+          "parent_pid": 1,
+          "command": "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/.pnpm/electron@43.4.1_supports-color@7.2.0/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=network --user-data-dir=/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-rea-fees-oZgIOg --shared-files --field-trial-handle=1718379636,r,2930545424173372707,11930456063681262973,262144 --enable-features=PdfUseShowSaveFilePicker,ScreenCaptureKitPickerScreen,ScreenCaptureKitStreamPickerSonoma --disable-features=DropInputEventsWhilePaintHolding,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TimeoutHangingVideoCaptureStarts,TraceSiteInstanceGetProcessCreation --variations-seed-version --pseudonymization-salt-handle=1935764596,r,5082391531622984683,8244771276094179933,4 --trace-process-track-uuid=3190708989122997041 --seatbelt-client=30",
+          "process_group_id": 1,
+          "session_id": null
+        },
+        {
+          "at_ms": 1160,
+          "pid": 1,
+          "parent_pid": 2,
+          "command": "(Electron)",
+          "process_group_id": 1,
+          "session_id": null
+        },
+        {
+          "at_ms": 1160,
+          "pid": 3,
+          "parent_pid": 1,
+          "command": "(Electron Helper)",
+          "process_group_id": 1,
+          "session_id": null
+        },
+        {
+          "at_ms": 1160,
+          "pid": 4,
+          "parent_pid": 1,
+          "command": "(Electron Helper)",
+          "process_group_id": 1,
+          "session_id": null
+        }
+      ],
+      "filesystem_checkpoints": [
+        {
+          "name": "before",
+          "at_ms": 0,
+          "files": [],
+          "effects": [],
+          "truncated": false
+        },
+        {
+          "name": "after_settlement",
+          "at_ms": 1328,
+          "files": [],
+          "effects": [],
+          "truncated": false
+        }
+      ],
+      "event_journal": [
+        {
+          "capture_order": 0,
+          "collection": "filesystem_checkpoints",
+          "index": 0
+        },
+        {
+          "capture_order": 1,
+          "collection": "process_samples",
+          "index": 0
+        },
+        {
+          "capture_order": 2,
+          "collection": "process_samples",
+          "index": 1
+        },
+        {
+          "capture_order": 3,
+          "collection": "process_samples",
+          "index": 2
+        },
+        {
+          "capture_order": 4,
+          "collection": "frames",
+          "index": 0
+        },
+        {
+          "capture_order": 5,
+          "collection": "frames",
+          "index": 1
+        },
+        {
+          "capture_order": 6,
+          "collection": "frames",
+          "index": 2
+        },
+        {
+          "capture_order": 7,
+          "collection": "rendered_frames",
+          "index": 0
+        },
+        {
+          "capture_order": 8,
+          "collection": "rendered_frames",
+          "index": 1
+        },
+        {
+          "capture_order": 9,
+          "collection": "rendered_frames",
+          "index": 2
+        },
+        {
+          "capture_order": 10,
+          "collection": "lifecycle",
+          "index": 0
+        },
+        {
+          "capture_order": 11,
+          "collection": "process_samples",
+          "index": 3
+        },
+        {
+          "capture_order": 12,
+          "collection": "process_samples",
+          "index": 4
+        },
+        {
+          "capture_order": 13,
+          "collection": "process_samples",
+          "index": 5
+        },
+        {
+          "capture_order": 14,
+          "collection": "lifecycle",
+          "index": 1
+        },
+        {
+          "capture_order": 15,
+          "collection": "filesystem_checkpoints",
+          "index": 1
+        }
+      ],
+      "files_before": [],
+      "files_after": [],
+      "filesystem_effects": [],
+      "truncated": false,
+      "truncation_details": {
+        "raw_terminal": {
+          "budget_bytes": 20000,
+          "observed_bytes": 2099,
+          "retained_bytes": 2099,
+          "observed_frames": 3,
+          "retained_frames": 3
+        },
+        "rendered_terminal": {
+          "budget_bytes": 20000,
+          "observed_bytes": 10347,
+          "retained_bytes": 10347,
+          "observed_frames": 3,
+          "retained_frames": 3
+        },
+        "filesystem_before": {
+          "files_limit": 10000,
+          "depth_limit": 16,
+          "enumeration_truncated": false,
+          "enumeration_reasons": [],
+          "hash_budget_bytes": 10000000,
+          "hashed_bytes": 0,
+          "hash_omissions": []
+        },
+        "filesystem_after": {
+          "files_limit": 10000,
+          "depth_limit": 16,
+          "enumeration_truncated": false,
+          "enumeration_reasons": [],
+          "hash_budget_bytes": 10000000,
+          "hashed_bytes": 0,
+          "hash_omissions": []
+        },
+        "process": {
+          "sample_limit": 1000,
+          "sampling_partial": false,
+          "retained_samples": 6,
+          "sample_limit_reached": false,
+          "sampling_failures": 0,
+          "first_sampling_failure": null,
+          "coverage": "sampled"
+        }
+      },
+      "limitations": [
+        "The executable digest is a prelaunch file sample; matching path metadata immediately after spawn does not prove an atomic operating-system image binding.",
+        "Process trees are sampled and may omit short-lived descendants.",
+        "Filesystem observations are before/after snapshots, not syscall traces.",
+        "Inherited host environment variables are not recorded and may affect results.",
+        "No filesystem observation paths were selected; filesystem effects remain unknown."
+      ],
+      "residual_unknowns": [
+        {
+          "scope": "process",
+          "reason": "Process trees are sampled and may omit short-lived descendants."
+        },
+        {
+          "scope": "process",
+          "reason": "The executable digest is a prelaunch file sample; operating-system image binding is not atomically observed."
+        },
+        {
+          "scope": "environment",
+          "reason": "Inherited host environment variables are not recorded."
+        },
+        {
+          "scope": "network",
+          "reason": "Network activity is not observed by this capture."
+        },
+        {
+          "scope": "filesystem",
+          "reason": "No filesystem observation paths were selected; filesystem effects remain unknown."
+        }
+      ],
+      "cleanup": {
+        "owned_process_group": "verified",
+        "temporary_root": "removed"
+      }
+    },
+    "confidence": "observed",
+    "authority": "controlled-replay",
+    "environment": {
+      "id": "darwin-arm64",
+      "platform": "darwin",
+      "architecture": "arm64",
+      "isolation": "process"
+    },
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The executable digest is a prelaunch file sample; matching path metadata immediately after spawn does not prove an atomic operating-system image binding.",
+      "Process trees are sampled and may omit short-lived descendants.",
+      "Filesystem observations are before/after snapshots, not syscall traces.",
+      "Inherited host environment variables are not recorded and may affect results.",
+      "No filesystem observation paths were selected; filesystem effects remain unknown."
+    ],
+    "locations": [],
+    "evidence_links": []
+  },
+  "controlledReplay": {
+    "evidence_id": "ev_1d11ed22806d271280988c26d90ea6aa6fb21cf7c9c16d710e65ee6167ef820e",
+    "subject": null,
+    "provider": {
+      "id": "rea-process",
+      "name": "REA process capture",
+      "version": "3"
+    },
+    "analysis_profile": null,
+    "predicate_type": "rea.process-capture",
+    "operation": "capture_process_scenario",
+    "parameters": {
+      "executable_name": "node",
+      "argument_count": 3,
+      "event_count": 0,
+      "filesystem_observation_path_count": 0,
+      "normalization": {
+        "paths": false,
+        "pids": true,
+        "ports": true,
+        "time_bucket_ms": 10,
+        "patterns": []
+      }
+    },
+    "raw_result": null,
+    "normalized_result": {
+      "manifest": {
+        "rea_version": "6.4.0",
+        "provider_version": "3",
+        "platform": "darwin",
+        "architecture": "arm64",
+        "pty_backend": "node-pty",
+        "started_at": "2026-10-20T18:11:22.486Z",
+        "completed_at": "2026-10-20T18:11:23.043Z",
+        "scenario": {
+          "executable": "/Users/kokinmartinez/.nvm/versions/node/v24.15.0/bin/node",
+          "arguments": [
+            "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/docs/implementation/evidence/oct20/replay-paper-fee-gap.mjs",
+            "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/release/install-backups/beta16-profile-before-beta17.db",
+            "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/release/installed-beta17-verification"
+          ],
+          "working_directory": "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto",
+          "environment": {},
+          "filesystem_observation_paths": [],
+          "terminal": {
+            "columns": 160,
+            "rows": 30,
+            "scrollback": 100
+          },
+          "events": [],
+          "timeout_ms": 20000,
+          "idle_timeout_ms": 30000,
+          "settle_ms": 100,
+          "limits": {
+            "output_bytes": 12000,
+            "files": 10000,
+            "file_bytes": 10000000,
+            "processes": 1000,
+            "filesystem_depth": 16
+          },
+          "normalization": {
+            "paths": false,
+            "pids": true,
+            "ports": true,
+            "time_bucket_ms": 10,
+            "patterns": []
+          },
+          "executable_sha256": "3200fbd9f7fd4410426dd541e10d1ab829d3472f270d743c7fabd1696c03fe32"
+        },
+        "comparison_contract": {
+          "working_directory": "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto",
+          "environment": {},
+          "ambient_environment": "unknown",
+          "filesystem_observation_paths": [],
+          "terminal": {
+            "columns": 160,
+            "rows": 30,
+            "scrollback": 100
+          },
+          "events": [],
+          "timeout_ms": 20000,
+          "idle_timeout_ms": 30000,
+          "settle_ms": 100,
+          "limits": {
+            "output_bytes": 12000,
+            "files": 10000,
+            "file_bytes": 10000000,
+            "processes": 1000,
+            "filesystem_depth": 16
+          },
+          "normalization": {
+            "paths": false,
+            "pids": true,
+            "ports": true,
+            "time_bucket_ms": 10,
+            "patterns": []
+          },
+          "port_normalization_version": "contextual-endpoints-v2",
+          "rendered_line_format": "trailing-spaces-trimmed-v1"
+        },
+        "full_scenario_sha256": "65dc5b0811af2234aacdb41aac57fd4dd11a597df9484507e052ef5ae3e2b65e",
+        "comparison_contract_sha256": "3a7b5e45da4d33e887520873b7b44083f90e05c2fe5d63748dfcbdbb9828e88e",
+        "selected_executable_sha256": "3200fbd9f7fd4410426dd541e10d1ab829d3472f270d743c7fabd1696c03fe32",
+        "executable_sha256": "3200fbd9f7fd4410426dd541e10d1ab829d3472f270d743c7fabd1696c03fe32",
+        "executable_identity": {
+          "state": "path_metadata_unchanged",
+          "reason": null
+        },
+        "normalization_sha256": "5c58aa1aa890197f15f9c59ef755d01120e6e07f356fa1ef2f20787e63b6fa87"
+      },
+      "normalization": {
+        "paths": false,
+        "pids": true,
+        "ports": true,
+        "time_bucket_ms": 10,
+        "patterns": []
+      },
+      "frames": [
+        {
+          "sequence": 0,
+          "at_ms": 410,
+          "data": "{\r\n  \"replay\": \"passed\",\r\n  \"approximateGapUsd\": \"80.06\",\r\n  \"blockedAboveBothRecoveryLimits\": true,\r\n  \"hypotheticalMatchingFeesReconcile\": true,\r\n  \"lowerMockPricesPassClassification\": true,\r\n  \"activityLabelsReconciliationMismatch\": true,\r\n  \"databaseWrites\": 0,\r\n  \"networkRequests\": 0\r\n}\r\n"
+        }
+      ],
+      "rendered_frames": [
+        {
+          "sequence": 0,
+          "at_ms": 410,
+          "columns": 160,
+          "rows": 30,
+          "cursor_x": 0,
+          "cursor_y": 10,
+          "active_buffer": "normal",
+          "lines": [
+            "{",
+            "  \"replay\": \"passed\",",
+            "  \"approximateGapUsd\": \"80.06\",",
+            "  \"blockedAboveBothRecoveryLimits\": true,",
+            "  \"hypotheticalMatchingFeesReconcile\": true,",
+            "  \"lowerMockPricesPassClassification\": true,",
+            "  \"activityLabelsReconciliationMismatch\": true,",
+            "  \"databaseWrites\": 0,",
+            "  \"networkRequests\": 0",
+            "}",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ],
+          "serialized_state": "{\r\n  \"replay\": \"passed\",\r\n  \"approximateGapUsd\": \"80.06\",\r\n  \"blockedAboveBothRecoveryLimits\": true,\r\n  \"hypotheticalMatchingFeesReconcile\": true,\r\n  \"lowerMockPricesPassClassification\": true,\r\n  \"activityLabelsReconciliationMismatch\": true,\r\n  \"databaseWrites\": 0,\r\n  \"networkRequests\": 0\r\n}\u001b[1B\u001b[1D"
+        }
+      ],
+      "interaction_events": [],
+      "exit": {
+        "code": 0,
+        "signal": 0,
+        "reason": "exited"
+      },
+      "settlement": {
+        "state": "quiesced",
+        "elapsed_ms": 108,
+        "cleanup_outcome": "not_required"
+      },
+      "process_samples": [
+        {
+          "at_ms": 90,
+          "pid": 1,
+          "parent_pid": 2,
+          "command": "/Users/kokinmartinez/.nvm/versions/node/v24.15.0/bin/node /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/docs/implementation/evidence/oct20/replay-paper-fee-gap.mjs /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/release/install-backups/beta16-profile-before-beta17.db /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/release/installed-beta17-verification",
+          "process_group_id": 1,
+          "session_id": null
+        },
+        {
+          "at_ms": 400,
+          "pid": 1,
+          "parent_pid": 2,
+          "command": "(node)",
+          "process_group_id": 1,
+          "session_id": null
+        }
+      ],
+      "filesystem_checkpoints": [
+        {
+          "name": "before",
+          "at_ms": 0,
+          "files": [],
+          "effects": [],
+          "truncated": false
+        },
+        {
+          "name": "after_settlement",
+          "at_ms": 557,
+          "files": [],
+          "effects": [],
+          "truncated": false
+        }
+      ],
+      "event_journal": [
+        {
+          "capture_order": 0,
+          "collection": "filesystem_checkpoints",
+          "index": 0
+        },
+        {
+          "capture_order": 1,
+          "collection": "process_samples",
+          "index": 0
+        },
+        {
+          "capture_order": 2,
+          "collection": "frames",
+          "index": 0
+        },
+        {
+          "capture_order": 3,
+          "collection": "rendered_frames",
+          "index": 0
+        },
+        {
+          "capture_order": 4,
+          "collection": "lifecycle",
+          "index": 0
+        },
+        {
+          "capture_order": 5,
+          "collection": "process_samples",
+          "index": 1
+        },
+        {
+          "capture_order": 6,
+          "collection": "lifecycle",
+          "index": 1
+        },
+        {
+          "capture_order": 7,
+          "collection": "filesystem_checkpoints",
+          "index": 1
+        }
+      ],
+      "files_before": [],
+      "files_after": [],
+      "filesystem_effects": [],
+      "truncated": false,
+      "truncation_details": {
+        "raw_terminal": {
+          "budget_bytes": 12000,
+          "observed_bytes": 294,
+          "retained_bytes": 294,
+          "observed_frames": 1,
+          "retained_frames": 1
+        },
+        "rendered_terminal": {
+          "budget_bytes": 12000,
+          "observed_bytes": 574,
+          "retained_bytes": 574,
+          "observed_frames": 1,
+          "retained_frames": 1
+        },
+        "filesystem_before": {
+          "files_limit": 10000,
+          "depth_limit": 16,
+          "enumeration_truncated": false,
+          "enumeration_reasons": [],
+          "hash_budget_bytes": 10000000,
+          "hashed_bytes": 0,
+          "hash_omissions": []
+        },
+        "filesystem_after": {
+          "files_limit": 10000,
+          "depth_limit": 16,
+          "enumeration_truncated": false,
+          "enumeration_reasons": [],
+          "hash_budget_bytes": 10000000,
+          "hashed_bytes": 0,
+          "hash_omissions": []
+        },
+        "process": {
+          "sample_limit": 1000,
+          "sampling_partial": false,
+          "retained_samples": 2,
+          "sample_limit_reached": false,
+          "sampling_failures": 0,
+          "first_sampling_failure": null,
+          "coverage": "sampled"
+        }
+      },
+      "limitations": [
+        "The executable digest is a prelaunch file sample; matching path metadata immediately after spawn does not prove an atomic operating-system image binding.",
+        "Process trees are sampled and may omit short-lived descendants.",
+        "Filesystem observations are before/after snapshots, not syscall traces.",
+        "Inherited host environment variables are not recorded and may affect results.",
+        "No filesystem observation paths were selected; filesystem effects remain unknown."
+      ],
+      "residual_unknowns": [
+        {
+          "scope": "process",
+          "reason": "Process trees are sampled and may omit short-lived descendants."
+        },
+        {
+          "scope": "process",
+          "reason": "The executable digest is a prelaunch file sample; operating-system image binding is not atomically observed."
+        },
+        {
+          "scope": "environment",
+          "reason": "Inherited host environment variables are not recorded."
+        },
+        {
+          "scope": "network",
+          "reason": "Network activity is not observed by this capture."
+        },
+        {
+          "scope": "filesystem",
+          "reason": "No filesystem observation paths were selected; filesystem effects remain unknown."
+        },
+        {
+          "scope": "process",
+          "reason": "Ownership of unrelated process 83089 could not be verified; it was left untouched: platform_binary_environment_withheld"
+        },
+        {
+          "scope": "process",
+          "reason": "Ownership of unrelated process 83090 could not be verified; it was left untouched: platform_binary_environment_withheld"
+        },
+        {
+          "scope": "process",
+          "reason": "Ownership of unrelated process 83091 could not be verified; it was left untouched: platform_binary_environment_withheld"
+        },
+        {
+          "scope": "process",
+          "reason": "Ownership of unrelated process 83092 could not be verified; it was left untouched: platform_binary_environment_withheld"
+        },
+        {
+          "scope": "process",
+          "reason": "Ownership of unrelated process 83093 could not be verified; it was left untouched: platform_binary_environment_withheld"
+        },
+        {
+          "scope": "process",
+          "reason": "Ownership of unrelated process 83094 could not be verified; it was left untouched: platform_binary_environment_withheld"
+        },
+        {
+          "scope": "process",
+          "reason": "Ownership of unrelated process 83095 could not be verified; it was left untouched: platform_binary_environment_withheld"
+        },
+        {
+          "scope": "process",
+          "reason": "Ownership of unrelated process 83096 could not be verified; it was left untouched: platform_binary_environment_withheld"
+        },
+        {
+          "scope": "process",
+          "reason": "Ownership of unrelated process 83097 could not be verified; it was left untouched: platform_binary_environment_withheld"
+        },
+        {
+          "scope": "process",
+          "reason": "Ownership of unrelated process 83098 could not be verified; it was left untouched: platform_binary_environment_withheld"
+        },
+        {
+          "scope": "process",
+          "reason": "Ownership of unrelated process 83197 could not be verified; it was left untouched: platform_binary_environment_withheld"
+        },
+        {
+          "scope": "process",
+          "reason": "Ownership of unrelated process 83198 could not be verified; it was left untouched: platform_binary_environment_withheld"
+        },
+        {
+          "scope": "process",
+          "reason": "Ownership of unrelated process 83199 could not be verified; it was left untouched: platform_binary_environment_withheld"
+        },
+        {
+          "scope": "process",
+          "reason": "Ownership of unrelated process 83224 could not be verified; it was left untouched: platform_binary_environment_withheld"
+        },
+        {
+          "scope": "process",
+          "reason": "Ownership of unrelated process 83225 could not be verified; it was left untouched: platform_binary_environment_withheld"
+        }
+      ],
+      "cleanup": {
+        "owned_process_group": "verified",
+        "temporary_root": "removed",
+        "unverified_processes": [
+          {
+            "pid": 83089,
+            "reason": "platform_binary_environment_withheld"
+          },
+          {
+            "pid": 83090,
+            "reason": "platform_binary_environment_withheld"
+          },
+          {
+            "pid": 83091,
+            "reason": "platform_binary_environment_withheld"
+          },
+          {
+            "pid": 83092,
+            "reason": "platform_binary_environment_withheld"
+          },
+          {
+            "pid": 83093,
+            "reason": "platform_binary_environment_withheld"
+          },
+          {
+            "pid": 83094,
+            "reason": "platform_binary_environment_withheld"
+          },
+          {
+            "pid": 83095,
+            "reason": "platform_binary_environment_withheld"
+          },
+          {
+            "pid": 83096,
+            "reason": "platform_binary_environment_withheld"
+          },
+          {
+            "pid": 83097,
+            "reason": "platform_binary_environment_withheld"
+          },
+          {
+            "pid": 83098,
+            "reason": "platform_binary_environment_withheld"
+          },
+          {
+            "pid": 83197,
+            "reason": "platform_binary_environment_withheld"
+          },
+          {
+            "pid": 83198,
+            "reason": "platform_binary_environment_withheld"
+          },
+          {
+            "pid": 83199,
+            "reason": "platform_binary_environment_withheld"
+          },
+          {
+            "pid": 83224,
+            "reason": "platform_binary_environment_withheld"
+          },
+          {
+            "pid": 83225,
+            "reason": "platform_binary_environment_withheld"
+          }
+        ]
+      }
+    },
+    "confidence": "observed",
+    "authority": "controlled-replay",
+    "environment": {
+      "id": "darwin-arm64",
+      "platform": "darwin",
+      "architecture": "arm64",
+      "isolation": "process"
+    },
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The executable digest is a prelaunch file sample; matching path metadata immediately after spawn does not prove an atomic operating-system image binding.",
+      "Process trees are sampled and may omit short-lived descendants.",
+      "Filesystem observations are before/after snapshots, not syscall traces.",
+      "Inherited host environment variables are not recorded and may affect results.",
+      "No filesystem observation paths were selected; filesystem effects remain unknown."
+    ],
+    "locations": [],
+    "evidence_links": []
+  }
+}

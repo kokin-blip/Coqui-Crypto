@@ -288,7 +288,7 @@ export class ParallelPaperService {
     if (!clear) throw new ParallelReconciliationError('broker_orders_pending', 'orders');
     if (!parallelAttemptsResolved(this.#events(experiment))) throw new ParallelReconciliationError('broker_fills_pending', 'order_lookup');
     await reconcilePaperPositionEvidence({ experiment, client, events: () => this.#events(experiment), now: () => this.#input.clock.nowMs(),
-      allowMinorResolution: this.status().status === 'paused', fullAudit: () => this.#reconcile(experiment, client, true),
+      fullAudit: () => this.#reconcile(experiment, client, true),
       append: (kind, key, detail) => this.#append(experiment, kind, key, detail) });
     this.#deadline?.check(); this.#claim?.check();
     this.#append(experiment, 'readiness', `broker-reconciled:${this.#events(experiment).length}`,

@@ -1,0 +1,22 @@
+[
+  {
+    "installedMember": "node_modules/@coqui/adapters/dist/http/alpaca-paper.js",
+    "sliceMember": "alpaca-paper.js",
+    "sha256": "df03983abe11759c228148ece2dd7badf8093075d0d956699167b9740c0c93aa"
+  },
+  {
+    "installedMember": "node_modules/@coqui/services/dist/paper/parallel-paper-reconciliation.js",
+    "sliceMember": "parallel-paper-reconciliation.js",
+    "sha256": "2260b9e1684ae9310bef2eb2a645079093e9aa6114ac1a2d221a318ee1dbd5a9"
+  },
+  {
+    "installedMember": "node_modules/@coqui/services/dist/paper/parallel-paper-recovery.js",
+    "sliceMember": "parallel-paper-recovery.js",
+    "sha256": "4ec0e7b177575510e935ad850e88368f4506bd59285b0ae347fbaded6527754c"
+  },
+  {
+    "installedMember": "node_modules/@coqui/services/dist/paper/parallel-paper-minor-recovery.js",
+    "sliceMember": "parallel-paper-minor-recovery.js",
+    "sha256": "72aee48767562cc236dc3f88ea78e1fa3bbbaf6966a058df1db9b79233c9b013"
+  }
+]

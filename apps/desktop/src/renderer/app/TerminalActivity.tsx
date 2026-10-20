@@ -1,5 +1,6 @@
 import { useWalletNames } from './WalletNames.js';
 import { useState } from 'react';
+import { CoquiSelect } from './CoquiComponents.js';
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { formatUsd } from '@coqui/ui-kit';
 import { useChannel, type ChannelState } from '../query/use-channel.js';
@@ -19,18 +20,24 @@ export function useTerminalActivity(client:CoquiClient,productId:string) {
   const names=useWalletNames(client);
   const scopes=useChannel(client,'trading.activity.scopes',{});
   const [selection,setSelection]=useState<string|null>(null);
-  const [connectionId,setConnectionId]=useState<string|null>(null);
+  const [requestedConnection,setConnectionId]=useState<string|null>(null);
   const [shared,setShared]=useState(true);
   const scopeId=scopes.kind==='ready'?(scopes.value.scopes.find(s=>s.id===selection)?.id??scopes.value.scopes.find(s=>s.current)?.id??'ledger'):'ledger';
+  const accounts=scopes.kind==='ready'?scopes.value.accounts.filter(account=>account.scopeId===scopeId):[];
+  const connectionId=accounts.some(account=>account.connectionId===requestedConnection)?requestedConnection:accounts[0]?.connectionId??null;
+  const accountLabel=(id:string|null):string=>{
+    const account=accounts.find(account=>account.connectionId===id);
+    return id!==null&&names.wallets.kind==='ready'&&names.wallets.value.wallets.some(wallet=>wallet.connectionId===id)?names.accountLabel(id):account?.label??'Account unavailable';
+  };
   const summary=useChannel(client,'trading.activity.summary',{scopeId,connectionId,productId},scopes.kind==='ready');
-  return {scopes,summary,names,scopeId,connectionId,shared,setSelection,setConnectionId,setShared};
+  return {scopes,summary,names,scopeId,connectionId,accounts,accountLabel,shared,setSelection:(id:string)=>{setSelection(id);setConnectionId(null);},setConnectionId,setShared};
 }
 export type TerminalActivityState = ReturnType<typeof useTerminalActivity>;
-export function ActivityControls({activity}:{readonly activity:TerminalActivityState}):React.JSX.Element {
-  return <div className="terminal-table-toolbar terminal-activity-controls">
-    <label>Paper source<select aria-label="Paper activity source" value={activity.scopeId} onChange={e=>activity.setSelection(e.target.value)} disabled={activity.scopes.kind!=='ready'}>{activity.scopes.kind==='ready'?activity.scopes.value.scopes.map(s=><option value={s.id} key={s.id}>{s.label}</option>):<option value="ledger">Loading sources…</option>}</select></label>
-    <label>Wallet<select aria-label="Wallet activity filter" value={activity.connectionId??''} onChange={e=>activity.setConnectionId(e.target.value||null)}><option value="">All wallets / combined simulation</option>{activity.scopes.kind==='ready'&&activity.scopes.value.wallets.map(w=><option key={w.id} value={w.id}>{activity.names.wallets.kind==='ready'&&activity.names.wallets.value.wallets.some(n=>n.connectionId===w.id)?activity.names.accountLabel(w.id):w.label}</option>)}</select></label>
-    <label><input type="checkbox" checked={activity.shared} onChange={e=>activity.setShared(e.target.checked)}/> Shared evaluations</label>
+export function ActivityControls({activity,compact=false}:{readonly activity:TerminalActivityState;readonly compact?:boolean}):React.JSX.Element {
+  return <div className={`terminal-table-toolbar terminal-activity-controls${compact?' terminal-activity-controls-compact':''}`}>
+    <label><span>Paper source</span><CoquiSelect aria-label="Paper activity source" value={activity.scopeId} onChange={event=>activity.setSelection(event.target.value)} disabled={activity.scopes.kind!=='ready'}>{activity.scopes.kind==='ready'?activity.scopes.value.scopes.map(scope=><option value={scope.id} key={scope.id}>{scope.label}</option>):<option value="ledger">Loading sources…</option>}</CoquiSelect></label>
+    <label><span>Account / wallet</span><CoquiSelect aria-label="Wallet activity filter" value={activity.connectionId??''} disabled={activity.accounts.length<=1} onChange={event=>activity.setConnectionId(event.target.value||null)}>{activity.accounts.map(account=><option key={account.connectionId??'combined'} value={account.connectionId??''}>{activity.accountLabel(account.connectionId)}</option>)}{activity.accounts.length===0&&<option value="">Loading accounts…</option>}</CoquiSelect></label>
+    {!compact&&<label><input type="checkbox" checked={activity.shared} onChange={event=>activity.setShared(event.target.checked)}/> Shared evaluations</label>}
   </div>;
 }
 export function CurrentlyWatching({state}:{readonly state:ChannelState<ActivitySummary>}):React.JSX.Element {

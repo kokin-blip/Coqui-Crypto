@@ -4,7 +4,6 @@ import type { ParallelPaperEvent, ParallelPaperExperiment } from '@coqui/storage
 import type { ParallelPaperDependencies } from './parallel-paper-service.js';
 import { ParallelBudgetError, ParallelReconciliationError, type PaperPositionDifference } from './parallel-paper-utils.js';
 import type { PaperDecisionPreparation } from './runtime-model.js';
-import { currentPaperPositionResolution } from './parallel-paper-resolution.js';
 
 export function parallelAttemptsResolved(events: readonly ParallelPaperEvent[]): boolean {
   const orders = new Map<unknown, ParallelPaperEvent>(), fills = new Map<unknown, Decimal>();
@@ -69,12 +68,7 @@ export async function validateParallelPositions(client: ReturnType<typeof create
       if (!qty.isFinite()) throw new Error('invalid_fee');
       add(symbol, qty.abs().neg());
     }
-    const resolution = currentPaperPositionResolution(events);
-    if (resolution) for (const row of resolution.detail['positionDifferences'] as PaperPositionDifference[]) {
-      const qty = new Decimal(row.observedQty);
-      if (!['BTCUSD', 'ETHUSD', 'LTCUSD'].includes(row.symbol) || !qty.isFinite() || qty.lt(0)) throw new Error('invalid_resolution');
-      expected.set(row.symbol, qty);
-    }
+
   } catch { throw new ParallelReconciliationError('broker_positions_mismatch', 'positions'); }
   const positions = await client.positions();
   const differences: PaperPositionDifference[] = [];

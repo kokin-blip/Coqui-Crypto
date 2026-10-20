@@ -6,8 +6,8 @@ export function TerminalTabs<T extends string>({ tabs, value, onChange, label, i
   readonly tabs: readonly T[]; readonly value: T; readonly onChange: (value: T) => void;
   readonly label: string; readonly id: string;
 }): React.JSX.Element {
-  return <div className="terminal-tabs" role="tablist" aria-label={label}>{tabs.map((tab, index) =>
-    <button key={tab} id={`${id}-tab-${index}`} role="tab" type="button" aria-selected={value === tab}
+  return <div className="terminal-tabs" data-figma-node="3:30" role="tablist" aria-label={label}>{tabs.map((tab, index) =>
+    <button data-figma-node={value===tab?'3:28':'3:26'} key={tab} id={`${id}-tab-${index}`} role="tab" type="button" aria-selected={value === tab}
       aria-controls={`${id}-panel`} tabIndex={value === tab ? 0 : -1} onClick={() => onChange(tab)}
       onKeyDown={(event) => {
         const next = event.key === 'ArrowRight' ? (index + 1) % tabs.length : event.key === 'ArrowLeft'

@@ -1,0 +1,109 @@
+{
+  "observedAt": "2026-10-20T18:11:09.613Z",
+  "installedVersion": "0.1.0-beta.17",
+  "probeElectronVersion": "43.4.1",
+  "profileWrites": 0,
+  "orderMutations": 0,
+  "requestCount": 6,
+  "accountIdentityMatches": true,
+  "after": "2026-09-25T00:00:00.000Z",
+  "journal": {
+    "feeCount": 40,
+    "fillCount": 46,
+    "submissionAttempts": 14,
+    "lastState": "paused"
+  },
+  "provider": {
+    "standardCount": 86,
+    "feeCount": 40,
+    "fillCount": 46,
+    "feeOnlyCount": 40,
+    "feeWithoutAfterCount": 40,
+    "feeWithoutAfterMissingFromStandard": 0,
+    "unfilteredCount": 87,
+    "unfilteredTypes": {
+      "JNLC": 1,
+      "FILL": 46,
+      "CFEE": 40
+    },
+    "feeOnlyMissingFromStandard": 0,
+    "unfilteredFeesMissingFromStandard": 0,
+    "feesAbsentFromJournal": 0,
+    "fillsAbsentFromJournal": 0,
+    "changedBookedFees": 0,
+    "latestFeeCreatedAt": "2026-10-10T08:01:00.505431Z",
+    "currentDayFeeCount": 0,
+    "feeShapes": {
+      "BTCUSD:asset_quantity": 22,
+      "LTCUSD:asset_quantity": 6,
+      "ETHUSD:asset_quantity": 4,
+      "no_symbol:no_quantity": 8
+    }
+  },
+  "currentDayBuyFillCount": 6,
+  "currentDayBuyFeeAt25Bps": {
+    "BTCUSD": "0.000479057795",
+    "ETHUSD": "0.0117957270375",
+    "LTCUSD": "0.22232491676"
+  },
+  "validationResult": "quantity_mismatch",
+  "currentDifferences": [
+    {
+      "symbol": "BTCUSD",
+      "expectedQty": "0.461075154",
+      "observedQty": "0.460596096",
+      "differenceQty": "-0.000479058"
+    },
+    {
+      "symbol": "ETHUSD",
+      "expectedQty": "19.311201909",
+      "observedQty": "19.299406181",
+      "differenceQty": "-0.011795728"
+    },
+    {
+      "symbol": "LTCUSD",
+      "expectedQty": "285.229693482",
+      "observedQty": "285.007368565",
+      "differenceQty": "-0.222324917"
+    }
+  ],
+  "historicalDifferences": [
+    {
+      "differenceQty": "-0.000479058",
+      "expectedQty": "0.461075154",
+      "observedQty": "0.460596096",
+      "symbol": "BTCUSD"
+    },
+    {
+      "differenceQty": "-0.011795728",
+      "expectedQty": "19.311201909",
+      "observedQty": "19.299406181",
+      "symbol": "ETHUSD"
+    },
+    {
+      "differenceQty": "-0.222324917",
+      "expectedQty": "285.229693482",
+      "observedQty": "285.007368565",
+      "symbol": "LTCUSD"
+    }
+  ],
+  "positions": [
+    {
+      "symbol": "BTCUSD",
+      "qty": "0.460596096"
+    },
+    {
+      "symbol": "ETHUSD",
+      "qty": "19.299406181"
+    },
+    {
+      "symbol": "LTCUSD",
+      "qty": "285.007368565"
+    }
+  ],
+  "limitations": [
+    "Separate GET snapshots are not an atomic provider transaction.",
+    "Fee percentage is a diagnostic hypothesis, never booked as a financial fact.",
+    "No provider internal settlement diagnostics are available."
+  ]
+}

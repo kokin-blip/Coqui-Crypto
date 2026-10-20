@@ -43,7 +43,7 @@ const microstructure = new CoinbaseMicrostructure();
 microstructure.receive({type:'snapshot',product_id:'BTC-USD',bids:[['84199','1'],['84198','2']],asks:[['84201','1'],['84202','2']]},Date.now());
 const feed = setInterval(()=>{feedTicks++;const now=Date.now();microstructure.receive({type:'l2update',product_id:'BTC-USD',changes:[['buy','84199',String(1+feedTicks%5)]]},now);microstructure.receive({type:'match',product_id:'BTC-USD',trade_id:feedTicks,side:feedTicks%2?'buy':'sell',price:String(84200+feedTicks%2),size:'0.01'},now);},1000);
 ipcMain.handle('coqui:query', async (_event, channel, payload) => {
-  if(activity!==null&&['trading.activity.summary','trading.activity.scopes','trading.activity.trail'].includes(channel))return activity.dispatch(channel,payload);
+  if(activity!==null&&['trading.activity.summary','trading.activity.scopes','trading.activity.trail','trading.activity.overview','trading.activity.orders','trading.activity.order-detail'].includes(channel))return activity.dispatch(channel,payload);
   if (channel === 'market-data.display-bars') {
     historyQueries++;
     const step = intervalMs[payload.interval];
@@ -73,6 +73,7 @@ ipcMain.handle('coqui:query', async (_event, channel, payload) => {
   return dispatch(channel, payload);
 });
 const window = new BrowserWindow({ show: false, width: 1920, height: 1080, webPreferences: { ...WEB_PREFERENCES, backgroundThrottling: false, preload: join(root, 'dist/preload/index.cjs') } });
+if(activity!==null){window.show();window.focus();window.webContents.focus();}
 const evaluate = code => window.webContents.executeJavaScript(code);
 // Optional audit instrumentation; never installed in the shipped application.
 if (process.env.COQUI_PERF_AUDIT === '1') {

@@ -1,0 +1,46 @@
+{
+  "bundle": "/Applications/Coqui.app",
+  "build": {
+    "version": "0.1.0-beta.18",
+    "sourceRevision": "05be901e50600b8f77512e28a62659bbf4a73e5b",
+    "dirty": true,
+    "sourceHash": "69e8a4a67c5001c2d48a81cb807c1d3706176ec780d6b15501b2b69d437d7f0e",
+    "channel": "beta-candidate",
+    "builtAtMs": 1792520883977
+  },
+  "asarSha256": "fe2646829fa5a08a8533144991b516d08358339706b61f9ab136664dda19bb61",
+  "identities": [
+    {
+      "path": "dist/main/build-info.json",
+      "sha256": "d00864a0fc21470a1a8eb66a769a49753e4626d776aa1a6f9fc4af655ad5b696"
+    },
+    {
+      "path": "node_modules/@coqui/services/dist/paper/parallel-paper-minor-recovery.js",
+      "sha256": "f4aad6338d98ab560eff95a5bed6b2cf02fdfe0f0e5c619c2877ac13e10f0a9d"
+    },
+    {
+      "path": "node_modules/@coqui/services/dist/paper/parallel-paper-recovery.js",
+      "sha256": "0deb3ed9bd31571d35b6edf42f15c8dd19b282ffa051867acbda5a7d4b3cae49"
+    },
+    {
+      "path": "node_modules/@coqui/services/dist/paper/parallel-paper-utils.js",
+      "sha256": "b44eb496a2d1a38abb92d7fa5a2817b5b1db58edbeebaa382b7f2b1a73657842"
+    },
+    {
+      "path": "node_modules/@coqui/services/dist/paper/parallel-paper-attention.js",
+      "sha256": "d51bdf32286989de89615675cdbe74ea8c0b846982f242803d85f69d3c36f06f"
+    },
+    {
+      "path": "node_modules/@coqui/contracts/dist/schemas/parallel-paper.js",
+      "sha256": "f368c569119f8ffd8a200c3508df663ce2e8d789ec2568daa0114fe6d01ac753"
+    }
+  ],
+  "signatureVerified": true,
+  "smoke": {
+    "opened": true,
+    "schemaVersion": 95,
+    "workerLoaded": true,
+    "error": null
+  },
+  "actualProfileAccess": false
+}

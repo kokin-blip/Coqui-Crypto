@@ -1,11 +1,13 @@
 import { activeParallelEvents } from './parallel-paper-plans.js';
 import { Decimal } from 'decimal.js';
+import { safeAlpacaNetworkCode } from '@coqui/adapters';
 
 import { instrumentKey } from '@coqui/core';
 import type { ParallelPaperEvent } from '@coqui/storage';
 
 import { PARALLEL_INSTRUMENTS } from './parallel-signal.js';
 import type { PaperDecisionPreparation } from './runtime-model.js';
+import { paperPendingFeeDetail } from './parallel-paper-utils.js';
 
 const RECOVERABLE_TRANSIENT_REASONS = new Set([
   'market_fetch_failed', 'invalid_market_data', 'market_alignment_failed',
@@ -112,12 +114,20 @@ export function projectParallelPaperActivity(events: readonly ParallelPaperEvent
         const title = phases[phase] ?? (['account', 'orders', 'order_lookup', 'positions', 'activities', 'quote', 'asset'].includes(phase)
           ? `Alpaca ${phase.replaceAll('_', ' ')} read` : 'Paper recovery check');
         const timing = (key: string, label: string) => typeof event.detail[key] === 'number' && Number.isFinite(event.detail[key])
-          ? ` · ${(Math.max(0, event.detail[key] as number) / 1000).toFixed(1)}s ${label}` : '';
+          ? ` · ${event.detail[key] > 0 && event.detail[key] < 1000
+            ? `${Math.max(1, Math.round(event.detail[key]))}ms` : `${(Math.max(0, event.detail[key]) / 1000).toFixed(1)}s`} ${label}` : '';
+        const networkCode = safeAlpacaNetworkCode(event.detail['networkCode']);
         const httpStatus = typeof event.detail['httpStatus'] === 'number'
           ? ` · HTTP ${String(event.detail['httpStatus'])}`
-          : event.detail['reason'] === 'alpaca_unavailable' && operation.length > 0 ? ' · network or timeout' : '';
+          : event.detail['reason'] === 'alpaca_unavailable' && operation.length > 0 ? ' · network failure' : '';
+        const pendingFees = paperPendingFeeDetail(event.detail['pendingFeeEvidence']);
+        if (event.detail['reason'] === 'broker_positions_mismatch' && pendingFees) return item('retry',
+          pendingFees.status === 'overdue' ? 'Fee evidence overdue · review Alpaca' : 'Waiting for fee evidence',
+          'Possible delayed crypto fees · exact accounting required · original pause retained');
+        if (event.detail['reason'] === 'broker_positions_mismatch') return item('retry', 'Alpaca position reconciliation mismatch',
+          `broker_positions_mismatch · positions · ${event.detail['feeReconciliation'] ? 'fee-shaped gap exceeds recovery limits · ' : ''}original pause retained`);
         return item('retry', `${title} ${event.detail['reason'] === 'deadline_exceeded' || event.detail['reason'] === 'alpaca_timeout' ? 'timed out' : 'failed'}`,
-          `${String(event.detail['reason'])}${operation}${httpStatus}${timing('elapsedMs', 'elapsed')}${timing('remainingMs', 'remaining')} · original pause retained`);
+          `${String(event.detail['reason'])}${operation}${httpStatus}${networkCode ? ` · ${networkCode}` : ''}${timing('elapsedMs', 'elapsed')}${timing('remainingMs', 'remaining')} · original pause retained`);
       }
       case 'external_fill': {
         const related = orders.get(String(event.detail['orderId']));

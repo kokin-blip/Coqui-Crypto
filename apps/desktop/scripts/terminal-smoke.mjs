@@ -36,6 +36,8 @@ export async function checkTerminal(window, check) {
   await waitFor(`document.activeElement?.id === 'terminal-data-tab-0' && document.activeElement?.getAttribute('aria-selected') === 'true'`);
   check('terminal tabs support keyboard navigation and focus', true);
 
+  check('algorithm activity is the default compact panel tab', await evaluate(`document.querySelector('#microstructure-tab-0')?.textContent==='Algo Activity'&&document.querySelector('#microstructure-tab-0')?.getAttribute('aria-selected')==='true'`));
+  await evaluate(`document.querySelector('#microstructure-tab-1').click()`);
   await waitFor(`[...(document.querySelector('select[aria-label="Order book market"]')?.options ?? [])].some(o => o.value === 'ETH-USD')`);
   await evaluate(`(() => {
     const select = document.querySelector('select[aria-label="Order book market"]');
@@ -47,7 +49,7 @@ export async function checkTerminal(window, check) {
   check('terminal links product selection to chart and decision evidence', true);
   await evaluate(`document.querySelector('#terminal-chart-tab-1').click(); document.querySelector('#microstructure-tab-1').click()`);
   await waitFor(`document.querySelector('#terminal-chart-panel')?.textContent.includes('ETH-USD') && document.querySelector('#microstructure-tab-1')?.getAttribute('aria-selected') === 'true'`);
-  check('terminal depth and recent-trades views retain the selected product', true);
+  check('terminal depth and order-book views retain the selected product', true);
   await evaluate(`document.querySelector('#terminal-chart-tab-0').click()`);
   await waitFor(`document.querySelector('button[aria-label="Fullscreen chart panel"]') !== null`);
   const enterHtml = windowEvent('enter-html-full-screen');

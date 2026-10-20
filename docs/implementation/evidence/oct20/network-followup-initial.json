@@ -1,0 +1,84 @@
+{
+  "observedAtUtc": "2026-10-20T19:12:27.227286+00:00",
+  "installedVersion": "0.1.0-beta.18",
+  "readAttemptsLast30Min": {
+    "('account', 'received')": 26,
+    "('orders', 'received')": 26,
+    "('activities', 'received')": 52,
+    "('positions', 'received')": 52
+  },
+  "networkFailuresLast30Min": [],
+  "latestEvents": [
+    {
+      "atUtc": "2026-10-20T19:04:30.141000+00:00",
+      "kind": "reconciliation_error",
+      "reason": "broker_positions_mismatch",
+      "operation": "positions",
+      "pendingFeeEvidence": {
+        "latestFillAtMs": 1792497660986,
+        "oldestFillAtMs": 1792497660392,
+        "reviewAfterMs": 1792627200000,
+        "status": "awaiting"
+      }
+    },
+    {
+      "atUtc": "2026-10-20T19:04:30.479000+00:00",
+      "kind": "readiness_check",
+      "reason": "broker_positions_mismatch",
+      "outcome": "paused"
+    },
+    {
+      "atUtc": "2026-10-20T19:05:30.259000+00:00",
+      "kind": "reconciliation_error",
+      "reason": "broker_positions_mismatch",
+      "operation": "positions",
+      "pendingFeeEvidence": {
+        "latestFillAtMs": 1792497660986,
+        "oldestFillAtMs": 1792497660392,
+        "reviewAfterMs": 1792627200000,
+        "status": "awaiting"
+      }
+    },
+    {
+      "atUtc": "2026-10-20T19:05:30.582000+00:00",
+      "kind": "readiness_check",
+      "reason": "broker_positions_mismatch",
+      "outcome": "paused"
+    },
+    {
+      "atUtc": "2026-10-20T19:06:30.156000+00:00",
+      "kind": "reconciliation_error",
+      "reason": "broker_positions_mismatch",
+      "operation": "positions",
+      "pendingFeeEvidence": {
+        "latestFillAtMs": 1792497660986,
+        "oldestFillAtMs": 1792497660392,
+        "reviewAfterMs": 1792627200000,
+        "status": "awaiting"
+      }
+    },
+    {
+      "atUtc": "2026-10-20T19:06:30.469000+00:00",
+      "kind": "readiness_check",
+      "reason": "broker_positions_mismatch",
+      "outcome": "paused"
+    },
+    {
+      "atUtc": "2026-10-20T19:11:53.782000+00:00",
+      "kind": "runtime_build"
+    },
+    {
+      "atUtc": "2026-10-20T19:12:17.466000+00:00",
+      "kind": "reconciliation_error",
+      "reason": "broker_positions_mismatch",
+      "operation": "positions",
+      "pendingFeeEvidence": {
+        "latestFillAtMs": 1792497660986,
+        "oldestFillAtMs": 1792497660392,
+        "reviewAfterMs": 1792627200000,
+        "status": "awaiting"
+      }
+    }
+  ],
+  "submissionAttempts": 14
+}

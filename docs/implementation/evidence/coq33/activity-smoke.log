@@ -1,0 +1,39 @@
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: 'b62bc6500c80f49c37274b60e8d8ce0e6c181daa837e480aa02be03098234377'
+}
+PASS default is Algo Activity with all assets, 7D and Closed P/L 
+PASS account selectors share source state with the main chart 
+PASS chart, metrics and recorded grouped orders render 
+{"timestamp":"2026-10-20T18:37:24.377Z","level":"warn","event":"coinbase_candles.fetch_failed","context":{"profileId":"main","source":"public","productId":"BTC-USD","interval":"1d","status":503,"reason":"http"}}
+PASS refresh retains expanded order and keyboard focus 
+PASS chart keyboard inspection exposes an exact observation 
+PASS grouped orders paginate without replaying the latest page 
+PASS Total chart uses existing valuations and labels its effective start 
+PASS Order Book retains depth and adds a scoped performance strip 
+PASS tab switching preserves chart mode and reuses the overview query 
+PASS source/account change rejects late prior-source display data 
+PASS broker missing fees and Total history remain explicitly unavailable 
+PASS dark-1920 compact panel fits without internal clipping {"innerWidth":1920,"innerHeight":861,"width":338,"scrollWidth":338,"overflow":false,"metricsOverflow":false,"figma":["3:30","3:28","3:26","3:56","3:56","3:56","3:56","3:46","3:37","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:37","3:37"],"theme":"dark"}
+PASS dark-1920 uses Figma dropdown, badge and row primitives 
+PASS dark-1440 compact panel fits without internal clipping {"innerWidth":1440,"innerHeight":861,"width":338,"scrollWidth":338,"overflow":false,"metricsOverflow":false,"figma":["3:30","3:28","3:26","3:56","3:56","3:56","3:56","3:46","3:37","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:37","3:37"],"theme":"dark"}
+PASS dark-1440 uses Figma dropdown, badge and row primitives 
+{"timestamp":"2026-10-20T18:37:31.344Z","level":"warn","event":"coinbase_candles.fetch_failed","context":{"profileId":"main","source":"public","productId":"BTC-USD","interval":"1d","status":503,"reason":"http"}}
+PASS light-1280 compact panel fits without internal clipping {"innerWidth":1280,"innerHeight":800,"width":338,"scrollWidth":338,"overflow":false,"metricsOverflow":false,"figma":["3:30","3:28","3:26","3:56","3:56","3:56","3:56","3:46","3:37","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:37","3:37"],"theme":"light"}
+PASS light-1280 uses Figma dropdown, badge and row primitives 
+PASS contrast-960 compact panel fits without internal clipping {"innerWidth":960,"innerHeight":861,"width":942,"scrollWidth":942,"overflow":false,"metricsOverflow":false,"figma":["3:30","3:28","3:26","3:56","3:56","3:56","3:56","3:46","3:37","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:37","3:37"],"theme":"high-contrast"}
+PASS contrast-960 uses Figma dropdown, badge and row primitives 
+{"timestamp":"2026-10-20T18:37:32.176Z","level":"warn","event":"coinbase_candles.fetch_failed","context":{"profileId":"main","source":"public","productId":"BTC-USD","interval":"1d","status":503,"reason":"http"}}
+PASS narrow-640 compact panel fits without internal clipping {"innerWidth":640,"innerHeight":861,"width":622,"scrollWidth":622,"overflow":false,"metricsOverflow":false,"figma":["3:30","3:28","3:26","3:56","3:56","3:56","3:56","3:46","3:37","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:37","3:37"],"theme":"dark"}
+PASS narrow-640 uses Figma dropdown, badge and row primitives 
+{"timestamp":"2026-10-20T18:37:32.856Z","level":"warn","event":"coinbase_candles.fetch_failed","context":{"profileId":"main","source":"public","productId":"BTC-USD","interval":"1d","status":503,"reason":"http"}}
+PASS zoom-1280 compact panel fits without internal clipping {"innerWidth":640,"innerHeight":430,"width":622,"scrollWidth":622,"overflow":false,"metricsOverflow":false,"figma":["3:30","3:28","3:26","3:56","3:56","3:56","3:56","3:46","3:37","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:37","3:37"],"theme":"high-contrast"}
+PASS zoom-1280 uses Figma dropdown, badge and row primitives 
+PASS confirmed empty selection is distinct from an unavailable read 
+{"timestamp":"2026-10-20T18:37:33.704Z","level":"warn","event":"coinbase_candles.fetch_failed","context":{"profileId":"main","source":"public","productId":"BTC-USD","interval":"1d","status":503,"reason":"http"}}
+PASS failed reads do not retain another selection’s results 
+PASS renderer has no uncaught chart or component errors 
+{"checks":26,"readP95Ms":2.4501670000001923}
+{"timestamp":"2026-10-20T18:37:33.838Z","level":"warn","event":"coinbase_candles.fetch_failed","context":{"profileId":"main","source":"public","productId":"BTC-USD","interval":"1d","status":0,"reason":"shutdown"}}
+{"timestamp":"2026-10-20T18:37:33.838Z","level":"warn","event":"coinbase_candles.fetch_failed","context":{"profileId":"main","source":"public","productId":"BTC-USD","interval":"1d","status":0,"reason":"shutdown"}}
+{"timestamp":"2026-10-20T18:37:33.838Z","level":"warn","event":"coinbase_candles.fetch_failed","context":{"profileId":"main","source":"public","productId":"ADA-USD","interval":"1d","status":0,"reason":"shutdown"}}

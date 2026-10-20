@@ -1,0 +1,32 @@
+$ eslint .
+
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/release/rea-beta17-fee-slice/alpaca-paper.js
+   28:64   error  'fetch' is not defined            no-undef
+   37:25   error  'performance' is not defined      no-undef
+   40:66   error  'performance' is not defined      no-undef
+   41:120  error  'performance' is not defined      no-undef
+   49:36   error  'AbortController' is not defined  no-undef
+   50:39   error  'AbortSignal' is not defined      no-undef
+   58:29   error  'setTimeout' is not defined       no-undef
+   88:70   error  'performance' is not defined      no-undef
+   97:36   error  'performance' is not defined      no-undef
+  105:21   error  'clearTimeout' is not defined     no-undef
+
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/release/rea-beta17-fee-slice/parallel-paper-recovery.js
+  38:21   error  'performance' is not defined  no-undef
+  44:101  error  'performance' is not defined  no-undef
+
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/docs/implementation/evidence/oct20/rea-broker-fee-probe.mjs
+   11:18  error  'URL' is not defined                                            no-undef
+   13:13  error  'setTimeout' is not defined                                     no-undef
+   49:19  error  'URL' is not defined                                            no-undef
+   50:20  error  'URLSearchParams' is not defined                                no-undef
+   51:26  error  'fetch' is not defined                                          no-undef
+   51:74  error  'AbortSignal' is not defined                                    no-undef
+   75:55  error  There is no `cause` attached to the symptom error being thrown  preserve-caught-error
+  100:37  error  'clearTimeout' is not defined                                   no-undef
+  103:3   error  'clearTimeout' is not defined                                   no-undef
+
+✖ 21 problems (21 errors, 0 warnings)
+
+[ELIFECYCLE] Command failed with exit code 1.

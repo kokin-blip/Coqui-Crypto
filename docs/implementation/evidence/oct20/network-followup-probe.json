@@ -1,0 +1,86 @@
+{
+  "observedAtUtc": "2026-10-20T19:13:35.679Z",
+  "installedVersion": "0.1.0-beta.18",
+  "sourceHash": "69e8a4a67c5001c2d48a81cb807c1d3706176ec780d6b15501b2b69d437d7f0e",
+  "results": [
+    {
+      "operation": "account",
+      "received": true,
+      "elapsedMs": 394
+    },
+    {
+      "operation": "orders",
+      "received": true,
+      "elapsedMs": 119
+    },
+    {
+      "operation": "positions",
+      "received": true,
+      "elapsedMs": 232
+    },
+    {
+      "operation": "activities",
+      "received": true,
+      "elapsedMs": 77
+    },
+    {
+      "operation": "quote",
+      "received": true,
+      "elapsedMs": 220,
+      "quoteValidation": "fresh"
+    }
+  ],
+  "attempts": [
+    {
+      "operation": "account",
+      "status": "received",
+      "attemptCount": 1,
+      "elapsedMs": 393.35233300000004,
+      "reason": null,
+      "httpStatus": 200,
+      "networkCode": null
+    },
+    {
+      "operation": "orders",
+      "status": "received",
+      "attemptCount": 1,
+      "elapsedMs": 118.72387500000013,
+      "reason": null,
+      "httpStatus": 200,
+      "networkCode": null
+    },
+    {
+      "operation": "positions",
+      "status": "received",
+      "attemptCount": 1,
+      "elapsedMs": 231.83658300000002,
+      "reason": null,
+      "httpStatus": 200,
+      "networkCode": null
+    },
+    {
+      "operation": "activities",
+      "status": "received",
+      "attemptCount": 1,
+      "elapsedMs": 75.60070799999994,
+      "reason": null,
+      "httpStatus": 200,
+      "networkCode": null
+    },
+    {
+      "operation": "quote",
+      "status": "received",
+      "attemptCount": 1,
+      "elapsedMs": 219.3453750000001,
+      "reason": null,
+      "httpStatus": 200,
+      "networkCode": null
+    }
+  ],
+  "orderMutations": 0,
+  "profileWrites": 0,
+  "limitations": [
+    "This bounded probe uses the installed adapter under matching Electron; it is separate from the running app connection.",
+    "Success now does not rule out intermittent failures later."
+  ]
+}

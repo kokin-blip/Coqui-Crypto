@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { Expand, PanelRight, Shrink } from 'lucide-react';
-import type { CoquiClient } from '@coqui/contracts';
+import type { ChannelRequest, CoquiClient } from '@coqui/contracts';
 import { useChannel } from '../query/use-channel.js';
 import { AdvancedMarkets } from './AdvancedMarkets.js';
 import { TerminalOrderBook } from './TerminalOrderBook.js';
@@ -20,6 +20,11 @@ const DATA_TABS = ['Assets', 'Paper Positions', 'Paper Proposals', 'Decisions', 
 function Workspace({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const [productId, setProductId] = useState('BTC-USD');
   const activity = useTerminalActivity(client, productId);
+  const [activityPeriod,setActivityPeriod]=useState<ChannelRequest<'trading.activity.overview'>['period']>('7d');
+  const [selectedMarketOnly,setSelectedMarketOnly]=useState(false);
+  const [timeZone]=useState(()=>Intl.DateTimeFormat().resolvedOptions().timeZone);
+  const overviewFilter={scopeId:activity.scopeId,connectionId:activity.connectionId,productId:selectedMarketOnly?productId:null,period:activityPeriod,timeZone};
+  const overview=useChannel(client,'trading.activity.overview',overviewFilter,activity.scopes.kind==='ready');
   const [aggregation, setAggregation] = useState('0.01');
   const [chartTab, setChartTab] = useState<typeof CHART_TABS[number]>('Price Chart');
   const [tab, setTab] = useState<typeof DATA_TABS[number]>('Assets');
@@ -54,7 +59,7 @@ function Workspace({ client }: { readonly client: CoquiClient }): React.JSX.Elem
             {chartTab === 'Depth Chart' && <><div className="terminal-table-toolbar"><strong>{productId}</strong><span>{aggregation} aggregation · {book.kind === 'ready' ? book.value.state : 'Unknown'}</span><a href="#/markets">Expanded chart workspace →</a></div><ChannelNotice state={book} label="Depth" />{book.kind === 'ready' && <TerminalDepthChart book={book.value} />}</>}
           </div>
         </section>
-        <TerminalOrderBook client={client} productId={productId} book={book} aggregation={aggregation} onAggregation={setAggregation} onProductChange={setProductId} />
+        <TerminalOrderBook activity={activity} overview={overview} overviewFilter={overviewFilter} onPeriod={setActivityPeriod} selectedMarketOnly={selectedMarketOnly} onSelectedMarketOnly={setSelectedMarketOnly} client={client} productId={productId} book={book} aggregation={aggregation} onAggregation={setAggregation} onProductChange={setProductId} />
       </div>
       <section className="terminal-panel terminal-bottom"><TerminalTabs tabs={DATA_TABS} value={tab} onChange={setTab} label="Account and algorithm data" id="terminal-data" />
         <div id="terminal-data-panel" role="tabpanel" aria-labelledby={`terminal-data-tab-${DATA_TABS.indexOf(tab)}`} className="terminal-data-content">

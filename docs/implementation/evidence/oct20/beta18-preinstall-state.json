@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 95,
+  "paperState": "paused",
+  "submissionAttempts": 14,
+  "profileBackup": "apps/desktop/release/install-backups/beta17-profile-before-beta18.db",
+  "backupSha256": "71ddef88d9c145bdccb2c7e27b71e565baad84bb84612b756c4ef0c5cac76307",
+  "installedVersionBefore": "0.1.0-beta.17",
+  "installedAsarSha256Before": "b6a3d2b2ca641e49b880ce23f982825223a798d09114667501aae06889b06d9c"
+}

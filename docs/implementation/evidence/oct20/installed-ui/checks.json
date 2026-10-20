@@ -1,0 +1,20 @@
+[
+  {
+    "code": "ENOTFOUND",
+    "messageRendered": true,
+    "installedRendererAndPreload": true,
+    "noTextClipping": true
+  },
+  {
+    "code": "ECONNRESET",
+    "messageRendered": true,
+    "installedRendererAndPreload": true,
+    "noTextClipping": true
+  },
+  {
+    "code": "CERT_HAS_EXPIRED",
+    "messageRendered": true,
+    "installedRendererAndPreload": true,
+    "noTextClipping": true
+  }
+]

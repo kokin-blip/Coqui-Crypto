@@ -1,4 +1,4 @@
-import { AlpacaPaperError, withinDeadline, type RequestDeadline, type createAlpacaPaperClient } from '@coqui/adapters';
+import { AlpacaPaperError, safeAlpacaNetworkCode, withinDeadline, type RequestDeadline, type createAlpacaPaperClient } from '@coqui/adapters';
 import { Decimal } from 'decimal.js';
 import { acquireExecutionLease, getAuthoritativeHost, validateExecutionLease, releaseExecutionLease,
   type Db } from '@coqui/storage';
@@ -59,13 +59,14 @@ export function observedParallelClient(client: Client, now: () => number, append
         return result;
       } catch (error) {
         const failure = error instanceof AlpacaPaperError ? new AlpacaPaperError(error.code, operation,
-          error.httpStatus, error.attemptCount, error.elapsedMs, error.budgetMs, error.remainingMs) : new AlpacaPaperError(
+          error.httpStatus, error.attemptCount, error.elapsedMs, error.budgetMs, error.remainingMs, safeAlpacaNetworkCode(error.networkCode)) : new AlpacaPaperError(
           error instanceof Error && error.message === 'deadline_exceeded' ? 'deadline_exceeded' :
           error instanceof TypeError ? 'invalid_response' : 'unavailable', operation, null, 0, performance.now() - started,
           budgetMs, deadline?.remainingMs() ?? null);
         append('readiness', key, { operation, status: 'unavailable', startedAtMs, observedAtMs: now(),
           durationMs: performance.now() - started, budgetMs, remainingMs: deadline?.remainingMs() ?? null,
           reason: `alpaca_${failure.code}`, httpStatus: failure.httpStatus, attemptCount: failure.attemptCount,
+          ...(failure.networkCode ? { networkCode: failure.networkCode } : {}),
           ...(operation === 'quote' ? { quoteSymbols: args[0] ?? ['BTC/USD', 'ETH/USD', 'LTC/USD'] } : {}) });
         throw failure;
       }
