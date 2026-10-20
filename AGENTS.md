@@ -11,6 +11,9 @@ issue updates or completion comments.
   issue, and place it in the appropriate existing project milestone.
 - Record what changed, the verification performed, and relevant commit, PR or
   evidence links. Distinguish local implementation from merged or released work.
+- Include the exact user prompt that initiated the work in every Linear addition
+  or update, under **Prompt used**. Include relevant follow-up prompts when they
+  change the scope; redact secrets or credentials before posting.
 - Set the status to reflect the issue's acceptance criteria. Use In Review when
   implementation is complete but review remains; use Done only when the issue's
   required work and checks are complete. Do not close unmet release, owner or

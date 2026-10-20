@@ -1,0 +1,24 @@
+You are reviewing Coqui Crypto, a local Electron/React crypto research and paper-trading workstation. Analyze the attached October 9, 2026 app review as the baseline, then produce a source-cited product and engineering decision brief that I can hand back to Codex for implementation planning.
+
+The app already has market charts/depth, read-only Coinbase/Robinhood portfolio visibility, paper proposals and separate Alpaca paper experiments, immutable research/data evidence, risk controls, bounded news intelligence, and optional evidence-bound AI explanations. Live execution is hard-disabled. The inspected baseline is beta.16 candidate, commit 487431cb04ff93213c065bcd1c412968c3fbd1b4. Do not assume the candidate is merged/released or operational gates are closed.
+
+Preserve the review's evidence classifications. Source findings are not all reproduced runtime defects; screenshots use disposable/disconnected profiles and synthetic news. Distinguish dated observations from current provider conditions. Challenge recommendations when evidence suggests a better approach. Do not invent private repository access, successful broker checks, valid strategy alpha, prospective start dates or elapsed coverage.
+
+Research these questions in order:
+1. What should a reliable, understandable readiness/error/recovery system look like for this workstation? Specify loading/unknown/blocked/failed/empty/partial/stale semantics, cold-modal accessibility and laptop-width decision hierarchy.
+2. What is the best diagnostic plan for real Electron market-data lag? Compare exact incremental depth aggregation, workers and bounded IPC; recommend measurements and decision thresholds before an architecture change.
+3. How should news ingestion, canonical resolution, coverage, source rights and point-in-time study provenance be exposed? Compare realistic free/low-cost data approaches using current official provider documentation; differentiate useful retained evidence from HTTP success and observed absence from unknown coverage.
+4. What research workflow prevents identity drift, selection bias, repeated holdout use and false promotion? Recommend interpretable baselines, cost stress, trial accounting, uncertainty, candidate/none freeze and elapsed coverage reporting. More models must not substitute for valid data.
+5. What verification would establish trustworthy connected paper execution, restart/reconciliation and backup restoration? Use current official Electron, SQLite and Alpaca/Coinbase/Robinhood documentation where applicable. Preserve owner authorization and read-only/paper separation.
+6. Which additions offer the highest value for a single local operator: health/readiness center, evidence export/replay, guided experiments, contribution planner, tax-lot coverage/estimates, notebook links or alerts? Compare selectively with relevant official product documentation; do not produce a generic trading-app feature list.
+
+Required output:
+- An executive recommendation and a revised ranked backlog mapping every accepted/rejected/deferred recommendation to F01-F14 or a new stable ID.
+- For each item: problem, user task, evidence and confidence, recommended behavior, alternatives/tradeoffs, dependencies, rough relative complexity (S/M/L, not invented calendar estimates), failure/recovery states and testable acceptance criteria.
+- A capability comparison that distinguishes missing features from existing-but-unproven implementation.
+- Separate immediate repairs, operational verification, substantial improvements and optional additions.
+- A specific validation plan: cold onboarding keyboard/screen-reader, errors and partial reads, realistic performance traces/soak, connected paper recovery, dataset identity/coverage and restored backup integrity.
+- Current primary-source citations adjacent to claims, publication/access dates where relevant, and explicit uncertainty. Flag legal/provider retention questions for appropriate review without pretending this report grants rights.
+- A proposed staged roadmap with dependency order, open owner/review/provider-rights/elapsed-evidence gates, and clear reasons to defer low-value complexity.
+- A “Return to Codex” section: exact proposed tasks, acceptance checks, source assumptions that still need repository verification, and decisions requiring my approval. Do not write production code or register/promote research.
+

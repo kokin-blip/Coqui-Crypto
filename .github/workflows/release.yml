@@ -18,6 +18,8 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    outputs:
+      matrix: ${{ steps.targets.outputs.matrix }}
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -34,6 +36,17 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Select release platforms
+        id: targets
+        shell: bash
+        run: |
+          # beta.16 is intentionally macOS-only; future tags retain both platforms.
+          if [[ "$GITHUB_REF_NAME" == "experimental-v0.1.0-beta.16" ]]; then
+            echo 'matrix={"include":[{"os":"macos-latest","script":"package:mac","artifact":"macos-arm64"}]}' >> "$GITHUB_OUTPUT"
+          else
+            echo 'matrix={"include":[{"os":"macos-latest","script":"package:mac","artifact":"macos-arm64"},{"os":"windows-latest","script":"package:win","artifact":"windows-x64"}]}' >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Verify
         run: pnpm verify
 
@@ -41,14 +54,7 @@ jobs:
     needs: verify
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - os: macos-latest
-            script: package:mac
-            artifact: macos-arm64
-          - os: windows-latest
-            script: package:win
-            artifact: windows-x64
+      matrix: ${{ fromJSON(needs.verify.outputs.matrix) }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 40
     steps:

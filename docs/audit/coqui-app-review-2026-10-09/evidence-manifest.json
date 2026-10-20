@@ -1,0 +1,80 @@
+{
+  "sourceRevision": "487431cb04ff93213c065bcd1c412968c3fbd1b4",
+  "reviewDate": "2026-10-09",
+  "timezone": "America/Phoenix",
+  "pdfPages": 24,
+  "acceptedScreenshots": 14,
+  "screenshots": [
+    {
+      "file": "01-setup.png",
+      "title": "Setup modal",
+      "note": "Clear optional and safety copy; cold-load focus management requires repair verification."
+    },
+    {
+      "file": "02-terminal-laptop.png",
+      "title": "Terminal at 1280 pixels",
+      "note": "Algorithm context moves to a drawer; readiness guide is absent. Historical display candles do not prove live health."
+    },
+    {
+      "file": "03-terminal-wide.png",
+      "title": "Terminal at 1920 pixels",
+      "note": "Evidence and risk sidebar is visible. Disconnected disposable profile; no valid strategy result is demonstrated."
+    },
+    {
+      "file": "04-connections.png",
+      "title": "Connections",
+      "note": "OS keychain and read-only boundaries are explicit. Credential setup was not exercised."
+    },
+    {
+      "file": "05-portfolio.png",
+      "title": "Portfolio holdings",
+      "note": "Honest empty state with an actionable connection link."
+    },
+    {
+      "file": "06-reconciliation.png",
+      "title": "Reconciliation",
+      "note": "Never-run disclosure is accurate for the fixture; next-action guidance could improve."
+    },
+    {
+      "file": "07-paper.png",
+      "title": "Paper overview",
+      "note": "Blocked preparation is visible beneath the Prepare action. No broker orders were submitted."
+    },
+    {
+      "file": "08-research.png",
+      "title": "Research",
+      "note": "Legacy plan is labeled collecting; news status lacks a report reference. Empty artifacts remain explicit."
+    },
+    {
+      "file": "09-news.png",
+      "title": "News detail",
+      "note": "Explicit synthetic article, resolved BTC and unresolved Ethereum. This does not establish real ingestion."
+    },
+    {
+      "file": "10-news-health.png",
+      "title": "News diagnostics",
+      "note": "Transport counters and command-based mapping prerequisite; useful ingestion needs separate evidence."
+    },
+    {
+      "file": "11-operations.png",
+      "title": "Operations",
+      "note": "Six bounded read models explain missing evidence; a unified current blocker would reduce scanning."
+    },
+    {
+      "file": "12-performance.png",
+      "title": "Paper performance",
+      "note": "No invented curve or ratios. Actual sample context should remain visible for nonempty histories."
+    },
+    {
+      "file": "13-risk.png",
+      "title": "Risk",
+      "note": "Insufficient history and stand-down are explicit; guardrail and performance histories are distinguished."
+    },
+    {
+      "file": "14-research-zoom.png",
+      "title": "Research at 200 percent zoom",
+      "note": "High contrast reflows, but shell and navigation consume much of the first viewport. Keyboard and screen-reader tasks remain unverified."
+    }
+  ],
+  "limits": "Disposable profiles and synthetic news. Existing compiled output; no fresh rebuild or personal-account validation."
+}
