@@ -8,7 +8,7 @@ const BOUNDARIES: Partial<Record<AppRoute, {label:string;detail:string}>> = {
   'portfolio/reconciliation':{label:'Snapshot comparison',detail:'Provider balances are compared with ledger records. Differences and missing evidence remain visible.'},
   'paper/overview':{label:'Paper simulations',detail:'Campaigns, parallel evaluations and Alpaca paper balances remain separate. Combined simulations are not wallet-attributed trades.'},
   'paper/orders':{label:'Proposal and execution evidence',detail:'Review stored proposals and their assumptions. Pending or unknown executions require resolution before connector removal.'},
-  'paper/performance':{label:'Verified paper valuations',detail:'Performance uses recorded daily simulation evidence. Missing samples and incomplete prices remain unavailable.'},
+  'paper/performance':{label:'Capital accounting evidence',detail:'Account performance uses verified opening capital, external flows and actual valuations. Missing timing or history leaves affected metrics unavailable. Legacy paper calculations remain separately labeled.'},
   strategies:{label:'Shared algorithm evaluations',detail:'Evidence gates and research results describe algorithms. They do not establish account-specific activity or live authority.'},
   research:{label:'Research evidence and lineage',detail:'Runs, prospective studies, reviews and negative findings retain their source hashes and evidence gates.'},
   events:{label:'Validated local imports',detail:'Published and first-known times remain separate for historical replay. Events do not change execution targets.'},

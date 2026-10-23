@@ -25,6 +25,7 @@ import {
   createDefaultCoinbaseEvidenceAcquirer,
   persistCoinbasePortfolioSnapshotV2,
   persistRobinhoodPortfolioSnapshotV2,
+  ingestCoinbaseCapital, recordCapitalIngestionFailure,
   type CoinbaseEvidenceAcquirer,
   type CoinbaseCredentialVerifier,
 } from '@coqui/services';
@@ -204,11 +205,14 @@ export function createConnectionHandlers(input: {
     if (!acquired.ok) return { ok: false as const, issues: [{ path: [], code: `coinbase_${acquired.code}` }] };
     if(!connectionEligible(getProfileConnectionV2(input.profileId,connection.id,input.database)!,input.database))return {ok:false as const,issues:[{path:[],code:'connection_disconnected'}]};
     const receivedAtMs = input.clock.nowMs();
-    await persistCoinbasePortfolioSnapshotV2({
+    const captured = await persistCoinbasePortfolioSnapshotV2({
       profileId: input.profileId, credentialFingerprint: connection.credentialFingerprint,
       requestedAtMs, receivedAtMs, accounts: acquired.value.accounts,
       feeTier: acquired.value.feeTier ?? null,
     }, input.database, input.priceSource);
+    try { ingestCoinbaseCapital({ profileId: input.profileId, connectionId: connection.id, requestedAtMs, observedAtMs: receivedAtMs,
+      acquisition: acquired.value, snapshot: captured.snapshot }, input.database); }
+    catch { recordCapitalIngestionFailure('coinbase', receivedAtMs, input.database); }
     return { ok: true as const, value: view(getProfileConnectionV2(input.profileId, connection.id, input.database)!, input.database) };
   }
 

@@ -73,6 +73,7 @@ const LOCAL_CHANNELS: readonly ChannelName[] = [
   'paper.campaign.connections',
   'paper.execution.proposals',
   'paper.performance',
+  'capital.scopes', 'capital.performance',
   'paper.performance-day',
 ];
 
@@ -98,6 +99,7 @@ const PAYLOADS: Partial<Record<ChannelName, unknown>> = {
   'app.incidents': { limit: 50 },
   'paper.execution.proposals': { limit: 50 },
   'paper.performance-day': { dayUtc: 1_799_971_200_000 },
+  'capital.performance': { scopeId: 'a'.repeat(64), epochId: null, fromMs: null, toMs: null },
   'market-events.timeline': { asOfMs: null, limit: 50 },
   'decision.timeline': { assetScope: null, asOfMs: null, limit: 50 },
 };

@@ -1,0 +1,107 @@
+{
+  "synthetic": true,
+  "accountAccess": false,
+  "checks": [
+    {
+      "name": "desktop-dark: appearance settings accepted",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-dark: corrected dollar profit and return visible",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-dark: missing basis and annualization remain unavailable",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-dark: unavailable evidence help is keyboard focusable",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-dark: help fits viewport",
+      "passed": true,
+      "detail": "{\"left\":570,\"right\":870,\"top\":387.5,\"bottom\":473.5,\"width\":1440,\"height\":861}"
+    },
+    {
+      "name": "narrow-light: appearance settings accepted",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-light: corrected dollar profit and return visible",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-light: missing basis and annualization remain unavailable",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-light: unavailable evidence help is keyboard focusable",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-light: help fits viewport",
+      "passed": true,
+      "detail": "{\"left\":170,\"right\":470,\"top\":387.5,\"bottom\":473.5,\"width\":640,\"height\":861}"
+    },
+    {
+      "name": "contrast-zoom: appearance settings accepted",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast-zoom: corrected dollar profit and return visible",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast-zoom: missing basis and annualization remain unavailable",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast-zoom: unavailable evidence help is keyboard focusable",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast-zoom: help fits viewport",
+      "passed": true,
+      "detail": "{\"left\":170,\"right\":470,\"top\":172.25,\"bottom\":258.25,\"width\":640,\"height\":430}"
+    },
+    {
+      "name": "capital performance round-trips through production preload",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "capital read leaves durable state unchanged",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "live authority remains disabled",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "renderer has no uncaught component errors",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "rendererErrors": [],
+  "browserNotices": [
+    "The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.",
+    "The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.",
+    "The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element."
+  ]
+}

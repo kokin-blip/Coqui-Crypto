@@ -17,6 +17,7 @@ import { marketEventChannelSchemas } from './schemas/market-events.js';
 import { operationsChannelSchemas } from './schemas/operations.js';
 import { paperExecutionChannelSchemas } from './schemas/paper-execution.js';
 import { paperPerformanceChannelSchemas } from './schemas/paper-performance.js';
+import { capitalPerformanceChannelSchemas } from './schemas/capital-performance.js';
 import { parallelPaperChannelSchemas } from './schemas/parallel-paper.js';
 import { portfolioChannelSchemas } from './schemas/portfolio.js';
 import { researchChannelSchemas } from './schemas/research.js';
@@ -56,6 +57,7 @@ export const CHANNEL_SCHEMAS = {
   ...operationsChannelSchemas,
   ...paperExecutionChannelSchemas,
   ...paperPerformanceChannelSchemas,
+  ...capitalPerformanceChannelSchemas,
   ...parallelPaperChannelSchemas,
   ...portfolioChannelSchemas,
   ...researchChannelSchemas,

@@ -28,7 +28,13 @@ export function readProfileDeletionImpact(
       (SELECT COUNT(*) FROM tax_lots_v2
         WHERE CAST(remaining_text AS REAL) <> 0) AS open_tax_lots,
       (SELECT COUNT(*) FROM disposals_v2) AS disposals,
-      ((SELECT COUNT(*) FROM portfolio_snapshot_evidence_v3) +
+      ((SELECT COUNT(*) FROM capital_scopes_v1) +
+        (SELECT COUNT(*) FROM capital_source_batches_v1) +
+        (SELECT COUNT(*) FROM capital_event_revisions_v1) +
+        (SELECT COUNT(*) FROM capital_tracking_epochs_v1) +
+        (SELECT COUNT(*) FROM capital_valuation_evidence_v1) +
+        (SELECT COUNT(*) FROM capital_performance_reports_v1) +
+        (SELECT COUNT(*) FROM portfolio_snapshot_evidence_v3) +
         (SELECT COUNT(*) FROM allocation_targets_v2) +
         (SELECT COUNT(*) FROM display_universe_items_v1 WHERE profile_id = ?) +
         (SELECT COUNT(*) FROM display_universe_events_v1 WHERE origin_profile_id = ?))

@@ -1,0 +1,13 @@
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '7bab92244b3ed201e84146dfeeb3346b0af0bbfd7d8b2e53fea37f4ca6b274a9'
+}
+(electron) 'console-message' arguments are deprecated and will be removed. Please use Event<WebContentsConsoleMessageEventParams> object instead.
+PASS desktop-dark: corrected dollar profit and return visible 
+PASS desktop-dark: missing basis and annualization remain unavailable 
+Error: Visual integrity failure in capital-desktop-dark: clipped text [{"selector":"dd","text":"UnavailableAnnualized returnCollect at least 365 elapsed days of supported retur","client":[142,29],"scroll":[142,33]},{"selector":"dd","text":"UnavailableSortinoInspect the zero-capital or zero-NAV segment; select a support","client":[142,29],"scroll":[142,33]},{"selector":"dd","text":"UnavailableCalmarCollect at least 365 elapsed days of supported return evidence ","client":[142,29],"scroll":[142,33]},{"selector":"dd","text":"UnavailableAccount-scoped realized P&LSupply reconciled cost-basis evidence tied","client":[142,29],"scroll":[142,33]},{"selector":"dd","text":"UnavailableAccount-scoped unrealized P&LSupply reconciled cost-basis evidence ti","client":[142,29],"scroll":[142,33]}]
+    at assertNoTextClipping (file:///Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/scripts/visual-overflow-audit.mjs:73:34)
+    at async run (file:///Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/scripts/capital-accounting-smoke.mjs:73:5)
+undefined
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop:
+[ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL] Command failed with exit code 1: electron scripts/capital-accounting-smoke.mjs

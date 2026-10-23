@@ -1,0 +1,16 @@
+
+ RUN  v4.1.8 /private/tmp/coqui-p01-commit-OpzgjA
+
+ ✓ tests/capital-ingestion.test.ts (18 tests) 1100ms
+ ✓ tests/capital-storage.test.ts (11 tests) 546ms
+ ✓ tests/alpaca-performance.test.ts (8 tests) 344ms
+ ✓ tests/capital-performance.test.ts (33 tests) 244ms
+ ✓ tests/capital-ui.test.ts (10 tests) 18ms
+ ✓ tests/contracts-channels.test.ts (21 tests) 14ms
+ ✓ tests/broker-cash-reconciliation.test.ts (16 tests) 5ms
+
+ Test Files  7 passed (7)
+      Tests  117 passed (117)
+   Start at  15:52:37
+   Duration  5.89s (transform 1.63s, setup 0ms, import 3.13s, tests 2.27s, environment 0ms)
+

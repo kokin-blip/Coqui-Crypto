@@ -1,0 +1,121 @@
+{
+  "researchDate": "2026-10-22",
+  "timezone": "America/Phoenix",
+  "kind": "illustrative_arithmetic_not_backtest",
+  "assumptions": [
+    "Fixed 25% assessment share",
+    "Sufficient reconciled realized profit and cash",
+    "Operating minimum does not bind",
+    "Fixed dollar changes for accounting sequence",
+    "No fees, personal taxes, reserve yield or execution delay",
+    "Reserve unaffected by the specified trading-price shock"
+  ],
+  "assessmentShare": "0.25",
+  "accountingSequence": [
+    {
+      "event": "initial_funding",
+      "tradingEquityUsd": "10000",
+      "reservedCashUsd": "0",
+      "completedDistributionsUsd": "0",
+      "contributionsUsd": "10000",
+      "economicProfitUsd": "0",
+      "assessedProfitUsd": "0",
+      "newReserveUsd": "0"
+    },
+    {
+      "event": "gain_2000_and_assess",
+      "tradingEquityUsd": "11500.00",
+      "reservedCashUsd": "500.00",
+      "completedDistributionsUsd": "0",
+      "contributionsUsd": "10000",
+      "economicProfitUsd": "2000.00",
+      "assessedProfitUsd": "2000",
+      "newReserveUsd": "500.00"
+    },
+    {
+      "event": "lose_1000",
+      "tradingEquityUsd": "10500.00",
+      "reservedCashUsd": "500.00",
+      "completedDistributionsUsd": "0",
+      "contributionsUsd": "10000",
+      "economicProfitUsd": "1000.00",
+      "assessedProfitUsd": "2000",
+      "newReserveUsd": "0"
+    },
+    {
+      "event": "recover_1000_no_repeat_assessment",
+      "tradingEquityUsd": "11500.00",
+      "reservedCashUsd": "500.00",
+      "completedDistributionsUsd": "0",
+      "contributionsUsd": "10000",
+      "economicProfitUsd": "2000.00",
+      "assessedProfitUsd": "2000",
+      "newReserveUsd": "0"
+    },
+    {
+      "event": "gain_another_2000_and_assess",
+      "tradingEquityUsd": "13000.0000",
+      "reservedCashUsd": "1000.0000",
+      "completedDistributionsUsd": "0",
+      "contributionsUsd": "10000",
+      "economicProfitUsd": "4000.0000",
+      "assessedProfitUsd": "4000.00",
+      "newReserveUsd": "500.0000"
+    },
+    {
+      "event": "deposit_5000_no_profit_created",
+      "tradingEquityUsd": "18000.0000",
+      "reservedCashUsd": "1000.0000",
+      "completedDistributionsUsd": "0",
+      "contributionsUsd": "15000",
+      "economicProfitUsd": "4000.0000",
+      "assessedProfitUsd": "4000.00",
+      "newReserveUsd": "0"
+    },
+    {
+      "event": "confirm_external_payout_1000_no_profit_created",
+      "tradingEquityUsd": "18000.0000",
+      "reservedCashUsd": "0.0000",
+      "completedDistributionsUsd": "1000",
+      "contributionsUsd": "15000",
+      "economicProfitUsd": "4000.0000",
+      "assessedProfitUsd": "4000.00",
+      "newReserveUsd": "0"
+    }
+  ],
+  "onePeriodComparisons": [
+    {
+      "nextPeriodReturn": "0.5",
+      "fullReinvestmentEndingUsd": "18000.0",
+      "retainedTradingEndingUsd": "17250.0",
+      "reserveUsd": "500",
+      "combinedEndingUsd": "17750.0",
+      "differenceUsd": "-250.0"
+    },
+    {
+      "nextPeriodReturn": "-0.5",
+      "fullReinvestmentEndingUsd": "6000.0",
+      "retainedTradingEndingUsd": "5750.0",
+      "reserveUsd": "500",
+      "combinedEndingUsd": "6250.0",
+      "differenceUsd": "250.0"
+    },
+    {
+      "nextPeriodReturn": "-1",
+      "fullReinvestmentEndingUsd": "0",
+      "retainedTradingEndingUsd": "0",
+      "reserveUsd": "500",
+      "combinedEndingUsd": "500",
+      "differenceUsd": "500"
+    }
+  ],
+  "verification": {
+    "decimalArithmetic": true,
+    "reserveTransferConservation": true,
+    "externalPayoutConservation": true,
+    "noPayoutOnLossOrRecovery": true,
+    "noPayoutFromContribution": true,
+    "minimumOrderExampleUsd": "500",
+    "tenWinsOneLossPnlUsd": "-400"
+  }
+}

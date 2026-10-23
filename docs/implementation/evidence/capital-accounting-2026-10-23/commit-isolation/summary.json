@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "base": "d824218f40574851e3539ba6854338419911d173",
+  "scope": "P0/P1 plus required pre-existing read-only broker prerequisites; unrelated recovery/hourly changes excluded",
+  "fullTestFiles": 281,
+  "fullTests": 1968,
+  "focusedTests": 117,
+  "typecheck": "passed",
+  "lint": "passed",
+  "rootBuild": "passed",
+  "desktopBuild": "passed",
+  "nativeDesktopSmoke": "passed",
+  "nativeCapitalSmoke": "19 checks passed",
+  "notes": [
+    "Original combined dirty-tree verification remains unchanged in the parent evidence directory.",
+    "Exact pre-build current research manifests remain archived. This commit regenerates current dependency manifests from the isolated source closure, using the committed generator.",
+    "No actual account accessed, study registered, financial action or release performed."
+  ]
+}

@@ -10,6 +10,7 @@ import { PerformanceDayDrawer } from './PerformanceDayDrawer.js';
 import { useWorkspace } from './WorkspaceContext.js';
 import { useChannel } from '../query/use-channel.js';
 import { SurfaceState } from './SurfaceState.js';
+import { CapitalPerformancePanel } from './CapitalPerformance.js';
 
 function metric(value: string | null, suffix = ''): string {
   return value === null ? 'Unavailable' : `${value}${suffix}`;
@@ -64,6 +65,14 @@ function EmptyPerformance({ invalidEvidenceRows }: { readonly invalidEvidenceRow
 }
 
 export function Performance({ client }: { readonly client: CoquiClient }): React.JSX.Element {
+  return <div className="screen-stack performance-screen"><CapitalPerformancePanel client={client} provider="local_paper" />
+    <details><summary>Legacy paper calculation and original valuation history</summary>
+      <p className="metric-note">Original calculation retained for compatibility. These percentages and the starting-holdings benchmark do not establish cash-flow-correct account performance.</p>
+      <LegacyPaperPerformance client={client} />
+    </details></div>;
+}
+
+function LegacyPaperPerformance({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const performance = useChannel(client, 'paper.performance', {});
   const workspace = useWorkspace();
   const [selectedDay, setSelectedDay] = useState<number | null>(null);

@@ -1,0 +1,27 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/accounts-profile-duplication.test.ts (9 tests) 920ms
+ ✓ tests/capital-ingestion.test.ts (17 tests) 1483ms
+ ✓ tests/capital-storage.test.ts (11 tests) 571ms
+ ✓ tests/capital-performance.test.ts (33 tests) 237ms
+stdout | tests/secret-leak-sweep.test.ts > a connected key never reaches the renderer > appears in no channel response
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: 'e455bf775ba4f6af88aa1ca60d48c6b327274adcf3ab0757bb3bda2794a36682'
+}
+
+stdout | tests/secret-leak-sweep.test.ts > a connected key never reaches the renderer > appears in no column of the database
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: 'e455bf775ba4f6af88aa1ca60d48c6b327274adcf3ab0757bb3bda2794a36682'
+}
+
+ ✓ tests/secret-leak-sweep.test.ts (7 tests) 163ms
+ ✓ tests/capital-ui.test.ts (10 tests) 18ms
+
+ Test Files  6 passed (6)
+      Tests  87 passed (87)
+   Start at  15:31:41
+   Duration  9.12s (transform 2.65s, setup 0ms, import 5.20s, tests 3.39s, environment 0ms)
+

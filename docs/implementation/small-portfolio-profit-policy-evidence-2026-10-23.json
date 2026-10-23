@@ -1,0 +1,275 @@
+{
+  "schema_version": 1,
+  "design_date": "2026-10-23",
+  "timezone": "America/Phoenix",
+  "status": "proposed_plan_only",
+  "prompt_used": "Review everything we discussed in this chat and all the research you gathered, then brainstorm how to turn those ideas into practical improvements for Coqui before writing code. If you discover gaps, conflicting findings, outdated assumptions, or unanswered implementation questions, conduct additional targeted research using primary papers and current official documentation before settling on a design. Consider profit-taking rules based on portfolio gains, percentage growth, or dollar milestones, with safeguards that distinguish investment profits from deposits, avoid repeatedly withdrawing the same gains, and preserve enough operating capital for future trades. Treat winning-trade counts as optional triggers rather than proof of profitability, and distinguish selling into cash from withdrawing money to the user. Design around realistic small starting balances, accounting for fees, spreads, slippage, fractional orders, minimum trade sizes, concentration, turnover, and the trade-off between compounding and withdrawals. Evaluate the researched strategies—including trend following with cash, buffered momentum rotation, breakout, bounded mean reversion, strategy blends, cost-aware execution, and calibrated ML filters—and identify which existing capabilities we can reuse, simplify, or improve. Challenge each idea, explain its failure modes, and prioritize evidence over complexity or promised returns. Preserve previous negative research findings and existing safety controls. After brainstorming and resolving necessary research questions, produce a concrete, phased implementation plan covering the architecture, data and accounting requirements, strategy changes, settings and user experience, dependencies, tests, and acceptance criteria. Separate promising hypotheses from validated behavior, define how we will evaluate strategies across small portfolio sizes using realistic costs and fresh evidence, and sequence the work into manageable steps that can then be implemented in the app without prematurely enabling live trading or automatic withdrawals.",
+  "production_code_changed": false,
+  "market_backtest_performed": false,
+  "study_registered": false,
+  "broker_account_accessed": false,
+  "live_or_withdrawal_capability_added": false,
+  "plan": {
+    "path": "docs/implementation/small-portfolio-profit-policy-plan-2026-10-23.md",
+    "sha256": "fda3c0b76897bbb4497cf0e13a7a70d5b9d0e75c441fea4a1044c500ae5cdd25"
+  },
+  "provenance": {
+    "branch": "codex/operations-crew-journal",
+    "head": "d824218f40574851e3539ba6854338419911d173",
+    "dirty_tree": true,
+    "source_sha256": {
+      "README.md": "8c49cb3ce485af17b585d271f1bbf85c8789adc6503995d5fc23b0176fbd6851",
+      "packages/core/src/portfolio/performance.ts": "2ea211bc9e422d7250fa7b9c714fb29393f89ecde9ece0eb98ccec3024c72834",
+      "packages/core/src/portfolio/paper-performance.ts": "fa5898d3d80f9f423dab6262cb9a2c8ad9d0d70cdc7b881fd4335e17ce093e26",
+      "packages/core/src/portfolio/snapshot-evidence.ts": "5de41ba3b371b65a0450522dc703e3008613aa8f916b0bae067f292534b2617e",
+      "packages/core/src/portfolio/broker-cash.ts": "83f7d2e45d5a63e8c9dd648ab4dd7fb062d69104bdcf28de30a66d48723fd425",
+      "packages/core/src/portfolio/broker-equity.ts": "e7f02f761a9a47258cb30f37442da1741a692eb90c8d949e0fef3be372bf4e77",
+      "packages/core/src/portfolio/costbasis.ts": "dc8962b0132ef7c4cd6206c19734757edd57f36222386e2bc22ea4f83a635cf0",
+      "packages/core/src/portfolio/tax-aware.ts": "e09c45a276c2d36f385697bcb94f198917fe60928fad7bbf2e7c6c03d43154d0",
+      "packages/core/src/portfolio/contribution.ts": "218b1f01f78e7d603f9d334d59e193bd2bb3ae6a29c7f46f252a0218c2b4687d",
+      "packages/services/src/portfolio/tax.ts": "928fab49c23e59183f8f4a07256b92d34ee0920733c879f47b420aa13c33a256",
+      "packages/core/src/risk/portfolio-sizing.ts": "b5fba71d866df1508f608e3b662703816eeee0c6820ff0433b3d6b5896f74d64",
+      "packages/core/src/execution/remediation-planner.ts": "50f28c1bfd56e1b923ec81c379fa0bde28d134b2129d4682ca727c2c087d8f40",
+      "packages/core/src/execution/remediation-book.ts": "40cf5a865e8238a9f213c02f4df1f6131e5c3a6b7480c3531a88f0fb5a1a2fa2",
+      "packages/adapters/src/http/alpaca-paper.ts": "403f5530bf39ca5c86f51e0de3e4508adfdaf03d7174085500ff0d6d1491247e",
+      "packages/storage/src/repositories/execution-authority.ts": "5efd62777911069a2569d563069e052fad8269ba0e3ddf80c6b8c8d771b0bdc3",
+      "packages/services/src/paper/execution-service.ts": "ddeee8bcaa060e793559a0e28a6f69dba7da6ea253c54926544eeea91f84fa6c",
+      "packages/services/src/paper/parallel-paper-settlement.ts": "2e53f2b979d123c35bd777f83561371673e33df0e140c8a9b0cd73e5e0de8459",
+      "packages/services/src/paper/parallel-paper-daily.ts": "f4ba395cdc13514ff8f0fafe6619db43e90b398a670617211216b0b6a10c3dcf",
+      "packages/services/src/paper/parallel-paper-intraday.ts": "e412097b5121e6c23d1e230065cb1a2c84df395c2b17509b1610dd19c849c885",
+      "packages/core/src/strategies/rotation.ts": "c97490e9bc102467d8cbf7f92d2d36a2a327e96b4de97c050c5e3f902a2cfbf8",
+      "packages/core/src/strategies/momentum.ts": "d64804149791184b41064a3281a8eef4450b1bae20e2679041baa768ea54f8ae",
+      "packages/core/src/research/breakout.ts": "adea7cf3f736dc1647f955715b64ef0866588220e4e2efd2cd0fa32f8f6a07fc",
+      "packages/core/src/research/range-rotation.ts": "7781e96680849939b41709255e0a591902650771222f53e496482bf72f80f2ac",
+      "packages/core/src/research/market-selector.ts": "a2ed1f022d56ee66d905e4ff2d3a320464155144e946f075256296622d753062",
+      "packages/core/src/research/overlay/calibration.ts": "3b7c64923c031d2599af1a5716f5f5f213244dbf867d52341f97b95c56ab7c1c",
+      "docs/studies/profit-distribution-and-quant-research-2026-10-22.md": "35e420071205c3bdaa6046df6fec7a1f92f04fd5693b224a564023031c502422",
+      "docs/studies/small-portfolio-quant-research-2026-10-22.md": "a596b3979616556b6bc2b9d58d259d1679bb95cead06df5b43efce34e4e82791",
+      "docs/studies/small-portfolio-strategy-research-2026-10-23.md": "45e3e1278dd9f79ec06904715907fd1822bc605bb0e1f926fe0abeb6d623130e",
+      "docs/studies/trendvol-replacement-v1-2026-08-09.md": "497833300c62cdb5b893fe9cef0224f686e1c232ce144404b34c3a7a7f4acaac",
+      "docs/studies/research-integrity.md": "e987a3e9fe4a275d9c319d2307bece00645d652ef6b691023e6d7a971df2e484",
+      "docs/studies/selective-participation.md": "c78fcf01842834a46909d7b493c4c5256a3fed55e2454b6fa67bcf3965b3aab9",
+      "docs/studies/execution-settlement-beta19-2026-10-21.md": "4a65cef107c2b1ca745da558e62a8db28fcf92a6bdf24430a6586eb7267a473b"
+    },
+    "note": "Hashes identify local inspected/referenced source bytes; they do not establish installed, merged or released state."
+  },
+  "accounting_examples": {
+    "assumptions": "All values USD; complete realized profit and cash where required; zero trading/transfer costs and personal taxes unless explicitly stated. No actual payment occurred.",
+    "identity": "P = active_equity + reserved_cash + confirmed_net_capital_out - capital_in",
+    "events": [
+      {
+        "event": "opening",
+        "active_equity": "500",
+        "reserved_cash": "0",
+        "capital_in": "500",
+        "confirmed_net_capital_out": "0",
+        "economic_profit": "0",
+        "assessed_profit": "0",
+        "new_reserve": "0"
+      },
+      {
+        "event": "gain_and_assess",
+        "active_equity": "537.50",
+        "reserved_cash": "12.50",
+        "capital_in": "500",
+        "confirmed_net_capital_out": "0",
+        "economic_profit": "50.00",
+        "assessed_profit": "50",
+        "new_reserve": "12.50"
+      },
+      {
+        "event": "deposit",
+        "active_equity": "737.50",
+        "reserved_cash": "12.50",
+        "capital_in": "700",
+        "confirmed_net_capital_out": "0",
+        "economic_profit": "50.00",
+        "assessed_profit": "50",
+        "new_reserve": "0"
+      },
+      {
+        "event": "loss",
+        "active_equity": "687.50",
+        "reserved_cash": "12.50",
+        "capital_in": "700",
+        "confirmed_net_capital_out": "0",
+        "economic_profit": "0.00",
+        "assessed_profit": "50",
+        "new_reserve": "0"
+      },
+      {
+        "event": "recovery",
+        "active_equity": "737.50",
+        "reserved_cash": "12.50",
+        "capital_in": "700",
+        "confirmed_net_capital_out": "0",
+        "economic_profit": "50.00",
+        "assessed_profit": "50",
+        "new_reserve": "0"
+      },
+      {
+        "event": "new_gain_and_assess",
+        "active_equity": "775",
+        "reserved_cash": "25",
+        "capital_in": "700",
+        "confirmed_net_capital_out": "0",
+        "economic_profit": "100",
+        "assessed_profit": "100",
+        "new_reserve": "12.50"
+      },
+      {
+        "event": "future_confirmed_external_receipt",
+        "active_equity": "775",
+        "reserved_cash": "15",
+        "capital_in": "700",
+        "confirmed_net_capital_out": "10",
+        "economic_profit": "100",
+        "assessed_profit": "100",
+        "new_reserve": "0"
+      }
+    ],
+    "partial_assessment_events": [
+      {
+        "economic_profit": "100",
+        "available_cap": "10",
+        "cycle_ceiling": "100",
+        "profit_assessed_this_step": "40",
+        "reserve_this_step": "10",
+        "watermark_after": "40"
+      },
+      {
+        "economic_profit": "30",
+        "available_cap": "100",
+        "cycle_ceiling": "100",
+        "profit_assessed_this_step": "0",
+        "reserve_this_step": "0",
+        "watermark_after": "40"
+      },
+      {
+        "economic_profit": "40",
+        "available_cap": "100",
+        "cycle_ceiling": "100",
+        "profit_assessed_this_step": "0",
+        "reserve_this_step": "0",
+        "watermark_after": "40"
+      },
+      {
+        "economic_profit": "60",
+        "available_cap": "100",
+        "cycle_ceiling": "100",
+        "profit_assessed_this_step": "20",
+        "reserve_this_step": "5",
+        "watermark_after": "60"
+      }
+    ]
+  },
+  "assessment_rounding": {
+    "representation": "Integer USD cents and integer share basis points.",
+    "formula": "r = min(floor(g*b/10000), C); G = ceil(r*10000/b)",
+    "tested_shares_bps": [
+      1,
+      25,
+      100,
+      2500,
+      3300,
+      3333,
+      5000,
+      9999,
+      10000
+    ],
+    "property_cases_passed": 99099,
+    "invariants": [
+      "0 <= G <= g",
+      "0 <= r <= C",
+      "floor(G*b/10000) == r",
+      "zero funding never advances H"
+    ],
+    "examples": [
+      {
+        "profit_cents": 10000,
+        "cash_cap_cents": 1000,
+        "share_bps": 2500,
+        "assessed_cents": 4000,
+        "reserve_cents": 1000
+      },
+      {
+        "profit_cents": 10000,
+        "cash_cap_cents": 1000,
+        "share_bps": 3300,
+        "assessed_cents": 3031,
+        "reserve_cents": 1000
+      },
+      {
+        "profit_cents": 10000,
+        "cash_cap_cents": 1000,
+        "share_bps": 3333,
+        "assessed_cents": 3001,
+        "reserve_cents": 1000
+      }
+    ]
+  },
+  "realized_cap_tradeoff": {
+    "marked_value": "550",
+    "tax_or_analytical_basis": "500",
+    "desired_reserve": "12.50",
+    "small_sale_notional": "12.50",
+    "realized_gain_before_cost": "1.1363636363636363636363636363636363636363636363636",
+    "sale_notional_to_realize_desired_gain_before_cost": "137.50000000000000000000000000000000000000000000000",
+    "assumptions": "Single holding with proportional basis and no costs. Demonstrates a policy trade-off; no broker tax lot instruction or trading recommendation."
+  },
+  "performance_counterexamples": [
+    {
+      "type": "cost_basis_is_not_flow",
+      "equity_before": "500",
+      "equity_after": "500",
+      "open_basis_before": "500",
+      "open_basis_after": "300",
+      "true_external_flow": "0",
+      "true_return_pct": "0",
+      "legacy_formula_inferred_flow": "-200",
+      "legacy_formula_return_pct": "40",
+      "provenance": "Arithmetic from inspected summarizePerformance formula, not an installed-account observation or a function execution."
+    },
+    {
+      "type": "endpoint_growth_is_not_flow_adjusted_return",
+      "equity_before": "500",
+      "equity_after": "1000",
+      "external_deposit_at_end": "500",
+      "one_year_endpoint_growth_pct": "100",
+      "investment_return_pct": "0"
+    }
+  ],
+  "fee_only_example": {
+    "fee_per_received_leg": "0.0025",
+    "break_even_price_gain_fraction": "0.0050188126959001513809586623199603017568985119440",
+    "source": "https://docs.alpaca.markets/us/docs/crypto-fees",
+    "checked_on": "2026-10-23"
+  },
+  "phases": [
+    "P0 definitions and source inventory",
+    "P1 capital ledger and returns",
+    "P2 budgets and feasibility",
+    "P3 reserve evaluation and preview",
+    "P4 parameterized simulation",
+    "P5 finite strategy and policy studies",
+    "P6 optional reviewed internal paper integration",
+    "P7 governed prospective qualification"
+  ],
+  "fresh_official_references": [
+    "https://docs.alpaca.markets/us/docs/crypto-trading",
+    "https://docs.alpaca.markets/us/docs/crypto-fees",
+    "https://docs.alpaca.markets/us/docs/paper-trading",
+    "https://alpaca.markets/support/why-do-i-get-an-error-of-insufficient-balance-when-my-cash-balance-holds-the-requested-amount",
+    "https://help.coinbase.com/en/coinbase/trading-and-funding/advanced-trade/advanced-trade-fees",
+    "https://docs.cdp.coinbase.com/api-reference/advanced-trade-api/rest-api/products/get-product",
+    "https://docs.cdp.coinbase.com/api-reference/advanced-trade-api/rest-api/accounts/get-account",
+    "https://www.gipsstandards.org/standards/gips-standards-for-firms/gips-standards-handbook-for-firms/",
+    "https://www.irs.gov/individuals/international-taxpayers/frequently-asked-questions-on-digital-asset-transactions"
+  ],
+  "limits": [
+    "No financial return claim follows from synthetic arithmetic or this plan.",
+    "Existing negative studies, consumed holdouts, owner decisions, safety controls and release gates remain unchanged.",
+    "Account-specific fees, native rule observations and account-wide authority must be verified before their dependent actions.",
+    "Initial reservation is cash-only under the strict realized-profit cap; sale-funded alternatives require separate evaluation and review."
+  ]
+}

@@ -103,6 +103,12 @@
 .terminal-metric { display: grid; grid-template-columns: 120px minmax(0, 1fr); align-items: baseline; gap: 8px; min-height: 30px; padding: 5px 12px; }
 .terminal-metric dt { color: var(--coqui-text-muted); font-size: 12px; }
 .terminal-metric dd { margin: 0; text-align: right; font-size: 12px; overflow-wrap: anywhere; }
+.terminal-metric-help { display: inline; }
+.terminal-metric-help > button { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; margin: -4px 0; padding: 0; vertical-align: middle; color: var(--coqui-text-muted); background: transparent; border: 0; border-radius: 4px; cursor: pointer; }
+.terminal-metric-help > button:hover { color: var(--coqui-text); background: var(--coqui-surface-3); }
+.terminal-metric-help > button:focus-visible { outline: 2px solid var(--coqui-focus); outline-offset: 1px; }
+.terminal-metric-explanation { position: fixed; inset: auto; position-area: bottom span-left; justify-self: end; position-try-fallbacks: flip-inline, flip-block, flip-inline flip-block; box-sizing: border-box; width: 300px; max-width: calc(100vw - 24px); max-height: calc(100vh - 24px); overflow: auto; margin: 6px 0; padding: 12px; color: var(--coqui-text); background: var(--coqui-surface-2); border: 1px solid var(--coqui-border-strong); border-radius: 4px; font-size: 12px; line-height: 1.5; text-align: left; white-space: normal; overflow-wrap: anywhere; }
+.terminal-metric-explanation strong { display: block; margin-bottom: 6px; font-weight: 600; }
 .terminal-footnote { margin: 0; padding: 8px 12px; color: var(--coqui-text-muted); font-size: 11px; line-height: 1.5; border-top: 1px solid var(--coqui-border); }
 .terminal-decision-detail { padding: 6px 12px; font-size: 12px; border-top: 1px solid var(--coqui-border); }
 .terminal-decision-detail small, .terminal-record-detail { overflow-wrap: anywhere; color: var(--coqui-text-muted); }
@@ -212,6 +218,8 @@
 .terminal-algo-metrics dt { color: var(--coqui-text-muted); font-size: 10px; }
 .terminal-algo-metrics dd { margin: 2px 0 0; font-size: 14px; font-weight: 500; overflow-wrap: anywhere; }
 .terminal-algo-caveat, .terminal-algo-evidence { margin: 0; padding: 3px 8px 6px; color: var(--coqui-text-muted); font-size: 10px; overflow-wrap: anywhere; }
+.terminal-algo-broker { border-top: 1px solid var(--coqui-border); font-size: 11px; }
+.terminal-algo-broker > summary { padding: 5px 8px; cursor: pointer; overflow-wrap: anywhere; }
 .terminal-algo-chart-heading, .terminal-algo-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 5px 8px; border-top: 1px solid var(--coqui-border); }
 .terminal-algo-chart-heading strong, .terminal-algo-section-heading strong { font-size: 11px; font-weight: 500; }
 .terminal-algo-chart-heading > div { display: flex; gap: 2px; }
@@ -252,3 +260,9 @@
 @media (max-width: 1279px) {
   .terminal-microstructure { max-height: 560px; }
 }
+
+.capital-performance code, .capital-performance dd { overflow-wrap: anywhere; }
+.capital-performance dd { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.capital-performance .terminal-metric-help > button { margin: 0; }
+.capital-performance .terminal-metric-explanation { position-area: none; position-try-fallbacks: none; inset: 12px; margin: auto; height: fit-content; justify-self: auto; }
+.capital-performance select { max-inline-size: 100%; }

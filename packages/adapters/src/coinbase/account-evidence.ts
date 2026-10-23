@@ -13,6 +13,7 @@ import type { HttpFailure } from '../http/index.js';
 import { COINBASE_API_HOST, type CoinbaseReadHttpClient } from './auth.js';
 import { fetchCoinbaseTransactionEvidence } from './transaction-evidence.js';
 import { fetchCoinbaseFeeTierEvidence } from './fee-evidence.js';
+import { coinbaseCapitalPortfolioHash, type CoinbaseCapitalEvidenceEnvelope } from './capital-evidence.js';
 
 const BASE_URL = `https://${COINBASE_API_HOST}/api/v3/brokerage`;
 const MAX_ACCOUNT_ROWS = 10_000;
@@ -46,6 +47,7 @@ export type CoinbaseEvidenceFailureCode =
   | 'proof_token_required';
 
 export interface CoinbaseEvidenceAcquisition {
+  readonly capitalEvidence?: CoinbaseCapitalEvidenceEnvelope;
   readonly accounts: readonly CoinbaseAccountEvidence[];
   readonly fills: readonly CoinbaseFillEvidence[];
   readonly transactions: readonly CoinbaseTransactionEvidence[];
@@ -57,6 +59,8 @@ export interface CoinbaseEvidenceAcquisition {
 }
 
 export interface CoinbaseEvidenceAcquisitionOptions {
+  /** Separate envelope; never participates in the historical schema-2 dataset hash. */
+  readonly includeCapitalEvidence?: boolean;
   /** Wall-clock budget shared by the complete accounts-and-fills cursor walk. */
   readonly maxElapsedMs?: number;
   /** Enable the separate V2 transaction-evidence walk. Production sync enables this. */
@@ -366,8 +370,16 @@ export async function fetchCoinbaseAccountEvidence(
     resource,
   });
   try {
+    const capitalAccounts: Array<{ accountUuid: string; portfolioIdentityHash: string | null }> = [];
+    const capitalTransactions: CoinbaseCapitalEvidenceEnvelope['transactions'][number][] = [];
     const accounts = await fetchPages(
-      http, 'accounts', parseAccount, (row) => row.accountUuid,
+      http, 'accounts', (raw) => {
+        const account = parseAccount(raw);
+        if (account !== null && options.includeCapitalEvidence === true) capitalAccounts.push({
+          accountUuid: account.accountUuid, portfolioIdentityHash: coinbaseCapitalPortfolioHash(raw),
+        });
+        return account;
+      }, (row) => row.accountUuid,
       MAX_ACCOUNT_ROWS, acquisitionSignal,
     );
     if (!accounts.ok) return failure(accounts, 'accounts');
@@ -377,7 +389,8 @@ export async function fetchCoinbaseAccountEvidence(
     );
     if (!fills.ok) return failure(fills, 'fills');
     const transactions = options.includeTransactions === true
-      ? await fetchCoinbaseTransactionEvidence(http, accounts.rows, acquisitionSignal)
+      ? await fetchCoinbaseTransactionEvidence(http, accounts.rows, acquisitionSignal,
+        options.includeCapitalEvidence === true ? (metadata) => { capitalTransactions.push(metadata); } : undefined)
       : { ok: true as const, rows: Object.freeze([]), pageCount: 0 };
     if (!transactions.ok) return failure(transactions, 'transactions');
     const feeTier = options.includeFeeTier === true
@@ -390,6 +403,10 @@ export async function fetchCoinbaseAccountEvidence(
        portfolio empty. Null degrades the evidence hash, not the pessimism. */
     const feeTierValue = feeTier.ok ? feeTier.value : null;
     const value = Object.freeze({
+      ...(options.includeCapitalEvidence === true ? { capitalEvidence: {
+        schemaVersion: 1 as const, accounts: capitalAccounts, transactions: capitalTransactions,
+        paginationComplete: options.includeTransactions === true,
+      } } : {}),
       accounts: accounts.rows,
       fills: fills.rows,
       transactions: transactions.rows,

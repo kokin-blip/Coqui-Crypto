@@ -173,7 +173,7 @@ export default tseslint.config(
     ...js.configs.recommended,
     languageOptions: {
       ...js.configs.recommended.languageOptions,
-      globals: { console: 'readonly', process: 'readonly' },
+      globals: { console: 'readonly', process: 'readonly', URL: 'readonly' },
     },
   },
   ...tseslint.configs.strict,

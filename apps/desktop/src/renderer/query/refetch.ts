@@ -42,6 +42,7 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'research.overlay-shadow.status': { refetchIntervalMs: MINUTE, staleTimeMs: 30 * SECOND },
   'research.overlay-shadow.set': { refetchIntervalMs: false, staleTimeMs: 0 },
   'alpaca.paper.status': { refetchIntervalMs: false, staleTimeMs: 30 * SECOND },
+  'alpaca.paper.performance': {refetchIntervalMs:60*SECOND,staleTimeMs:30*SECOND,foregroundOnly:true,gcTimeMs:0},
   'alpaca.paper.connect': { refetchIntervalMs: false, staleTimeMs: 0 },
   'alpaca.paper.refresh': { refetchIntervalMs: false, staleTimeMs: 0 },
   'alpaca.paper.disconnect': { refetchIntervalMs: false, staleTimeMs: 0 },
@@ -124,6 +125,8 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'paper.execution.prepare': { refetchIntervalMs: false, staleTimeMs: 0 },
   'paper.execution.review': { refetchIntervalMs: false, staleTimeMs: 0 },
   'paper.performance': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
+  'capital.scopes': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
+  'capital.performance': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
   'paper.performance-day': { refetchIntervalMs: false, staleTimeMs: 30 * SECOND },
   // Reference prices move continuously, and this is the figure a user watches.
   'market-data.prices': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },

@@ -72,6 +72,8 @@ export function observedParallelClient(client: Client, now: () => number, append
       }
     };
   return Object.freeze({
+    portfolioHistory: wrap('portfolio_history', client.portfolioHistory),
+    allActivities: wrap('account_activities', client.allActivities),
     account: wrap('account', client.account), positions: wrap('positions', client.positions),
     orders: wrap('orders', client.orders), orderByClientId: wrap('order_lookup', client.orderByClientId),
     asset: wrap('asset', client.asset), activities: wrap('activities', client.activities),

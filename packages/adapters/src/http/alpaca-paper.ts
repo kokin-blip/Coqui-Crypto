@@ -2,6 +2,7 @@ import { Decimal } from 'decimal.js';
 import type { RequestDeadline } from './deadline.js';
 import { alpacaUniverseSymbols, parseAlpacaUniverseAssets } from './alpaca-universe.js';
 import { alpacaNetworkFailureCode, type AlpacaNetworkCode } from './alpaca-network.js';
+import { parseAlpacaPortfolioHistory } from './alpaca-portfolio-history.js';
 /** Alpaca Trading API client. The host is intentionally not configurable: paper only. */
 export const ALPACA_PAPER_ORIGIN = 'https://paper-api.alpaca.markets/v2' as const;
 const ALPACA_CRYPTO_DATA_ORIGIN = 'https://data.alpaca.markets' as const;
@@ -12,6 +13,7 @@ export interface AlpacaPaperCredentials {
 }
 
 export interface AlpacaPaperAccount {
+  readonly created_at?: string;
   readonly id: string;
   readonly status: string;
   readonly currency: string;
@@ -53,6 +55,7 @@ export interface AlpacaPaperActivity {
   readonly status?: string;
   readonly created_at?: string;
   readonly side?: string;
+  readonly currency?: string;
 }
 
 export interface AlpacaPaperAsset {
@@ -153,6 +156,12 @@ export function createAlpacaPaperClient(credentials: AlpacaPaperCredentials, fet
   }
 
   return Object.freeze({
+    portfolioHistory: async (start:string,end:string) => {
+      if(!Number.isFinite(Date.parse(start))||!Number.isFinite(Date.parse(end))||Date.parse(start)>Date.parse(end))throw new AlpacaPaperError('invalid_response','portfolio_history');
+      const params=new URLSearchParams({start,end,timeframe:'1D',intraday_reporting:'continuous',pnl_reset:'no_reset',cashflow_types:'ALL'});
+      const raw=await request<unknown>(`/account/portfolio/history?${params}`,{operation:'portfolio_history'});
+      try{return parseAlpacaPortfolioHistory(raw);}catch{throw new AlpacaPaperError('invalid_response','portfolio_history',200);}
+    },
     account: () => request<AlpacaPaperAccount>('/account', { operation: 'account' }),
     positions: () => request<AlpacaPaperPosition[]>('/positions', { operation: 'positions' }),
     orders: (status: 'open' | 'all' = 'open') => request<AlpacaPaperOrder[]>(`/orders?status=${status}&limit=500`, { operation: 'orders' }),
@@ -170,7 +179,8 @@ export function createAlpacaPaperClient(credentials: AlpacaPaperCredentials, fet
     latestCryptoQuotes: (symbols: readonly string[] = ['BTC/USD', 'ETH/USD', 'LTC/USD']) => request<unknown>(`/v1beta3/crypto/us/latest/quotes?symbols=${alpacaUniverseSymbols(symbols)}`, { data: true, operation: 'quote' }),
     cryptoAssets: async () => parseAlpacaUniverseAssets(await request<unknown>('/assets?asset_class=crypto', { operation: 'assets' })),
     latestCryptoOrderbooks: (symbols: readonly string[]) => request<unknown>(`/v1beta3/crypto/us/latest/orderbooks?symbols=${alpacaUniverseSymbols(symbols)}`, { data: true, operation: 'orderbook' }),
-    activities: (after: string, pageToken?: string) => request<AlpacaPaperActivity[]>(`/account/activities?activity_types=FILL%2CCFEE%2CFEE&direction=asc&page_size=100&after=${encodeURIComponent(after)}${pageToken === undefined ? '' : `&page_token=${encodeURIComponent(pageToken)}`}`, { operation: 'activities' }),
+    activities: (after: string, pageToken?: string, fullAudit = false) => request<AlpacaPaperActivity[]>(`/account/activities?${fullAudit ? '' : 'activity_types=FILL%2CCFEE%2CFEE&'}direction=asc&page_size=100&after=${encodeURIComponent(after)}${pageToken === undefined ? '' : `&page_token=${encodeURIComponent(pageToken)}`}`, { operation: 'activities' }),
+    allActivities: (pageToken?: string) => request<AlpacaPaperActivity[]>(`/account/activities?direction=asc&page_size=100${pageToken === undefined ? '' : `&page_token=${encodeURIComponent(pageToken)}`}`, { operation: 'account_activities' }),
     submit: (order: { readonly symbol: string; readonly side: 'buy' | 'sell'; readonly qty: string; readonly client_order_id: string }) =>
       request<AlpacaPaperOrder>('/orders', { operation: 'submit', method: 'POST', body: { ...order, type: 'market', time_in_force: 'gtc' } }),
     cancel: (orderId: string) => request<undefined>(`/orders/${encodeURIComponent(orderId)}`, { operation: 'cancel', method: 'DELETE' }),

@@ -1,0 +1,23 @@
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '7bab92244b3ed201e84146dfeeb3346b0af0bbfd7d8b2e53fea37f4ca6b274a9'
+}
+PASS desktop-dark: appearance settings accepted 
+PASS desktop-dark: corrected dollar profit and return visible 
+PASS desktop-dark: missing basis and annualization remain unavailable 
+PASS desktop-dark: unavailable evidence help is keyboard focusable 
+PASS desktop-dark: help fits viewport {"left":570,"right":870,"top":387.5,"bottom":473.5,"width":1440,"height":861}
+PASS narrow-light: appearance settings accepted 
+PASS narrow-light: corrected dollar profit and return visible 
+PASS narrow-light: missing basis and annualization remain unavailable 
+PASS narrow-light: unavailable evidence help is keyboard focusable 
+PASS narrow-light: help fits viewport {"left":170,"right":470,"top":387.5,"bottom":473.5,"width":640,"height":861}
+PASS contrast-zoom: appearance settings accepted 
+PASS contrast-zoom: corrected dollar profit and return visible 
+PASS contrast-zoom: missing basis and annualization remain unavailable 
+PASS contrast-zoom: unavailable evidence help is keyboard focusable 
+PASS contrast-zoom: help fits viewport {"left":170,"right":470,"top":172.25,"bottom":258.25,"width":640,"height":430}
+PASS capital performance round-trips through production preload 
+PASS capital read leaves durable state unchanged 
+PASS live authority remains disabled 
+PASS renderer has no uncaught component errors 

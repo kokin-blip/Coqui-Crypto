@@ -41,7 +41,7 @@
       ],
       [
         "packages/adapters/src/coinbase/account-evidence.ts",
-        "9cf1db6bc77e3dd34a7aea4356a52a02957f66c9c1b0aa2dd28ad3b6949b9dd2"
+        "7aa081e6255b7eadc9a7edf6c4f8311976e5598514d2d66d83b0f1503b1427f6"
       ],
       [
         "packages/adapters/src/coinbase/archive.ts",
@@ -56,6 +56,10 @@
         "21ba71249e69b2c51194f30e5908cd85180250e18d4e3a21712d147f212b6410"
       ],
       [
+        "packages/adapters/src/coinbase/capital-evidence.ts",
+        "e9668520cfbf16cfcdd4db98ea23a4c594a2dd38a1c050a567ac26fc13cd2676"
+      ],
+      [
         "packages/adapters/src/coinbase/catalog.ts",
         "9a45b371eddd108258ecaf6766b657ad8b231663a342f7d7279abfea0f09f879"
       ],
@@ -65,7 +69,7 @@
       ],
       [
         "packages/adapters/src/coinbase/index.ts",
-        "e03109aa39f0db6104093fe4728371ab853fa5a8300a77b5a9be8f3af3598baf"
+        "2de721f984e259896801d7fc35a22d46b991f4ccdd13c135de4779645d313d7f"
       ],
       [
         "packages/adapters/src/coinbase/market-diagnostics.ts",
@@ -89,7 +93,7 @@
       ],
       [
         "packages/adapters/src/coinbase/transaction-evidence.ts",
-        "50e61b7ae53da5236302e94817d8d74f933f9a12912d909f3d330ed05174c6bf"
+        "89bc20388e44dde60b02d697762bd5d97a18e2481c67145fb486ed3d8048f411"
       ],
       [
         "packages/adapters/src/coinbase/universe.ts",
@@ -145,7 +149,11 @@
       ],
       [
         "packages/adapters/src/http/alpaca-paper.ts",
-        "b857a4e2602d6457c4b81763887e7ce632bcf010fd7c903bf0b27a3e27f1c4b4"
+        "fed858cbc36bb461af8535c4a8b4093cb5b186e5eebc56c70594ddb588db57da"
+      ],
+      [
+        "packages/adapters/src/http/alpaca-portfolio-history.ts",
+        "3186a42c78387aabab4ae3151d16639aaff873870ee8a48cc0cc497f1e647031"
       ],
       [
         "packages/adapters/src/http/alpaca-universe.ts",
@@ -169,7 +177,7 @@
       ],
       [
         "packages/adapters/src/http/index.ts",
-        "18ffab1289dffada2ce07f93145d0c9a3a4acaf86f46a04212df980415600825"
+        "4ae748fb68dae627b0b1cdd9e6f6aecf9e85017fc85a6aa4c0f7815c6bb583a5"
       ],
       [
         "packages/adapters/src/http/news.ts",
@@ -265,7 +273,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "fe81989c84201f7b4b382578e7523312d8410997558c4bd00eeb0f1498d8cb52"
+        "f3494f19d942cbf7ec3f472f15f3ae1442821fc732efaa854e1b048bca087c2b"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -273,7 +281,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "613983840894cef6d8ea5a8e0b63d36056d11fd6eb47fded02c1f04db4cd1825"
+        "294a40424af54fcf3b94a5ef0e34bc3c67c4541aad419e6e07c74c6ce934cd3d"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -301,11 +309,15 @@
       ],
       [
         "packages/contracts/src/schemas/alpaca-paper.ts",
-        "82fec38dbc9662b22a7cdeb2ef586b55c252791d08c925bffa821d931e11e23a"
+        "0a6b7d76979262d4bba31b0f68f8da3f16aa288300d3e06e3bad28e91bc9e986"
       ],
       [
         "packages/contracts/src/schemas/app.ts",
         "4f69213582e47f6267b6ad692b8dda3f6cc6b34b69a72bd4cbc85dcd09362aa6"
+      ],
+      [
+        "packages/contracts/src/schemas/capital-performance.ts",
+        "464a4df04e5bcde27faa4d44f314a7d4d2126dfa08da19f51ae1bae975cc4cdd"
       ],
       [
         "packages/contracts/src/schemas/chart-extensions.ts",
@@ -600,6 +612,26 @@
         "acfc03bdda5479ab2a0951217616c27d33f8005abb6e33b9cfbe0e5d0786bdb9"
       ],
       [
+        "packages/core/src/portfolio/broker-cash.ts",
+        "83f7d2e45d5a63e8c9dd648ab4dd7fb062d69104bdcf28de30a66d48723fd425"
+      ],
+      [
+        "packages/core/src/portfolio/broker-equity.ts",
+        "e7f02f761a9a47258cb30f37442da1741a692eb90c8d949e0fef3be372bf4e77"
+      ],
+      [
+        "packages/core/src/portfolio/capital-ledger.ts",
+        "2a9547b1a5b8bb7dfaf54ee8fc80f13df98d7324571ff3547a8deb87f521d23a"
+      ],
+      [
+        "packages/core/src/portfolio/capital-performance.ts",
+        "9275fdffeaa4f9fb035778e6e84b75b525e8d5f19bbc96239b5d6c912c795b73"
+      ],
+      [
+        "packages/core/src/portfolio/capital-return-math.ts",
+        "a035b1b5aad267ba2932f0b5b95df18170a32e2751708e7a1ab2c4befc6f8af7"
+      ],
+      [
         "packages/core/src/portfolio/coinbase-evidence.ts",
         "1fb9e8326650d06c6cb6abea3f1e9da23737c19ae02515ee01e60bee14d3b5d1"
       ],
@@ -625,7 +657,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "7b77c396bacde059a0fe20ed5f91c965f875f8a3a1c4959084e624aa346708d2"
+        "51ab75972a1ebaeb590122390bb3a01cc2b19a7539a96a3ec89374cfc4b3ec47"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -965,7 +997,7 @@
       ],
       [
         "packages/services/src/accounts/coinbase-sync.ts",
-        "fcd1ecefd9640cb245b73ad12316340737b7a8fba55782eb53bc3e06c7dca775"
+        "f80b0f23e43df7e5db5ce94ee36c69b42b52df3a2ed1dfc78dded041e40e15a3"
       ],
       [
         "packages/services/src/accounts/comparison.ts",
@@ -1253,7 +1285,7 @@
       ],
       [
         "packages/services/src/paper/parallel-execution-safety.ts",
-        "4bd7765129c37a0f5152d60469d2824a5ae035d324798c58efd7158552f65200"
+        "f1c2113a108aff74db422db3927f53baa4ae4a5a09026e7751e0c80152e5ddb6"
       ],
       [
         "packages/services/src/paper/parallel-fee-accounting.ts",
@@ -1376,6 +1408,30 @@
         "e27bb0965f91643807acd1c505d766bc67ad8494660b5cadbfb5463bb00cef0a"
       ],
       [
+        "packages/services/src/portfolio/capital-accounting.ts",
+        "86b9f911e40400a2302a91cbba4de69ed40431db7426990f5256b36ea76602d0"
+      ],
+      [
+        "packages/services/src/portfolio/capital-alpaca.ts",
+        "71304a20af339e2fed02b54b9a51a338b6516e02cfcdc6c473bbb91ee52bd89d"
+      ],
+      [
+        "packages/services/src/portfolio/capital-coinbase.ts",
+        "bd3729fca6ac1762684691f77bb494f830f3479c1aadf35738688d0ec90503e7"
+      ],
+      [
+        "packages/services/src/portfolio/capital-local-paper.ts",
+        "43b7057c8cdec8a9dc16ccb510d381ad64d809e473d27ec64876525b2515d154"
+      ],
+      [
+        "packages/services/src/portfolio/capital-performance.ts",
+        "85a487f5311f5da8060adc5974052e9e10e3cd633de30399558c12f594725294"
+      ],
+      [
+        "packages/services/src/portfolio/capital-sources.ts",
+        "f8e1f91c79d17a9a62da5e0fbf71d186ac807ac061afa9ab2e436674383f18a6"
+      ],
+      [
         "packages/services/src/portfolio/csv-import.ts",
         "aa1415a26bbf2c9b834ded39ca218126ea13a3bee79c08b5b2ea26d480fb876c"
       ],
@@ -1385,7 +1441,7 @@
       ],
       [
         "packages/services/src/portfolio/index.ts",
-        "d63850cb78aa4f4f3a8503d86e2cba648c7dba44f8ddba8237d66b33e71df4df"
+        "91215d2894e92941eaddf171ceee17fc68efe48a6d40c0d77f39a8a9b2b7169e"
       ],
       [
         "packages/services/src/portfolio/ledger.ts",
@@ -1573,7 +1629,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "199b6dbb20dbc443de54ab6b39478aa797f8f32a8cafde6ce8554d8a30c9c337"
+        "ae765d17f8c40e4b8a9b980238a49add1411073eb2701c83c64a1ef75a28b8c6"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -1864,6 +1920,10 @@
         "77c6075bed5f3876e7844c6268f1b5cbf14b75b08815d6b280a70c9ebb0d736e"
       ],
       [
+        "packages/storage/src/migrations/v96.ts",
+        "9018fde448d490dd6bc69cf78ca98e61a04a128bf98ddf6e136e154bf030a458"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -1893,11 +1953,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
-        "c2c75914871f05a0c76e6b929a85b1bbd5fd8b5d26e9976a2033f2a1926d5285"
+        "ac12b429d4890a28f1e6d4574bdc845769300753611e7ad82a36c0ec48e3820e"
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "d378033d766e84ab1c5f3eb5d38798b64395bf6f88408d32d044bc365e277077"
+        "9576938261fb9eb4e7680cb68d05a8a79d5dc221f9a30400e40b568c9ed80e79"
       ],
       [
         "packages/storage/src/profiles/index.ts",
@@ -1972,6 +2032,10 @@
         "76d235c08f077b864e86c61e746cc45834e74f82c0dc2731e9e258f8d1bbeb2d"
       ],
       [
+        "packages/storage/src/repositories/capital-accounting.ts",
+        "c2d5f9deb8069e3746cc2dd09c9f399fd6dc7ef8ec185e00b6a347683432979f"
+      ],
+      [
         "packages/storage/src/repositories/chart-extensions.ts",
         "7669fe5796f5f5bba841815fe89da9fbcba11d15736fae1b2d6599ab8d1b2bf9"
       ],
@@ -2041,7 +2105,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "a11a92c3edeb93373a122d44bdd2ea10ab831b5354c64703eab0a36dd660dcff"
+        "07be0a3a171b40689f461bada42a2117ce1370d96daad2d54fcc40fb71304b34"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -2157,7 +2221,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "6d7feaf5d946095ca9bb4ca659aa020d55611b48284138d3c8c8fbc7b9aa7330"
+        "2a2ffcc4ddb3a3969ad99674f6b7aebd74fcfa3b7a6488ecf4918c5dd7939c96"
       ],
       [
         "packages/storage/src/repositories/range-rotation.ts",
@@ -2252,7 +2316,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "d5bfaf1a3e437b5677f8ae599b4497065b520c755ed502423fc66322f7004486"
+    "hash": "a23556e6d0c99e9930673e9aee380f6e026616a2f5102210d88cc9121080c614"
   },
   "wider-breakout-v1": {
     "version": 1,
@@ -2296,7 +2360,7 @@
       ],
       [
         "packages/adapters/src/coinbase/account-evidence.ts",
-        "9cf1db6bc77e3dd34a7aea4356a52a02957f66c9c1b0aa2dd28ad3b6949b9dd2"
+        "7aa081e6255b7eadc9a7edf6c4f8311976e5598514d2d66d83b0f1503b1427f6"
       ],
       [
         "packages/adapters/src/coinbase/archive.ts",
@@ -2311,6 +2375,10 @@
         "21ba71249e69b2c51194f30e5908cd85180250e18d4e3a21712d147f212b6410"
       ],
       [
+        "packages/adapters/src/coinbase/capital-evidence.ts",
+        "e9668520cfbf16cfcdd4db98ea23a4c594a2dd38a1c050a567ac26fc13cd2676"
+      ],
+      [
         "packages/adapters/src/coinbase/catalog.ts",
         "9a45b371eddd108258ecaf6766b657ad8b231663a342f7d7279abfea0f09f879"
       ],
@@ -2320,7 +2388,7 @@
       ],
       [
         "packages/adapters/src/coinbase/index.ts",
-        "e03109aa39f0db6104093fe4728371ab853fa5a8300a77b5a9be8f3af3598baf"
+        "2de721f984e259896801d7fc35a22d46b991f4ccdd13c135de4779645d313d7f"
       ],
       [
         "packages/adapters/src/coinbase/market-diagnostics.ts",
@@ -2344,7 +2412,7 @@
       ],
       [
         "packages/adapters/src/coinbase/transaction-evidence.ts",
-        "50e61b7ae53da5236302e94817d8d74f933f9a12912d909f3d330ed05174c6bf"
+        "89bc20388e44dde60b02d697762bd5d97a18e2481c67145fb486ed3d8048f411"
       ],
       [
         "packages/adapters/src/coinbase/universe.ts",
@@ -2400,7 +2468,11 @@
       ],
       [
         "packages/adapters/src/http/alpaca-paper.ts",
-        "b857a4e2602d6457c4b81763887e7ce632bcf010fd7c903bf0b27a3e27f1c4b4"
+        "fed858cbc36bb461af8535c4a8b4093cb5b186e5eebc56c70594ddb588db57da"
+      ],
+      [
+        "packages/adapters/src/http/alpaca-portfolio-history.ts",
+        "3186a42c78387aabab4ae3151d16639aaff873870ee8a48cc0cc497f1e647031"
       ],
       [
         "packages/adapters/src/http/alpaca-universe.ts",
@@ -2424,7 +2496,7 @@
       ],
       [
         "packages/adapters/src/http/index.ts",
-        "18ffab1289dffada2ce07f93145d0c9a3a4acaf86f46a04212df980415600825"
+        "4ae748fb68dae627b0b1cdd9e6f6aecf9e85017fc85a6aa4c0f7815c6bb583a5"
       ],
       [
         "packages/adapters/src/http/news.ts",
@@ -2520,7 +2592,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "fe81989c84201f7b4b382578e7523312d8410997558c4bd00eeb0f1498d8cb52"
+        "f3494f19d942cbf7ec3f472f15f3ae1442821fc732efaa854e1b048bca087c2b"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -2528,7 +2600,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "613983840894cef6d8ea5a8e0b63d36056d11fd6eb47fded02c1f04db4cd1825"
+        "294a40424af54fcf3b94a5ef0e34bc3c67c4541aad419e6e07c74c6ce934cd3d"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -2556,11 +2628,15 @@
       ],
       [
         "packages/contracts/src/schemas/alpaca-paper.ts",
-        "82fec38dbc9662b22a7cdeb2ef586b55c252791d08c925bffa821d931e11e23a"
+        "0a6b7d76979262d4bba31b0f68f8da3f16aa288300d3e06e3bad28e91bc9e986"
       ],
       [
         "packages/contracts/src/schemas/app.ts",
         "4f69213582e47f6267b6ad692b8dda3f6cc6b34b69a72bd4cbc85dcd09362aa6"
+      ],
+      [
+        "packages/contracts/src/schemas/capital-performance.ts",
+        "464a4df04e5bcde27faa4d44f314a7d4d2126dfa08da19f51ae1bae975cc4cdd"
       ],
       [
         "packages/contracts/src/schemas/chart-extensions.ts",
@@ -2855,6 +2931,26 @@
         "acfc03bdda5479ab2a0951217616c27d33f8005abb6e33b9cfbe0e5d0786bdb9"
       ],
       [
+        "packages/core/src/portfolio/broker-cash.ts",
+        "83f7d2e45d5a63e8c9dd648ab4dd7fb062d69104bdcf28de30a66d48723fd425"
+      ],
+      [
+        "packages/core/src/portfolio/broker-equity.ts",
+        "e7f02f761a9a47258cb30f37442da1741a692eb90c8d949e0fef3be372bf4e77"
+      ],
+      [
+        "packages/core/src/portfolio/capital-ledger.ts",
+        "2a9547b1a5b8bb7dfaf54ee8fc80f13df98d7324571ff3547a8deb87f521d23a"
+      ],
+      [
+        "packages/core/src/portfolio/capital-performance.ts",
+        "9275fdffeaa4f9fb035778e6e84b75b525e8d5f19bbc96239b5d6c912c795b73"
+      ],
+      [
+        "packages/core/src/portfolio/capital-return-math.ts",
+        "a035b1b5aad267ba2932f0b5b95df18170a32e2751708e7a1ab2c4befc6f8af7"
+      ],
+      [
         "packages/core/src/portfolio/coinbase-evidence.ts",
         "1fb9e8326650d06c6cb6abea3f1e9da23737c19ae02515ee01e60bee14d3b5d1"
       ],
@@ -2880,7 +2976,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "7b77c396bacde059a0fe20ed5f91c965f875f8a3a1c4959084e624aa346708d2"
+        "51ab75972a1ebaeb590122390bb3a01cc2b19a7539a96a3ec89374cfc4b3ec47"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -3220,7 +3316,7 @@
       ],
       [
         "packages/services/src/accounts/coinbase-sync.ts",
-        "fcd1ecefd9640cb245b73ad12316340737b7a8fba55782eb53bc3e06c7dca775"
+        "f80b0f23e43df7e5db5ce94ee36c69b42b52df3a2ed1dfc78dded041e40e15a3"
       ],
       [
         "packages/services/src/accounts/comparison.ts",
@@ -3508,7 +3604,7 @@
       ],
       [
         "packages/services/src/paper/parallel-execution-safety.ts",
-        "4bd7765129c37a0f5152d60469d2824a5ae035d324798c58efd7158552f65200"
+        "f1c2113a108aff74db422db3927f53baa4ae4a5a09026e7751e0c80152e5ddb6"
       ],
       [
         "packages/services/src/paper/parallel-fee-accounting.ts",
@@ -3631,6 +3727,30 @@
         "e27bb0965f91643807acd1c505d766bc67ad8494660b5cadbfb5463bb00cef0a"
       ],
       [
+        "packages/services/src/portfolio/capital-accounting.ts",
+        "86b9f911e40400a2302a91cbba4de69ed40431db7426990f5256b36ea76602d0"
+      ],
+      [
+        "packages/services/src/portfolio/capital-alpaca.ts",
+        "71304a20af339e2fed02b54b9a51a338b6516e02cfcdc6c473bbb91ee52bd89d"
+      ],
+      [
+        "packages/services/src/portfolio/capital-coinbase.ts",
+        "bd3729fca6ac1762684691f77bb494f830f3479c1aadf35738688d0ec90503e7"
+      ],
+      [
+        "packages/services/src/portfolio/capital-local-paper.ts",
+        "43b7057c8cdec8a9dc16ccb510d381ad64d809e473d27ec64876525b2515d154"
+      ],
+      [
+        "packages/services/src/portfolio/capital-performance.ts",
+        "85a487f5311f5da8060adc5974052e9e10e3cd633de30399558c12f594725294"
+      ],
+      [
+        "packages/services/src/portfolio/capital-sources.ts",
+        "f8e1f91c79d17a9a62da5e0fbf71d186ac807ac061afa9ab2e436674383f18a6"
+      ],
+      [
         "packages/services/src/portfolio/csv-import.ts",
         "aa1415a26bbf2c9b834ded39ca218126ea13a3bee79c08b5b2ea26d480fb876c"
       ],
@@ -3640,7 +3760,7 @@
       ],
       [
         "packages/services/src/portfolio/index.ts",
-        "d63850cb78aa4f4f3a8503d86e2cba648c7dba44f8ddba8237d66b33e71df4df"
+        "91215d2894e92941eaddf171ceee17fc68efe48a6d40c0d77f39a8a9b2b7169e"
       ],
       [
         "packages/services/src/portfolio/ledger.ts",
@@ -3828,7 +3948,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "199b6dbb20dbc443de54ab6b39478aa797f8f32a8cafde6ce8554d8a30c9c337"
+        "ae765d17f8c40e4b8a9b980238a49add1411073eb2701c83c64a1ef75a28b8c6"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -4119,6 +4239,10 @@
         "77c6075bed5f3876e7844c6268f1b5cbf14b75b08815d6b280a70c9ebb0d736e"
       ],
       [
+        "packages/storage/src/migrations/v96.ts",
+        "9018fde448d490dd6bc69cf78ca98e61a04a128bf98ddf6e136e154bf030a458"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -4148,11 +4272,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
-        "c2c75914871f05a0c76e6b929a85b1bbd5fd8b5d26e9976a2033f2a1926d5285"
+        "ac12b429d4890a28f1e6d4574bdc845769300753611e7ad82a36c0ec48e3820e"
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "d378033d766e84ab1c5f3eb5d38798b64395bf6f88408d32d044bc365e277077"
+        "9576938261fb9eb4e7680cb68d05a8a79d5dc221f9a30400e40b568c9ed80e79"
       ],
       [
         "packages/storage/src/profiles/index.ts",
@@ -4227,6 +4351,10 @@
         "76d235c08f077b864e86c61e746cc45834e74f82c0dc2731e9e258f8d1bbeb2d"
       ],
       [
+        "packages/storage/src/repositories/capital-accounting.ts",
+        "c2d5f9deb8069e3746cc2dd09c9f399fd6dc7ef8ec185e00b6a347683432979f"
+      ],
+      [
         "packages/storage/src/repositories/chart-extensions.ts",
         "7669fe5796f5f5bba841815fe89da9fbcba11d15736fae1b2d6599ab8d1b2bf9"
       ],
@@ -4296,7 +4424,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "a11a92c3edeb93373a122d44bdd2ea10ab831b5354c64703eab0a36dd660dcff"
+        "07be0a3a171b40689f461bada42a2117ce1370d96daad2d54fcc40fb71304b34"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -4412,7 +4540,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "6d7feaf5d946095ca9bb4ca659aa020d55611b48284138d3c8c8fbc7b9aa7330"
+        "2a2ffcc4ddb3a3969ad99674f6b7aebd74fcfa3b7a6488ecf4918c5dd7939c96"
       ],
       [
         "packages/storage/src/repositories/range-rotation.ts",
@@ -4507,7 +4635,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "400a60e7cf68bac70bea0d4792a918176b0593fa27aa4f158d8ddf134d149a2b"
+    "hash": "6b6ad79b3fef050357cc3fbc46519377f952f36e5c8fb86abb154cea1c0ff585"
   },
   "wider-range-rotation-v1": {
     "version": 1,
@@ -4551,7 +4679,7 @@
       ],
       [
         "packages/adapters/src/coinbase/account-evidence.ts",
-        "9cf1db6bc77e3dd34a7aea4356a52a02957f66c9c1b0aa2dd28ad3b6949b9dd2"
+        "7aa081e6255b7eadc9a7edf6c4f8311976e5598514d2d66d83b0f1503b1427f6"
       ],
       [
         "packages/adapters/src/coinbase/archive.ts",
@@ -4566,6 +4694,10 @@
         "21ba71249e69b2c51194f30e5908cd85180250e18d4e3a21712d147f212b6410"
       ],
       [
+        "packages/adapters/src/coinbase/capital-evidence.ts",
+        "e9668520cfbf16cfcdd4db98ea23a4c594a2dd38a1c050a567ac26fc13cd2676"
+      ],
+      [
         "packages/adapters/src/coinbase/catalog.ts",
         "9a45b371eddd108258ecaf6766b657ad8b231663a342f7d7279abfea0f09f879"
       ],
@@ -4575,7 +4707,7 @@
       ],
       [
         "packages/adapters/src/coinbase/index.ts",
-        "e03109aa39f0db6104093fe4728371ab853fa5a8300a77b5a9be8f3af3598baf"
+        "2de721f984e259896801d7fc35a22d46b991f4ccdd13c135de4779645d313d7f"
       ],
       [
         "packages/adapters/src/coinbase/market-diagnostics.ts",
@@ -4599,7 +4731,7 @@
       ],
       [
         "packages/adapters/src/coinbase/transaction-evidence.ts",
-        "50e61b7ae53da5236302e94817d8d74f933f9a12912d909f3d330ed05174c6bf"
+        "89bc20388e44dde60b02d697762bd5d97a18e2481c67145fb486ed3d8048f411"
       ],
       [
         "packages/adapters/src/coinbase/universe.ts",
@@ -4655,7 +4787,11 @@
       ],
       [
         "packages/adapters/src/http/alpaca-paper.ts",
-        "b857a4e2602d6457c4b81763887e7ce632bcf010fd7c903bf0b27a3e27f1c4b4"
+        "fed858cbc36bb461af8535c4a8b4093cb5b186e5eebc56c70594ddb588db57da"
+      ],
+      [
+        "packages/adapters/src/http/alpaca-portfolio-history.ts",
+        "3186a42c78387aabab4ae3151d16639aaff873870ee8a48cc0cc497f1e647031"
       ],
       [
         "packages/adapters/src/http/alpaca-universe.ts",
@@ -4679,7 +4815,7 @@
       ],
       [
         "packages/adapters/src/http/index.ts",
-        "18ffab1289dffada2ce07f93145d0c9a3a4acaf86f46a04212df980415600825"
+        "4ae748fb68dae627b0b1cdd9e6f6aecf9e85017fc85a6aa4c0f7815c6bb583a5"
       ],
       [
         "packages/adapters/src/http/news.ts",
@@ -4775,7 +4911,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "fe81989c84201f7b4b382578e7523312d8410997558c4bd00eeb0f1498d8cb52"
+        "f3494f19d942cbf7ec3f472f15f3ae1442821fc732efaa854e1b048bca087c2b"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -4783,7 +4919,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "613983840894cef6d8ea5a8e0b63d36056d11fd6eb47fded02c1f04db4cd1825"
+        "294a40424af54fcf3b94a5ef0e34bc3c67c4541aad419e6e07c74c6ce934cd3d"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -4811,11 +4947,15 @@
       ],
       [
         "packages/contracts/src/schemas/alpaca-paper.ts",
-        "82fec38dbc9662b22a7cdeb2ef586b55c252791d08c925bffa821d931e11e23a"
+        "0a6b7d76979262d4bba31b0f68f8da3f16aa288300d3e06e3bad28e91bc9e986"
       ],
       [
         "packages/contracts/src/schemas/app.ts",
         "4f69213582e47f6267b6ad692b8dda3f6cc6b34b69a72bd4cbc85dcd09362aa6"
+      ],
+      [
+        "packages/contracts/src/schemas/capital-performance.ts",
+        "464a4df04e5bcde27faa4d44f314a7d4d2126dfa08da19f51ae1bae975cc4cdd"
       ],
       [
         "packages/contracts/src/schemas/chart-extensions.ts",
@@ -5110,6 +5250,26 @@
         "acfc03bdda5479ab2a0951217616c27d33f8005abb6e33b9cfbe0e5d0786bdb9"
       ],
       [
+        "packages/core/src/portfolio/broker-cash.ts",
+        "83f7d2e45d5a63e8c9dd648ab4dd7fb062d69104bdcf28de30a66d48723fd425"
+      ],
+      [
+        "packages/core/src/portfolio/broker-equity.ts",
+        "e7f02f761a9a47258cb30f37442da1741a692eb90c8d949e0fef3be372bf4e77"
+      ],
+      [
+        "packages/core/src/portfolio/capital-ledger.ts",
+        "2a9547b1a5b8bb7dfaf54ee8fc80f13df98d7324571ff3547a8deb87f521d23a"
+      ],
+      [
+        "packages/core/src/portfolio/capital-performance.ts",
+        "9275fdffeaa4f9fb035778e6e84b75b525e8d5f19bbc96239b5d6c912c795b73"
+      ],
+      [
+        "packages/core/src/portfolio/capital-return-math.ts",
+        "a035b1b5aad267ba2932f0b5b95df18170a32e2751708e7a1ab2c4befc6f8af7"
+      ],
+      [
         "packages/core/src/portfolio/coinbase-evidence.ts",
         "1fb9e8326650d06c6cb6abea3f1e9da23737c19ae02515ee01e60bee14d3b5d1"
       ],
@@ -5135,7 +5295,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "7b77c396bacde059a0fe20ed5f91c965f875f8a3a1c4959084e624aa346708d2"
+        "51ab75972a1ebaeb590122390bb3a01cc2b19a7539a96a3ec89374cfc4b3ec47"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -5475,7 +5635,7 @@
       ],
       [
         "packages/services/src/accounts/coinbase-sync.ts",
-        "fcd1ecefd9640cb245b73ad12316340737b7a8fba55782eb53bc3e06c7dca775"
+        "f80b0f23e43df7e5db5ce94ee36c69b42b52df3a2ed1dfc78dded041e40e15a3"
       ],
       [
         "packages/services/src/accounts/comparison.ts",
@@ -5763,7 +5923,7 @@
       ],
       [
         "packages/services/src/paper/parallel-execution-safety.ts",
-        "4bd7765129c37a0f5152d60469d2824a5ae035d324798c58efd7158552f65200"
+        "f1c2113a108aff74db422db3927f53baa4ae4a5a09026e7751e0c80152e5ddb6"
       ],
       [
         "packages/services/src/paper/parallel-fee-accounting.ts",
@@ -5886,6 +6046,30 @@
         "e27bb0965f91643807acd1c505d766bc67ad8494660b5cadbfb5463bb00cef0a"
       ],
       [
+        "packages/services/src/portfolio/capital-accounting.ts",
+        "86b9f911e40400a2302a91cbba4de69ed40431db7426990f5256b36ea76602d0"
+      ],
+      [
+        "packages/services/src/portfolio/capital-alpaca.ts",
+        "71304a20af339e2fed02b54b9a51a338b6516e02cfcdc6c473bbb91ee52bd89d"
+      ],
+      [
+        "packages/services/src/portfolio/capital-coinbase.ts",
+        "bd3729fca6ac1762684691f77bb494f830f3479c1aadf35738688d0ec90503e7"
+      ],
+      [
+        "packages/services/src/portfolio/capital-local-paper.ts",
+        "43b7057c8cdec8a9dc16ccb510d381ad64d809e473d27ec64876525b2515d154"
+      ],
+      [
+        "packages/services/src/portfolio/capital-performance.ts",
+        "85a487f5311f5da8060adc5974052e9e10e3cd633de30399558c12f594725294"
+      ],
+      [
+        "packages/services/src/portfolio/capital-sources.ts",
+        "f8e1f91c79d17a9a62da5e0fbf71d186ac807ac061afa9ab2e436674383f18a6"
+      ],
+      [
         "packages/services/src/portfolio/csv-import.ts",
         "aa1415a26bbf2c9b834ded39ca218126ea13a3bee79c08b5b2ea26d480fb876c"
       ],
@@ -5895,7 +6079,7 @@
       ],
       [
         "packages/services/src/portfolio/index.ts",
-        "d63850cb78aa4f4f3a8503d86e2cba648c7dba44f8ddba8237d66b33e71df4df"
+        "91215d2894e92941eaddf171ceee17fc68efe48a6d40c0d77f39a8a9b2b7169e"
       ],
       [
         "packages/services/src/portfolio/ledger.ts",
@@ -6083,7 +6267,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "199b6dbb20dbc443de54ab6b39478aa797f8f32a8cafde6ce8554d8a30c9c337"
+        "ae765d17f8c40e4b8a9b980238a49add1411073eb2701c83c64a1ef75a28b8c6"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -6374,6 +6558,10 @@
         "77c6075bed5f3876e7844c6268f1b5cbf14b75b08815d6b280a70c9ebb0d736e"
       ],
       [
+        "packages/storage/src/migrations/v96.ts",
+        "9018fde448d490dd6bc69cf78ca98e61a04a128bf98ddf6e136e154bf030a458"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -6403,11 +6591,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
-        "c2c75914871f05a0c76e6b929a85b1bbd5fd8b5d26e9976a2033f2a1926d5285"
+        "ac12b429d4890a28f1e6d4574bdc845769300753611e7ad82a36c0ec48e3820e"
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "d378033d766e84ab1c5f3eb5d38798b64395bf6f88408d32d044bc365e277077"
+        "9576938261fb9eb4e7680cb68d05a8a79d5dc221f9a30400e40b568c9ed80e79"
       ],
       [
         "packages/storage/src/profiles/index.ts",
@@ -6482,6 +6670,10 @@
         "76d235c08f077b864e86c61e746cc45834e74f82c0dc2731e9e258f8d1bbeb2d"
       ],
       [
+        "packages/storage/src/repositories/capital-accounting.ts",
+        "c2d5f9deb8069e3746cc2dd09c9f399fd6dc7ef8ec185e00b6a347683432979f"
+      ],
+      [
         "packages/storage/src/repositories/chart-extensions.ts",
         "7669fe5796f5f5bba841815fe89da9fbcba11d15736fae1b2d6599ab8d1b2bf9"
       ],
@@ -6551,7 +6743,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "a11a92c3edeb93373a122d44bdd2ea10ab831b5354c64703eab0a36dd660dcff"
+        "07be0a3a171b40689f461bada42a2117ce1370d96daad2d54fcc40fb71304b34"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -6667,7 +6859,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "6d7feaf5d946095ca9bb4ca659aa020d55611b48284138d3c8c8fbc7b9aa7330"
+        "2a2ffcc4ddb3a3969ad99674f6b7aebd74fcfa3b7a6488ecf4918c5dd7939c96"
       ],
       [
         "packages/storage/src/repositories/range-rotation.ts",
@@ -6762,7 +6954,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "6447b0a31ba4cab9e20551b550b34b857fccf1add1e5d9cc9d03442d88d89886"
+    "hash": "3bfe7741d3d4f56c7a95425eaeb1c690b693d59cec82bc8ba9b1aa9df58b8cce"
   },
   "paper-market-selector-v1": {
     "version": 1,
@@ -6806,7 +6998,7 @@
       ],
       [
         "packages/adapters/src/coinbase/account-evidence.ts",
-        "9cf1db6bc77e3dd34a7aea4356a52a02957f66c9c1b0aa2dd28ad3b6949b9dd2"
+        "7aa081e6255b7eadc9a7edf6c4f8311976e5598514d2d66d83b0f1503b1427f6"
       ],
       [
         "packages/adapters/src/coinbase/archive.ts",
@@ -6821,6 +7013,10 @@
         "21ba71249e69b2c51194f30e5908cd85180250e18d4e3a21712d147f212b6410"
       ],
       [
+        "packages/adapters/src/coinbase/capital-evidence.ts",
+        "e9668520cfbf16cfcdd4db98ea23a4c594a2dd38a1c050a567ac26fc13cd2676"
+      ],
+      [
         "packages/adapters/src/coinbase/catalog.ts",
         "9a45b371eddd108258ecaf6766b657ad8b231663a342f7d7279abfea0f09f879"
       ],
@@ -6830,7 +7026,7 @@
       ],
       [
         "packages/adapters/src/coinbase/index.ts",
-        "e03109aa39f0db6104093fe4728371ab853fa5a8300a77b5a9be8f3af3598baf"
+        "2de721f984e259896801d7fc35a22d46b991f4ccdd13c135de4779645d313d7f"
       ],
       [
         "packages/adapters/src/coinbase/market-diagnostics.ts",
@@ -6854,7 +7050,7 @@
       ],
       [
         "packages/adapters/src/coinbase/transaction-evidence.ts",
-        "50e61b7ae53da5236302e94817d8d74f933f9a12912d909f3d330ed05174c6bf"
+        "89bc20388e44dde60b02d697762bd5d97a18e2481c67145fb486ed3d8048f411"
       ],
       [
         "packages/adapters/src/coinbase/universe.ts",
@@ -6910,7 +7106,11 @@
       ],
       [
         "packages/adapters/src/http/alpaca-paper.ts",
-        "b857a4e2602d6457c4b81763887e7ce632bcf010fd7c903bf0b27a3e27f1c4b4"
+        "fed858cbc36bb461af8535c4a8b4093cb5b186e5eebc56c70594ddb588db57da"
+      ],
+      [
+        "packages/adapters/src/http/alpaca-portfolio-history.ts",
+        "3186a42c78387aabab4ae3151d16639aaff873870ee8a48cc0cc497f1e647031"
       ],
       [
         "packages/adapters/src/http/alpaca-universe.ts",
@@ -6934,7 +7134,7 @@
       ],
       [
         "packages/adapters/src/http/index.ts",
-        "18ffab1289dffada2ce07f93145d0c9a3a4acaf86f46a04212df980415600825"
+        "4ae748fb68dae627b0b1cdd9e6f6aecf9e85017fc85a6aa4c0f7815c6bb583a5"
       ],
       [
         "packages/adapters/src/http/news.ts",
@@ -7030,7 +7230,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "fe81989c84201f7b4b382578e7523312d8410997558c4bd00eeb0f1498d8cb52"
+        "f3494f19d942cbf7ec3f472f15f3ae1442821fc732efaa854e1b048bca087c2b"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -7038,7 +7238,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "613983840894cef6d8ea5a8e0b63d36056d11fd6eb47fded02c1f04db4cd1825"
+        "294a40424af54fcf3b94a5ef0e34bc3c67c4541aad419e6e07c74c6ce934cd3d"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -7066,11 +7266,15 @@
       ],
       [
         "packages/contracts/src/schemas/alpaca-paper.ts",
-        "82fec38dbc9662b22a7cdeb2ef586b55c252791d08c925bffa821d931e11e23a"
+        "0a6b7d76979262d4bba31b0f68f8da3f16aa288300d3e06e3bad28e91bc9e986"
       ],
       [
         "packages/contracts/src/schemas/app.ts",
         "4f69213582e47f6267b6ad692b8dda3f6cc6b34b69a72bd4cbc85dcd09362aa6"
+      ],
+      [
+        "packages/contracts/src/schemas/capital-performance.ts",
+        "464a4df04e5bcde27faa4d44f314a7d4d2126dfa08da19f51ae1bae975cc4cdd"
       ],
       [
         "packages/contracts/src/schemas/chart-extensions.ts",
@@ -7365,6 +7569,26 @@
         "acfc03bdda5479ab2a0951217616c27d33f8005abb6e33b9cfbe0e5d0786bdb9"
       ],
       [
+        "packages/core/src/portfolio/broker-cash.ts",
+        "83f7d2e45d5a63e8c9dd648ab4dd7fb062d69104bdcf28de30a66d48723fd425"
+      ],
+      [
+        "packages/core/src/portfolio/broker-equity.ts",
+        "e7f02f761a9a47258cb30f37442da1741a692eb90c8d949e0fef3be372bf4e77"
+      ],
+      [
+        "packages/core/src/portfolio/capital-ledger.ts",
+        "2a9547b1a5b8bb7dfaf54ee8fc80f13df98d7324571ff3547a8deb87f521d23a"
+      ],
+      [
+        "packages/core/src/portfolio/capital-performance.ts",
+        "9275fdffeaa4f9fb035778e6e84b75b525e8d5f19bbc96239b5d6c912c795b73"
+      ],
+      [
+        "packages/core/src/portfolio/capital-return-math.ts",
+        "a035b1b5aad267ba2932f0b5b95df18170a32e2751708e7a1ab2c4befc6f8af7"
+      ],
+      [
         "packages/core/src/portfolio/coinbase-evidence.ts",
         "1fb9e8326650d06c6cb6abea3f1e9da23737c19ae02515ee01e60bee14d3b5d1"
       ],
@@ -7390,7 +7614,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "7b77c396bacde059a0fe20ed5f91c965f875f8a3a1c4959084e624aa346708d2"
+        "51ab75972a1ebaeb590122390bb3a01cc2b19a7539a96a3ec89374cfc4b3ec47"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -7730,7 +7954,7 @@
       ],
       [
         "packages/services/src/accounts/coinbase-sync.ts",
-        "fcd1ecefd9640cb245b73ad12316340737b7a8fba55782eb53bc3e06c7dca775"
+        "f80b0f23e43df7e5db5ce94ee36c69b42b52df3a2ed1dfc78dded041e40e15a3"
       ],
       [
         "packages/services/src/accounts/comparison.ts",
@@ -8018,7 +8242,7 @@
       ],
       [
         "packages/services/src/paper/parallel-execution-safety.ts",
-        "4bd7765129c37a0f5152d60469d2824a5ae035d324798c58efd7158552f65200"
+        "f1c2113a108aff74db422db3927f53baa4ae4a5a09026e7751e0c80152e5ddb6"
       ],
       [
         "packages/services/src/paper/parallel-fee-accounting.ts",
@@ -8141,6 +8365,30 @@
         "e27bb0965f91643807acd1c505d766bc67ad8494660b5cadbfb5463bb00cef0a"
       ],
       [
+        "packages/services/src/portfolio/capital-accounting.ts",
+        "86b9f911e40400a2302a91cbba4de69ed40431db7426990f5256b36ea76602d0"
+      ],
+      [
+        "packages/services/src/portfolio/capital-alpaca.ts",
+        "71304a20af339e2fed02b54b9a51a338b6516e02cfcdc6c473bbb91ee52bd89d"
+      ],
+      [
+        "packages/services/src/portfolio/capital-coinbase.ts",
+        "bd3729fca6ac1762684691f77bb494f830f3479c1aadf35738688d0ec90503e7"
+      ],
+      [
+        "packages/services/src/portfolio/capital-local-paper.ts",
+        "43b7057c8cdec8a9dc16ccb510d381ad64d809e473d27ec64876525b2515d154"
+      ],
+      [
+        "packages/services/src/portfolio/capital-performance.ts",
+        "85a487f5311f5da8060adc5974052e9e10e3cd633de30399558c12f594725294"
+      ],
+      [
+        "packages/services/src/portfolio/capital-sources.ts",
+        "f8e1f91c79d17a9a62da5e0fbf71d186ac807ac061afa9ab2e436674383f18a6"
+      ],
+      [
         "packages/services/src/portfolio/csv-import.ts",
         "aa1415a26bbf2c9b834ded39ca218126ea13a3bee79c08b5b2ea26d480fb876c"
       ],
@@ -8150,7 +8398,7 @@
       ],
       [
         "packages/services/src/portfolio/index.ts",
-        "d63850cb78aa4f4f3a8503d86e2cba648c7dba44f8ddba8237d66b33e71df4df"
+        "91215d2894e92941eaddf171ceee17fc68efe48a6d40c0d77f39a8a9b2b7169e"
       ],
       [
         "packages/services/src/portfolio/ledger.ts",
@@ -8338,7 +8586,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "199b6dbb20dbc443de54ab6b39478aa797f8f32a8cafde6ce8554d8a30c9c337"
+        "ae765d17f8c40e4b8a9b980238a49add1411073eb2701c83c64a1ef75a28b8c6"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -8629,6 +8877,10 @@
         "77c6075bed5f3876e7844c6268f1b5cbf14b75b08815d6b280a70c9ebb0d736e"
       ],
       [
+        "packages/storage/src/migrations/v96.ts",
+        "9018fde448d490dd6bc69cf78ca98e61a04a128bf98ddf6e136e154bf030a458"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -8658,11 +8910,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
-        "c2c75914871f05a0c76e6b929a85b1bbd5fd8b5d26e9976a2033f2a1926d5285"
+        "ac12b429d4890a28f1e6d4574bdc845769300753611e7ad82a36c0ec48e3820e"
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "d378033d766e84ab1c5f3eb5d38798b64395bf6f88408d32d044bc365e277077"
+        "9576938261fb9eb4e7680cb68d05a8a79d5dc221f9a30400e40b568c9ed80e79"
       ],
       [
         "packages/storage/src/profiles/index.ts",
@@ -8737,6 +8989,10 @@
         "76d235c08f077b864e86c61e746cc45834e74f82c0dc2731e9e258f8d1bbeb2d"
       ],
       [
+        "packages/storage/src/repositories/capital-accounting.ts",
+        "c2d5f9deb8069e3746cc2dd09c9f399fd6dc7ef8ec185e00b6a347683432979f"
+      ],
+      [
         "packages/storage/src/repositories/chart-extensions.ts",
         "7669fe5796f5f5bba841815fe89da9fbcba11d15736fae1b2d6599ab8d1b2bf9"
       ],
@@ -8806,7 +9062,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "a11a92c3edeb93373a122d44bdd2ea10ab831b5354c64703eab0a36dd660dcff"
+        "07be0a3a171b40689f461bada42a2117ce1370d96daad2d54fcc40fb71304b34"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -8922,7 +9178,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "6d7feaf5d946095ca9bb4ca659aa020d55611b48284138d3c8c8fbc7b9aa7330"
+        "2a2ffcc4ddb3a3969ad99674f6b7aebd74fcfa3b7a6488ecf4918c5dd7939c96"
       ],
       [
         "packages/storage/src/repositories/range-rotation.ts",
@@ -9017,7 +9273,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "1f8391b15d48d7866533abd2273ca2c2f8d308f74a6dcb631a1c1ce32d3a1aa4"
+    "hash": "29d3bda798a91b295512c01ee1c66008ecf121cedbcd88286e2f6c7171a5eab1"
   },
   "trendvol-hourly-execution-v1": {
     "version": 1,
@@ -9049,7 +9305,7 @@
       ],
       [
         "packages/adapters/src/coinbase/account-evidence.ts",
-        "9cf1db6bc77e3dd34a7aea4356a52a02957f66c9c1b0aa2dd28ad3b6949b9dd2"
+        "7aa081e6255b7eadc9a7edf6c4f8311976e5598514d2d66d83b0f1503b1427f6"
       ],
       [
         "packages/adapters/src/coinbase/archive.ts",
@@ -9064,6 +9320,10 @@
         "21ba71249e69b2c51194f30e5908cd85180250e18d4e3a21712d147f212b6410"
       ],
       [
+        "packages/adapters/src/coinbase/capital-evidence.ts",
+        "e9668520cfbf16cfcdd4db98ea23a4c594a2dd38a1c050a567ac26fc13cd2676"
+      ],
+      [
         "packages/adapters/src/coinbase/catalog.ts",
         "9a45b371eddd108258ecaf6766b657ad8b231663a342f7d7279abfea0f09f879"
       ],
@@ -9073,7 +9333,7 @@
       ],
       [
         "packages/adapters/src/coinbase/index.ts",
-        "e03109aa39f0db6104093fe4728371ab853fa5a8300a77b5a9be8f3af3598baf"
+        "2de721f984e259896801d7fc35a22d46b991f4ccdd13c135de4779645d313d7f"
       ],
       [
         "packages/adapters/src/coinbase/market-diagnostics.ts",
@@ -9097,7 +9357,7 @@
       ],
       [
         "packages/adapters/src/coinbase/transaction-evidence.ts",
-        "50e61b7ae53da5236302e94817d8d74f933f9a12912d909f3d330ed05174c6bf"
+        "89bc20388e44dde60b02d697762bd5d97a18e2481c67145fb486ed3d8048f411"
       ],
       [
         "packages/adapters/src/coinbase/universe.ts",
@@ -9153,7 +9413,11 @@
       ],
       [
         "packages/adapters/src/http/alpaca-paper.ts",
-        "b857a4e2602d6457c4b81763887e7ce632bcf010fd7c903bf0b27a3e27f1c4b4"
+        "fed858cbc36bb461af8535c4a8b4093cb5b186e5eebc56c70594ddb588db57da"
+      ],
+      [
+        "packages/adapters/src/http/alpaca-portfolio-history.ts",
+        "3186a42c78387aabab4ae3151d16639aaff873870ee8a48cc0cc497f1e647031"
       ],
       [
         "packages/adapters/src/http/alpaca-universe.ts",
@@ -9177,7 +9441,7 @@
       ],
       [
         "packages/adapters/src/http/index.ts",
-        "18ffab1289dffada2ce07f93145d0c9a3a4acaf86f46a04212df980415600825"
+        "4ae748fb68dae627b0b1cdd9e6f6aecf9e85017fc85a6aa4c0f7815c6bb583a5"
       ],
       [
         "packages/adapters/src/http/news.ts",
@@ -9273,7 +9537,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "fe81989c84201f7b4b382578e7523312d8410997558c4bd00eeb0f1498d8cb52"
+        "f3494f19d942cbf7ec3f472f15f3ae1442821fc732efaa854e1b048bca087c2b"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -9281,7 +9545,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "613983840894cef6d8ea5a8e0b63d36056d11fd6eb47fded02c1f04db4cd1825"
+        "294a40424af54fcf3b94a5ef0e34bc3c67c4541aad419e6e07c74c6ce934cd3d"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -9309,11 +9573,15 @@
       ],
       [
         "packages/contracts/src/schemas/alpaca-paper.ts",
-        "82fec38dbc9662b22a7cdeb2ef586b55c252791d08c925bffa821d931e11e23a"
+        "0a6b7d76979262d4bba31b0f68f8da3f16aa288300d3e06e3bad28e91bc9e986"
       ],
       [
         "packages/contracts/src/schemas/app.ts",
         "4f69213582e47f6267b6ad692b8dda3f6cc6b34b69a72bd4cbc85dcd09362aa6"
+      ],
+      [
+        "packages/contracts/src/schemas/capital-performance.ts",
+        "464a4df04e5bcde27faa4d44f314a7d4d2126dfa08da19f51ae1bae975cc4cdd"
       ],
       [
         "packages/contracts/src/schemas/chart-extensions.ts",
@@ -9608,6 +9876,26 @@
         "acfc03bdda5479ab2a0951217616c27d33f8005abb6e33b9cfbe0e5d0786bdb9"
       ],
       [
+        "packages/core/src/portfolio/broker-cash.ts",
+        "83f7d2e45d5a63e8c9dd648ab4dd7fb062d69104bdcf28de30a66d48723fd425"
+      ],
+      [
+        "packages/core/src/portfolio/broker-equity.ts",
+        "e7f02f761a9a47258cb30f37442da1741a692eb90c8d949e0fef3be372bf4e77"
+      ],
+      [
+        "packages/core/src/portfolio/capital-ledger.ts",
+        "2a9547b1a5b8bb7dfaf54ee8fc80f13df98d7324571ff3547a8deb87f521d23a"
+      ],
+      [
+        "packages/core/src/portfolio/capital-performance.ts",
+        "9275fdffeaa4f9fb035778e6e84b75b525e8d5f19bbc96239b5d6c912c795b73"
+      ],
+      [
+        "packages/core/src/portfolio/capital-return-math.ts",
+        "a035b1b5aad267ba2932f0b5b95df18170a32e2751708e7a1ab2c4befc6f8af7"
+      ],
+      [
         "packages/core/src/portfolio/coinbase-evidence.ts",
         "1fb9e8326650d06c6cb6abea3f1e9da23737c19ae02515ee01e60bee14d3b5d1"
       ],
@@ -9633,7 +9921,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "7b77c396bacde059a0fe20ed5f91c965f875f8a3a1c4959084e624aa346708d2"
+        "51ab75972a1ebaeb590122390bb3a01cc2b19a7539a96a3ec89374cfc4b3ec47"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -10013,7 +10301,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "199b6dbb20dbc443de54ab6b39478aa797f8f32a8cafde6ce8554d8a30c9c337"
+        "ae765d17f8c40e4b8a9b980238a49add1411073eb2701c83c64a1ef75a28b8c6"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -10304,6 +10592,10 @@
         "77c6075bed5f3876e7844c6268f1b5cbf14b75b08815d6b280a70c9ebb0d736e"
       ],
       [
+        "packages/storage/src/migrations/v96.ts",
+        "9018fde448d490dd6bc69cf78ca98e61a04a128bf98ddf6e136e154bf030a458"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -10333,11 +10625,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
-        "c2c75914871f05a0c76e6b929a85b1bbd5fd8b5d26e9976a2033f2a1926d5285"
+        "ac12b429d4890a28f1e6d4574bdc845769300753611e7ad82a36c0ec48e3820e"
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "d378033d766e84ab1c5f3eb5d38798b64395bf6f88408d32d044bc365e277077"
+        "9576938261fb9eb4e7680cb68d05a8a79d5dc221f9a30400e40b568c9ed80e79"
       ],
       [
         "packages/storage/src/profiles/index.ts",
@@ -10412,6 +10704,10 @@
         "76d235c08f077b864e86c61e746cc45834e74f82c0dc2731e9e258f8d1bbeb2d"
       ],
       [
+        "packages/storage/src/repositories/capital-accounting.ts",
+        "c2d5f9deb8069e3746cc2dd09c9f399fd6dc7ef8ec185e00b6a347683432979f"
+      ],
+      [
         "packages/storage/src/repositories/chart-extensions.ts",
         "7669fe5796f5f5bba841815fe89da9fbcba11d15736fae1b2d6599ab8d1b2bf9"
       ],
@@ -10481,7 +10777,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "a11a92c3edeb93373a122d44bdd2ea10ab831b5354c64703eab0a36dd660dcff"
+        "07be0a3a171b40689f461bada42a2117ce1370d96daad2d54fcc40fb71304b34"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -10597,7 +10893,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "6d7feaf5d946095ca9bb4ca659aa020d55611b48284138d3c8c8fbc7b9aa7330"
+        "2a2ffcc4ddb3a3969ad99674f6b7aebd74fcfa3b7a6488ecf4918c5dd7939c96"
       ],
       [
         "packages/storage/src/repositories/range-rotation.ts",
@@ -10692,7 +10988,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "b62bc6500c80f49c37274b60e8d8ce0e6c181daa837e480aa02be03098234377"
+    "hash": "293548dadb404461dacc3c73fc0abd0662e77832679efbbdea0cbae8e55b8deb"
   },
   "trendvol-execution-remediation-v1": {
     "version": 1,
@@ -10724,7 +11020,7 @@
       ],
       [
         "packages/adapters/src/coinbase/account-evidence.ts",
-        "9cf1db6bc77e3dd34a7aea4356a52a02957f66c9c1b0aa2dd28ad3b6949b9dd2"
+        "7aa081e6255b7eadc9a7edf6c4f8311976e5598514d2d66d83b0f1503b1427f6"
       ],
       [
         "packages/adapters/src/coinbase/archive.ts",
@@ -10739,6 +11035,10 @@
         "21ba71249e69b2c51194f30e5908cd85180250e18d4e3a21712d147f212b6410"
       ],
       [
+        "packages/adapters/src/coinbase/capital-evidence.ts",
+        "e9668520cfbf16cfcdd4db98ea23a4c594a2dd38a1c050a567ac26fc13cd2676"
+      ],
+      [
         "packages/adapters/src/coinbase/catalog.ts",
         "9a45b371eddd108258ecaf6766b657ad8b231663a342f7d7279abfea0f09f879"
       ],
@@ -10748,7 +11048,7 @@
       ],
       [
         "packages/adapters/src/coinbase/index.ts",
-        "e03109aa39f0db6104093fe4728371ab853fa5a8300a77b5a9be8f3af3598baf"
+        "2de721f984e259896801d7fc35a22d46b991f4ccdd13c135de4779645d313d7f"
       ],
       [
         "packages/adapters/src/coinbase/market-diagnostics.ts",
@@ -10772,7 +11072,7 @@
       ],
       [
         "packages/adapters/src/coinbase/transaction-evidence.ts",
-        "50e61b7ae53da5236302e94817d8d74f933f9a12912d909f3d330ed05174c6bf"
+        "89bc20388e44dde60b02d697762bd5d97a18e2481c67145fb486ed3d8048f411"
       ],
       [
         "packages/adapters/src/coinbase/universe.ts",
@@ -10828,7 +11128,11 @@
       ],
       [
         "packages/adapters/src/http/alpaca-paper.ts",
-        "b857a4e2602d6457c4b81763887e7ce632bcf010fd7c903bf0b27a3e27f1c4b4"
+        "fed858cbc36bb461af8535c4a8b4093cb5b186e5eebc56c70594ddb588db57da"
+      ],
+      [
+        "packages/adapters/src/http/alpaca-portfolio-history.ts",
+        "3186a42c78387aabab4ae3151d16639aaff873870ee8a48cc0cc497f1e647031"
       ],
       [
         "packages/adapters/src/http/alpaca-universe.ts",
@@ -10852,7 +11156,7 @@
       ],
       [
         "packages/adapters/src/http/index.ts",
-        "18ffab1289dffada2ce07f93145d0c9a3a4acaf86f46a04212df980415600825"
+        "4ae748fb68dae627b0b1cdd9e6f6aecf9e85017fc85a6aa4c0f7815c6bb583a5"
       ],
       [
         "packages/adapters/src/http/news.ts",
@@ -10948,7 +11252,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "fe81989c84201f7b4b382578e7523312d8410997558c4bd00eeb0f1498d8cb52"
+        "f3494f19d942cbf7ec3f472f15f3ae1442821fc732efaa854e1b048bca087c2b"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -10956,7 +11260,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "613983840894cef6d8ea5a8e0b63d36056d11fd6eb47fded02c1f04db4cd1825"
+        "294a40424af54fcf3b94a5ef0e34bc3c67c4541aad419e6e07c74c6ce934cd3d"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -10984,11 +11288,15 @@
       ],
       [
         "packages/contracts/src/schemas/alpaca-paper.ts",
-        "82fec38dbc9662b22a7cdeb2ef586b55c252791d08c925bffa821d931e11e23a"
+        "0a6b7d76979262d4bba31b0f68f8da3f16aa288300d3e06e3bad28e91bc9e986"
       ],
       [
         "packages/contracts/src/schemas/app.ts",
         "4f69213582e47f6267b6ad692b8dda3f6cc6b34b69a72bd4cbc85dcd09362aa6"
+      ],
+      [
+        "packages/contracts/src/schemas/capital-performance.ts",
+        "464a4df04e5bcde27faa4d44f314a7d4d2126dfa08da19f51ae1bae975cc4cdd"
       ],
       [
         "packages/contracts/src/schemas/chart-extensions.ts",
@@ -11283,6 +11591,26 @@
         "acfc03bdda5479ab2a0951217616c27d33f8005abb6e33b9cfbe0e5d0786bdb9"
       ],
       [
+        "packages/core/src/portfolio/broker-cash.ts",
+        "83f7d2e45d5a63e8c9dd648ab4dd7fb062d69104bdcf28de30a66d48723fd425"
+      ],
+      [
+        "packages/core/src/portfolio/broker-equity.ts",
+        "e7f02f761a9a47258cb30f37442da1741a692eb90c8d949e0fef3be372bf4e77"
+      ],
+      [
+        "packages/core/src/portfolio/capital-ledger.ts",
+        "2a9547b1a5b8bb7dfaf54ee8fc80f13df98d7324571ff3547a8deb87f521d23a"
+      ],
+      [
+        "packages/core/src/portfolio/capital-performance.ts",
+        "9275fdffeaa4f9fb035778e6e84b75b525e8d5f19bbc96239b5d6c912c795b73"
+      ],
+      [
+        "packages/core/src/portfolio/capital-return-math.ts",
+        "a035b1b5aad267ba2932f0b5b95df18170a32e2751708e7a1ab2c4befc6f8af7"
+      ],
+      [
         "packages/core/src/portfolio/coinbase-evidence.ts",
         "1fb9e8326650d06c6cb6abea3f1e9da23737c19ae02515ee01e60bee14d3b5d1"
       ],
@@ -11308,7 +11636,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "7b77c396bacde059a0fe20ed5f91c965f875f8a3a1c4959084e624aa346708d2"
+        "51ab75972a1ebaeb590122390bb3a01cc2b19a7539a96a3ec89374cfc4b3ec47"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -11680,7 +12008,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "199b6dbb20dbc443de54ab6b39478aa797f8f32a8cafde6ce8554d8a30c9c337"
+        "ae765d17f8c40e4b8a9b980238a49add1411073eb2701c83c64a1ef75a28b8c6"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -11971,6 +12299,10 @@
         "77c6075bed5f3876e7844c6268f1b5cbf14b75b08815d6b280a70c9ebb0d736e"
       ],
       [
+        "packages/storage/src/migrations/v96.ts",
+        "9018fde448d490dd6bc69cf78ca98e61a04a128bf98ddf6e136e154bf030a458"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -12000,11 +12332,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
-        "c2c75914871f05a0c76e6b929a85b1bbd5fd8b5d26e9976a2033f2a1926d5285"
+        "ac12b429d4890a28f1e6d4574bdc845769300753611e7ad82a36c0ec48e3820e"
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "d378033d766e84ab1c5f3eb5d38798b64395bf6f88408d32d044bc365e277077"
+        "9576938261fb9eb4e7680cb68d05a8a79d5dc221f9a30400e40b568c9ed80e79"
       ],
       [
         "packages/storage/src/profiles/index.ts",
@@ -12079,6 +12411,10 @@
         "76d235c08f077b864e86c61e746cc45834e74f82c0dc2731e9e258f8d1bbeb2d"
       ],
       [
+        "packages/storage/src/repositories/capital-accounting.ts",
+        "c2d5f9deb8069e3746cc2dd09c9f399fd6dc7ef8ec185e00b6a347683432979f"
+      ],
+      [
         "packages/storage/src/repositories/chart-extensions.ts",
         "7669fe5796f5f5bba841815fe89da9fbcba11d15736fae1b2d6599ab8d1b2bf9"
       ],
@@ -12148,7 +12484,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "a11a92c3edeb93373a122d44bdd2ea10ab831b5354c64703eab0a36dd660dcff"
+        "07be0a3a171b40689f461bada42a2117ce1370d96daad2d54fcc40fb71304b34"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -12264,7 +12600,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "6d7feaf5d946095ca9bb4ca659aa020d55611b48284138d3c8c8fbc7b9aa7330"
+        "2a2ffcc4ddb3a3969ad99674f6b7aebd74fcfa3b7a6488ecf4918c5dd7939c96"
       ],
       [
         "packages/storage/src/repositories/range-rotation.ts",
@@ -12359,6 +12695,6 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "1ecba7908bf07b63c4a56346f0e7053d1498b6982111dd7830b8000cec090330"
+    "hash": "e208ccf6b55e87bc126d649b8c1a2c72ff7994f06a97a42d084a4a28da6d1c37"
   }
 }

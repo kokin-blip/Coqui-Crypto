@@ -1,0 +1,11 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/capital-ui.test.ts (10 tests) 37ms
+ ✓ tests/capital-ingestion.test.ts (18 tests) 1164ms
+
+ Test Files  2 passed (2)
+      Tests  28 passed (28)
+   Start at  15:41:53
+   Duration  4.81s (transform 4.20s, setup 0ms, import 5.38s, tests 1.20s, environment 0ms)
+

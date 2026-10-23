@@ -4,7 +4,7 @@ import { isAbsolute, relative, resolve } from 'node:path';
 import { DatabaseSync, type SQLInputValue } from 'node:sqlite';
 
 import { backupDatabase } from '../sqlite/index.js';
-import { campaignAuthorityRowCount } from './duplication-transient-counts.js';
+import { archiveCapitalBindingsForCopy, campaignAuthorityRowCount } from './duplication-transient-counts.js';
 import { dropDecisionDuplicationTriggers, restoreDecisionDuplicationTriggers } from './duplication-decision-triggers.js';
 import { deleteExploratoryCampaignRows, dropExploratoryDuplicationTriggers, restoreExploratoryDuplicationTriggers } from './duplication-exploratory-triggers.js';
 import { dropResearchDuplicationTriggers, restoreResearchDuplicationTriggers, excludeNewsReportAssociations } from './duplication-research-triggers.js';
@@ -327,7 +327,7 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
         input.targetProfileId.toLowerCase());
         const targetProfileId = input.targetProfileId.toLowerCase();
         const campaignAuthorityRows = campaignAuthorityRowCount(target, targetProfileId);
-        deleteExploratoryCampaignRows(target);
+        deleteExploratoryCampaignRows(target); archiveCapitalBindingsForCopy(target, targetProfileId);
         target.exec(`
           DELETE FROM host_takeover_history_v1;
           DELETE FROM authoritative_hosts_v1;

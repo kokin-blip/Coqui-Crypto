@@ -4,6 +4,7 @@ import { CHART_COLORS, formatUsd } from '@coqui/ui-kit';
 import { useChannel } from '../query/use-channel.js';
 import { ChannelNotice, TerminalMetric } from './TerminalPrimitives.js';
 import { FinancialChart } from './FinancialChart.js';
+import { CapitalPerformancePanel } from './CapitalPerformance.js';
 
 const LedgerPerformance = lazy(async () => ({ default: (await import('./Performance.js')).Performance }));
 
@@ -42,9 +43,9 @@ function ExploratoryPerformance({ client }: { readonly client: CoquiClient }): R
 
 export function TerminalPerformance({ client }: { readonly client: CoquiClient }): React.JSX.Element {
   const portfolio = useChannel(client, 'paper.exploratory.portfolio', {});
-  const [source, setSource] = useState('current');
+  const [source, setSource] = useState('accounting');
   const exploratory = source === 'exploratory' || source === 'current' && portfolio.kind === 'ready' && portfolio.value?.primary === true;
-  return <><div className="terminal-table-toolbar"><label>Simulation<select value={source} onChange={(event) => setSource(event.target.value)}><option value="current">Current paper campaign</option><option value="ledger">Paper ledger</option><option value="exploratory">Exploratory campaign</option></select></label><span>{exploratory ? 'Exploratory / unvalidated' : 'Paper ledger'} · after costs</span></div>
-    {source === 'current' && portfolio.kind !== 'ready' ? <ChannelNotice state={portfolio} label="Paper campaign" /> : exploratory ? <ExploratoryPerformance client={client} />
+  return <><div className="terminal-table-toolbar"><label>Performance source<select value={source} onChange={(event) => setSource(event.target.value)}><option value="accounting">Account capital</option><option value="current">Current paper campaign</option><option value="ledger">Paper ledger history</option><option value="exploratory">Exploratory campaign</option></select></label><span>{source === 'accounting' ? 'Capital accounting v1' : exploratory ? 'Exploratory / unvalidated' : 'Paper ledger'} · after costs</span></div>
+    {source === 'accounting' ? <CapitalPerformancePanel client={client} /> : source === 'current' && portfolio.kind !== 'ready' ? <ChannelNotice state={portfolio} label="Paper campaign" /> : exploratory ? <ExploratoryPerformance client={client} />
       : <Suspense fallback={<p className="terminal-empty">Loading performance…</p>}><LedgerPerformance client={client} /></Suspense>}</>;
 }

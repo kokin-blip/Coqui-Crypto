@@ -3,8 +3,9 @@ import {
   sha256Hex,
   type Clock,
   type PriceSource,
+  type SpotPriceObservation,
 } from '@coqui/core';
-import { paperPortfolioView } from '@coqui/services';
+import { ingestLocalPaperCapital, paperPortfolioView, recordCapitalIngestionFailure } from '@coqui/services';
 import {
   getPaperDailyValuationEvidence,
   listPaperDailyValuationEvidence,
@@ -45,9 +46,15 @@ export async function capturePaperPerformanceEvidence(input: {
 }): Promise<PaperDailyValuationEvidence> {
   const dayUtc = Math.floor(input.scheduledForMs / 86_400_000) * 86_400_000;
   const existing = getPaperDailyValuationEvidence(input.profileId, dayUtc, input.database);
-  if (existing !== null) return existing;
+  if (existing !== null) {
+    try { ingestLocalPaperCapital(input.profileId, input.database, input.clock.nowMs()); }
+    catch { recordCapitalIngestionFailure('local_paper', input.clock.nowMs(), input.database); }
+    return existing;
+  }
+  let quotes: ReadonlyMap<string, SpotPriceObservation> = new Map();
   const view = await paperPortfolioView(
-    { database: input.database, clock: input.clock, priceSource: input.priceSource },
+    { database: input.database, clock: input.clock, priceSource: { name: input.priceSource.name,
+      spot: async (instruments) => { quotes = await input.priceSource.spot(instruments); return quotes; } } },
     input.profileId,
   );
   const first = listPaperDailyValuationEvidence(input.profileId, input.database)[0] ?? null;
@@ -85,5 +92,7 @@ export async function capturePaperPerformanceEvidence(input: {
     unpricedCount: view.unpricedCount, positionsJson, provenanceJson, evidenceHash,
   } satisfies PaperDailyValuationEvidence;
   savePaperDailyValuationEvidence(evidence, input.database);
+  try { ingestLocalPaperCapital(input.profileId, input.database, input.clock.nowMs(), { evidenceHash, observations: quotes }); }
+  catch { recordCapitalIngestionFailure('local_paper', input.clock.nowMs(), input.database); }
   return evidence;
 }

@@ -7,6 +7,7 @@ import { useChannel } from '../query/use-channel.js';
 import { ChannelNotice, TerminalMetric } from './TerminalPrimitives.js';
 import { formatLocalTimestamp } from './time-format.js';
 import { useDialogFocus } from './use-dialog-focus.js';
+import { useCapitalPerformance } from './CapitalPerformance.js';
 
 function Decision({ client, id, asset }: { readonly client: CoquiClient; readonly id: string; readonly asset: string }): React.JSX.Element {
   const state = useChannel(client, 'decision.detail', { decisionId: id });
@@ -36,7 +37,7 @@ export function TerminalAlgorithm({ client, productId, activity }: { readonly cl
   const portfolio = useChannel(client, 'portfolio.current', {});
   const paper = useChannel(client, 'paper.portfolio', {});
   const exploratory = useChannel(client, 'paper.exploratory.portfolio', {});
-  const performance = useChannel(client, 'paper.performance', {});
+  const performance = useCapitalPerformance(client, { provider: 'local_paper' }).state;
   const latestId = timeline.kind === 'ready' ? timeline.value.items[0]?.decisionId : undefined;
   const primary = exploratory.kind === 'ready' && exploratory.value?.primary === true ? exploratory.value : null;
   const money = (v: string | null | undefined): string => v === null || v === undefined ? 'Unavailable' : formatUsd(v)?.text ?? v;
@@ -63,7 +64,7 @@ export function TerminalAlgorithm({ client, productId, activity }: { readonly cl
         <TerminalMetric label={primary === null ? 'Paper equity' : 'Exploratory equity'}>{money(primary === null ? paper.kind === 'ready' ? paper.value.totalValueUsd : null : primary.currentEquityUsd)}</TerminalMetric>
         <TerminalMetric label="Paper cash">{money(primary === null ? paper.kind === 'ready' ? paper.value.cashUsd : null : primary.balances.find((balance) => balance.exposureKey === 'USD')?.valueUsd)}</TerminalMetric>
         {primary !== null && <TerminalMetric label="After-cost return">{primary.paperReturnPct === null ? 'Unavailable' : `${primary.paperReturnPct.toFixed(2)}%`}</TerminalMetric>}
-        <TerminalMetric label={primary === null ? "Max paper drawdown" : "Paper drawdown"}>{primary !== null ? primary.drawdownPct === null ? 'Unavailable' : `${primary.drawdownPct.toFixed(2)}%` : performance.kind === 'ready' ? `${performance.value.metrics.maxDrawdownPct}%` : 'Unavailable'}</TerminalMetric>
+        <TerminalMetric label={primary === null ? "Max paper drawdown" : "Paper drawdown"}>{primary !== null ? primary.drawdownPct === null ? 'Unavailable' : `${primary.drawdownPct.toFixed(2)}%` : performance.kind === 'ready' && performance.value.metrics.maxDrawdownPct.state === 'available' ? `${performance.value.metrics.maxDrawdownPct.value}%` : 'Unavailable'}</TerminalMetric>
       </dl><p className="terminal-footnote">Active profile totals · Connected accounts: read-only · Paper: simulated · Performance after costs</p>
     </section>
   </div>;

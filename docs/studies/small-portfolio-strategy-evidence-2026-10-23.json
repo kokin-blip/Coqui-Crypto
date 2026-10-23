@@ -1,0 +1,184 @@
+{
+  "schema_version": 1,
+  "research_date": "2026-10-23",
+  "timezone": "America/Phoenix",
+  "status": "unregistered_research_only",
+  "market_backtest_performed": false,
+  "runtime_changed": false,
+  "study_registered": false,
+  "orders_or_accounts_accessed": false,
+  "committed_or_released": false,
+  "prompt_used": "Ok thats good, both that and the last thing you said. Now I want you to do deep research on algorithmic trading and quantitative trading for smaller portfolios. We could also use general quant and algo information and adapt that to work with smaller portfolios",
+  "local_context": {
+    "branch": "codex/operations-crew-journal",
+    "head": "d824218f40574851e3539ba6854338419911d173",
+    "dirty_tree": true,
+    "provenance_note": "Hashes identify inspected local bytes, including existing uncommitted work; HEAD alone is not the source identity.",
+    "source_sha256": {
+      "packages/core/src/strategies/momentum.ts": "d64804149791184b41064a3281a8eef4450b1bae20e2679041baa768ea54f8ae",
+      "packages/core/src/strategies/rotation.ts": "c97490e9bc102467d8cbf7f92d2d36a2a327e96b4de97c050c5e3f902a2cfbf8",
+      "packages/core/src/research/breakout.ts": "adea7cf3f736dc1647f955715b64ef0866588220e4e2efd2cd0fa32f8f6a07fc",
+      "packages/core/src/research/range-rotation.ts": "7781e96680849939b41709255e0a591902650771222f53e496482bf72f80f2ac",
+      "packages/core/src/research/market-selector.ts": "a2ed1f022d56ee66d905e4ff2d3a320464155144e946f075256296622d753062",
+      "packages/core/src/research/overlay/calibration.ts": "3b7c64923c031d2599af1a5716f5f5f213244dbf867d52341f97b95c56ab7c1c",
+      "docs/studies/trendvol-replacement-v1-2026-08-09.md": "497833300c62cdb5b893fe9cef0224f686e1c232ce144404b34c3a7a7f4acaac",
+      "docs/studies/wider-breakout-v1-2026-09-27.md": "0e5f5190c501487bd04aa12825157420614796b646dbcc8750ac997c507ab8f0",
+      "docs/studies/wider-range-rotation-v1-2026-09-27.md": "b42aba7ff6b13945491b93ccf8647b32ca5e39082480aef46562d477ffe523e5",
+      "docs/studies/market-selector-v1-2026-09-27.md": "bb8564862fc124b0c49ecbacfd06cfc5b52624ce77e5dfb34aac56dcac4d2bc6",
+      "docs/studies/selective-participation.md": "c78fcf01842834a46909d7b493c4c5256a3fed55e2454b6fa67bcf3965b3aab9",
+      "docs/studies/news-intelligence-rollout-2026-10-09.md": "fc349b2d94bfb9b174682975984184b9b9661ae8b98238dab2e2e239152f5ef3",
+      "docs/studies/small-portfolio-quant-research-2026-10-22.md": "a596b3979616556b6bc2b9d58d259d1679bb95cead06df5b43efce34e4e82791"
+    }
+  },
+  "report": {
+    "path": "docs/studies/small-portfolio-strategy-research-2026-10-23.md",
+    "sha256": "45e3e1278dd9f79ec06904715907fd1822bc605bb0e1f926fe0abeb6d623130e"
+  },
+  "binary_trade_illustration": {
+    "assumptions": [
+      "Hypothetical fixed average gross payoffs on invested notional.",
+      "Constant additive round-trip cost; not exact broker fee or slippage accounting.",
+      "No empirical probability estimate, market simulation, return forecast, or independent repeated-trade assumption.",
+      "Capital rows show proportional arithmetic only; they do not establish full order feasibility."
+    ],
+    "formula": "expected_net = p*a - (1-p)*b - c; break_even_p = (b+c)/(a+b)",
+    "break_even_cases": [
+      {
+        "average_gross_win": "0.006",
+        "average_gross_loss_magnitude": "0.004",
+        "constant_round_trip_cost": "0.008",
+        "break_even_win_probability": "1.2",
+        "feasible_probability": false
+      },
+      {
+        "average_gross_win": "0.02",
+        "average_gross_loss_magnitude": "0.01",
+        "constant_round_trip_cost": "0.008",
+        "break_even_win_probability": "0.6",
+        "feasible_probability": true
+      },
+      {
+        "average_gross_win": "0.05",
+        "average_gross_loss_magnitude": "0.02",
+        "constant_round_trip_cost": "0.008",
+        "break_even_win_probability": "0.4",
+        "feasible_probability": true
+      }
+    ],
+    "capital_example": {
+      "win_probability": "0.65",
+      "average_gross_win": "0.02",
+      "average_gross_loss_magnitude": "0.01",
+      "constant_round_trip_cost": "0.008",
+      "fraction_of_account_in_position": "0.25",
+      "expected_net_return_on_notional": "0.0015",
+      "rows": [
+        {
+          "reference_equity_usd": "50",
+          "position_notional_usd": "12.50",
+          "expected_net_pnl_usd": "0.018750",
+          "passes_25_usd_notional_floor_only": false
+        },
+        {
+          "reference_equity_usd": "100",
+          "position_notional_usd": "25.00",
+          "expected_net_pnl_usd": "0.037500",
+          "passes_25_usd_notional_floor_only": true
+        },
+        {
+          "reference_equity_usd": "250",
+          "position_notional_usd": "62.50",
+          "expected_net_pnl_usd": "0.093750",
+          "passes_25_usd_notional_floor_only": true
+        },
+        {
+          "reference_equity_usd": "500",
+          "position_notional_usd": "125.00",
+          "expected_net_pnl_usd": "0.187500",
+          "passes_25_usd_notional_floor_only": true
+        },
+        {
+          "reference_equity_usd": "1000",
+          "position_notional_usd": "250.00",
+          "expected_net_pnl_usd": "0.375000",
+          "passes_25_usd_notional_floor_only": true
+        },
+        {
+          "reference_equity_usd": "2500",
+          "position_notional_usd": "625.00",
+          "expected_net_pnl_usd": "0.937500",
+          "passes_25_usd_notional_floor_only": true
+        },
+        {
+          "reference_equity_usd": "5000",
+          "position_notional_usd": "1250.00",
+          "expected_net_pnl_usd": "1.875000",
+          "passes_25_usd_notional_floor_only": true
+        },
+        {
+          "reference_equity_usd": "10000",
+          "position_notional_usd": "2500.00",
+          "expected_net_pnl_usd": "3.750000",
+          "passes_25_usd_notional_floor_only": true
+        },
+        {
+          "reference_equity_usd": "100000",
+          "position_notional_usd": "25000.00",
+          "expected_net_pnl_usd": "37.500000",
+          "passes_25_usd_notional_floor_only": true
+        }
+      ]
+    }
+  },
+  "fee_only_example": {
+    "source_url": "https://docs.alpaca.markets/us/docs/crypto-fees",
+    "source_checked_on": "2026-10-23",
+    "published_first_tier_taker_fee_per_side": "0.0025",
+    "formula": "1 / ((1-buy_fee)*(1-sell_fee)) - 1",
+    "break_even_price_return_fraction": "0.005018812695900151380958662319960301757",
+    "assumptions": "Fees deducted from received crypto on purchase and received cash on sale; excludes all other friction, rounding, taxes and account-specific deviations."
+  },
+  "candidate_priority": [
+    {
+      "id": "simple_trend_cash",
+      "priority": 1,
+      "state": "proposed_ablation_of_existing_allocator"
+    },
+    {
+      "id": "buffered_rotation",
+      "priority": 1,
+      "state": "proposed_retail_test_of_existing_strategy"
+    },
+    {
+      "id": "swing_breakout",
+      "priority": 2,
+      "state": "existing_shadow_family_new_variants_need_new_identity"
+    },
+    {
+      "id": "bounded_mean_reversion",
+      "priority": 2,
+      "state": "existing_shadow_family_weaker_direct_spot_evidence"
+    },
+    {
+      "id": "fixed_blend",
+      "priority": 3,
+      "state": "proposed_benchmark_for_existing_shadow_selector"
+    },
+    {
+      "id": "calibrated_filter",
+      "priority": 3,
+      "state": "reuse_existing_selective_participation_governance"
+    },
+    {
+      "id": "cost_aware_adjustment",
+      "priority": "overlay",
+      "state": "separate_execution_ablation"
+    }
+  ],
+  "research_boundaries": [
+    "Existing negative TrendVol result remains negative; consumed holdout cannot become untouched.",
+    "No owner, registration, prospective coverage, review, promotion or release gate is changed.",
+    "Paper results are not promised retail returns; long-short to long-only is a new strategy.",
+    "All candidates and thresholds count toward trial inventory; unavailable statistics remain unavailable."
+  ]
+}

@@ -1,5 +1,7 @@
 import { profileConnectionV2 } from '@coqui/core';
-import { connectionRemoval } from '@coqui/storage';
+import { connectionRemoval, getLatestConnectionAccountSnapshotV2 } from '@coqui/storage';
+import { ingestCoinbaseCapital } from '../portfolio/capital-coinbase.js';
+import { recordCapitalIngestionFailure } from '../portfolio/capital-accounting.js';
 import {
   createCoinbaseReadHttpClient,
   fetchCoinbaseAccountEvidence,
@@ -108,6 +110,7 @@ export function createDefaultCoinbaseEvidenceAcquirer(): CoinbaseEvidenceAcquire
         return await fetchCoinbaseAccountEvidence(client, signal, {
           includeTransactions: true,
           includeFeeTier: true,
+          includeCapitalEvidence: true,
         });
       } finally {
         client.destroy();
@@ -221,6 +224,12 @@ export class CoinbaseAccountSyncService {
         setSetting('coinbase.last_sync_at', String(receivedAtMs), this.#database);
         return { saved: result, discrepancyCount: discrepancies.length };
       });
+      try {
+        ingestCoinbaseCapital({ profileId, connectionId: connection.id, requestedAtMs: requested, observedAtMs: receivedAtMs,
+          acquisition: acquired.value, snapshot: getLatestConnectionAccountSnapshotV2(profileId, connection.id, this.#database) }, this.#database);
+      } catch {
+        recordCapitalIngestionFailure('coinbase', receivedAtMs, this.#database);
+      }
       const evidenceCount = 1 + acquired.value.accounts.length +
         acquired.value.fills.length + transactions.length +
         persisted.discrepancyCount + (feeTier === null ? 0 : 1);

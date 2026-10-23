@@ -1,4 +1,6 @@
 import { createActivityOverviewHandlers } from './activity-overview-handlers.js';
+import {createAlpacaPerformanceHandlers} from './alpaca-performance-handlers.js';
+import type {SecretStore} from '@coqui/adapters';
 import { projectPaperPosition, allocationPercent, samePaperQuantity, markPaperPosition } from '@coqui/core';
 import type { ChannelRequest, ChannelResponse } from '@coqui/contracts';
 import { readTradingActivity, tradingActivityScopes, tradingActivityRevision, type Db, type DecisionDetailV1, type TradingActivityFacts } from '@coqui/storage';
@@ -21,7 +23,8 @@ export function activityWatching(detail:DecisionDetailV1|null, productId:string,
     risk:risk?.kind==='risk_evaluated'?(risk.detail.approved?'Passed':`Blocked: ${risk.detail.reasonCodes.join(', ')}`):'Unassessed',signals,decisionId:d.decisionId,shared};
 }
 export interface ActivityMark {priceUsd:string;source:string;atMs:number|null}
-export function createTradingActivityHandlers(input:{profileId:string;database:Db;now:()=>number;mark:(productId:string)=>ActivityMark|null}):ChannelHandlers {
+export function createTradingActivityHandlers(input:{profileId:string;database:Db;now:()=>number;mark:(productId:string)=>ActivityMark|null;
+  secrets?:SecretStore;brokerPerformanceClientFactory?:Parameters<typeof createAlpacaPerformanceHandlers>[0]['clientFactory']}):ChannelHandlers {
   let cache:{key:string;revision:string;facts:TradingActivityFacts;positions:Map<string,ReturnType<typeof projectPaperPosition>>}|null=null;
   const read=(payload:ChannelRequest<'trading.activity.summary'>)=>{
     const scopes=tradingActivityScopes(input.profileId,input.database);const scope=scopes.scopes.find(s=>s.id===payload.scopeId);
@@ -33,6 +36,7 @@ export function createTradingActivityHandlers(input:{profileId:string;database:D
   const failure=()=>({ok:false as const,issues:[{path:[],code:'activity_scope_unavailable'}]});
   return {
     ...createActivityOverviewHandlers(input),
+    ...createAlpacaPerformanceHandlers({...input,...(input.brokerPerformanceClientFactory===undefined?{}:{clientFactory:input.brokerPerformanceClientFactory})}),
     'trading.activity.scopes':()=>({ok:true,value:{profileId:input.profileId,...tradingActivityScopes(input.profileId,input.database),asOfMs:input.now()}}),
     'trading.activity.summary':(payload:ChannelRequest<'trading.activity.summary'>)=>{
       const result=read(payload);if(result===null)return failure();const {scope,facts}=result;

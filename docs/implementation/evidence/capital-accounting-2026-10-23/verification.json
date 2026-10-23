@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-23",
+  "mode": "local_implementation_awaiting_review",
+  "migrationVersion": 96,
+  "calculationVersion": "capital-flow-performance-v1",
+  "checks": [
+    {
+      "command": "pnpm test",
+      "state": "passed",
+      "files": 287,
+      "tests": 2074,
+      "evidence": "full-tests-passing.log"
+    },
+    {
+      "command": "pnpm exec vitest run tests/capital-ingestion.test.ts tests/capital-ui.test.ts",
+      "state": "passed",
+      "files": 2,
+      "tests": 28,
+      "includesAdditionalPopulatedRestoreCase": true,
+      "evidence": "lifecycle-ui-final.log"
+    },
+    {
+      "command": "pnpm typecheck",
+      "state": "passed",
+      "evidence": "typecheck.log"
+    },
+    {
+      "command": "pnpm lint",
+      "state": "passed",
+      "evidence": "lint.log"
+    },
+    {
+      "command": "pnpm build",
+      "state": "passed",
+      "evidence": "root-build.log"
+    },
+    {
+      "command": "pnpm --filter @coqui/desktop build",
+      "state": "passed",
+      "evidence": "desktop-build.log"
+    },
+    {
+      "command": "pnpm --filter @coqui/desktop exec electron scripts/smoke.mjs",
+      "state": "passed",
+      "evidence": "native-smoke-passing.log"
+    },
+    {
+      "command": "pnpm --filter @coqui/desktop exec electron scripts/capital-accounting-smoke.mjs",
+      "state": "passed",
+      "nativeChecks": 19,
+      "evidence": "accounting-ui-passing.log"
+    },
+    {
+      "command": "git diff --check",
+      "state": "passed"
+    }
+  ],
+  "priorFailures": [
+    "First full run: unchanged Coinbase timeout passed on isolated retry; capital channel secret sweep was extended before the clean full run.",
+    "Restricted native process SIGABRT before startup; disposable native tests passed outside that process sandbox.",
+    "Native screen audit found help-button clipping and help outside viewport at 200% zoom; scoped layout fixes passed final checks."
+  ],
+  "notices": [
+    "Existing Vite large-chunk warnings",
+    "Existing browser CSP meta frame-ancestors notice recorded separately in ui/smoke.json"
+  ],
+  "safety": {
+    "actualAccountAccess": false,
+    "financialWritesAdded": false,
+    "studyRegistration": false,
+    "deployment": false,
+    "liveAuthoritySmoke": false
+  },
+  "preservationAudit": "preservation-audit.json",
+  "promptSha256": "4d2bf0e0a2cae242e3dbaa85577d4a802ceeb7b952e3a23d05a3dbe2f18c7f88",
+  "artifacts": [
+    {
+      "path": "full-tests-initial-failed.log",
+      "sha256": "c114e02512df5f13481ee0c97def7cf31002726815acab7451cb86628de2b76e"
+    },
+    {
+      "path": "full-tests-passing.log",
+      "sha256": "e55780b4ce45c66890e1a0342e6c6c292bd8487b5a39b202e67cae53978d57d5"
+    },
+    {
+      "path": "typecheck.log",
+      "sha256": "9cb7e68dd67d787ad7a36816afe2abbcde7523d59230ab49ed3d8fa46afd1441"
+    },
+    {
+      "path": "lint.log",
+      "sha256": "050c69da23536758722729aeda55a8d0fb9d557495ef6d33d70873a3b64a71c1"
+    },
+    {
+      "path": "root-build.log",
+      "sha256": "097d7fcd2b6c778109c1c948076ae7874e7000c1c140089671568f5850b02735"
+    },
+    {
+      "path": "desktop-build.log",
+      "sha256": "6a56107afbac02c09916e92fc7b4cf3b6c388fbf964adfa8f313ce32a5448d90"
+    },
+    {
+      "path": "native-smoke-sandbox-abort.log",
+      "sha256": "a8dc86411739cded7dfc482068f1754ef60f47b10a2ea12f79fc40d78f296d6b"
+    },
+    {
+      "path": "native-smoke-passing.log",
+      "sha256": "0f047b2ea1ec881356fead4efe990ae9244e0ac62514e4df9e19d1493c6b1351"
+    },
+    {
+      "path": "accounting-ui-initial-clipping.log",
+      "sha256": "11762532099f111760336cbd1950009e6b5dddfa748f843955c3ed2358c10821"
+    },
+    {
+      "path": "accounting-ui-passing.log",
+      "sha256": "1d2cafad890702ee4afd24af5693533b1caf33a26dfdac47ba4df7f42a21ef1f"
+    },
+    {
+      "path": "lifecycle-ui-final.log",
+      "sha256": "81f9e235ed51c5eae9d9d7163c00cc0a2c77ad400dd0d8423fdb393d95610891"
+    },
+    {
+      "path": "focused-final.log",
+      "sha256": "b085047a26a0e773b5e483c7ac3460c6695e2264cb5f4072c1e824a924ed2e02"
+    },
+    {
+      "path": "smoke-lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "ui/contrast-zoom-help.png",
+      "sha256": "ec0cc388199b7d087aecfe6de6d96e07e93393f2e0b1bb18d5f86ed29296620f"
+    },
+    {
+      "path": "ui/contrast-zoom.png",
+      "sha256": "6213b5af1b191b2777149889d53ddfe79d72febe80a444bc51140734e7b77407"
+    },
+    {
+      "path": "ui/desktop-dark-help.png",
+      "sha256": "bbb7efe2442840af10311b263d5bd33821face7dd78d1360f60b3d2c38ff9bdb"
+    },
+    {
+      "path": "ui/desktop-dark.png",
+      "sha256": "2ce8ec5e4cd58e00a840bb5c9699a2c9d02a2575f2e70ca17f735722600a5582"
+    },
+    {
+      "path": "ui/narrow-light-help.png",
+      "sha256": "991bbdaab2804bdef8e9111bc1a2c11b697547820490d154e4a1ea0c51b86807"
+    },
+    {
+      "path": "ui/narrow-light.png",
+      "sha256": "88de2ae2dba9b89c23df03e123fd9714e9e198f3add44959d39bbf44a7138c36"
+    },
+    {
+      "path": "ui/smoke.json",
+      "sha256": "0dce2ebad47bbb5091eb20e958010eec5fab5e3cc8e6adf9f4235cbd2e98ca6d"
+    }
+  ]
+}

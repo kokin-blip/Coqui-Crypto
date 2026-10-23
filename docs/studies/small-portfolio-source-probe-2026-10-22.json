@@ -1,0 +1,250 @@
+{
+  "researchDate": "2026-10-22",
+  "timezone": "America/Phoenix",
+  "kind": "synthetic_source_probe_not_market_backtest",
+  "nodeVersion": "v24.15.0",
+  "assumptions": [
+    "Single fictional asset priced at $100 with zero spread",
+    "Synthetic increments and minima of 0.000001 units; no venue account accessed",
+    "Existing research planner policy B; ample limits and no pending orders",
+    "5% target entry from cash; current hard $25 policy minimum",
+    "Source helper outputs are not evidence of runtime integration"
+  ],
+  "sourceHashes": {
+    "packages/core/src/execution/remediation-planner.ts": "50f28c1bfd56e1b923ec81c379fa0bde28d134b2129d4682ca727c2c087d8f40",
+    "packages/core/src/risk/portfolio-sizing.ts": "b5fba71d866df1508f608e3b662703816eeee0c6820ff0433b3d6b5896f74d64",
+    "packages/core/src/risk/autotrade.ts": "d1afcfa69d7c56946348af5de7e49c7fda34358491786fa05b3614ddfa70b35c",
+    "packages/core/src/strategies/buy-candidates.ts": "3ea1a03a21f44199216890d7556b05d11ae5343f8e620d120c1beb218821299b"
+  },
+  "capitalRows": [
+    {
+      "balanceUsd": "50",
+      "coqui25UsdMinimumPct": "50.0000",
+      "onePctDriftUsd": "0.5",
+      "fivePctEntryUsd": "2.5",
+      "fivePctEntryOrders": [],
+      "blocked": [
+        {
+          "assetId": "synthetic",
+          "reason": "minimum_after_rounding"
+        }
+      ],
+      "helperPolicy": {
+        "tier": "micro",
+        "minTradeUsd": 25,
+        "maxTurnoverPct": 0.08,
+        "maxTurnoverUsd": "4",
+        "cashReservePct": 0.1,
+        "candidateSleevePct": 0,
+        "maxCandidates": 1,
+        "perCandidateWeightWhenAllSlotsUsed": 0,
+        "perCandidateUsdWhenAllSlotsUsed": "0"
+      }
+    },
+    {
+      "balanceUsd": "100",
+      "coqui25UsdMinimumPct": "25.0000",
+      "onePctDriftUsd": "1",
+      "fivePctEntryUsd": "5",
+      "fivePctEntryOrders": [],
+      "blocked": [
+        {
+          "assetId": "synthetic",
+          "reason": "minimum_after_rounding"
+        }
+      ],
+      "helperPolicy": {
+        "tier": "small",
+        "minTradeUsd": 25,
+        "maxTurnoverPct": 0.16,
+        "maxTurnoverUsd": "16",
+        "cashReservePct": 0.07,
+        "candidateSleevePct": 0.04,
+        "maxCandidates": 2,
+        "perCandidateWeightWhenAllSlotsUsed": 0.02,
+        "perCandidateUsdWhenAllSlotsUsed": "2"
+      }
+    },
+    {
+      "balanceUsd": "250",
+      "coqui25UsdMinimumPct": "10.0000",
+      "onePctDriftUsd": "2.5",
+      "fivePctEntryUsd": "12.5",
+      "fivePctEntryOrders": [],
+      "blocked": [
+        {
+          "assetId": "synthetic",
+          "reason": "minimum_after_rounding"
+        }
+      ],
+      "helperPolicy": {
+        "tier": "small",
+        "minTradeUsd": 25,
+        "maxTurnoverPct": 0.16,
+        "maxTurnoverUsd": "40",
+        "cashReservePct": 0.07,
+        "candidateSleevePct": 0.04,
+        "maxCandidates": 2,
+        "perCandidateWeightWhenAllSlotsUsed": 0.02,
+        "perCandidateUsdWhenAllSlotsUsed": "5"
+      }
+    },
+    {
+      "balanceUsd": "500",
+      "coqui25UsdMinimumPct": "5.0000",
+      "onePctDriftUsd": "5",
+      "fivePctEntryUsd": "25",
+      "fivePctEntryOrders": [
+        {
+          "quantity": "0.25",
+          "notionalUsd": "25"
+        }
+      ],
+      "blocked": [],
+      "helperPolicy": {
+        "tier": "small",
+        "minTradeUsd": 25,
+        "maxTurnoverPct": 0.16,
+        "maxTurnoverUsd": "80",
+        "cashReservePct": 0.07,
+        "candidateSleevePct": 0.04,
+        "maxCandidates": 2,
+        "perCandidateWeightWhenAllSlotsUsed": 0.02,
+        "perCandidateUsdWhenAllSlotsUsed": "10"
+      }
+    },
+    {
+      "balanceUsd": "1000",
+      "coqui25UsdMinimumPct": "2.5000",
+      "onePctDriftUsd": "10",
+      "fivePctEntryUsd": "50",
+      "fivePctEntryOrders": [
+        {
+          "quantity": "0.5",
+          "notionalUsd": "50"
+        }
+      ],
+      "blocked": [],
+      "helperPolicy": {
+        "tier": "medium",
+        "minTradeUsd": 25,
+        "maxTurnoverPct": 0.28,
+        "maxTurnoverUsd": "280",
+        "cashReservePct": 0.04,
+        "candidateSleevePct": 0.08,
+        "maxCandidates": 2,
+        "perCandidateWeightWhenAllSlotsUsed": 0.04,
+        "perCandidateUsdWhenAllSlotsUsed": "40"
+      }
+    },
+    {
+      "balanceUsd": "2500",
+      "coqui25UsdMinimumPct": "1.0000",
+      "onePctDriftUsd": "25",
+      "fivePctEntryUsd": "125",
+      "fivePctEntryOrders": [
+        {
+          "quantity": "1.25",
+          "notionalUsd": "125"
+        }
+      ],
+      "blocked": [],
+      "helperPolicy": {
+        "tier": "medium",
+        "minTradeUsd": 25,
+        "maxTurnoverPct": 0.28,
+        "maxTurnoverUsd": "700",
+        "cashReservePct": 0.04,
+        "candidateSleevePct": 0.08,
+        "maxCandidates": 2,
+        "perCandidateWeightWhenAllSlotsUsed": 0.04,
+        "perCandidateUsdWhenAllSlotsUsed": "100"
+      }
+    },
+    {
+      "balanceUsd": "5000",
+      "coqui25UsdMinimumPct": "0.5000",
+      "onePctDriftUsd": "50",
+      "fivePctEntryUsd": "250",
+      "fivePctEntryOrders": [
+        {
+          "quantity": "2.5",
+          "notionalUsd": "250"
+        }
+      ],
+      "blocked": [],
+      "helperPolicy": {
+        "tier": "medium",
+        "minTradeUsd": 25,
+        "maxTurnoverPct": 0.28,
+        "maxTurnoverUsd": "1400",
+        "cashReservePct": 0.04,
+        "candidateSleevePct": 0.08,
+        "maxCandidates": 2,
+        "perCandidateWeightWhenAllSlotsUsed": 0.04,
+        "perCandidateUsdWhenAllSlotsUsed": "200"
+      }
+    },
+    {
+      "balanceUsd": "10000",
+      "coqui25UsdMinimumPct": "0.2500",
+      "onePctDriftUsd": "100",
+      "fivePctEntryUsd": "500",
+      "fivePctEntryOrders": [
+        {
+          "quantity": "5",
+          "notionalUsd": "500"
+        }
+      ],
+      "blocked": [],
+      "helperPolicy": {
+        "tier": "large",
+        "minTradeUsd": 50,
+        "maxTurnoverPct": 0.35,
+        "maxTurnoverUsd": "3500",
+        "cashReservePct": 0.03,
+        "candidateSleevePct": 0.1,
+        "maxCandidates": 2,
+        "perCandidateWeightWhenAllSlotsUsed": 0.05,
+        "perCandidateUsdWhenAllSlotsUsed": "500"
+      }
+    },
+    {
+      "balanceUsd": "100000",
+      "coqui25UsdMinimumPct": "0.0250",
+      "onePctDriftUsd": "1000",
+      "fivePctEntryUsd": "5000",
+      "fivePctEntryOrders": [
+        {
+          "quantity": "50",
+          "notionalUsd": "5000"
+        }
+      ],
+      "blocked": [],
+      "helperPolicy": {
+        "tier": "large",
+        "minTradeUsd": 50,
+        "maxTurnoverPct": 0.35,
+        "maxTurnoverUsd": "35000",
+        "cashReservePct": 0.03,
+        "candidateSleevePct": 0.1,
+        "maxCandidates": 2,
+        "perCandidateWeightWhenAllSlotsUsed": 0.05,
+        "perCandidateUsdWhenAllSlotsUsed": "5000"
+      }
+    }
+  ],
+  "requiredExitCase": {
+    "balanceUsd": "100",
+    "positionUsd": "20",
+    "orders": [],
+    "blocked": [
+      {
+        "assetId": "synthetic",
+        "reason": "minimum_after_rounding"
+      }
+    ]
+  },
+  "feeOnlyRoundTripBreakEvenPct": "0.5018812696",
+  "assertions": "passed"
+}

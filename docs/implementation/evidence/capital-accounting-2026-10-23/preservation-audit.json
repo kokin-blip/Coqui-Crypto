@@ -1,0 +1,365 @@
+{
+  "schemaVersion": 1,
+  "head": "d824218f40574851e3539ba6854338419911d173",
+  "branch": "codex/operations-crew-journal",
+  "preExistingCount": 517,
+  "unchangedPreExistingCount": 506,
+  "intentionalOverlaps": [
+    {
+      "status": " M",
+      "path": "apps/desktop/src/main/composition.ts",
+      "sha256": "6ce7bdcf5954f9fc2723efff8e72f74791dcc849feb119f5733942d24be7998c",
+      "currentSha256": "fe7f1cd0f8b1b3245a071700b37a173353f74a1284569a41a28a912c956cbba5"
+    },
+    {
+      "status": " M",
+      "path": "apps/desktop/src/renderer/query/refetch.ts",
+      "sha256": "9f41095e4de585095f9d3e3bfbcdc1b141cfac7f1288e1d92a805a1ef472cfd9",
+      "currentSha256": "d4b1046cb31a26a53d570562e55ea78e87554867a07083d77cf54f482b5d5695"
+    },
+    {
+      "status": " M",
+      "path": "apps/desktop/src/renderer/styles/terminal.css",
+      "sha256": "33c3b924637922726c0608f193c9957758f4d5642c8b9650c0fc91786a851a89",
+      "currentSha256": "a49a262a85e1c445bd62a4fb57c3a762d66edb39a79ddcfd16f7778bcfefb8a9"
+    },
+    {
+      "status": " M",
+      "path": "docs/studies/behavior-manifests-v1.json",
+      "sha256": "3352cbec35b7a770c83dd1bd37f5021651f11a44d4a433bf3f401bbc110a457d",
+      "currentSha256": "3bff75a39b1ec1e946331b2cdbb1de976852e853f3a64fb7d6a316d54b86bc83"
+    },
+    {
+      "status": " M",
+      "path": "packages/contracts/src/channels.ts",
+      "sha256": "7d11a4bf998411ea87a43b2f0f6bcff4b2ed4f9544d4af9c1f96c5707633610f",
+      "currentSha256": "6e652deef47c9add197694a554b5131be3506cb967739204575c5625014c0af0"
+    },
+    {
+      "status": " M",
+      "path": "packages/core/src/portfolio/index.ts",
+      "sha256": "c40aac4abe51e0b05d0f4b83ee8a4ed90d0f0b9699d488ae1658ae0ed6362c9e",
+      "currentSha256": "51ab75972a1ebaeb590122390bb3a01cc2b19a7539a96a3ec89374cfc4b3ec47"
+    },
+    {
+      "status": " M",
+      "path": "packages/core/src/research/study-manifests.generated.ts",
+      "sha256": "517f894eec10738d027c6463e00ec8850fa30f25fdb7108db00fd19ea7a3cde3",
+      "currentSha256": "0d56757ec1ab22bc1f139211f4f10032945d3de414f102824c328b8fc55b8278"
+    },
+    {
+      "status": " M",
+      "path": "tests/contracts-channels.test.ts",
+      "sha256": "365bda53b7f6494be03d51dc25f413d65c9165902db9c34d0f247d127cda839f",
+      "currentSha256": "2f02d00569a704e3ced08e39fb205440ae68002c9db613393117fded4df178ef"
+    },
+    {
+      "status": "??",
+      "path": "apps/desktop/src/main/alpaca-performance-handlers.ts",
+      "sha256": "76bda97a22a5d0ec813f726d29a07cb93ac76a6bd706d9b78009c8fefc1a7d6b",
+      "currentSha256": "5df12b59faa084ab7725490573b7a414a62e963e04d6bbaa1a105f3306ca453d"
+    },
+    {
+      "status": "??",
+      "path": "apps/desktop/src/renderer/app/BrokerAccountPerformance.tsx",
+      "sha256": "815f67f5746978a153a65409bfbb03ea59e5f0bfab841d37fd414723f6d8c609",
+      "currentSha256": "8763860b2d58c7044e355806a9d225801c8ed06597fd0a64dbf02d09383327f4"
+    },
+    {
+      "status": "??",
+      "path": "tests/alpaca-performance.test.ts",
+      "sha256": "9c4eebf6da329da9369e0b1885e7439cef5abe4bf9fda11d386d036a7e88f96d",
+      "currentSha256": "b2ccdfa8e5451fd05686488f80a278f3ac2b90e369832b9c59dfa720a3112515"
+    }
+  ],
+  "unexpectedChanges": [],
+  "preserved": {
+    "roadmap": true,
+    "companionEvidence": true,
+    "beforeBuildManifests": true,
+    "beforeBuildGeneratedModule": true
+  },
+  "additionalDeliveryPaths": [
+    {
+      "status": " M",
+      "path": "apps/desktop/src/main/connection-handlers.ts",
+      "sha256": "bb66c0cc0581e75fa508f30dbf6189e44f8a743da8f37b6b3c071fedd738d0b3"
+    },
+    {
+      "status": " M",
+      "path": "apps/desktop/src/main/paper-performance-evidence.ts",
+      "sha256": "22b8b6353a709a2e59629790280e6f2a97ea6f36cc430547fc1c205c93165915"
+    },
+    {
+      "status": " M",
+      "path": "apps/desktop/src/renderer/app/Performance.tsx",
+      "sha256": "3a4f5453f1375108bf93feda9894e045db07c1c9fed707191ed391a0bba9dfe4"
+    },
+    {
+      "status": " M",
+      "path": "apps/desktop/src/renderer/app/RouteEvidenceBoundary.tsx",
+      "sha256": "9c47ca1c082986b087e466ac9f38dc4df7f754532f4096616ffe5b08cae42520"
+    },
+    {
+      "status": " M",
+      "path": "apps/desktop/src/renderer/app/TerminalAlgorithm.tsx",
+      "sha256": "1036de619a3f3ccea55bf31b0af62ae074e1146e90a299b99b23a5c7048de5fe"
+    },
+    {
+      "status": " M",
+      "path": "apps/desktop/src/renderer/app/TerminalPerformance.tsx",
+      "sha256": "432313d1ece8841f1aa732c00670c7531a60d67bf1349f083a83a1d4fc7ccb4c"
+    },
+    {
+      "status": " M",
+      "path": "eslint.config.js",
+      "sha256": "4983e1edb044cc8556c5924087602b8dc51940b8f66f6cc9dbd462c77b7b7584"
+    },
+    {
+      "status": " M",
+      "path": "packages/adapters/src/coinbase/account-evidence.ts",
+      "sha256": "7aa081e6255b7eadc9a7edf6c4f8311976e5598514d2d66d83b0f1503b1427f6"
+    },
+    {
+      "status": " M",
+      "path": "packages/adapters/src/coinbase/index.ts",
+      "sha256": "2de721f984e259896801d7fc35a22d46b991f4ccdd13c135de4779645d313d7f"
+    },
+    {
+      "status": " M",
+      "path": "packages/adapters/src/coinbase/transaction-evidence.ts",
+      "sha256": "89bc20388e44dde60b02d697762bd5d97a18e2481c67145fb486ed3d8048f411"
+    },
+    {
+      "status": " M",
+      "path": "packages/adapters/src/http/index.ts",
+      "sha256": "4ae748fb68dae627b0b1cdd9e6f6aecf9e85017fc85a6aa4c0f7815c6bb583a5"
+    },
+    {
+      "status": " M",
+      "path": "packages/contracts/src/index.ts",
+      "sha256": "294a40424af54fcf3b94a5ef0e34bc3c67c4541aad419e6e07c74c6ce934cd3d"
+    },
+    {
+      "status": " M",
+      "path": "packages/services/src/accounts/coinbase-sync.ts",
+      "sha256": "f80b0f23e43df7e5db5ce94ee36c69b42b52df3a2ed1dfc78dded041e40e15a3"
+    },
+    {
+      "status": " M",
+      "path": "packages/services/src/portfolio/index.ts",
+      "sha256": "91215d2894e92941eaddf171ceee17fc68efe48a6d40c0d77f39a8a9b2b7169e"
+    },
+    {
+      "status": " M",
+      "path": "packages/storage/src/migrations/index.ts",
+      "sha256": "ae765d17f8c40e4b8a9b980238a49add1411073eb2701c83c64a1ef75a28b8c6"
+    },
+    {
+      "status": " M",
+      "path": "packages/storage/src/profiles/duplication-transient-counts.ts",
+      "sha256": "ac12b429d4890a28f1e6d4574bdc845769300753611e7ad82a36c0ec48e3820e"
+    },
+    {
+      "status": " M",
+      "path": "packages/storage/src/profiles/duplication.ts",
+      "sha256": "9576938261fb9eb4e7680cb68d05a8a79d5dc221f9a30400e40b568c9ed80e79"
+    },
+    {
+      "status": " M",
+      "path": "packages/storage/src/repositories/index.ts",
+      "sha256": "07be0a3a171b40689f461bada42a2117ce1370d96daad2d54fcc40fb71304b34"
+    },
+    {
+      "status": " M",
+      "path": "packages/storage/src/repositories/profile-impact.ts",
+      "sha256": "2a2ffcc4ddb3a3969ad99674f6b7aebd74fcfa3b7a6488ecf4918c5dd7939c96"
+    },
+    {
+      "status": " M",
+      "path": "tests/accounts-profile-backup.test.ts",
+      "sha256": "046f8e35a5e7f61f5988777e732756da9655c3300a1e494ccf4ba1afd0723ec9"
+    },
+    {
+      "status": " M",
+      "path": "tests/accounts-profile-comparison.test.ts",
+      "sha256": "6c060dae62b10eda97c2117011691bc3ee9c3580535b0fdbca389e14b4a98121"
+    },
+    {
+      "status": " M",
+      "path": "tests/accounts-profile-duplication.test.ts",
+      "sha256": "0c34cf0c19e4a96c8b5e39ed13b96285bff6b34ef936d8ff314f5015f1399e47"
+    },
+    {
+      "status": " M",
+      "path": "tests/accounts-profiles-service.test.ts",
+      "sha256": "7256a5e93e58a1e06fb7297b384770d168a53e501c769f746f582f009fa16dea"
+    },
+    {
+      "status": " M",
+      "path": "tests/isolated-restore.test.ts",
+      "sha256": "9b66773b1669855102fd64e0e8f56908906a2a7ef41152e221390ceeccda048e"
+    },
+    {
+      "status": " M",
+      "path": "tests/news-intelligence-storage.test.ts",
+      "sha256": "90edb1c029fa8415c0e001e477e7a4f6448166c13baee284579f465eb4e5c75d"
+    },
+    {
+      "status": " M",
+      "path": "tests/news-quota.test.ts",
+      "sha256": "3190c71276d49ab226240f2b60cfe149e40d345a8f0b63167a94acee6f9b73a6"
+    },
+    {
+      "status": " M",
+      "path": "tests/news-rollout.test.ts",
+      "sha256": "01a19dfe83a6ea3dca56ca8498075d7f26670c3f299cba2c7157ca5e1fc24bad"
+    },
+    {
+      "status": " M",
+      "path": "tests/news-storage.test.ts",
+      "sha256": "53d2b83fbcdb35ab8989c1c29d776aa2df66954f1f687e28f2eeb9be727b3236"
+    },
+    {
+      "status": " M",
+      "path": "tests/portfolio-snapshot-evidence.test.ts",
+      "sha256": "90e4fdc8c18a9c5669e91b5a5888f5abe728c7ec034f422c1aba1f7503691562"
+    },
+    {
+      "status": " M",
+      "path": "tests/secret-leak-sweep.test.ts",
+      "sha256": "4d5204c5ea49f11188abc11fbdae7f5b791ea0c1b6dd5298a7f0aebb0a791be7"
+    },
+    {
+      "status": " M",
+      "path": "tests/storage-canonical-assets.test.ts",
+      "sha256": "0a46fe745a06e8910ae25abe0923e796ac47cdd7eee31e7c07b2d92a45d4a62c"
+    },
+    {
+      "status": " M",
+      "path": "tests/storage-migrations.test.ts",
+      "sha256": "3f22a3685a76a155e22be2f3d0c3d94e500acc6245bb0e9a25ab5fd53ef96a9c"
+    },
+    {
+      "status": " M",
+      "path": "tests/storage-portfolio-repository.test.ts",
+      "sha256": "eca6abb27793f61a6653288254556fe90d5c16141ed77c0e184ae9bafa932174"
+    },
+    {
+      "status": "??",
+      "path": "apps/desktop/scripts/capital-accounting-smoke.mjs",
+      "sha256": "f235a1ff1fd3b61cc84364bf580773ec40e2a102c9309b9a5145788e6b4c8da2"
+    },
+    {
+      "status": "??",
+      "path": "apps/desktop/src/main/capital-handlers.ts",
+      "sha256": "f8888a79ea3a0ab73258fe95497171f15368aaea33ce9a13e725177185533698"
+    },
+    {
+      "status": "??",
+      "path": "apps/desktop/src/renderer/app/CapitalPerformance.tsx",
+      "sha256": "deb59c2f5739ef8bebf86fc453c296823697486a063152cf30738a7bb7874733"
+    },
+    {
+      "status": "??",
+      "path": "docs/implementation/small-portfolio-capital-accounting-plan-2026-10-23.md",
+      "sha256": "0ad4f6f7250dfb44d0eb5f07caeb7ee99025e17181d5da7c8cb2fff464008cf1"
+    },
+    {
+      "status": "??",
+      "path": "docs/implementation/small-portfolio-phase-tracker-2026-10-23.md",
+      "sha256": "68ca9fddda2d4696232b5f456b4e6dd406e87a50a36294d6b4bb49375b503539"
+    },
+    {
+      "status": "??",
+      "path": "packages/adapters/src/coinbase/capital-evidence.ts",
+      "sha256": "e9668520cfbf16cfcdd4db98ea23a4c594a2dd38a1c050a567ac26fc13cd2676"
+    },
+    {
+      "status": "??",
+      "path": "packages/contracts/src/schemas/capital-performance.ts",
+      "sha256": "464a4df04e5bcde27faa4d44f314a7d4d2126dfa08da19f51ae1bae975cc4cdd"
+    },
+    {
+      "status": "??",
+      "path": "packages/core/src/portfolio/capital-ledger.ts",
+      "sha256": "2a9547b1a5b8bb7dfaf54ee8fc80f13df98d7324571ff3547a8deb87f521d23a"
+    },
+    {
+      "status": "??",
+      "path": "packages/core/src/portfolio/capital-performance.ts",
+      "sha256": "9275fdffeaa4f9fb035778e6e84b75b525e8d5f19bbc96239b5d6c912c795b73"
+    },
+    {
+      "status": "??",
+      "path": "packages/core/src/portfolio/capital-return-math.ts",
+      "sha256": "a035b1b5aad267ba2932f0b5b95df18170a32e2751708e7a1ab2c4befc6f8af7"
+    },
+    {
+      "status": "??",
+      "path": "packages/services/src/portfolio/capital-accounting.ts",
+      "sha256": "86b9f911e40400a2302a91cbba4de69ed40431db7426990f5256b36ea76602d0"
+    },
+    {
+      "status": "??",
+      "path": "packages/services/src/portfolio/capital-alpaca.ts",
+      "sha256": "71304a20af339e2fed02b54b9a51a338b6516e02cfcdc6c473bbb91ee52bd89d"
+    },
+    {
+      "status": "??",
+      "path": "packages/services/src/portfolio/capital-coinbase.ts",
+      "sha256": "bd3729fca6ac1762684691f77bb494f830f3479c1aadf35738688d0ec90503e7"
+    },
+    {
+      "status": "??",
+      "path": "packages/services/src/portfolio/capital-local-paper.ts",
+      "sha256": "43b7057c8cdec8a9dc16ccb510d381ad64d809e473d27ec64876525b2515d154"
+    },
+    {
+      "status": "??",
+      "path": "packages/services/src/portfolio/capital-performance.ts",
+      "sha256": "85a487f5311f5da8060adc5974052e9e10e3cd633de30399558c12f594725294"
+    },
+    {
+      "status": "??",
+      "path": "packages/services/src/portfolio/capital-sources.ts",
+      "sha256": "f8e1f91c79d17a9a62da5e0fbf71d186ac807ac061afa9ab2e436674383f18a6"
+    },
+    {
+      "status": "??",
+      "path": "packages/storage/src/migrations/v96.ts",
+      "sha256": "9018fde448d490dd6bc69cf78ca98e61a04a128bf98ddf6e136e154bf030a458"
+    },
+    {
+      "status": "??",
+      "path": "packages/storage/src/repositories/capital-accounting.ts",
+      "sha256": "c2d5f9deb8069e3746cc2dd09c9f399fd6dc7ef8ec185e00b6a347683432979f"
+    },
+    {
+      "status": "??",
+      "path": "tests/capital-ingestion.test.ts",
+      "sha256": "826e685b4812f98cba4ae57aa5bfddc71c7c6b8aac13b897728576b8e7585eea"
+    },
+    {
+      "status": "??",
+      "path": "tests/capital-performance.test.ts",
+      "sha256": "3e79942918f33d8cc7cba5c52574ee27970347b66372cbaf60172effa48306cc"
+    },
+    {
+      "status": "??",
+      "path": "tests/capital-storage.test.ts",
+      "sha256": "047cc4b9d11d6bba42dc11df447a0e22d4563ab9dc3861e2f1f3786e3e58c199"
+    },
+    {
+      "status": "??",
+      "path": "tests/capital-ui.test.ts",
+      "sha256": "cbce8180c6debb614622b5d969cd273e447b0137dbf9f82bfa6ffa40768b891f"
+    },
+    {
+      "status": "??",
+      "path": "tests/helpers/capital.ts",
+      "sha256": "bb9fba658f09240417ad268ad7911ab8b440b91cc1b021a75bbfc5f635e2cb08"
+    }
+  ],
+  "legacyHelpers": "No diff in performance.ts, paper-performance.ts, broker-cash.ts or broker-equity.ts; baseline evidence retains the pre-existing untracked broker helpers."
+}

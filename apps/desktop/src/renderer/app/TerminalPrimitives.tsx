@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import type { ChannelState } from '../query/use-channel.js';
 import { SurfaceState } from './SurfaceState.js';
+import { MetricInfo } from './MetricInfo.js';
 
 export function TerminalTabs<T extends string>({ tabs, value, onChange, label, id }: {
   readonly tabs: readonly T[]; readonly value: T; readonly onChange: (value: T) => void;
@@ -25,8 +26,8 @@ export function ChannelNotice({ state, label }: { readonly state: ChannelState<u
     {...(state.kind === 'loading' ? {} : { detail: state.issues.map((issue) => issue.code).join(', ') })} />;
 }
 
-export function TerminalMetric({ label, children, tone = '' }: {
-  readonly label: string; readonly children: ReactNode; readonly tone?: string;
+export function TerminalMetric({ label, children, tone = '', info }: {
+  readonly label: string; readonly children: ReactNode; readonly tone?: string; readonly info?: string;
 }): React.JSX.Element {
-  return <div className="terminal-metric"><dt>{label}</dt><dd className={tone}>{children}</dd></div>;
+  return <div className="terminal-metric"><dt>{label}{info!==undefined&&<MetricInfo label={label}>{info}</MetricInfo>}</dt><dd className={tone}>{children}</dd></div>;
 }

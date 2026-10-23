@@ -1,0 +1,163 @@
+{
+  "researchDate": "2026-10-22",
+  "timezone": "America/Phoenix",
+  "kind": "illustrative_economics_not_market_backtest",
+  "assumptions": [
+    "Overhead of $10/month is hypothetical, not a Coqui fee",
+    "0.25% one-way example is published Alpaca first-tier taker fee; account-specific applicability is unverified",
+    "Turnover is sum of absolute buy and sell notionals divided by reference equity",
+    "No spread, slippage, tax, interest, fee rounding or market return in fee-only illustrations",
+    "Legacy 85 bps is a local model assumption, not a current exchange quotation"
+  ],
+  "capitalRows": [
+    {
+      "capitalUsd": "50",
+      "policyMinimumUsd": "25",
+      "policyMinimumPct": "50.0",
+      "onePctTradeUsd": "0.50",
+      "fivePctTradeUsd": "2.50",
+      "hypotheticalTenUsdMonthlyOverheadAnnualPct": "240.0",
+      "hypotheticalTenPctProfitUsd": "5.0",
+      "quarterOfThatProfitUsd": "1.250"
+    },
+    {
+      "capitalUsd": "100",
+      "policyMinimumUsd": "25",
+      "policyMinimumPct": "25.00",
+      "onePctTradeUsd": "1.00",
+      "fivePctTradeUsd": "5.00",
+      "hypotheticalTenUsdMonthlyOverheadAnnualPct": "120.0",
+      "hypotheticalTenPctProfitUsd": "10.0",
+      "quarterOfThatProfitUsd": "2.500"
+    },
+    {
+      "capitalUsd": "250",
+      "policyMinimumUsd": "25",
+      "policyMinimumPct": "10.0",
+      "onePctTradeUsd": "2.50",
+      "fivePctTradeUsd": "12.50",
+      "hypotheticalTenUsdMonthlyOverheadAnnualPct": "48.00",
+      "hypotheticalTenPctProfitUsd": "25.0",
+      "quarterOfThatProfitUsd": "6.250"
+    },
+    {
+      "capitalUsd": "500",
+      "policyMinimumUsd": "25",
+      "policyMinimumPct": "5.00",
+      "onePctTradeUsd": "5.00",
+      "fivePctTradeUsd": "25.00",
+      "hypotheticalTenUsdMonthlyOverheadAnnualPct": "24.00",
+      "hypotheticalTenPctProfitUsd": "50.0",
+      "quarterOfThatProfitUsd": "12.500"
+    },
+    {
+      "capitalUsd": "1000",
+      "policyMinimumUsd": "25",
+      "policyMinimumPct": "2.500",
+      "onePctTradeUsd": "10.00",
+      "fivePctTradeUsd": "50.00",
+      "hypotheticalTenUsdMonthlyOverheadAnnualPct": "12.00",
+      "hypotheticalTenPctProfitUsd": "100.0",
+      "quarterOfThatProfitUsd": "25.000"
+    },
+    {
+      "capitalUsd": "2500",
+      "policyMinimumUsd": "25",
+      "policyMinimumPct": "1.00",
+      "onePctTradeUsd": "25.00",
+      "fivePctTradeUsd": "125.00",
+      "hypotheticalTenUsdMonthlyOverheadAnnualPct": "4.800",
+      "hypotheticalTenPctProfitUsd": "250.0",
+      "quarterOfThatProfitUsd": "62.500"
+    },
+    {
+      "capitalUsd": "5000",
+      "policyMinimumUsd": "25",
+      "policyMinimumPct": "0.500",
+      "onePctTradeUsd": "50.00",
+      "fivePctTradeUsd": "250.00",
+      "hypotheticalTenUsdMonthlyOverheadAnnualPct": "2.400",
+      "hypotheticalTenPctProfitUsd": "500.0",
+      "quarterOfThatProfitUsd": "125.000"
+    },
+    {
+      "capitalUsd": "10000",
+      "policyMinimumUsd": "25",
+      "policyMinimumPct": "0.2500",
+      "onePctTradeUsd": "100.00",
+      "fivePctTradeUsd": "500.00",
+      "hypotheticalTenUsdMonthlyOverheadAnnualPct": "1.200",
+      "hypotheticalTenPctProfitUsd": "1000.0",
+      "quarterOfThatProfitUsd": "250.000"
+    },
+    {
+      "capitalUsd": "100000",
+      "policyMinimumUsd": "25",
+      "policyMinimumPct": "0.02500",
+      "onePctTradeUsd": "1000.00",
+      "fivePctTradeUsd": "5000.00",
+      "hypotheticalTenUsdMonthlyOverheadAnnualPct": "0.1200",
+      "hypotheticalTenPctProfitUsd": "10000.0",
+      "quarterOfThatProfitUsd": "2500.000"
+    }
+  ],
+  "proportionalFeeExamples": [
+    {
+      "tradeUsd": "5",
+      "feeRate": "0.0025",
+      "oneWayFeeUsd": "0.0125",
+      "feePct": "0.25"
+    },
+    {
+      "tradeUsd": "10",
+      "feeRate": "0.0025",
+      "oneWayFeeUsd": "0.0250",
+      "feePct": "0.25"
+    },
+    {
+      "tradeUsd": "25",
+      "feeRate": "0.0025",
+      "oneWayFeeUsd": "0.0625",
+      "feePct": "0.25"
+    },
+    {
+      "tradeUsd": "100",
+      "feeRate": "0.0025",
+      "oneWayFeeUsd": "0.2500",
+      "feePct": "0.25"
+    },
+    {
+      "tradeUsd": "1000",
+      "feeRate": "0.0025",
+      "oneWayFeeUsd": "2.5000",
+      "feePct": "0.25"
+    }
+  ],
+  "monthlyTurnoverExamples": [
+    {
+      "monthlyOneWayTurnoverMultiple": "0.1",
+      "feeOnlyCostPctOfEquity": "0.02500",
+      "legacy85BpsCostPctOfEquity": "0.08500"
+    },
+    {
+      "monthlyOneWayTurnoverMultiple": "1",
+      "feeOnlyCostPctOfEquity": "0.2500",
+      "legacy85BpsCostPctOfEquity": "0.8500"
+    },
+    {
+      "monthlyOneWayTurnoverMultiple": "6",
+      "feeOnlyCostPctOfEquity": "1.5000",
+      "legacy85BpsCostPctOfEquity": "5.1000"
+    }
+  ],
+  "feeOnlyRoundTripBreakEvenPct": "0.501881269590015138095866231996030175700",
+  "examples": {
+    "fivePctEntryMinimumCapitalAt25UsdFloor": "500",
+    "twoPctEntryMinimumCapitalAt25UsdFloor": "1250",
+    "flatMarket500Plus50MonthlyFor12Months": "1100",
+    "plus50PctThenMinus50PctReturn": "-0.25",
+    "oneUsdPayoutFeeAtOnePctCostCapRequiresPayout": "100",
+    "profitNeededForThatPayoutAt25PctShare": "400"
+  },
+  "verification": "decimal assertions passed"
+}

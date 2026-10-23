@@ -63,7 +63,7 @@ import {
 import { createDiagnostics } from './diagnostics.js';
 import { createExploratoryPaperRuntime } from './exploratory-paper-handlers.js';
 import { createTradingActivityHandlers, resolveActivityMark } from './trading-activity-handlers.js';
-import { createDecisionHandlers } from './decision-handlers.js';
+import { createDecisionHandlers } from './decision-handlers.js'; import { createCapitalHandlers } from './capital-handlers.js';
 import { createAdvisorHandlers } from './advisor-handlers.js';
 import { createChartExtensionHandlers, createChartSnapshotHandlers, createChartWorkspaceHandlers } from './chart-handler-factories.js';
 import { createAccountPreferenceHandlers } from './account-preference-handlers.js';
@@ -294,7 +294,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   if (options.disableScheduler !== true) startScheduler();
   const exploratoryRuntime = createExploratoryPaperRuntime({ profileId: options.profileId,
     database, clock, market: paperMarket, campaigns: exploratoryCampaigns, run: paperRunDependencies });
-  const handlers: ChannelHandlers = { ...overlayShadow.handlers,
+  const handlers: ChannelHandlers = { ...overlayShadow.handlers, ...createCapitalHandlers(options.profileId, database, { nowMs: clock.nowMs(), onError: error => report('capital.initialization', error) }),
     ...createAlpacaPaperHandlers({ profileId: options.profileId, database, clock,
       onDisconnect: () => parallel.service.pauseForDisconnect(),
       ...(options.secrets === undefined ? {} : { secrets: options.secrets }) }),
@@ -324,7 +324,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     ...createResearchOrchestrationHandlers({coordinator:researchHost,clock}),
     ...createDecisionHandlers(options.profileId, clock, database),
     ...createTradingActivityHandlers({ profileId: options.profileId, database, now: () => clock.nowMs(),
-      mark: productId => resolveActivityMark(productId, liveMarket.snapshot().quotes, id => paperMarket.view.bars(id as never).at(-1)) }),
+      mark: productId => resolveActivityMark(productId, liveMarket.snapshot().quotes, id => paperMarket.view.bars(id as never).at(-1)), ...(options.secrets===undefined?{}:{secrets:options.secrets}) }),
     ...exploratoryRuntime.handlers,
     'activity.feed': (payload: { readonly limit: number; readonly cursor: string | null }) => ({
       ok: true,

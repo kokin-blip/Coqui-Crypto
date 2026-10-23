@@ -7,6 +7,7 @@ import {
 
 import type { CoinbaseEvidenceFailureCode } from './account-evidence.js';
 import { COINBASE_API_HOST, type CoinbaseReadHttpClient } from './auth.js';
+import { coinbaseCapitalTransactionMetadata, type CoinbaseCapitalTransactionMetadata } from './capital-evidence.js';
 
 const MAX_TRANSACTION_ROWS = 100_000;
 const MAX_TRANSACTION_PAGES = 1_000;
@@ -119,6 +120,7 @@ export async function fetchCoinbaseTransactionEvidence(
   http: Pick<CoinbaseReadHttpClient, 'getJson'>,
   accounts: readonly CoinbaseAccountEvidence[],
   signal?: AbortSignal,
+  onCapitalEvidence?: (metadata: CoinbaseCapitalTransactionMetadata) => void,
 ): Promise<CoinbaseTransactionAcquisitionResult> {
   const rows = new Map<string, CoinbaseTransactionEvidence>();
   let pageCount = 0;
@@ -147,6 +149,7 @@ export async function fetchCoinbaseTransactionEvidence(
       for (const raw of body['data']) {
         const parsed = transaction(raw, account.accountUuid);
         if (parsed === null) return { ok: false, code: 'invalid_response' };
+        onCapitalEvidence?.(coinbaseCapitalTransactionMetadata(raw, parsed.accountUuid, parsed.transactionId));
         const identity = `${parsed.accountUuid}:${parsed.transactionId}`;
         const prior = rows.get(identity);
         if (prior !== undefined && JSON.stringify(prior) !== JSON.stringify(parsed)) {

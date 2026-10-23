@@ -5,6 +5,7 @@ import type { ChannelRequest, ChannelResponse, CoquiClient } from '@coqui/contra
 import { formatUsd } from '@coqui/ui-kit';
 import { useChannel, type ChannelState } from '../query/use-channel.js';
 import { ActivityPnlChart } from './ActivityPnlChart.js';
+import { BrokerAccountPerformance } from './BrokerAccountPerformance.js';
 import { ChannelNotice, TerminalMetric } from './TerminalPrimitives.js';
 import { CoquiBadge, CoquiButton } from './CoquiComponents.js';
 import type { TerminalActivityState } from './TerminalActivity.js';
@@ -83,6 +84,8 @@ export function AlgoActivity({client,activity,state,filter,onProductChange,mode,
       <TerminalMetric label="Winning / losing exits">{value.wins} / {value.losses}</TerminalMetric>
       <TerminalMetric label="Executed orders">{value.executedOrders}{!value.historyComplete?' · partial':''}</TerminalMetric>
     </dl>
+    {value.scope.source==='alpaca_paper'&&filter.productId===null&&<BrokerAccountPerformance key={`${value.profileId}:${value.scope.id}:${value.connectionId}`}
+      client={client} profileId={value.profileId} scopeId={value.scope.id} connectionId={value.connectionId}/>}
     {(value.realizedPnlUsd===null||value.unrealizedPnlUsd===null||value.unknownExits>0||value.breakeven>0||value.valuation!=='fresh')&&<p className="terminal-algo-caveat">
       {value.realizedPnlUsd===null&&<>Known realized subtotal {signed(value.knownRealizedPnlUsd)}. </>}
       {value.unrealizedPnlUsd===null&&<>Open valuation {value.valuation}{value.knownUnrealizedPnlUsd===null?'':` · known subtotal ${signed(value.knownUnrealizedPnlUsd)}`}. </>}
