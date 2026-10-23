@@ -4,9 +4,9 @@ The [full saved roadmap](small-portfolio-profit-policy-plan-2026-10-23.md) remai
 
 | Phase | State | Completed | Remaining / blockers | Dependencies |
 |---|---|---|---|---|
-| P0 Definitions, scope, source inventory | Complete locally | Definitions, baseline, source inventory, exact-or-unavailable rules and independent fixtures | Review remains separate from implementation | Saved roadmap, source baseline |
-| P1 Capital-flow accounting and corrected performance | Implemented locally; in review | Storage, ingestion, calculations, read projections, displays, lifecycle and acceptance checks | Human review; actual connected evidence completeness, owner qualification and release remain separate open gates | P0 |
-| P2 Shared budgets and small-portfolio feasibility | Not started | None | All requirements in saved roadmap retained | P1 |
+| P0 Definitions, scope, source inventory | Committed and pushed | Definitions, baseline, source inventory, exact-or-unavailable rules and independent fixtures | Review remains separate from implementation | Saved roadmap, source baseline |
+| P1 Capital-flow accounting and corrected performance | Committed and pushed; in review | Storage, ingestion, calculations, read projections, displays, lifecycle and acceptance checks; isolated delivery 0c3d36c | Human review; actual connected evidence completeness, owner qualification and release remain separate open gates | P0 |
+| P2 Shared budgets and small-portfolio feasibility | Planning complete; implementation pending | Full roadmap reread; current code/official blocking semantics inspected; concrete P2-A–F implementation plan saved | All P2 implementation, integration and acceptance requirements remain open; COQ-36 backlog | P1; existing operational review for connected adoption |
 | P3 Profit-reserve evaluation and previews | Not started | None | All requirements in saved roadmap retained | P1/P2 |
 | P4 Capital-aware simulation | Not started | None | All requirements in saved roadmap retained | P1–P3 and corrected engine compatibility |
 | P5 Strategy and policy experiments | Not started | None | All hypotheses, finite trials, negative findings and evidence gates retained | P4 and adequate development data |
@@ -73,3 +73,16 @@ The [full saved roadmap](small-portfolio-profit-policy-plan-2026-10-23.md) remai
 **Prompt used:** [exact initiating implementation prompt](evidence/capital-accounting-2026-10-23/prompt-used.md). No product scope reduction or follow-up decision is inferred. [COQ-35](https://linear.app/coqui-crypto/issue/COQ-35/implement-p0p1-capital-flow-accounting-and-versioned-performance) tracks local implementation; COQ-34 remains the completed research record. Linear comments include the exact prompt and credit **Completed by: kokin**.
 
 Before starting P2 or any later phase, reread that phase's full architecture, requirements, hypotheses, settings/UX, dependencies, tests, acceptance criteria and safety gates from the unchanged saved roadmap. All P2–P7 requirements remain pending in full.
+
+## Delivery: commit/push P0/P1 and prepare P2
+
+- P0/P1 committed and pushed as [0c3d36c](https://github.com/kokin-blip/Coqui-Crypto/commit/0c3d36c10d2ea0b69a010c828ba903acca2f0c5c) on `codex/operations-crew-journal`. Focused staging retained unrelated work, including mixed-file execution/hourly-study edits. Required existing read-only broker prerequisites were included; no working file was changed by staging/commit.
+- The exact isolated source closure passed 281 files / 1,968 tests, 117 focused tests, typecheck/lint, root/desktop builds and both disposable native smoke suites. [Isolated evidence](evidence/capital-accounting-2026-10-23/commit-isolation/summary.json) is separate from the earlier combined checkout's 287-file/2,074-test run. These establish mechanics, not strategy efficacy or a release.
+- Reread P2 and all applicable architecture/accounting/UX/evaluation/dependency/test requirements from the full saved roadmap before preparing the [P2 implementation plan](small-portfolio-p2-implementation-plan-2026-10-23.md). Inspected 19 source files and 17 synthetic sizing rows; checked only current official rule, cash/hold, buying-power and fee semantics that blocked the design.
+- P2 is planning only. Six batches cover contracts/fixtures, native evidence/storage, shared budget revisions, joint feasibility, actual consumer integration and read-only UX/compatibility. Native and discretionary floors remain distinct; no risk expansion to meet minimums. New shared reservation assurance is blocked while an active legacy connected writer or unproven account-wide ownership exists.
+- No P2 application code, active campaign migration, strategy change, profit reserve funding, order/cancellation, withdrawal, deployment or study registration. P0/P1 and the original roadmap/evidence hashes are preserved. P3–P7 remain pending in full; P2 implementation/acceptance is not marked complete.
+- [COQ-35](https://linear.app/coqui-crypto/issue/COQ-35/implement-p0p1-capital-flow-accounting-and-versioned-performance) remains In Review; [COQ-36](https://linear.app/coqui-crypto/issue/COQ-36/implement-p2-shared-budgets-and-small-portfolio-feasibility) tracks pending implementation. Owner, connected-evidence and release gates remain open.
+
+**Prompt used**
+
+Push and commit that then Lets move on to P2. Reread its full requirements in the saved roadmap, inspect the current code, and prepare a concrete implementation plan before writing code. Preserve P0/P1 and the complete P0–P7 scope.

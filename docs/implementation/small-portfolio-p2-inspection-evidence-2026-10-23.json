@@ -1,0 +1,268 @@
+{
+  "schemaVersion": 1,
+  "kind": "source_inspection_and_synthetic_sizing_probe_not_market_evidence",
+  "head": "d824218f40574851e3539ba6854338419911d173",
+  "date": "2026-10-23",
+  "files": [
+    {
+      "path": "packages/core/src/risk/portfolio-sizing.ts",
+      "sha256": "b5fba71d866df1508f608e3b662703816eeee0c6820ff0433b3d6b5896f74d64"
+    },
+    {
+      "path": "packages/core/src/paper/index.ts",
+      "sha256": "bfbbc34f642c01bbbea66ae8323e9211bf5518fb7167dbc0e51c51234577bd07"
+    },
+    {
+      "path": "packages/core/src/execution/planning.ts",
+      "sha256": "62bd3f725b25cdbf9a9dd48de81f21a7702d699bc6fc49067f3ec7f496165d16"
+    },
+    {
+      "path": "packages/core/src/execution/remediation-planner.ts",
+      "sha256": "50f28c1bfd56e1b923ec81c379fa0bde28d134b2129d4682ca727c2c087d8f40"
+    },
+    {
+      "path": "packages/core/src/portfolio/contribution.ts",
+      "sha256": "218b1f01f78e7d603f9d334d59e193bd2bb3ae6a29c7f46f252a0218c2b4687d"
+    },
+    {
+      "path": "packages/adapters/src/coinbase/product-rules.ts",
+      "sha256": "c5ab24d509dfc2a0b0a8add30c59bc9e4955f9b7be8e7ebbad54bfa4ec6bc7df"
+    },
+    {
+      "path": "packages/adapters/src/http/alpaca-paper.ts",
+      "sha256": "403f5530bf39ca5c86f51e0de3e4508adfdaf03d7174085500ff0d6d1491247e"
+    },
+    {
+      "path": "packages/adapters/src/http/alpaca-universe.ts",
+      "sha256": "9d1117e07adeb041edae7a342acd4bb2e0a5c0c7fe9b6d30b72f81842f9cd687"
+    },
+    {
+      "path": "packages/services/src/paper/oms-book.ts",
+      "sha256": "475cc55517958d67b72f0a330160b29bc12b6701a579dcc5825a69c3dbd7531d"
+    },
+    {
+      "path": "packages/services/src/paper/oms.ts",
+      "sha256": "6b3dec576e7dc4634ad4b1562b1c51f9dedae07ab82c53a94f8a4e815a4bb701"
+    },
+    {
+      "path": "packages/services/src/paper/proposal-preview.ts",
+      "sha256": "0c46abe3e92bca21a29b290204b20471d9cd8c4f34dfb3d3e8e85a467a9c393f"
+    },
+    {
+      "path": "packages/services/src/paper/execution-service.ts",
+      "sha256": "ddeee8bcaa060e793559a0e28a6f69dba7da6ea253c54926544eeea91f84fa6c"
+    },
+    {
+      "path": "packages/services/src/paper/routing.ts",
+      "sha256": "1c1cd3c32bd3f07b95e383c4409e9b64cc6f4c54b82483a40fc4aeb6009ab581"
+    },
+    {
+      "path": "packages/services/src/paper/execution-remediation-shadow.ts",
+      "sha256": "189dd1ce75dba8ff8929640fe1be903f5a1ec24aff8171eb06d7da152b9f3edb"
+    },
+    {
+      "path": "packages/services/src/paper/parallel-paper-daily.ts",
+      "sha256": "f4ba395cdc13514ff8f0fafe6619db43e90b398a670617211216b0b6a10c3dcf"
+    },
+    {
+      "path": "packages/services/src/paper/parallel-paper-intraday.ts",
+      "sha256": "e412097b5121e6c23d1e230065cb1a2c84df395c2b17509b1610dd19c849c885"
+    },
+    {
+      "path": "packages/services/src/paper/parallel-paper-utils.ts",
+      "sha256": "49c35752ea9a65fe4acd726b7b9fcf3d7498b5fced2aaf2bf71f13730723e71f"
+    },
+    {
+      "path": "packages/storage/src/repositories/execution-authority.ts",
+      "sha256": "5efd62777911069a2569d563069e052fad8269ba0e3ddf80c6b8c8d771b0bdc3"
+    },
+    {
+      "path": "packages/storage/src/migrations/index.ts",
+      "sha256": "ae765d17f8c40e4b8a9b980238a49add1411073eb2701c83c64a1ef75a28b8c6"
+    }
+  ],
+  "observations": [
+    {
+      "capitalUsd": "50",
+      "tier": "micro",
+      "maxNewEntryFraction": "0.03",
+      "discretionaryFloorUsd": "25",
+      "candidateSleeveFraction": "0",
+      "maxEntryUsd": "1.5",
+      "entryMeetsDiscretionaryFloorBeforeCosts": false
+    },
+    {
+      "capitalUsd": "99.99",
+      "tier": "micro",
+      "maxNewEntryFraction": "0.03",
+      "discretionaryFloorUsd": "25",
+      "candidateSleeveFraction": "0",
+      "maxEntryUsd": "2.9997",
+      "entryMeetsDiscretionaryFloorBeforeCosts": false
+    },
+    {
+      "capitalUsd": "100",
+      "tier": "small",
+      "maxNewEntryFraction": "0.05",
+      "discretionaryFloorUsd": "25",
+      "candidateSleeveFraction": "0.04",
+      "maxEntryUsd": "5",
+      "entryMeetsDiscretionaryFloorBeforeCosts": false
+    },
+    {
+      "capitalUsd": "100.01",
+      "tier": "small",
+      "maxNewEntryFraction": "0.05",
+      "discretionaryFloorUsd": "25",
+      "candidateSleeveFraction": "0.04",
+      "maxEntryUsd": "5.000500000000001",
+      "entryMeetsDiscretionaryFloorBeforeCosts": false
+    },
+    {
+      "capitalUsd": "250",
+      "tier": "small",
+      "maxNewEntryFraction": "0.05",
+      "discretionaryFloorUsd": "25",
+      "candidateSleeveFraction": "0.04",
+      "maxEntryUsd": "12.5",
+      "entryMeetsDiscretionaryFloorBeforeCosts": false
+    },
+    {
+      "capitalUsd": "499.99",
+      "tier": "small",
+      "maxNewEntryFraction": "0.05",
+      "discretionaryFloorUsd": "25",
+      "candidateSleeveFraction": "0.04",
+      "maxEntryUsd": "24.9995",
+      "entryMeetsDiscretionaryFloorBeforeCosts": false
+    },
+    {
+      "capitalUsd": "500",
+      "tier": "small",
+      "maxNewEntryFraction": "0.05",
+      "discretionaryFloorUsd": "25",
+      "candidateSleeveFraction": "0.04",
+      "maxEntryUsd": "25",
+      "entryMeetsDiscretionaryFloorBeforeCosts": true
+    },
+    {
+      "capitalUsd": "500.01",
+      "tier": "small",
+      "maxNewEntryFraction": "0.05",
+      "discretionaryFloorUsd": "25",
+      "candidateSleeveFraction": "0.04",
+      "maxEntryUsd": "25.000500000000002",
+      "entryMeetsDiscretionaryFloorBeforeCosts": true
+    },
+    {
+      "capitalUsd": "999.99",
+      "tier": "small",
+      "maxNewEntryFraction": "0.05",
+      "discretionaryFloorUsd": "25",
+      "candidateSleeveFraction": "0.04",
+      "maxEntryUsd": "49.999500000000005",
+      "entryMeetsDiscretionaryFloorBeforeCosts": true
+    },
+    {
+      "capitalUsd": "1000",
+      "tier": "medium",
+      "maxNewEntryFraction": "0.08",
+      "discretionaryFloorUsd": "25",
+      "candidateSleeveFraction": "0.08",
+      "maxEntryUsd": "80",
+      "entryMeetsDiscretionaryFloorBeforeCosts": true
+    },
+    {
+      "capitalUsd": "1000.01",
+      "tier": "medium",
+      "maxNewEntryFraction": "0.08",
+      "discretionaryFloorUsd": "25",
+      "candidateSleeveFraction": "0.08",
+      "maxEntryUsd": "80.0008",
+      "entryMeetsDiscretionaryFloorBeforeCosts": true
+    },
+    {
+      "capitalUsd": "2500",
+      "tier": "medium",
+      "maxNewEntryFraction": "0.08",
+      "discretionaryFloorUsd": "25",
+      "candidateSleeveFraction": "0.08",
+      "maxEntryUsd": "200",
+      "entryMeetsDiscretionaryFloorBeforeCosts": true
+    },
+    {
+      "capitalUsd": "5000",
+      "tier": "medium",
+      "maxNewEntryFraction": "0.08",
+      "discretionaryFloorUsd": "25",
+      "candidateSleeveFraction": "0.08",
+      "maxEntryUsd": "400",
+      "entryMeetsDiscretionaryFloorBeforeCosts": true
+    },
+    {
+      "capitalUsd": "9999.99",
+      "tier": "medium",
+      "maxNewEntryFraction": "0.08",
+      "discretionaryFloorUsd": "25",
+      "candidateSleeveFraction": "0.08",
+      "maxEntryUsd": "799.9992",
+      "entryMeetsDiscretionaryFloorBeforeCosts": true
+    },
+    {
+      "capitalUsd": "10000",
+      "tier": "large",
+      "maxNewEntryFraction": "0.05",
+      "discretionaryFloorUsd": "50",
+      "candidateSleeveFraction": "0.1",
+      "maxEntryUsd": "500",
+      "entryMeetsDiscretionaryFloorBeforeCosts": true
+    },
+    {
+      "capitalUsd": "10000.01",
+      "tier": "large",
+      "maxNewEntryFraction": "0.05",
+      "discretionaryFloorUsd": "50",
+      "candidateSleeveFraction": "0.1",
+      "maxEntryUsd": "500.00050000000005",
+      "entryMeetsDiscretionaryFloorBeforeCosts": true
+    },
+    {
+      "capitalUsd": "100000",
+      "tier": "large",
+      "maxNewEntryFraction": "0.05",
+      "discretionaryFloorUsd": "50",
+      "candidateSleeveFraction": "0.1",
+      "maxEntryUsd": "5000",
+      "entryMeetsDiscretionaryFloorBeforeCosts": true
+    }
+  ],
+  "limitations": [
+    "Helper arithmetic is the existing Number-based policy; these are source observations, not exact venue feasibility.",
+    "No installed account, credentials, orders, studies or market returns were used.",
+    "Legacy dirty execution files remain separate from the curated P0/P1 commit."
+  ],
+  "documentation": [
+    {
+      "url": "https://docs.cdp.coinbase.com/api-reference/advanced-trade-api/rest-api/public/get-public-product",
+      "question": "Distinct minima/increments/tick and spot tradability semantics"
+    },
+    {
+      "url": "https://docs.cdp.coinbase.com/api-reference/advanced-trade-api/rest-api/accounts/get-account",
+      "question": "Available balance/hold/account membership fields"
+    },
+    {
+      "url": "https://docs.alpaca.markets/us/docs/crypto-trading",
+      "question": "Native asset precision and supported order forms"
+    },
+    {
+      "url": "https://alpaca.markets/support/can-i-margin-or-short-with-cryptocurrency",
+      "question": "Eligible crypto buying power and pending fills"
+    },
+    {
+      "url": "https://docs.alpaca.markets/us/docs/crypto-fees",
+      "question": "Received-asset fee denomination and delayed posting"
+    }
+  ],
+  "p01CommittedBase": "0c3d36c10d2ea0b69a010c828ba903acca2f0c5c",
+  "inspectedWorkingTreePreserved": true
+}
