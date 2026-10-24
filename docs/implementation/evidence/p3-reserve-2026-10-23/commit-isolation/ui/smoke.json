@@ -1,0 +1,132 @@
+{
+  "synthetic": true,
+  "accountAccess": false,
+  "checks": [
+    {
+      "name": "desktop-dark: observed cash survives incomplete performance",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-dark: exact hypothetical cents and retained capital",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-dark: keyboard help fits viewport",
+      "passed": true,
+      "detail": "{\"left\":570,\"right\":870,\"top\":369.5,\"bottom\":491.5,\"width\":1440,\"height\":861}"
+    },
+    {
+      "name": "desktop-dark: help returns keyboard focus",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-dark: editing invalidates the previous result",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-light: observed cash survives incomplete performance",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-light: exact hypothetical cents and retained capital",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-light: keyboard help fits viewport",
+      "passed": true,
+      "detail": "{\"left\":170,\"right\":470,\"top\":369.5,\"bottom\":491.5,\"width\":640,\"height\":861}"
+    },
+    {
+      "name": "narrow-light: help returns keyboard focus",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-light: editing invalidates the previous result",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast-zoom: observed cash survives incomplete performance",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast-zoom: exact hypothetical cents and retained capital",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast-zoom: keyboard help fits viewport",
+      "passed": true,
+      "detail": "{\"left\":170,\"right\":470,\"top\":154.25,\"bottom\":276.25,\"width\":640,\"height\":430}"
+    },
+    {
+      "name": "contrast-zoom: help returns keyboard focus",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast-zoom: editing invalidates the previous result",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "preview crosses production preload without authority",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "read routes leave durable capital and financial evidence unchanged",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "save records only preview configuration",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "inspection preserves unavailable account evidence",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "settings and inspection do not write financial state",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "inspection retry returns original identity",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "no financial action controls",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "live authority remains disabled",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "no renderer component errors",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "rendererErrors": [],
+  "browserNotices": [
+    "The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.",
+    "The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.",
+    "The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element."
+  ]
+}

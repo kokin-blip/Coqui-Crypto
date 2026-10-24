@@ -1,0 +1,11 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/profit-reserve-ui.test.ts (10 tests) 486ms
+ ✓ tests/profit-reserve-state.test.ts (5 tests) 16ms
+
+ Test Files  2 passed (2)
+      Tests  15 passed (15)
+   Start at  18:16:14
+   Duration  2.27s (transform 1.20s, setup 0ms, import 1.64s, tests 502ms, environment 0ms)
+

@@ -1,0 +1,28 @@
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: 'b766cd2fb81187c45ee552b1c03c2d259e053b3fa78db758a1bd145394160853'
+}
+PASS desktop-dark: observed cash survives incomplete performance 
+PASS desktop-dark: exact hypothetical cents and retained capital 
+PASS desktop-dark: keyboard help fits viewport {"left":570,"right":870,"top":369.5,"bottom":491.5,"width":1440,"height":861}
+PASS desktop-dark: help returns keyboard focus 
+PASS desktop-dark: editing invalidates the previous result 
+PASS narrow-light: observed cash survives incomplete performance 
+PASS narrow-light: exact hypothetical cents and retained capital 
+PASS narrow-light: keyboard help fits viewport {"left":170,"right":470,"top":369.5,"bottom":491.5,"width":640,"height":861}
+PASS narrow-light: help returns keyboard focus 
+PASS narrow-light: editing invalidates the previous result 
+PASS contrast-zoom: observed cash survives incomplete performance 
+PASS contrast-zoom: exact hypothetical cents and retained capital 
+PASS contrast-zoom: keyboard help fits viewport {"left":170,"right":470,"top":154.25,"bottom":276.25,"width":640,"height":430}
+PASS contrast-zoom: help returns keyboard focus 
+PASS contrast-zoom: editing invalidates the previous result 
+PASS preview crosses production preload without authority 
+PASS read routes leave durable capital and financial evidence unchanged 
+PASS save records only preview configuration 
+PASS inspection preserves unavailable account evidence 
+PASS settings and inspection do not write financial state 
+PASS inspection retry returns original identity 
+PASS no financial action controls 
+PASS live authority remains disabled 
+PASS no renderer component errors 

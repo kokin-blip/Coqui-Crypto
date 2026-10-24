@@ -281,7 +281,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "827adbf34626b906f5a295a8d31bfeb968b45860c6b53017ef24aa0119f7443e"
+        "e65c59b6b65ecf19d7b002457447977a2cd2cf5a2eb5b4b72721c4f09bfe10a2"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -289,7 +289,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "d7c7064adc54c07e63ea4d54d1003c5db913437801cde07f9cfa7e331c8a9219"
+        "43613c28f2ed18411eb5f337dc9eaa64eeb054d291b3081ac5d9b6baace475a8"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -406,6 +406,10 @@
       [
         "packages/contracts/src/schemas/portfolio.ts",
         "4cf94241a8416465e4692a30a47807c20bf0a25f7ed90de69f70688b1795b522"
+      ],
+      [
+        "packages/contracts/src/schemas/profit-reserve.ts",
+        "686bc4079d95caad58649f88229f9b6c6efdb22d65e8d8bb854ec9f330c5ed3f"
       ],
       [
         "packages/contracts/src/schemas/provenance.ts",
@@ -681,7 +685,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "51ab75972a1ebaeb590122390bb3a01cc2b19a7539a96a3ec89374cfc4b3ec47"
+        "6ce047a8ace746894142109e1e717ea67049454fb1a7b989daf0cd8568b2478f"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -700,8 +704,24 @@
         "b1424f3e37951863c6a1f177c7163d11411069ee46febd7d72a4428feb46b0f0"
       ],
       [
+        "packages/core/src/portfolio/profit-reserve-eligibility.ts",
+        "535b3934a2b98ccdda535ffbf310d6ef18f594e4b6ac81b343570e7ed276a7bd"
+      ],
+      [
+        "packages/core/src/portfolio/profit-reserve-state.ts",
+        "9a05caf2d21ea8052d89adb79b55aadd97052e3bf8b5e3d411795eb8be701cf9"
+      ],
+      [
+        "packages/core/src/portfolio/profit-reserve.ts",
+        "a896b9cc83c8e8c913b7b24bb383a640275e0a05f0d55edaaf508e885cd5491d"
+      ],
+      [
         "packages/core/src/portfolio/rebalance.ts",
         "ab0717a5fc8591b96bd06e5e39b517380bf27dfb2822abb5ef8d9d5ae46cd8ef"
+      ],
+      [
+        "packages/core/src/portfolio/reserve-capital-witness.ts",
+        "75b6e0fb895d195b9c0ef08c7b11040f4b0c0ff55bc306fb2cf5485bde01f690"
       ],
       [
         "packages/core/src/portfolio/risk-budget.ts",
@@ -1497,11 +1517,31 @@
       ],
       [
         "packages/services/src/portfolio/index.ts",
-        "c43827e58f931a33b8ca58935455b0b35ef56a6950acbe59980da403458d8dca"
+        "f07059d4411dab4fc259c197e612c7fd06dd1cb2e454523c3a2987b383a0427b"
       ],
       [
         "packages/services/src/portfolio/ledger.ts",
         "9658693466db53b960ce8e0119809f11cebc09233ffb4a02e872bac2d6c2b87e"
+      ],
+      [
+        "packages/services/src/portfolio/profit-reserve-consequences.ts",
+        "96c7a93b0d4788671bc8df1bfacb38fd92476bf67c8b575c696c7eea0ad3d0f0"
+      ],
+      [
+        "packages/services/src/portfolio/profit-reserve-eligibility.ts",
+        "cce1d9bb9cc26f1f434c8f4a0f537df8aa2f43e81aea8c57039630f1a3efac3d"
+      ],
+      [
+        "packages/services/src/portfolio/profit-reserve-scenario.ts",
+        "154f7197a533328c374b3f4566e5621e06f2cee9db4ebc13e45f4316aa0c369c"
+      ],
+      [
+        "packages/services/src/portfolio/profit-reserve-state.ts",
+        "d94cae65b78c06dcf3890f0d7919370006d52b79fe88bcd0e6f6df516243b408"
+      ],
+      [
+        "packages/services/src/portfolio/profit-reserve.ts",
+        "eec5d5d7b709b72c99235c5bb680d7a4e4b131a202feef77df4d7ff772c68125"
       ],
       [
         "packages/services/src/portfolio/read-models.ts",
@@ -1685,7 +1725,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "083c6837c8f0b300a4351efdeace578c5c496f03d3042690b8f7b2313fa1cdb6"
+        "d75eec060309ef5b0c88a1df110fed1e3da86ba21b35fee2807689e9af9911b0"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -1984,6 +2024,10 @@
         "1e63ecd84ba121765dda224634e240cd29dde6cd2a2157b0fb8800d54f513ff0"
       ],
       [
+        "packages/storage/src/migrations/v98.ts",
+        "5acfdbb22d52ac0c18695af27513bd1e964618464c4702555536601ea40ebc2d"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -2013,7 +2057,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
-        "ac12b429d4890a28f1e6d4574bdc845769300753611e7ad82a36c0ec48e3820e"
+        "e300ff67f87bc8764e82763f6d8a1ad38300fbfbfe24ce46d043c1c62a986105"
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
@@ -2169,7 +2213,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "2e0572e1ed93608c237b8139bcfba6f2f1b946ee03afc2846ecd5c31c981dc80"
+        "824ae127be18441c8472d516939293d1b28638f1603a3d4ce7f252f3f9946a2f"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -2285,7 +2329,11 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "f30609cddcd2d7d14def24a2d506cd95794707279d3819f3e40b832a7ab4054a"
+        "19ee86f12646a1a5a6b2b10cf892240d5289b58cde714efdb7164082b36e34a9"
+      ],
+      [
+        "packages/storage/src/repositories/profit-reserve.ts",
+        "7bff9407fd4265c30e6acccce4969740789bb22c13980e1aeae84c4562dc8a0c"
       ],
       [
         "packages/storage/src/repositories/range-rotation.ts",
@@ -2380,7 +2428,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "c4540a99868cada132b2281b7395c9a1cf9b047bd244c44c9d94fedf1d146814"
+    "hash": "3223eb4c602ad83df6b0f753ffa283d3fee7525fb1be38a1f302210d2e8bec38"
   },
   "wider-breakout-v1": {
     "version": 1,
@@ -2664,7 +2712,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "827adbf34626b906f5a295a8d31bfeb968b45860c6b53017ef24aa0119f7443e"
+        "e65c59b6b65ecf19d7b002457447977a2cd2cf5a2eb5b4b72721c4f09bfe10a2"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -2672,7 +2720,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "d7c7064adc54c07e63ea4d54d1003c5db913437801cde07f9cfa7e331c8a9219"
+        "43613c28f2ed18411eb5f337dc9eaa64eeb054d291b3081ac5d9b6baace475a8"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -2789,6 +2837,10 @@
       [
         "packages/contracts/src/schemas/portfolio.ts",
         "4cf94241a8416465e4692a30a47807c20bf0a25f7ed90de69f70688b1795b522"
+      ],
+      [
+        "packages/contracts/src/schemas/profit-reserve.ts",
+        "686bc4079d95caad58649f88229f9b6c6efdb22d65e8d8bb854ec9f330c5ed3f"
       ],
       [
         "packages/contracts/src/schemas/provenance.ts",
@@ -3064,7 +3116,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "51ab75972a1ebaeb590122390bb3a01cc2b19a7539a96a3ec89374cfc4b3ec47"
+        "6ce047a8ace746894142109e1e717ea67049454fb1a7b989daf0cd8568b2478f"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -3083,8 +3135,24 @@
         "b1424f3e37951863c6a1f177c7163d11411069ee46febd7d72a4428feb46b0f0"
       ],
       [
+        "packages/core/src/portfolio/profit-reserve-eligibility.ts",
+        "535b3934a2b98ccdda535ffbf310d6ef18f594e4b6ac81b343570e7ed276a7bd"
+      ],
+      [
+        "packages/core/src/portfolio/profit-reserve-state.ts",
+        "9a05caf2d21ea8052d89adb79b55aadd97052e3bf8b5e3d411795eb8be701cf9"
+      ],
+      [
+        "packages/core/src/portfolio/profit-reserve.ts",
+        "a896b9cc83c8e8c913b7b24bb383a640275e0a05f0d55edaaf508e885cd5491d"
+      ],
+      [
         "packages/core/src/portfolio/rebalance.ts",
         "ab0717a5fc8591b96bd06e5e39b517380bf27dfb2822abb5ef8d9d5ae46cd8ef"
+      ],
+      [
+        "packages/core/src/portfolio/reserve-capital-witness.ts",
+        "75b6e0fb895d195b9c0ef08c7b11040f4b0c0ff55bc306fb2cf5485bde01f690"
       ],
       [
         "packages/core/src/portfolio/risk-budget.ts",
@@ -3880,11 +3948,31 @@
       ],
       [
         "packages/services/src/portfolio/index.ts",
-        "c43827e58f931a33b8ca58935455b0b35ef56a6950acbe59980da403458d8dca"
+        "f07059d4411dab4fc259c197e612c7fd06dd1cb2e454523c3a2987b383a0427b"
       ],
       [
         "packages/services/src/portfolio/ledger.ts",
         "9658693466db53b960ce8e0119809f11cebc09233ffb4a02e872bac2d6c2b87e"
+      ],
+      [
+        "packages/services/src/portfolio/profit-reserve-consequences.ts",
+        "96c7a93b0d4788671bc8df1bfacb38fd92476bf67c8b575c696c7eea0ad3d0f0"
+      ],
+      [
+        "packages/services/src/portfolio/profit-reserve-eligibility.ts",
+        "cce1d9bb9cc26f1f434c8f4a0f537df8aa2f43e81aea8c57039630f1a3efac3d"
+      ],
+      [
+        "packages/services/src/portfolio/profit-reserve-scenario.ts",
+        "154f7197a533328c374b3f4566e5621e06f2cee9db4ebc13e45f4316aa0c369c"
+      ],
+      [
+        "packages/services/src/portfolio/profit-reserve-state.ts",
+        "d94cae65b78c06dcf3890f0d7919370006d52b79fe88bcd0e6f6df516243b408"
+      ],
+      [
+        "packages/services/src/portfolio/profit-reserve.ts",
+        "eec5d5d7b709b72c99235c5bb680d7a4e4b131a202feef77df4d7ff772c68125"
       ],
       [
         "packages/services/src/portfolio/read-models.ts",
@@ -4068,7 +4156,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "083c6837c8f0b300a4351efdeace578c5c496f03d3042690b8f7b2313fa1cdb6"
+        "d75eec060309ef5b0c88a1df110fed1e3da86ba21b35fee2807689e9af9911b0"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -4367,6 +4455,10 @@
         "1e63ecd84ba121765dda224634e240cd29dde6cd2a2157b0fb8800d54f513ff0"
       ],
       [
+        "packages/storage/src/migrations/v98.ts",
+        "5acfdbb22d52ac0c18695af27513bd1e964618464c4702555536601ea40ebc2d"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -4396,7 +4488,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
-        "ac12b429d4890a28f1e6d4574bdc845769300753611e7ad82a36c0ec48e3820e"
+        "e300ff67f87bc8764e82763f6d8a1ad38300fbfbfe24ce46d043c1c62a986105"
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
@@ -4552,7 +4644,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "2e0572e1ed93608c237b8139bcfba6f2f1b946ee03afc2846ecd5c31c981dc80"
+        "824ae127be18441c8472d516939293d1b28638f1603a3d4ce7f252f3f9946a2f"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -4668,7 +4760,11 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "f30609cddcd2d7d14def24a2d506cd95794707279d3819f3e40b832a7ab4054a"
+        "19ee86f12646a1a5a6b2b10cf892240d5289b58cde714efdb7164082b36e34a9"
+      ],
+      [
+        "packages/storage/src/repositories/profit-reserve.ts",
+        "7bff9407fd4265c30e6acccce4969740789bb22c13980e1aeae84c4562dc8a0c"
       ],
       [
         "packages/storage/src/repositories/range-rotation.ts",
@@ -4763,7 +4859,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "f2badf590a331e171164c2b6334f59d683915bb49d589c80830d1265b3d8d3f4"
+    "hash": "8bdba37ffaaea1b5a338d27d8ff47e0c1a5b1c95f31a262bad899a956f01300f"
   },
   "wider-range-rotation-v1": {
     "version": 1,
@@ -5047,7 +5143,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "827adbf34626b906f5a295a8d31bfeb968b45860c6b53017ef24aa0119f7443e"
+        "e65c59b6b65ecf19d7b002457447977a2cd2cf5a2eb5b4b72721c4f09bfe10a2"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -5055,7 +5151,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "d7c7064adc54c07e63ea4d54d1003c5db913437801cde07f9cfa7e331c8a9219"
+        "43613c28f2ed18411eb5f337dc9eaa64eeb054d291b3081ac5d9b6baace475a8"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -5172,6 +5268,10 @@
       [
         "packages/contracts/src/schemas/portfolio.ts",
         "4cf94241a8416465e4692a30a47807c20bf0a25f7ed90de69f70688b1795b522"
+      ],
+      [
+        "packages/contracts/src/schemas/profit-reserve.ts",
+        "686bc4079d95caad58649f88229f9b6c6efdb22d65e8d8bb854ec9f330c5ed3f"
       ],
       [
         "packages/contracts/src/schemas/provenance.ts",
@@ -5447,7 +5547,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "51ab75972a1ebaeb590122390bb3a01cc2b19a7539a96a3ec89374cfc4b3ec47"
+        "6ce047a8ace746894142109e1e717ea67049454fb1a7b989daf0cd8568b2478f"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -5466,8 +5566,24 @@
         "b1424f3e37951863c6a1f177c7163d11411069ee46febd7d72a4428feb46b0f0"
       ],
       [
+        "packages/core/src/portfolio/profit-reserve-eligibility.ts",
+        "535b3934a2b98ccdda535ffbf310d6ef18f594e4b6ac81b343570e7ed276a7bd"
+      ],
+      [
+        "packages/core/src/portfolio/profit-reserve-state.ts",
+        "9a05caf2d21ea8052d89adb79b55aadd97052e3bf8b5e3d411795eb8be701cf9"
+      ],
+      [
+        "packages/core/src/portfolio/profit-reserve.ts",
+        "a896b9cc83c8e8c913b7b24bb383a640275e0a05f0d55edaaf508e885cd5491d"
+      ],
+      [
         "packages/core/src/portfolio/rebalance.ts",
         "ab0717a5fc8591b96bd06e5e39b517380bf27dfb2822abb5ef8d9d5ae46cd8ef"
+      ],
+      [
+        "packages/core/src/portfolio/reserve-capital-witness.ts",
+        "75b6e0fb895d195b9c0ef08c7b11040f4b0c0ff55bc306fb2cf5485bde01f690"
       ],
       [
         "packages/core/src/portfolio/risk-budget.ts",
@@ -6263,11 +6379,31 @@
       ],
       [
         "packages/services/src/portfolio/index.ts",
-        "c43827e58f931a33b8ca58935455b0b35ef56a6950acbe59980da403458d8dca"
+        "f07059d4411dab4fc259c197e612c7fd06dd1cb2e454523c3a2987b383a0427b"
       ],
       [
         "packages/services/src/portfolio/ledger.ts",
         "9658693466db53b960ce8e0119809f11cebc09233ffb4a02e872bac2d6c2b87e"
+      ],
+      [
+        "packages/services/src/portfolio/profit-reserve-consequences.ts",
+        "96c7a93b0d4788671bc8df1bfacb38fd92476bf67c8b575c696c7eea0ad3d0f0"
+      ],
+      [
+        "packages/services/src/portfolio/profit-reserve-eligibility.ts",
+        "cce1d9bb9cc26f1f434c8f4a0f537df8aa2f43e81aea8c57039630f1a3efac3d"
+      ],
+      [
+        "packages/services/src/portfolio/profit-reserve-scenario.ts",
+        "154f7197a533328c374b3f4566e5621e06f2cee9db4ebc13e45f4316aa0c369c"
+      ],
+      [
+        "packages/services/src/portfolio/profit-reserve-state.ts",
+        "d94cae65b78c06dcf3890f0d7919370006d52b79fe88bcd0e6f6df516243b408"
+      ],
+      [
+        "packages/services/src/portfolio/profit-reserve.ts",
+        "eec5d5d7b709b72c99235c5bb680d7a4e4b131a202feef77df4d7ff772c68125"
       ],
       [
         "packages/services/src/portfolio/read-models.ts",
@@ -6451,7 +6587,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "083c6837c8f0b300a4351efdeace578c5c496f03d3042690b8f7b2313fa1cdb6"
+        "d75eec060309ef5b0c88a1df110fed1e3da86ba21b35fee2807689e9af9911b0"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -6750,6 +6886,10 @@
         "1e63ecd84ba121765dda224634e240cd29dde6cd2a2157b0fb8800d54f513ff0"
       ],
       [
+        "packages/storage/src/migrations/v98.ts",
+        "5acfdbb22d52ac0c18695af27513bd1e964618464c4702555536601ea40ebc2d"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -6779,7 +6919,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
-        "ac12b429d4890a28f1e6d4574bdc845769300753611e7ad82a36c0ec48e3820e"
+        "e300ff67f87bc8764e82763f6d8a1ad38300fbfbfe24ce46d043c1c62a986105"
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
@@ -6935,7 +7075,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "2e0572e1ed93608c237b8139bcfba6f2f1b946ee03afc2846ecd5c31c981dc80"
+        "824ae127be18441c8472d516939293d1b28638f1603a3d4ce7f252f3f9946a2f"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -7051,7 +7191,11 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "f30609cddcd2d7d14def24a2d506cd95794707279d3819f3e40b832a7ab4054a"
+        "19ee86f12646a1a5a6b2b10cf892240d5289b58cde714efdb7164082b36e34a9"
+      ],
+      [
+        "packages/storage/src/repositories/profit-reserve.ts",
+        "7bff9407fd4265c30e6acccce4969740789bb22c13980e1aeae84c4562dc8a0c"
       ],
       [
         "packages/storage/src/repositories/range-rotation.ts",
@@ -7146,7 +7290,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "4d77f1b71ddbd821b0a4c5e2fbaf6aea49a10b79d77ad651cdfeccabdc5b0ee6"
+    "hash": "ff55727dd644ea6571112de616a89f4b29b4ddab80728098069d2eeacc881717"
   },
   "paper-market-selector-v1": {
     "version": 1,
@@ -7430,7 +7574,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "827adbf34626b906f5a295a8d31bfeb968b45860c6b53017ef24aa0119f7443e"
+        "e65c59b6b65ecf19d7b002457447977a2cd2cf5a2eb5b4b72721c4f09bfe10a2"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -7438,7 +7582,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "d7c7064adc54c07e63ea4d54d1003c5db913437801cde07f9cfa7e331c8a9219"
+        "43613c28f2ed18411eb5f337dc9eaa64eeb054d291b3081ac5d9b6baace475a8"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -7555,6 +7699,10 @@
       [
         "packages/contracts/src/schemas/portfolio.ts",
         "4cf94241a8416465e4692a30a47807c20bf0a25f7ed90de69f70688b1795b522"
+      ],
+      [
+        "packages/contracts/src/schemas/profit-reserve.ts",
+        "686bc4079d95caad58649f88229f9b6c6efdb22d65e8d8bb854ec9f330c5ed3f"
       ],
       [
         "packages/contracts/src/schemas/provenance.ts",
@@ -7830,7 +7978,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "51ab75972a1ebaeb590122390bb3a01cc2b19a7539a96a3ec89374cfc4b3ec47"
+        "6ce047a8ace746894142109e1e717ea67049454fb1a7b989daf0cd8568b2478f"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -7849,8 +7997,24 @@
         "b1424f3e37951863c6a1f177c7163d11411069ee46febd7d72a4428feb46b0f0"
       ],
       [
+        "packages/core/src/portfolio/profit-reserve-eligibility.ts",
+        "535b3934a2b98ccdda535ffbf310d6ef18f594e4b6ac81b343570e7ed276a7bd"
+      ],
+      [
+        "packages/core/src/portfolio/profit-reserve-state.ts",
+        "9a05caf2d21ea8052d89adb79b55aadd97052e3bf8b5e3d411795eb8be701cf9"
+      ],
+      [
+        "packages/core/src/portfolio/profit-reserve.ts",
+        "a896b9cc83c8e8c913b7b24bb383a640275e0a05f0d55edaaf508e885cd5491d"
+      ],
+      [
         "packages/core/src/portfolio/rebalance.ts",
         "ab0717a5fc8591b96bd06e5e39b517380bf27dfb2822abb5ef8d9d5ae46cd8ef"
+      ],
+      [
+        "packages/core/src/portfolio/reserve-capital-witness.ts",
+        "75b6e0fb895d195b9c0ef08c7b11040f4b0c0ff55bc306fb2cf5485bde01f690"
       ],
       [
         "packages/core/src/portfolio/risk-budget.ts",
@@ -8646,11 +8810,31 @@
       ],
       [
         "packages/services/src/portfolio/index.ts",
-        "c43827e58f931a33b8ca58935455b0b35ef56a6950acbe59980da403458d8dca"
+        "f07059d4411dab4fc259c197e612c7fd06dd1cb2e454523c3a2987b383a0427b"
       ],
       [
         "packages/services/src/portfolio/ledger.ts",
         "9658693466db53b960ce8e0119809f11cebc09233ffb4a02e872bac2d6c2b87e"
+      ],
+      [
+        "packages/services/src/portfolio/profit-reserve-consequences.ts",
+        "96c7a93b0d4788671bc8df1bfacb38fd92476bf67c8b575c696c7eea0ad3d0f0"
+      ],
+      [
+        "packages/services/src/portfolio/profit-reserve-eligibility.ts",
+        "cce1d9bb9cc26f1f434c8f4a0f537df8aa2f43e81aea8c57039630f1a3efac3d"
+      ],
+      [
+        "packages/services/src/portfolio/profit-reserve-scenario.ts",
+        "154f7197a533328c374b3f4566e5621e06f2cee9db4ebc13e45f4316aa0c369c"
+      ],
+      [
+        "packages/services/src/portfolio/profit-reserve-state.ts",
+        "d94cae65b78c06dcf3890f0d7919370006d52b79fe88bcd0e6f6df516243b408"
+      ],
+      [
+        "packages/services/src/portfolio/profit-reserve.ts",
+        "eec5d5d7b709b72c99235c5bb680d7a4e4b131a202feef77df4d7ff772c68125"
       ],
       [
         "packages/services/src/portfolio/read-models.ts",
@@ -8834,7 +9018,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "083c6837c8f0b300a4351efdeace578c5c496f03d3042690b8f7b2313fa1cdb6"
+        "d75eec060309ef5b0c88a1df110fed1e3da86ba21b35fee2807689e9af9911b0"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -9133,6 +9317,10 @@
         "1e63ecd84ba121765dda224634e240cd29dde6cd2a2157b0fb8800d54f513ff0"
       ],
       [
+        "packages/storage/src/migrations/v98.ts",
+        "5acfdbb22d52ac0c18695af27513bd1e964618464c4702555536601ea40ebc2d"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -9162,7 +9350,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
-        "ac12b429d4890a28f1e6d4574bdc845769300753611e7ad82a36c0ec48e3820e"
+        "e300ff67f87bc8764e82763f6d8a1ad38300fbfbfe24ce46d043c1c62a986105"
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
@@ -9318,7 +9506,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "2e0572e1ed93608c237b8139bcfba6f2f1b946ee03afc2846ecd5c31c981dc80"
+        "824ae127be18441c8472d516939293d1b28638f1603a3d4ce7f252f3f9946a2f"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -9434,7 +9622,11 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "f30609cddcd2d7d14def24a2d506cd95794707279d3819f3e40b832a7ab4054a"
+        "19ee86f12646a1a5a6b2b10cf892240d5289b58cde714efdb7164082b36e34a9"
+      ],
+      [
+        "packages/storage/src/repositories/profit-reserve.ts",
+        "7bff9407fd4265c30e6acccce4969740789bb22c13980e1aeae84c4562dc8a0c"
       ],
       [
         "packages/storage/src/repositories/range-rotation.ts",
@@ -9529,7 +9721,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "da40c883ac18a119a4a22e388657d3acf7ae5fc5f91c4fb76f86cc13d614c25c"
+    "hash": "8c22af8f1d0bd6b24b96be2a6c7d34079936ebfbef12a10377c72f3e6dc0420a"
   },
   "trendvol-hourly-execution-v1": {
     "version": 1,
@@ -9801,7 +9993,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "827adbf34626b906f5a295a8d31bfeb968b45860c6b53017ef24aa0119f7443e"
+        "e65c59b6b65ecf19d7b002457447977a2cd2cf5a2eb5b4b72721c4f09bfe10a2"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -9809,7 +10001,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "d7c7064adc54c07e63ea4d54d1003c5db913437801cde07f9cfa7e331c8a9219"
+        "43613c28f2ed18411eb5f337dc9eaa64eeb054d291b3081ac5d9b6baace475a8"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -9926,6 +10118,10 @@
       [
         "packages/contracts/src/schemas/portfolio.ts",
         "4cf94241a8416465e4692a30a47807c20bf0a25f7ed90de69f70688b1795b522"
+      ],
+      [
+        "packages/contracts/src/schemas/profit-reserve.ts",
+        "686bc4079d95caad58649f88229f9b6c6efdb22d65e8d8bb854ec9f330c5ed3f"
       ],
       [
         "packages/contracts/src/schemas/provenance.ts",
@@ -10201,7 +10397,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "51ab75972a1ebaeb590122390bb3a01cc2b19a7539a96a3ec89374cfc4b3ec47"
+        "6ce047a8ace746894142109e1e717ea67049454fb1a7b989daf0cd8568b2478f"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -10220,8 +10416,24 @@
         "b1424f3e37951863c6a1f177c7163d11411069ee46febd7d72a4428feb46b0f0"
       ],
       [
+        "packages/core/src/portfolio/profit-reserve-eligibility.ts",
+        "535b3934a2b98ccdda535ffbf310d6ef18f594e4b6ac81b343570e7ed276a7bd"
+      ],
+      [
+        "packages/core/src/portfolio/profit-reserve-state.ts",
+        "9a05caf2d21ea8052d89adb79b55aadd97052e3bf8b5e3d411795eb8be701cf9"
+      ],
+      [
+        "packages/core/src/portfolio/profit-reserve.ts",
+        "a896b9cc83c8e8c913b7b24bb383a640275e0a05f0d55edaaf508e885cd5491d"
+      ],
+      [
         "packages/core/src/portfolio/rebalance.ts",
         "ab0717a5fc8591b96bd06e5e39b517380bf27dfb2822abb5ef8d9d5ae46cd8ef"
+      ],
+      [
+        "packages/core/src/portfolio/reserve-capital-witness.ts",
+        "75b6e0fb895d195b9c0ef08c7b11040f4b0c0ff55bc306fb2cf5485bde01f690"
       ],
       [
         "packages/core/src/portfolio/risk-budget.ts",
@@ -10581,7 +10793,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "083c6837c8f0b300a4351efdeace578c5c496f03d3042690b8f7b2313fa1cdb6"
+        "d75eec060309ef5b0c88a1df110fed1e3da86ba21b35fee2807689e9af9911b0"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -10880,6 +11092,10 @@
         "1e63ecd84ba121765dda224634e240cd29dde6cd2a2157b0fb8800d54f513ff0"
       ],
       [
+        "packages/storage/src/migrations/v98.ts",
+        "5acfdbb22d52ac0c18695af27513bd1e964618464c4702555536601ea40ebc2d"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -10909,7 +11125,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
-        "ac12b429d4890a28f1e6d4574bdc845769300753611e7ad82a36c0ec48e3820e"
+        "e300ff67f87bc8764e82763f6d8a1ad38300fbfbfe24ce46d043c1c62a986105"
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
@@ -11065,7 +11281,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "2e0572e1ed93608c237b8139bcfba6f2f1b946ee03afc2846ecd5c31c981dc80"
+        "824ae127be18441c8472d516939293d1b28638f1603a3d4ce7f252f3f9946a2f"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -11181,7 +11397,11 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "f30609cddcd2d7d14def24a2d506cd95794707279d3819f3e40b832a7ab4054a"
+        "19ee86f12646a1a5a6b2b10cf892240d5289b58cde714efdb7164082b36e34a9"
+      ],
+      [
+        "packages/storage/src/repositories/profit-reserve.ts",
+        "7bff9407fd4265c30e6acccce4969740789bb22c13980e1aeae84c4562dc8a0c"
       ],
       [
         "packages/storage/src/repositories/range-rotation.ts",
@@ -11276,7 +11496,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "9b77d943755c1128c5209a47af2e6961d646d7a5a843356c326d4bc9c2120372"
+    "hash": "b766cd2fb81187c45ee552b1c03c2d259e053b3fa78db758a1bd145394160853"
   },
   "trendvol-execution-remediation-v1": {
     "version": 1,
@@ -11548,7 +11768,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "827adbf34626b906f5a295a8d31bfeb968b45860c6b53017ef24aa0119f7443e"
+        "e65c59b6b65ecf19d7b002457447977a2cd2cf5a2eb5b4b72721c4f09bfe10a2"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -11556,7 +11776,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "d7c7064adc54c07e63ea4d54d1003c5db913437801cde07f9cfa7e331c8a9219"
+        "43613c28f2ed18411eb5f337dc9eaa64eeb054d291b3081ac5d9b6baace475a8"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -11673,6 +11893,10 @@
       [
         "packages/contracts/src/schemas/portfolio.ts",
         "4cf94241a8416465e4692a30a47807c20bf0a25f7ed90de69f70688b1795b522"
+      ],
+      [
+        "packages/contracts/src/schemas/profit-reserve.ts",
+        "686bc4079d95caad58649f88229f9b6c6efdb22d65e8d8bb854ec9f330c5ed3f"
       ],
       [
         "packages/contracts/src/schemas/provenance.ts",
@@ -11948,7 +12172,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "51ab75972a1ebaeb590122390bb3a01cc2b19a7539a96a3ec89374cfc4b3ec47"
+        "6ce047a8ace746894142109e1e717ea67049454fb1a7b989daf0cd8568b2478f"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -11967,8 +12191,24 @@
         "b1424f3e37951863c6a1f177c7163d11411069ee46febd7d72a4428feb46b0f0"
       ],
       [
+        "packages/core/src/portfolio/profit-reserve-eligibility.ts",
+        "535b3934a2b98ccdda535ffbf310d6ef18f594e4b6ac81b343570e7ed276a7bd"
+      ],
+      [
+        "packages/core/src/portfolio/profit-reserve-state.ts",
+        "9a05caf2d21ea8052d89adb79b55aadd97052e3bf8b5e3d411795eb8be701cf9"
+      ],
+      [
+        "packages/core/src/portfolio/profit-reserve.ts",
+        "a896b9cc83c8e8c913b7b24bb383a640275e0a05f0d55edaaf508e885cd5491d"
+      ],
+      [
         "packages/core/src/portfolio/rebalance.ts",
         "ab0717a5fc8591b96bd06e5e39b517380bf27dfb2822abb5ef8d9d5ae46cd8ef"
+      ],
+      [
+        "packages/core/src/portfolio/reserve-capital-witness.ts",
+        "75b6e0fb895d195b9c0ef08c7b11040f4b0c0ff55bc306fb2cf5485bde01f690"
       ],
       [
         "packages/core/src/portfolio/risk-budget.ts",
@@ -12320,7 +12560,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "083c6837c8f0b300a4351efdeace578c5c496f03d3042690b8f7b2313fa1cdb6"
+        "d75eec060309ef5b0c88a1df110fed1e3da86ba21b35fee2807689e9af9911b0"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -12619,6 +12859,10 @@
         "1e63ecd84ba121765dda224634e240cd29dde6cd2a2157b0fb8800d54f513ff0"
       ],
       [
+        "packages/storage/src/migrations/v98.ts",
+        "5acfdbb22d52ac0c18695af27513bd1e964618464c4702555536601ea40ebc2d"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -12648,7 +12892,7 @@
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
-        "ac12b429d4890a28f1e6d4574bdc845769300753611e7ad82a36c0ec48e3820e"
+        "e300ff67f87bc8764e82763f6d8a1ad38300fbfbfe24ce46d043c1c62a986105"
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
@@ -12804,7 +13048,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "2e0572e1ed93608c237b8139bcfba6f2f1b946ee03afc2846ecd5c31c981dc80"
+        "824ae127be18441c8472d516939293d1b28638f1603a3d4ce7f252f3f9946a2f"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -12920,7 +13164,11 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "f30609cddcd2d7d14def24a2d506cd95794707279d3819f3e40b832a7ab4054a"
+        "19ee86f12646a1a5a6b2b10cf892240d5289b58cde714efdb7164082b36e34a9"
+      ],
+      [
+        "packages/storage/src/repositories/profit-reserve.ts",
+        "7bff9407fd4265c30e6acccce4969740789bb22c13980e1aeae84c4562dc8a0c"
       ],
       [
         "packages/storage/src/repositories/range-rotation.ts",
@@ -13015,6 +13263,6 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "37cc9f28b0db6d6d5cbb7640c7700fff4fff6a4cf51491d9ed1651e7899199ee"
+    "hash": "069b2b7c5535f1141a9c22112738a57c47c97f12a0557855fff25ba1283fc26d"
   }
 }

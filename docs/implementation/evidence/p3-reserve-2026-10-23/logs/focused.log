@@ -1,0 +1,21 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/storage-migrations.test.ts (6 tests) 4325ms
+     ✓ preserves exact rows when upgrading from every preceding schema version  4117ms
+ ✓ tests/contracts-channels.test.ts (21 tests) 11ms
+ ✓ tests/profit-reserve-ui.test.ts (9 tests) 422ms
+ ✓ tests/capital-ingestion.test.ts (18 tests) 1019ms
+ ✓ tests/profit-reserve-service.test.ts (14 tests) 695ms
+ ✓ tests/profit-reserve-storage.test.ts (9 tests) 538ms
+ ✓ tests/capital-budget-evidence.test.ts (7 tests) 343ms
+ ✓ tests/profit-reserve.test.ts (17 tests) 237ms
+ ✓ tests/profit-reserve-state.test.ts (5 tests) 15ms
+ ✓ tests/reserve-capital-witness.test.ts (5 tests) 8ms
+ ✓ tests/profit-reserve-eligibility.test.ts (11 tests) 5ms
+
+ Test Files  11 passed (11)
+      Tests  122 passed (122)
+   Start at  18:06:25
+   Duration  11.25s (transform 1.08s, setup 0ms, import 2.99s, tests 7.62s, environment 0ms)
+

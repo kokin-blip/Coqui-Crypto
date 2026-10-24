@@ -19,6 +19,7 @@ import { paperExecutionChannelSchemas } from './schemas/paper-execution.js';
 import { paperPerformanceChannelSchemas } from './schemas/paper-performance.js';
 import { capitalPerformanceChannelSchemas } from './schemas/capital-performance.js';
 import { capitalFeasibilityChannelSchemas } from './schemas/capital-feasibility.js';
+import { profitReserveChannelSchemas } from './schemas/profit-reserve.js';
 import { parallelPaperChannelSchemas } from './schemas/parallel-paper.js';
 import { portfolioChannelSchemas } from './schemas/portfolio.js';
 import { researchChannelSchemas } from './schemas/research.js';
@@ -60,6 +61,7 @@ export const CHANNEL_SCHEMAS = {
   ...paperPerformanceChannelSchemas,
   ...capitalPerformanceChannelSchemas,
   ...capitalFeasibilityChannelSchemas,
+  ...profitReserveChannelSchemas,
   ...parallelPaperChannelSchemas,
   ...portfolioChannelSchemas,
   ...researchChannelSchemas,
@@ -115,6 +117,7 @@ const WRITE_CHANNELS = [
   'parallel.paper.pause',
   'parallel.paper.resume',
   'parallel.paper.stop',
+  'capital.reserve.inspect', 'capital.reserve.settings.save',
   'accounts.coinbase.connect',
   'accounts.coinbase.connect-json',
   'accounts.coinbase.disconnect',

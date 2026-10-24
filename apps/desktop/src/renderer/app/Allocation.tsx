@@ -6,6 +6,7 @@ import { AllocationComposition } from './AllocationComposition.js';
 import { DeferredPanel } from './DeferredPanel.js';
 import { SurfaceState } from './SurfaceState.js';
 import { CapitalFeasibility } from './CapitalFeasibility.js';
+import { ProfitReserves } from './ProfitReserves.js';
 import { useChannel } from '../query/use-channel.js';
 
 type AllocationView = ChannelResponse<'portfolio.allocation'>;
@@ -132,6 +133,7 @@ export function Allocation({ client }: { readonly client: CoquiClient }): React.
       </div>
 
       <CapitalFeasibility client={client} />
+      <ProfitReserves client={client} />
       <DeferredPanel
         title="Contribution planner"
         phase="P8"

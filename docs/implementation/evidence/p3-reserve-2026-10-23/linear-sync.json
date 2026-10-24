@@ -1,0 +1,17 @@
+{
+  "issue": "COQ-37",
+  "status": "In Review",
+  "url": "https://linear.app/coqui-crypto/issue/COQ-37/implement-p3-profit-assessment-immutable-preview-state-and",
+  "issueDescriptionUpdated": true,
+  "completionCommentSaved": true,
+  "milestoneProgressCommentSaved": true,
+  "milestone": "7c291557-21bc-42fb-9d52-9a58363c3b7e",
+  "dependenciesPreserved": [
+    "COQ-35",
+    "COQ-36"
+  ],
+  "localUncommitted": true,
+  "merged": false,
+  "released": false,
+  "Prompt used": "Ok move onto building P3 using the saved plan. Preserve P0\u2013P2 and the full P0\u2013P7 scope, and keep the phase tracker updated."
+}

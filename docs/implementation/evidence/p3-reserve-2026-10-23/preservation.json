@@ -1,0 +1,49 @@
+{
+  "unchangedPreexistingFiles": 487,
+  "intentionalOverlaps": [
+    {
+      "path": "apps/desktop/src/main/composition.ts",
+      "reason": "Only exact P3 insertions; removing these restores the baseline hash."
+    },
+    {
+      "path": "apps/desktop/src/renderer/query/refetch.ts",
+      "reason": "Only exact P3 insertions; removing these restores the baseline hash."
+    },
+    {
+      "path": "apps/desktop/src/renderer/styles/terminal.css",
+      "reason": "Only exact P3 insertions; removing these restores the baseline hash."
+    },
+    {
+      "path": "docs/studies/behavior-manifests-v1.json",
+      "reason": "Current dependency manifest regenerated; exact old bytes archived; frozen studies unchanged."
+    },
+    {
+      "path": "packages/contracts/src/channels.ts",
+      "reason": "Only exact P3 insertions; removing these restores the baseline hash."
+    },
+    {
+      "path": "packages/core/src/research/study-manifests.generated.ts",
+      "reason": "Current dependency manifest regenerated; exact old bytes archived; frozen studies unchanged."
+    },
+    {
+      "path": "tests/contracts-channels.test.ts",
+      "reason": "Only exact P3 insertions; removing these restores the baseline hash."
+    },
+    {
+      "path": "tests/risk-dashboard.test.ts",
+      "reason": "Only exact P3 insertions; removing these restores the baseline hash."
+    }
+  ],
+  "unexpectedChanges": [],
+  "protectedHashes": {
+    "docs/implementation/small-portfolio-profit-policy-plan-2026-10-23.md": true,
+    "docs/implementation/small-portfolio-profit-policy-evidence-2026-10-23.json": true,
+    "docs/implementation/small-portfolio-p3-implementation-plan-2026-10-23.md": true,
+    "packages/core/src/portfolio/capital-performance.ts": true,
+    "packages/core/src/execution/account-budget.ts": true,
+    "packages/core/src/execution/capital-feasibility.ts": true,
+    "packages/core/src/execution/remediation-planner.ts": true
+  },
+  "indexIntentionallyUnchanged": true,
+  "fullP0P7ScopePreserved": true
+}

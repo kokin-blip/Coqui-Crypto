@@ -277,3 +277,19 @@
 .capital-scenario button[type='submit'] { min-height: 2.25rem; }
 .capital-feasibility-result { margin-top: 1rem; }
 .capital-feasibility code { overflow-wrap: anywhere; }
+
+.profit-reserves { margin-block-start: 1.5rem; }
+.profit-reserves p { max-inline-size: 75ch; }
+.profit-reserves h4 { margin-block: 1.25rem 0.5rem; }
+.profit-reserves code { overflow-wrap: anywhere; }
+.reserve-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 0.75rem; margin-block: 1rem; padding: 0; border: 0; }
+.reserve-fields legend { padding: 0; margin-block-end: 0.5rem; font-weight: 600; }
+.reserve-fields label, .profit-reserves > label { display: grid; gap: 0.3rem; min-inline-size: 0; }
+.profit-reserves input, .profit-reserves select { min-inline-size: 0; max-inline-size: 100%; border: 1px solid var(--coqui-border); border-radius: 4px; background: var(--coqui-surface-2); color: var(--coqui-text); padding: 6px 8px; }
+.reserve-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-block: 1rem; }
+.reserve-scenario { margin-block-start: 1.25rem; }
+.reserve-result { margin-block: 1rem; }
+.reserve-result th, .reserve-result td { padding: 0.4rem 0.65rem; text-align: start; vertical-align: top; }
+.reserve-result :is(td, dd) { font-variant-numeric: tabular-nums; }
+
+.reserve-result pre { white-space: pre-wrap; overflow-wrap: anywhere; max-block-size: 24rem; overflow-y: auto; }

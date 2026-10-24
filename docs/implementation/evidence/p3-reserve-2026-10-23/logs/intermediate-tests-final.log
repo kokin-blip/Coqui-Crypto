@@ -1,0 +1,161 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/wider-universe.test.ts (14 tests) 25294ms
+     ✓ compares all three candidates at both costs on a complete registered development calendar  25136ms
+ ✓ tests/overlay-development.test.ts (4 tests) 8546ms
+     ✓ reports every treatment and scenario without loading a holdout; insufficient ML cannot earn selection  7600ms
+     ✓ uses disjoint training/calibration windows and future perturbations cannot alter fitted parameters  924ms
+ ✓ tests/research-integrity-governance.test.ts (14 tests) 6637ms
+     ✓ registers exactly two spread-floor candidates and rejects invalid values  837ms
+     ✓ supports all four existing families with chronological embargo and all candidates reported  2812ms
+     ✓ claims before reading, records failure and prevents renamed plans reopening overlapping data  821ms
+     ✓ allows only one concurrent loader and returns completed evidence without reopening data  911ms
+     ✓ freezes none without loading a holdout and refuses freezes after it starts  826ms
+ ✓ tests/storage-migrations.test.ts (6 tests) 4533ms
+     ✓ preserves exact rows when upgrading from every preceding schema version  4320ms
+ ✓ tests/news-rollout.test.ts (15 tests) 4409ms
+     ✓ processes over 250 observations across restarts and overlapping connections, retaining actual availability  555ms
+     ✓ finishes more than ten thousand historical observations without a full-history batch  2363ms
+     ✓ evaluates synthetic daily and hourly studies without fitting on test outcomes  729ms
+ ✓ tests/parallel-paper-deadlines.test.ts (33 tests) 3824ms
+     ✓ recovers a paused large journal after slow reconciliation without reserving submission time  1316ms
+     ✓ reconciles paginated fills and fees with 40,000 diagnostic events using one history read  1030ms
+ ✓ tests/desktop-scheduler-runtime.test.ts (19 tests) 3614ms
+     ✓ keeps Alpaca checks running while local preparation is stalled, without overlapping paper passes  714ms
+     ✓ records suspend/resume and restart gaps durably without inferring their cause  396ms
+ ✓ tests/accounts-profile-deletion.test.ts (6 tests) 3359ms
+     ✓ commits manifest removal, deletes only the target database and credentials, and retains the backup  2756ms
+ ✓ tests/overlay-governance.test.ts (4 tests) 2841ms
+     ✓ retains permanent controls and refuses qualification without account costs or enough eligible actions  2721ms
+ ✓ tests/market-selector.test.ts (7 tests) 2313ms
+     ✓ stores profile-scoped immutable studies and reports only matched, completed evidence  1588ms
+ ✓ tests/remediation-manifest.test.ts (3 tests) 2116ms
+     ✓ binds the ML worker boundary and inference implementation to the shadow candidate  835ms
+     ✓ invalidates relevant changes but ignores an unrelated renderer change and diagnostic manifest output  1058ms
+ ✓ tests/news-intelligence.test.ts (24 tests) 1732ms
+ ✓ tests/range-rotation.test.ts (5 tests) 1251ms
+     ✓ requires complete matched evidence and never promotes a replay result  887ms
+ ✓ tests/parallel-ml-runtime.test.ts (7 tests) 1153ms
+ ✓ tests/rate-limiter.test.ts (7 tests) 1046ms
+     ✓ grants tokens immediately and queues overflow in FIFO order  1003ms
+ ✓ tests/capital-ingestion.test.ts (18 tests) 1010ms
+ ✓ tests/hourly-shadow-service.test.ts (20 tests) 941ms
+ ✓ tests/paper-run-loop.test.ts (17 tests) 913ms
+ ✓ tests/activity-overview.test.ts (14 tests) 865ms
+     ✓ keeps the newest executions visible after the cost-basis history cap  591ms
+ ✓ tests/news-host-runtime.test.ts (9 tests) 789ms
+ ✓ tests/accounts-profile-duplication.test.ts (9 tests) 873ms
+ ✓ tests/news-quota.test.ts (15 tests) 819ms
+ ✓ tests/parallel-paper.test.ts (16 tests) 778ms
+ ✓ tests/overlay-replay.test.ts (9 tests) 725ms
+     ✓ future scrambling and appending cannot change prior targets, orders or books  388ms
+ ✓ tests/wallet-scheduler-service.test.ts (10 tests) 687ms
+ ✓ tests/profit-reserve-service.test.ts (14 tests) 695ms
+ ✓ tests/connector-removal.test.ts (14 tests) 695ms
+ ✓ tests/accounts-coinbase-sync.test.ts (14 tests) 616ms
+ ✓ tests/desktop-profile-contexts.test.ts (8 tests) 614ms
+ ✓ tests/news-storage.test.ts (11 tests) 604ms
+ ✓ tests/paper-seven-day-run.test.ts (8 tests) 584ms
+ ✓ tests/breakout.test.ts (5 tests) 553ms
+     ✓ replays a complete matched calendar without changing the real paper portfolio  410ms
+ ✓ tests/accounts-profile-comparison.test.ts (5 tests) 534ms
+ ✓ tests/parallel-paper-execution.test.ts (10 tests) 547ms
+ ✓ tests/news-runtime.test.ts (10 tests) 540ms
+ ✓ tests/capital-storage.test.ts (11 tests) 508ms
+ ✓ tests/profit-reserve-storage.test.ts (9 tests) 568ms
+ ✓ tests/portfolio-reconciliation-ledger.test.ts (13 tests) 539ms
+ ✓ tests/research-read-models.test.ts (12 tests) 534ms
+ ✓ tests/parallel-ml-inference.test.ts (6 tests) 513ms
+ ✓ tests/desktop-diagnostics.test.ts (10 tests) 459ms
+ ✓ tests/operations-journal-integration.test.ts (10 tests) 521ms
+ ✓ tests/accounts-profiles-service.test.ts (12 tests) 518ms
+ ✓ tests/capital-budget-consumers.test.ts (9 tests) 497ms
+ ✓ tests/paper-reconciliation.test.ts (10 tests) 487ms
+ ✓ tests/portfolio-read-models.test.ts (11 tests) 492ms
+ ✓ tests/research-scoreboard.test.ts (11 tests) 480ms
+ ✓ tests/risk-evidence-tracker-service.test.ts (6 tests) 484ms
+ ✓ tests/trading-activity-sources.test.ts (3 tests) 454ms
+     ✓ keeps complete fills and the latest mark when diagnostic history exceeds the financial cap  348ms
+ ✓ tests/operations-journal-history.test.ts (1 test) 452ms
+     ✓ bounds identity lookups while preserving delayed-fill grouping, unmatched events and profile isolation  451ms
+ ✓ tests/accounts-settings.test.ts (10 tests) 441ms
+ ✓ tests/accounts-profile-backup.test.ts (4 tests) 401ms
+ ✓ tests/profit-reserve-ui.test.ts (10 tests) 495ms
+ ✓ tests/paper-oms.test.ts (8 tests) 420ms
+ ✓ tests/accounts-profile-dashboard.test.ts (5 tests) 403ms
+stdout | tests/market-events.test.ts > immutable market-event dataset > validates local ingestion and temporal reads across the renderer boundary
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '542de7e36712e9572ca8199725121e10920447f1f492280fbe62e623578caac0'
+}
+
+stdout | tests/market-events.test.ts > immutable market-event dataset > selects and reads a local fixture in main before ingestion
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '542de7e36712e9572ca8199725121e10920447f1f492280fbe62e623578caac0'
+}
+
+ ✓ tests/market-events.test.ts (10 tests) 417ms
+ ✓ tests/capital-budget-evidence.test.ts (7 tests) 355ms
+ ✓ tests/paper-execution-service.test.ts (8 tests) 390ms
+ ✓ tests/paper-portfolio-view.test.ts (8 tests) 390ms
+ ✓ tests/overlay-shadow.test.ts (5 tests) 375ms
+ ✓ tests/connection-handlers.test.ts (8 tests) 390ms
+ ✓ tests/decision-dataset-service.test.ts (7 tests) 386ms
+ ✓ tests/status-rail.test.ts (8 tests) 368ms
+ ✓ tests/portfolio-csv-import-service.test.ts (8 tests) 375ms
+ ✓ tests/wider-universe-runtime.test.ts (3 tests) 375ms
+     ✓ waits for prior-day evidence, collects four assets, persists shadow only, and resumes without duplicates  312ms
+ ✓ tests/accounts-profile-deletion-preview.test.ts (7 tests) 335ms
+ ✓ tests/boundaries.test.ts (11 tests) 399ms
+     ✓ rejects Electron in core  369ms
+ ✓ tests/forward-evidence.test.ts (8 tests) 367ms
+ ✓ tests/news-intelligence-storage.test.ts (5 tests) 337ms
+ ✓ tests/risk-dashboard.test.ts (9 tests) 371ms
+ ✓ tests/capital-budget-storage.test.ts (7 tests) 340ms
+ ✓ tests/advisor-analyst.test.ts (7 tests) 332ms
+ ✓ tests/research-worker-pool.test.ts (7 tests) 320ms
+ ✓ tests/alpaca-performance.test.ts (8 tests) 319ms
+ ✓ tests/exploratory-paper-evaluate.test.ts (6 tests) 317ms
+ ✓ tests/chart-extension-service.test.ts (6 tests) 317ms
+ ✓ tests/forward-edge-study.test.ts (12 tests) 291ms
+ ✓ tests/activity-feed.test.ts (6 tests) 287ms
+ ✓ tests/portfolio-tax-service.test.ts (6 tests) 279ms
+ ✓ tests/storage-portfolio-repository.test.ts (6 tests) 283ms
+ ✓ tests/paper-campaign-control.test.ts (6 tests) 284ms
+ ✓ tests/display-universe-service.test.ts (6 tests) 282ms
+ ✓ tests/advisor-service.test.ts (6 tests) 277ms
+ ✓ tests/prepared-decision-dataset.test.ts (5 tests) 327ms
+ ✓ tests/portfolio-ledger-service.test.ts (5 tests) 280ms
+ ✓ tests/storage-market-research.test.ts (6 tests) 278ms
+ ✓ tests/news-report-association.test.ts (4 tests) 265ms
+ ✓ tests/exploratory-paper-campaign.test.ts (5 tests) 262ms
+ ✓ tests/http-client.test.ts (17 tests) 251ms
+ ✓ tests/paper-attainable-open.test.ts (6 tests) 238ms
+ ✓ tests/research-trial-registry.test.ts (5 tests) 241ms
+ ✓ tests/storage-wallet-repository.test.ts (5 tests) 229ms
+ ✓ tests/advisor-decision-evidence.test.ts (5 tests) 239ms
+ ✓ tests/storage-display-universe.test.ts (5 tests) 231ms
+ ✓ tests/capital-performance.test.ts (33 tests) 233ms
+ ✓ tests/storage-coinbase-evidence.test.ts (5 tests) 234ms
+ ✓ tests/wallet-nicknames.test.ts (6 tests) 213ms
+ ✓ tests/alerts-service.test.ts (5 tests) 231ms
+ ✓ tests/trendvol-research-evaluator.test.ts (1 test) 224ms
+ ✓ tests/research-host-coordinator.test.ts (4 tests) 222ms
+ ✓ tests/profit-reserve.test.ts (18 tests) 231ms
+ ✓ tests/operations-journal.test.ts (4 tests) 203ms
+ ✓ tests/connections.test.ts (5 tests) 194ms
+ ✓ tests/parallel-ml-signal.test.ts (5 tests) 190ms
+ ✓ tests/market-acquisition.test.ts (9 tests) 198ms
+ ✓ tests/execution-gate.test.ts (17 tests) 189ms
+ ✓ tests/universe-storage-service.test.ts (4 tests) 194ms
+ ✓ tests/storage-paper-repository.test.ts (4 tests) 185ms
+ ✓ tests/desktop-notifications.test.ts (12 tests) 185ms
+ ✓ tests/predecessor-vault-recovery.test.ts (8 tests) 192ms
+ ✓ tests/decision-evidence.test.ts (5 tests) 192ms
+ ✓ tests/contracts-service-conformance.test.ts (8 tests) 191ms
+ ✓ tests/isolated-restore.test.ts (1 test) 189ms
+ ✓ tests/portfolio-allocation-policy-service.test.ts (4 tests) 189ms
+ ✓ tests/trading-activity.test.ts (7 tests) 198ms
+ ✓ tests/storage-canonical-assets.test.ts (4 tests) 189ms

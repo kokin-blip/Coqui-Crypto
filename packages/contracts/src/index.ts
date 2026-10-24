@@ -16,3 +16,5 @@ export * from './schemas/news-archive.js';
 
 export { newsStudyReportFileSchema } from './schemas/news-report-file.js';
 export * from './schemas/news-export-permission.js';
+
+export * from './schemas/profit-reserve.js';

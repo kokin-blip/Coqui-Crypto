@@ -1,0 +1,73 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ❯ tests/profit-reserve-storage.test.ts (9 tests | 6 failed) 504ms
+     ✓ migration adds empty tables and does not enable a policy 53ms
+     ✓ stores immutable versions/reports, exact retries and rejects fabricated or financial-domain state 61ms
+     × atomically models one assessment, retries exactly after lost acknowledgement and never writes account claims 53ms
+     × failure at capital_reserve_state_revisions_v1 rolls the entire modeled transition back 52ms
+     × failure at capital_reserve_assessments_v1 rolls the entire modeled transition back 49ms
+     × failure at capital_reserve_preview_heads_v1 rolls the entire modeled transition back 49ms
+     ✓ late source revisions invalidate a modeled commitment and keep old evidence unchanged 54ms
+     × preserves monotone H on release and settings revisions, and stable command receipts after later writes 50ms
+     × backup/restore retains original evidence and a populated copy archives heads without resetting origins 83ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/profit-reserve-storage.test.ts > P3 append-only preview storage and real transactional modeled boundary > atomically models one assessment, retries exactly after lost acknowledgement and never writes account claims
+Error: reserve_preview_invalid
+ ❯ applyModeledReserve packages/core/src/portfolio/profit-reserve-state.ts:34:200
+
+ ❯ packages/services/src/portfolio/profit-reserve-state.ts:23:16
+ ❯ inTransaction packages/storage/src/sqlite/connection.ts:99:20
+ ❯ commitIsolatedReservePreview packages/services/src/portfolio/profit-reserve-state.ts:9:10
+ ❯ tests/profit-reserve-storage.test.ts:34:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  tests/profit-reserve-storage.test.ts > P3 append-only preview storage and real transactional modeled boundary > failure at capital_reserve_state_revisions_v1 rolls the entire modeled transition back
+ FAIL  tests/profit-reserve-storage.test.ts > P3 append-only preview storage and real transactional modeled boundary > failure at capital_reserve_assessments_v1 rolls the entire modeled transition back
+ FAIL  tests/profit-reserve-storage.test.ts > P3 append-only preview storage and real transactional modeled boundary > failure at capital_reserve_preview_heads_v1 rolls the entire modeled transition back
+AssertionError: expected [Function] to throw error including 'injected_p3_failure' but got 'reserve_preview_invalid'
+
+Expected: "injected_p3_failure"
+Received: "reserve_preview_invalid"
+
+ ❯ tests/profit-reserve-storage.test.ts:43:57
+     41|     const {db,commit,f}=setup();const event=table.endsWith('heads_v1')…
+     42|     db.exec(`CREATE TEMP TRIGGER fail_p3 AFTER ${event} ON ${table} BE…
+     43|     expect(()=>commitIsolatedReservePreview(commit,db)).toThrow('injec…
+       |                                                         ^
+     44|     expect(reserveHead(SCOPE,db)?.state_id).toBe(f.state.id);expect(db…
+     45|     db.exec('DROP TRIGGER fail_p3');expect(commitIsolatedReservePrevie…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  tests/profit-reserve-storage.test.ts > P3 append-only preview storage and real transactional modeled boundary > preserves monotone H on release and settings revisions, and stable command receipts after later writes
+Error: reserve_preview_invalid
+ ❯ applyModeledReserve packages/core/src/portfolio/profit-reserve-state.ts:34:200
+
+ ❯ packages/services/src/portfolio/profit-reserve-state.ts:23:16
+ ❯ inTransaction packages/storage/src/sqlite/connection.ts:99:20
+ ❯ commitIsolatedReservePreview packages/services/src/portfolio/profit-reserve-state.ts:9:10
+ ❯ tests/profit-reserve-storage.test.ts:52:45
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  tests/profit-reserve-storage.test.ts > P3 append-only preview storage and real transactional modeled boundary > backup/restore retains original evidence and a populated copy archives heads without resetting origins
+Error: reserve_preview_invalid
+ ❯ applyModeledReserve packages/core/src/portfolio/profit-reserve-state.ts:34:200
+
+ ❯ packages/services/src/portfolio/profit-reserve-state.ts:23:16
+ ❯ inTransaction packages/storage/src/sqlite/connection.ts:99:20
+ ❯ commitIsolatedReservePreview packages/services/src/portfolio/profit-reserve-state.ts:9:10
+ ❯ tests/profit-reserve-storage.test.ts:60:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 3 passed (9)
+   Start at  17:55:46
+   Duration  3.39s (transform 2.12s, setup 0ms, import 2.77s, tests 504ms, environment 0ms)
+

@@ -7,7 +7,7 @@ The [full saved roadmap](small-portfolio-profit-policy-plan-2026-10-23.md) remai
 | P0 Definitions, scope, source inventory | Committed and pushed | Definitions, baseline, source inventory, exact-or-unavailable rules and independent fixtures | Review remains separate from implementation | Saved roadmap, source baseline |
 | P1 Capital-flow accounting and corrected performance | Committed and pushed; in review | Storage, ingestion, calculations, read projections, displays, lifecycle and acceptance checks; isolated delivery 0c3d36c | Human review; actual connected evidence completeness, owner qualification and release remain separate open gates | P0 |
 | P2 Shared budgets and small-portfolio feasibility | Committed and pushed; In Review | A–F capability; isolated commit aff6b60 passes 286 files/2,033 tests, typecheck/lint/builds/native checks; original combined-checkout 292-file/2,140-test evidence retained | Human review; account-specific rules/fees/holds/ownership and owner/release gates remain open | P1 review; P6 operational review before connected adoption |
-| P3 Profit-reserve evaluation and previews | Implementation-ready plan saved; code not started | Full roadmap reread; 43-file source inventory, 10 partial-assessment and nine-balance arithmetic probes; P3-A–F design | All implementation batches/acceptance pending; scoped basis/fees, common financial cut and retained-plan proof required; connected evidence/review gates remain open | P1/P2; COQ-29/31 patterns; P6 operational authorization remains separate |
+| P3 Profit-reserve evaluation and previews | Local implementation complete; In Review | P3-A–F, 73 new focused cases; 299 files/2,213 tests, typecheck/lint/builds, native safety and 24 P3 UI checks; preservation audit | Human review; actual basis/fees/common-cut/retained-plan proof, account ownership, owner/qualification/release gates remain open; uncommitted | P1/P2; COQ-29/31 patterns; P6 operational authorization remains separate |
 | P4 Capital-aware simulation | Not started | None | All requirements in saved roadmap retained | P1–P3 and corrected engine compatibility |
 | P5 Strategy and policy experiments | Not started | None | All hypotheses, finite trials, negative findings and evidence gates retained | P4 and adequate development data |
 | P6 Optional reviewed paper integration | Not started | None | Default off; all operational/authority/review gates retained | P3/P4 and applicable paper qualification |
@@ -145,3 +145,45 @@ Commit and push P2, then lets move on to P3. Reread its full requirements in the
 **Prompt used**
 
 Commit and push P2, then lets move on to P3. Reread its full requirements in the saved roadmap, inspect the code, and prepare a concrete implementation plan before coding. Preserve P0–P2 and the full P0–P7 scope.
+
+## P3 implementation — P3-A started
+
+- Reread the full saved P3 plan and applicable original roadmap reserve/accounting/capital/UX/acceptance requirements. Recorded current commit, dirty-file hashes, protected P0–P2/roadmap/P3-plan hashes and exact current dependency manifests in `evidence/p3-reserve-2026-10-23/`.
+- Scope remains P3 preview capability only; modeled state is distinct from financial claims. All P3-A–F implementation and acceptance gates remain pending. P0–P2 are preserved; P4–P7 remain pending in full. No account financial action, strategy change, scheduler, registration, deployment or release.
+- Dependencies: saved P3 design, canonical P1/P2 evidence and original review gates. Current account basis/fees/ownership and retained-plan proof remain evidence requirements. COQ-37 In Progress; local implementation only.
+
+**Prompt used**
+
+Ok move onto building P3 using the saved plan. Preserve P0–P2 and the full P0–P7 scope, and keep the phase tracker updated.
+
+### P3-A — definitions, contracts and independent fixtures delivered locally
+
+- Strict preview-only settings/results, all three trigger definitions, separate modeled state, immutable identities and hand-calculated fixtures are implemented. Public schemas reject financial-domain modes and renderer-provided account facts. Default remains keep invested; actual P2 funded-claim rejection is unchanged.
+- First 38 core/transition/eligibility/fixed-plan tests and repository typecheck pass. Independent fixtures cover 33% partial cents, losses/recovery, deposit-only crossings, fee/basis gaps and full-request capital proof. A forged-preview regression now checks the content hash before modeled mutation.
+- P3-B/C pure components are implemented but source-service assembly and integrated acceptance remain in progress. P3-D storage and P3-E/F integration/UI/full acceptance remain pending. All P0–P2 protected numerical files and original roadmap remain unchanged; P4–P7 remain pending in full. Local and uncommitted; no financial side effects or review/release claim.
+
+**Prompt used:** Ok move onto building P3 using the saved plan. Preserve P0–P2 and the full P0–P7 scope, and keep the phase tracker updated.
+
+### P3-B/C/D — scoped mechanics and immutable preview persistence delivered locally
+
+- Added scope-bound FIFO investment evidence, common-cut/source revision checks and exact retained-capital witnesses for fixed requests. Unknown legacy opening basis, provider history/fee gaps and unsupported operating requirements remain unavailable; P1/P2 numerical versions are untouched. All three triggers, bounded cycles, policy exclusions, partial assessments, loss/recovery, modeled release and no-repeated-gain invariants are tested.
+- Empty v98 migration, immutable preview policies/state/eligibility/assessments/reports, operational CAS heads and lifecycle archiving are implemented. A seventh table, `capital_reserve_commands_v1`, preserves immutable local command receipts across later writes; this is the required exact-retry mechanism, not another financial ledger or a product scope change.
+- Actual modeled transaction tests inject failure at state/assessment/head boundaries; rollback, duplicate retry after lost acknowledgement, stale sources and populated backup/restore/copy pass. Canonical input serialization ensures a stored preview reproduces unchanged. Actual P2 funded profit/tax claims remain rejected.
+- P3-E preview service/UI implemented locally with account/scenario separation, explicit save/inspect evidence writes, shared profile-operation gate, fixed-base/caps/provenance, cost-bearing hypothetical sales and labeled up/down comparisons. First UI states pass; production native confirmation remains pending.
+- Focused run: 11 files / 122 tests pass, including original P1/P2 integration and migration/registry checks. Typecheck and lint pass. P3-F full/native/preservation checks and final issue state remain pending. Local/uncommitted; human review, account-specific evidence, owner and release gates stay open. P4–P7 retain full scope and remain pending.
+
+**Prompt used:** Ok move onto building P3 using the saved plan. Preserve P0–P2 and the full P0–P7 scope, and keep the phase tracker updated.
+
+### P3-E/F — local preview capability acceptance; review remains open
+
+- P3-A–F implementation and local acceptance are complete. [Delivery record](small-portfolio-p3-delivery-2026-10-23.md), [summary](evidence/p3-reserve-2026-10-23/summary.json), source hashes, exact pre-build manifests, [preservation audit](evidence/p3-reserve-2026-10-23/preservation.json), command logs and production screenshots are saved.
+- Final repository checks: **299 test files / 2,213 tests passed**. Seven new suites contain **73 cases** across exact assessment/property sequences, state/loss/policy behavior, scoped investment evidence, fixed-plan requirements, real storage/lifecycle/rollback and service/IPC/UI. Typecheck, lint, root build and production desktop build pass. Standard native safety smoke and **24 P3 native checks** pass.
+- Native checks use production preload and disposable synthetic profiles: current cash remains visible alongside incomplete P&L, 25% of $50 yields a modeled $12.50 reserve/$537.50 retained capital, input edits invalidate old results, keyboard help fits/returns focus, read routes preserve durable capital/financial rows, save/inspect change only local preview evidence, retries preserve original identities and live authority stays disabled. Dark desktop, narrow light and high-contrast 200% images were inspected in one initial batch and one final confirmation.
+- Cash capacity expires on screen independently of recorded balances; dates remain visible. An added regression confirms this. Initial failures were corrected and retained in logs: canonical input serialization/content validation, wrapper/report retry identity, stale expected schema/channel lists and an intermediate script lint issue. An older full run was interrupted after the final freshness change; final acceptance above applies to the current source.
+- Preservation: **487/495** pre-existing changed files remain byte-identical. Six mixed source/test files contain only exact P3 insertions whose removal restores original hashes; two current generated dependency manifests have exact archived pre-build bytes. Original roadmap/evidence, accepted P3 plan and protected P1/P2/frozen remediation numerical hashes match. Git index and unrelated work remain intact. No historical report, negative result or consumed holdout was rewritten.
+- [COQ-37](https://linear.app/coqui-crypto/issue/COQ-37/implement-p3-profit-assessment-immutable-preview-state-and) is verified In Review; its description/completion comment and milestone progress comment are synchronized, preserving dependencies. This is **local and uncommitted**, not a merge, installed upgrade, deployment, release or qualification. Current account-specific basis/fees/coverage/common-cut/native rules/ownership and retained-plan proof remain legitimate unavailable states; P1/P2 review, owner and release gates remain open.
+- Mode after completion remains **Preview only**. No actual profit/tax reserve claim, sale/order/cancel, external receipt/withdrawal, polling/scheduler activation, strategy adoption or study registration. P6's optional reviewed paper funding/sale capability remains separate. P4–P7 are pending in full. Reread the next phase's complete saved requirements before beginning it; no next phase is started or silently simplified.
+
+**Prompt used**
+
+Ok move onto building P3 using the saved plan. Preserve P0–P2 and the full P0–P7 scope, and keep the phase tracker updated.

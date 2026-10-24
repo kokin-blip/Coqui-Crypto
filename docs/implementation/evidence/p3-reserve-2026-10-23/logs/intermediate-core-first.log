@@ -1,0 +1,31 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/profit-reserve.test.ts (17 tests) 205ms
+ ❯ tests/profit-reserve-state.test.ts (5 tests | 1 failed) 19ms
+     ✓ partial cycle stays capped, losses/recovery produce no repeated gains, and release keeps H 9ms
+     ✓ later gains cannot expand the ceiling, one open cycle survives repeat inspection 3ms
+     ✓ policy changes exclude old gains, retain losses and block unknown pending operations 1ms
+     ✓ closes tiny remainder without assessing it and does not rearm a consumed balance level 2ms
+     × refuses expired, altered and financial-domain transitions 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/profit-reserve-state.test.ts > P3 modeled state and loss carry-forward > refuses expired, altered and financial-domain transitions
+AssertionError: expected [Function] to throw an error
+ ❯ tests/profit-reserve-state.test.ts:38:106
+     36|     const f=fixture(),r=f.evaluate();
+     37|     expect(()=>applyModeledReserve(f.policy,f.state,r,'expired',r.expi…
+     38|     expect(()=>applyModeledReserve(f.policy,f.state,{...r,reserveUsd:r…
+       |                                                                                                          ^
+     39|     expect(()=>releaseModeledReserve({...f.state,domain:'paper' as nev…
+     40|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 21 passed (22)
+   Start at  17:44:43
+   Duration  952ms (transform 394ms, setup 0ms, import 571ms, tests 225ms, environment 0ms)
+

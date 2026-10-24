@@ -1,0 +1,127 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ❯ tests/storage-migrations.test.ts (6 tests | 1 failed) 4836ms
+     × preserves predecessor versions 1-28 and appends Coqui-native migrations 4ms
+     ✓ creates the current schema while retaining only intended legacy tables 55ms
+     ✓ preserves exact rows when upgrading from every preceding schema version  4599ms
+     ✓ creates a restorable VACUUM backup before migrating a file database 80ms
+     ✓ rolls back schema changes and version advancement when a migration fails 49ms
+     ✓ rejects renumbered, reordered, and future schemas 48ms
+ ✓ tests/capital-ingestion.test.ts (18 tests) 1136ms
+ ✓ tests/profit-reserve-service.test.ts (14 tests) 768ms
+ ✓ tests/profit-reserve-storage.test.ts (9 tests) 598ms
+ ✓ tests/capital-budget-evidence.test.ts (7 tests) 353ms
+ ✓ tests/profit-reserve.test.ts (17 tests) 236ms
+ ❯ tests/profit-reserve-ui.test.ts (0 test)
+ ✓ tests/profit-reserve-eligibility.test.ts (11 tests) 5ms
+ ✓ tests/profit-reserve-state.test.ts (5 tests) 16ms
+ ❯ tests/contracts-channels.test.ts (21 tests | 1 failed) 15ms
+     ✓ exposes every channel as a dotted lowercase name with both directions typed 4ms
+     ✓ matches the boundaries that actually have tested services today 0ms
+     ✓ refuses a channel name that is not registered 0ms
+     × classifies every channel, and names the one write 4ms
+     ✓ rejects an unexpected property rather than forwarding it 1ms
+     ✓ enforces payload bounds at the boundary, before any service runs 1ms
+     ✓ rejects a traversal-shaped job id before it reaches storage 0ms
+     ✓ carries all four outcomes distinctly 1ms
+     ✓ will not accept a failure without at least one issue 0ms
+     ✓ will not accept an outcome that carries both a value and issues 0ms
+     ✓ refuses free text in an issue code, so a stack cannot travel as one 0ms
+     ✓ pins liveExecutionPermitted to false on the wire 0ms
+     ✓ rejects a status outside the closed vocabulary 0ms
+     ✓ carries estimateOnly across IPC as a literal true 0ms
+     ✓ keeps an unpriced holding null across every money field 1ms
+     ✓ permits a priced holding with no observation time 0ms
+     ✓ has no resolved flag on a reconciliation exception 0ms
+     ✓ offers no resolution that touches a tax lot 0ms
+     ✓ permits a null DSR and trial count on a benchmark row 0ms
+     ✓ rejects a DSR outside the unit interval 0ms
+     ✓ pins mode to paper on the wire 0ms
+ ✓ tests/reserve-capital-witness.test.ts (5 tests) 9ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/profit-reserve-ui.test.ts [ tests/profit-reserve-ui.test.ts ]
+SyntaxError: Cannot call vi.hoisted() inside vi.hoisted(): both methods are hoisted to the top of the file and not actually called inside each other.
+      6| import { NOW, SCOPE } from "./helpers/feasibility.js";
+      7| import { financial, settings } from "./helpers/profit-reserve.js";
+      8| const channels = vi.hoisted(() => ({})), calls = vi.hoisted(() => []);
+       |                                                  ^
+      9| vi.mock("../apps/desktop/src/renderer/query/use-channel.js", () => ({ …
+     10|  calls.push({
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts-channels.test.ts > channel registry > classifies every channel, and names the one write
+AssertionError: expected [ …(69) ] to deeply equal [ Array(69) ]
+
+- Expected
++ Received
+
+@@ -1,6 +1,8 @@
+  [
++   "capital.reserve.settings.save",
++   "capital.reserve.inspect",
+    "news.report.select-location",
+    "app.recovery.verify",
+    "app.evidence-export",
+    "research.overlay-shadow.set",
+    "alpaca.paper.connect",
+@@ -10,12 +12,10 @@
+    "parallel.paper.reconcile",
+    "parallel.paper.pause",
+    "parallel.paper.resume",
+    "parallel.paper.stop",
+    "parallel.paper.hourly-study.restart",
+-   "capital.reserve.inspect",
+-   "capital.reserve.settings.save",
+    "accounts.coinbase.connect",
+    "accounts.coinbase.connect-json",
+    "accounts.coinbase.disconnect",
+    "accounts.coinbase.sync",
+    "accounts.profile.switch",
+
+ ❯ tests/contracts-channels.test.ts:120:33
+    118|     expect([...CHANNEL_KINDS.read, ...CHANNEL_KINDS.write].sort())
+    119|       .toEqual([...CHANNEL_NAMES].sort());
+    120|     expect(CHANNEL_KINDS.write).toEqual([
+       |                                 ^
+    121|       'news.report.select-location', 'app.recovery.verify',
+    122|       'app.evidence-export', 'research.overlay-shadow.set',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/storage-migrations.test.ts > ported predecessor migration manifest > preserves predecessor versions 1-28 and appends Coqui-native migrations
+AssertionError: expected [ 'initial_schema', …(97) ] to deeply equal [ 'initial_schema', …(96) ]
+
+- Expected
++ Received
+
+@@ -94,6 +94,7 @@
+    "scoped_news_export_permissions",
+    "news_report_locations",
+    "operations_activity_events_v1",
+    "capital_accounting_v1",
+    "capital_budget_feasibility_v1",
++   "profit_reserve_preview_v1",
+  ]
+
+ ❯ tests/storage-migrations.test.ts:46:59
+     44|       Array.from({ length: 98 }, (_, index) => index + 1),
+     45|     );
+     46|     expect(migrations.map((migration) => migration.name)).toEqual([
+       |                                                           ^
+     47|       'initial_schema',
+     48|       'risk_reports_and_timestamp_indexes',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  3 failed | 8 passed (11)
+      Tests  2 failed | 111 passed (113)
+   Start at  18:04:19
+   Duration  12.02s (transform 1.39s, setup 0ms, import 3.30s, tests 7.97s, environment 0ms)
+

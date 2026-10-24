@@ -88,7 +88,7 @@ describe('canonical provider mapping repository', () => {
        (provider, provider_asset_id, canonical_asset_id, status, updated_at)
        VALUES ('coingecko', 'bitcoin', 'legacy-btc', 'verified', 2)`,
     ).run();
-    expect(runMigrations(database)).toBe(97);
+    expect(runMigrations(database)).toBe(98);
     expect(listCanonicalMappingExceptions(database)).toEqual([
       expect.objectContaining({ sourceTable: 'asset_provider_mappings', sourceKey: 'coingecko:bitcoin' }),
       expect.objectContaining({ sourceTable: 'canonical_assets', sourceKey: 'legacy-btc' }),

@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "base": "c563d4e2c784dac90056acc89f9af02806e7397c",
+  "branch": "codex/operations-crew-journal",
+  "delivery": "P3-A\u2013F local implementation complete; human review remains open",
+  "committed": false,
+  "pushed": false,
+  "installed": false,
+  "deployed": false,
+  "fullTestFiles": 299,
+  "fullTests": 2213,
+  "newFocusedTestFiles": 7,
+  "newFocusedTests": 73,
+  "typecheck": "passed",
+  "lint": "passed",
+  "rootBuild": "passed",
+  "desktopBuild": "passed",
+  "nativeGeneral": "ALL PASS",
+  "nativeProfitReserve": 24,
+  "nativeThemes": [
+    "dark desktop",
+    "narrow light",
+    "high contrast 200% zoom"
+  ],
+  "visualInspection": "Initial batched inspection and one final confirmation completed; no clipping or component errors.",
+  "assurance": "Combined working checkout; not an isolated commit, current-account financial verification, market study, qualification or release.",
+  "sourceLimitations": [
+    "Legacy local opening holdings have unknown acquisition basis; no opening cash or deposits invented.",
+    "Connected basis/fees/coherent cuts/ownership remain unverified.",
+    "A global operating floor is not certified; fixed-plan proof or unavailable is required.",
+    "Actual funded profit/tax claims remain rejected. All modeled assessments belong to preview books."
+  ],
+  "migration": 98,
+  "additionalStorage": "Immutable command receipts implement retry behavior across later commands; no financial ledger or authority.",
+  "preservation": {
+    "unchangedPreexistingFiles": 487,
+    "intentionalOverlaps": 8,
+    "unexpectedChanges": 0,
+    "originalRoadmapAndProtectedNumericalHashesMatch": true
+  },
+  "notes": [
+    "Source code is locally uncommitted; exact commit isolation must precede a later requested commit.",
+    "First complete run exposed only three expected-schema/channel-list assertions; those were corrected.",
+    "An intermediate full run was deliberately interrupted after the last freshness correction; final full acceptance is separate.",
+    "Earlier unit failures exposed content-hash/canonical-roundtrip and wrapper/report identity checks; regression coverage now passes.",
+    "Current dependency manifests regenerated after exact pre-build archives; no frozen registration/result/negative finding/consumed holdout rewritten.",
+    "Verification used disposable synthetic profiles and mocked acquisition; no account reset, broker order/cancel/withdrawal, scheduler, study registration or deployment."
+  ],
+  "Prompt used": "Ok move onto building P3 using the saved plan. Preserve P0\u2013P2 and the full P0\u2013P7 scope, and keep the phase tracker updated."
+}

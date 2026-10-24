@@ -12,6 +12,7 @@ export function Research({ client }: { readonly client: CoquiClient }): React.JS
   const edgeStudy = useChannel(client, 'research.edge-study', {});
   return (
     <div className="screen-stack"><NewsStudyStatus client={client} />
+      <p className="metric-note"><a href="#/portfolio/allocation">Inspect profit reserve previews</a>. Preview evidence is separate from registered studies and grants no trading authority.</p>
       <section className="panel" aria-labelledby="forward-edge-heading">
         <div className="panel-heading"><div><h2 id="forward-edge-heading">Forward edge study</h2></div><span className="section-label">Prospective evidence only</span></div>
         {edgeStudy.kind === 'loading' && <SurfaceState kind="loading" title="Reading the registered study" compact />}

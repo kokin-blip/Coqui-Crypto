@@ -1,19 +1,21 @@
 import type { ChannelRequest } from '@coqui/contracts';
-import { capitalPerformanceView, capitalScopesView, ingestLocalPaperCapital, recordCapitalIngestionFailure } from '@coqui/services';
+import { capitalPerformanceView, capitalScopesView, ingestLocalPaperCapital, recordCapitalIngestionFailure, type ProfileOperationGate } from '@coqui/services';
 import type { Db } from '@coqui/storage';
 
 import type { ChannelHandlers } from './dispatch.js';
 import { createCapitalFeasibilityHandlers } from './capital-feasibility-handlers.js';
+import { createProfitReserveHandlers } from './profit-reserve-handlers.js';
 
-/** Read-only handlers accept a database, not a provider or execution client. */
+/** Capital reads and local preview settings/evidence accept no provider or execution client. */
 export function createCapitalHandlers(profileId: string, database: Db, initialization?: {
-  readonly nowMs: number; readonly now?: () => number; readonly onError: (error: unknown) => void;
+  readonly nowMs: number; readonly operationGate?: ProfileOperationGate; readonly now?: () => number; readonly onError: (error: unknown) => void;
 }): ChannelHandlers {
   if (initialization) {
     try { ingestLocalPaperCapital(profileId, database, initialization.nowMs); }
     catch (error) { recordCapitalIngestionFailure('local_paper', initialization.nowMs, database); initialization.onError(error); }
   }
   return {
+    ...createProfitReserveHandlers(profileId, database, initialization?.now ?? (() => Date.now()), initialization?.operationGate),
     ...createCapitalFeasibilityHandlers(profileId, database, initialization?.now ?? (() => Date.now())),
     'capital.scopes': () => ({ ok: true, value: capitalScopesView(profileId, database) }),
     'capital.performance': (request: ChannelRequest<'capital.performance'>) => {
