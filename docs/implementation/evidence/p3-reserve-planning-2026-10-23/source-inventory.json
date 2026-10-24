@@ -1,0 +1,264 @@
+{
+  "base": "aff6b603dbf354762ddde6bc50cc00eb3eebe098",
+  "files": [
+    {
+      "path": "packages/core/src/portfolio/capital-ledger.ts",
+      "committedSha256": "2a9547b1a5b8bb7dfaf54ee8fc80f13df98d7324571ff3547a8deb87f521d23a",
+      "workingSha256": "2a9547b1a5b8bb7dfaf54ee8fc80f13df98d7324571ff3547a8deb87f521d23a",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/core/src/portfolio/capital-performance.ts",
+      "committedSha256": "9275fdffeaa4f9fb035778e6e84b75b525e8d5f19bbc96239b5d6c912c795b73",
+      "workingSha256": "9275fdffeaa4f9fb035778e6e84b75b525e8d5f19bbc96239b5d6c912c795b73",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/core/src/portfolio/paper-activity.ts",
+      "committedSha256": "0066683ba87c4eea8173ce0d956671a18aa48cdea9530049faf4ef888671383c",
+      "workingSha256": "0066683ba87c4eea8173ce0d956671a18aa48cdea9530049faf4ef888671383c",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/core/src/portfolio/costbasis.ts",
+      "committedSha256": "dc8962b0132ef7c4cd6206c19734757edd57f36222386e2bc22ea4f83a635cf0",
+      "workingSha256": "dc8962b0132ef7c4cd6206c19734757edd57f36222386e2bc22ea4f83a635cf0",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/core/src/portfolio/tax-aware.ts",
+      "committedSha256": "e09c45a276c2d36f385697bcb94f198917fe60928fad7bbf2e7c6c03d43154d0",
+      "workingSha256": "e09c45a276c2d36f385697bcb94f198917fe60928fad7bbf2e7c6c03d43154d0",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/core/src/paper/evidence.ts",
+      "committedSha256": "c71cef08307f697ab18362a0d70e46fbccb987749ca3c35c920df4c87660e066",
+      "workingSha256": "c71cef08307f697ab18362a0d70e46fbccb987749ca3c35c920df4c87660e066",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/core/src/execution/account-budget.ts",
+      "committedSha256": "5addc9d44bd58ead38a595c963b762707c253f24d83e23bfc2492d14a3bc5b0d",
+      "workingSha256": "5addc9d44bd58ead38a595c963b762707c253f24d83e23bfc2492d14a3bc5b0d",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/core/src/execution/capital-feasibility.ts",
+      "committedSha256": "d5b6132f5a22302f55add90521bf0b4319d651a3ef622f78b241f3ecd2a41caf",
+      "workingSha256": "d5b6132f5a22302f55add90521bf0b4319d651a3ef622f78b241f3ecd2a41caf",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/core/src/execution/native-rules.ts",
+      "committedSha256": "42e16846c87031e909454dfa772f5a9de6ed8a7c61b0112f7db2f5ec8dd88117",
+      "workingSha256": "42e16846c87031e909454dfa772f5a9de6ed8a7c61b0112f7db2f5ec8dd88117",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/services/src/portfolio/capital-performance.ts",
+      "committedSha256": "85a487f5311f5da8060adc5974052e9e10e3cd633de30399558c12f594725294",
+      "workingSha256": "85a487f5311f5da8060adc5974052e9e10e3cd633de30399558c12f594725294",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/services/src/portfolio/capital-local-paper.ts",
+      "committedSha256": "85d179fc129fc33037f875735c89e0344140688b7ea2ca02c1cb60a02017958a",
+      "workingSha256": "85d179fc129fc33037f875735c89e0344140688b7ea2ca02c1cb60a02017958a",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/services/src/portfolio/capital-alpaca.ts",
+      "committedSha256": "8c665e94059785f23af70ce4e30d124ee1da4d20f6ef8af3b9b9b10ccaf08b29",
+      "workingSha256": "8c665e94059785f23af70ce4e30d124ee1da4d20f6ef8af3b9b9b10ccaf08b29",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/services/src/portfolio/capital-coinbase.ts",
+      "committedSha256": "4edfbdcb679cfb966256bba60c0ed5886abba509356596ad179c0e09f5370e5d",
+      "workingSha256": "4edfbdcb679cfb966256bba60c0ed5886abba509356596ad179c0e09f5370e5d",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/services/src/portfolio/capital-sources.ts",
+      "committedSha256": "f8e1f91c79d17a9a62da5e0fbf71d186ac807ac061afa9ab2e436674383f18a6",
+      "workingSha256": "f8e1f91c79d17a9a62da5e0fbf71d186ac807ac061afa9ab2e436674383f18a6",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/services/src/portfolio/capital-budget.ts",
+      "committedSha256": "de570594e07dd7ba2579c3be691ca1e4f5fbd5e431d31eb45c82d9cbaee82d4d",
+      "workingSha256": "de570594e07dd7ba2579c3be691ca1e4f5fbd5e431d31eb45c82d9cbaee82d4d",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/services/src/portfolio/capital-budget-sources.ts",
+      "committedSha256": "8079ceb6135c1605bec96b00b0ce7a96dbe0f4177d668c1e1abe39f461c06a82",
+      "workingSha256": "8079ceb6135c1605bec96b00b0ce7a96dbe0f4177d668c1e1abe39f461c06a82",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/services/src/portfolio/capital-feasibility.ts",
+      "committedSha256": "8b886e0ff5f3b18da55483f7a4293b8373a6f9efb07cc31ce7e919045da62dcc",
+      "workingSha256": "8b886e0ff5f3b18da55483f7a4293b8373a6f9efb07cc31ce7e919045da62dcc",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/services/src/portfolio/tax.ts",
+      "committedSha256": "928fab49c23e59183f8f4a07256b92d34ee0920733c879f47b420aa13c33a256",
+      "workingSha256": "928fab49c23e59183f8f4a07256b92d34ee0920733c879f47b420aa13c33a256",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/services/src/accounts/settings.ts",
+      "committedSha256": "0a2693981b5e96f558e48af4759e7919d18f2989a57af9793b8c6c2373f14ceb",
+      "workingSha256": "0a2693981b5e96f558e48af4759e7919d18f2989a57af9793b8c6c2373f14ceb",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/services/src/paper/proposal-preview.ts",
+      "committedSha256": "0c46abe3e92bca21a29b290204b20471d9cd8c4f34dfb3d3e8e85a467a9c393f",
+      "workingSha256": "0c46abe3e92bca21a29b290204b20471d9cd8c4f34dfb3d3e8e85a467a9c393f",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/services/src/paper/capital-preview.ts",
+      "committedSha256": "9a64a88af0ea82fd70b00bb1a443df336ff358da2a106372f11e6d3ae91cb3a3",
+      "workingSha256": "9a64a88af0ea82fd70b00bb1a443df336ff358da2a106372f11e6d3ae91cb3a3",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/storage/src/repositories/capital-accounting.ts",
+      "committedSha256": "c2d5f9deb8069e3746cc2dd09c9f399fd6dc7ef8ec185e00b6a347683432979f",
+      "workingSha256": "c2d5f9deb8069e3746cc2dd09c9f399fd6dc7ef8ec185e00b6a347683432979f",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/storage/src/repositories/capital-budget.ts",
+      "committedSha256": "c08adc2cc4f93c1460401a02b19eb71db306db57b5dbab7b27e04d209062dec4",
+      "workingSha256": "c08adc2cc4f93c1460401a02b19eb71db306db57b5dbab7b27e04d209062dec4",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/storage/src/repositories/paper-runtime.ts",
+      "committedSha256": "9773820c70f2e84b9b13d939a9728ac65522f0eb2eacb2b957efdab0869097bf",
+      "workingSha256": "9773820c70f2e84b9b13d939a9728ac65522f0eb2eacb2b957efdab0869097bf",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/storage/src/repositories/paper-performance.ts",
+      "committedSha256": "b348bc7a56a09bea9c4d95b9b462c8f5be148381310cafe26e7fd20858176116",
+      "workingSha256": "b348bc7a56a09bea9c4d95b9b462c8f5be148381310cafe26e7fd20858176116",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/storage/src/repositories/paper.ts",
+      "committedSha256": "bb894ddeb694805dc49ec1d355d5421d10f7b0e5ec212902a7f85b3a839b9398",
+      "workingSha256": "bb894ddeb694805dc49ec1d355d5421d10f7b0e5ec212902a7f85b3a839b9398",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/storage/src/repositories/settings.ts",
+      "committedSha256": "defc162c2cd8a55a9fe23e50be20120616afb34c2aeffcabcacf8489c359f24d",
+      "workingSha256": "defc162c2cd8a55a9fe23e50be20120616afb34c2aeffcabcacf8489c359f24d",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/storage/src/repositories/profile-impact.ts",
+      "committedSha256": "f30609cddcd2d7d14def24a2d506cd95794707279d3819f3e40b832a7ab4054a",
+      "workingSha256": "f30609cddcd2d7d14def24a2d506cd95794707279d3819f3e40b832a7ab4054a",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/storage/src/profiles/duplication.ts",
+      "committedSha256": "9576938261fb9eb4e7680cb68d05a8a79d5dc221f9a30400e40b568c9ed80e79",
+      "workingSha256": "9576938261fb9eb4e7680cb68d05a8a79d5dc221f9a30400e40b568c9ed80e79",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/storage/src/profiles/duplication-transient-counts.ts",
+      "committedSha256": "ac12b429d4890a28f1e6d4574bdc845769300753611e7ad82a36c0ec48e3820e",
+      "workingSha256": "ac12b429d4890a28f1e6d4574bdc845769300753611e7ad82a36c0ec48e3820e",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/storage/src/migrations/v97.ts",
+      "committedSha256": "1e63ecd84ba121765dda224634e240cd29dde6cd2a2157b0fb8800d54f513ff0",
+      "workingSha256": "1e63ecd84ba121765dda224634e240cd29dde6cd2a2157b0fb8800d54f513ff0",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/contracts/src/schemas/capital-performance.ts",
+      "committedSha256": "464a4df04e5bcde27faa4d44f314a7d4d2126dfa08da19f51ae1bae975cc4cdd",
+      "workingSha256": "464a4df04e5bcde27faa4d44f314a7d4d2126dfa08da19f51ae1bae975cc4cdd",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/contracts/src/schemas/capital-feasibility.ts",
+      "committedSha256": "14b46260003c4c3c7bc06394c12ee18954e8d0135bfe3ea8b4295775ae99e96f",
+      "workingSha256": "14b46260003c4c3c7bc06394c12ee18954e8d0135bfe3ea8b4295775ae99e96f",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "packages/contracts/src/channels.ts",
+      "committedSha256": "827adbf34626b906f5a295a8d31bfeb968b45860c6b53017ef24aa0119f7443e",
+      "workingSha256": "a06646589ffa49a9f50ed8bc032a6044ae08f13dad5e45df054178af804f73d1",
+      "unrelatedWorkingOverlay": true
+    },
+    {
+      "path": "apps/desktop/src/main/capital-handlers.ts",
+      "committedSha256": "7cfc1b7830fc92172ae4c61adfb2de183fd59d667679ca484d78973ea4ddf9a2",
+      "workingSha256": "7cfc1b7830fc92172ae4c61adfb2de183fd59d667679ca484d78973ea4ddf9a2",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "apps/desktop/src/main/capital-feasibility-handlers.ts",
+      "committedSha256": "fb7e8c2b59a14367d487ed22414750186655ec183a6eea964240c22f772ae121",
+      "workingSha256": "fb7e8c2b59a14367d487ed22414750186655ec183a6eea964240c22f772ae121",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "apps/desktop/src/main/composition.ts",
+      "committedSha256": "23bb7feb2b27923017cdced2c6c5664009d70707acd468ebfa0f852ddc1f2d3b",
+      "workingSha256": "344b3e8757a480a00d34dd0249fa8ad820f386899ff2e833cba01514e014b87b",
+      "unrelatedWorkingOverlay": true
+    },
+    {
+      "path": "apps/desktop/src/renderer/app/CapitalFeasibility.tsx",
+      "committedSha256": "9391e6753b0ffbb575f51b91a9da2080d6763ebb0ca6352b3ebf57794126fd32",
+      "workingSha256": "9391e6753b0ffbb575f51b91a9da2080d6763ebb0ca6352b3ebf57794126fd32",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "apps/desktop/src/renderer/app/Allocation.tsx",
+      "committedSha256": "fe5a1792769e8889d18ee7497c2f3250c87354bcc9b0e17c6625715846352de7",
+      "workingSha256": "fe5a1792769e8889d18ee7497c2f3250c87354bcc9b0e17c6625715846352de7",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "apps/desktop/src/renderer/app/Performance.tsx",
+      "committedSha256": "3a4f5453f1375108bf93feda9894e045db07c1c9fed707191ed391a0bba9dfe4",
+      "workingSha256": "3a4f5453f1375108bf93feda9894e045db07c1c9fed707191ed391a0bba9dfe4",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "apps/desktop/src/renderer/app/Research.tsx",
+      "committedSha256": "1f9686138c52bf9bb9dc75609097ca1861a716bf151cbf420261ea1c4fd5e87d",
+      "workingSha256": "1f9686138c52bf9bb9dc75609097ca1861a716bf151cbf420261ea1c4fd5e87d",
+      "unrelatedWorkingOverlay": false
+    },
+    {
+      "path": "apps/desktop/src/renderer/query/refetch.ts",
+      "committedSha256": "9feaf715ec745fe788c11d98cfa2f332d626269bd0f2f3f49ec68869b3987ca3",
+      "workingSha256": "cf8ee2f0245d9bbfa6a11a8211b32f008b2893798a217734aa083940254f4ce4",
+      "unrelatedWorkingOverlay": true
+    },
+    {
+      "path": "apps/desktop/src/renderer/styles/terminal.css",
+      "committedSha256": "a710dba77fc4dcad2089ec3b725d68e58038d12b61d0322b25e5a3836d7ecb0f",
+      "workingSha256": "2a97dab3f70fe02ed420877daf6cdfc966807790548b518633ebc2daae2b3bfa",
+      "unrelatedWorkingOverlay": true
+    }
+  ],
+  "claims": "Source inspection only; not an installed-account audit. No P3 application edits."
+}

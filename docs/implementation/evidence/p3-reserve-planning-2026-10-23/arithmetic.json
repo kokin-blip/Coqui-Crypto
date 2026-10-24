@@ -1,0 +1,178 @@
+{
+  "assurance": "Hand-calculated synthetic accounting probes only; not implementation tests, market performance or a study",
+  "partialAssessments": [
+    {
+      "P": "50",
+      "H": "0",
+      "U": "50",
+      "shareBps": 2500,
+      "capacityUsd": "100",
+      "reserveCents": 1250,
+      "assessedProfitCents": 5000
+    },
+    {
+      "P": "100",
+      "H": "0",
+      "U": "100",
+      "shareBps": 2500,
+      "capacityUsd": "10",
+      "reserveCents": 1000,
+      "assessedProfitCents": 4000
+    },
+    {
+      "P": "100",
+      "H": "0",
+      "U": "100",
+      "shareBps": 3300,
+      "capacityUsd": "10",
+      "reserveCents": 1000,
+      "assessedProfitCents": 3031
+    },
+    {
+      "P": "30",
+      "H": "40",
+      "U": "100",
+      "shareBps": 2500,
+      "capacityUsd": "100",
+      "reserveCents": 0,
+      "assessedProfitCents": 0
+    },
+    {
+      "P": "40",
+      "H": "40",
+      "U": "100",
+      "shareBps": 2500,
+      "capacityUsd": "100",
+      "reserveCents": 0,
+      "assessedProfitCents": 0
+    },
+    {
+      "P": "60",
+      "H": "40",
+      "U": "100",
+      "shareBps": 2500,
+      "capacityUsd": "100",
+      "reserveCents": 500,
+      "assessedProfitCents": 2000
+    },
+    {
+      "P": ".01",
+      "H": "0",
+      "U": ".01",
+      "shareBps": 10000,
+      "capacityUsd": "1",
+      "reserveCents": 1,
+      "assessedProfitCents": 1
+    },
+    {
+      "P": "100",
+      "H": "0",
+      "U": "100",
+      "shareBps": 0,
+      "capacityUsd": "100",
+      "reserveCents": 0,
+      "assessedProfitCents": 0
+    },
+    {
+      "P": ".039",
+      "H": "0",
+      "U": ".039",
+      "shareBps": 2500,
+      "capacityUsd": "100",
+      "reserveCents": 0,
+      "assessedProfitCents": 0
+    },
+    {
+      "P": ".04",
+      "H": "0",
+      "U": ".04",
+      "shareBps": 2500,
+      "capacityUsd": "100",
+      "reserveCents": 1,
+      "assessedProfitCents": 4
+    }
+  ],
+  "flowNeutrality": [
+    {
+      "openingUsd": "50",
+      "depositUsd": "17.13",
+      "outflowUsd": "5.01",
+      "terminalUsd": "62.12",
+      "economicProfitUsd": "0"
+    },
+    {
+      "openingUsd": "100",
+      "depositUsd": "17.13",
+      "outflowUsd": "5.01",
+      "terminalUsd": "112.12",
+      "economicProfitUsd": "0"
+    },
+    {
+      "openingUsd": "250",
+      "depositUsd": "17.13",
+      "outflowUsd": "5.01",
+      "terminalUsd": "262.12",
+      "economicProfitUsd": "0"
+    },
+    {
+      "openingUsd": "500",
+      "depositUsd": "17.13",
+      "outflowUsd": "5.01",
+      "terminalUsd": "512.12",
+      "economicProfitUsd": "0"
+    },
+    {
+      "openingUsd": "1000",
+      "depositUsd": "17.13",
+      "outflowUsd": "5.01",
+      "terminalUsd": "1012.12",
+      "economicProfitUsd": "0"
+    },
+    {
+      "openingUsd": "2500",
+      "depositUsd": "17.13",
+      "outflowUsd": "5.01",
+      "terminalUsd": "2512.12",
+      "economicProfitUsd": "0"
+    },
+    {
+      "openingUsd": "5000",
+      "depositUsd": "17.13",
+      "outflowUsd": "5.01",
+      "terminalUsd": "5012.12",
+      "economicProfitUsd": "0"
+    },
+    {
+      "openingUsd": "10000",
+      "depositUsd": "17.13",
+      "outflowUsd": "5.01",
+      "terminalUsd": "10012.12",
+      "economicProfitUsd": "0"
+    },
+    {
+      "openingUsd": "100000",
+      "depositUsd": "17.13",
+      "outflowUsd": "5.01",
+      "terminalUsd": "100012.12",
+      "economicProfitUsd": "0"
+    }
+  ],
+  "depositPlusGainBalanceCase": {
+    "B": "500",
+    "P_base": "0",
+    "P": "10",
+    "deposit": "200",
+    "actualActiveUsd": "710",
+    "growthOnlyBalanceUsd": "510",
+    "targetUsd": "550",
+    "crossed": false
+  },
+  "saleExample": {
+    "basis": "500",
+    "markedValue": "550",
+    "saleForCash": "12.50",
+    "gainBeforeCosts": "1.136363636363636363636363636",
+    "saleForGain12_50": "137.50",
+    "assurance": "Proportional-basis illustration only; not broker tax identification"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "base": "aff6b603dbf354762ddde6bc50cc00eb3eebe098",
+  "unchangedPreexistingDirtyFiles": 495,
+  "changedPreexistingDirtyFiles": [],
+  "inspectedSourceFilesUnchanged": 43,
+  "protectedHashesMatch": true,
+  "p3ApplicationFilesChanged": [],
+  "planSha256": "156ee761285c5aee216d7ebde5795babd7efbb1007a20823a118de63f193d48d",
+  "fullScopeTrackerRetained": true,
+  "localLinksValid": true,
+  "verifiedCurrentSourceGaps": [
+    "local_nonempty_opening_holdings_zero_cash",
+    "unscoped_cost_basis",
+    "no_global_floor_certificate",
+    "p2_funded_reserves_disabled"
+  ],
+  "planningOnly": true
+}

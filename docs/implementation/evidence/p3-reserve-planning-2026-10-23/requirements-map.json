@@ -1,0 +1,32 @@
+{
+  "roadmapSha256": "fda3c0b76897bbb4497cf0e13a7a70d5b9d0e75c441fea4a1044c500ae5cdd25",
+  "readRanges": [
+    "1–134",
+    "135–245",
+    "246–338",
+    "339–432"
+  ],
+  "P3": {
+    "accountingScopeCoverageBasisFeesIncome": "sections 2–3",
+    "allThreeTriggersFrozenBaseAndCycles": "section 4",
+    "monotoneWatermarkPolicyChangeExactPartialAssessment": "section 4",
+    "strictProfitCashCapitalCapsAndPendingClaims": "sections 3–5",
+    "immutableStateAssessmentAtomicityCompatibility": "sections 5–6",
+    "settingsAndFullConsequenceUX": "section 7",
+    "dependenciesSmallBatchesAndAcceptance": "sections 8–9",
+    "zeroFinancialSideEffects": "sections 1,5,8–9"
+  },
+  "P0": "preserved",
+  "P1": "preserved; in review",
+  "P2": "pushed; in review",
+  "P3status": "implementation-ready plan only; implementation not started",
+  "P4throughP7": "all original requirements retained and pending; no scope reduction",
+  "specificGapsResolvedInDesign": [
+    "Legacy local initializer requires zero opening cash and nonempty tracked holdings; no invented cash-origin evidence",
+    "P1 realized/unrealized metrics unscoped; independent eligibility version needed",
+    "P2 global floor unavailable; fixed-plan conditional proof or unavailable, not a universal optimizer",
+    "Draft/inspected preview state never funds actual claims or promotes modeled H into account facts"
+  ],
+  "newResearch": "None needed: no unresolved provider semantics assumed; missing account evidence remains unavailable",
+  "decisionsRequiringUserInput": []
+}
