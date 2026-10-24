@@ -281,7 +281,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "e65c59b6b65ecf19d7b002457447977a2cd2cf5a2eb5b4b72721c4f09bfe10a2"
+        "0facef90df4bb9d288b1b617ef0fd89e272de4e98762777b0bdc128ed90cd411"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -289,7 +289,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "43613c28f2ed18411eb5f337dc9eaa64eeb054d291b3081ac5d9b6baace475a8"
+        "da359e5b3b743b6da5cc4e5a7114a7e7f025e960d503a5c0854b1ab1686257a5"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -330,6 +330,10 @@
       [
         "packages/contracts/src/schemas/capital-performance.ts",
         "464a4df04e5bcde27faa4d44f314a7d4d2126dfa08da19f51ae1bae975cc4cdd"
+      ],
+      [
+        "packages/contracts/src/schemas/capital-replay.ts",
+        "a47839bcae1a18830ac9b657ca1e76ac3fe8ebf1ba30313833e651b6ae28d13e"
       ],
       [
         "packages/contracts/src/schemas/chart-extensions.ts",
@@ -768,6 +772,38 @@
         "adea7cf3f736dc1647f955715b64ef0866588220e4e2efd2cd0fa32f8f6a07fc"
       ],
       [
+        "packages/core/src/research/capital-replay-accounting.ts",
+        "fd4b15f6131899348ad84b8355d6ed1b721b3a55a3bfd95ce53af7791cf84a04"
+      ],
+      [
+        "packages/core/src/research/capital-replay-book.ts",
+        "c224b2b239800fd6e7b048c2ecb181fbf866e6ebb181ac3753e1a959d36d1d00"
+      ],
+      [
+        "packages/core/src/research/capital-replay-execution.ts",
+        "1876a41f17d79e7ad8bf9aed0fffc9e9f6a0ae5386e6dff97eb2623050f68dac"
+      ],
+      [
+        "packages/core/src/research/capital-replay-report.ts",
+        "fb67f4ce01e2bfc108e55ebabe76400586fc93a2d2ed4a7a3bf589bd7d7bf12a"
+      ],
+      [
+        "packages/core/src/research/capital-replay-reserves.ts",
+        "e9a8fd7a952e19824a2475f910c5b3b37c9bb6c9b772b9eb23acb881af155d6d"
+      ],
+      [
+        "packages/core/src/research/capital-replay-tape.ts",
+        "6380e9d9ff3496ce7dfce6818d2632fffc5d6ae37409b64076da9896d9072f43"
+      ],
+      [
+        "packages/core/src/research/capital-replay-types.ts",
+        "5f4d1275981014c15f01f42eb4b2c2b16b5d49d63a2be40dfe9478d723031b49"
+      ],
+      [
+        "packages/core/src/research/capital-replay.ts",
+        "97fbcd15b064e67fc4b00a3a521fa31ea31bd0be9c28acf6392319f7c6e22bc3"
+      ],
+      [
         "packages/core/src/research/cscv.ts",
         "39572bbd7472040e2d5d8a1b930497c0a5778f3e191284fc2b9bcd060a796178"
       ],
@@ -801,7 +837,7 @@
       ],
       [
         "packages/core/src/research/index.ts",
-        "a140e62e064578ba93880b3cebf5f2dde44ba0e64db5f1d497a185e76a09363a"
+        "c982a446bac984ed2a7a2753f6aeef8316db276260cf5ab51d0e5fd3e0eae4cc"
       ],
       [
         "packages/core/src/research/integrity-plan.ts",
@@ -1560,6 +1596,14 @@
         "928fab49c23e59183f8f4a07256b92d34ee0920733c879f47b420aa13c33a256"
       ],
       [
+        "packages/services/src/research/capital-replay-data.ts",
+        "aafe114ad64b85a58b17842609f284e8f6a4fffc5d87b31fa6cede3ba1865cfc"
+      ],
+      [
+        "packages/services/src/research/capital-replay.ts",
+        "8616217ed1e823aaf4aeccb9f761a4db33214f2354c3bf4d3616ef74ef1e5520"
+      ],
+      [
         "packages/services/src/research/evidence.ts",
         "fb4eaa970191d1fde55bf1ec2bd290d375eaf5133ab2f6a86cf7dbc5e48215d5"
       ],
@@ -1573,7 +1617,7 @@
       ],
       [
         "packages/services/src/research/index.ts",
-        "05dc1a72448e75dd5b5d20d76c712341d5baed5ff0e8f7f5eab9f33c5c8843a6"
+        "81259483a291eb2e1cc90bef6f06f425fa23dbdf371619064f93823935fbeff7"
       ],
       [
         "packages/services/src/research/integrity-study.ts",
@@ -2144,6 +2188,10 @@
         "c08adc2cc4f93c1460401a02b19eb71db306db57b5dbab7b27e04d209062dec4"
       ],
       [
+        "packages/storage/src/repositories/capital-replay.ts",
+        "08091991462f12d6db25d41a260a0c96e96d91540e2cd39644e4aa364fcd402d"
+      ],
+      [
         "packages/storage/src/repositories/chart-extensions.ts",
         "7669fe5796f5f5bba841815fe89da9fbcba11d15736fae1b2d6599ab8d1b2bf9"
       ],
@@ -2213,7 +2261,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "824ae127be18441c8472d516939293d1b28638f1603a3d4ce7f252f3f9946a2f"
+        "6ce26dcaea84fb2ab237f366517987b10292982c4944a2ca43fe7a532c6100c6"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -2329,7 +2377,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "19ee86f12646a1a5a6b2b10cf892240d5289b58cde714efdb7164082b36e34a9"
+        "251515ff26d6fa607a75da359552f33362977ae9a3a20ec07d17a9cdb0a6bff5"
       ],
       [
         "packages/storage/src/repositories/profit-reserve.ts",
@@ -2428,7 +2476,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "3223eb4c602ad83df6b0f753ffa283d3fee7525fb1be38a1f302210d2e8bec38"
+    "hash": "fb5f18429bf1044e057c68f5009f0d129181f168dfc21005b74ad44e2ac2ef2e"
   },
   "wider-breakout-v1": {
     "version": 1,
@@ -2712,7 +2760,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "e65c59b6b65ecf19d7b002457447977a2cd2cf5a2eb5b4b72721c4f09bfe10a2"
+        "0facef90df4bb9d288b1b617ef0fd89e272de4e98762777b0bdc128ed90cd411"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -2720,7 +2768,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "43613c28f2ed18411eb5f337dc9eaa64eeb054d291b3081ac5d9b6baace475a8"
+        "da359e5b3b743b6da5cc4e5a7114a7e7f025e960d503a5c0854b1ab1686257a5"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -2761,6 +2809,10 @@
       [
         "packages/contracts/src/schemas/capital-performance.ts",
         "464a4df04e5bcde27faa4d44f314a7d4d2126dfa08da19f51ae1bae975cc4cdd"
+      ],
+      [
+        "packages/contracts/src/schemas/capital-replay.ts",
+        "a47839bcae1a18830ac9b657ca1e76ac3fe8ebf1ba30313833e651b6ae28d13e"
       ],
       [
         "packages/contracts/src/schemas/chart-extensions.ts",
@@ -3199,6 +3251,38 @@
         "adea7cf3f736dc1647f955715b64ef0866588220e4e2efd2cd0fa32f8f6a07fc"
       ],
       [
+        "packages/core/src/research/capital-replay-accounting.ts",
+        "fd4b15f6131899348ad84b8355d6ed1b721b3a55a3bfd95ce53af7791cf84a04"
+      ],
+      [
+        "packages/core/src/research/capital-replay-book.ts",
+        "c224b2b239800fd6e7b048c2ecb181fbf866e6ebb181ac3753e1a959d36d1d00"
+      ],
+      [
+        "packages/core/src/research/capital-replay-execution.ts",
+        "1876a41f17d79e7ad8bf9aed0fffc9e9f6a0ae5386e6dff97eb2623050f68dac"
+      ],
+      [
+        "packages/core/src/research/capital-replay-report.ts",
+        "fb67f4ce01e2bfc108e55ebabe76400586fc93a2d2ed4a7a3bf589bd7d7bf12a"
+      ],
+      [
+        "packages/core/src/research/capital-replay-reserves.ts",
+        "e9a8fd7a952e19824a2475f910c5b3b37c9bb6c9b772b9eb23acb881af155d6d"
+      ],
+      [
+        "packages/core/src/research/capital-replay-tape.ts",
+        "6380e9d9ff3496ce7dfce6818d2632fffc5d6ae37409b64076da9896d9072f43"
+      ],
+      [
+        "packages/core/src/research/capital-replay-types.ts",
+        "5f4d1275981014c15f01f42eb4b2c2b16b5d49d63a2be40dfe9478d723031b49"
+      ],
+      [
+        "packages/core/src/research/capital-replay.ts",
+        "97fbcd15b064e67fc4b00a3a521fa31ea31bd0be9c28acf6392319f7c6e22bc3"
+      ],
+      [
         "packages/core/src/research/cscv.ts",
         "39572bbd7472040e2d5d8a1b930497c0a5778f3e191284fc2b9bcd060a796178"
       ],
@@ -3232,7 +3316,7 @@
       ],
       [
         "packages/core/src/research/index.ts",
-        "a140e62e064578ba93880b3cebf5f2dde44ba0e64db5f1d497a185e76a09363a"
+        "c982a446bac984ed2a7a2753f6aeef8316db276260cf5ab51d0e5fd3e0eae4cc"
       ],
       [
         "packages/core/src/research/integrity-plan.ts",
@@ -3991,6 +4075,14 @@
         "928fab49c23e59183f8f4a07256b92d34ee0920733c879f47b420aa13c33a256"
       ],
       [
+        "packages/services/src/research/capital-replay-data.ts",
+        "aafe114ad64b85a58b17842609f284e8f6a4fffc5d87b31fa6cede3ba1865cfc"
+      ],
+      [
+        "packages/services/src/research/capital-replay.ts",
+        "8616217ed1e823aaf4aeccb9f761a4db33214f2354c3bf4d3616ef74ef1e5520"
+      ],
+      [
         "packages/services/src/research/evidence.ts",
         "fb4eaa970191d1fde55bf1ec2bd290d375eaf5133ab2f6a86cf7dbc5e48215d5"
       ],
@@ -4004,7 +4096,7 @@
       ],
       [
         "packages/services/src/research/index.ts",
-        "05dc1a72448e75dd5b5d20d76c712341d5baed5ff0e8f7f5eab9f33c5c8843a6"
+        "81259483a291eb2e1cc90bef6f06f425fa23dbdf371619064f93823935fbeff7"
       ],
       [
         "packages/services/src/research/integrity-study.ts",
@@ -4575,6 +4667,10 @@
         "c08adc2cc4f93c1460401a02b19eb71db306db57b5dbab7b27e04d209062dec4"
       ],
       [
+        "packages/storage/src/repositories/capital-replay.ts",
+        "08091991462f12d6db25d41a260a0c96e96d91540e2cd39644e4aa364fcd402d"
+      ],
+      [
         "packages/storage/src/repositories/chart-extensions.ts",
         "7669fe5796f5f5bba841815fe89da9fbcba11d15736fae1b2d6599ab8d1b2bf9"
       ],
@@ -4644,7 +4740,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "824ae127be18441c8472d516939293d1b28638f1603a3d4ce7f252f3f9946a2f"
+        "6ce26dcaea84fb2ab237f366517987b10292982c4944a2ca43fe7a532c6100c6"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -4760,7 +4856,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "19ee86f12646a1a5a6b2b10cf892240d5289b58cde714efdb7164082b36e34a9"
+        "251515ff26d6fa607a75da359552f33362977ae9a3a20ec07d17a9cdb0a6bff5"
       ],
       [
         "packages/storage/src/repositories/profit-reserve.ts",
@@ -4859,7 +4955,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "8bdba37ffaaea1b5a338d27d8ff47e0c1a5b1c95f31a262bad899a956f01300f"
+    "hash": "056886980ce54a57c4bc9f1212e6c7565216b2906a144b7c7010bdf5b448883d"
   },
   "wider-range-rotation-v1": {
     "version": 1,
@@ -5143,7 +5239,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "e65c59b6b65ecf19d7b002457447977a2cd2cf5a2eb5b4b72721c4f09bfe10a2"
+        "0facef90df4bb9d288b1b617ef0fd89e272de4e98762777b0bdc128ed90cd411"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -5151,7 +5247,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "43613c28f2ed18411eb5f337dc9eaa64eeb054d291b3081ac5d9b6baace475a8"
+        "da359e5b3b743b6da5cc4e5a7114a7e7f025e960d503a5c0854b1ab1686257a5"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -5192,6 +5288,10 @@
       [
         "packages/contracts/src/schemas/capital-performance.ts",
         "464a4df04e5bcde27faa4d44f314a7d4d2126dfa08da19f51ae1bae975cc4cdd"
+      ],
+      [
+        "packages/contracts/src/schemas/capital-replay.ts",
+        "a47839bcae1a18830ac9b657ca1e76ac3fe8ebf1ba30313833e651b6ae28d13e"
       ],
       [
         "packages/contracts/src/schemas/chart-extensions.ts",
@@ -5630,6 +5730,38 @@
         "adea7cf3f736dc1647f955715b64ef0866588220e4e2efd2cd0fa32f8f6a07fc"
       ],
       [
+        "packages/core/src/research/capital-replay-accounting.ts",
+        "fd4b15f6131899348ad84b8355d6ed1b721b3a55a3bfd95ce53af7791cf84a04"
+      ],
+      [
+        "packages/core/src/research/capital-replay-book.ts",
+        "c224b2b239800fd6e7b048c2ecb181fbf866e6ebb181ac3753e1a959d36d1d00"
+      ],
+      [
+        "packages/core/src/research/capital-replay-execution.ts",
+        "1876a41f17d79e7ad8bf9aed0fffc9e9f6a0ae5386e6dff97eb2623050f68dac"
+      ],
+      [
+        "packages/core/src/research/capital-replay-report.ts",
+        "fb67f4ce01e2bfc108e55ebabe76400586fc93a2d2ed4a7a3bf589bd7d7bf12a"
+      ],
+      [
+        "packages/core/src/research/capital-replay-reserves.ts",
+        "e9a8fd7a952e19824a2475f910c5b3b37c9bb6c9b772b9eb23acb881af155d6d"
+      ],
+      [
+        "packages/core/src/research/capital-replay-tape.ts",
+        "6380e9d9ff3496ce7dfce6818d2632fffc5d6ae37409b64076da9896d9072f43"
+      ],
+      [
+        "packages/core/src/research/capital-replay-types.ts",
+        "5f4d1275981014c15f01f42eb4b2c2b16b5d49d63a2be40dfe9478d723031b49"
+      ],
+      [
+        "packages/core/src/research/capital-replay.ts",
+        "97fbcd15b064e67fc4b00a3a521fa31ea31bd0be9c28acf6392319f7c6e22bc3"
+      ],
+      [
         "packages/core/src/research/cscv.ts",
         "39572bbd7472040e2d5d8a1b930497c0a5778f3e191284fc2b9bcd060a796178"
       ],
@@ -5663,7 +5795,7 @@
       ],
       [
         "packages/core/src/research/index.ts",
-        "a140e62e064578ba93880b3cebf5f2dde44ba0e64db5f1d497a185e76a09363a"
+        "c982a446bac984ed2a7a2753f6aeef8316db276260cf5ab51d0e5fd3e0eae4cc"
       ],
       [
         "packages/core/src/research/integrity-plan.ts",
@@ -6422,6 +6554,14 @@
         "928fab49c23e59183f8f4a07256b92d34ee0920733c879f47b420aa13c33a256"
       ],
       [
+        "packages/services/src/research/capital-replay-data.ts",
+        "aafe114ad64b85a58b17842609f284e8f6a4fffc5d87b31fa6cede3ba1865cfc"
+      ],
+      [
+        "packages/services/src/research/capital-replay.ts",
+        "8616217ed1e823aaf4aeccb9f761a4db33214f2354c3bf4d3616ef74ef1e5520"
+      ],
+      [
         "packages/services/src/research/evidence.ts",
         "fb4eaa970191d1fde55bf1ec2bd290d375eaf5133ab2f6a86cf7dbc5e48215d5"
       ],
@@ -6435,7 +6575,7 @@
       ],
       [
         "packages/services/src/research/index.ts",
-        "05dc1a72448e75dd5b5d20d76c712341d5baed5ff0e8f7f5eab9f33c5c8843a6"
+        "81259483a291eb2e1cc90bef6f06f425fa23dbdf371619064f93823935fbeff7"
       ],
       [
         "packages/services/src/research/integrity-study.ts",
@@ -7006,6 +7146,10 @@
         "c08adc2cc4f93c1460401a02b19eb71db306db57b5dbab7b27e04d209062dec4"
       ],
       [
+        "packages/storage/src/repositories/capital-replay.ts",
+        "08091991462f12d6db25d41a260a0c96e96d91540e2cd39644e4aa364fcd402d"
+      ],
+      [
         "packages/storage/src/repositories/chart-extensions.ts",
         "7669fe5796f5f5bba841815fe89da9fbcba11d15736fae1b2d6599ab8d1b2bf9"
       ],
@@ -7075,7 +7219,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "824ae127be18441c8472d516939293d1b28638f1603a3d4ce7f252f3f9946a2f"
+        "6ce26dcaea84fb2ab237f366517987b10292982c4944a2ca43fe7a532c6100c6"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -7191,7 +7335,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "19ee86f12646a1a5a6b2b10cf892240d5289b58cde714efdb7164082b36e34a9"
+        "251515ff26d6fa607a75da359552f33362977ae9a3a20ec07d17a9cdb0a6bff5"
       ],
       [
         "packages/storage/src/repositories/profit-reserve.ts",
@@ -7290,7 +7434,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "ff55727dd644ea6571112de616a89f4b29b4ddab80728098069d2eeacc881717"
+    "hash": "2728d380134f058ab91ef959102a1d37358ef382f47add5ed1924357ac4c92c8"
   },
   "paper-market-selector-v1": {
     "version": 1,
@@ -7574,7 +7718,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "e65c59b6b65ecf19d7b002457447977a2cd2cf5a2eb5b4b72721c4f09bfe10a2"
+        "0facef90df4bb9d288b1b617ef0fd89e272de4e98762777b0bdc128ed90cd411"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -7582,7 +7726,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "43613c28f2ed18411eb5f337dc9eaa64eeb054d291b3081ac5d9b6baace475a8"
+        "da359e5b3b743b6da5cc4e5a7114a7e7f025e960d503a5c0854b1ab1686257a5"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -7623,6 +7767,10 @@
       [
         "packages/contracts/src/schemas/capital-performance.ts",
         "464a4df04e5bcde27faa4d44f314a7d4d2126dfa08da19f51ae1bae975cc4cdd"
+      ],
+      [
+        "packages/contracts/src/schemas/capital-replay.ts",
+        "a47839bcae1a18830ac9b657ca1e76ac3fe8ebf1ba30313833e651b6ae28d13e"
       ],
       [
         "packages/contracts/src/schemas/chart-extensions.ts",
@@ -8061,6 +8209,38 @@
         "adea7cf3f736dc1647f955715b64ef0866588220e4e2efd2cd0fa32f8f6a07fc"
       ],
       [
+        "packages/core/src/research/capital-replay-accounting.ts",
+        "fd4b15f6131899348ad84b8355d6ed1b721b3a55a3bfd95ce53af7791cf84a04"
+      ],
+      [
+        "packages/core/src/research/capital-replay-book.ts",
+        "c224b2b239800fd6e7b048c2ecb181fbf866e6ebb181ac3753e1a959d36d1d00"
+      ],
+      [
+        "packages/core/src/research/capital-replay-execution.ts",
+        "1876a41f17d79e7ad8bf9aed0fffc9e9f6a0ae5386e6dff97eb2623050f68dac"
+      ],
+      [
+        "packages/core/src/research/capital-replay-report.ts",
+        "fb67f4ce01e2bfc108e55ebabe76400586fc93a2d2ed4a7a3bf589bd7d7bf12a"
+      ],
+      [
+        "packages/core/src/research/capital-replay-reserves.ts",
+        "e9a8fd7a952e19824a2475f910c5b3b37c9bb6c9b772b9eb23acb881af155d6d"
+      ],
+      [
+        "packages/core/src/research/capital-replay-tape.ts",
+        "6380e9d9ff3496ce7dfce6818d2632fffc5d6ae37409b64076da9896d9072f43"
+      ],
+      [
+        "packages/core/src/research/capital-replay-types.ts",
+        "5f4d1275981014c15f01f42eb4b2c2b16b5d49d63a2be40dfe9478d723031b49"
+      ],
+      [
+        "packages/core/src/research/capital-replay.ts",
+        "97fbcd15b064e67fc4b00a3a521fa31ea31bd0be9c28acf6392319f7c6e22bc3"
+      ],
+      [
         "packages/core/src/research/cscv.ts",
         "39572bbd7472040e2d5d8a1b930497c0a5778f3e191284fc2b9bcd060a796178"
       ],
@@ -8094,7 +8274,7 @@
       ],
       [
         "packages/core/src/research/index.ts",
-        "a140e62e064578ba93880b3cebf5f2dde44ba0e64db5f1d497a185e76a09363a"
+        "c982a446bac984ed2a7a2753f6aeef8316db276260cf5ab51d0e5fd3e0eae4cc"
       ],
       [
         "packages/core/src/research/integrity-plan.ts",
@@ -8853,6 +9033,14 @@
         "928fab49c23e59183f8f4a07256b92d34ee0920733c879f47b420aa13c33a256"
       ],
       [
+        "packages/services/src/research/capital-replay-data.ts",
+        "aafe114ad64b85a58b17842609f284e8f6a4fffc5d87b31fa6cede3ba1865cfc"
+      ],
+      [
+        "packages/services/src/research/capital-replay.ts",
+        "8616217ed1e823aaf4aeccb9f761a4db33214f2354c3bf4d3616ef74ef1e5520"
+      ],
+      [
         "packages/services/src/research/evidence.ts",
         "fb4eaa970191d1fde55bf1ec2bd290d375eaf5133ab2f6a86cf7dbc5e48215d5"
       ],
@@ -8866,7 +9054,7 @@
       ],
       [
         "packages/services/src/research/index.ts",
-        "05dc1a72448e75dd5b5d20d76c712341d5baed5ff0e8f7f5eab9f33c5c8843a6"
+        "81259483a291eb2e1cc90bef6f06f425fa23dbdf371619064f93823935fbeff7"
       ],
       [
         "packages/services/src/research/integrity-study.ts",
@@ -9437,6 +9625,10 @@
         "c08adc2cc4f93c1460401a02b19eb71db306db57b5dbab7b27e04d209062dec4"
       ],
       [
+        "packages/storage/src/repositories/capital-replay.ts",
+        "08091991462f12d6db25d41a260a0c96e96d91540e2cd39644e4aa364fcd402d"
+      ],
+      [
         "packages/storage/src/repositories/chart-extensions.ts",
         "7669fe5796f5f5bba841815fe89da9fbcba11d15736fae1b2d6599ab8d1b2bf9"
       ],
@@ -9506,7 +9698,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "824ae127be18441c8472d516939293d1b28638f1603a3d4ce7f252f3f9946a2f"
+        "6ce26dcaea84fb2ab237f366517987b10292982c4944a2ca43fe7a532c6100c6"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -9622,7 +9814,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "19ee86f12646a1a5a6b2b10cf892240d5289b58cde714efdb7164082b36e34a9"
+        "251515ff26d6fa607a75da359552f33362977ae9a3a20ec07d17a9cdb0a6bff5"
       ],
       [
         "packages/storage/src/repositories/profit-reserve.ts",
@@ -9721,7 +9913,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "8c22af8f1d0bd6b24b96be2a6c7d34079936ebfbef12a10377c72f3e6dc0420a"
+    "hash": "21174938394772ccc3560df62e5a82a910fa57d7f711c66d33861bb3f515d6fb"
   },
   "trendvol-hourly-execution-v1": {
     "version": 1,
@@ -9993,7 +10185,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "e65c59b6b65ecf19d7b002457447977a2cd2cf5a2eb5b4b72721c4f09bfe10a2"
+        "0facef90df4bb9d288b1b617ef0fd89e272de4e98762777b0bdc128ed90cd411"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -10001,7 +10193,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "43613c28f2ed18411eb5f337dc9eaa64eeb054d291b3081ac5d9b6baace475a8"
+        "da359e5b3b743b6da5cc4e5a7114a7e7f025e960d503a5c0854b1ab1686257a5"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -10042,6 +10234,10 @@
       [
         "packages/contracts/src/schemas/capital-performance.ts",
         "464a4df04e5bcde27faa4d44f314a7d4d2126dfa08da19f51ae1bae975cc4cdd"
+      ],
+      [
+        "packages/contracts/src/schemas/capital-replay.ts",
+        "a47839bcae1a18830ac9b657ca1e76ac3fe8ebf1ba30313833e651b6ae28d13e"
       ],
       [
         "packages/contracts/src/schemas/chart-extensions.ts",
@@ -10480,6 +10676,38 @@
         "adea7cf3f736dc1647f955715b64ef0866588220e4e2efd2cd0fa32f8f6a07fc"
       ],
       [
+        "packages/core/src/research/capital-replay-accounting.ts",
+        "fd4b15f6131899348ad84b8355d6ed1b721b3a55a3bfd95ce53af7791cf84a04"
+      ],
+      [
+        "packages/core/src/research/capital-replay-book.ts",
+        "c224b2b239800fd6e7b048c2ecb181fbf866e6ebb181ac3753e1a959d36d1d00"
+      ],
+      [
+        "packages/core/src/research/capital-replay-execution.ts",
+        "1876a41f17d79e7ad8bf9aed0fffc9e9f6a0ae5386e6dff97eb2623050f68dac"
+      ],
+      [
+        "packages/core/src/research/capital-replay-report.ts",
+        "fb67f4ce01e2bfc108e55ebabe76400586fc93a2d2ed4a7a3bf589bd7d7bf12a"
+      ],
+      [
+        "packages/core/src/research/capital-replay-reserves.ts",
+        "e9a8fd7a952e19824a2475f910c5b3b37c9bb6c9b772b9eb23acb881af155d6d"
+      ],
+      [
+        "packages/core/src/research/capital-replay-tape.ts",
+        "6380e9d9ff3496ce7dfce6818d2632fffc5d6ae37409b64076da9896d9072f43"
+      ],
+      [
+        "packages/core/src/research/capital-replay-types.ts",
+        "5f4d1275981014c15f01f42eb4b2c2b16b5d49d63a2be40dfe9478d723031b49"
+      ],
+      [
+        "packages/core/src/research/capital-replay.ts",
+        "97fbcd15b064e67fc4b00a3a521fa31ea31bd0be9c28acf6392319f7c6e22bc3"
+      ],
+      [
         "packages/core/src/research/cscv.ts",
         "39572bbd7472040e2d5d8a1b930497c0a5778f3e191284fc2b9bcd060a796178"
       ],
@@ -10513,7 +10741,7 @@
       ],
       [
         "packages/core/src/research/index.ts",
-        "a140e62e064578ba93880b3cebf5f2dde44ba0e64db5f1d497a185e76a09363a"
+        "c982a446bac984ed2a7a2753f6aeef8316db276260cf5ab51d0e5fd3e0eae4cc"
       ],
       [
         "packages/core/src/research/integrity-plan.ts",
@@ -11212,6 +11440,10 @@
         "c08adc2cc4f93c1460401a02b19eb71db306db57b5dbab7b27e04d209062dec4"
       ],
       [
+        "packages/storage/src/repositories/capital-replay.ts",
+        "08091991462f12d6db25d41a260a0c96e96d91540e2cd39644e4aa364fcd402d"
+      ],
+      [
         "packages/storage/src/repositories/chart-extensions.ts",
         "7669fe5796f5f5bba841815fe89da9fbcba11d15736fae1b2d6599ab8d1b2bf9"
       ],
@@ -11281,7 +11513,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "824ae127be18441c8472d516939293d1b28638f1603a3d4ce7f252f3f9946a2f"
+        "6ce26dcaea84fb2ab237f366517987b10292982c4944a2ca43fe7a532c6100c6"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -11397,7 +11629,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "19ee86f12646a1a5a6b2b10cf892240d5289b58cde714efdb7164082b36e34a9"
+        "251515ff26d6fa607a75da359552f33362977ae9a3a20ec07d17a9cdb0a6bff5"
       ],
       [
         "packages/storage/src/repositories/profit-reserve.ts",
@@ -11496,7 +11728,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "b766cd2fb81187c45ee552b1c03c2d259e053b3fa78db758a1bd145394160853"
+    "hash": "39f8ea24e3649f1a09d50e676ca5db3c2181e4b9ba29819c59f9991dc1658ac2"
   },
   "trendvol-execution-remediation-v1": {
     "version": 1,
@@ -11768,7 +12000,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "e65c59b6b65ecf19d7b002457447977a2cd2cf5a2eb5b4b72721c4f09bfe10a2"
+        "0facef90df4bb9d288b1b617ef0fd89e272de4e98762777b0bdc128ed90cd411"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -11776,7 +12008,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "43613c28f2ed18411eb5f337dc9eaa64eeb054d291b3081ac5d9b6baace475a8"
+        "da359e5b3b743b6da5cc4e5a7114a7e7f025e960d503a5c0854b1ab1686257a5"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -11817,6 +12049,10 @@
       [
         "packages/contracts/src/schemas/capital-performance.ts",
         "464a4df04e5bcde27faa4d44f314a7d4d2126dfa08da19f51ae1bae975cc4cdd"
+      ],
+      [
+        "packages/contracts/src/schemas/capital-replay.ts",
+        "a47839bcae1a18830ac9b657ca1e76ac3fe8ebf1ba30313833e651b6ae28d13e"
       ],
       [
         "packages/contracts/src/schemas/chart-extensions.ts",
@@ -12255,6 +12491,38 @@
         "adea7cf3f736dc1647f955715b64ef0866588220e4e2efd2cd0fa32f8f6a07fc"
       ],
       [
+        "packages/core/src/research/capital-replay-accounting.ts",
+        "fd4b15f6131899348ad84b8355d6ed1b721b3a55a3bfd95ce53af7791cf84a04"
+      ],
+      [
+        "packages/core/src/research/capital-replay-book.ts",
+        "c224b2b239800fd6e7b048c2ecb181fbf866e6ebb181ac3753e1a959d36d1d00"
+      ],
+      [
+        "packages/core/src/research/capital-replay-execution.ts",
+        "1876a41f17d79e7ad8bf9aed0fffc9e9f6a0ae5386e6dff97eb2623050f68dac"
+      ],
+      [
+        "packages/core/src/research/capital-replay-report.ts",
+        "fb67f4ce01e2bfc108e55ebabe76400586fc93a2d2ed4a7a3bf589bd7d7bf12a"
+      ],
+      [
+        "packages/core/src/research/capital-replay-reserves.ts",
+        "e9a8fd7a952e19824a2475f910c5b3b37c9bb6c9b772b9eb23acb881af155d6d"
+      ],
+      [
+        "packages/core/src/research/capital-replay-tape.ts",
+        "6380e9d9ff3496ce7dfce6818d2632fffc5d6ae37409b64076da9896d9072f43"
+      ],
+      [
+        "packages/core/src/research/capital-replay-types.ts",
+        "5f4d1275981014c15f01f42eb4b2c2b16b5d49d63a2be40dfe9478d723031b49"
+      ],
+      [
+        "packages/core/src/research/capital-replay.ts",
+        "97fbcd15b064e67fc4b00a3a521fa31ea31bd0be9c28acf6392319f7c6e22bc3"
+      ],
+      [
         "packages/core/src/research/cscv.ts",
         "39572bbd7472040e2d5d8a1b930497c0a5778f3e191284fc2b9bcd060a796178"
       ],
@@ -12288,7 +12556,7 @@
       ],
       [
         "packages/core/src/research/index.ts",
-        "a140e62e064578ba93880b3cebf5f2dde44ba0e64db5f1d497a185e76a09363a"
+        "c982a446bac984ed2a7a2753f6aeef8316db276260cf5ab51d0e5fd3e0eae4cc"
       ],
       [
         "packages/core/src/research/integrity-plan.ts",
@@ -12979,6 +13247,10 @@
         "c08adc2cc4f93c1460401a02b19eb71db306db57b5dbab7b27e04d209062dec4"
       ],
       [
+        "packages/storage/src/repositories/capital-replay.ts",
+        "08091991462f12d6db25d41a260a0c96e96d91540e2cd39644e4aa364fcd402d"
+      ],
+      [
         "packages/storage/src/repositories/chart-extensions.ts",
         "7669fe5796f5f5bba841815fe89da9fbcba11d15736fae1b2d6599ab8d1b2bf9"
       ],
@@ -13048,7 +13320,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "824ae127be18441c8472d516939293d1b28638f1603a3d4ce7f252f3f9946a2f"
+        "6ce26dcaea84fb2ab237f366517987b10292982c4944a2ca43fe7a532c6100c6"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -13164,7 +13436,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "19ee86f12646a1a5a6b2b10cf892240d5289b58cde714efdb7164082b36e34a9"
+        "251515ff26d6fa607a75da359552f33362977ae9a3a20ec07d17a9cdb0a6bff5"
       ],
       [
         "packages/storage/src/repositories/profit-reserve.ts",
@@ -13263,6 +13535,6 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "069b2b7c5535f1141a9c22112738a57c47c97f12a0557855fff25ba1283fc26d"
+    "hash": "afc4473e703a9c31eac4fd301bd311e5c1d9a8a920deae3d17ef388e44767fbb"
   }
 }

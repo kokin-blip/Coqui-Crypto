@@ -293,3 +293,19 @@
 .reserve-result :is(td, dd) { font-variant-numeric: tabular-nums; }
 
 .reserve-result pre { white-space: pre-wrap; overflow-wrap: anywhere; max-block-size: 24rem; overflow-y: auto; }
+
+.capital-replay p { max-inline-size: 75ch; }
+.capital-replay code { overflow-wrap: anywhere; }
+.capital-replay > label { display: grid; gap: 0.35rem; max-inline-size: 48rem; margin-block: 0.75rem; }
+.capital-replay select { min-inline-size: 0; max-inline-size: 100%; }
+.capital-replay-table { overflow-x: auto; margin-block: 1rem; }
+.capital-replay-table table { min-inline-size: 70rem; width: 100%; font-variant-numeric: tabular-nums; }
+.capital-replay-table th, .capital-replay-table td { padding: 0.4rem 0.6rem; text-align: start; }
+.capital-replay caption { text-align: start; margin-block-end: 0.5rem; }
+.capital-replay-selection { margin-block: 1.25rem; }
+.capital-replay-selection li { margin-block: 0.5rem; }
+.capital-replay-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+.capital-replay .terminal-metric-help > button { margin: 0; }
+.capital-replay .terminal-metric-explanation { position-area: none; position-try-fallbacks: none; inset: 12px; margin: auto; height: fit-content; justify-self: auto; }
+.capital-replay .metric-grid :is(dt, dd) { min-inline-size: 0; overflow-wrap: anywhere; }

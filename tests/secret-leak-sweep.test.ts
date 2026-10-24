@@ -74,6 +74,7 @@ const LOCAL_CHANNELS: readonly ChannelName[] = [
   'paper.execution.proposals',
   'paper.performance',
   'capital.scopes', 'capital.performance', 'capital.budget', 'capital.feasibility',
+  'research.capital-replay.runs', 'research.capital-replay.detail',
   'capital.reserve.view', 'capital.reserve.preview', 'capital.reserve.settings.save', 'capital.reserve.inspect',
   'paper.performance-day',
 ];
@@ -101,6 +102,8 @@ const PAYLOADS: Partial<Record<ChannelName, unknown>> = {
   'paper.execution.proposals': { limit: 50 },
   'paper.performance-day': { dayUtc: 1_799_971_200_000 },
   'capital.performance': { scopeId: 'a'.repeat(64), epochId: null, fromMs: null, toMs: null },
+  'research.capital-replay.runs': {limit:10},
+  'research.capital-replay.detail': {runId:'a'.repeat(64),cellId:null,page:0,limit:10},
   'capital.reserve.view': {scopeId:'a'.repeat(64)},
   'capital.reserve.preview': {mode:'observed',scopeId:'a'.repeat(64)},
   'capital.reserve.settings.save': {commandId:'11111111-1111-4111-8111-111111111111',scopeId:'a'.repeat(64),expectedPolicyId:null,expectedStateId:null,expectedInputHash:'b'.repeat(64),settings:{goal:'keep_invested',trigger:{kind:'profit_usd',value:'50'},shareBps:0,retainedCapitalUsd:'0',minimumBatchUsd:'1',cadence:'manual',reviewWinCount:null,taxHold:{amountUsd:'0',backing:'principal'}}},

@@ -1,0 +1,12 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/capital-replay-flows.test.ts (6 tests) 242ms
+ ✓ tests/capital-replay-execution.test.ts (10 tests) 547ms
+     ✓ counts each friction component once across generated exact purchases  458ms
+
+ Test Files  2 passed (2)
+      Tests  16 passed (16)
+   Start at  21:27:52
+   Duration  1.83s (transform 614ms, setup 0ms, import 854ms, tests 788ms, environment 0ms)
+

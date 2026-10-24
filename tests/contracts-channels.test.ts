@@ -96,7 +96,7 @@ describe('channel registry', () => {
       'portfolio.reconciliation.resolve',
       'portfolio.tax',
       'portfolio.view',
-      'research.candidate.review', 'research.candidate.rollback', 'research.edge-study', 'research.integrity-workspace',
+      'research.candidate.review', 'research.candidate.rollback', 'research.capital-replay.detail', 'research.capital-replay.runs', 'research.edge-study', 'research.integrity-workspace',
       'research.job',
       'research.jobs', 'research.lineage',
       'research.negative-findings', 'research.overlay-shadow.set', 'research.overlay-shadow.status',

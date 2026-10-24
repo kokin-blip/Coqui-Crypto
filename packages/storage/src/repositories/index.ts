@@ -80,3 +80,4 @@ export * from './capital-budget.js';
 export * from './activity-valuations.js';
 
 export * from './profit-reserve.js';
+export * from './capital-replay.js';

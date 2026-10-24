@@ -1,0 +1,39 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/capital-replay-service.test.ts (4 tests) 1003ms
+     ✓ strictly validates and roundtrips actual stored results and exact retries  430ms
+     ✓ rolls back a crash after chunks and before root publication and does not write finances  314ms
+ ❯ tests/capital-replay-flows.test.ts (5 tests | 1 failed) 172ms
+     ✓ separates a $102 debit from the $100 receipt and $2 investment cost 54ms
+     ✓ counts pending receivable once and does not claim early receipt 84ms
+     × keeps unavailable timing distinct from zero and preserves daily gaps 9ms
+     ✓ does not reuse known future fee evidence at an earlier reserve review 21ms
+     ✓ supports full redemption and linked later funding without resetting H 3ms
+ ✓ tests/capital-replay-book.test.ts (5 tests) 340ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/capital-replay-flows.test.ts > P4 dated capital flow and metric boundaries > keeps unavailable timing distinct from zero and preserves daily gaps
+AssertionError: expected { Object (state, value, ...) } to match object { state: 'unavailable' }
+(3 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "state": "unavailable",
++   "state": "available",
+  }
+
+ ❯ tests/capital-replay-flows.test.ts:23:126
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 13 passed (14)
+   Start at  20:56:46
+   Duration  3.47s (transform 1.21s, setup 0ms, import 1.76s, tests 1.51s, environment 0ms)
+

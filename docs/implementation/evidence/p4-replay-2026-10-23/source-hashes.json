@@ -1,0 +1,182 @@
+[
+  {
+    "path": "apps/desktop/scripts/capital-replay-smoke.mjs",
+    "sha256": "6bb2fff524c4f99cb16b5962f4038491761758dc252752a3a0809bfc5091fc66"
+  },
+  {
+    "path": "apps/desktop/src/main/capital-replay-handlers.ts",
+    "sha256": "beee1ecb67c58b2168c20f85b5783c62861c7604426b36cc2abb6e033828ec84"
+  },
+  {
+    "path": "apps/desktop/src/main/composition.ts",
+    "sha256": "99e201b96cef1ac8f119edabd7a88401a3803128400f3a4ab8cdaafb86f00c30"
+  },
+  {
+    "path": "apps/desktop/src/renderer/app/CapitalReplayResults.tsx",
+    "sha256": "1596ebca94529b967992a3e8793fa2cbdb2043414cd7eadb505225fb1410283e"
+  },
+  {
+    "path": "apps/desktop/src/renderer/app/Research.tsx",
+    "sha256": "c121c526c7ae5291198e82fee0b27f9c20f0f6c8fa1a2c4a06657b58d8b396ca"
+  },
+  {
+    "path": "apps/desktop/src/renderer/query/refetch.ts",
+    "sha256": "968acdc8fc8f6a13245b0655552b52102ecb98ce709c77d21880d91e2d75b561"
+  },
+  {
+    "path": "apps/desktop/src/renderer/styles/terminal.css",
+    "sha256": "26eeffdca4e5995427da8d522cbd686419d35613d2e40386d053dc335e272b8b"
+  },
+  {
+    "path": "docs/implementation/small-portfolio-p4-delivery-2026-10-23.md",
+    "sha256": "50211b5a9efa88cda3c8349a322614573eae8fca29d64a882f1ef33899f71780"
+  },
+  {
+    "path": "docs/implementation/small-portfolio-phase-tracker-2026-10-23.md",
+    "sha256": "5450c914b3035cd8040f785fab3820340c17279118e6b3049c1927363d971b9e"
+  },
+  {
+    "path": "docs/studies/behavior-manifests-v1.json",
+    "sha256": "a67cfc4f2bcf9f0993eb963d803a4d48f5636f5190932a3159f2796bc9ea0546"
+  },
+  {
+    "path": "package.json",
+    "sha256": "6ea225dd883dfbd014af34f093d6c4b3a538e59852fb47fbff1fcc72d0318d1d"
+  },
+  {
+    "path": "packages/contracts/src/channels.ts",
+    "sha256": "fefc8b58886782e2e6437e8491dbb1c3aff75d68e6e4672b5fd191be3ead3ef5"
+  },
+  {
+    "path": "packages/contracts/src/index.ts",
+    "sha256": "da359e5b3b743b6da5cc4e5a7114a7e7f025e960d503a5c0854b1ab1686257a5"
+  },
+  {
+    "path": "packages/contracts/src/schemas/capital-replay.ts",
+    "sha256": "a47839bcae1a18830ac9b657ca1e76ac3fe8ebf1ba30313833e651b6ae28d13e"
+  },
+  {
+    "path": "packages/core/src/research/capital-replay-accounting.ts",
+    "sha256": "fd4b15f6131899348ad84b8355d6ed1b721b3a55a3bfd95ce53af7791cf84a04"
+  },
+  {
+    "path": "packages/core/src/research/capital-replay-book.ts",
+    "sha256": "c224b2b239800fd6e7b048c2ecb181fbf866e6ebb181ac3753e1a959d36d1d00"
+  },
+  {
+    "path": "packages/core/src/research/capital-replay-execution.ts",
+    "sha256": "1876a41f17d79e7ad8bf9aed0fffc9e9f6a0ae5386e6dff97eb2623050f68dac"
+  },
+  {
+    "path": "packages/core/src/research/capital-replay-report.ts",
+    "sha256": "fb67f4ce01e2bfc108e55ebabe76400586fc93a2d2ed4a7a3bf589bd7d7bf12a"
+  },
+  {
+    "path": "packages/core/src/research/capital-replay-reserves.ts",
+    "sha256": "e9a8fd7a952e19824a2475f910c5b3b37c9bb6c9b772b9eb23acb881af155d6d"
+  },
+  {
+    "path": "packages/core/src/research/capital-replay-tape.ts",
+    "sha256": "6380e9d9ff3496ce7dfce6818d2632fffc5d6ae37409b64076da9896d9072f43"
+  },
+  {
+    "path": "packages/core/src/research/capital-replay-types.ts",
+    "sha256": "5f4d1275981014c15f01f42eb4b2c2b16b5d49d63a2be40dfe9478d723031b49"
+  },
+  {
+    "path": "packages/core/src/research/capital-replay.ts",
+    "sha256": "97fbcd15b064e67fc4b00a3a521fa31ea31bd0be9c28acf6392319f7c6e22bc3"
+  },
+  {
+    "path": "packages/core/src/research/index.ts",
+    "sha256": "c982a446bac984ed2a7a2753f6aeef8316db276260cf5ab51d0e5fd3e0eae4cc"
+  },
+  {
+    "path": "packages/core/src/research/study-manifests.generated.ts",
+    "sha256": "e8c29111c1ebb5755a684ada96c8c53786c50867e828204bfe29609dd91e3fcc"
+  },
+  {
+    "path": "packages/services/src/research/capital-replay-data.ts",
+    "sha256": "aafe114ad64b85a58b17842609f284e8f6a4fffc5d87b31fa6cede3ba1865cfc"
+  },
+  {
+    "path": "packages/services/src/research/capital-replay.ts",
+    "sha256": "8616217ed1e823aaf4aeccb9f761a4db33214f2354c3bf4d3616ef74ef1e5520"
+  },
+  {
+    "path": "packages/services/src/research/index.ts",
+    "sha256": "81259483a291eb2e1cc90bef6f06f425fa23dbdf371619064f93823935fbeff7"
+  },
+  {
+    "path": "packages/storage/src/repositories/capital-replay.ts",
+    "sha256": "08091991462f12d6db25d41a260a0c96e96d91540e2cd39644e4aa364fcd402d"
+  },
+  {
+    "path": "packages/storage/src/repositories/index.ts",
+    "sha256": "6ce26dcaea84fb2ab237f366517987b10292982c4944a2ca43fe7a532c6100c6"
+  },
+  {
+    "path": "packages/storage/src/repositories/profile-impact.ts",
+    "sha256": "251515ff26d6fa607a75da359552f33362977ae9a3a20ec07d17a9cdb0a6bff5"
+  },
+  {
+    "path": "scripts/research-capital-replay.mjs",
+    "sha256": "3cfbe48fcf0b7411cf3b28aa37059939cfaa99fbb3f23b0b7cb196df8fae0aec"
+  },
+  {
+    "path": "scripts/smoke-capital-replay.mjs",
+    "sha256": "965b60bda4a4b9aa540aabf74e5c92d403ea3d325cb5b4d7dab385a6c397eb62"
+  },
+  {
+    "path": "tests/capital-replay-book.test.ts",
+    "sha256": "0cece6fc7d8279b4ca2eadb24d36d75067ebb4ecaf85dd8d53b1218a2958c9db"
+  },
+  {
+    "path": "tests/capital-replay-execution.test.ts",
+    "sha256": "b552d7de1d6a6ed1c81762990be92e5900f8bdc6590648172a72c2e386684e8a"
+  },
+  {
+    "path": "tests/capital-replay-flows.test.ts",
+    "sha256": "760132c3e6328bb7e2e39c5b199010b319da020e376e0874f045e9d1d88b44e9"
+  },
+  {
+    "path": "tests/capital-replay-governance.test.ts",
+    "sha256": "009046957c1409e7018d136e95fd48ad2164c010809bec958e6573bdbcee3277"
+  },
+  {
+    "path": "tests/capital-replay-metrics.test.ts",
+    "sha256": "23a8cc718ed6cf3a5b593a3ff4d94f51406d56174d300636daa047904035cdab"
+  },
+  {
+    "path": "tests/capital-replay-reserves.test.ts",
+    "sha256": "912d259704b134f6cbea8f405d6032836202dad410c84b26208a1b0b613bfb43"
+  },
+  {
+    "path": "tests/capital-replay-service.test.ts",
+    "sha256": "f34e7f7f6d7f42e7ddb1b078047254659c2003a7a2a80470b00a599f4c2d7f1b"
+  },
+  {
+    "path": "tests/capital-replay-storage.test.ts",
+    "sha256": "e3e18487521de38ee51548ecafdaa5832f3a87d9d63b9ad271e314c7958f4fa4"
+  },
+  {
+    "path": "tests/capital-replay-stress.test.ts",
+    "sha256": "bcdb3641c4865ecb6bcbb1d1209a0a355ba930aad1ed291f2d30d07fdac97a67"
+  },
+  {
+    "path": "tests/capital-replay-ui.test.ts",
+    "sha256": "287ff0141fecfd971f2cd931a4412b7cd19b4a587c17bfcf7f7ca994ed979ae0"
+  },
+  {
+    "path": "tests/contracts-channels.test.ts",
+    "sha256": "8e3bf1d4582e456c8b8f5e4e05977cc831d7230453d909a5242861993656618f"
+  },
+  {
+    "path": "tests/helpers/capital-replay.ts",
+    "sha256": "60111db39bcd3a497e9b61cae1cb86227371cde17daf9796995ec84d0f6d3a18"
+  },
+  {
+    "path": "tests/secret-leak-sweep.test.ts",
+    "sha256": "ed73e1372206e12940eb5dbe715434a57e02eea8df4a87e56e4effe5bc025949"
+  }
+]

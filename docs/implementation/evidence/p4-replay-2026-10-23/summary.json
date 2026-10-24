@@ -1,0 +1,84 @@
+{
+  "phase": "P4-A\u2013F",
+  "status": "local_capability_complete_review_pending",
+  "base": "a83402d59e0142dc9f1bc6c433be752c757b3bd2",
+  "branch": "codex/operations-crew-journal",
+  "committed": false,
+  "pushed": false,
+  "mode": "offline_development",
+  "marketRun": false,
+  "financialAuthority": false,
+  "schemaVersion": 98,
+  "runtime": {
+    "codeRevision": "a83402d59e0142dc9f1bc6c433be752c757b3bd2",
+    "sourceManifestHash": "8753041283f65079184433772adfccf0bd7f9973347374b5053b9209f33ad859",
+    "lockfileHash": "955950e91a76499274dcdf8781352612b3890a0ad7f076d6db5cd255fd0f3c79"
+  },
+  "node": "v24.19.0",
+  "fullTests": {
+    "files": 309,
+    "tests": 2278,
+    "log": "logs/coqui-p4-all-closure.log",
+    "newP4Suites": 10,
+    "newP4Cases": 65
+  },
+  "finalUiLabelCheck": {
+    "files": 1,
+    "tests": 8,
+    "log": "logs/coqui-p4-ui-closure.log"
+  },
+  "typecheck": {
+    "passed": true,
+    "log": "logs/coqui-p4-typecheck-closure.log"
+  },
+  "lint": {
+    "passed": true,
+    "log": "logs/coqui-p4-lint-closure.log",
+    "finalSmokeScript": "logs/coqui-p4-smoke-script-lint.log"
+  },
+  "rootBuild": {
+    "passed": true,
+    "log": "logs/coqui-p4-root-build-closure.log"
+  },
+  "desktopBuild": {
+    "passed": true,
+    "log": "logs/coqui-p4-desktop-build-closure.log",
+    "warning": "Existing bundle chunks over 500 kB; no packaging or release."
+  },
+  "cli": {
+    "passed": true,
+    "checks": 10,
+    "artifact": "cli-smoke.json",
+    "log": "logs/coqui-p4-cli-closure.log"
+  },
+  "native": {
+    "passed": true,
+    "checks": 19,
+    "artifact": "ui/smoke.json",
+    "log": "logs/coqui-p4-native-closure.log",
+    "captureNote": "Initial batch and confirmation inspected. Final scope-label functional closure used --checks-only; no additional visual refinement loop."
+  },
+  "nativeSafety": {
+    "passed": true,
+    "log": "logs/coqui-p4-native-safety.log"
+  },
+  "detector": {
+    "runs": 1,
+    "findings": []
+  },
+  "preservation": "preservation.json",
+  "sourceHashes": "source-hashes.json",
+  "reviewIssue": "COQ-38",
+  "phaseTracker": "../../small-portfolio-phase-tracker-2026-10-23.md",
+  "remaining": [
+    "Human review and upstream P1\u2013P3 review dependencies",
+    "Exact source isolation if a later commit is requested",
+    "Actual account/data/cost/owner evidence; P5/P6/P7 and release gates remain separate"
+  ],
+  "futurePhases": {
+    "P5": "not_started_full_scope_retained",
+    "P6": "not_started_full_scope_retained",
+    "P7": "not_started_full_scope_retained"
+  },
+  "Prompt used": "Ok move onto building P4 using the saved plan. Preserve P0\u2013P3 and the full P0\u2013P7 scope, and keep the phase tracker updated."
+}

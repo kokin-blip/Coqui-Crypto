@@ -1,0 +1,14 @@
+packages/contracts/src/schemas/capital-replay.ts(2,104): error TS2307: Cannot find module '@coqui/core' or its corresponding type declarations.
+packages/contracts/src/schemas/capital-replay.ts(3,39): error TS2307: Cannot find module '@coqui/core' or its corresponding type declarations.
+packages/contracts/dist/channels.d.ts(12814,36): error TS2304: Cannot find name 'CapitalReplaySpecV1'.
+packages/contracts/dist/channels.d.ts(12814,91): error TS2304: Cannot find name 'CapitalReplaySpecV1'.
+packages/contracts/dist/schemas/capital-replay.d.ts(2,104): error TS2307: Cannot find module '@coqui/core' or its corresponding type declarations.
+packages/contracts/dist/channels.d.ts(12814,36): error TS2304: Cannot find name 'CapitalReplaySpecV1'.
+packages/contracts/dist/channels.d.ts(12814,91): error TS2304: Cannot find name 'CapitalReplaySpecV1'.
+packages/contracts/dist/schemas/capital-replay.d.ts(2,104): error TS2307: Cannot find module '@coqui/core' or its corresponding type declarations.
+packages/contracts/dist/channels.d.ts(12814,36): error TS2304: Cannot find name 'CapitalReplaySpecV1'.
+packages/contracts/dist/channels.d.ts(12814,91): error TS2304: Cannot find name 'CapitalReplaySpecV1'.
+packages/contracts/dist/schemas/capital-replay.d.ts(2,104): error TS2307: Cannot find module '@coqui/core' or its corresponding type declarations.
+packages/contracts/dist/channels.d.ts(12814,36): error TS2304: Cannot find name 'CapitalReplaySpecV1'.
+packages/contracts/dist/channels.d.ts(12814,91): error TS2304: Cannot find name 'CapitalReplaySpecV1'.
+packages/contracts/dist/schemas/capital-replay.d.ts(2,104): error TS2307: Cannot find module '@coqui/core' or its corresponding type declarations.

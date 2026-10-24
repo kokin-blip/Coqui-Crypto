@@ -61,7 +61,9 @@ export function readProfileDeletionImpact(
         (SELECT COUNT(*) FROM research_preregistrations) +
         (SELECT COUNT(*) FROM research_study_runs) +
         (SELECT COUNT(*) FROM research_evidence_snapshots_v2) +
-        (SELECT COUNT(*) FROM trial_registry_records)) AS research_evidence_records,
+        (SELECT COUNT(*) FROM trial_registry_records) +
+        (SELECT COUNT(*) FROM research_integrity_events WHERE kind IN
+          ('capital_replay_spec','capital_replay_attempt','capital_replay_input','capital_replay_chunk','capital_replay_result','capital_replay_failure','capital_replay_interrupted'))) AS research_evidence_records,
       ((SELECT COUNT(*) FROM alert_events_v2 WHERE profile_id = ?) +
         (SELECT COUNT(*) FROM alert_price_targets_v2 WHERE profile_id = ?))
         AS alert_evidence_records,

@@ -1,0 +1,10 @@
+
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/scripts/capital-replay-smoke.mjs
+  26:68  error  'Buffer' is not defined  no-undef
+
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/scripts/smoke-capital-replay.mjs
+  12:67   error  'Buffer' is not defined  no-undef
+  24:177  error  'Buffer' is not defined  no-undef
+
+✖ 3 problems (3 errors, 0 warnings)
+

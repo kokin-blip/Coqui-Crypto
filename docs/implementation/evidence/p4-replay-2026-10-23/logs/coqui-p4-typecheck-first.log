@@ -1,0 +1,1 @@
+packages/core/src/research/capital-replay-tape.ts(86,65): error TS2304: Cannot find name 'NativeExecutionRulesV1'.

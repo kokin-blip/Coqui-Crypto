@@ -18,3 +18,5 @@ export * from "./overlay-study.js";
 
 export * from "./overlay-shadow.js";
 export * from './integrity-workspace.js';
+export * from './capital-replay.js';
+export * from './capital-replay-data.js';

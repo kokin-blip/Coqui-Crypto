@@ -1,0 +1,10 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/capital-replay-reserves.test.ts (8 tests) 432ms
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  21:04:15
+   Duration  962ms (transform 366ms, setup 0ms, import 452ms, tests 432ms, environment 0ms)
+

@@ -1,3 +1,4 @@
+import { CapitalReplayResults } from './CapitalReplayResults.js';
 import { NewsStudyStatus } from './NewsPanels.js';
 import type { CoquiClient } from '@coqui/contracts';
 
@@ -35,6 +36,7 @@ export function Research({ client }: { readonly client: CoquiClient }): React.JS
           <p>{s.gates.join(' · ')}</p><p>Runtime {s.sourceManifestHash} · lockfile {s.lockfileHash} · costs {s.costHashes.join(', ')}</p>
         </details>)}
       </section>
+      <CapitalReplayResults client={client} />
       <ResearchRuns client={client} />
       <ResearchEvidenceDashboard client={client} />
       <NegativeFindings client={client} />

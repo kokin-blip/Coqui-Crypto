@@ -1,0 +1,53 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/capital-replay-service.test.ts (4 tests) 1207ms
+     ✓ strictly validates and roundtrips actual stored results and exact retries  454ms
+     ✓ retains failed attempts and requires explicit retry before reopening inputs  332ms
+     ✓ rolls back a crash after chunks and before root publication and does not write finances  376ms
+ ✓ tests/capital-replay-storage.test.ts (2 tests) 1049ms
+     ✓ preserves populated results through backup and copy, with archived origin and no authority  551ms
+     ✓ links corrected calculations to old immutable reports and rejects unproved lineage  497ms
+ ✓ tests/capital-replay-execution.test.ts (6 tests) 477ms
+     ✓ counts each friction component once across generated exact purchases  420ms
+ ✓ tests/capital-replay-reserves.test.ts (8 tests) 382ms
+ ✓ tests/capital-replay-book.test.ts (5 tests) 366ms
+ ✓ tests/capital-replay-ui.test.ts (8 tests) 357ms
+ ✓ tests/capital-replay-governance.test.ts (5 tests) 173ms
+ ✓ tests/capital-replay-metrics.test.ts (5 tests) 347ms
+ ✓ tests/capital-replay-flows.test.ts (5 tests) 149ms
+ ❯ tests/capital-replay-stress.test.ts (6 tests | 1 failed) 3163ms
+     ✓ retains the complete capital grid under decline  936ms
+     ✓ retains the complete capital grid under rebound  899ms
+     ✓ retains the complete capital grid under outage  330ms
+     × retains the complete capital grid under missing 425ms
+     ✓ retains the complete capital grid under delayed-fees  436ms
+     ✓ makes interrupted funding explicit without manufacturing return or suppressing cells 137ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/capital-replay-stress.test.ts > P4 deterministic joint-path mechanics, not alpha evidence > retains the complete capital grid under missing
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/capital-replay-stress.test.ts:10:94
+      8|   const s=variantChange({...rehash(spec,t),pathId:`synthetic-${kind}`}…
+      9|   expect(r.cells).toHaveLength(36);expect(r.variantInventory).toHaveLe…
+     10|   if(kind==='missing')expect(r.cells.some(c=>c.reasonCodes.includes('m…
+       |                                                                                              ^
+     11|   if(kind==='delayed-fees')expect(r.cells.filter(c=>c.cell.arm==='poli…
+     12|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 9 passed (10)
+      Tests  1 failed | 53 passed (54)
+   Start at  21:13:18
+   Duration  11.01s (transform 1.15s, setup 0ms, import 2.75s, tests 7.67s, environment 0ms)
+

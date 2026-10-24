@@ -1,0 +1,22 @@
+
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/packages/core/src/research/capital-replay-accounting.ts
+  24:72  error  Do not delete dynamically computed property keys  @typescript-eslint/no-dynamic-delete
+
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/packages/core/src/research/capital-replay-book.ts
+  71:28  error  Do not delete dynamically computed property keys  @typescript-eslint/no-dynamic-delete
+
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/packages/core/src/research/capital-replay-report.ts
+  16:27  error  Unnecessary escape character: \"  no-useless-escape
+  16:45  error  Unnecessary escape character: \"  no-useless-escape
+  16:50  error  Unnecessary escape character: \"  no-useless-escape
+  16:52  error  Unnecessary escape character: \"  no-useless-escape
+  16:58  error  Unnecessary escape character: \"  no-useless-escape
+
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/packages/services/src/research/capital-replay.ts
+  45:213  error  There is no `cause` attached to the symptom error being thrown  preserve-caught-error
+
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/scripts/research-capital-replay.mjs
+  36:19  error  'AbortController' is not defined  no-undef
+
+✖ 9 problems (9 errors, 0 warnings)
+

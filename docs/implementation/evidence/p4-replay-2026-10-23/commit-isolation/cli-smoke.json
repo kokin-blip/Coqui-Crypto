@@ -1,0 +1,52 @@
+{
+  "synthetic": true,
+  "accountAccess": false,
+  "runtime": {
+    "codeRevision": "a83402d59e0142dc9f1bc6c433be752c757b3bd2",
+    "sourceManifestHash": "9ac9cafeae09b3a64a90f75660cdbb56dc838f25b568c0e6022dd4ce299d2a5b",
+    "lockfileHash": "955950e91a76499274dcdf8781352612b3890a0ad7f076d6db5cd255fd0f3c79"
+  },
+  "resultId": "232936258c13795a19d17411953f9e0286704e2c0676df14c73fdcfff4128bc0",
+  "checks": [
+    {
+      "name": "existing inactive profile fixture",
+      "passed": true
+    },
+    {
+      "name": "validate reads no data bodies",
+      "passed": true
+    },
+    {
+      "name": "documented argument separator is accepted",
+      "passed": true
+    },
+    {
+      "name": "real CLI independently retains all 36 cells",
+      "passed": true
+    },
+    {
+      "name": "exact retry and report require no tape reload",
+      "passed": true
+    },
+    {
+      "name": "self-contained report preserves exact spec and all cells",
+      "passed": true
+    },
+    {
+      "name": "CSV retains complete grid and arms",
+      "passed": true
+    },
+    {
+      "name": "no financial, paper or registration rows",
+      "passed": true
+    },
+    {
+      "name": "only dedicated P4 integrity kinds written",
+      "passed": true
+    },
+    {
+      "name": "active profile refused by actual CLI",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/capital-replay-service.test.ts (4 tests) 1031ms
+     ✓ strictly validates and roundtrips actual stored results and exact retries  422ms
+     ✓ rolls back a crash after chunks and before root publication and does not write finances  346ms
+ ✓ tests/capital-replay-execution.test.ts (6 tests) 426ms
+     ✓ counts each friction component once across generated exact purchases  384ms
+ ✓ tests/capital-replay-reserves.test.ts (8 tests) 377ms
+stdout | tests/secret-leak-sweep.test.ts > a connected key never reaches the renderer > appears in no channel response
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '0effb6f2f40dd5fdcf926931a4e4bb3c94e16b008d5c8daa1b7606784863a66d'
+}
+
+stdout | tests/secret-leak-sweep.test.ts > a connected key never reaches the renderer > appears in no column of the database
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '0effb6f2f40dd5fdcf926931a4e4bb3c94e16b008d5c8daa1b7606784863a66d'
+}
+
+ ✓ tests/secret-leak-sweep.test.ts (7 tests) 187ms
+ ✓ tests/contracts-channels.test.ts (21 tests) 10ms
+ ✓ tests/capital-replay-ui.test.ts (8 tests) 328ms
+ ✓ tests/capital-replay-storage.test.ts (2 tests) 966ms
+     ✓ preserves populated results through backup and copy, with archived origin and no authority  508ms
+     ✓ links corrected calculations to old immutable reports and rejects unproved lineage  457ms
+ ✓ tests/capital-replay-book.test.ts (5 tests) 364ms
+ ✓ tests/capital-replay-governance.test.ts (5 tests) 172ms
+ ✓ tests/capital-replay-flows.test.ts (5 tests) 148ms
+
+ Test Files  10 passed (10)
+      Tests  71 passed (71)
+   Start at  21:11:06
+   Duration  7.32s (transform 1.13s, setup 0ms, import 2.77s, tests 4.01s, environment 0ms)
+

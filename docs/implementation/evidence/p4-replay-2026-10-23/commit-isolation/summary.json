@@ -1,0 +1,29 @@
+{
+  "candidate": "/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-p4-commit-xlyctq1w",
+  "base": "a83402d59e0142dc9f1bc6c433be752c757b3bd2",
+  "mixed": [
+    "apps/desktop/src/main/composition.ts",
+    "apps/desktop/src/renderer/query/refetch.ts",
+    "apps/desktop/src/renderer/styles/terminal.css",
+    "package.json",
+    "packages/contracts/src/channels.ts",
+    "tests/contracts-channels.test.ts"
+  ],
+  "sourceFiles": 45,
+  "Prompt used": "Commit and push P4, then lets move on to P5. Reread its full requirements in the saved roadmap, inspect the code, and prepare a concrete implementation plan before coding. Preserve P0\u2013P4 and the full P0\u2013P7 scope.",
+  "status": "isolated_source_verified_before_commit",
+  "fullTestFiles": 303,
+  "fullTests": 2171,
+  "newP4Cases": 65,
+  "typecheck": "passed",
+  "lint": "passed",
+  "rootBuild": "passed",
+  "desktopBuild": "passed",
+  "cliChecks": 10,
+  "nativeP4Checks": 19,
+  "nativeGeneral": "ALL PASS",
+  "mixedFilesInverseMatchCommittedBase": true,
+  "combinedCheckoutEvidence": "Original 309-file / 2278-test acceptance retained unchanged.",
+  "scope": "P4 only; unrelated hourly/execution work excluded; generated manifests from the committed generator.",
+  "remaining": "Review, actual account/data/owner evidence, qualification and release remain open."
+}

@@ -1,0 +1,10 @@
+(node:69505) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `Electron --trace-warnings ...` to show where the warning was created)
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '8a340fb3e4965544f1df4f7f50941769d378a98d0305ed69ea0c11a57a89417c'
+}
+PASS desktop-dark: full grid and unavailable annualization 
+Error: Visual integrity failure in p4-desktop-dark-grid: clipped text [{"selector":"dt","text":"Active-sleeve TWRActive-sleeve TWRReserve movements are capital flows out of the","client":[142,28],"scroll":[142,32]},{"selector":"dd","text":"Unavailableannualized Return PctCollect at least 365 elapsed days of supported r","client":[142,29],"scroll":[142,33]},{"selector":"dt","text":"User-net dollar outcomeUser-net dollar outcomeTotal managed equity plus modeled ","client":[142,46],"scroll":[142,50]}]
+    at assertNoTextClipping (file:///Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/scripts/visual-overflow-audit.mjs:73:34)
+    at async run (file:///Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/scripts/capital-replay-smoke.mjs:43:92)

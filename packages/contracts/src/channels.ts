@@ -1,3 +1,4 @@
+import { capitalReplayChannelSchemas } from './schemas/capital-replay.js';
 import { operationsJournalChannelSchemas } from './schemas/operations-journal.js';
 import { newsChannelSchemas } from './schemas/news-channels.js';
 import { overlayShadowChannelSchemas } from './schemas/overlay-shadow.js';
@@ -42,6 +43,7 @@ import type { ContractSchema, DeepReadonly } from './messages.js';
  * more than the services can honour.
  */
 export const CHANNEL_SCHEMAS = {
+  ...capitalReplayChannelSchemas,
   ...operationsJournalChannelSchemas,
   ...newsChannelSchemas,
   ...overlayShadowChannelSchemas,

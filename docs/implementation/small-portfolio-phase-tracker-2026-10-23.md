@@ -8,7 +8,7 @@ The [full saved roadmap](small-portfolio-profit-policy-plan-2026-10-23.md) remai
 | P1 Capital-flow accounting and corrected performance | Committed and pushed; in review | Storage, ingestion, calculations, read projections, displays, lifecycle and acceptance checks; isolated delivery 0c3d36c | Human review; actual connected evidence completeness, owner qualification and release remain separate open gates | P0 |
 | P2 Shared budgets and small-portfolio feasibility | Committed and pushed; In Review | A–F capability; isolated commit aff6b60 passes 286 files/2,033 tests, typecheck/lint/builds/native checks; original combined-checkout 292-file/2,140-test evidence retained | Human review; account-specific rules/fees/holds/ownership and owner/release gates remain open | P1 review; P6 operational review before connected adoption |
 | P3 Profit-reserve evaluation and previews | Committed and pushed; In Review | P3-A–F in 9c6b2fc; exact isolated closure 293 files/2,106 tests, typecheck/lint/builds and both native suites (24 P3 checks); combined 299-file/2,213-test evidence retained | Human review; actual basis/fees/common-cut/retained-plan proof, account ownership, owner/qualification/release gates remain open | P1/P2; COQ-29/31 patterns; P6 operational authorization remains separate |
-| P4 Capital-aware simulation | Planning ready; implementation not started | Full roadmap reread; 55-file source inventory, synthetic probes and concrete P4-A–F addendum saved; COQ-38 Backlog | All implementation/acceptance remains pending; no market result, registration, account verification or qualification claimed | P1–P3 review and corrected engine compatibility; full saved P4 plan |
+| P4 Capital-aware simulation | Locally complete; In Review; uncommitted | P4-A–F capability; 309 files/2,278 tests, typecheck/lint/root and desktop builds, ten CLI checks, standard native safety and 19 P4 native checks; full nine-balance offline replay and immutable read-only results | Human review; exact source isolation before a later requested commit; actual data/cost/account evidence and P5/P7 owner/qualification/release gates remain separate | P1–P3 review; full saved P4 plan; no operational authority |
 | P5 Strategy and policy experiments | Not started | None | All hypotheses, finite trials, negative findings and evidence gates retained | P4 and adequate development data |
 | P6 Optional reviewed paper integration | Not started | None | Default off; all operational/authority/review gates retained | P3/P4 and applicable paper qualification |
 | P7 Prospective evaluation and qualification | Not started | None | Fresh registration, evidence, coverage, qualification and promotion gates retained | Owner registration, valid identities, readiness and fresh data |
@@ -199,3 +199,61 @@ Ok move onto building P3 using the saved plan. Preserve P0–P2 and the full P0�
 **Prompt used**
 
 Commit and push P3, then lets move on to P4. Reread its full requirements in the saved roadmap, inspect the code, and prepare a concrete implementation plan before coding. Preserve P0–P3 and the full P0–P7 scope.
+
+## P4 implementation started
+
+- Reread full saved P4 requirements and applicable original roadmap. Captured dirty-file/protected hashes and exact current manifests. P4-A–F acceptance remains pending; no phase completion claimed. P0–P3 preserved; P5–P7 pending in full.
+- COQ-38 In Progress. Offline development mechanics only; no financial action, registration, install, deployment or release.
+
+**Prompt used**
+
+Ok move onto building P4 using the saved plan. Preserve P0–P3 and the full P0–P7 scope, and keep the phase tracker updated.
+
+### P4-A — definitions, identities and first integrated fixtures
+
+- Strict spec/tape/result contracts, nine-capital/matched-control inventory, causal decision checks, exact cash/basis/fee conventions and separate replay version implemented locally. Legacy engines and P0–P3 numerical versions are unchanged.
+- First **3 files / 14 tests** and repository typecheck pass: independent books, native/discretionary rejection, received-asset fees, flow neutrality, pending receipts, missing timing/daily samples, fee lags, linked redemption/funding, immutable storage roundtrip/retry and injected result-root rollback. An initial gap fixture still contained daily marks at both neighboring boundaries; it now removes the actual missing daily sample.
+- B/C/D pure implementation and E persistence are in progress; full stress/lifecycle/UI/CLI/native acceptance remains pending. No P4 completion/market evidence or later-phase gate claimed. Local/uncommitted.
+
+**Prompt used**
+
+Ok move onto building P4 using the saved plan. Preserve P0–P3 and the full P0–P7 scope, and keep the phase tracker updated.
+
+### P4-B/C/D — exact execution, flows, metrics and reserve replay
+
+- Local pure implementation calls P2 for native execution and budget refreshes, P1 for total/sleeve return evidence, and P3's unchanged policy/cycle/assessment reducers. All nine independent books and cash/hold/passive controls are retained. Unknown fills hold cash, unfilled sales fund nothing, received-side fees preserve exact delivered units/basis, and modeled reserves remain cash subsets.
+- **10 new suites / 54 tests passed** at this cut, including hand arithmetic and generated conservation, flows/receipts/fees, gap/zero-capital segments, all P3 triggers, H/loss/release/partial cycles, immutable storage/corrections/copy and strict IPC/UI states. Further friction/stress checks and final repository acceptance remain in progress.
+- Real CLI passes **9 checks**: existing inactive profile, explicit source identity, all 36 cells, exact retry/report without tape reload, complete JSON/spec/CSV export, no financial/paper/registration rows and active-profile refusal. Runtime/semantic validation stays at core/service boundaries; contract schemas remain independent of core.
+- E integration is implemented; native theme/zoom/keyboard checks found metric-label clipping and are being corrected before acceptance. F full suite/build/preservation checks remain open. No market performance or trading authority claimed. Local/uncommitted; P0–P3 and full P5–P7 requirements remain intact.
+- Clarification: exposed development execution requires an explicit read-only original governance metadata DB in addition to the empty execution profile. The empty profile cannot establish known development/holdout boundaries. Missing metadata refuses before the tape loader; sealed final result bodies are never read.
+
+**Prompt used**
+
+Ok move onto building P4 using the saved plan. Preserve P0–P3 and the full P0–P7 scope, and keep the phase tracker updated.
+
+### P4-E — durable offline runner and local result inspection
+
+- Dedicated typed P4 integrity kinds retain immutable specs, attempts, input/result chunks, hashes, failure/interruption evidence and correction lineage. Empty-profile execution, physical development preflight, read-only governance metadata, lifecycle checks and exact retry are integrated. Schema stays 98; no observed capital/claim/order tables are used.
+- Actual CLI passes **10 checks**, including documented argument separator, full 36-cell inventory, exact retry/report after removing the tape, exact spec/JSON/CSV export, no financial/paper/registration rows and active-profile refusal. Input/output bounds count UTF-8 bytes; unsupported inputs/fees/timing remain explicit.
+- Two read-only Main routes and Research results support all cells, independent unavailable metrics, paged path/fill/journal evidence, assumptions, archived origins and failed/interrupted states. Reads through production preload preserve every database row. No Run/import/financial IPC command exists.
+- **18 native P4 checks** and standard native safety smoke pass on disposable synthetic profiles. Keyboard selection/help, focus return, narrow light/dark/high-contrast 200% layouts and no financial controls are checked. One initial batched visual inspection plus one confirmation completed; clipping was fixed within P4 styles. Source mechanics are synthetic development evidence only.
+- F final full-suite/typecheck/lint/build and preservation closure is in progress. Exact pre-build manifests and baseline stay saved; all 17 protected hashes match. Local/uncommitted; human review and all account/owner/qualification/release gates remain open. P5–P7 remain pending in full.
+
+**Prompt used**
+
+Ok move onto building P4 using the saved plan. Preserve P0–P3 and the full P0–P7 scope, and keep the phase tracker updated.
+
+
+### P4-F — local mechanics acceptance; human review remains open
+
+- All P4-A–F implementation and local capability checks are complete. [Delivery](small-portfolio-p4-delivery-2026-10-23.md), [summary](evidence/p4-replay-2026-10-23/summary.json), source hashes, exact pre-build manifests, command logs, preservation audit and synthetic production screenshots are saved. This is the combined dirty checkout, **not an isolated commit, merge or release**.
+- Final full closure: **309 files / 2,278 tests passed**. Ten new P4 suites contain **65 cases**, including generated friction/conservation, every capital/control, flows/unknown receipts/return segments, exact P3 caps/H/cycles, native exit minima ± one increment, correlated decline/rebound/outage/delisting/fees/underfunding, immutable retries/corrections/copy/restore and no financial/registration effects. Final typechecks, lint and root/production desktop builds pass; the existing large-chunk warning remains advisory. A subsequent final period/funding-label-only change passes the focused eight UI cases, final typechecks/build and native checks.
+- Real CLI passes **10 checks** with Node 24; final production preload/native replay passes **19 checks**, including explicit period/funding scope labels and unchanged database rows on reads. Standard native safety smoke passes. One initial visual batch and one confirmation covered dark desktop, narrow light and high-contrast 200%; final functional checks used checks-only mode without another screenshot/visual refinement pass. The detector ran once and reported no findings.
+- Source preservation: **487/495** existing dirty entries remain byte-identical, six mixed files have exact inverse-verifiable P4-only additions, and two generated manifests have exact archived pre-build bytes. All **17** protected roadmap/evidence/accepted-plan/P0–P3/frozen numerical hashes match. Git index remains untouched. No old report, negative finding, registration or consumed holdout is rewritten; changed current dependency hashes do not make old data fresh.
+- Earlier failed/intermediate runs remain in evidence. Corrected issues include unavailable-mark diagnostics, contract/core build coupling, clipping, explicit doubled quote spread, incomplete receipt claims, stale terminal balances after failed funding and UTF-8 resource sizing. Earlier full runs overlapping edits loaded prior module code with newly added tests; the final closure is separate and passes. No unrelated baseline failure is attributed to P4.
+- COQ-38 is In Review for **local, uncommitted capability**. Existing P1/P2/P3 review, account ownership/evidence, owner/prospective/qualification and release gates remain open. No provider acquisition, financial reserve claim, live/paper order/cancel, payout/withdrawal, scheduler/policy activation, strategy selection, registration, installation, deployment or release. Exact source/commit isolation must be verified if a later commit is requested.
+- P0–P3 and the complete P0–P7 saved architecture, accounting, hypotheses, dependencies and acceptance requirements are preserved. **P5–P7 remain not started in full.** Reread the next phase's complete saved requirements before beginning; no future phase is reduced, silently completed or started by this delivery.
+
+**Prompt used**
+
+Ok move onto building P4 using the saved plan. Preserve P0–P3 and the full P0–P7 scope, and keep the phase tracker updated.

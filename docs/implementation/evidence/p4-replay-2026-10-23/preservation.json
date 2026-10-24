@@ -1,0 +1,145 @@
+{
+  "base": "a83402d59e0142dc9f1bc6c433be752c757b3bd2",
+  "baselineDirtyCount": 495,
+  "unchangedCount": 487,
+  "mixedInsertions": [
+    {
+      "path": "apps/desktop/src/main/composition.ts",
+      "before": "a761f209811227aae4dab21d751a3cb964ee0fca3b3cac0953a19861866f5a80",
+      "after": "99e201b96cef1ac8f119edabd7a88401a3803128400f3a4ab8cdaafb86f00c30",
+      "inverseP4MatchesBaseline": true
+    },
+    {
+      "path": "apps/desktop/src/renderer/query/refetch.ts",
+      "before": "f3eb6d057829de4d8c4f2e31d0574530e86b1c58be7de950c05723978cb13eb0",
+      "after": "968acdc8fc8f6a13245b0655552b52102ecb98ce709c77d21880d91e2d75b561",
+      "inverseP4MatchesBaseline": true
+    },
+    {
+      "path": "apps/desktop/src/renderer/styles/terminal.css",
+      "before": "aa976873bc2b0d49d427334f59740953eeb6bd1289d21019064e0fd71324d71c",
+      "after": "26eeffdca4e5995427da8d522cbd686419d35613d2e40386d053dc335e272b8b",
+      "inverseP4MatchesBaseline": true
+    },
+    {
+      "path": "package.json",
+      "before": "d73d0d20a5210c588e5b5f551385bbc79083323453b419382679eb156683d040",
+      "after": "6ea225dd883dfbd014af34f093d6c4b3a538e59852fb47fbff1fcc72d0318d1d",
+      "inverseP4MatchesBaseline": true
+    },
+    {
+      "path": "packages/contracts/src/channels.ts",
+      "before": "25b43e5df06df0361eb265ab76c852621523d358aafbf949ce42151ac4096c7d",
+      "after": "fefc8b58886782e2e6437e8491dbb1c3aff75d68e6e4672b5fd191be3ead3ef5",
+      "inverseP4MatchesBaseline": true
+    },
+    {
+      "path": "tests/contracts-channels.test.ts",
+      "before": "4c6a6b06e4dff6a5df06e4207dd9f85f5e45a56af07e918e3b1f3827995d6c0b",
+      "after": "8e3bf1d4582e456c8b8f5e4e05977cc831d7230453d909a5242861993656618f",
+      "inverseP4MatchesBaseline": true
+    }
+  ],
+  "generatedWithExactPrebuildArchive": [
+    {
+      "path": "docs/studies/behavior-manifests-v1.json",
+      "before": "458497a2683e571f0680525251aff14012708b46ccdb1ab167da3718bd143f82",
+      "after": "a67cfc4f2bcf9f0993eb963d803a4d48f5636f5190932a3159f2796bc9ea0546"
+    },
+    {
+      "path": "packages/core/src/research/study-manifests.generated.ts",
+      "before": "4c6357d8c33e5add3f13890b3429cca50d3cfdd2c62881ccb247d240935b53c0",
+      "after": "e8c29111c1ebb5755a684ada96c8c53786c50867e828204bfe29609dd91e3fcc"
+    }
+  ],
+  "protected": [
+    {
+      "path": "docs/implementation/small-portfolio-profit-policy-plan-2026-10-23.md",
+      "sha256": "fda3c0b76897bbb4497cf0e13a7a70d5b9d0e75c441fea4a1044c500ae5cdd25",
+      "matches": true
+    },
+    {
+      "path": "docs/implementation/small-portfolio-profit-policy-evidence-2026-10-23.json",
+      "sha256": "ff2b0270f0de0af52b87cd7e3f6eb168e34956b3857ab085c4290d2bfff287a4",
+      "matches": true
+    },
+    {
+      "path": "docs/implementation/small-portfolio-p3-implementation-plan-2026-10-23.md",
+      "sha256": "156ee761285c5aee216d7ebde5795babd7efbb1007a20823a118de63f193d48d",
+      "matches": true
+    },
+    {
+      "path": "packages/core/src/portfolio/capital-performance.ts",
+      "sha256": "9275fdffeaa4f9fb035778e6e84b75b525e8d5f19bbc96239b5d6c912c795b73",
+      "matches": true
+    },
+    {
+      "path": "packages/core/src/execution/account-budget.ts",
+      "sha256": "5addc9d44bd58ead38a595c963b762707c253f24d83e23bfc2492d14a3bc5b0d",
+      "matches": true
+    },
+    {
+      "path": "packages/core/src/execution/capital-feasibility.ts",
+      "sha256": "d5b6132f5a22302f55add90521bf0b4319d651a3ef622f78b241f3ecd2a41caf",
+      "matches": true
+    },
+    {
+      "path": "packages/core/src/portfolio/profit-reserve.ts",
+      "sha256": "a896b9cc83c8e8c913b7b24bb383a640275e0a05f0d55edaaf508e885cd5491d",
+      "matches": true
+    },
+    {
+      "path": "packages/core/src/portfolio/profit-reserve-state.ts",
+      "sha256": "9a05caf2d21ea8052d89adb79b55aadd97052e3bf8b5e3d411795eb8be701cf9",
+      "matches": true
+    },
+    {
+      "path": "packages/core/src/portfolio/profit-reserve-eligibility.ts",
+      "sha256": "535b3934a2b98ccdda535ffbf310d6ef18f594e4b6ac81b343570e7ed276a7bd",
+      "matches": true
+    },
+    {
+      "path": "packages/core/src/portfolio/reserve-capital-witness.ts",
+      "sha256": "75b6e0fb895d195b9c0ef08c7b11040f4b0c0ff55bc306fb2cf5485bde01f690",
+      "matches": true
+    },
+    {
+      "path": "packages/core/src/backtest/integrity-engine.ts",
+      "sha256": "4dff5acbc762a7ddc2d150e98ae83301bbd6426c880114b265641e50024b5f8b",
+      "matches": true
+    },
+    {
+      "path": "packages/core/src/backtest/integrity-book.ts",
+      "sha256": "3325b16420747237647ef30091b57316a6e8706dadd30109e2815b54f2dcd9d5",
+      "matches": true
+    },
+    {
+      "path": "packages/core/src/execution/remediation-book.ts",
+      "sha256": "40cf5a865e8238a9f213c02f4df1f6131e5c3a6b7480c3531a88f0fb5a1a2fa2",
+      "matches": true
+    },
+    {
+      "path": "packages/core/src/execution/remediation-planner.ts",
+      "sha256": "50f28c1bfd56e1b923ec81c379fa0bde28d134b2129d4682ca727c2c087d8f40",
+      "matches": true
+    },
+    {
+      "path": "packages/core/src/research/remediation-evaluation.ts",
+      "sha256": "2d1dc933656093e6f32bd732942ea7f6143ea7650594c169b460fbeafd925d6f",
+      "matches": true
+    },
+    {
+      "path": "packages/core/src/research/study-instance.ts",
+      "sha256": "0643ed6fa99c6cd92c5e65e08306201c9f2b81a300a829e0b405dc9bcf929322",
+      "matches": true
+    },
+    {
+      "path": "docs/implementation/small-portfolio-p4-implementation-plan-2026-10-23.md",
+      "sha256": "6ed139d1b898c342ed43b5c2458f8d108ce1b410bbffe63bf2d900d7d0e0d590",
+      "matches": true
+    }
+  ],
+  "stagedFiles": [],
+  "failures": [],
+  "passed": true
+}

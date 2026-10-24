@@ -1,0 +1,25 @@
+(node:76747) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `Electron --trace-warnings ...` to show where the warning was created)
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '2e7ba2315ef1a22f3375a438f2459e7d1d3e5775282a43ba388e0023ff99e19b'
+}
+PASS desktop-dark: full grid and unavailable annualization 
+PASS desktop-dark: simulated receipts and sleeve scope 
+PASS desktop-dark: keyboard help fits viewport {"left":570,"right":870,"top":369.5,"bottom":491.5,"width":1440,"height":861}
+PASS desktop-dark: help returns focus 
+PASS narrow-light: full grid and unavailable annualization 
+PASS narrow-light: simulated receipts and sleeve scope 
+PASS narrow-light: keyboard help fits viewport {"left":170,"right":470,"top":369.5,"bottom":491.5,"width":640,"height":861}
+PASS narrow-light: help returns focus 
+PASS contrast-zoom: full grid and unavailable annualization 
+PASS contrast-zoom: simulated receipts and sleeve scope 
+PASS contrast-zoom: keyboard help fits viewport {"left":170,"right":470,"top":154.25,"bottom":276.25,"width":640,"height":430}
+PASS contrast-zoom: help returns focus 
+PASS period and funding scopes are explicit 
+PASS production preload reads bounded results 
+PASS interruption differs from zero return 
+PASS read routes leave all database rows unchanged 
+PASS no run or financial controls 
+PASS live authority remains disabled 
+PASS no renderer errors 

@@ -1,0 +1,29 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/capital-replay-stress.test.ts (6 tests) 3174ms
+     ✓ retains the complete capital grid under decline  942ms
+     ✓ retains the complete capital grid under rebound  901ms
+     ✓ retains the complete capital grid under outage  331ms
+     ✓ retains the complete capital grid under missing  424ms
+     ✓ retains the complete capital grid under delayed-fees  440ms
+ ✓ tests/capital-replay-service.test.ts (4 tests) 1051ms
+     ✓ strictly validates and roundtrips actual stored results and exact retries  424ms
+     ✓ rolls back a crash after chunks and before root publication and does not write finances  359ms
+ ✓ tests/capital-replay-storage.test.ts (2 tests) 999ms
+     ✓ preserves populated results through backup and copy, with archived origin and no authority  522ms
+     ✓ links corrected calculations to old immutable reports and rejects unproved lineage  476ms
+ ✓ tests/capital-replay-execution.test.ts (6 tests) 436ms
+     ✓ counts each friction component once across generated exact purchases  393ms
+ ✓ tests/capital-replay-reserves.test.ts (8 tests) 355ms
+ ✓ tests/capital-replay-book.test.ts (5 tests) 373ms
+ ✓ tests/capital-replay-ui.test.ts (8 tests) 335ms
+ ✓ tests/capital-replay-metrics.test.ts (5 tests) 352ms
+ ✓ tests/capital-replay-governance.test.ts (5 tests) 170ms
+ ✓ tests/capital-replay-flows.test.ts (5 tests) 149ms
+
+ Test Files  10 passed (10)
+      Tests  54 passed (54)
+   Start at  21:16:24
+   Duration  10.31s (transform 990ms, setup 0ms, import 2.37s, tests 7.39s, environment 0ms)
+
