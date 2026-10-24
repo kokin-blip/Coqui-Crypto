@@ -1,0 +1,23 @@
+{
+  "assurance": "Synthetic source probe; no market or account observation, no trial registration",
+  "legacyIntegrityOpening": 10000,
+  "legacyMatchedOpening": "100000",
+  "legacySmallBuy": [
+    {
+      "quantity": "2.5",
+      "notional": "2.5"
+    }
+  ],
+  "sharedP2SameRequest": {
+    "state": "infeasible",
+    "blocked": [
+      {
+        "assetId": "coinbase|spot|BTC-USD",
+        "reasons": [
+          "discretionary_floor_not_met"
+        ]
+      }
+    ]
+  },
+  "sourceBase": "9c6b2fccebc9e809ba2800fc538e831bab0c5c66"
+}

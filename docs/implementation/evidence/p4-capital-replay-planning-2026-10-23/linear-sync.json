@@ -1,0 +1,15 @@
+{
+  "issue": "COQ-38",
+  "state": "Backlog",
+  "implementationStarted": false,
+  "planDescriptionSaved": true,
+  "dependencies": [
+    "COQ-35",
+    "COQ-36",
+    "COQ-37"
+  ],
+  "P3Issue": "COQ-37",
+  "P3State": "In Review",
+  "P3PushedCommit": "9c6b2fccebc9e809ba2800fc538e831bab0c5c66",
+  "Prompt used": "Commit and push P3, then lets move on to P4. Reread its full requirements in the saved roadmap, inspect the code, and prepare a concrete implementation plan before coding. Preserve P0\u2013P3 and the full P0\u2013P7 scope."
+}

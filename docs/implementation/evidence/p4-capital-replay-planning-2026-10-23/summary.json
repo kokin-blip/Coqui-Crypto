@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "mode": "P4 planning only",
+  "sourceFiles": 55,
+  "fullRoadmapReread": true,
+  "implementationBatches": [
+    "P4-A definitions",
+    "P4-B exact book/execution",
+    "P4-C flows/metrics/controls",
+    "P4-D reserve replay",
+    "P4-E offline runner/read-only results",
+    "P4-F acceptance/preservation"
+  ],
+  "applicationCodeChanged": false,
+  "newFullTestsRun": "None for documentation-only P4 planning; exact P3 commit checks retained separately.",
+  "sourceProbe": "Synthetic compiled-code probe and independent Decimal fixtures only; not market evidence",
+  "productDecisionsRequiredNow": [],
+  "actualEvidenceRequirements": [
+    "account fee/native-rule history",
+    "allowed development data and exposure boundaries",
+    "fixed policy/target tape",
+    "future P5 experiment choices and owner P7 registration"
+  ],
+  "P3Commit": "9c6b2fccebc9e809ba2800fc538e831bab0c5c66",
+  "P3OriginVerified": true,
+  "P3IsolatedFiles": 293,
+  "P3IsolatedTests": 2106,
+  "P4Issue": "COQ-38",
+  "P4Status": "Backlog",
+  "P5P7": "Pending in full",
+  "Prompt used": "Commit and push P3, then lets move on to P4. Reread its full requirements in the saved roadmap, inspect the code, and prepare a concrete implementation plan before coding. Preserve P0\u2013P3 and the full P0\u2013P7 scope."
+}

@@ -1,0 +1,51 @@
+{
+  "P4 full capital/denominator path": [
+    "3 Input contracts",
+    "4 Exact book and costs",
+    "5 Performance",
+    "8 B/C batches",
+    "9 Acceptance 1"
+  ],
+  "nine actual books and infeasible cells": [
+    "1 Boundary",
+    "3 Capital cells",
+    "6 Controls",
+    "9 cases"
+  ],
+  "P1 flow-correct returns and unavailable states": [
+    "5 Flows/performance",
+    "9 flow/gap/zero cases"
+  ],
+  "P2 shared budget/rules/concentration/turnover": [
+    "4 Execution",
+    "5 Two-budget bridge",
+    "9 boundaries"
+  ],
+  "P3 cycles/watermarks/caps/releases/receipts": [
+    "5 Reserve accounting",
+    "9 partial/loss/pending cases"
+  ],
+  "realistic explicit costs/yield/overhead": [
+    "3 Costs",
+    "4 Cost models",
+    "5 Outcomes"
+  ],
+  "registered boundaries and negative findings": [
+    "2 Legacy findings",
+    "6 Data boundaries",
+    "10 retained gates"
+  ],
+  "path-dependent uncertainty and stresses": [
+    "6 Stress/single-path contract",
+    "10 P5 experiments"
+  ],
+  "architecture/storage/UX/lifecycle": [
+    "7 Files and data ownership",
+    "8 E/F batches"
+  ],
+  "all P0-P7 dependencies/remaining scope": [
+    "1 Boundary",
+    "8 Dependencies",
+    "10 retained phases"
+  ]
+}

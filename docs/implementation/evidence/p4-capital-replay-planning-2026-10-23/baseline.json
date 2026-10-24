@@ -1,0 +1,2011 @@
+{
+  "base": "9c6b2fccebc9e809ba2800fc538e831bab0c5c66",
+  "branch": "codex/operations-crew-journal",
+  "sourceFileCount": 55,
+  "dirtyFiles": [
+    {
+      "path": "apps/desktop/package.json",
+      "sha256": "102cfc76e9bcdf1858112762d18cb8bc6bff5d69921a050d22282faaccc81e28"
+    },
+    {
+      "path": "apps/desktop/scripts/algo-activity-smoke.mjs",
+      "sha256": "dbe05e42b35aa70b1975ea41900cbca7136683d9fadfcbbd9636dd8662334464"
+    },
+    {
+      "path": "apps/desktop/src/main/composition.ts",
+      "sha256": "a761f209811227aae4dab21d751a3cb964ee0fca3b3cac0953a19861866f5a80"
+    },
+    {
+      "path": "apps/desktop/src/main/dispatch.ts",
+      "sha256": "15009ac6e036155e67a14db313ead8966e31a8b46e1d0aa52f5f0bb8c5fbf2f5"
+    },
+    {
+      "path": "apps/desktop/src/main/parallel-paper-handlers.ts",
+      "sha256": "f70bdf57eec189a78fd5c5314d95078d8d540f8b01a83049c1666bf7eac8d922"
+    },
+    {
+      "path": "apps/desktop/src/main/parallel-paper-runtime.ts",
+      "sha256": "4067b7d46d40c5b9aa5b09ea236814aaf23f2eea70c251f29be1676af95142f2"
+    },
+    {
+      "path": "apps/desktop/src/main/scheduler-runtime.ts",
+      "sha256": "b6911af2bb307b8d227061142a54b322e5a643f8a4557cce63632ed292048f7a"
+    },
+    {
+      "path": "apps/desktop/src/renderer/app/ParallelPaperComparison.tsx",
+      "sha256": "88bb296e17b37b42cc3e41f65e00c56be3c731e623c612fd7e6558932287955a"
+    },
+    {
+      "path": "apps/desktop/src/renderer/app/ParallelPaperRecovery.tsx",
+      "sha256": "90ae8d6b5c2cc6cdafebdfefed9754986f73b603ace0a30dfe8078ceac69422b"
+    },
+    {
+      "path": "apps/desktop/src/renderer/app/TerminalAlgoActivity.tsx",
+      "sha256": "7c05a402c0b6761c0f2e3f120dc21590ad9a6f316aa16383c772a00c55f916d3"
+    },
+    {
+      "path": "apps/desktop/src/renderer/query/refetch.ts",
+      "sha256": "f3eb6d057829de4d8c4f2e31d0574530e86b1c58be7de950c05723978cb13eb0"
+    },
+    {
+      "path": "apps/desktop/src/renderer/styles/terminal.css",
+      "sha256": "aa976873bc2b0d49d427334f59740953eeb6bd1289d21019064e0fd71324d71c"
+    },
+    {
+      "path": "docs/parallel-paper.md",
+      "sha256": "9b5b0b69d5e75eb3df2d6d9f1a6e28df3deb1a6082b00bbbaa853f61fa3f4f8f"
+    },
+    {
+      "path": "docs/studies/behavior-manifests-v1.json",
+      "sha256": "458497a2683e571f0680525251aff14012708b46ccdb1ab167da3718bd143f82"
+    },
+    {
+      "path": "output/pdf/coqui-app-review-evidence-2026-10-09.zip",
+      "sha256": null
+    },
+    {
+      "path": "package.json",
+      "sha256": "d73d0d20a5210c588e5b5f551385bbc79083323453b419382679eb156683d040"
+    },
+    {
+      "path": "packages/adapters/src/http/alpaca-paper.ts",
+      "sha256": "85474134631ae3153f05087bc47151665dd2cdd441a5eb88b1d6c91e975aff58"
+    },
+    {
+      "path": "packages/adapters/src/http/deadline.ts",
+      "sha256": "7cc1f636d6f7df532ba03520966afbcd3d9a789f22b5216cdedb6d35fc7f1a8c"
+    },
+    {
+      "path": "packages/adapters/src/secrets/store.ts",
+      "sha256": "3e9a78b9ece3c2299d916d8af7f27cd4af2d14947139ca7bc6a1b4491c11c5be"
+    },
+    {
+      "path": "packages/contracts/src/channels.ts",
+      "sha256": "25b43e5df06df0361eb265ab76c852621523d358aafbf949ce42151ac4096c7d"
+    },
+    {
+      "path": "packages/contracts/src/schemas/parallel-paper.ts",
+      "sha256": "120d7292506180aba29f1c54f3f12e26bf6b2eb14dc056c6f74d0ba49343cc19"
+    },
+    {
+      "path": "packages/core/src/research/study-manifests.generated.ts",
+      "sha256": "4c6357d8c33e5add3f13890b3429cca50d3cfdd2c62881ccb247d240935b53c0"
+    },
+    {
+      "path": "packages/services/src/paper/index.ts",
+      "sha256": "d7784da18456d29e4053444402d2852ff40d3d1558e80ff0159a239df6385146"
+    },
+    {
+      "path": "packages/services/src/paper/parallel-broker-evidence.ts",
+      "sha256": "1103cb8ab3c8806227ab8516cd8728f7c5fc9260fe8273e77b357b2cfa0db28c"
+    },
+    {
+      "path": "packages/services/src/paper/parallel-execution-safety.ts",
+      "sha256": "1cfe219c3cb2d1dbb059caf736f28e005e0d98ea607f638ceea9603591bb63b5"
+    },
+    {
+      "path": "packages/services/src/paper/parallel-hourly-shadow.ts",
+      "sha256": "77279b7404a44e9ca84d54fab88b3d12db1e28e5c28157a48739809c3ef92221"
+    },
+    {
+      "path": "packages/services/src/paper/parallel-paper-activity.ts",
+      "sha256": "83420ffec7ce636dce476192704a5a30746a241e2a4220a3baedabd0dd6c0be2"
+    },
+    {
+      "path": "packages/services/src/paper/parallel-paper-attention.ts",
+      "sha256": "1eafddba8d58cf8ec6e133774cb332ec3204b2dea51f8915fa805d270acdbba1"
+    },
+    {
+      "path": "packages/services/src/paper/parallel-paper-daily.ts",
+      "sha256": "f4ba395cdc13514ff8f0fafe6619db43e90b398a670617211216b0b6a10c3dcf"
+    },
+    {
+      "path": "packages/services/src/paper/parallel-paper-intraday.ts",
+      "sha256": "e412097b5121e6c23d1e230065cb1a2c84df395c2b17509b1610dd19c849c885"
+    },
+    {
+      "path": "packages/services/src/paper/parallel-paper-minor-recovery.ts",
+      "sha256": "474e52b55b346e87a5fddcc625cf23e0a323c3d21a95a85b576b2d9f0b2d5f2e"
+    },
+    {
+      "path": "packages/services/src/paper/parallel-paper-pass.ts",
+      "sha256": "5d1223fa695e23ee36b1413072d9ec3f889c8fe4ef3d3224a221d174552a80d8"
+    },
+    {
+      "path": "packages/services/src/paper/parallel-paper-reconciliation.ts",
+      "sha256": "84f8e9e083724a1043f709b40fba420b13cb5af35b06b3db79be0e8da7830625"
+    },
+    {
+      "path": "packages/services/src/paper/parallel-paper-recovery.ts",
+      "sha256": "e5a99a13ebe1450e0d3e22a6e927dedac6100d79157a29a15f2bdb4c870ff800"
+    },
+    {
+      "path": "packages/services/src/paper/parallel-paper-service.ts",
+      "sha256": "da59e9c95038ed36051b33a5251d7af5bd18892a8d192728ce67818c09049569"
+    },
+    {
+      "path": "packages/services/src/paper/parallel-paper-summary.ts",
+      "sha256": "29c307980cc8b062cb1c6294e7e04080bdf63e432c9acb9024c48f79b3775101"
+    },
+    {
+      "path": "packages/services/src/paper/parallel-paper-utils.ts",
+      "sha256": "49c35752ea9a65fe4acd726b7b9fcf3d7498b5fced2aaf2bf71f13730723e71f"
+    },
+    {
+      "path": "packages/services/src/paper/restart-hourly-study.ts",
+      "sha256": "70f2c8f57d068af14190862e74b997575bfc6e40a5305e07eaf7c6bcffd8f5d2"
+    },
+    {
+      "path": "packages/services/src/research/study-collection.ts",
+      "sha256": "86f33360bd2ad423ccf1837f3baa784dd6c2f92f9c83b367c811b2943149ea36"
+    },
+    {
+      "path": "packages/storage/src/repositories/operations-journal-sources.ts",
+      "sha256": "8a87b79a1c8ef8f224cb04047b14e373494e8651c9ac4d9309686f77bf72899e"
+    },
+    {
+      "path": "packages/storage/src/repositories/trading-activity.ts",
+      "sha256": "d7a74cb5fc0eab51ed20edf7a9cd641dad16089e6618580b5305008c31e11e04"
+    },
+    {
+      "path": "scripts/build-study-manifests.mjs",
+      "sha256": "f154f557929d49b3b2f422726e5d036d1d4933622791bcff3e65e9fb2ccd9555"
+    },
+    {
+      "path": "tests/alpaca-paper.test.ts",
+      "sha256": "8faae77cffcbb9d786ac4b1be4548e4fd823861278b4d76066e1befa1bf6f247"
+    },
+    {
+      "path": "tests/contracts-channels.test.ts",
+      "sha256": "4c6a6b06e4dff6a5df06e4207dd9f85f5e45a56af07e918e3b1f3827995d6c0b"
+    },
+    {
+      "path": "tests/desktop-scheduler-runtime.test.ts",
+      "sha256": "f22a67acb8c2421643fc4b218c389319470e34af7168cdec7828861ca8f90582"
+    },
+    {
+      "path": "tests/parallel-paper-deadlines.test.ts",
+      "sha256": "801fc9a02c3a27564229cc8f2b72fa02eebad857011c9f60d7e9de419f2edfda"
+    },
+    {
+      "path": "tests/parallel-paper-execution.test.ts",
+      "sha256": "ac98cc7a26122ab92120e7746150c184390931182c98ae3977b1f3fa10279baf"
+    },
+    {
+      "path": "tests/parallel-paper-minor-recovery.test.ts",
+      "sha256": "b4ef842c1a99a22a93ff8b9dc03cecffae946649436bf1c09a0e23c3e1baefa1"
+    },
+    {
+      "path": "tests/parallel-paper-recovery-reporting.test.ts",
+      "sha256": "d403df4c1672e6b6f261f40106673ce5512d586b2cb1d251ba09578df7de49dd"
+    },
+    {
+      "path": "tests/parallel-paper-ui.test.ts",
+      "sha256": "804356a819a385b29b5aac84d39fef24fdaa76e64e4d9289a9aaa927d11d8555"
+    },
+    {
+      "path": "tests/parallel-paper.test.ts",
+      "sha256": "7bcf652f2e1598b465fa1a65daf6c06370e13d84bdb8eb8830c68e09375ec1f0"
+    },
+    {
+      "path": "tests/risk-dashboard.test.ts",
+      "sha256": "5687cc84a8fbc8448e71dc14d511ffd90c2d2c78eaa9fc96ab6964a9fbbb6f2e"
+    },
+    {
+      "path": "tests/secrets.test.ts",
+      "sha256": "329dc8fed6851e991f67b866be676d20f701c01400d0747545eb4991da506f0c"
+    },
+    {
+      "path": "tests/trading-activity-sources.test.ts",
+      "sha256": "b72bad3e1f3b0b85a7520fc20bff0fd1cc017b1982d272a1e83b24208ccc0112"
+    },
+    {
+      "path": "apps/desktop/src/main/hourly-shadow-runtime.ts",
+      "sha256": "7ff61a09af891a04a05880ac8940a3ef6eba9c657a1b6fe11d265bc821c2ec66"
+    },
+    {
+      "path": "apps/desktop/src/main/hourly-study-handlers.ts",
+      "sha256": "b85fc5290819cc7f3ad40ae1956b630d5f80da81b365ebbb68c3b847952f5dcc"
+    },
+    {
+      "path": "apps/desktop/src/renderer/app/HourlyShadowPanel.tsx",
+      "sha256": "cd962808cb27251287e24c13899391b9d2c61b0cff7b2f02b9542500fef76c32"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/algo-activity/algo-activity-alpaca-missing-evidence.png",
+      "sha256": "87304baa8b699736fd60a6bd06aa7bc95be7d7d4c2c27d1ae24b1ee47e0550a9"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/algo-activity/algo-activity-contrast-960.png",
+      "sha256": "900b2b7f80c0d607dcf42ebd13104013ae68b07a9fb448bc33e94b2721611562"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/algo-activity/algo-activity-dark-1440.png",
+      "sha256": "fd974cdd1ef68ce4e6c20da805545dee36da85635492492bfb2be41c800a2577"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/algo-activity/algo-activity-dark-1920.png",
+      "sha256": "ca10b1ce35ae706dde6ccf71d09c8c753114730a67c9b51e45469bbb868117b9"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/algo-activity/algo-activity-information-contrast-960.png",
+      "sha256": "537085a7760c24fae54e5610e46cb2e681410a63ca274d3157acaa2c130fb983"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/algo-activity/algo-activity-information-dark-1440.png",
+      "sha256": "d1c002bfdafa35cae1725f9d3d8c875d6dbfdb5ce906e2a2aa529a1b79a473c6"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/algo-activity/algo-activity-information-dark-1920.png",
+      "sha256": "bc6a511dc15e4f3897254ab35086c49c667047a736fca9533430d88adb4c0ee8"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/algo-activity/algo-activity-information-light-1280.png",
+      "sha256": "84177f26d4a7b7c863aa289ae2a6d6caa7c747234036b167008398fc83e0b2e7"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/algo-activity/algo-activity-information-narrow-640.png",
+      "sha256": "bb36dab558e378daf23b6cb8a340d85f73428bcf113192ba4fa143707bec0a7f"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/algo-activity/algo-activity-information-zoom-1280.png",
+      "sha256": "1358186d12e28597b081e456ef5436d958f5c6b51625cb0b86302476a9426405"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/algo-activity/algo-activity-light-1280.png",
+      "sha256": "897ae38432b21bfb8c7c10870735b94d35e6231852345de130ce6e92754988f6"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/algo-activity/algo-activity-metric-information.png",
+      "sha256": "0189d6708d701020b20a04b18e46a97997e5fc24428fa1015e6d65dc4738cddd"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/algo-activity/algo-activity-narrow-640.png",
+      "sha256": "1a8b1f85a3902d639cdc6a231d50868924b464407dcd1b47d4b272c1003f0bc3"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/algo-activity/algo-activity-panel.png",
+      "sha256": "b4cc5e2885cdc3b38da5d0a0da927bcd7403b7be2c0ab6529a3e52d788a33b26"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/algo-activity/algo-activity-zoom-1280.png",
+      "sha256": "375db3e89a4a5d69c0c2d7f67293f6947751d1b3b7f2efeeeb11e4889ee4fb45"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/algo-activity/order-book-dark-1920.png",
+      "sha256": "61cae53c60476d3eec6fa24af32ef35cf3668fe1a9ebf92caf0b397ba88a340e"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/algo-activity/smoke.json",
+      "sha256": "d094edbeeb862ca35259c58482442638f501aa89f7b7da4d7dd78bbb9b71e86a"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/check-package.mjs",
+      "sha256": "f6de230106616af1e8a7a05be2760090cc74d83e261237998b1d8341e66f14a0"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/check-source-identity.mjs",
+      "sha256": "e7f0d651e69423275d828e0b73bad65bbff29eeac4042f2c200951fa20709e6e"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/design-detect.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/desktop-build-final.log",
+      "sha256": "d095266648f0f174a95937f9a476f8b428868572ee7d0d49a170a6783c73c5a9"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/desktop-build.log",
+      "sha256": "1060d12281547196a76ee027d7468973d4d310e7b959f6ec6935775de4f24a18"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/final-lint.log",
+      "sha256": "050c69da23536758722729aeda55a8d0fb9d557495ef6d33d70873a3b64a71c1"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/final-verification.mjs",
+      "sha256": "41dd059ebc9d7941332878efe8851504d1bdef82b53a24b4ba648e6b1f6a499a"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/install-final.mjs",
+      "sha256": "908a3e5c414ba059786ca51fe25cbb7b859dda1602b96a4b1c3d99df566ba4c8"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/install.mjs",
+      "sha256": "89aa838b80135d85cbbbfb0b9e7d7a2417972e567e511d7a5a96726b8aab8536"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/installation-final.json",
+      "sha256": "194c613e38f6f1eda5871bb029076ba58aa7832d03d8db7a2b3013c13799ed97"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/installation.json",
+      "sha256": "aad7a5927899f301fcd5d6768dd4cb3326453ccb8dd7eeb4cbd4be52bae61b2f"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/installed-algo-activity-final.log",
+      "sha256": "d69e467c16c2587addbd013d7e08e84d5b0ebb41d963ad87321ab038876ca99b"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/installed-algo-activity.log",
+      "sha256": "8eacd384b7995c84e86583bc338869d3690f5c82c838cc8db876a925ce7c2e95"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/installed-smoke.log",
+      "sha256": "6108e7988b86032a04b84d12e185b6f6bf40d17e0a83dad5c62031f77cb6164d"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/installed-ui-smoke-final.log",
+      "sha256": "c4ae365c21ef3d31dca22913c5a668b035f286c1ac9571a77e8708c96b814f01"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/installed-ui-smoke.log",
+      "sha256": "8ed1c2d906ca7840ec679bf566db57384ccca05de5857f242b3764591329b9a8"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/native-verification.json",
+      "sha256": "945772e059f8f1954ffa68cdf8e9a167050d033f59ce83f005906d35e0daede3"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/package-final.log",
+      "sha256": "4efd0f9f07805bfcb3ed6efc942167e49be1ef7367d9888c9d5418d901c8e974"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/package.log",
+      "sha256": "4efd0f9f07805bfcb3ed6efc942167e49be1ef7367d9888c9d5418d901c8e974"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/packaged-smoke.log",
+      "sha256": "6108e7988b86032a04b84d12e185b6f6bf40d17e0a83dad5c62031f77cb6164d"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/prepare-installed-checks.mjs",
+      "sha256": "dc9b9e174780e367b8421608cd5b5f0bd42ae23806a3fd33c41a2629622a5839"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/profile-after.json",
+      "sha256": "0e88c8ab9bfbe5442bfc52b67bcf5bd998255cae46e4fa9ad4015a92d1ea2217"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/profile-before.json",
+      "sha256": "f708fb22ea0f582cb013c600e7636d8f9d3330154e995e966f638ae27876c39f"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/profile-check.mjs",
+      "sha256": "f4091772c05ba79c28afe888dc227047998dee61caaf34c1a2d56be2c8b1104a"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/provenance-build.log",
+      "sha256": "097d7fcd2b6c778109c1c948076ae7874e7000c1c140089671568f5850b02735"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/source-identity.json",
+      "sha256": "f7ade02452be784632173065e0397f4caa3610f9efbc78a2ba9e17785cb217c8"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/verification.json",
+      "sha256": "4154c062dfe31b3de2cb8224551accbc71d6c35794d6a5d68d1f7dc5550a357f"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/verify-before-copy-fix.log",
+      "sha256": "d1d8091003cd827bd06201de448e7859d3359fd05bde5a1cdd5408bfcc28f240"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/verify-first.log",
+      "sha256": "8a85463fb025f1738518fd4222c16cfc7fea7b195eb94fc5ee3624b1eb9a476d"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-cash-reconciliation-2026-10-20/verify.log",
+      "sha256": "9837d079f9dacd812d53a9d7e91498d0981e3c962c0f92ffa218a25fd730edac"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/algo-activity/algo-activity-alpaca-missing-evidence.png",
+      "sha256": "c61d81aff4aec67b3eb6e161034910c6d7b23a448d33ce89aebaa129d3ec2cb9"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/algo-activity/algo-activity-contrast-960.png",
+      "sha256": "3fd144acef695df87d94f22c2a3e1b9a285e852850e8ba3194920a863bbd476a"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/algo-activity/algo-activity-dark-1440.png",
+      "sha256": "3b6c87df68528cddc56a392e7d655307398e61fd3b724b3fbed902daf311ce6d"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/algo-activity/algo-activity-dark-1920.png",
+      "sha256": "ba74a8579dcd597d67d4cf2af2a962a7c88dbb46241b0a215a6536381cf2895a"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/algo-activity/algo-activity-light-1280.png",
+      "sha256": "e92cff69290154cd13406fd8cdda10be574dc0c19b3aee21d0856d44e61e83cd"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/algo-activity/algo-activity-narrow-640.png",
+      "sha256": "e4a3df1029d47577e6efd0fdc96bdfc43f167a7be48b07a3c9289ede0aa91f42"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/algo-activity/algo-activity-panel.png",
+      "sha256": "945575e793505f4c75b42489d85b2ae032d00cb431ccb0ff175dc25fefb46aa6"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/algo-activity/algo-activity-zoom-1280.png",
+      "sha256": "cdb50de9c7a3481fabd31938da332441ae32313c0e16b1923c3b0ea42be719c6"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/algo-activity/order-book-dark-1920.png",
+      "sha256": "e6f83245c218e476c32e1bc48dc2d0caf5589c539867f3abd6ef9ec2aa38475f"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/algo-activity/smoke.json",
+      "sha256": "d4f3c9e704491f81cc16e0003fc574b43b87fdc5fc8dd7798c3b20c7e1c1ef2c"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/build.log",
+      "sha256": "097d7fcd2b6c778109c1c948076ae7874e7000c1c140089671568f5850b02735"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/check-info-identity.mjs",
+      "sha256": "6252679ae96981d69cc4c2bdf14a178845c85a4e80d998d0e8f68c89ba8714fc"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/check-info-package.mjs",
+      "sha256": "b9f7afceac1ed493cfbc5ee88c765075443a7d9dc25d637524ddb104f03ef02a"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/design-detect.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/desktop-build.log",
+      "sha256": "3c6f0c2c15197a3d9959f2e06ea4b4cb1be18fac4aff86647b1e2451b6da0dc1"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/final-lint.log",
+      "sha256": "050c69da23536758722729aeda55a8d0fb9d557495ef6d33d70873a3b64a71c1"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/final-verification.mjs",
+      "sha256": "8c1d44ae2916ca89235931fcbdd475d301c79545be523609b226ff682077a39b"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-algo-activity/algo-activity-alpaca-missing-evidence.png",
+      "sha256": "ec783fa4fc26d9febdd36d5836ae858f865de78b20898bedecc345f93e21e9ed"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-algo-activity/algo-activity-contrast-960.png",
+      "sha256": "6318bd42d6498468cfc7550a95f7022511904c41aeb282b169d2013d36d3ae68"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-algo-activity/algo-activity-dark-1440.png",
+      "sha256": "dd17a2f5a642f6f6c484b210c8870ece6df624d0e42908c0081d0266c324d593"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-algo-activity/algo-activity-dark-1920.png",
+      "sha256": "120426b5a9bd157425a8f19378ad0d77678f25d1d5cf88fa6c48981444da65a7"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-algo-activity/algo-activity-information-contrast-960.png",
+      "sha256": "2194b62d44db0d028d966c428bdc7728be359bac426da89ba3557e0079e6cfe3"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-algo-activity/algo-activity-information-dark-1440.png",
+      "sha256": "598fb9ac56012128ebcbdb9f04891af3b92c42319f4715efe8ce107cb18edbc6"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-algo-activity/algo-activity-information-dark-1920.png",
+      "sha256": "24a6401add98f35a87bf9b6f11f6b30820e928cc7bb0495adccb7a84ef2ee389"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-algo-activity/algo-activity-information-light-1280.png",
+      "sha256": "c456b10102aec17361c412d5dae72c2dd05fb590666defb6cc3ba0b5ff2601a7"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-algo-activity/algo-activity-information-narrow-640.png",
+      "sha256": "7f7e1fc4ada35a63127b3cba307f45f393e25c2fb2c4f72aa12bf23cb9bcf7dd"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-algo-activity/algo-activity-information-zoom-1280.png",
+      "sha256": "9d756b771aefa6f62d76e091bfbe8da0c66b2585747cf0f1617879ae286dfbd9"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-algo-activity/algo-activity-light-1280.png",
+      "sha256": "804c11f43fe180c07fdb4718b7f3aa4adec863e8559aba15b769811525116ad7"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-algo-activity/algo-activity-metric-information.png",
+      "sha256": "362a488d6d52a7ac6c5e7b019ef063bca0bc817d5dc04d3a4308432e3e067310"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-algo-activity/algo-activity-narrow-640.png",
+      "sha256": "57748a9fe5a5b50b28fdf07ac1be62d732fe6b9788941952738f3aa4143ead76"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-algo-activity/algo-activity-panel.png",
+      "sha256": "a639caef6fa36cda6c666a4699678e5327c0210d4ad2d0a4d922a13e902ec275"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-algo-activity/algo-activity-zoom-1280.png",
+      "sha256": "0a0a04add9d676a11e990ffcf3a00e3fd12b3ff86b42dad2c9865f901e12ae55"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-algo-activity/order-book-dark-1920.png",
+      "sha256": "57be81df3d26320b1e3cd029bd0e2fc33390ddc6336be2138ccbb5adac71e3a1"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-algo-activity/smoke.json",
+      "sha256": "a07b3764bec72145e041f9284895695d52e16bded78c99ebd927f2ad31943ab5"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-design-detect.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-desktop-build.log",
+      "sha256": "62bcc0ebaf52e4b177aaab6ca90fe87b69b58dab19b8c90be42cafa5350fa359"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-installation.json",
+      "sha256": "ef966bf8ae2c9cc0b9e4b3e068f7d3b7b5ebd57ac10fe6c6a6b68d60d6703b4b"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-installed-algo-activity.log",
+      "sha256": "15c71b67b5d16ae017f4aa068bd2627c89eb5fef3643e69fe8b8810d57969cfc"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-installed-smoke.log",
+      "sha256": "3dca64a6d9bcef13b5773f7e865fc8ae4f427f244f9c72443f161e0e315ccbfa"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-installed-ui-smoke.log",
+      "sha256": "924886fe2f83f8b16fc9549bce94849659bf94d0d6e0b7dc07741dbbbb7feadd"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-package.log",
+      "sha256": "7e154a4c10dd9f9dfb2b68760bcd62b32fbf798b1dcebce80cad356e9d0c4a9b"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-packaged-smoke.log",
+      "sha256": "3dca64a6d9bcef13b5773f7e865fc8ae4f427f244f9c72443f161e0e315ccbfa"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-source-identity.json",
+      "sha256": "b9e00eb2f76479ef94791174bd3371a23911835eb11f4acbc64d7c0c843db4f0"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-typecheck.log",
+      "sha256": "9cb7e68dd67d787ad7a36816afe2abbcde7523d59230ab49ed3d8fa46afd1441"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/info-verify.log",
+      "sha256": "9db690e168593c0c11cf9bdfbe1d1702033f2d46b431869ab860a6f8c300ac93"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/install-info.mjs",
+      "sha256": "820c08628e2b6aa73dc099d0b8beace115a7cb19f2c3f3d272e0298e669ec7d8"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/install.mjs",
+      "sha256": "8258682217222ac804ba4257b456c66f91d600e305f443d17f08b2ab16c4c269"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/installation.json",
+      "sha256": "6ff218b30ab92e3b73ef3aab625d54dd6b8285e40b5ad97f2f0a4f5806c62bc7"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/installed-algo-activity.log",
+      "sha256": "d5f04eb270fc8dff0a4ca2a9ac523ed211d6769bbe76ab598b4cbe41c1df2b82"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/installed-smoke.log",
+      "sha256": "3dca64a6d9bcef13b5773f7e865fc8ae4f427f244f9c72443f161e0e315ccbfa"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/installed-ui-smoke.log",
+      "sha256": "954e5b9d571f55ecdf6e5c6c2cb0cf067bdcf4e4115ed304e7d097ba3dd8b3af"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/package.log",
+      "sha256": "7e154a4c10dd9f9dfb2b68760bcd62b32fbf798b1dcebce80cad356e9d0c4a9b"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/packaged-smoke.log",
+      "sha256": "3dca64a6d9bcef13b5773f7e865fc8ae4f427f244f9c72443f161e0e315ccbfa"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/prepare-info-checks.mjs",
+      "sha256": "0fa1fa9b608a358373902c46376b297873af5b8029a50ec3c00292a9e9ac29e2"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/prepare-installed-checks.mjs",
+      "sha256": "0fefe6e7b42143fd6fb254bee04cff6e1d7c3a9b4e36a9f3262c1fea7630a6e6"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/profile-after.json",
+      "sha256": "a4d13100b6d1b0f8521f64068d11f1bcecd2abd59ad9560c65a68fafa832341e"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/profile-before.json",
+      "sha256": "a299563bc042647914129dcac580a1ed26a4167f653e227edcee0eff19a2be1f"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/profile-check.mjs",
+      "sha256": "579e34a8392f28d915f614ca7c2f8a1e7ce867c9ac93192aa5ae7f470f3efd86"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/source-identity.json",
+      "sha256": "e495383ecdc059c6b07b417c99f6356b959dec9ec37b56ded37a8fa983507b0c"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/verification.json",
+      "sha256": "37c948e6bfa786356d524e5d60a8f2508d1de4cbdf031f04c0078f2d88abd298"
+    },
+    {
+      "path": "docs/implementation/evidence/broker-performance-2026-10-20/verify.log",
+      "sha256": "5f68c60629053053ade86095c270f8199b12fd5d81aaeb5bfff94fb23826d14c"
+    },
+    {
+      "path": "docs/implementation/evidence/debit-provenance-2026-10-22/analysis.json",
+      "sha256": "c7bf05c78eb8d1dd7fccb6ec7a41018fd1dfe949962f3c8c271f9a2bbd8656e3"
+    },
+    {
+      "path": "docs/implementation/evidence/debit-provenance-2026-10-22/analyze.py",
+      "sha256": "e401349681a8d6faf3ad417df2d6ef697f9302f70a61debe641e926e7839c895"
+    },
+    {
+      "path": "docs/implementation/evidence/debit-provenance-2026-10-22/artifact-audit.json",
+      "sha256": "585d9bdaea5b9465ca960a965e7dfca89930a6d2429cccf63b44cac26a29d2e9"
+    },
+    {
+      "path": "docs/implementation/evidence/drop-response-2026-10-22/analysis.json",
+      "sha256": "a14daebed6bc5d69d1e58105c9c113bf0cc51e40d06a5c36014be8b14cb4d045"
+    },
+    {
+      "path": "docs/implementation/evidence/drop-response-2026-10-22/analyze.py",
+      "sha256": "8d61bd25223edc68607304e4eee794a8b5637c48b87ac0592f1fc6da25a5ba87"
+    },
+    {
+      "path": "docs/implementation/evidence/drop-response-2026-10-22/verification.json",
+      "sha256": "c34d67d3b6b8ee1c62049326e29ebef15e01275d5458741b2a1f4c1b15f9411f"
+    },
+    {
+      "path": "docs/implementation/evidence/equity-drop-2026-10-22/analysis.json",
+      "sha256": "fec49d207f0a9352152aa3c8192d000c2e267a6ff9c41945cce0fee646f09603"
+    },
+    {
+      "path": "docs/implementation/evidence/equity-drop-2026-10-22/analyze.py",
+      "sha256": "d9cb0c029af3744a402bdb947ad8eb36241954f4407ad966cf74461ad367323c"
+    },
+    {
+      "path": "docs/implementation/evidence/equity-drop-2026-10-22/independent-cash-verification.json",
+      "sha256": "93014487e2556a39542b6389e014bc79adc612541375c19a57982eedcb5a80e5"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/artifact-check.mjs",
+      "sha256": "12160d9a7910149b39c9e4ea7c7f6637a141ff242b52dd36511cac3ce234e164"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/broker-replay.mjs",
+      "sha256": "41fc97f27de4506f53b9c7768def4501f76b0c3af751925c6fa750cf672e133e"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/candidate-artifact-check.log",
+      "sha256": "65266347334928e870304c209e8c9598253212815240d395ce12b4d6fd52969d"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/candidate-artifact.json",
+      "sha256": "4247c31282d5ef8c19d7ac0d6c1d1c56913b03dfe9af540508f4991896f61d35"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/candidate-broker-replay.json",
+      "sha256": "7d52996fb7e39ea5f8d53ea151f3609e44b016381b4429c7a3b12020fe551250"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/candidate-broker-replay.log",
+      "sha256": "66709e3422f2a99893c8031d9e75458838a615c1d285355c49fb0f838b5bf07d"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/candidate-packaged-smoke.log",
+      "sha256": "b6c89d47fb9e4c076635d2baccaed524b0d23d949090325752b8abaf381c2bd2"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/desktop-build.log",
+      "sha256": "75dba8f454be05be4b73c390690b8602c483dcff914cc3434da4dcccaa5a557a"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/desktop-smoke.log",
+      "sha256": "4426d1a88b65bd0bec37bfbc74931951292760ec94c34f70a4374f06ec343047"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/final-focused.log",
+      "sha256": "8afdaa4fb31cd31a1a427aaca29f18647c28e27ac4407c522802bf792c315f1e"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/final-lint.log",
+      "sha256": "050c69da23536758722729aeda55a8d0fb9d557495ef6d33d70873a3b64a71c1"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/final-typecheck.log",
+      "sha256": "9cb7e68dd67d787ad7a36816afe2abbcde7523d59230ab49ed3d8fa46afd1441"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/incident-replay.mjs",
+      "sha256": "db3e240e6543e2b44f0bfcc3b5bf27b8e62a6493cbd423177074af7b380ff3d4"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/install.log",
+      "sha256": "0f75c68d27a35d668ecc06ea9b1c6ec19cc047660fd4e870b7e9d688d4413851"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/install.mjs",
+      "sha256": "015e2cffab6ad987afbff4b79698848fedd29825a3985c1a027f153de6247c96"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/installation.json",
+      "sha256": "44f286a1ec1f139e76cca970b6fab0656aa54f90bae4b7ad7d8be63913a5a49c"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/installed-artifact-check.log",
+      "sha256": "93c57eb78c9d0b9a42837321b2968ccba3fde2e304a98d70a7f923350d7c7c7f"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/installed-artifact.json",
+      "sha256": "5c1c4bdb2a3b9be32da27bf3cce1d22cef28abfc465b4f1ae7039e8798c33bec"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/installed-broker-replay.json",
+      "sha256": "8423fbc631af52234dfa650077dc8d5f054315c94e88f785866be896bc2c1906"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/installed-broker-replay.log",
+      "sha256": "487b06999729e20ceb925b49b59ee6307a2c93c2879bd687e3e1d0909a56eb2f"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/installed-incident-replay.json",
+      "sha256": "c80ae1e812f7ccbb8ff1adc12d1bfa58f3cfff22305798dac8c1e2612c170f11"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/installed-incident-replay.log",
+      "sha256": "e6f392b9f73be79dd2bdd6617d74cbfe15d123a98fc966f04cdac62b71f846ea"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/installed-packaged-smoke.log",
+      "sha256": "b6c89d47fb9e4c076635d2baccaed524b0d23d949090325752b8abaf381c2bd2"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/installed-recovery.png",
+      "sha256": "7fec02439c8b04958d389f0896512c5e0eb109a79830b73faf79528553e93b33"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/installed-recovery.txt",
+      "sha256": "5f1d90c023e1f1f2af17dfd520c468412d39d043b2776ff8fff56c20f7c1e729"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/linear-receipts.json",
+      "sha256": "c6c54afbc9d6767b42070e0aaf5129ff125d9651b504414972b62146d093718d"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/package-final.log",
+      "sha256": "bef06a06feaf8e3939bfadea83f733983ca3a505106746553b28957fe50e1d44"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/package.log",
+      "sha256": "60e04e7761639a3477f9e25764daca6b9f0a1b9f991e990086e85420f0914428"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/profile-after.json",
+      "sha256": "16113d23bc81f8bc38c40372f8adf9758944f4256a4b903c93a3b24c649a40a2"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/profile-before.json",
+      "sha256": "b359c0caaf036fde4ef628d12ac2ce7fd81fd3618d1121f0e62c3a2686cce61f"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/profile-check.mjs",
+      "sha256": "91a3466e13c77bcf4005fa7c8483b93c01991d9cbe02945b59e08fe54dd2997f"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/verification.json",
+      "sha256": "674f5f9e4db6e409fa017d98a63b23cb7d3842e31d5fd2f4e1272b0a780fd43c"
+    },
+    {
+      "path": "docs/implementation/evidence/execution-settlement-2026-10-21/verify.log",
+      "sha256": "193ef5a67d09af9c2eb04b36b494c52eef7759c60c6e61aaa9180417bf14c32f"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/candidate-ui.log",
+      "sha256": "5035c58730fa0aedce83bf4fc4de45c7ba8a383ffd2343b761840dc7ae88864b"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/check-source-identity.mjs",
+      "sha256": "ec4f471dae790f7c35eb8ec4a7d24c270b23523d7f6ba85fda1024750b28aa54"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/desktop-build.log",
+      "sha256": "f9315039a6266c2e73032ad01b8aed2bbcaff935ddc62524c70a94587143e290"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/evidence-lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/final-focused.log",
+      "sha256": "e464bcdfb12418b6b1cd2bb8e0f34e2825dc753ee735bc9b383879972357aa33"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/hourly-ui-checks.mjs",
+      "sha256": "a653d537138fee01444e813b4e20486c1ef10ba2e501dd25688b7314f081e32f"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/install-local.mjs",
+      "sha256": "249ef3b003a84b37d09701c29e811fb9715e2a8d631e071522ac27cafaaed8c9"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/installation.json",
+      "sha256": "31015a11e869eddb8e7d9d8ef7f01879966e98823386dce685757629d76519e8"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/installed-packaged-smoke.log",
+      "sha256": "14aaf7a98682fbc8996a9a96e85b11381f924c05f1d71ed135a1c1214b5c6802"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/installed-ui.log",
+      "sha256": "9aea95492058db26dbb647b62a91468975fdd0ca406317c7ee8e2d519ef27635"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/linear-receipts.json",
+      "sha256": "da23f4d30c96fd25bae643020ac25da4a13a97c87a143434945fbc3047220d61"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/package-verified.json",
+      "sha256": "b1ccab1768b4d9c87bc9b399d33a110c2b68a625e06534302e8e7a2641f36649"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/package.log",
+      "sha256": "6b20f09ffde9f6dc5d0e6958e650864ddcda8cd5fd2cd9ba27f3d63ec68eaaa1"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/packaged-check.mjs",
+      "sha256": "57c5da8f1254d3eb487f72458d122163ecbda32ab6a0adb73b889f6b324c2ad7"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/profile-after.json",
+      "sha256": "5ed497bd1b4b949882bcaac079e615a4fb622854e19651aba5b7964f096a7491"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/profile-after.log",
+      "sha256": "12e3baa1c1062f12f593eb2f5db9782c6d40609aaf42a8f6f3f9c0970f1940bf"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/profile-before.json",
+      "sha256": "e736450f57079313e90e11c8ba26e125da805779d9bcb8c4eff25a76331160e5"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/profile-check.mjs",
+      "sha256": "5a78d3cb1ab90ee5e9f61662c90b39be7c59b46932fb2b26ce1de221582cfbf9"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/prompt-used.md",
+      "sha256": "6726a0da1c092008011e90e99c9844f9c45808e17b2c4681a1d550fb6a72c9ed"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/quit-process-check.json",
+      "sha256": "5efe13cb332306a12cf97c064cbf23ce8dcb5d3d34015e7461b1c96a6c9742ca"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/source-identity.json",
+      "sha256": "6139334e963a851fcc422dfec097f9d0f32c2969592726979520503ab861cdd6"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/stop-quit-process.mjs",
+      "sha256": "708ee7629d48c1b2b91a05ec3ef0d172344f6752494ab7e58d3611349b625aec"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/study-registration-check.log",
+      "sha256": "a2db6512e17bce648576ed44179194f2d0c6f79f25c61273f3c86c0ebdfbf370"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/study-registration-check.mjs",
+      "sha256": "b11dd3f1fad2c7de44636688a8b615f0afff439f32d6250dc592e2376bfae167"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/study-registration.json",
+      "sha256": "da753ed8b19d3b08976a049e24ac6f52fc0a370b3603ad9f2545b545814edf58"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/ui/checks.json",
+      "sha256": "c2fe45f8cbeb771bc7e7a384343c0dfeffed53fab103d6b31f86f025cd9f1183"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/ui/narrow-preview.png",
+      "sha256": "56bc7d1a71737477881da1fe6f3ffbe161067e90f7bd84a7873c995ef5640458"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/ui/scheduled.png",
+      "sha256": "eb04b22bd9015cf4328356389031c4ccb74b7be4e9a8f227953a6d865e7810f4"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/ui/wide-preview.png",
+      "sha256": "65cf56e28c2ed268cab0dab114ed5c0f36b4b6646140179fb4554e576a821c07"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/ui/zoom-preview.png",
+      "sha256": "1daeab0f31a832aa338b86fdd1e1622367527abe3e30921866eecb0c5f06f5a9"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/verification.json",
+      "sha256": "ffadea0604d8950515902fca57d71454c693423de5867219fe4a2b18c0bea037"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/verification.md",
+      "sha256": "8d706b02ea757912f6980bdf6f06d2ed07647569d5ee346eb1032fc7b08c21b5"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/verify-before-channel-guard-update.log",
+      "sha256": "1def017963978cc73a53092c309939b57f3005d439d53f52794d8842df84deba"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/verify-before-final-clock-offset-check.log",
+      "sha256": "1be61c5447a49213b65589ce15059552f6cc306ba43445c281221631da66c013"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/verify-before-secret-guard-worker-refresh.log",
+      "sha256": "adb93778ea6d147c4d81bf56793068676a031797a62760a8786593d46116bf8c"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/verify-before-ui-harness-lint.log",
+      "sha256": "98551626f16097ec28ff2c6e0bd4b8bb2794550573f922bace9056824386f970"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/verify-packaging-collision.log",
+      "sha256": "293acaf98b7ab445b9987784b4b36b8c1f8c82f21b95b1954dc5cc8211bd9021"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-notices-hourly-shadow-2026-10-20/verify.log",
+      "sha256": "263fb923135cc51ee96d492feb385440609c96fbf9b5d69614dee688f0961b3c"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-wait-root-cause-2026-10-20/focused-tests.log",
+      "sha256": "3b3bac9baeadbf566b9217f3e634a1a1ea2117a1f4899d7fb02816a6590d1497"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-wait-root-cause-2026-10-20/fresh-probe.json",
+      "sha256": "ab082d07cc8cb0c9c5bdf72348be0965e93ea311de750548d19c377afcb6aecd"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-wait-root-cause-2026-10-20/read-only-probe.mjs",
+      "sha256": "4dd01368386085a81b197c94781e93a9942b673348af33022aaa787382f92598"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-wait-root-cause-2026-10-20/source-history.json",
+      "sha256": "91f3afa875234be988c4c0b182ac751b29769d9de216ccffa8c6f17499be0097"
+    },
+    {
+      "path": "docs/implementation/evidence/fee-wait-root-cause-2026-10-20/source-history.mjs",
+      "sha256": "fd9155d0b50cc2b0e26ea0defcaa6bcd677a0d045099a2db297c3182d89aa23e"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/algo-activity/algo-activity-alpaca-missing-evidence.png",
+      "sha256": "a7b3719d42ddde73518c85631a5e7a61fa78214d2bb556bf34ba9655af966875"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/algo-activity/algo-activity-contrast-960.png",
+      "sha256": "364ceac26388e8acf6a3c2092f20363c0aeef95d6f9b46d7105ec77a3331d679"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/algo-activity/algo-activity-dark-1440.png",
+      "sha256": "4e1afe3eaafc42b426f36f153ad21d07491128484698971e62e2b231352e5bf4"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/algo-activity/algo-activity-dark-1920.png",
+      "sha256": "625fd3e527a9ade07fdd944a4132e238ba4a665d0ee92e00ee010d6b58aea42b"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/algo-activity/algo-activity-light-1280.png",
+      "sha256": "14c2d4ac856976ab7c9995bdb2292981a412341b574ac5a9b300f378d201b39a"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/algo-activity/algo-activity-narrow-640.png",
+      "sha256": "21c653ed9e9391b942f831774334350f7043e967cb16cf4fd4fedeb269c882b6"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/algo-activity/algo-activity-panel.png",
+      "sha256": "2ad46ea511434c6498ac719159eb17d8e2878151ee53ff07eccd3c0f3a85383b"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/algo-activity/algo-activity-zoom-1280.png",
+      "sha256": "483a686357de1ff2e552a5430f7502df2312b7a4246734d29d1edca31b7888d9"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/algo-activity/order-book-dark-1920.png",
+      "sha256": "e83ac3c649f0e2044b579ef83ae806a5722fdd68616c347da487934263a52215"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/algo-activity/smoke.json",
+      "sha256": "c57bd2b8a3cd01d49ac617c4acda064effd409d3fc466df3e3951603d71b4339"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/build-info.json",
+      "sha256": "4c81336defb8bd73e22af05c3de6e22e96a570b5aa4d36b8db616cd6dd6a164c"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/crew-journal/crew-journal-contrast.png",
+      "sha256": "d4d41a1b371b56b638bff356e1dd93278a33c6b95bdeb725d0f7cb7eeb8ccc91"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/crew-journal/crew-journal-dark.png",
+      "sha256": "4ae6f299d2de383221e22dfb2f722d4472d488b3527a949b615d27f12e8035b9"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/crew-journal/crew-journal-light.png",
+      "sha256": "80049dfa33e8ebcf8e35d7221ac26ed6e7a41fa6fc3d7d297f2326edcc224c04"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/crew-journal/crew-journal-placement.png",
+      "sha256": "e5aac4fa001e643a998d3ac2b42333a5ae221d37e7310e4a9a78dc12358644d6"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/crew-journal/crew-journal-zoom.png",
+      "sha256": "01d105982169c0232fc2369089e445a6c995b44dd5fc634d62513539c40484ba"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/crew-journal/electron-checks.json",
+      "sha256": "45d9b4c17b1d46be879e0cd45330adf4f1b638c1dd8641f050f3e20f2dcc4277"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/desktop-build.log",
+      "sha256": "afc106dba99dc345391d4e0bb495a3398e8b9c095380d3a91afcc019b5bdfb22"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/fee-diagnostics/CERT_HAS_EXPIRED.png",
+      "sha256": "5f3c05243d52367bbd37eb47ceb1b18e559a32d8ebd0e523755b56d53b3fff1d"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/fee-diagnostics/ECONNRESET.png",
+      "sha256": "5f3c05243d52367bbd37eb47ceb1b18e559a32d8ebd0e523755b56d53b3fff1d"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/fee-diagnostics/ENOTFOUND.png",
+      "sha256": "5f3c05243d52367bbd37eb47ceb1b18e559a32d8ebd0e523755b56d53b3fff1d"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/fee-diagnostics/awaiting.png",
+      "sha256": "11d9e19f72772764f7458c542000570fa43387d3d65e38649338fac73b8bf50f"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/fee-diagnostics/checks.json",
+      "sha256": "50d4579a574ee6327c556475ac9dca3b8ee1fc59fc53f66331b0648d97d84fcf"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/fee-diagnostics/exact.png",
+      "sha256": "9343e2fe755c487188cb9a9a7082d3496e7a30334a5030df56a910af7a786e52"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/fee-diagnostics/overdue.png",
+      "sha256": "11d9e19f72772764f7458c542000570fa43387d3d65e38649338fac73b8bf50f"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/final-lint.log",
+      "sha256": "050c69da23536758722729aeda55a8d0fb9d557495ef6d33d70873a3b64a71c1"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/install.mjs",
+      "sha256": "bb1cf13b5fcc51e255450bfb06b642c0083659a722611099f67ef21809b67b7b"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/installation.json",
+      "sha256": "6251a5ba3e1d2b33aa183c564142e2e56b61b399ad8c3145e3aa140999de5cc4"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/installed-algo-activity.log",
+      "sha256": "79e38d28fea7c054dba406a65008771b5278af8bcf62c5651969f3fd8140ac3f"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/installed-crew-journal-focus-run.log",
+      "sha256": "f09139788fb6ab4a0d74fa60ea19388a4450b4973175e0de4fd767089acf7bd4"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/installed-crew-journal-initial.log",
+      "sha256": "c27ede6d0a1bd7107b5fa1a1ecd63ec04f9a5e1fd93269e94184034fd427112a"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/installed-crew-journal.log",
+      "sha256": "424db4e5cd6da0a4eddb940eb1c78f0e1c6414b2ee5ecf2eb18848afc1b58abc"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/installed-fee-diagnostics.log",
+      "sha256": "447534488d6c1e05a78b3d06d992f45a7ec8c0aeb0179fc54f949444ccd1f05e"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/installed-history-check.json",
+      "sha256": "8629f5733b8c1b7842bbf34bcdd0eb57e4f1383e9e17b7ec5125f5cd3a3e51aa"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/installed-history-check.log",
+      "sha256": "bb458b9d55efeec78c37e21d6701979f96acc7716eb63c28919fed16e0404e70"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/installed-history-check.mjs",
+      "sha256": "87c66c5fdf2676bfe503ef00e47dc5c54954881a7a6585b24a76344ec5830263"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/installed-native.log",
+      "sha256": "5b36ea6fa3ea20c8761ea93f5f8381df99744227b47600c27f2a3806686b00d0"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/installed-smoke.log",
+      "sha256": "d8f2dc16e7cb969c4f3a7bb0369b29c2f93f0a6eb9ab0074edcedfba4e4af3da"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/installed-ui-smoke.log",
+      "sha256": "1b647fea2211f1e49358b75fb38eb0de34ec0a211c341708296a3ad85b481166"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/journal-baseline.json",
+      "sha256": "bd4129f365583f305cce118c4579e699e7e8aae0a50637573d326fc7b7168502"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/journal-repaired.json",
+      "sha256": "c8d2e7ba5b43e25e735bfb1bac3c4b4c8b1155561c1fa1a4361b951aab35b3e9"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/member-integrity.json",
+      "sha256": "eed651646c8deb8060fba297b47e4a1719ed5099d04f29545302fe6f80d40e4d"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/native-checks.mjs",
+      "sha256": "599f91576548f47712c11ab5cd9244f62ee47facaef1ad67b7062709b4708f64"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/package.log",
+      "sha256": "51b4551212dd58ed7de8f1491f33d6c34f03a9b30ff771f3152e7961307d6fa8"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/packaged-smoke.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/prepare-installed-checks.mjs",
+      "sha256": "6a63874ca10283adc9db8cabc35e300c9671647e21228cad409048f149c4bdc8"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/profile-after.json",
+      "sha256": "0d5cd8faf069fb28326c496d0585621dc9147381df57d162f79142050269b983"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/profile-before.json",
+      "sha256": "311ec910629e156f9be2822099d0ab41ce303bf1a0a856c0643ccc6a2388a4e3"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/profile-check.mjs",
+      "sha256": "fa63f8c5bcd2ce3365935dce4ad0cd61473a7ea9f502bac17d6c0a8a08e72225"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/repair-build-info.json",
+      "sha256": "3f8519285a93f7a89c9c43a345c909e03c1f3687950a054d3f44e7a3e91df9e1"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/repair-build.log",
+      "sha256": "097d7fcd2b6c778109c1c948076ae7874e7000c1c140089671568f5850b02735"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/repair-desktop-build.log",
+      "sha256": "0c86823cceb387d987e467faa71880efc390de5eea3a4afbbeb87400b6b2b105"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/repair-focused-tests.log",
+      "sha256": "5b711ec89d38129c4a1cacd4757cf26a270c115ed31c7f1555c2fb4979eecf06"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/repair-installation.json",
+      "sha256": "4d44a6076e3b3026325fff48aa2249e76a31cac207bcd97c02cb175959cfe0e5"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/repair-installed-algo-activity.log",
+      "sha256": "87f40b94255fa3cdd18d351e26d163ce2f90adc98d000eab31ef5a9955f384b2"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/repair-installed-crew-journal.log",
+      "sha256": "b66399d9146739c32c288e3cdcf8a87e13b5cbb663f5e42b78985a44cc0df178"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/repair-installed-fee-diagnostics.log",
+      "sha256": "b0c9562bcbaf7811b8db6ca584bdadf91d28b73b3fd0b8a3e5ee10a9bd1a5307"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/repair-installed-native.log",
+      "sha256": "5b36ea6fa3ea20c8761ea93f5f8381df99744227b47600c27f2a3806686b00d0"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/repair-installed-smoke.log",
+      "sha256": "2130725ca97109e561343be48722337e55a3f43ad503525bc00e0452eaf0a811"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/repair-installed-ui-smoke.log",
+      "sha256": "b20a1b64c4433896da7e7934277aff594923041a0cf644b32a894e0728c60473"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/repair-member-integrity.json",
+      "sha256": "6a9ae926c058e2402f4b6e47176d0b9c4e3586ef92c1db82386cae1b62a96d5b"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/repair-package.log",
+      "sha256": "412ba9c373c1d0fcf110f2200586b18a674324de85a0dd57ff9769430544be30"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/repair-packaged-smoke.log",
+      "sha256": "2130725ca97109e561343be48722337e55a3f43ad503525bc00e0452eaf0a811"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/repair-verify.log",
+      "sha256": "34b8fddce0fc67df1cfa6399407ee0c00cbcdd57963b6333f52aaf36acc20f0f"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/source-identity.json",
+      "sha256": "30c3a2b234e57cbab94a75e4244e530de41b98936f99a9e7bae7d433043400fa"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/verification.json",
+      "sha256": "1426cdecd74b5a02b8a3f983e22cf57e1f8c21671600f1ead040f1cf559b25ad"
+    },
+    {
+      "path": "docs/implementation/evidence/latest-install-2026-10-20/verify.log",
+      "sha256": "2598415d6f7295d3d78f860d1a64ab1b2a3492374fb30addf398124194066a8b"
+    },
+    {
+      "path": "docs/implementation/evidence/order-lookup-2026-10-21/diagnosis.json",
+      "sha256": "78a17a0616569f3883beea44e4b6ed4dea55056eb342b0b25df2cfc80dcec63b"
+    },
+    {
+      "path": "docs/implementation/evidence/order-lookup-2026-10-21/read-only-diagnosis.mjs",
+      "sha256": "6d3ff7ef9225d8be7a35f472ff4a4586f186634a20b6cc15c310ff34c6bfe5ee"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/artifact-check.mjs",
+      "sha256": "a229122d8a305a2e67bcabbcda9bb47b99710ecce1029853c50d83524a3eee7e"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/before-ui.png",
+      "sha256": "6ef0747f5fe5bc2981861ece6a5fd376e1001fdaa0046ba9aca0cb690092baa7"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/before-ui.txt",
+      "sha256": "bbe163d57853b7e689ae565dd71c80e6346b9e09522d270b72be1498d617b05d"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/broker-replay.mjs",
+      "sha256": "12527dda02d1e4691d6094ddf3076182910c60a620f958200c7a3afe815762d3"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/candidate-artifact-check.log",
+      "sha256": "4e583d4e6914f3cdaa8ac30dd0c467e8b52d70e018475891fc0b3b7671259b93"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/candidate-artifact.json",
+      "sha256": "0850777dea36171ee24e8f40fa0640832694fcc899c3f7ba308326361d7b6f72"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/candidate-broker-replay.json",
+      "sha256": "48313bbe8929646d7469a73137691435590df8b0aeba3dab76ec1941814d6cf1"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/candidate-broker-replay.log",
+      "sha256": "4697bae07133916a1946a23d27207cb35d3cbd5735fffd32a6916411bde0c68f"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/candidate-packaged-smoke.log",
+      "sha256": "f1005217f88fd4d554b395d58a7f12a2feaa8e1f4633bc09d83c5dc4b9b85bab"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/desktop-build-final.log",
+      "sha256": "3a4ed49ee291c95399b0d9b18ac7a341739ab9080d4129570c5ff04b700d5f71"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/desktop-build.log",
+      "sha256": "a2fac38b5d2706fd4ab981dc95303f6c54c95fc0a602b1ad7d318a64336313d1"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/desktop-smoke-final.log",
+      "sha256": "0ed4fb0daf06a36b5e066427f8e7a59955ce8dbd2535ed1cafa3a404562cfb2a"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/desktop-smoke.log",
+      "sha256": "63ddacf282eb830bf9bb2d1c320bfd439cc6c95c10c4d77c17381a18fab56608"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/final-lint.log",
+      "sha256": "050c69da23536758722729aeda55a8d0fb9d557495ef6d33d70873a3b64a71c1"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/final-workspace-build.log",
+      "sha256": "097d7fcd2b6c778109c1c948076ae7874e7000c1c140089671568f5850b02735"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/install.log",
+      "sha256": "21d45f3aa6e475a167e23462ee699d246d9e168ed893a07e10cee2f405bdc170"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/install.mjs",
+      "sha256": "b90cc6d2d8b869c64ff262685910ae3051058fbf017ea27cc6eb1594269ce3b4"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/installation.json",
+      "sha256": "10bb4da378ecbcc8a2a6a81ec33a9a4ae2980efda4de3ea381af31e66c786232"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/installed-activity.png",
+      "sha256": "265677db8ebe98c9cb63f50760400f8d3cd2dacd49a0cfbe784249a52a8e9b27"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/installed-activity.txt",
+      "sha256": "b107a9c9847a8788013d3021b29486950ce8450ab4791278cd6e6bb9af0744b9"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/installed-artifact-check.log",
+      "sha256": "50ef5e88dc5eeba3c4ff3a4bbf19aa42be4adba3f37d29fa6313aceb5ad0c4e0"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/installed-artifact.json",
+      "sha256": "9098173464c87cb1e2f0756b32f4b4b9c4d5f29a1090c92e43a597b428c38d11"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/installed-broker-replay.json",
+      "sha256": "ff204ab0932a9acfa3b3c533ce0edb8fe8dfbcb4583b716302a649d802fc7d37"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/installed-broker-replay.log",
+      "sha256": "8cbab4966ead9f2f29036099ef593b0b71e7346ab9ba6eb8797555e15cc26cf0"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/installed-packaged-smoke.log",
+      "sha256": "f1005217f88fd4d554b395d58a7f12a2feaa8e1f4633bc09d83c5dc4b9b85bab"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/installed-ui.png",
+      "sha256": "fe287c040a71a7117f87ea9a459435aed8e7e4fdc46e1ae139afe3675bf929f1"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/installed-ui.txt",
+      "sha256": "d5ead6cee8085f5d18f85121ffa09b5b7b5ad5ebbc3780e15db97ffcba8b291a"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/package-final.log",
+      "sha256": "cd6c5bc97aebcb7b7739ddb31edef8b0f41360d0faec10686139ed06f33f2cce"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/package.log",
+      "sha256": "cd6c5bc97aebcb7b7739ddb31edef8b0f41360d0faec10686139ed06f33f2cce"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/profile-after.json",
+      "sha256": "1b1338ff3dfaa7efde6c217eccdac248b964bb55e4cc44cb4de20fd0fe4c1073"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/profile-after.log",
+      "sha256": "980371941b091295df5cd02fa51e741629131c34dc5b1f3f35fca67aa0569440"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/profile-before.json",
+      "sha256": "f08d5283c6f47d885d37d587bc414054911dc9400be9f4b171d2d1177c1fee2d"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/profile-before.log",
+      "sha256": "b5161abc7373d56e12957580d47171f29837780d8579038443350e493213bc03"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/profile-check.mjs",
+      "sha256": "50d3c4a75c9e1381c2711f8c3c803e438f8cb11aab97603f0cf583957a5584c4"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/soak-check.mjs",
+      "sha256": "ada4e69bfa5d5bb76c3a6d23fb86bd419be1e67d893be573f8037a11d2c8f9a3"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/verification.json",
+      "sha256": "6af5ab43783b5ddfc5a5bf811f1af59fdb9835208fdbfa7006a83eb640a3fcbe"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/verify-final.log",
+      "sha256": "43277df4f3a927cd3118253b65b48c6176428b252e2d208aabb2b76ed998544f"
+    },
+    {
+      "path": "docs/implementation/evidence/order-recovery-beta20-2026-10-21/verify.log",
+      "sha256": "f4238e3aeac8afca141734e6350a01684b63907bf2eb2f44f0d5140894891f3f"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/artifact-check.mjs",
+      "sha256": "cd3afb56db5c9315f29b1665daca0e9030d49573cc4f164286c5a871b24ebdb9"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/before.json",
+      "sha256": "bf0f9f192c4a1dda9b5c769b87034b0334cb78a405bd744b8418dc49bdfe79a0"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/broker-replay.mjs",
+      "sha256": "d612dbc37db110be6e3abaeff52c30312be23a843dbd8ea13d9c7c45b4e27c89"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/candidate-artifact-check.log",
+      "sha256": "5c1920868c5f77388705ef018d7d423ca5294bb19449506b7f5a2ad165092abb"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/candidate-artifact.json",
+      "sha256": "24bc3cbf527ce9ddeecbcae01bf1d416bc79f6c0fda10ba92c32387074a5a342"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/candidate-lifecycle.json",
+      "sha256": "00ae06c3f68e918e5339564b6f9d2aa8189063d72d55c10f5266a832c976f438"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/candidate-lifecycle.log",
+      "sha256": "d448c596f481c0c8092b9f851e9a2a470ce4f9f5c51424edcc8dd1e7f5076162"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/candidate-packaged-smoke.log",
+      "sha256": "f883543dac19c2f94b48d7eece51e5b65c48c7e439c87b157d6a1e5e36f428bc"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/change.diff",
+      "sha256": "6279d1dfeae8edddd13a7af5fefbaa4bcaf8126ecb88e3bdda396b876f68e1d3"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/changed-file-hashes.json",
+      "sha256": "a2e1a45ca8d317dd5067d334e58717d2b0cd7e43bade8f423622e37aa6890f11"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/check.py",
+      "sha256": "16cb0e7eb0a65438799941bc59358a244c4593571ab7449ffa441deb763b76b7"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/desktop-build.log",
+      "sha256": "755372323343c86afbf059dd0547881a5dd7437935359ebe962a6d2368f43469"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/desktop-smoke.log",
+      "sha256": "9b60c19f2ee0d876765595c287ab42f52d33b8cd74b65162ecb8e5ccf9a06977"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/final-lint.log",
+      "sha256": "050c69da23536758722729aeda55a8d0fb9d557495ef6d33d70873a3b64a71c1"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/final-observation.log",
+      "sha256": "2066e8ed2fab304259138826bd6ae844acc4f0d9d8b16b5feb37a1d224853aaa"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/finalize.mjs",
+      "sha256": "eed4386aa3053dafbec82cb19abb1d2655fe79fcf4cb622ce8fb09d348a48587"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/focused.log",
+      "sha256": "86f0624dea34f216bac97551ae62c1b16e1f41c21819d19179cdc9f5d724cada"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/install.log",
+      "sha256": "5a0c9f5a968087022a5f418eed7d3c5f4eaf4422886606dd3feeb0db57f9466c"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/install.mjs",
+      "sha256": "8291c818d36b2b567842f90a41c95b6b5beee3a4cc874ef8aeaf1728b2325354"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/installation.json",
+      "sha256": "7f28c089a73fc94e7f26465c0a0fa94ac00c6f231913b1d20370249c31d762e5"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/installed-about.txt",
+      "sha256": "816d836cefd721ef716787df35704c0d811fa5aaddc9b4308bc6a2330109856d"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/installed-artifact-check.log",
+      "sha256": "322685dd3db4c1b02b4785f41ac7ea70ca96333ac62efb01b4350b50c36c6d77"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/installed-artifact.json",
+      "sha256": "975d88d59be04f8f2b4c2dd4679a8805ae118486efddb4a68bd09b92df2701eb"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/installed-broker-replay-final.log",
+      "sha256": "a54de5b3d9f722f004e079a25820cdfecb9d9d3b86f08430ec4b673261978555"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/installed-broker-replay.json",
+      "sha256": "58caa8e2e2bce082ae619be0bb1e7356ad5b1b5d7f27704aff895b109bf58f7b"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/installed-broker-replay.log",
+      "sha256": "dd57e125820d9c25d015e1a8d512499ca84bea44cac6f9a0effb407ec0803e11"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/installed-lifecycle.json",
+      "sha256": "a3260993d77369c72f089fcae348b0e03723825e8ecbb2b02c4773bb0396278e"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/installed-lifecycle.log",
+      "sha256": "f4d35301272ca70c019fc349ce95b96f6b60980ee177bbab28907614fe7583f4"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/installed-packaged-smoke.log",
+      "sha256": "f883543dac19c2f94b48d7eece51e5b65c48c7e439c87b157d6a1e5e36f428bc"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/latest.json",
+      "sha256": "6c9b511289e156cbd9018f4d6ebcff79b5bcdd173b99a51959dcaa3417c92f4c"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/package-final.log",
+      "sha256": "709d40988dc1ec7ff88cb77d0f2220a3aed43ec2d884fa601269f5091bfbfd31"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/package.log",
+      "sha256": "e6a7b5f9f16e44dfbdc0b1bf7d81d714a59cc5b5a41b66c709c3592b4fa7f172"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/profile-before.json",
+      "sha256": "eb7f4b147430878242cab95a9ad14aa3756c4c2d75ee72eb234a9ccb83e016cb"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/profile-installed.json",
+      "sha256": "8bcdcf72ed88207f1576909b2d9a3924873e5d2ed5fc357832c7975e0ebff8c2"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/profile-runtime.json",
+      "sha256": "ec6c9be390ac4a8e38fa16ca11e8f918784a6f25a23b1b18f26f1dc4cb11d06a"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/regression-before.log",
+      "sha256": "e2f03187c0896c67a3f14623fe4158e3d8cb5add57642cc85aa69a882cc170b1"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/resumed-settings.png",
+      "sha256": "d4368c197e7ef862e5eb21db035d3e3b8a388d102134e92237aa40d203e414dc"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/resumed-settings.txt",
+      "sha256": "15e44c817e757df89b99e9cb44fabf2a3cb78e537110b5985d3ae556920f6694"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/running-final.png",
+      "sha256": "464a18a8e916bd10ecc331dc8318d6bb53badd29db354ca19d40ac0fa3cb2815"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/running-final.txt",
+      "sha256": "a692633ada5d8715f68191cf557c90e78a0c33d74cb2ff9a14978f7f10150319"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/scheduler-verification.json",
+      "sha256": "2471126b523b6be34f33fdf853011ebb0d1e9473873949fc4065e043b70f03d5"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/verification.json",
+      "sha256": "2e25acabd22017e115fbebe5dd1c2e7fe0807e75577cea820ba0641a33191f50"
+    },
+    {
+      "path": "docs/implementation/evidence/ownership-wake-beta21-2026-10-23/verify.log",
+      "sha256": "9cb4290c69d3bbdb0585bfd858f45e3906f46b65aa86058cbb338512272b6eb8"
+    },
+    {
+      "path": "docs/implementation/evidence/paper-resume-2026-10-21/before.json",
+      "sha256": "62e0dafab4c92d16efa766bface891429ebc69c37ac38161b1f7eb1994a91f59"
+    },
+    {
+      "path": "docs/implementation/evidence/paper-resume-2026-10-21/check-history.json",
+      "sha256": "6854099879aa1831140a115d33c8dd44eb22bb5275465edbdbb8d3ed88b70d3f"
+    },
+    {
+      "path": "docs/implementation/evidence/paper-resume-2026-10-21/check.py",
+      "sha256": "73fe6ec4f12f705444b7c84b8cf0825d91f677b4b0c49db265adabeb75500c89"
+    },
+    {
+      "path": "docs/implementation/evidence/paper-resume-2026-10-21/latest.json",
+      "sha256": "b0a0c59ddb1ea4d80f7a74ee0070de3f723263346e42829713b7134e70d04c7b"
+    },
+    {
+      "path": "docs/implementation/evidence/paper-resume-2026-10-21/resumed-settings.png",
+      "sha256": "b13fb346cc7f8457e3091581b8f8759fb6ea1228ee3fdc1c4817fab929da7613"
+    },
+    {
+      "path": "docs/implementation/evidence/paper-resume-2026-10-21/resumed-settings.txt",
+      "sha256": "8be173bee1fd2d8dd20a0b852aad24e99497a689eda031d0379c6e29ac4314da"
+    },
+    {
+      "path": "docs/implementation/evidence/paper-resume-2026-10-21/running-after-five-checks.png",
+      "sha256": "0442ec6c0ecf1ae1042aac299d0782b0fb603a4471ea73193ade25403c9481fd"
+    },
+    {
+      "path": "docs/implementation/evidence/paper-resume-2026-10-21/running-after-five-checks.txt",
+      "sha256": "7dea9d7c587c4ba28f807044beadce4e48f5ce0561d6ef2503e2924d34f81b71"
+    },
+    {
+      "path": "docs/implementation/evidence/paper-resume-2026-10-21/verification.json",
+      "sha256": "fe16518858c707d026c2046e2aac6fb8e9816b6bbd357726163d89599af691b3"
+    },
+    {
+      "path": "docs/implementation/evidence/pnl-behavior-audit-2026-10-20/verification.json",
+      "sha256": "ad53d140915c9d41aade4d79733cf0d7093699572c82424a7d21098aa2ea3b7b"
+    },
+    {
+      "path": "docs/implementation/evidence/quantity-gap-reconciliation-2026-10-20/broker-read-final.log",
+      "sha256": "2caa6514c64d178eea53b537f4b47b900d1cf35f993837bc1e1d7af7a5c8ab35"
+    },
+    {
+      "path": "docs/implementation/evidence/quantity-gap-reconciliation-2026-10-20/broker-read.log",
+      "sha256": "2caa6514c64d178eea53b537f4b47b900d1cf35f993837bc1e1d7af7a5c8ab35"
+    },
+    {
+      "path": "docs/implementation/evidence/quantity-gap-reconciliation-2026-10-20/independent-verification.log",
+      "sha256": "d85d1116442d197b34fa19f298c28973d60afd3a2f51ea54cda52c2c48432b58"
+    },
+    {
+      "path": "docs/implementation/evidence/quantity-gap-reconciliation-2026-10-20/linear-receipts.json",
+      "sha256": "259327bfdec8947f3b328cfc08b399cba6cc0cd2e3f5d06efd8b2a2a79166246"
+    },
+    {
+      "path": "docs/implementation/evidence/quantity-gap-reconciliation-2026-10-20/lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/implementation/evidence/quantity-gap-reconciliation-2026-10-20/profile-after.json",
+      "sha256": "068ae4f0463509d354cb237d0ad05b208450bbfca9be417f31766fef53a34237"
+    },
+    {
+      "path": "docs/implementation/evidence/quantity-gap-reconciliation-2026-10-20/profile-before.json",
+      "sha256": "a712b8abf683e373cf249ba910d4f18d63fc0fead391b9ab69079fbc342dd82d"
+    },
+    {
+      "path": "docs/implementation/evidence/quantity-gap-reconciliation-2026-10-20/profile-check.mjs",
+      "sha256": "d2a2c51211492b5fe58166099919a3e43c8626cc5687f2a2807352531fd98030"
+    },
+    {
+      "path": "docs/implementation/evidence/quantity-gap-reconciliation-2026-10-20/verification.json",
+      "sha256": "9c510ed1a0425f13487947c6a4ac99c054d4d12c5771f909217361c6b5e8cbf8"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/candidate-recovery-ui-checks.mjs",
+      "sha256": "f49af89a69fac64edd772db9d9a25488a928bef072c3958fe14722d184fa9e86"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/candidate-recovery-ui.log",
+      "sha256": "b43f15f6b50795b27bc68114a5ad4048c462434b277b200d057389d5dca809cd"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/candidate-recovery-ui/CERT_HAS_EXPIRED.png",
+      "sha256": "6ae1b09b70636d0e82d3ee17787d4fa7b8955aa66d701da7274623f83d4e08ef"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/candidate-recovery-ui/ECONNRESET.png",
+      "sha256": "6ae1b09b70636d0e82d3ee17787d4fa7b8955aa66d701da7274623f83d4e08ef"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/candidate-recovery-ui/ENOTFOUND.png",
+      "sha256": "6ae1b09b70636d0e82d3ee17787d4fa7b8955aa66d701da7274623f83d4e08ef"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/candidate-recovery-ui/armed-awaiting-narrow.png",
+      "sha256": "bad73c7248b282736fb427b6e1aba585e296d26bdcbec09fe421ee7159691c8d"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/candidate-recovery-ui/armed-awaiting.png",
+      "sha256": "87241ccb73dff188795a0120cf5a1a26f33b7f278a16796a3e6d37bee802048c"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/candidate-recovery-ui/awaiting.png",
+      "sha256": "11d9e19f72772764f7458c542000570fa43387d3d65e38649338fac73b8bf50f"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/candidate-recovery-ui/checks.json",
+      "sha256": "5c361afa5f05bf68396d510a536ef7ec59882245c249a77fa9a9db503f63e6a8"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/candidate-recovery-ui/exact.png",
+      "sha256": "ab421794c4f2fce6022d1b5e0eaf2d8ff54cf6a8fa3bbb39564b05a013f87f07"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/candidate-recovery-ui/overdue.png",
+      "sha256": "087a03f9cb3e8a2bc8c6c42551a5aea15a83865ab8eebe071c293be02b8d5c45"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/check-source-identity.mjs",
+      "sha256": "e51e86782782e0f6e14650ad27e2ccdeac35a7ad031d4eb6c2cac21b50d7510d"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/credentials-contended.log",
+      "sha256": "3381f9d7161bf2eae481505cfc4a75800b45584a49b389491ccb7bf6dc902048"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/credentials-focused.log",
+      "sha256": "5e5eb6d0260a683aa512de0161231e771fe8fbd831dd20c60d1300e3f3113a46"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/desktop-build.log",
+      "sha256": "948cfc4079bfd1a16ac3ef996e327c9410d654d44965ff2d6d3e19e16e0897a5"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/fee-diagnostics/CERT_HAS_EXPIRED.png",
+      "sha256": "6ae1b09b70636d0e82d3ee17787d4fa7b8955aa66d701da7274623f83d4e08ef"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/fee-diagnostics/ECONNRESET.png",
+      "sha256": "6ae1b09b70636d0e82d3ee17787d4fa7b8955aa66d701da7274623f83d4e08ef"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/fee-diagnostics/ENOTFOUND.png",
+      "sha256": "6ae1b09b70636d0e82d3ee17787d4fa7b8955aa66d701da7274623f83d4e08ef"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/fee-diagnostics/armed-awaiting-narrow.png",
+      "sha256": "d0a09e3b7ae868cc8764dea14e2fe9943861c76b1358abcc221239d86ec3031a"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/fee-diagnostics/armed-awaiting.png",
+      "sha256": "76133e59b7064a40b35cf9fb473adff3afde5e15eb0dac01bf0b6b2e59c8aec5"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/fee-diagnostics/awaiting.png",
+      "sha256": "c552adc2d34e36e8c2c99c170052cde25255df650ba3b7301d670fac62fd573c"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/fee-diagnostics/checks.json",
+      "sha256": "5c361afa5f05bf68396d510a536ef7ec59882245c249a77fa9a9db503f63e6a8"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/fee-diagnostics/exact.png",
+      "sha256": "3804585d23be1f8edd247e62177a81cf925cb4e9afa2daefe8169a748f1e9068"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/fee-diagnostics/overdue.png",
+      "sha256": "53554844ff990b16fabc261427076ed3498ded857b9b0ccaa27e07d01fa4adef"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/focused.log",
+      "sha256": "dea79dbd31cd655b0fe87799bd9207c63f0e41b4f9ed448973e37bbafa4ecde0"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/install-final.mjs",
+      "sha256": "9bee2363955d0397bb02219ed441cbf7882beadb6feeed7e15e10594a0d06805"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/installation-before-credential-fix.json",
+      "sha256": "a6d8d4a84363ac1cfb3e5fdd73004aa1ada663ee35bf28f9357c6f7ba1e5dd17"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/installation-before-credential-generation.json",
+      "sha256": "e77d9ac966415c485d8486bb081bbae3d3facc8f84c37112cbeef9f537fc6801"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/installation-before-native-read-bound.json",
+      "sha256": "5092d07a8c3af32b059b8f28d1145b6d7872fa4a1787298f1697200f774a4025"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/installation-final.json",
+      "sha256": "8374720fc2c4d61c15016a714ccbf3940ea72555ad17c5ba63d18b478ff75fb9"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/installed-packaged-smoke.log",
+      "sha256": "8c85b7706e7e68513cb0038243f73dc1946845aeb9ff682475287a077b576b9b"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/installed-recovery-ui.log",
+      "sha256": "29982fe7c2c6d4a95834e279a036e525199518a0977f1259967d998e30e0bb36"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/installed-ui-smoke.log",
+      "sha256": "3f94ed95fbd9398c2a0dcd2a705631045c76574ff3f393693b4784047be357f3"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/keychain-approved-linear-receipts.json",
+      "sha256": "757f2832d459bb255c57934c94a5eb5465343f5f27d94a419e10276d489407c6"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/keychain-approved-verification.json",
+      "sha256": "c639947df06e9abf6ca71fd87b2a7c7152d1f6a2f4ceac7a64e24fb68ed3bfe5"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/linear-receipts.json",
+      "sha256": "fe41af146814169e27115dfc68cd283b09c45bfd10c87e15f0d0bbcd603e1332"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/lint-final.log",
+      "sha256": "050c69da23536758722729aeda55a8d0fb9d557495ef6d33d70873a3b64a71c1"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/package.log",
+      "sha256": "434b01e614350fa77348af9557da40db9026263348cd10794388e4e0d18917b5"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/packaged-check.mjs",
+      "sha256": "9bfeddf621483b36cb9973cf9cd8d4b554b34bccb5111b83db94adfa7a090286"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/prepare-installed-checks.mjs",
+      "sha256": "e911d421e066274fd036f54933bf1c8f29ec77acd65a0daba65b4a827602d0de"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/profile-after-install-before-keychain.json",
+      "sha256": "b6403c810a9fe88fd27ee9a77f6e471714b0468c3a9a1d80d74ee370bc085b98"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/profile-after.json",
+      "sha256": "011e4e2ee4dd21a273aebe489768ae7aca757450a995235bb98ba34216e4be4f"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/profile-before.json",
+      "sha256": "a712b8abf683e373cf249ba910d4f18d63fc0fead391b9ab69079fbc342dd82d"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/profile-check.mjs",
+      "sha256": "856eca23916af6639ca2474e9ecb18fcd0c875bf4d85a5edeff057060ec2c770"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/quit-process-check.json",
+      "sha256": "f772c592656d47b81fac3266e0fe604134f8c86f2d65f0dfddce08fca97799f7"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/recovery-ui-checks.mjs",
+      "sha256": "723c471582b346eae2c77eafccb2e536acb25fd861c232447e4002b136e7a7a5"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/research-timing-isolated.log",
+      "sha256": "4af95785194288e259ea951b9ddbfee1468a920793dd796713a7f1af05ea5af5"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/source-identity.json",
+      "sha256": "513ac82211d188af4b04c88be6f8acbaabbb0a3f2af6a1b7bf6b36f1117c089f"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/stop-quit-process.mjs",
+      "sha256": "5b5179679076464e2db4fba0f4bc1643b350c8b57d5c410266de0af0a8b746fb"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/typecheck-final.log",
+      "sha256": "9cb7e68dd67d787ad7a36816afe2abbcde7523d59230ab49ed3d8fa46afd1441"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/ui-focused.log",
+      "sha256": "a864c6540c455bd01fbab4d0c916b072c8f19c712f21949406cba553bbb456a2"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/verification-before-keychain-approval.json",
+      "sha256": "e87eab15b8f13600a5f1fb16bd8a1ae1973a8c162b66f3388c91e81af935d88a"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/verification.json",
+      "sha256": "72082f1bce9c37d319125117924dcd265d4e6bcdbcaf313ba47b6d818bc9dd4a"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/verify-before-credential-timeout.log",
+      "sha256": "5eae2173c823d5c950da61a6db88937bfc23ccabf0f7c2e3daf1cbdc7196bfc8"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/verify-before-native-read-bound.log",
+      "sha256": "f6e01d9b0cba99cd8be4b69957e3899db5f8f53cfcd73a531f96f4741309d3df"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/verify-before-wake-check.log",
+      "sha256": "8215f8ac2a21464ca734cad224df8e416f9574706f1b4dcd60aadb3556aca774"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/verify-contended-interrupted.log",
+      "sha256": "9a0e060cac674952ec4eff6739e9539e8e6cc2f31a243bff0cc034b8401a1b53"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/verify-initial.log",
+      "sha256": "342291fee75676d4abb2ad3fb87b7efde069a0cc79170a7327b7b6c61e5d97f6"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/verify-restricted-slow.log",
+      "sha256": "d5979095407d3012e4663af3ae64322d2945a245ca4c3e3e2d34c334aeb8248d"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/verify-with-app-open.log",
+      "sha256": "7821e48f25192b0ae83fac2c63f9a9f6be3e21f3c85f8daeb6d6cfc6f7f66b49"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/verify.log",
+      "sha256": "a3284c81e65ba119ab052defc974a9a3bfb0e9a9d93146c64180393f3028171c"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/wake-focused.log",
+      "sha256": "012f53786c05a88882b5101d0f0473d512b5228dc9c0737d3f51093070f0d8fc"
+    },
+    {
+      "path": "docs/implementation/evidence/scheduler-fee-recovery-2026-10-20/write-verification.mjs",
+      "sha256": "389f45d800dc3237015657ee35b647a0b9b56844203e1196d3702819ffa7e49a"
+    },
+    {
+      "path": "docs/studies/execution-settlement-beta19-2026-10-21.md",
+      "sha256": "4a65cef107c2b1ca745da558e62a8db28fcf92a6bdf24430a6586eb7267a473b"
+    },
+    {
+      "path": "docs/studies/fee-wait-ui-regression-root-cause-2026-10-20.md",
+      "sha256": "2ed0e2dc5eb7b246d9e055075fc71d20729f127832b14ade2730f1f282a7a28f"
+    },
+    {
+      "path": "packages/adapters/src/http/alpaca-rejection.ts",
+      "sha256": "56f868ed7f9fb2402d5cfd6fdec846db529043342d739be93f4f3bf0a59343bb"
+    },
+    {
+      "path": "packages/services/src/paper/hourly-shadow-service.ts",
+      "sha256": "b9a3e51268f7bc8ebe12995db59b6a0dee4ac8e75d055e59d2b13606bd2437d1"
+    },
+    {
+      "path": "packages/services/src/paper/parallel-fee-wait-activity.ts",
+      "sha256": "0d259ada5f60691ee7e4f75ff8b94d6b8318a8f6149f1aa2a18a5475b61e5f92"
+    },
+    {
+      "path": "packages/services/src/paper/parallel-paper-rejections.ts",
+      "sha256": "4ac8acbf0948b0dd7f3b10490cbfb9504736c06363d59f1cf1edacf76a2eb61b"
+    },
+    {
+      "path": "packages/services/src/paper/parallel-paper-settlement.ts",
+      "sha256": "2e53f2b979d123c35bd777f83561371673e33df0e140c8a9b0cd73e5e0de8459"
+    },
+    {
+      "path": "tests/hourly-shadow-service.test.ts",
+      "sha256": "d8fff1c65b98bdb4b032f2ad88b136beb799109e77c1a6d98f7ef6bb0c68c73b"
+    },
+    {
+      "path": "tests/operations-journal-history.test.ts",
+      "sha256": "1a0caac2b0b579a7d24440c13b884659e4fc60c2660602fa68e0d06870c76050"
+    },
+    {
+      "path": "tests/parallel-fee-wait-activity.test.ts",
+      "sha256": "f0ca3dec00da43b46b7a71ef37034efb66f9358d57cdfdf82e30ad4b3384a989"
+    },
+    {
+      "path": "tests/parallel-paper-rejections.test.ts",
+      "sha256": "a888b143b1b97c9807671d02b905a05d28cb8fb50329a5a97ea65f60e75a43d2"
+    },
+    {
+      "path": "tests/parallel-paper-settlement-execution.test.ts",
+      "sha256": "e795f071cdc43617c7388ee4499f1fbca1334f62999dd81fcfc8126a689acffb"
+    },
+    {
+      "path": "tests/parallel-paper-settlement.test.ts",
+      "sha256": "0f7ed48680277608abf780626156f0f550a703b797453e352776b10bc60fae2d"
+    }
+  ],
+  "protectedHashes": {
+    "docs/implementation/small-portfolio-profit-policy-plan-2026-10-23.md": "fda3c0b76897bbb4497cf0e13a7a70d5b9d0e75c441fea4a1044c500ae5cdd25",
+    "docs/implementation/small-portfolio-profit-policy-evidence-2026-10-23.json": "ff2b0270f0de0af52b87cd7e3f6eb168e34956b3857ab085c4290d2bfff287a4",
+    "docs/implementation/small-portfolio-p3-implementation-plan-2026-10-23.md": "156ee761285c5aee216d7ebde5795babd7efbb1007a20823a118de63f193d48d",
+    "packages/core/src/portfolio/capital-performance.ts": "9275fdffeaa4f9fb035778e6e84b75b525e8d5f19bbc96239b5d6c912c795b73",
+    "packages/core/src/execution/account-budget.ts": "5addc9d44bd58ead38a595c963b762707c253f24d83e23bfc2492d14a3bc5b0d",
+    "packages/core/src/execution/capital-feasibility.ts": "d5b6132f5a22302f55add90521bf0b4319d651a3ef622f78b241f3ecd2a41caf",
+    "packages/core/src/portfolio/profit-reserve.ts": "a896b9cc83c8e8c913b7b24bb383a640275e0a05f0d55edaaf508e885cd5491d",
+    "packages/core/src/portfolio/profit-reserve-state.ts": "9a05caf2d21ea8052d89adb79b55aadd97052e3bf8b5e3d411795eb8be701cf9",
+    "packages/core/src/portfolio/profit-reserve-eligibility.ts": "535b3934a2b98ccdda535ffbf310d6ef18f594e4b6ac81b343570e7ed276a7bd",
+    "packages/core/src/portfolio/reserve-capital-witness.ts": "75b6e0fb895d195b9c0ef08c7b11040f4b0c0ff55bc306fb2cf5485bde01f690",
+    "packages/core/src/backtest/integrity-engine.ts": "4dff5acbc762a7ddc2d150e98ae83301bbd6426c880114b265641e50024b5f8b",
+    "packages/core/src/backtest/integrity-book.ts": "3325b16420747237647ef30091b57316a6e8706dadd30109e2815b54f2dcd9d5",
+    "packages/core/src/execution/remediation-book.ts": "40cf5a865e8238a9f213c02f4df1f6131e5c3a6b7480c3531a88f0fb5a1a2fa2",
+    "packages/core/src/execution/remediation-planner.ts": "50f28c1bfd56e1b923ec81c379fa0bde28d134b2129d4682ca727c2c087d8f40",
+    "packages/core/src/research/remediation-evaluation.ts": "2d1dc933656093e6f32bd732942ea7f6143ea7650594c169b460fbeafd925d6f",
+    "packages/core/src/research/study-instance.ts": "0643ed6fa99c6cd92c5e65e08306201c9f2b81a300a829e0b405dc9bcf929322"
+  },
+  "applicationFilesChangedByPlanning": false,
+  "dataBodiesRead": false,
+  "marketStudyRun": false,
+  "researchRegistration": false,
+  "sourceProbe": "Synthetic inputs against the exact verified P3 closure; no account/network.",
+  "Prompt used": "Commit and push P3, then lets move on to P4. Reread its full requirements in the saved roadmap, inspect the code, and prepare a concrete implementation plan before coding. Preserve P0\u2013P3 and the full P0\u2013P7 scope."
+}

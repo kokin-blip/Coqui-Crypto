@@ -1,0 +1,138 @@
+{
+  "assurance": "Independent Decimal arithmetic, not a market result or application acceptance",
+  "capitalGrid": [
+    {
+      "openingUsd": "50",
+      "requested5PercentUsd": "2.50",
+      "zeroFriction25DollarFloorPasses": false,
+      "flatPlus20Contribution": {
+        "terminalEquityUsd": "70",
+        "contributionUsd": "20",
+        "economicPnlUsd": "0",
+        "twrPercent": "0"
+      }
+    },
+    {
+      "openingUsd": "100",
+      "requested5PercentUsd": "5.00",
+      "zeroFriction25DollarFloorPasses": false,
+      "flatPlus20Contribution": {
+        "terminalEquityUsd": "120",
+        "contributionUsd": "20",
+        "economicPnlUsd": "0",
+        "twrPercent": "0"
+      }
+    },
+    {
+      "openingUsd": "250",
+      "requested5PercentUsd": "12.50",
+      "zeroFriction25DollarFloorPasses": false,
+      "flatPlus20Contribution": {
+        "terminalEquityUsd": "270",
+        "contributionUsd": "20",
+        "economicPnlUsd": "0",
+        "twrPercent": "0"
+      }
+    },
+    {
+      "openingUsd": "500",
+      "requested5PercentUsd": "25.00",
+      "zeroFriction25DollarFloorPasses": true,
+      "flatPlus20Contribution": {
+        "terminalEquityUsd": "520",
+        "contributionUsd": "20",
+        "economicPnlUsd": "0",
+        "twrPercent": "0"
+      }
+    },
+    {
+      "openingUsd": "1000",
+      "requested5PercentUsd": "50.00",
+      "zeroFriction25DollarFloorPasses": true,
+      "flatPlus20Contribution": {
+        "terminalEquityUsd": "1020",
+        "contributionUsd": "20",
+        "economicPnlUsd": "0",
+        "twrPercent": "0"
+      }
+    },
+    {
+      "openingUsd": "2500",
+      "requested5PercentUsd": "125.00",
+      "zeroFriction25DollarFloorPasses": true,
+      "flatPlus20Contribution": {
+        "terminalEquityUsd": "2520",
+        "contributionUsd": "20",
+        "economicPnlUsd": "0",
+        "twrPercent": "0"
+      }
+    },
+    {
+      "openingUsd": "5000",
+      "requested5PercentUsd": "250.00",
+      "zeroFriction25DollarFloorPasses": true,
+      "flatPlus20Contribution": {
+        "terminalEquityUsd": "5020",
+        "contributionUsd": "20",
+        "economicPnlUsd": "0",
+        "twrPercent": "0"
+      }
+    },
+    {
+      "openingUsd": "10000",
+      "requested5PercentUsd": "500.00",
+      "zeroFriction25DollarFloorPasses": true,
+      "flatPlus20Contribution": {
+        "terminalEquityUsd": "10020",
+        "contributionUsd": "20",
+        "economicPnlUsd": "0",
+        "twrPercent": "0"
+      }
+    },
+    {
+      "openingUsd": "100000",
+      "requested5PercentUsd": "5000.00",
+      "zeroFriction25DollarFloorPasses": true,
+      "flatPlus20Contribution": {
+        "terminalEquityUsd": "100020",
+        "contributionUsd": "20",
+        "economicPnlUsd": "0",
+        "twrPercent": "0"
+      }
+    }
+  ],
+  "receivedFee": {
+    "openingCashUsd": "100",
+    "grossQuantity": "10",
+    "priceUsd": "1",
+    "rate": "0.0025",
+    "cashAfterUsd": "90",
+    "deliveredQuantity": "9.9750",
+    "basisCostUsd": "10",
+    "markedEquityUsd": "99.9750",
+    "feeAttributionUsd": "0.025"
+  },
+  "reserve": {
+    "openingUsd": "500",
+    "profitUsd": "50",
+    "shareBps": 2500,
+    "totalEquityUsd": "550",
+    "reserveUsd": "12.50",
+    "activeUsd": "537.50",
+    "hUsd": "50"
+  },
+  "partial33Percent": {
+    "profitCents": 10000,
+    "capacityCents": 1000,
+    "shareBps": 3300,
+    "reserveCents": 1000,
+    "assessedCents": 3031,
+    "roundingResidualUsd": "0.0023"
+  },
+  "debitReceiptFee": {
+    "debitUsd": "102",
+    "receiptUsd": "100",
+    "feeUsd": "2",
+    "economicPnlChangeUsd": "-2"
+  }
+}

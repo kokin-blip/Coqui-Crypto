@@ -1,0 +1,16 @@
+import { pathToFileURL } from 'node:url';
+const base=process.argv[2];
+const c=await import(pathToFileURL(`${base}/packages/core/dist/index.js`));
+const asset='coinbase|spot|BTC-USD',now=1000000;
+const cost={modelVersion:'independent-zero-friction',feeBps:0,spreadBps:0,slippageBps:0,minUsefulTradeUsd:25,impactCoefBps:0};
+const book=c.rebalanceResearchBook({cash:'50',units:new Map()},new Map([[asset,1]]),new Map([[asset,0.05]]),cost);
+const k=c.knownNativeRule,na=c.inapplicableNativeRule;
+const rule=c.nativeExecutionRules({provider:'coinbase',environment:'production_read_only',assetId:asset,productId:'BTC-USD',baseCurrency:'BTC',quoteCurrency:'USD',form:'market_quantity',timeInForce:'gtc',tradable:true,assurance:'scenario',quantityIncrement:k('0.01'),quantityMin:k('0.01'),quantityMax:na('fixture'),quoteIncrement:k('0.01'),quoteMin:k('0.01'),quoteMax:na('fixture'),priceIncrement:k('0.01'),observedAtMs:now,expiresAtMs:now+30000,source:'synthetic',evidenceRefs:['fixture']});
+const scope=c.capitalHash('independent-P4-probe');
+const budget=c.projectAccountBudget(c.budgetEvidence({scopeId:scope,bookId:scope,provider:'local_paper',environment:'simulation',observedAtMs:now,expiresAtMs:now+30000,cashUsd:'50',equityUsd:'50',positions:{},marks:{},quotes:{},ruleIds:[rule.id],fees:null,venueEligibleUsd:na('local cash'),complete:true,holdMatchingComplete:true,authority:'isolated_book',assurance:'scenario',reasonCodes:[],evidenceRefs:['fixture']}),[],now);
+const p2=c.evaluateCapitalFeasibility({budget,expectedRevision:budget.revision,nowMs:now,assets:[{assetId:asset,markUsd:'1',rules:rule,quote:{bid:'1',ask:'1',atMs:now}}],intents:[{assetId:asset,deltaQuantity:'2.5',reason:'entry',strategyRef:'fixture'}],policy:{id:'fixed',maxOrders:2,maxOrderUsd:'50',maxTurnoverUsd:'50',usedTurnoverUsd:'0',maxEntryFraction:'0.05',maxPositionFraction:'1',accountMaxPositionFraction:'1',maxInvestedFraction:'1',accountMaxInvestedFraction:'1',discretionaryFloorUsd:'25',riskExitBypassesDiscretionaryFloor:false,killSwitchEngaged:false},fees:{id:'zero',rate:'0',fixedUsd:'0',currency:'USD',slippageBps:'0',assurance:'scenario',expiresAtMs:now+30000}});
+const start=Date.UTC(2026,0,1),day=86400000;
+const bars=Array.from({length:12},(_,i)=>({assetId:asset,source:'fixture',interval:'1d',startTimeMs:start+i*day,endTimeMs:start+(i+1)*day,open:100,high:100,low:100,close:100,volume:100,isComplete:true,retrievedAtMs:start+13*day,quality:'reported_ohlc'}));
+const ds=c.buildDecisionMarketDataset({[asset]:bars},[asset],{policy:'reject-on-gap',nowMs:start+13*day});
+const run=c.backtestIntegrityDataset(ds,[{assetId:asset,weight:1}],{clock:{nowMs:()=>0},warmup:3,rebalanceEveryDays:1,tradeCosts:cost,evalSignal:()=>null});
+console.log(JSON.stringify({assurance:'Synthetic source probe; no market or account observation, no trial registration',legacyIntegrityOpening:run.hold.equity[0].value,legacyMatchedOpening:c.openingMatchedBook().cash,legacySmallBuy:book.fills.map(f=>({quantity:f.quantity,notional:f.notional})),sharedP2SameRequest:{state:p2.state,blocked:p2.blocked},sourceBase:'9c6b2fccebc9e809ba2800fc538e831bab0c5c66'},null,2));

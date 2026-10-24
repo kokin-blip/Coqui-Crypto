@@ -51,3 +51,7 @@ The isolated P3 closure on c563d4e passes **293 files / 2,106 tests**, typecheck
 **Prompt used**
 
 Commit and push P3, then lets move on to P4. Reread its full requirements in the saved roadmap, inspect the code, and prepare a concrete implementation plan before coding. Preserve P0–P3 and the full P0–P7 scope.
+
+## Committed and pushed
+
+P3 is pushed as [9c6b2fccebc9e809ba2800fc538e831bab0c5c66](https://github.com/kokin-blip/Coqui-Crypto/commit/9c6b2fccebc9e809ba2800fc538e831bab0c5c66). Origin was verified at this commit. Exact commit-source checks above passed; unrelated work remains uncommitted. COQ-37 remains In Review. No merge, install, release, financial action or qualification is claimed. P4 planning is saved separately; P0–P3 and full P0–P7 scope are preserved.

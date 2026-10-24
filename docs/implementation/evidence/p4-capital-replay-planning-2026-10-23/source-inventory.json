@@ -1,0 +1,332 @@
+[
+  {
+    "path": "packages/core/src/backtest/integrity-book.ts",
+    "workingSha256": "3325b16420747237647ef30091b57316a6e8706dadd30109e2815b54f2dcd9d5",
+    "committedSha256": "3325b16420747237647ef30091b57316a6e8706dadd30109e2815b54f2dcd9d5",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/backtest/integrity-engine.ts",
+    "workingSha256": "4dff5acbc762a7ddc2d150e98ae83301bbd6426c880114b265641e50024b5f8b",
+    "committedSha256": "4dff5acbc762a7ddc2d150e98ae83301bbd6426c880114b265641e50024b5f8b",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/backtest/execution-timing.ts",
+    "workingSha256": "49b8bfdc3aaa77ff92f03ad5703d5665cbd4cd6267b48052ef179fdcf991d8b8",
+    "committedSha256": "49b8bfdc3aaa77ff92f03ad5703d5665cbd4cd6267b48052ef179fdcf991d8b8",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/backtest/analytics.ts",
+    "workingSha256": "412c3e39bbd2ab0dfab52ed6d2f8a8bc194da4c4369766a43b003153f7a1b8be",
+    "committedSha256": "412c3e39bbd2ab0dfab52ed6d2f8a8bc194da4c4369766a43b003153f7a1b8be",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/backtest/types.ts",
+    "workingSha256": "e8571c1750cf2bac8e7ac2efda963663a6c988a952ebdcc628bf27cae36cba36",
+    "committedSha256": "e8571c1750cf2bac8e7ac2efda963663a6c988a952ebdcc628bf27cae36cba36",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/paper/modeled-fill.ts",
+    "workingSha256": "10bc553cda02c2e1fae2442726a85182f00d2f6120899078fbedf3ed26b51e2c",
+    "committedSha256": "10bc553cda02c2e1fae2442726a85182f00d2f6120899078fbedf3ed26b51e2c",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/costs/index.ts",
+    "workingSha256": "780e721e494434b7a5042b005db501b93a1219539d13c106a93b5bfefa14366f",
+    "committedSha256": "780e721e494434b7a5042b005db501b93a1219539d13c106a93b5bfefa14366f",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/costs/scenarios.ts",
+    "workingSha256": "65e61a457af3d3bd9443e6e40962bd684444ced808d5f396a69a003a40ed5c44",
+    "committedSha256": "65e61a457af3d3bd9443e6e40962bd684444ced808d5f396a69a003a40ed5c44",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/execution/account-budget.ts",
+    "workingSha256": "5addc9d44bd58ead38a595c963b762707c253f24d83e23bfc2492d14a3bc5b0d",
+    "committedSha256": "5addc9d44bd58ead38a595c963b762707c253f24d83e23bfc2492d14a3bc5b0d",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/execution/capital-feasibility.ts",
+    "workingSha256": "d5b6132f5a22302f55add90521bf0b4319d651a3ef622f78b241f3ecd2a41caf",
+    "committedSha256": "d5b6132f5a22302f55add90521bf0b4319d651a3ef622f78b241f3ecd2a41caf",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/execution/native-rules.ts",
+    "workingSha256": "42e16846c87031e909454dfa772f5a9de6ed8a7c61b0112f7db2f5ec8dd88117",
+    "committedSha256": "42e16846c87031e909454dfa772f5a9de6ed8a7c61b0112f7db2f5ec8dd88117",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/execution/remediation-book.ts",
+    "workingSha256": "40cf5a865e8238a9f213c02f4df1f6131e5c3a6b7480c3531a88f0fb5a1a2fa2",
+    "committedSha256": "40cf5a865e8238a9f213c02f4df1f6131e5c3a6b7480c3531a88f0fb5a1a2fa2",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/execution/remediation-planner.ts",
+    "workingSha256": "50f28c1bfd56e1b923ec81c379fa0bde28d134b2129d4682ca727c2c087d8f40",
+    "committedSha256": "50f28c1bfd56e1b923ec81c379fa0bde28d134b2129d4682ca727c2c087d8f40",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/portfolio/capital-performance.ts",
+    "workingSha256": "9275fdffeaa4f9fb035778e6e84b75b525e8d5f19bbc96239b5d6c912c795b73",
+    "committedSha256": "9275fdffeaa4f9fb035778e6e84b75b525e8d5f19bbc96239b5d6c912c795b73",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/portfolio/capital-ledger.ts",
+    "workingSha256": "2a9547b1a5b8bb7dfaf54ee8fc80f13df98d7324571ff3547a8deb87f521d23a",
+    "committedSha256": "2a9547b1a5b8bb7dfaf54ee8fc80f13df98d7324571ff3547a8deb87f521d23a",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/portfolio/profit-reserve.ts",
+    "workingSha256": "a896b9cc83c8e8c913b7b24bb383a640275e0a05f0d55edaaf508e885cd5491d",
+    "committedSha256": "a896b9cc83c8e8c913b7b24bb383a640275e0a05f0d55edaaf508e885cd5491d",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/portfolio/profit-reserve-state.ts",
+    "workingSha256": "9a05caf2d21ea8052d89adb79b55aadd97052e3bf8b5e3d411795eb8be701cf9",
+    "committedSha256": "9a05caf2d21ea8052d89adb79b55aadd97052e3bf8b5e3d411795eb8be701cf9",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/portfolio/profit-reserve-eligibility.ts",
+    "workingSha256": "535b3934a2b98ccdda535ffbf310d6ef18f594e4b6ac81b343570e7ed276a7bd",
+    "committedSha256": "535b3934a2b98ccdda535ffbf310d6ef18f594e4b6ac81b343570e7ed276a7bd",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/portfolio/reserve-capital-witness.ts",
+    "workingSha256": "75b6e0fb895d195b9c0ef08c7b11040f4b0c0ff55bc306fb2cf5485bde01f690",
+    "committedSha256": "75b6e0fb895d195b9c0ef08c7b11040f4b0c0ff55bc306fb2cf5485bde01f690",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/research/execution-replay.ts",
+    "workingSha256": "9092ec62aa2979d0bd48411fe48c1ea3517c3a51919c875b422dcde6111fbbcd",
+    "committedSha256": "9092ec62aa2979d0bd48411fe48c1ea3517c3a51919c875b422dcde6111fbbcd",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/research/remediation-evaluation.ts",
+    "workingSha256": "2d1dc933656093e6f32bd732942ea7f6143ea7650594c169b460fbeafd925d6f",
+    "committedSha256": "2d1dc933656093e6f32bd732942ea7f6143ea7650594c169b460fbeafd925d6f",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/research/integrity-plan.ts",
+    "workingSha256": "3822bb96e6d8fbcf367510eac946ebf0fa5ec25f41562f31698ae668b2b7b31a",
+    "committedSha256": "3822bb96e6d8fbcf367510eac946ebf0fa5ec25f41562f31698ae668b2b7b31a",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/research/study-instance.ts",
+    "workingSha256": "0643ed6fa99c6cd92c5e65e08306201c9f2b81a300a829e0b405dc9bcf929322",
+    "committedSha256": "0643ed6fa99c6cd92c5e65e08306201c9f2b81a300a829e0b405dc9bcf929322",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/research/family-runner.ts",
+    "workingSha256": "2a9eb9370fb941796d86e5945cfa81ef158c315ec8d6065bf1a139bdc0b6a646",
+    "committedSha256": "2a9eb9370fb941796d86e5945cfa81ef158c315ec8d6065bf1a139bdc0b6a646",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/research/generalized-study.ts",
+    "workingSha256": "51cebafde2b484d3e23b824aa876f3ed6cf0c848fffa734a1563220c35af3f52",
+    "committedSha256": "51cebafde2b484d3e23b824aa876f3ed6cf0c848fffa734a1563220c35af3f52",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/research/wider-universe-replay.ts",
+    "workingSha256": "fff0f19a8043c87cf8ed5005f00d0fa1d0012d6824b5b0c1688fb06c3b20fb4a",
+    "committedSha256": "fff0f19a8043c87cf8ed5005f00d0fa1d0012d6824b5b0c1688fb06c3b20fb4a",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/core/src/trials/index.ts",
+    "workingSha256": "5d303d062ec6b7ee47706b2f13ca2782c2c9e41e913418bed5a9669a2584ff24",
+    "committedSha256": "5d303d062ec6b7ee47706b2f13ca2782c2c9e41e913418bed5a9669a2584ff24",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/services/src/research/integrity-study.ts",
+    "workingSha256": "cc62beb7f19bcc3f28ec8ab80ffda59faee618bca44f9aca7275473f0e49ba85",
+    "committedSha256": "cc62beb7f19bcc3f28ec8ab80ffda59faee618bca44f9aca7275473f0e49ba85",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/services/src/research/integrity-workspace.ts",
+    "workingSha256": "45a93e9b4aa7bc431c44980503ca45cde06fff63841002dd8040b34f465d983a",
+    "committedSha256": "45a93e9b4aa7bc431c44980503ca45cde06fff63841002dd8040b34f465d983a",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/services/src/research/remediation-report.ts",
+    "workingSha256": "c682b82594597506af5cd580236bec5d8f8c43b17af8afd52f1b1bbe01fb5d2d",
+    "committedSha256": "c682b82594597506af5cd580236bec5d8f8c43b17af8afd52f1b1bbe01fb5d2d",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/services/src/research/worker-pool.ts",
+    "workingSha256": "8fc1d8a617de1ffa41e93093e2d8abd21f6b19d99f386541ac566d5a51802c18",
+    "committedSha256": "8fc1d8a617de1ffa41e93093e2d8abd21f6b19d99f386541ac566d5a51802c18",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/services/src/research/worker-protocol.ts",
+    "workingSha256": "67aa163c3885d227ca6c6517885c5c6ab73493f673e92308e186e2881fb5127e",
+    "committedSha256": "67aa163c3885d227ca6c6517885c5c6ab73493f673e92308e186e2881fb5127e",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/services/src/research/research-worker.ts",
+    "workingSha256": "133547c17b31d6c808a17d01dc033b27e5a85579cdda9a4cb2aa3cd438412018",
+    "committedSha256": "133547c17b31d6c808a17d01dc033b27e5a85579cdda9a4cb2aa3cd438412018",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/services/src/research/read-models.ts",
+    "workingSha256": "02a35a755f17bb3f0484a5e2e0e10c079ebd12dc39abf0b2a4842b9598e98ea1",
+    "committedSha256": "02a35a755f17bb3f0484a5e2e0e10c079ebd12dc39abf0b2a4842b9598e98ea1",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/services/src/portfolio/profit-reserve-state.ts",
+    "workingSha256": "d94cae65b78c06dcf3890f0d7919370006d52b79fe88bcd0e6f6df516243b408",
+    "committedSha256": "d94cae65b78c06dcf3890f0d7919370006d52b79fe88bcd0e6f6df516243b408",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/services/src/portfolio/profit-reserve-scenario.ts",
+    "workingSha256": "154f7197a533328c374b3f4566e5621e06f2cee9db4ebc13e45f4316aa0c369c",
+    "committedSha256": "154f7197a533328c374b3f4566e5621e06f2cee9db4ebc13e45f4316aa0c369c",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/storage/src/archive/reader.ts",
+    "workingSha256": "3b64b54dd513ed2729280f3b50dfa1d88d73a174ee4378495cc7ca8663fa7db1",
+    "committedSha256": "3b64b54dd513ed2729280f3b50dfa1d88d73a174ee4378495cc7ca8663fa7db1",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/storage/src/archive/decision-dataset.ts",
+    "workingSha256": "c685cf151e743aaa89f9c0b5cc56eaf78f7ee562f13039385ee11da6361c0e4d",
+    "committedSha256": "c685cf151e743aaa89f9c0b5cc56eaf78f7ee562f13039385ee11da6361c0e4d",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/storage/src/archive/types.ts",
+    "workingSha256": "87dbbfb7520e8026e85705bd99a047a3ab9d018bfc81afbc18a461707a168a5b",
+    "committedSha256": "87dbbfb7520e8026e85705bd99a047a3ab9d018bfc81afbc18a461707a168a5b",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/storage/src/repositories/market-data.ts",
+    "workingSha256": "95b231bd4e563cd378eae24ab0de3beb98270d8581fb55d58e4bbec272db84a1",
+    "committedSha256": "95b231bd4e563cd378eae24ab0de3beb98270d8581fb55d58e4bbec272db84a1",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/storage/src/repositories/research-integrity.ts",
+    "workingSha256": "f3fc1950c929f8501dff023ecc8c10d747ba9e2cad3f7ec8de324e0a922f9d0d",
+    "committedSha256": "f3fc1950c929f8501dff023ecc8c10d747ba9e2cad3f7ec8de324e0a922f9d0d",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/storage/src/repositories/research-evidence.ts",
+    "workingSha256": "cfe886eeb88bc13b4f874d50a621b3a731b55bdef779430b8dd8f6addc0b4bf4",
+    "committedSha256": "cfe886eeb88bc13b4f874d50a621b3a731b55bdef779430b8dd8f6addc0b4bf4",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/storage/src/repositories/research-orchestration.ts",
+    "workingSha256": "1f87768d952107d56909feb117da9cab145b9d04c377131e0b5b5f3c5615ced3",
+    "committedSha256": "1f87768d952107d56909feb117da9cab145b9d04c377131e0b5b5f3c5615ced3",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/storage/src/repositories/trials.ts",
+    "workingSha256": "8fe70b3f3c4517c18a4b198920d1ce27247b50008b27a76dfdbc1b561ee6dec8",
+    "committedSha256": "8fe70b3f3c4517c18a4b198920d1ce27247b50008b27a76dfdbc1b561ee6dec8",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/storage/src/repositories/profile-impact.ts",
+    "workingSha256": "19ee86f12646a1a5a6b2b10cf892240d5289b58cde714efdb7164082b36e34a9",
+    "committedSha256": "19ee86f12646a1a5a6b2b10cf892240d5289b58cde714efdb7164082b36e34a9",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/storage/src/profiles/restore-proof.ts",
+    "workingSha256": "61c339be7a214da1e118c0622e96e41d08ed46d2a402b560711a5a2f10cf4ecd",
+    "committedSha256": "61c339be7a214da1e118c0622e96e41d08ed46d2a402b560711a5a2f10cf4ecd",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/storage/src/profiles/duplication-research-triggers.ts",
+    "workingSha256": "23b62521a212764237be81a3b47516853559569624cb242c7209764064a92a4f",
+    "committedSha256": "23b62521a212764237be81a3b47516853559569624cb242c7209764064a92a4f",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/storage/src/migrations/v86.ts",
+    "workingSha256": "aa1187fb06d366f0a83d88b4262486cd44f2d742a03033d8c28b4d8a61104d75",
+    "committedSha256": "aa1187fb06d366f0a83d88b4262486cd44f2d742a03033d8c28b4d8a61104d75",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/contracts/src/schemas/research.ts",
+    "workingSha256": "d60eadb9a7d3955fcd983d338a6b679cc0221633f640cac5807ce499336af4da",
+    "committedSha256": "d60eadb9a7d3955fcd983d338a6b679cc0221633f640cac5807ce499336af4da",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "apps/desktop/src/main/research-handlers.ts",
+    "workingSha256": "9c8ee3057c89f2ef32a8de19f696cba40ee069f831db7e73c6cbfc2ba52e81b5",
+    "committedSha256": "9c8ee3057c89f2ef32a8de19f696cba40ee069f831db7e73c6cbfc2ba52e81b5",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "scripts/research-integrity.mjs",
+    "workingSha256": "e3b8317db1fddfc669ea0605cd6292f8f2de02b301e0a140e7d6aad62edbc43e",
+    "committedSha256": "e3b8317db1fddfc669ea0605cd6292f8f2de02b301e0a140e7d6aad62edbc43e",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "scripts/build-study-manifests.mjs",
+    "workingSha256": "f154f557929d49b3b2f422726e5d036d1d4933622791bcff3e65e9fb2ccd9555",
+    "committedSha256": "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8",
+    "hasUnrelatedWorkingChanges": true
+  },
+  {
+    "path": "tests/helpers/feasibility.ts",
+    "workingSha256": "459622e0cb090ed1e2c79755b78536eace061c0a0bb5606bdcfc77693afb92c8",
+    "committedSha256": "459622e0cb090ed1e2c79755b78536eace061c0a0bb5606bdcfc77693afb92c8",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "tests/research-integrity-engine.test.ts",
+    "workingSha256": "19a41d9d6635249ed77f42bad7aaad884e257b9e08b0a8d22d8513ce4ba53969",
+    "committedSha256": "19a41d9d6635249ed77f42bad7aaad884e257b9e08b0a8d22d8513ce4ba53969",
+    "hasUnrelatedWorkingChanges": false
+  },
+  {
+    "path": "packages/services/src/accounts/profiles.ts",
+    "workingSha256": "6b16c3595208d580894d08b5e6c123250929f6057c393ae18f7ac4dca21bcc9b",
+    "committedSha256": "6b16c3595208d580894d08b5e6c123250929f6057c393ae18f7ac4dca21bcc9b",
+    "hasUnrelatedWorkingChanges": false
+  }
+]
