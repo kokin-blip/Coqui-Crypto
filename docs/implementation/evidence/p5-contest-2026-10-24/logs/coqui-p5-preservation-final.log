@@ -1,0 +1,55 @@
+{
+  "base": "a015711c29a10d768f0d0b40d467a75c1bd0adac",
+  "head": "a015711c29a10d768f0d0b40d467a75c1bd0adac",
+  "preexistingDirtyEntries": 507,
+  "byteIdentical": 498,
+  "intentionalOverlaps": [
+    {
+      "path": "apps/desktop/src/main/composition.ts",
+      "proof": "P5-only insertions invert exactly to baseline"
+    },
+    {
+      "path": "apps/desktop/src/renderer/query/refetch.ts",
+      "proof": "P5-only insertions invert exactly to baseline"
+    },
+    {
+      "path": "apps/desktop/src/renderer/styles/terminal.css",
+      "proof": "P5-only insertions invert exactly to baseline"
+    },
+    {
+      "path": "docs/implementation/small-portfolio-phase-tracker-2026-10-23.md",
+      "proof": "exact pre-change archive retained; current generated manifest or tracker intentionally updated"
+    },
+    {
+      "path": "docs/studies/behavior-manifests-v1.json",
+      "proof": "exact pre-change archive retained; current generated manifest or tracker intentionally updated"
+    },
+    {
+      "path": "package.json",
+      "proof": "P5-only insertions invert exactly to baseline"
+    },
+    {
+      "path": "packages/contracts/src/channels.ts",
+      "proof": "P5-only insertions invert exactly to baseline"
+    },
+    {
+      "path": "packages/core/src/research/study-manifests.generated.ts",
+      "proof": "exact pre-change archive retained; current generated manifest or tracker intentionally updated"
+    },
+    {
+      "path": "tests/contracts-channels.test.ts",
+      "proof": "P5-only insertions invert exactly to baseline"
+    }
+  ],
+  "protectedUnchanged": 28,
+  "protectedCompatibilityExceptions": [
+    {
+      "path": "packages/core/src/research/capital-replay.ts",
+      "reason": "version-preserving kernel extraction; original bytes archived; six full P4 result hashes and original regression suite guard numerical compatibility"
+    }
+  ],
+  "unexpected": [],
+  "cleanCanarySuiteInverseVerified": true,
+  "indexUnchanged": true,
+  "passed": true
+}

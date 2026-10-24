@@ -1,0 +1,138 @@
+{
+  "date": "2026-10-24",
+  "promptUsed": "Ok move onto building P5 using the saved plan. Preserve P0\u2013P4 and the full P0\u2013P7 scope, and keep the phase tracker updated.",
+  "branch": "codex/operations-crew-journal",
+  "base": "a015711c29a10d768f0d0b40d467a75c1bd0adac",
+  "localUncommitted": true,
+  "committed": false,
+  "pushed": false,
+  "merged": false,
+  "released": false,
+  "capability": "P5-A\u2013G implemented and locally verified",
+  "developmentEvaluation": "P5-H pending; no actual market evaluation",
+  "fullPhaseComplete": false,
+  "preservesPhases": [
+    "P0",
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5",
+    "P6",
+    "P7"
+  ],
+  "checks": {
+    "fullRepository": {
+      "passed": true,
+      "files": 323,
+      "tests": 2321,
+      "scope": "before final display-only correction",
+      "log": "logs/coqui-p5-full-tests-final.log"
+    },
+    "finalFocused": {
+      "passed": true,
+      "files": 14,
+      "tests": 44,
+      "log": "logs/coqui-p5-focused-final.log"
+    },
+    "finalUiAndCompatibility": {
+      "passed": true,
+      "files": 2,
+      "tests": 14,
+      "log": "logs/coqui-p5-ui-tests-display-final.log"
+    },
+    "typecheck": {
+      "passed": true,
+      "log": "logs/coqui-p5-typecheck-display-final.log"
+    },
+    "lint": {
+      "passed": true,
+      "log": "logs/coqui-p5-lint-display-final.log"
+    },
+    "finalHarnessLint": {
+      "passed": true,
+      "log": "logs/coqui-p5-native-harness-lint-final.log"
+    },
+    "rootBuild": {
+      "passed": true,
+      "log": "logs/coqui-p5-build-2.log"
+    },
+    "desktopBuild": {
+      "passed": true,
+      "log": "logs/coqui-p5-desktop-build-display-final.log",
+      "advisory": "existing bundle-size advisory"
+    },
+    "cli": {
+      "passed": true,
+      "count": 9,
+      "evidence": "cli-smoke.json"
+    },
+    "native": {
+      "passed": true,
+      "count": 22,
+      "evidence": "ui/smoke.json",
+      "log": "logs/coqui-p5-native-capture-final.log"
+    },
+    "existingNativeSafety": {
+      "passed": true,
+      "log": "logs/coqui-p5-native-safety.log"
+    },
+    "preservation": {
+      "passed": true,
+      "evidence": "preservation.json"
+    }
+  },
+  "p4Compatibility": {
+    "archivedFullResultHashes": 6,
+    "numericalResultsUnchanged": true,
+    "sourceExtractionException": "capital-replay.ts wraps internal kernel; exact original source archived"
+  },
+  "inventory": {
+    "fullSeedSERCellsValidated": 1053,
+    "fullSeedRecipeExecuted": false,
+    "diagnosticsAdditional": true,
+    "capitalRows": [
+      "50",
+      "100",
+      "250",
+      "500",
+      "1000",
+      "2500",
+      "5000",
+      "10000",
+      "100000"
+    ]
+  },
+  "uiReview": {
+    "disposition": "ship",
+    "scope": "two material fixes scored resolved",
+    "evidence": "ui-review.md",
+    "captures": 12,
+    "documenterComplete": true,
+    "existingDriftPreserved": [
+      "compact prose DESIGN.md",
+      "absent .impeccable/design.json"
+    ]
+  },
+  "financialActions": false,
+  "providerOrAccountAccess": false,
+  "studyRegistration": false,
+  "holdoutAccess": false,
+  "strategyActivation": false,
+  "prospectiveCollector": false,
+  "pending": [
+    "human review",
+    "exact source-isolated closure before requested commit",
+    "P5-H frozen permitted data/universe/rights and point-in-time evidence",
+    "P5-H costs/rules/allocator/risk/primary-capital weights/funding/expenses/objectives",
+    "P5-H original registry assurance and adequate power/resources",
+    "P5-H complete declared development outcomes and conditional shadow proposal",
+    "P6/P7 full operational/owner/qualification/release gates"
+  ],
+  "issues": {
+    "id": "COQ-39",
+    "status": "In Progress",
+    "reason": "H acceptance unmet; capability review separate",
+    "synchronization": "linear-sync.json"
+  }
+}

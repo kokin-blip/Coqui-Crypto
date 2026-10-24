@@ -1,0 +1,4 @@
+$ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.renderer.json --noEmit
+tests/capital-contest-governance.test.ts(6,9): error TS2305: Module '"@coqui/contracts"' has no exported member 'classifyChannel'.
+tests/capital-contest-governance.test.ts(17,86): error TS2554: Expected 1 arguments, but got 2.
+[ELIFECYCLE] Command failed with exit code 2.

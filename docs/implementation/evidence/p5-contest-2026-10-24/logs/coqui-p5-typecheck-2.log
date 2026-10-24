@@ -1,0 +1,6 @@
+$ tsc -p tsconfig.check.json --noEmit && tsc -p apps/desktop/tsconfig.renderer.json --noEmit
+packages/core/src/research/capital-contest-report.ts(8,39): error TS2709: Cannot use namespace 'Decimal' as a type.
+packages/core/src/research/capital-contest-report.ts(13,66): error TS2709: Cannot use namespace 'Decimal' as a type.
+packages/core/src/research/capital-contest-report.ts(13,94): error TS2709: Cannot use namespace 'Decimal' as a type.
+packages/core/src/research/capital-contest-report.ts(19,47): error TS2709: Cannot use namespace 'Decimal' as a type.
+[ELIFECYCLE] Command failed with exit code 2.

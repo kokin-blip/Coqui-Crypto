@@ -1,0 +1,29 @@
+(node:18888) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `Electron --trace-warnings ...` to show where the warning was created)
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: 'df956ecc3209a02ef04fb7967c1db5aa2a0becdb9659aa26a812ae1f23231b8b'
+}
+PASS desktop-dark: complete inventory and none 
+PASS desktop-dark: keyboard help fits viewport {"left":570,"right":870,"top":360.5,"bottom":500.5,"width":1440,"height":861}
+PASS desktop-dark: help returns keyboard focus 
+PASS desktop-dark: annual IRR labeled and number kept intact 
+PASS desktop-dark: no run or financial action 
+PASS narrow-light: complete inventory and none 
+PASS narrow-light: keyboard help fits viewport {"left":170,"right":470,"top":360.5,"bottom":500.5,"width":640,"height":861}
+PASS narrow-light: help returns keyboard focus 
+PASS narrow-light: annual IRR labeled and number kept intact 
+PASS narrow-light: no run or financial action 
+[18888:1024/155449.700445:ERROR:mojo/public/cpp/bindings/lib/interface_endpoint_client.cc:748] Message 2 rejected by interface blink.mojom.Widget
+PASS contrast-zoom: complete inventory and none 
+PASS contrast-zoom: keyboard help fits viewport {"left":170,"right":470,"top":145.25,"bottom":285.25,"width":640,"height":430}
+PASS contrast-zoom: help returns keyboard focus 
+PASS contrast-zoom: annual IRR labeled and number kept intact 
+PASS contrast-zoom: no run or financial action 
+PASS period, exposure and trial assumptions explicit 
+PASS production preload reads bounded results 
+PASS interruption differs from zero return 
+PASS read routes leave all database rows unchanged 
+PASS no run or financial controls 
+PASS live authority remains disabled 
+PASS no renderer errors 

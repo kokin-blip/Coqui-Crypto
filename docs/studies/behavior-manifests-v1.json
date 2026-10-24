@@ -281,7 +281,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "0facef90df4bb9d288b1b617ef0fd89e272de4e98762777b0bdc128ed90cd411"
+        "545059bc8e0b241f88c6950661b5e7b310adc6902db8a12204b9eaa91e91fa95"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -289,7 +289,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "da359e5b3b743b6da5cc4e5a7114a7e7f025e960d503a5c0854b1ab1686257a5"
+        "a845e8bda856c6ae40e910933e0a72db453e2f1d49ed34bee7a19a17ba76a821"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -322,6 +322,10 @@
       [
         "packages/contracts/src/schemas/app.ts",
         "4f69213582e47f6267b6ad692b8dda3f6cc6b34b69a72bd4cbc85dcd09362aa6"
+      ],
+      [
+        "packages/contracts/src/schemas/capital-contest.ts",
+        "775421f311574731bddcfa204fb84ea4a56bf4598f4b4f50e4482dc25afba202"
       ],
       [
         "packages/contracts/src/schemas/capital-feasibility.ts",
@@ -772,6 +776,46 @@
         "adea7cf3f736dc1647f955715b64ef0866588220e4e2efd2cd0fa32f8f6a07fc"
       ],
       [
+        "packages/core/src/research/capital-contest-evaluation.ts",
+        "464310358691f59dae3eed1d16259220d8d0b4c10336ca109be82827ddb7e24b"
+      ],
+      [
+        "packages/core/src/research/capital-contest-execution.ts",
+        "24558ed4c095b4fbb958877649b2e254d846f7c325d58e5d3f338fc40e67b13c"
+      ],
+      [
+        "packages/core/src/research/capital-contest-manifest.ts",
+        "0fc36e6e13e6f3d86e9f0376f295d84c4a114a3f4e0467ff260a8abff47ded8d"
+      ],
+      [
+        "packages/core/src/research/capital-contest-paths.ts",
+        "0103caa7c922a8db1a7805a990521bb54838209b27a2fe614bdef7a5b8e22ecd"
+      ],
+      [
+        "packages/core/src/research/capital-contest-report.ts",
+        "737f78e6a56e195a0e9c731d78e385ce84dc40c6028e6c7fc3e45c81c33b5dab"
+      ],
+      [
+        "packages/core/src/research/capital-contest-reserves.ts",
+        "c0eca8f70ac022de02289db5e509c4f8d67ef8891b1d93aa2436a21ae44a8b75"
+      ],
+      [
+        "packages/core/src/research/capital-contest-sales.ts",
+        "3522377330b7acaae34e278781ff8fb76be7433762f99bf9c28daa3eff55a06c"
+      ],
+      [
+        "packages/core/src/research/capital-contest-signals.ts",
+        "d243c7e04c7604536621e9dea4f0c3e3a558017aab2f90a600f77149a6d1bc8f"
+      ],
+      [
+        "packages/core/src/research/capital-contest-types.ts",
+        "6d6d269e7bd0fc1afd65e17257a01c431048a3f1f1afd946e353ee0ce4307154"
+      ],
+      [
+        "packages/core/src/research/capital-contest.ts",
+        "0573b33a74830ed51e0ef1c7e818d4df2552bdc6d5f86cabdfa92e9de4e57ccf"
+      ],
+      [
         "packages/core/src/research/capital-replay-accounting.ts",
         "fd4b15f6131899348ad84b8355d6ed1b721b3a55a3bfd95ce53af7791cf84a04"
       ],
@@ -782,6 +826,10 @@
       [
         "packages/core/src/research/capital-replay-execution.ts",
         "1876a41f17d79e7ad8bf9aed0fffc9e9f6a0ae5386e6dff97eb2623050f68dac"
+      ],
+      [
+        "packages/core/src/research/capital-replay-kernel.ts",
+        "8d9e4f5fc572b089a6e2b9df774d60db5760c8353710007612110a6401b0f3b4"
       ],
       [
         "packages/core/src/research/capital-replay-report.ts",
@@ -801,7 +849,7 @@
       ],
       [
         "packages/core/src/research/capital-replay.ts",
-        "97fbcd15b064e67fc4b00a3a521fa31ea31bd0be9c28acf6392319f7c6e22bc3"
+        "e4eac3914934b29cb11b66a739d27f0238fdfc2b32d6d26578a0cc577e99687d"
       ],
       [
         "packages/core/src/research/cscv.ts",
@@ -837,7 +885,7 @@
       ],
       [
         "packages/core/src/research/index.ts",
-        "c982a446bac984ed2a7a2753f6aeef8316db276260cf5ab51d0e5fd3e0eae4cc"
+        "9ed2c779dd16376b97874030215fff5a5a9ca03390a68e0d7ce40248a6a71603"
       ],
       [
         "packages/core/src/research/integrity-plan.ts",
@@ -1596,6 +1644,14 @@
         "928fab49c23e59183f8f4a07256b92d34ee0920733c879f47b420aa13c33a256"
       ],
       [
+        "packages/services/src/research/capital-contest-data.ts",
+        "dc6657673ddcd8834b4e561b55e64c8e6d595942f6da918a4332e19cb84d91a2"
+      ],
+      [
+        "packages/services/src/research/capital-contest.ts",
+        "eb7e4c6fcb0f68a92d231f3741be345bf33dba758d29682bbfefa36ccb4da4bd"
+      ],
+      [
         "packages/services/src/research/capital-replay-data.ts",
         "aafe114ad64b85a58b17842609f284e8f6a4fffc5d87b31fa6cede3ba1865cfc"
       ],
@@ -1617,7 +1673,7 @@
       ],
       [
         "packages/services/src/research/index.ts",
-        "81259483a291eb2e1cc90bef6f06f425fa23dbdf371619064f93823935fbeff7"
+        "c5d1097953766283bb985321a6461fc7f522e97cdeed7864adb757e3166d8c44"
       ],
       [
         "packages/services/src/research/integrity-study.ts",
@@ -2188,6 +2244,10 @@
         "c08adc2cc4f93c1460401a02b19eb71db306db57b5dbab7b27e04d209062dec4"
       ],
       [
+        "packages/storage/src/repositories/capital-contest.ts",
+        "a3d00f434bf0a16c30451bfdb3ec9016e31b3d4e76ff6f4c952cf344f4c482bd"
+      ],
+      [
         "packages/storage/src/repositories/capital-replay.ts",
         "08091991462f12d6db25d41a260a0c96e96d91540e2cd39644e4aa364fcd402d"
       ],
@@ -2261,7 +2321,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "6ce26dcaea84fb2ab237f366517987b10292982c4944a2ca43fe7a532c6100c6"
+        "21e6200d89e937b844f30f755240a8249ed370c5b855d079bef99e39f1070c07"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -2377,7 +2437,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "251515ff26d6fa607a75da359552f33362977ae9a3a20ec07d17a9cdb0a6bff5"
+        "e72f6d1936a129730299d70eb03dccb2a4125edc0d1f9fbbe23e29fa01c5dc5b"
       ],
       [
         "packages/storage/src/repositories/profit-reserve.ts",
@@ -2476,7 +2536,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "fb5f18429bf1044e057c68f5009f0d129181f168dfc21005b74ad44e2ac2ef2e"
+    "hash": "1c753d299a640a8799055d7d71cfb9ee0b877f83bf31244049e76c835f40d119"
   },
   "wider-breakout-v1": {
     "version": 1,
@@ -2760,7 +2820,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "0facef90df4bb9d288b1b617ef0fd89e272de4e98762777b0bdc128ed90cd411"
+        "545059bc8e0b241f88c6950661b5e7b310adc6902db8a12204b9eaa91e91fa95"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -2768,7 +2828,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "da359e5b3b743b6da5cc4e5a7114a7e7f025e960d503a5c0854b1ab1686257a5"
+        "a845e8bda856c6ae40e910933e0a72db453e2f1d49ed34bee7a19a17ba76a821"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -2801,6 +2861,10 @@
       [
         "packages/contracts/src/schemas/app.ts",
         "4f69213582e47f6267b6ad692b8dda3f6cc6b34b69a72bd4cbc85dcd09362aa6"
+      ],
+      [
+        "packages/contracts/src/schemas/capital-contest.ts",
+        "775421f311574731bddcfa204fb84ea4a56bf4598f4b4f50e4482dc25afba202"
       ],
       [
         "packages/contracts/src/schemas/capital-feasibility.ts",
@@ -3251,6 +3315,46 @@
         "adea7cf3f736dc1647f955715b64ef0866588220e4e2efd2cd0fa32f8f6a07fc"
       ],
       [
+        "packages/core/src/research/capital-contest-evaluation.ts",
+        "464310358691f59dae3eed1d16259220d8d0b4c10336ca109be82827ddb7e24b"
+      ],
+      [
+        "packages/core/src/research/capital-contest-execution.ts",
+        "24558ed4c095b4fbb958877649b2e254d846f7c325d58e5d3f338fc40e67b13c"
+      ],
+      [
+        "packages/core/src/research/capital-contest-manifest.ts",
+        "0fc36e6e13e6f3d86e9f0376f295d84c4a114a3f4e0467ff260a8abff47ded8d"
+      ],
+      [
+        "packages/core/src/research/capital-contest-paths.ts",
+        "0103caa7c922a8db1a7805a990521bb54838209b27a2fe614bdef7a5b8e22ecd"
+      ],
+      [
+        "packages/core/src/research/capital-contest-report.ts",
+        "737f78e6a56e195a0e9c731d78e385ce84dc40c6028e6c7fc3e45c81c33b5dab"
+      ],
+      [
+        "packages/core/src/research/capital-contest-reserves.ts",
+        "c0eca8f70ac022de02289db5e509c4f8d67ef8891b1d93aa2436a21ae44a8b75"
+      ],
+      [
+        "packages/core/src/research/capital-contest-sales.ts",
+        "3522377330b7acaae34e278781ff8fb76be7433762f99bf9c28daa3eff55a06c"
+      ],
+      [
+        "packages/core/src/research/capital-contest-signals.ts",
+        "d243c7e04c7604536621e9dea4f0c3e3a558017aab2f90a600f77149a6d1bc8f"
+      ],
+      [
+        "packages/core/src/research/capital-contest-types.ts",
+        "6d6d269e7bd0fc1afd65e17257a01c431048a3f1f1afd946e353ee0ce4307154"
+      ],
+      [
+        "packages/core/src/research/capital-contest.ts",
+        "0573b33a74830ed51e0ef1c7e818d4df2552bdc6d5f86cabdfa92e9de4e57ccf"
+      ],
+      [
         "packages/core/src/research/capital-replay-accounting.ts",
         "fd4b15f6131899348ad84b8355d6ed1b721b3a55a3bfd95ce53af7791cf84a04"
       ],
@@ -3261,6 +3365,10 @@
       [
         "packages/core/src/research/capital-replay-execution.ts",
         "1876a41f17d79e7ad8bf9aed0fffc9e9f6a0ae5386e6dff97eb2623050f68dac"
+      ],
+      [
+        "packages/core/src/research/capital-replay-kernel.ts",
+        "8d9e4f5fc572b089a6e2b9df774d60db5760c8353710007612110a6401b0f3b4"
       ],
       [
         "packages/core/src/research/capital-replay-report.ts",
@@ -3280,7 +3388,7 @@
       ],
       [
         "packages/core/src/research/capital-replay.ts",
-        "97fbcd15b064e67fc4b00a3a521fa31ea31bd0be9c28acf6392319f7c6e22bc3"
+        "e4eac3914934b29cb11b66a739d27f0238fdfc2b32d6d26578a0cc577e99687d"
       ],
       [
         "packages/core/src/research/cscv.ts",
@@ -3316,7 +3424,7 @@
       ],
       [
         "packages/core/src/research/index.ts",
-        "c982a446bac984ed2a7a2753f6aeef8316db276260cf5ab51d0e5fd3e0eae4cc"
+        "9ed2c779dd16376b97874030215fff5a5a9ca03390a68e0d7ce40248a6a71603"
       ],
       [
         "packages/core/src/research/integrity-plan.ts",
@@ -4075,6 +4183,14 @@
         "928fab49c23e59183f8f4a07256b92d34ee0920733c879f47b420aa13c33a256"
       ],
       [
+        "packages/services/src/research/capital-contest-data.ts",
+        "dc6657673ddcd8834b4e561b55e64c8e6d595942f6da918a4332e19cb84d91a2"
+      ],
+      [
+        "packages/services/src/research/capital-contest.ts",
+        "eb7e4c6fcb0f68a92d231f3741be345bf33dba758d29682bbfefa36ccb4da4bd"
+      ],
+      [
         "packages/services/src/research/capital-replay-data.ts",
         "aafe114ad64b85a58b17842609f284e8f6a4fffc5d87b31fa6cede3ba1865cfc"
       ],
@@ -4096,7 +4212,7 @@
       ],
       [
         "packages/services/src/research/index.ts",
-        "81259483a291eb2e1cc90bef6f06f425fa23dbdf371619064f93823935fbeff7"
+        "c5d1097953766283bb985321a6461fc7f522e97cdeed7864adb757e3166d8c44"
       ],
       [
         "packages/services/src/research/integrity-study.ts",
@@ -4667,6 +4783,10 @@
         "c08adc2cc4f93c1460401a02b19eb71db306db57b5dbab7b27e04d209062dec4"
       ],
       [
+        "packages/storage/src/repositories/capital-contest.ts",
+        "a3d00f434bf0a16c30451bfdb3ec9016e31b3d4e76ff6f4c952cf344f4c482bd"
+      ],
+      [
         "packages/storage/src/repositories/capital-replay.ts",
         "08091991462f12d6db25d41a260a0c96e96d91540e2cd39644e4aa364fcd402d"
       ],
@@ -4740,7 +4860,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "6ce26dcaea84fb2ab237f366517987b10292982c4944a2ca43fe7a532c6100c6"
+        "21e6200d89e937b844f30f755240a8249ed370c5b855d079bef99e39f1070c07"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -4856,7 +4976,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "251515ff26d6fa607a75da359552f33362977ae9a3a20ec07d17a9cdb0a6bff5"
+        "e72f6d1936a129730299d70eb03dccb2a4125edc0d1f9fbbe23e29fa01c5dc5b"
       ],
       [
         "packages/storage/src/repositories/profit-reserve.ts",
@@ -4955,7 +5075,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "056886980ce54a57c4bc9f1212e6c7565216b2906a144b7c7010bdf5b448883d"
+    "hash": "84ef4dffe9ad90f5db96ed63683b7b3e761328823131490ff156117eaba134d2"
   },
   "wider-range-rotation-v1": {
     "version": 1,
@@ -5239,7 +5359,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "0facef90df4bb9d288b1b617ef0fd89e272de4e98762777b0bdc128ed90cd411"
+        "545059bc8e0b241f88c6950661b5e7b310adc6902db8a12204b9eaa91e91fa95"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -5247,7 +5367,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "da359e5b3b743b6da5cc4e5a7114a7e7f025e960d503a5c0854b1ab1686257a5"
+        "a845e8bda856c6ae40e910933e0a72db453e2f1d49ed34bee7a19a17ba76a821"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -5280,6 +5400,10 @@
       [
         "packages/contracts/src/schemas/app.ts",
         "4f69213582e47f6267b6ad692b8dda3f6cc6b34b69a72bd4cbc85dcd09362aa6"
+      ],
+      [
+        "packages/contracts/src/schemas/capital-contest.ts",
+        "775421f311574731bddcfa204fb84ea4a56bf4598f4b4f50e4482dc25afba202"
       ],
       [
         "packages/contracts/src/schemas/capital-feasibility.ts",
@@ -5730,6 +5854,46 @@
         "adea7cf3f736dc1647f955715b64ef0866588220e4e2efd2cd0fa32f8f6a07fc"
       ],
       [
+        "packages/core/src/research/capital-contest-evaluation.ts",
+        "464310358691f59dae3eed1d16259220d8d0b4c10336ca109be82827ddb7e24b"
+      ],
+      [
+        "packages/core/src/research/capital-contest-execution.ts",
+        "24558ed4c095b4fbb958877649b2e254d846f7c325d58e5d3f338fc40e67b13c"
+      ],
+      [
+        "packages/core/src/research/capital-contest-manifest.ts",
+        "0fc36e6e13e6f3d86e9f0376f295d84c4a114a3f4e0467ff260a8abff47ded8d"
+      ],
+      [
+        "packages/core/src/research/capital-contest-paths.ts",
+        "0103caa7c922a8db1a7805a990521bb54838209b27a2fe614bdef7a5b8e22ecd"
+      ],
+      [
+        "packages/core/src/research/capital-contest-report.ts",
+        "737f78e6a56e195a0e9c731d78e385ce84dc40c6028e6c7fc3e45c81c33b5dab"
+      ],
+      [
+        "packages/core/src/research/capital-contest-reserves.ts",
+        "c0eca8f70ac022de02289db5e509c4f8d67ef8891b1d93aa2436a21ae44a8b75"
+      ],
+      [
+        "packages/core/src/research/capital-contest-sales.ts",
+        "3522377330b7acaae34e278781ff8fb76be7433762f99bf9c28daa3eff55a06c"
+      ],
+      [
+        "packages/core/src/research/capital-contest-signals.ts",
+        "d243c7e04c7604536621e9dea4f0c3e3a558017aab2f90a600f77149a6d1bc8f"
+      ],
+      [
+        "packages/core/src/research/capital-contest-types.ts",
+        "6d6d269e7bd0fc1afd65e17257a01c431048a3f1f1afd946e353ee0ce4307154"
+      ],
+      [
+        "packages/core/src/research/capital-contest.ts",
+        "0573b33a74830ed51e0ef1c7e818d4df2552bdc6d5f86cabdfa92e9de4e57ccf"
+      ],
+      [
         "packages/core/src/research/capital-replay-accounting.ts",
         "fd4b15f6131899348ad84b8355d6ed1b721b3a55a3bfd95ce53af7791cf84a04"
       ],
@@ -5740,6 +5904,10 @@
       [
         "packages/core/src/research/capital-replay-execution.ts",
         "1876a41f17d79e7ad8bf9aed0fffc9e9f6a0ae5386e6dff97eb2623050f68dac"
+      ],
+      [
+        "packages/core/src/research/capital-replay-kernel.ts",
+        "8d9e4f5fc572b089a6e2b9df774d60db5760c8353710007612110a6401b0f3b4"
       ],
       [
         "packages/core/src/research/capital-replay-report.ts",
@@ -5759,7 +5927,7 @@
       ],
       [
         "packages/core/src/research/capital-replay.ts",
-        "97fbcd15b064e67fc4b00a3a521fa31ea31bd0be9c28acf6392319f7c6e22bc3"
+        "e4eac3914934b29cb11b66a739d27f0238fdfc2b32d6d26578a0cc577e99687d"
       ],
       [
         "packages/core/src/research/cscv.ts",
@@ -5795,7 +5963,7 @@
       ],
       [
         "packages/core/src/research/index.ts",
-        "c982a446bac984ed2a7a2753f6aeef8316db276260cf5ab51d0e5fd3e0eae4cc"
+        "9ed2c779dd16376b97874030215fff5a5a9ca03390a68e0d7ce40248a6a71603"
       ],
       [
         "packages/core/src/research/integrity-plan.ts",
@@ -6554,6 +6722,14 @@
         "928fab49c23e59183f8f4a07256b92d34ee0920733c879f47b420aa13c33a256"
       ],
       [
+        "packages/services/src/research/capital-contest-data.ts",
+        "dc6657673ddcd8834b4e561b55e64c8e6d595942f6da918a4332e19cb84d91a2"
+      ],
+      [
+        "packages/services/src/research/capital-contest.ts",
+        "eb7e4c6fcb0f68a92d231f3741be345bf33dba758d29682bbfefa36ccb4da4bd"
+      ],
+      [
         "packages/services/src/research/capital-replay-data.ts",
         "aafe114ad64b85a58b17842609f284e8f6a4fffc5d87b31fa6cede3ba1865cfc"
       ],
@@ -6575,7 +6751,7 @@
       ],
       [
         "packages/services/src/research/index.ts",
-        "81259483a291eb2e1cc90bef6f06f425fa23dbdf371619064f93823935fbeff7"
+        "c5d1097953766283bb985321a6461fc7f522e97cdeed7864adb757e3166d8c44"
       ],
       [
         "packages/services/src/research/integrity-study.ts",
@@ -7146,6 +7322,10 @@
         "c08adc2cc4f93c1460401a02b19eb71db306db57b5dbab7b27e04d209062dec4"
       ],
       [
+        "packages/storage/src/repositories/capital-contest.ts",
+        "a3d00f434bf0a16c30451bfdb3ec9016e31b3d4e76ff6f4c952cf344f4c482bd"
+      ],
+      [
         "packages/storage/src/repositories/capital-replay.ts",
         "08091991462f12d6db25d41a260a0c96e96d91540e2cd39644e4aa364fcd402d"
       ],
@@ -7219,7 +7399,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "6ce26dcaea84fb2ab237f366517987b10292982c4944a2ca43fe7a532c6100c6"
+        "21e6200d89e937b844f30f755240a8249ed370c5b855d079bef99e39f1070c07"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -7335,7 +7515,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "251515ff26d6fa607a75da359552f33362977ae9a3a20ec07d17a9cdb0a6bff5"
+        "e72f6d1936a129730299d70eb03dccb2a4125edc0d1f9fbbe23e29fa01c5dc5b"
       ],
       [
         "packages/storage/src/repositories/profit-reserve.ts",
@@ -7434,7 +7614,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "2728d380134f058ab91ef959102a1d37358ef382f47add5ed1924357ac4c92c8"
+    "hash": "0080f2417a568b0dfaeca2f9c135e4f357bec1abac8fd94dab4376bfcd3ee989"
   },
   "paper-market-selector-v1": {
     "version": 1,
@@ -7718,7 +7898,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "0facef90df4bb9d288b1b617ef0fd89e272de4e98762777b0bdc128ed90cd411"
+        "545059bc8e0b241f88c6950661b5e7b310adc6902db8a12204b9eaa91e91fa95"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -7726,7 +7906,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "da359e5b3b743b6da5cc4e5a7114a7e7f025e960d503a5c0854b1ab1686257a5"
+        "a845e8bda856c6ae40e910933e0a72db453e2f1d49ed34bee7a19a17ba76a821"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -7759,6 +7939,10 @@
       [
         "packages/contracts/src/schemas/app.ts",
         "4f69213582e47f6267b6ad692b8dda3f6cc6b34b69a72bd4cbc85dcd09362aa6"
+      ],
+      [
+        "packages/contracts/src/schemas/capital-contest.ts",
+        "775421f311574731bddcfa204fb84ea4a56bf4598f4b4f50e4482dc25afba202"
       ],
       [
         "packages/contracts/src/schemas/capital-feasibility.ts",
@@ -8209,6 +8393,46 @@
         "adea7cf3f736dc1647f955715b64ef0866588220e4e2efd2cd0fa32f8f6a07fc"
       ],
       [
+        "packages/core/src/research/capital-contest-evaluation.ts",
+        "464310358691f59dae3eed1d16259220d8d0b4c10336ca109be82827ddb7e24b"
+      ],
+      [
+        "packages/core/src/research/capital-contest-execution.ts",
+        "24558ed4c095b4fbb958877649b2e254d846f7c325d58e5d3f338fc40e67b13c"
+      ],
+      [
+        "packages/core/src/research/capital-contest-manifest.ts",
+        "0fc36e6e13e6f3d86e9f0376f295d84c4a114a3f4e0467ff260a8abff47ded8d"
+      ],
+      [
+        "packages/core/src/research/capital-contest-paths.ts",
+        "0103caa7c922a8db1a7805a990521bb54838209b27a2fe614bdef7a5b8e22ecd"
+      ],
+      [
+        "packages/core/src/research/capital-contest-report.ts",
+        "737f78e6a56e195a0e9c731d78e385ce84dc40c6028e6c7fc3e45c81c33b5dab"
+      ],
+      [
+        "packages/core/src/research/capital-contest-reserves.ts",
+        "c0eca8f70ac022de02289db5e509c4f8d67ef8891b1d93aa2436a21ae44a8b75"
+      ],
+      [
+        "packages/core/src/research/capital-contest-sales.ts",
+        "3522377330b7acaae34e278781ff8fb76be7433762f99bf9c28daa3eff55a06c"
+      ],
+      [
+        "packages/core/src/research/capital-contest-signals.ts",
+        "d243c7e04c7604536621e9dea4f0c3e3a558017aab2f90a600f77149a6d1bc8f"
+      ],
+      [
+        "packages/core/src/research/capital-contest-types.ts",
+        "6d6d269e7bd0fc1afd65e17257a01c431048a3f1f1afd946e353ee0ce4307154"
+      ],
+      [
+        "packages/core/src/research/capital-contest.ts",
+        "0573b33a74830ed51e0ef1c7e818d4df2552bdc6d5f86cabdfa92e9de4e57ccf"
+      ],
+      [
         "packages/core/src/research/capital-replay-accounting.ts",
         "fd4b15f6131899348ad84b8355d6ed1b721b3a55a3bfd95ce53af7791cf84a04"
       ],
@@ -8219,6 +8443,10 @@
       [
         "packages/core/src/research/capital-replay-execution.ts",
         "1876a41f17d79e7ad8bf9aed0fffc9e9f6a0ae5386e6dff97eb2623050f68dac"
+      ],
+      [
+        "packages/core/src/research/capital-replay-kernel.ts",
+        "8d9e4f5fc572b089a6e2b9df774d60db5760c8353710007612110a6401b0f3b4"
       ],
       [
         "packages/core/src/research/capital-replay-report.ts",
@@ -8238,7 +8466,7 @@
       ],
       [
         "packages/core/src/research/capital-replay.ts",
-        "97fbcd15b064e67fc4b00a3a521fa31ea31bd0be9c28acf6392319f7c6e22bc3"
+        "e4eac3914934b29cb11b66a739d27f0238fdfc2b32d6d26578a0cc577e99687d"
       ],
       [
         "packages/core/src/research/cscv.ts",
@@ -8274,7 +8502,7 @@
       ],
       [
         "packages/core/src/research/index.ts",
-        "c982a446bac984ed2a7a2753f6aeef8316db276260cf5ab51d0e5fd3e0eae4cc"
+        "9ed2c779dd16376b97874030215fff5a5a9ca03390a68e0d7ce40248a6a71603"
       ],
       [
         "packages/core/src/research/integrity-plan.ts",
@@ -9033,6 +9261,14 @@
         "928fab49c23e59183f8f4a07256b92d34ee0920733c879f47b420aa13c33a256"
       ],
       [
+        "packages/services/src/research/capital-contest-data.ts",
+        "dc6657673ddcd8834b4e561b55e64c8e6d595942f6da918a4332e19cb84d91a2"
+      ],
+      [
+        "packages/services/src/research/capital-contest.ts",
+        "eb7e4c6fcb0f68a92d231f3741be345bf33dba758d29682bbfefa36ccb4da4bd"
+      ],
+      [
         "packages/services/src/research/capital-replay-data.ts",
         "aafe114ad64b85a58b17842609f284e8f6a4fffc5d87b31fa6cede3ba1865cfc"
       ],
@@ -9054,7 +9290,7 @@
       ],
       [
         "packages/services/src/research/index.ts",
-        "81259483a291eb2e1cc90bef6f06f425fa23dbdf371619064f93823935fbeff7"
+        "c5d1097953766283bb985321a6461fc7f522e97cdeed7864adb757e3166d8c44"
       ],
       [
         "packages/services/src/research/integrity-study.ts",
@@ -9625,6 +9861,10 @@
         "c08adc2cc4f93c1460401a02b19eb71db306db57b5dbab7b27e04d209062dec4"
       ],
       [
+        "packages/storage/src/repositories/capital-contest.ts",
+        "a3d00f434bf0a16c30451bfdb3ec9016e31b3d4e76ff6f4c952cf344f4c482bd"
+      ],
+      [
         "packages/storage/src/repositories/capital-replay.ts",
         "08091991462f12d6db25d41a260a0c96e96d91540e2cd39644e4aa364fcd402d"
       ],
@@ -9698,7 +9938,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "6ce26dcaea84fb2ab237f366517987b10292982c4944a2ca43fe7a532c6100c6"
+        "21e6200d89e937b844f30f755240a8249ed370c5b855d079bef99e39f1070c07"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -9814,7 +10054,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "251515ff26d6fa607a75da359552f33362977ae9a3a20ec07d17a9cdb0a6bff5"
+        "e72f6d1936a129730299d70eb03dccb2a4125edc0d1f9fbbe23e29fa01c5dc5b"
       ],
       [
         "packages/storage/src/repositories/profit-reserve.ts",
@@ -9913,7 +10153,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "21174938394772ccc3560df62e5a82a910fa57d7f711c66d33861bb3f515d6fb"
+    "hash": "48673bccb0252444604a7b2acb75f77eff46956c7c02dc43a5bd0468470f5614"
   },
   "trendvol-hourly-execution-v1": {
     "version": 1,
@@ -10185,7 +10425,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "0facef90df4bb9d288b1b617ef0fd89e272de4e98762777b0bdc128ed90cd411"
+        "545059bc8e0b241f88c6950661b5e7b310adc6902db8a12204b9eaa91e91fa95"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -10193,7 +10433,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "da359e5b3b743b6da5cc4e5a7114a7e7f025e960d503a5c0854b1ab1686257a5"
+        "a845e8bda856c6ae40e910933e0a72db453e2f1d49ed34bee7a19a17ba76a821"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -10226,6 +10466,10 @@
       [
         "packages/contracts/src/schemas/app.ts",
         "4f69213582e47f6267b6ad692b8dda3f6cc6b34b69a72bd4cbc85dcd09362aa6"
+      ],
+      [
+        "packages/contracts/src/schemas/capital-contest.ts",
+        "775421f311574731bddcfa204fb84ea4a56bf4598f4b4f50e4482dc25afba202"
       ],
       [
         "packages/contracts/src/schemas/capital-feasibility.ts",
@@ -10676,6 +10920,46 @@
         "adea7cf3f736dc1647f955715b64ef0866588220e4e2efd2cd0fa32f8f6a07fc"
       ],
       [
+        "packages/core/src/research/capital-contest-evaluation.ts",
+        "464310358691f59dae3eed1d16259220d8d0b4c10336ca109be82827ddb7e24b"
+      ],
+      [
+        "packages/core/src/research/capital-contest-execution.ts",
+        "24558ed4c095b4fbb958877649b2e254d846f7c325d58e5d3f338fc40e67b13c"
+      ],
+      [
+        "packages/core/src/research/capital-contest-manifest.ts",
+        "0fc36e6e13e6f3d86e9f0376f295d84c4a114a3f4e0467ff260a8abff47ded8d"
+      ],
+      [
+        "packages/core/src/research/capital-contest-paths.ts",
+        "0103caa7c922a8db1a7805a990521bb54838209b27a2fe614bdef7a5b8e22ecd"
+      ],
+      [
+        "packages/core/src/research/capital-contest-report.ts",
+        "737f78e6a56e195a0e9c731d78e385ce84dc40c6028e6c7fc3e45c81c33b5dab"
+      ],
+      [
+        "packages/core/src/research/capital-contest-reserves.ts",
+        "c0eca8f70ac022de02289db5e509c4f8d67ef8891b1d93aa2436a21ae44a8b75"
+      ],
+      [
+        "packages/core/src/research/capital-contest-sales.ts",
+        "3522377330b7acaae34e278781ff8fb76be7433762f99bf9c28daa3eff55a06c"
+      ],
+      [
+        "packages/core/src/research/capital-contest-signals.ts",
+        "d243c7e04c7604536621e9dea4f0c3e3a558017aab2f90a600f77149a6d1bc8f"
+      ],
+      [
+        "packages/core/src/research/capital-contest-types.ts",
+        "6d6d269e7bd0fc1afd65e17257a01c431048a3f1f1afd946e353ee0ce4307154"
+      ],
+      [
+        "packages/core/src/research/capital-contest.ts",
+        "0573b33a74830ed51e0ef1c7e818d4df2552bdc6d5f86cabdfa92e9de4e57ccf"
+      ],
+      [
         "packages/core/src/research/capital-replay-accounting.ts",
         "fd4b15f6131899348ad84b8355d6ed1b721b3a55a3bfd95ce53af7791cf84a04"
       ],
@@ -10686,6 +10970,10 @@
       [
         "packages/core/src/research/capital-replay-execution.ts",
         "1876a41f17d79e7ad8bf9aed0fffc9e9f6a0ae5386e6dff97eb2623050f68dac"
+      ],
+      [
+        "packages/core/src/research/capital-replay-kernel.ts",
+        "8d9e4f5fc572b089a6e2b9df774d60db5760c8353710007612110a6401b0f3b4"
       ],
       [
         "packages/core/src/research/capital-replay-report.ts",
@@ -10705,7 +10993,7 @@
       ],
       [
         "packages/core/src/research/capital-replay.ts",
-        "97fbcd15b064e67fc4b00a3a521fa31ea31bd0be9c28acf6392319f7c6e22bc3"
+        "e4eac3914934b29cb11b66a739d27f0238fdfc2b32d6d26578a0cc577e99687d"
       ],
       [
         "packages/core/src/research/cscv.ts",
@@ -10741,7 +11029,7 @@
       ],
       [
         "packages/core/src/research/index.ts",
-        "c982a446bac984ed2a7a2753f6aeef8316db276260cf5ab51d0e5fd3e0eae4cc"
+        "9ed2c779dd16376b97874030215fff5a5a9ca03390a68e0d7ce40248a6a71603"
       ],
       [
         "packages/core/src/research/integrity-plan.ts",
@@ -11440,6 +11728,10 @@
         "c08adc2cc4f93c1460401a02b19eb71db306db57b5dbab7b27e04d209062dec4"
       ],
       [
+        "packages/storage/src/repositories/capital-contest.ts",
+        "a3d00f434bf0a16c30451bfdb3ec9016e31b3d4e76ff6f4c952cf344f4c482bd"
+      ],
+      [
         "packages/storage/src/repositories/capital-replay.ts",
         "08091991462f12d6db25d41a260a0c96e96d91540e2cd39644e4aa364fcd402d"
       ],
@@ -11513,7 +11805,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "6ce26dcaea84fb2ab237f366517987b10292982c4944a2ca43fe7a532c6100c6"
+        "21e6200d89e937b844f30f755240a8249ed370c5b855d079bef99e39f1070c07"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -11629,7 +11921,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "251515ff26d6fa607a75da359552f33362977ae9a3a20ec07d17a9cdb0a6bff5"
+        "e72f6d1936a129730299d70eb03dccb2a4125edc0d1f9fbbe23e29fa01c5dc5b"
       ],
       [
         "packages/storage/src/repositories/profit-reserve.ts",
@@ -11728,7 +12020,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "39f8ea24e3649f1a09d50e676ca5db3c2181e4b9ba29819c59f9991dc1658ac2"
+    "hash": "df956ecc3209a02ef04fb7967c1db5aa2a0becdb9659aa26a812ae1f23231b8b"
   },
   "trendvol-execution-remediation-v1": {
     "version": 1,
@@ -12000,7 +12292,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "0facef90df4bb9d288b1b617ef0fd89e272de4e98762777b0bdc128ed90cd411"
+        "545059bc8e0b241f88c6950661b5e7b310adc6902db8a12204b9eaa91e91fa95"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -12008,7 +12300,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "da359e5b3b743b6da5cc4e5a7114a7e7f025e960d503a5c0854b1ab1686257a5"
+        "a845e8bda856c6ae40e910933e0a72db453e2f1d49ed34bee7a19a17ba76a821"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -12041,6 +12333,10 @@
       [
         "packages/contracts/src/schemas/app.ts",
         "4f69213582e47f6267b6ad692b8dda3f6cc6b34b69a72bd4cbc85dcd09362aa6"
+      ],
+      [
+        "packages/contracts/src/schemas/capital-contest.ts",
+        "775421f311574731bddcfa204fb84ea4a56bf4598f4b4f50e4482dc25afba202"
       ],
       [
         "packages/contracts/src/schemas/capital-feasibility.ts",
@@ -12491,6 +12787,46 @@
         "adea7cf3f736dc1647f955715b64ef0866588220e4e2efd2cd0fa32f8f6a07fc"
       ],
       [
+        "packages/core/src/research/capital-contest-evaluation.ts",
+        "464310358691f59dae3eed1d16259220d8d0b4c10336ca109be82827ddb7e24b"
+      ],
+      [
+        "packages/core/src/research/capital-contest-execution.ts",
+        "24558ed4c095b4fbb958877649b2e254d846f7c325d58e5d3f338fc40e67b13c"
+      ],
+      [
+        "packages/core/src/research/capital-contest-manifest.ts",
+        "0fc36e6e13e6f3d86e9f0376f295d84c4a114a3f4e0467ff260a8abff47ded8d"
+      ],
+      [
+        "packages/core/src/research/capital-contest-paths.ts",
+        "0103caa7c922a8db1a7805a990521bb54838209b27a2fe614bdef7a5b8e22ecd"
+      ],
+      [
+        "packages/core/src/research/capital-contest-report.ts",
+        "737f78e6a56e195a0e9c731d78e385ce84dc40c6028e6c7fc3e45c81c33b5dab"
+      ],
+      [
+        "packages/core/src/research/capital-contest-reserves.ts",
+        "c0eca8f70ac022de02289db5e509c4f8d67ef8891b1d93aa2436a21ae44a8b75"
+      ],
+      [
+        "packages/core/src/research/capital-contest-sales.ts",
+        "3522377330b7acaae34e278781ff8fb76be7433762f99bf9c28daa3eff55a06c"
+      ],
+      [
+        "packages/core/src/research/capital-contest-signals.ts",
+        "d243c7e04c7604536621e9dea4f0c3e3a558017aab2f90a600f77149a6d1bc8f"
+      ],
+      [
+        "packages/core/src/research/capital-contest-types.ts",
+        "6d6d269e7bd0fc1afd65e17257a01c431048a3f1f1afd946e353ee0ce4307154"
+      ],
+      [
+        "packages/core/src/research/capital-contest.ts",
+        "0573b33a74830ed51e0ef1c7e818d4df2552bdc6d5f86cabdfa92e9de4e57ccf"
+      ],
+      [
         "packages/core/src/research/capital-replay-accounting.ts",
         "fd4b15f6131899348ad84b8355d6ed1b721b3a55a3bfd95ce53af7791cf84a04"
       ],
@@ -12501,6 +12837,10 @@
       [
         "packages/core/src/research/capital-replay-execution.ts",
         "1876a41f17d79e7ad8bf9aed0fffc9e9f6a0ae5386e6dff97eb2623050f68dac"
+      ],
+      [
+        "packages/core/src/research/capital-replay-kernel.ts",
+        "8d9e4f5fc572b089a6e2b9df774d60db5760c8353710007612110a6401b0f3b4"
       ],
       [
         "packages/core/src/research/capital-replay-report.ts",
@@ -12520,7 +12860,7 @@
       ],
       [
         "packages/core/src/research/capital-replay.ts",
-        "97fbcd15b064e67fc4b00a3a521fa31ea31bd0be9c28acf6392319f7c6e22bc3"
+        "e4eac3914934b29cb11b66a739d27f0238fdfc2b32d6d26578a0cc577e99687d"
       ],
       [
         "packages/core/src/research/cscv.ts",
@@ -12556,7 +12896,7 @@
       ],
       [
         "packages/core/src/research/index.ts",
-        "c982a446bac984ed2a7a2753f6aeef8316db276260cf5ab51d0e5fd3e0eae4cc"
+        "9ed2c779dd16376b97874030215fff5a5a9ca03390a68e0d7ce40248a6a71603"
       ],
       [
         "packages/core/src/research/integrity-plan.ts",
@@ -13247,6 +13587,10 @@
         "c08adc2cc4f93c1460401a02b19eb71db306db57b5dbab7b27e04d209062dec4"
       ],
       [
+        "packages/storage/src/repositories/capital-contest.ts",
+        "a3d00f434bf0a16c30451bfdb3ec9016e31b3d4e76ff6f4c952cf344f4c482bd"
+      ],
+      [
         "packages/storage/src/repositories/capital-replay.ts",
         "08091991462f12d6db25d41a260a0c96e96d91540e2cd39644e4aa364fcd402d"
       ],
@@ -13320,7 +13664,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "6ce26dcaea84fb2ab237f366517987b10292982c4944a2ca43fe7a532c6100c6"
+        "21e6200d89e937b844f30f755240a8249ed370c5b855d079bef99e39f1070c07"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -13436,7 +13780,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "251515ff26d6fa607a75da359552f33362977ae9a3a20ec07d17a9cdb0a6bff5"
+        "e72f6d1936a129730299d70eb03dccb2a4125edc0d1f9fbbe23e29fa01c5dc5b"
       ],
       [
         "packages/storage/src/repositories/profit-reserve.ts",
@@ -13535,6 +13879,6 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "afc4473e703a9c31eac4fd301bd311e5c1d9a8a920deae3d17ef388e44767fbb"
+    "hash": "68ab17ae2735cfb9bf0d9bcf4341c41750ebedf881701e7f6d031004a3796f9d"
   }
 }

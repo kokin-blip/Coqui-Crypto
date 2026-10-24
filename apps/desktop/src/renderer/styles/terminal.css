@@ -309,3 +309,24 @@
 .capital-replay .terminal-metric-help > button { margin: 0; }
 .capital-replay .terminal-metric-explanation { position-area: none; position-try-fallbacks: none; inset: 12px; margin: auto; height: fit-content; justify-self: auto; }
 .capital-replay .metric-grid :is(dt, dd) { min-inline-size: 0; overflow-wrap: anywhere; }
+
+/* P5 read-only evidence inherits the terminal's tables, typography and theme. */
+.capital-contest { min-width: 0; }
+.capital-contest h3 { margin-block: 16px 8px; }
+.capital-contest > label { display: grid; gap: 4px; max-width: 60ch; }
+.capital-contest select { width: 100%; min-width: 0; }
+.capital-contest-table, .capital-contest details { max-width: 100%; overflow: auto; }
+.capital-contest table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.capital-contest th, .capital-contest td { padding: 6px 8px; text-align: left; white-space: nowrap; border-bottom: 1px solid var(--coqui-border); }
+.capital-contest caption { padding-block: 8px; text-align: left; }
+.capital-contest-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 12px; }
+.capital-contest details { margin-block: 12px; }
+.capital-contest code, .capital-contest pre { overflow-wrap: anywhere; white-space: pre-wrap; }
+
+.capital-contest .terminal-metric-help > button { margin: 0; }
+.capital-contest .terminal-metric-explanation { position-area: none; position-try-fallbacks: none; inset: 12px; margin: auto; height: fit-content; justify-self: auto; }
+
+.capital-contest .metric-grid :is(dt, dd) { min-inline-size: 0; overflow-wrap: anywhere; }
+
+.capital-contest .metric-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); }
+.capital-contest-metric-value { white-space: nowrap; font-variant-numeric: tabular-nums; }

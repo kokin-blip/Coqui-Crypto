@@ -1,0 +1,21 @@
+$ eslint .
+
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/src/main/composition.ts
+  573:1  error  File has too many lines (501). Maximum allowed is 500  max-lines
+
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/packages/core/src/research/capital-contest-paths.ts
+  4:32  error  'DAY' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/packages/core/src/research/capital-contest.ts
+  21:12  error  '_id' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/packages/services/src/research/capital-contest.ts
+  3:124  error  'CanonicalJsonValue' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/scripts/research-capital-contest.mjs
+   8:9   error  'capitalHash' is defined but never used  @typescript-eslint/no-unused-vars
+  32:19  error  'AbortController' is not defined         no-undef
+
+✖ 6 problems (6 errors, 0 warnings)
+
+[ELIFECYCLE] Command failed with exit code 1.

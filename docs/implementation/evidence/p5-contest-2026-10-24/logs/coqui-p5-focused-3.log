@@ -1,0 +1,52 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/capital-replay-stress.test.ts (9 tests) 5052ms
+     ✓ retains the complete capital grid under decline  1097ms
+     ✓ retains the complete capital grid under rebound  1064ms
+     ✓ retains the complete capital grid under outage  392ms
+     ✓ retains the complete capital grid under missing  518ms
+     ✓ retains the complete capital grid under delayed-fees  512ms
+     ✓ replays a joint correlation shock across both instruments and every capital cell  1070ms
+ ✓ tests/capital-contest-governance.test.ts (2 tests) 1796ms
+     ✓ retains complete cells after an interrupted attempt, resumes once, and keeps queries nonmutating  1726ms
+ ✓ tests/capital-contest-service.test.ts (3 tests) 5154ms
+     ✓ stores all nine-size inventories, reads without writes and retries without loading data  2612ms
+     ✓ rolls back cell chunks on real root failure and requires explicit resume  2492ms
+ ✓ tests/capital-contest-paths.test.ts (1 test) 4663ms
+   ✓ reconstructs every full-book hash from a stored path without writing or reopening input files  4663ms
+ ✓ tests/capital-contest-compatibility.test.ts (6 tests) 2835ms
+     ✓ received-fee  525ms
+     ✓ reserve  1688ms
+ ✓ tests/capital-contest-inference.test.ts (4 tests) 2495ms
+     ✓ keeps sparse/missing replicas unavailable and produces none, never a fallback leader  2477ms
+ ✓ tests/capital-contest-ui.test.ts (7 tests) 2381ms
+ ✓ tests/capital-replay-service.test.ts (5 tests) 1289ms
+     ✓ strictly validates and roundtrips actual stored results and exact retries  514ms
+     ✓ rolls back a crash after chunks and before root publication and does not write finances  445ms
+ ✓ tests/capital-replay-storage.test.ts (2 tests) 1138ms
+     ✓ preserves populated results through backup and copy, with archived origin and no authority  538ms
+     ✓ links corrected calculations to old immutable reports and rejects unproved lineage  599ms
+ ✓ tests/capital-replay-reserves.test.ts (10 tests) 545ms
+ ✓ tests/capital-replay-execution.test.ts (10 tests) 539ms
+     ✓ counts each friction component once across generated exact purchases  460ms
+ ✓ tests/capital-replay-book.test.ts (5 tests) 444ms
+ ✓ tests/capital-replay-ui.test.ts (8 tests) 402ms
+ ✓ tests/capital-replay-metrics.test.ts (5 tests) 404ms
+ ✓ tests/capital-contest-reserves.test.ts (2 tests) 324ms
+ ✓ tests/capital-contest-stress.test.ts (4 tests) 208ms
+ ✓ tests/capital-replay-governance.test.ts (5 tests) 171ms
+ ✓ tests/capital-replay-flows.test.ts (6 tests) 170ms
+ ✓ tests/capital-contest-signals.test.ts (4 tests) 146ms
+ ✓ tests/capital-contest-selection.test.ts (1 test) 56ms
+ ✓ tests/capital-contest-manifest.test.ts (4 tests) 23ms
+ ✓ tests/contracts-channels.test.ts (21 tests) 12ms
+ ✓ tests/capital-contest-storage.test.ts (1 test) 1879ms
+   ✓ keeps populated reports unchanged across backup/restore/copy, archives origin, and counts each durable fact once  1878ms
+ ✓ tests/capital-contest-execution.test.ts (1 test) 4ms
+
+ Test Files  24 passed (24)
+      Tests  126 passed (126)
+   Start at  02:39:48
+   Duration  39.38s (transform 1.57s, setup 0ms, import 5.65s, tests 32.13s, environment 1ms)
+

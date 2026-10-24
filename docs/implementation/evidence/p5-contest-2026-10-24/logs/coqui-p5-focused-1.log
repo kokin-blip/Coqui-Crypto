@@ -1,0 +1,419 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ❯ tests/capital-contest-ui.test.ts (7 tests | 1 failed) 1916ms
+     ✓ keeps loading explicit 4ms
+     ✓ keeps failed explicit 0ms
+     ✓ keeps blocked explicit 0ms
+     ✓ keeps unknown explicit 0ms
+     ✓ shows the empty separate-profile flow without financial or run controls 0ms
+     × shows all balances, none, unavailable intervals and concrete assumptions 14ms
+     ✓ preserves archived/partial/failed status and prevents a missing result becoming a choice 1ms
+ ✓ tests/capital-contest-service.test.ts (3 tests) 4162ms
+     ✓ stores all nine-size inventories, reads without writes and retries without loading data  2087ms
+     ✓ rolls back cell chunks on real root failure and requires explicit resume  2030ms
+ ✓ tests/capital-contest-compatibility.test.ts (6 tests) 2494ms
+     ✓ received-fee  458ms
+     ✓ reserve  1509ms
+ ✓ tests/capital-contest-inference.test.ts (4 tests) 2213ms
+     ✓ keeps sparse/missing replicas unavailable and produces none, never a fallback leader  2197ms
+ ✓ tests/capital-contest-signals.test.ts (4 tests) 136ms
+ ✓ tests/capital-contest-manifest.test.ts (3 tests) 12ms
+ ✓ tests/contracts-channels.test.ts (21 tests) 12ms
+ ✓ tests/capital-contest-execution.test.ts (1 test) 4ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/capital-contest-ui.test.ts > P5 read-only evidence UX > shows all balances, none, unavailable intervals and concrete assumptions
+AssertionError: expected '<p><strong>complete</strong> · 72/72 …' to contain 'simulated'
+
+- Expected
++ Received
+
+- simulated
++ <p><strong>complete</strong> · 72/72 cells · 0/0 resample paths.</p><h3>Research choice: none<span class="terminal-metric-help"><button type="button" popoverTarget="_R_13_" aria-label="About Research choice"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button><span id="_R_13_" popover="auto" class="terminal-metric-explanation" role="note"><strong>Research choice</strong>A numerical leader cannot replace missing evidence. None can mean failed gates, insufficient history, unavailable uncertainty or incomplete trial history. A conditional development choice grants no paper or live authority.</span></span></h3><p class="metric-note">Dec 31, 2025, 5:00 PM to Jan 2, 2026, 5:00 PM · coinbase USD simulation · synthetic · trial history known-lower-bound. All nine balances share market history.</p><details><summary>Choice evidence and failed gates (12)</summary><ul><li>T1:minimum observations</li><li>T1:dsr gate</li><li>T1:pbo gate</li><li>T1:capital feasibility actions or drawdown</li><li>T1:required passive and exposure contrasts missing</li><li>T1:paired uncertainty gate</li><li>R1:minimum observations</li><li>R1:dsr gate</li><li>R1:pbo gate</li><li>R1:capital feasibility actions or drawdown</li><li>R1:required passive and exposure contrasts missing</li><li>R1:paired uncertainty gate</li></ul></details><div class="capital-contest-table" role="region" tabindex="0" aria-label="Experiment cells; scroll for all columns"><table><caption>Declared capital, cost and funding variants · page 1</caption><thead><tr><th>Evidence</th><th>Opening USD</th><th>Group / arm</th><th>Cost / funding</th><th>State</th><th>Total equity</th><th>Active equity</th><th>Reserved cash</th><th>Economic P&amp;L</th><th>Total TWR</th><th>Blocked</th></tr></thead><tbody><tr><td><button type="button" aria-label="Inspect T1:base:50">Inspect</button></td><td>$50.00</td><td>S / T1</td><td>base</td><td>complete</td><td>$50.059954</td><td>$50.059954</td><td>$0.00</td><td>$0.059954</td><td>0.119908%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect T1:base:100">Inspect</button></td><td>$100.00</td><td>S / T1</td><td>base</td><td>complete</td><td>$100.119902</td><td>$100.119902</td><td>$0.00</td><td>$0.119902</td><td>0.119902%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect T1:base:250">Inspect</button></td><td>$250.00</td><td>S / T1</td><td>base</td><td>complete</td><td>$250.299746</td><td>$250.299746</td><td>$0.00</td><td>$0.299746</td><td>0.1198984%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect T1:base:500">Inspect</button></td><td>$500.00</td><td>S / T1</td><td>base</td><td>complete</td><td>$500.599486</td><td>$500.599486</td><td>$0.00</td><td>$0.599486</td><td>0.1198972%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect T1:base:1000">Inspect</button></td><td>$1,000.00</td><td>S / T1</td><td>base</td><td>complete</td><td>$1,001.198966</td><td>$1,001.198966</td><td>$0.00</td><td>$1.198966</td><td>0.1198966%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect T1:base:2500">Inspect</button></td><td>$2,500.00</td><td>S / T1</td><td>base</td><td>complete</td><td>$2,502.997409</td><td>$2,502.997409</td><td>$0.00</td><td>$2.997409</td><td>0.11989636%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect T1:base:5000">Inspect</button></td><td>$5,000.00</td><td>S / T1</td><td>base</td><td>complete</td><td>$5,005.994817</td><td>$5,005.994817</td><td>$0.00</td><td>$5.994817</td><td>0.11989634%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect T1:base:10000">Inspect</button></td><td>$10,000.00</td><td>S / T1</td><td>base</td><td>complete</td><td>$10,011.989631</td><td>$10,011.989631</td><td>$0.00</td><td>$11.989631</td><td>0.11989631%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect T1:base:100000">Inspect</button></td><td>$100,000.00</td><td>S / T1</td><td>base</td><td>complete</td><td>$100,119.896276</td><td>$100,119.896276</td><td>$0.00</td><td>$119.896276</td><td>0.119896276%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect R1:base:50">Inspect</button></td><td>$50.00</td><td>S / R1</td><td>base</td><td>complete</td><td>$50.30</td><td>$50.30</td><td>$0.00</td><td>$0.30</td><td>0.6%</td><td>0/1</td></tr><tr><td><button type="button" aria-label="Inspect R1:base:100">Inspect</button></td><td>$100.00</td><td>S / R1</td><td>base</td><td>complete</td><td>$100.60</td><td>$100.60</td><td>$0.00</td><td>$0.60</td><td>0.6%</td><td>0/1</td></tr><tr><td><button type="button" aria-label="Inspect R1:base:250">Inspect</button></td><td>$250.00</td><td>S / R1</td><td>base</td><td>complete</td><td>$251.50</td><td>$251.50</td><td>$0.00</td><td>$1.50</td><td>0.6%</td><td>0/1</td></tr><tr><td><button type="button" aria-label="Inspect R1:base:500">Inspect</button></td><td>$500.00</td><td>S / R1</td><td>base</td><td>complete</td><td>$503.00</td><td>$503.00</td><td>$0.00</td><td>$3.00</td><td>0.6%</td><td>0/1</td></tr><tr><td><button type="button" aria-label="Inspect R1:base:1000">Inspect</button></td><td>$1,000.00</td><td>S / R1</td><td>base</td><td>complete</td><td>$1,006.00</td><td>$1,006.00</td><td>$0.00</td><td>$6.00</td><td>0.6%</td><td>0/1</td></tr><tr><td><button type="button" aria-label="Inspect R1:base:2500">Inspect</button></td><td>$2,500.00</td><td>S / R1</td><td>base</td><td>complete</td><td>$2,515.00</td><td>$2,515.00</td><td>$0.00</td><td>$15.00</td><td>0.6%</td><td>0/1</td></tr><tr><td><button type="button" aria-label="Inspect R1:base:5000">Inspect</button></td><td>$5,000.00</td><td>S / R1</td><td>base</td><td>complete</td><td>$5,030.00</td><td>$5,030.00</td><td>$0.00</td><td>$30.00</td><td>0.6%</td><td>0/1</td></tr><tr><td><button type="button" aria-label="Inspect R1:base:10000">Inspect</button></td><td>$10,000.00</td><td>S / R1</td><td>base</td><td>complete</td><td>$10,060.00</td><td>$10,060.00</td><td>$0.00</td><td>$60.00</td><td>0.6%</td><td>0/1</td></tr><tr><td><button type="button" aria-label="Inspect R1:base:100000">Inspect</button></td><td>$100,000.00</td><td>S / R1</td><td>base</td><td>complete</td><td>$100,600.00</td><td>$100,600.00</td><td>$0.00</td><td>$600.00</td><td>0.6%</td><td>0/1</td></tr><tr><td><button type="button" aria-label="Inspect L:base:50">Inspect</button></td><td>$50.00</td><td>S / L</td><td>base</td><td>complete</td><td>$50.164962</td><td>$50.164962</td><td>$0.00</td><td>$0.164962</td><td>0.329924%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect L:base:100">Inspect</button></td><td>$100.00</td><td>S / L</td><td>base</td><td>complete</td><td>$100.329923</td><td>$100.329923</td><td>$0.00</td><td>$0.329923</td><td>0.329923%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect L:base:250">Inspect</button></td><td>$250.00</td><td>S / L</td><td>base</td><td>complete</td><td>$250.824805</td><td>$250.824805</td><td>$0.00</td><td>$0.824805</td><td>0.329922%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect L:base:500">Inspect</button></td><td>$500.00</td><td>S / L</td><td>base</td><td>complete</td><td>$501.649613</td><td>$501.649613</td><td>$0.00</td><td>$1.649613</td><td>0.3299226%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect L:base:1000">Inspect</button></td><td>$1,000.00</td><td>S / L</td><td>base</td><td>complete</td><td>$1,003.299226</td><td>$1,003.299226</td><td>$0.00</td><td>$3.299226</td><td>0.3299226%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect L:base:2500">Inspect</button></td><td>$2,500.00</td><td>S / L</td><td>base</td><td>complete</td><td>$2,508.248062</td><td>$2,508.248062</td><td>$0.00</td><td>$8.248062</td><td>0.32992248%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect L:base:5000">Inspect</button></td><td>$5,000.00</td><td>S / L</td><td>base</td><td>complete</td><td>$5,016.496128</td><td>$5,016.496128</td><td>$0.00</td><td>$16.496128</td><td>0.32992256%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect L:base:10000">Inspect</button></td><td>$10,000.00</td><td>S / L</td><td>base</td><td>complete</td><td>$10,032.992253</td><td>$10,032.992253</td><td>$0.00</td><td>$32.992253</td><td>0.32992253%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect L:base:100000">Inspect</button></td><td>$100,000.00</td><td>S / L</td><td>base</td><td>complete</td><td>$100,329.922533</td><td>$100,329.922533</td><td>$0.00</td><td>$329.922533</td><td>0.329922533%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect H:base:50">Inspect</button></td><td>$50.00</td><td>S / H</td><td>base</td><td>complete</td><td>$50.06</td><td>$50.06</td><td>$0.00</td><td>$0.06</td><td>0.12%</td><td>0/3</td></tr><tr><td><button type="button" aria-label="Inspect H:base:100">Inspect</button></td><td>$100.00</td><td>S / H</td><td>base</td><td>complete</td><td>$100.12</td><td>$100.12</td><td>$0.00</td><td>$0.12</td><td>0.12%</td><td>0/3</td></tr><tr><td><button type="button" aria-label="Inspect H:base:250">Inspect</button></td><td>$250.00</td><td>S / H</td><td>base</td><td>complete</td><td>$250.30</td><td>$250.30</td><td>$0.00</td><td>$0.30</td><td>0.12%</td><td>0/3</td></tr><tr><td><button type="button" aria-label="Inspect H:base:500">Inspect</button></td><td>$500.00</td><td>S / H</td><td>base</td><td>complete</td><td>$500.60</td><td>$500.60</td><td>$0.00</td><td>$0.60</td><td>0.12%</td><td>0/3</td></tr><tr><td><button type="button" aria-label="Inspect H:base:1000">Inspect</button></td><td>$1,000.00</td><td>S / H</td><td>base</td><td>complete</td><td>$1,001.20</td><td>$1,001.20</td><td>$0.00</td><td>$1.20</td><td>0.12%</td><td>0/3</td></tr><tr><td><button type="button" aria-label="Inspect H:base:2500">Inspect</button></td><td>$2,500.00</td><td>S / H</td><td>base</td><td>complete</td><td>$2,503.00</td><td>$2,503.00</td><td>$0.00</td><td>$3.00</td><td>0.12%</td><td>0/3</td></tr><tr><td><button type="button" aria-label="Inspect H:base:5000">Inspect</button></td><td>$5,000.00</td><td>S / H</td><td>base</td><td>complete</td><td>$5,006.00</td><td>$5,006.00</td><td>$0.00</td><td>$6.00</td><td>0.12%</td><td>0/3</td></tr><tr><td><button type="button" aria-label="Inspect H:base:10000">Inspect</button></td><td>$10,000.00</td><td>S / H</td><td>base</td><td>complete</td><td>$10,012.00</td><td>$10,012.00</td><td>$0.00</td><td>$12.00</td><td>0.12%</td><td>0/3</td></tr><tr><td><button type="button" aria-label="Inspect H:base:100000">Inspect</button></td><td>$100,000.00</td><td>S / H</td><td>base</td><td>complete</td><td>$100,120.00</td><td>$100,120.00</td><td>$0.00</td><td>$120.00</td><td>0.12%</td><td>0/3</td></tr><tr><td><button type="button" aria-label="Inspect P:base:50">Inspect</button></td><td>$50.00</td><td>S / P</td><td>base</td><td>complete</td><td>$50.059954</td><td>$50.059954</td><td>$0.00</td><td>$0.059954</td><td>0.119908%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect P:base:100">Inspect</button></td><td>$100.00</td><td>S / P</td><td>base</td><td>complete</td><td>$100.119902</td><td>$100.119902</td><td>$0.00</td><td>$0.119902</td><td>0.119902%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect P:base:250">Inspect</button></td><td>$250.00</td><td>S / P</td><td>base</td><td>complete</td><td>$250.299746</td><td>$250.299746</td><td>$0.00</td><td>$0.299746</td><td>0.1198984%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect P:base:500">Inspect</button></td><td>$500.00</td><td>S / P</td><td>base</td><td>complete</td><td>$500.599486</td><td>$500.599486</td><td>$0.00</td><td>$0.599486</td><td>0.1198972%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect P:base:1000">Inspect</button></td><td>$1,000.00</td><td>S / P</td><td>base</td><td>complete</td><td>$1,001.198966</td><td>$1,001.198966</td><td>$0.00</td><td>$1.198966</td><td>0.1198966%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect P:base:2500">Inspect</button></td><td>$2,500.00</td><td>S / P</td><td>base</td><td>complete</td><td>$2,502.997409</td><td>$2,502.997409</td><td>$0.00</td><td>$2.997409</td><td>0.11989636%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect P:base:5000">Inspect</button></td><td>$5,000.00</td><td>S / P</td><td>base</td><td>complete</td><td>$5,005.994817</td><td>$5,005.994817</td><td>$0.00</td><td>$5.994817</td><td>0.11989634%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect P:base:10000">Inspect</button></td><td>$10,000.00</td><td>S / P</td><td>base</td><td>complete</td><td>$10,011.989631</td><td>$10,011.989631</td><td>$0.00</td><td>$11.989631</td><td>0.11989631%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect P:base:100000">Inspect</button></td><td>$100,000.00</td><td>S / P</td><td>base</td><td>complete</td><td>$100,119.896276</td><td>$100,119.896276</td><td>$0.00</td><td>$119.896276</td><td>0.119896276%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect C:base:50">Inspect</button></td><td>$50.00</td><td>S / C</td><td>base</td><td>complete</td><td>$50.00</td><td>$50.00</td><td>$0.00</td><td>$0.00</td><td>0%</td><td>0/0</td></tr><tr><td><button type="button" aria-label="Inspect C:base:100">Inspect</button></td><td>$100.00</td><td>S / C</td><td>base</td><td>complete</td><td>$100.00</td><td>$100.00</td><td>$0.00</td><td>$0.00</td><td>0%</td><td>0/0</td></tr><tr><td><button type="button" aria-label="Inspect C:base:250">Inspect</button></td><td>$250.00</td><td>S / C</td><td>base</td><td>complete</td><td>$250.00</td><td>$250.00</td><td>$0.00</td><td>$0.00</td><td>0%</td><td>0/0</td></tr><tr><td><button type="button" aria-label="Inspect C:base:500">Inspect</button></td><td>$500.00</td><td>S / C</td><td>base</td><td>complete</td><td>$500.00</td><td>$500.00</td><td>$0.00</td><td>$0.00</td><td>0%</td><td>0/0</td></tr><tr><td><button type="button" aria-label="Inspect C:base:1000">Inspect</button></td><td>$1,000.00</td><td>S / C</td><td>base</td><td>complete</td><td>$1,000.00</td><td>$1,000.00</td><td>$0.00</td><td>$0.00</td><td>0%</td><td>0/0</td></tr><tr><td><button type="button" aria-label="Inspect C:base:2500">Inspect</button></td><td>$2,500.00</td><td>S / C</td><td>base</td><td>complete</td><td>$2,500.00</td><td>$2,500.00</td><td>$0.00</td><td>$0.00</td><td>0%</td><td>0/0</td></tr><tr><td><button type="button" aria-label="Inspect C:base:5000">Inspect</button></td><td>$5,000.00</td><td>S / C</td><td>base</td><td>complete</td><td>$5,000.00</td><td>$5,000.00</td><td>$0.00</td><td>$0.00</td><td>0%</td><td>0/0</td></tr><tr><td><button type="button" aria-label="Inspect C:base:10000">Inspect</button></td><td>$10,000.00</td><td>S / C</td><td>base</td><td>complete</td><td>$10,000.00</td><td>$10,000.00</td><td>$0.00</td><td>$0.00</td><td>0%</td><td>0/0</td></tr><tr><td><button type="button" aria-label="Inspect C:base:100000">Inspect</button></td><td>$100,000.00</td><td>S / C</td><td>base</td><td>complete</td><td>$100,000.00</td><td>$100,000.00</td><td>$0.00</td><td>$0.00</td><td>0%</td><td>0/0</td></tr><tr><td><button type="button" aria-label="Inspect XT:base:50">Inspect</button></td><td>$50.00</td><td>S / XT</td><td>base</td><td>complete</td><td>$50.059954</td><td>$50.059954</td><td>$0.00</td><td>$0.059954</td><td>0.119908%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect XT:base:100">Inspect</button></td><td>$100.00</td><td>S / XT</td><td>base</td><td>complete</td><td>$100.119902</td><td>$100.119902</td><td>$0.00</td><td>$0.119902</td><td>0.119902%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect XT:base:250">Inspect</button></td><td>$250.00</td><td>S / XT</td><td>base</td><td>complete</td><td>$250.299746</td><td>$250.299746</td><td>$0.00</td><td>$0.299746</td><td>0.1198984%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect XT:base:500">Inspect</button></td><td>$500.00</td><td>S / XT</td><td>base</td><td>complete</td><td>$500.599486</td><td>$500.599486</td><td>$0.00</td><td>$0.599486</td><td>0.1198972%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect XT:base:1000">Inspect</button></td><td>$1,000.00</td><td>S / XT</td><td>base</td><td>complete</td><td>$1,001.198966</td><td>$1,001.198966</td><td>$0.00</td><td>$1.198966</td><td>0.1198966%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect XT:base:2500">Inspect</button></td><td>$2,500.00</td><td>S / XT</td><td>base</td><td>complete</td><td>$2,502.997409</td><td>$2,502.997409</td><td>$0.00</td><td>$2.997409</td><td>0.11989636%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect XT:base:5000">Inspect</button></td><td>$5,000.00</td><td>S / XT</td><td>base</td><td>complete</td><td>$5,005.994817</td><td>$5,005.994817</td><td>$0.00</td><td>$5.994817</td><td>0.11989634%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect XT:base:10000">Inspect</button></td><td>$10,000.00</td><td>S / XT</td><td>base</td><td>complete</td><td>$10,011.989631</td><td>$10,011.989631</td><td>$0.00</td><td>$11.989631</td><td>0.11989631%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect XT:base:100000">Inspect</button></td><td>$100,000.00</td><td>S / XT</td><td>base</td><td>complete</td><td>$100,119.896276</td><td>$100,119.896276</td><td>$0.00</td><td>$119.896276</td><td>0.119896276%</td><td>0/6</td></tr><tr><td><button type="button" aria-label="Inspect XR:base:50">Inspect</button></td><td>$50.00</td><td>S / XR</td><td>base</td><td>infeasible</td><td>$50.199964</td><td>$50.199964</td><td>$0.00</td><td>$0.199964</td><td>0.399928%</td><td>1/6</td></tr><tr><td><button type="button" aria-label="Inspect XR:base:100">Inspect</button></td><td>$100.00</td><td>S / XR</td><td>base</td><td>infeasible</td><td>$100.399933</td><td>$100.399933</td><td>$0.00</td><td>$0.399933</td><td>0.399933%</td><td>1/6</td></tr><tr><td><button type="button" aria-label="Inspect XR:base:250">Inspect</button></td><td>$250.00</td><td>S / XR</td><td>base</td><td>infeasible</td><td>$250.999833</td><td>$250.999833</td><td>$0.00</td><td>$0.999833</td><td>0.3999332%</td><td>1/6</td></tr><tr><td><button type="button" aria-label="Inspect XR:base:500">Inspect</button></td><td>$500.00</td><td>S / XR</td><td>base</td><td>infeasible</td><td>$501.999664</td><td>$501.999664</td><td>$0.00</td><td>$1.999664</td><td>0.3999328%</td><td>1/6</td></tr><tr><td><button type="button" aria-label="Inspect XR:base:1000">Inspect</button></td><td>$1,000.00</td><td>S / XR</td><td>base</td><td>infeasible</td><td>$1,003.999333</td><td>$1,003.999333</td><td>$0.00</td><td>$3.999333</td><td>0.3999333%</td><td>1/6</td></tr><tr><td><button type="button" aria-label="Inspect XR:base:2500">Inspect</button></td><td>$2,500.00</td><td>S / XR</td><td>base</td><td>infeasible</td><td>$2,509.998338</td><td>$2,509.998338</td><td>$0.00</td><td>$9.998338</td><td>0.39993352%</td><td>1/6</td></tr><tr><td><button type="button" aria-label="Inspect XR:base:5000">Inspect</button></td><td>$5,000.00</td><td>S / XR</td><td>base</td><td>infeasible</td><td>$5,019.996674</td><td>$5,019.996674</td><td>$0.00</td><td>$19.996674</td><td>0.39993348%</td><td>1/6</td></tr><tr><td><button type="button" aria-label="Inspect XR:base:10000">Inspect</button></td><td>$10,000.00</td><td>S / XR</td><td>base</td><td>infeasible</td><td>$10,039.993357</td><td>$10,039.993357</td><td>$0.00</td><td>$39.993357</td><td>0.39993357%</td><td>1/6</td></tr><tr><td><button type="button" aria-label="Inspect XR:base:100000">Inspect</button></td><td>$100,000.00</td><td>S / XR</td><td>base</td><td>infeasible</td><td>$100,399.933597</td><td>$100,399.933597</td><td>$0.00</td><td>$399.933597</td><td>0.399933597%</td><td>1/6</td></tr></tbody></table></div><div class="capital-contest-actions"><button type="button" disabled="">Previous cells</button><button type="button" disabled="">Next cells</button></div><details open=""><summary>Decision evidence · T1:base:50 · 2 decisions</summary><ol><li>Dec 30, 2025, 5:05 PM → Dec 31, 2025, 5:00 PM · targets · complete declared history<br/>Targets <code>{&quot;coinbase|spot|BTC-USD&quot;:&quot;0.1&quot;,&quot;coinbase|spot|ETH-USD&quot;:&quot;0.1&quot;,&quot;coinbase|spot|LTC-USD&quot;:&quot;0.1&quot;}</code> · history <code>f65403c4ed3dc3f5f11a4e823072b70cb5fb6e3c2c545ce962db8c1e983aaf5f</code></li><li>Dec 31, 2025, 5:05 PM → Jan 1, 2026, 5:00 PM · targets · complete declared history<br/>Targets <code>{&quot;coinbase|spot|BTC-USD&quot;:&quot;0.1&quot;,&quot;coinbase|spot|ETH-USD&quot;:&quot;0.1&quot;,&quot;coinbase|spot|LTC-USD&quot;:&quot;0.1&quot;}</code> · history <code>f0e223c342b2b8a944c89a362c38f13c5425b1ee744fd48b99bb81ee0fa8ace5</code></li></ol></details><details><summary>Paired uncertainty, policy objectives and all outcomes</summary><table><caption>Conditional paired intervals · percentage-point differences</caption><thead><tr><th>Contrast</th><th>Estimate</th><th>Lower / upper</th><th>Evidence</th></tr></thead><tbody><tr><td>trend-passive</td><td>0.0000</td><td>Unavailable</td><td>2 tests · 0 paths · insufficient_history_or_effective_blocks, resample_inventory_incomplete_or_unavailable, insufficient_tail_resolution</td></tr><tr><td>rotation-passive</td><td>0.4801</td><td>Unavailable</td><td>2 tests · 0 paths · insufficient_history_or_effective_blocks, resample_inventory_incomplete_or_unavailable, insufficient_tail_resolution</td></tr></tbody></table><ul></ul><ul><li>Development only; no promotion/registration/financial authority.</li><li>Conditional stationary fixed-universe joint paths; boundary joins are artificial.</li><li>Basic Bonferroni bootstrap coverage is approximate, not finite-sample guaranteed.</li><li>Every resampled path reruns signals, calibration, actual books, funding, costs and reserve policy.</li><li>Capital sizes and bootstrap replications are not independent alpha trials.</li><li>Negative TrendVol evidence, historical reports and consumed holdout remain unchanged.</li></ul></details><details><summary>Frozen assumptions and source identities</summary><p>Engine capital-contest-v1 · manifest <code>84d5a97a192a526c59fc248192878f8fb49675575a4ce0b4f0d3e77c95dcc62b</code> · data <code>8404b6496199858a8fe9551ecb98edcc24bd108a287eb129791ec8b02a1099a9</code>. Source revision <code>synthetic-source</code>.</p><p>Primary capital weights <code>{&quot;500&quot;:&quot;1&quot;}</code>. The $100,000 row is diagnostic. No per-balance hindsight winner.</p><p>Distribution objective: at most 5% sacrifice, 0 floor breaches, minimum $1.00 modeled reserved/received. These are declared research assumptions.</p><pre>{
++   &quot;candidates&quot;: [
++     {
++       &quot;id&quot;: &quot;T1&quot;,
++       &quot;family&quot;: &quot;trend&quot;,
++       &quot;lookbackDays&quot;: 3,
++       &quot;volatilityDays&quot;: 3,
++       &quot;cadenceDays&quot;: 1,
++       &quot;anchorMs&quot;: 1767225600000,
++       &quot;decisionDelayMs&quot;: 300000,
++       &quot;baseWeights&quot;: {
++         &quot;coinbase|spot|BTC-USD&quot;: &quot;0.1&quot;,
++         &quot;coinbase|spot|ETH-USD&quot;: &quot;0.1&quot;,
++         &quot;coinbase|spot|LTC-USD&quot;: &quot;0.1&quot;
++       },
++       &quot;topN&quot;: 1,
++       &quot;buffer&quot;: 2,
++       &quot;weighting&quot;: &quot;equal&quot;,
++       &quot;dustUsd&quot;: &quot;0.001&quot;,
++       &quot;momentum&quot;: null,
++       &quot;volatility&quot;: null,
++       &quot;exposureOf&quot;: null
++     },
++     {
++       &quot;id&quot;: &quot;R1&quot;,
++       &quot;family&quot;: &quot;rotation&quot;,
++       &quot;lookbackDays&quot;: 3,
++       &quot;volatilityDays&quot;: 3,
++       &quot;cadenceDays&quot;: 1,
++       &quot;anchorMs&quot;: 1767225600000,
++       &quot;decisionDelayMs&quot;: 300000,
++       &quot;baseWeights&quot;: {
++         &quot;coinbase|spot|BTC-USD&quot;: &quot;0.1&quot;,
++         &quot;coinbase|spot|ETH-USD&quot;: &quot;0.1&quot;,
++         &quot;coinbase|spot|LTC-USD&quot;: &quot;0.1&quot;
++       },
++       &quot;topN&quot;: 1,
++       &quot;buffer&quot;: 2,
++       &quot;weighting&quot;: &quot;equal&quot;,
++       &quot;dustUsd&quot;: &quot;0.001&quot;,
++       &quot;momentum&quot;: null,
++       &quot;volatility&quot;: null,
++       &quot;exposureOf&quot;: null
++     },
++     {
++       &quot;id&quot;: &quot;L&quot;,
++       &quot;family&quot;: &quot;allocator&quot;,
++       &quot;lookbackDays&quot;: 3,
++       &quot;volatilityDays&quot;: 3,
++       &quot;cadenceDays&quot;: 1,
++       &quot;anchorMs&quot;: 1767225600000,
++       &quot;decisionDelayMs&quot;: 300000,
++       &quot;baseWeights&quot;: {
++         &quot;coinbase|spot|BTC-USD&quot;: &quot;0.1&quot;,
++         &quot;coinbase|spot|ETH-USD&quot;: &quot;0.1&quot;,
++         &quot;coinbase|spot|LTC-USD&quot;: &quot;0.1&quot;
++       },
++       &quot;topN&quot;: 1,
++       &quot;buffer&quot;: 2,
++       &quot;weighting&quot;: &quot;equal&quot;,
++       &quot;dustUsd&quot;: &quot;0.001&quot;,
++       &quot;momentum&quot;: {
++         &quot;lookbackDays&quot;: 3,
++         &quot;volatilityDays&quot;: 3,
++         &quot;maxRelativeTilt&quot;: 0.35,
++         &quot;defensiveScale&quot;: 0.2,
++         &quot;targetVolatilityPct&quot;: 55
++       },
++       &quot;volatility&quot;: null,
++       &quot;exposureOf&quot;: null
++     },
++     {
++       &quot;id&quot;: &quot;H&quot;,
++       &quot;family&quot;: &quot;hold&quot;,
++       &quot;lookbackDays&quot;: 3,
++       &quot;volatilityDays&quot;: 3,
++       &quot;cadenceDays&quot;: 1,
++       &quot;anchorMs&quot;: 1767225600000,
++       &quot;decisionDelayMs&quot;: 300000,
++       &quot;baseWeights&quot;: {
++         &quot;coinbase|spot|BTC-USD&quot;: &quot;0.1&quot;,
++         &quot;coinbase|spot|ETH-USD&quot;: &quot;0.1&quot;,
++         &quot;coinbase|spot|LTC-USD&quot;: &quot;0.1&quot;
++       },
++       &quot;topN&quot;: 1,
++       &quot;buffer&quot;: 2,
++       &quot;weighting&quot;: &quot;equal&quot;,
++       &quot;dustUsd&quot;: &quot;0.001&quot;,
++       &quot;momentum&quot;: null,
++       &quot;volatility&quot;: null,
++       &quot;exposureOf&quot;: null
++     },
++     {
++       &quot;id&quot;: &quot;P&quot;,
++       &quot;family&quot;: &quot;passive&quot;,
++       &quot;lookbackDays&quot;: 3,
++       &quot;volatilityDays&quot;: 3,
++       &quot;cadenceDays&quot;: 1,
++       &quot;anchorMs&quot;: 1767225600000,
++       &quot;decisionDelayMs&quot;: 300000,
++       &quot;baseWeights&quot;: {
++         &quot;coinbase|spot|BTC-USD&quot;: &quot;0.1&quot;,
++         &quot;coinbase|spot|ETH-USD&quot;: &quot;0.1&quot;,
++         &quot;coinbase|spot|LTC-USD&quot;: &quot;0.1&quot;
++       },
++       &quot;topN&quot;: 1,
++       &quot;buffer&quot;: 2,
++       &quot;weighting&quot;: &quot;equal&quot;,
++       &quot;dustUsd&quot;: &quot;0.001&quot;,
++       &quot;momentum&quot;: null,
++       &quot;volatility&quot;: null,
++       &quot;exposureOf&quot;: null
++     },
++     {
++       &quot;id&quot;: &quot;C&quot;,
++       &quot;family&quot;: &quot;cash&quot;,
++       &quot;lookbackDays&quot;: 3,
++       &quot;volatilityDays&quot;: 3,
++       &quot;cadenceDays&quot;: 1,
++       &quot;anchorMs&quot;: 1767225600000,
++       &quot;decisionDelayMs&quot;: 300000,
++       &quot;baseWeights&quot;: {
++         &quot;coinbase|spot|BTC-USD&quot;: &quot;0.1&quot;,
++         &quot;coinbase|spot|ETH-USD&quot;: &quot;0.1&quot;,
++         &quot;coinbase|spot|LTC-USD&quot;: &quot;0.1&quot;
++       },
++       &quot;topN&quot;: 1,
++       &quot;buffer&quot;: 2,
++       &quot;weighting&quot;: &quot;equal&quot;,
++       &quot;dustUsd&quot;: &quot;0.001&quot;,
++       &quot;momentum&quot;: null,
++       &quot;volatility&quot;: null,
++       &quot;exposureOf&quot;: null
++     },
++     {
++       &quot;id&quot;: &quot;XT&quot;,
++       &quot;family&quot;: &quot;exposure&quot;,
++       &quot;lookbackDays&quot;: 3,
++       &quot;volatilityDays&quot;: 3,
++       &quot;cadenceDays&quot;: 1,
++       &quot;anchorMs&quot;: 1767225600000,
++       &quot;decisionDelayMs&quot;: 300000,
++       &quot;baseWeights&quot;: {
++         &quot;coinbase|spot|BTC-USD&quot;: &quot;0.1&quot;,
++         &quot;coinbase|spot|ETH-USD&quot;: &quot;0.1&quot;,
++         &quot;coinbase|spot|LTC-USD&quot;: &quot;0.1&quot;
++       },
++       &quot;topN&quot;: 1,
++       &quot;buffer&quot;: 2,
++       &quot;weighting&quot;: &quot;equal&quot;,
++       &quot;dustUsd&quot;: &quot;0.001&quot;,
++       &quot;momentum&quot;: null,
++       &quot;volatility&quot;: null,
++       &quot;exposureOf&quot;: &quot;T1&quot;
++     },
++     {
++       &quot;id&quot;: &quot;XR&quot;,
++       &quot;family&quot;: &quot;exposure&quot;,
++       &quot;lookbackDays&quot;: 3,
++       &quot;volatilityDays&quot;: 3,
++       &quot;cadenceDays&quot;: 1,
++       &quot;anchorMs&quot;: 1767225600000,
++       &quot;decisionDelayMs&quot;: 300000,
++       &quot;baseWeights&quot;: {
++         &quot;coinbase|spot|BTC-USD&quot;: &quot;0.1&quot;,
++         &quot;coinbase|spot|ETH-USD&quot;: &quot;0.1&quot;,
++         &quot;coinbase|spot|LTC-USD&quot;: &quot;0.1&quot;
++       },
++       &quot;topN&quot;: 1,
++       &quot;buffer&quot;: 2,
++       &quot;weighting&quot;: &quot;equal&quot;,
++       &quot;dustUsd&quot;: &quot;0.001&quot;,
++       &quot;momentum&quot;: null,
++       &quot;volatility&quot;: null,
++       &quot;exposureOf&quot;: &quot;R1&quot;
++     }
++   ],
++   &quot;arms&quot;: [
++     {
++       &quot;id&quot;: &quot;T1&quot;,
++       &quot;candidateId&quot;: &quot;T1&quot;,
++       &quot;group&quot;: &quot;S&quot;,
++       &quot;selectable&quot;: true,
++       &quot;execution&quot;: &quot;legacy_shaped&quot;,
++       &quot;routineBand&quot;: &quot;0.01&quot;,
++       &quot;changeBand&quot;: &quot;0.02&quot;,
++       &quot;shareBps&quot;: 0,
++       &quot;minimumBatchUsd&quot;: &quot;0.01&quot;,
++       &quot;retainedCapitalUsd&quot;: &quot;0&quot;,
++       &quot;capMode&quot;: &quot;strict_realized&quot;
++     },
++     {
++       &quot;id&quot;: &quot;R1&quot;,
++       &quot;candidateId&quot;: &quot;R1&quot;,
++       &quot;group&quot;: &quot;S&quot;,
++       &quot;selectable&quot;: true,
++       &quot;execution&quot;: &quot;legacy_shaped&quot;,
++       &quot;routineBand&quot;: &quot;0.01&quot;,
++       &quot;changeBand&quot;: &quot;0.02&quot;,
++       &quot;shareBps&quot;: 0,
++       &quot;minimumBatchUsd&quot;: &quot;0.01&quot;,
++       &quot;retainedCapitalUsd&quot;: &quot;0&quot;,
++       &quot;capMode&quot;: &quot;strict_realized&quot;
++     },
++     {
++       &quot;id&quot;: &quot;L&quot;,
++       &quot;candidateId&quot;: &quot;L&quot;,
++       &quot;group&quot;: &quot;S&quot;,
++       &quot;selectable&quot;: false,
++       &quot;execution&quot;: &quot;legacy_shaped&quot;,
++       &quot;routineBand&quot;: &quot;0.01&quot;,
++       &quot;changeBand&quot;: &quot;0.02&quot;,
++       &quot;shareBps&quot;: 0,
++       &quot;minimumBatchUsd&quot;: &quot;0.01&quot;,
++       &quot;retainedCapitalUsd&quot;: &quot;0&quot;,
++       &quot;capMode&quot;: &quot;strict_realized&quot;
++     },
++     {
++       &quot;id&quot;: &quot;H&quot;,
++       &quot;candidateId&quot;: &quot;H&quot;,
++       &quot;group&quot;: &quot;S&quot;,
++       &quot;selectable&quot;: false,
++       &quot;execution&quot;: &quot;legacy_shaped&quot;,
++       &quot;routineBand&quot;: &quot;0.01&quot;,
++       &quot;changeBand&quot;: &quot;0.02&quot;,
++       &quot;shareBps&quot;: 0,
++       &quot;minimumBatchUsd&quot;: &quot;0.01&quot;,
++       &quot;retainedCapitalUsd&quot;: &quot;0&quot;,
++       &quot;capMode&quot;: &quot;strict_realized&quot;
++     },
++     {
++       &quot;id&quot;: &quot;P&quot;,
++       &quot;candidateId&quot;: &quot;P&quot;,
++       &quot;group&quot;: &quot;S&quot;,
++       &quot;selectable&quot;: false,
++       &quot;execution&quot;: &quot;legacy_shaped&quot;,
++       &quot;routineBand&quot;: &quot;0.01&quot;,
++       &quot;changeBand&quot;: &quot;0.02&quot;,
++       &quot;shareBps&quot;: 0,
++       &quot;minimumBatchUsd&quot;: &quot;0.01&quot;,
++       &quot;retainedCapitalUsd&quot;: &quot;0&quot;,
++       &quot;capMode&quot;: &quot;strict_realized&quot;
++     },
++     {
++       &quot;id&quot;: &quot;C&quot;,
++       &quot;candidateId&quot;: &quot;C&quot;,
++       &quot;group&quot;: &quot;S&quot;,
++       &quot;selectable&quot;: false,
++       &quot;execution&quot;: &quot;legacy_shaped&quot;,
++       &quot;routineBand&quot;: &quot;0.01&quot;,
++       &quot;changeBand&quot;: &quot;0.02&quot;,
++       &quot;shareBps&quot;: 0,
++       &quot;minimumBatchUsd&quot;: &quot;0.01&quot;,
++       &quot;retainedCapitalUsd&quot;: &quot;0&quot;,
++       &quot;capMode&quot;: &quot;strict_realized&quot;
++     },
++     {
++       &quot;id&quot;: &quot;XT&quot;,
++       &quot;candidateId&quot;: &quot;XT&quot;,
++       &quot;group&quot;: &quot;S&quot;,
++       &quot;selectable&quot;: false,
++       &quot;execution&quot;: &quot;legacy_shaped&quot;,
++       &quot;routineBand&quot;: &quot;0.01&quot;,
++       &quot;changeBand&quot;: &quot;0.02&quot;,
++       &quot;shareBps&quot;: 0,
++       &quot;minimumBatchUsd&quot;: &quot;0.01&quot;,
++       &quot;retainedCapitalUsd&quot;: &quot;0&quot;,
++       &quot;capMode&quot;: &quot;strict_realized&quot;
++     },
++     {
++       &quot;id&quot;: &quot;XR&quot;,
++       &quot;candidateId&quot;: &quot;XR&quot;,
++       &quot;group&quot;: &quot;S&quot;,
++       &quot;selectable&quot;: false,
++       &quot;execution&quot;: &quot;legacy_shaped&quot;,
++       &quot;routineBand&quot;: &quot;0.01&quot;,
++       &quot;changeBand&quot;: &quot;0.02&quot;,
++       &quot;shareBps&quot;: 0,
++       &quot;minimumBatchUsd&quot;: &quot;0.01&quot;,
++       &quot;retainedCapitalUsd&quot;: &quot;0&quot;,
++       &quot;capMode&quot;: &quot;strict_realized&quot;
++     }
++   ],
++   &quot;variants&quot;: [
++     {
++       &quot;id&quot;: &quot;base&quot;,
++       &quot;cost&quot;: {
++         &quot;id&quot;: &quot;zero&quot;,
++         &quot;venue&quot;: &quot;coinbase&quot;,
++         &quot;role&quot;: &quot;taker&quot;,
++         &quot;feeRate&quot;: &quot;0&quot;,
++         &quot;feeCurrency&quot;: &quot;USD&quot;,
++         &quot;feeBasis&quot;: &quot;execution_notional&quot;,
++         &quot;fixedUsd&quot;: &quot;0&quot;,
++         &quot;spreadBps&quot;: &quot;0&quot;,
++         &quot;slippageBps&quot;: &quot;0&quot;,
++         &quot;impactBps&quot;: &quot;0&quot;,
++         &quot;impactRefUsd&quot;: &quot;25000&quot;,
++         &quot;multiplier&quot;: 1,
++         &quot;feePostingLagFrames&quot;: 0,
++         &quot;sourceRef&quot;: &quot;synthetic_not_account&quot;
++       },
++       &quot;policy&quot;: {
++         &quot;id&quot;: &quot;9aec8af534835fc47dfbf0bce6ab8a9d0f13ba9bc8264331504f2ece0d524392&quot;,
++         &quot;maxOrders&quot;: 5,
++         &quot;maxOrderUsd&quot;: &quot;1000000&quot;,
++         &quot;maxTurnoverUsd&quot;: &quot;1000000&quot;,
++         &quot;usedTurnoverUsd&quot;: &quot;0&quot;,
++         &quot;maxEntryFraction&quot;: &quot;1&quot;,
++         &quot;maxPositionFraction&quot;: &quot;1&quot;,
++         &quot;accountMaxPositionFraction&quot;: &quot;1&quot;,
++         &quot;maxInvestedFraction&quot;: &quot;1&quot;,
++         &quot;accountMaxInvestedFraction&quot;: &quot;1&quot;,
++         &quot;discretionaryFloorUsd&quot;: &quot;0&quot;,
++         &quot;riskExitBypassesDiscretionaryFloor&quot;: false,
++         &quot;killSwitchEngaged&quot;: false
++       },
++       &quot;turnoverWindowMs&quot;: 86400000,
++       &quot;flows&quot;: [],
++       &quot;reserve&quot;: {
++         &quot;goal&quot;: &quot;keep_invested&quot;,
++         &quot;trigger&quot;: {
++           &quot;kind&quot;: &quot;profit_usd&quot;,
++           &quot;value&quot;: &quot;50&quot;
++         },
++         &quot;shareBps&quot;: 0,
++         &quot;retainedCapitalUsd&quot;: &quot;0&quot;,
++         &quot;minimumBatchUsd&quot;: &quot;0.01&quot;,
++         &quot;cadence&quot;: &quot;manual&quot;,
++         &quot;reviewWinCount&quot;: null,
++         &quot;taxHold&quot;: {
++           &quot;amountUsd&quot;: &quot;0&quot;,
++           &quot;backing&quot;: &quot;principal&quot;
++         }
++       },
++       &quot;activationAtMs&quot;: 1767225600000,
++       &quot;reviewAtMs&quot;: [],
++       &quot;operatingObjective&quot;: &quot;fixed_request&quot;,
++       &quot;activeDailyYield&quot;: &quot;0&quot;,
++       &quot;reserveDailyYield&quot;: &quot;0&quot;,
++       &quot;externalExpenses&quot;: []
++     }
++   ],
++   &quot;folds&quot;: [
++     {
++       &quot;id&quot;: &quot;fold-1&quot;,
++       &quot;trainFromMs&quot;: 1766361600000,
++       &quot;trainToMs&quot;: 1767139200000,
++       &quot;validationFromMs&quot;: 1767225600000,
++       &quot;validationToMs&quot;: 1767398400000,
++       &quot;embargoMs&quot;: 0
++     }
++   ],
++   &quot;inference&quot;: {
++     &quot;seed&quot;: 42,
++     &quot;resamples&quot;: 0,
++     &quot;meanBlockDays&quot;: 3,
++     &quot;alpha&quot;: 0.05,
++     &quot;minHistoryDays&quot;: 30,
++     &quot;minEffectiveBlocks&quot;: 2,
++     &quot;minTailReplications&quot;: 20
++   },
++   &quot;selection&quot;: {
++     &quot;minObservations&quot;: 365,
++     &quot;minActions&quot;: 30,
++     &quot;maxPbo&quot;: 0.05,
++     &quot;minDsr&quot;: 0.95,
++     &quot;maxDrawdownPct&quot;: 50,
++     &quot;partitions&quot;: 4
++   },
++   &quot;sourceRefs&quot;: [
++     &quot;synthetic_fixture_only&quot;
++   ]
++ }</pre></details>
+
+ ❯ tests/capital-contest-ui.test.ts:20:446
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 7 passed (8)
+      Tests  1 failed | 48 passed (49)
+   Start at  02:20:40
+   Duration  13.52s (transform 1.07s, setup 0ms, import 2.11s, tests 10.95s, environment 0ms)
+

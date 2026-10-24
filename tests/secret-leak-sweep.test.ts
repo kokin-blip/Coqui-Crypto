@@ -75,6 +75,7 @@ const LOCAL_CHANNELS: readonly ChannelName[] = [
   'paper.performance',
   'capital.scopes', 'capital.performance', 'capital.budget', 'capital.feasibility',
   'research.capital-replay.runs', 'research.capital-replay.detail',
+  'research.capital-contest.runs', 'research.capital-contest.detail',
   'capital.reserve.view', 'capital.reserve.preview', 'capital.reserve.settings.save', 'capital.reserve.inspect',
   'paper.performance-day',
 ];
@@ -102,6 +103,8 @@ const PAYLOADS: Partial<Record<ChannelName, unknown>> = {
   'paper.execution.proposals': { limit: 50 },
   'paper.performance-day': { dayUtc: 1_799_971_200_000 },
   'capital.performance': { scopeId: 'a'.repeat(64), epochId: null, fromMs: null, toMs: null },
+  'research.capital-contest.runs': {limit:10},
+  'research.capital-contest.detail': {runId:'a'.repeat(64),cellId:null,page:0,limit:10},
   'research.capital-replay.runs': {limit:10},
   'research.capital-replay.detail': {runId:'a'.repeat(64),cellId:null,page:0,limit:10},
   'capital.reserve.view': {scopeId:'a'.repeat(64)},

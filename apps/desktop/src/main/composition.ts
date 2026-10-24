@@ -1,4 +1,4 @@
-import { createCapitalReplayHandlers } from './capital-replay-handlers.js'; import { createPaperReviewHandlers } from './paper-review-handlers.js';
+import { createCapitalContestHandlers } from './capital-contest-handlers.js'; import { createCapitalReplayHandlers } from './capital-replay-handlers.js'; import { createPaperReviewHandlers } from './paper-review-handlers.js';
 import { createWorkstationHandlers } from './workstation-handlers.js';
 import { runtimeRecoveryHandlers, type RecoveryOptions } from './recovery-handlers.js';
 import { createNewsHandlers } from './news-handlers.js';
@@ -321,7 +321,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     ...createMarketEventHandlers({ profileId: options.profileId, database, clock,
       requestResearch: (triggerId,at) => researchHost.request(triggerId,at),
       ...(options.pickMarketEventFile===undefined?{}:{pickEventFile:options.pickMarketEventFile}) }),
-    ...createResearchOrchestrationHandlers({coordinator:researchHost,clock}), ...createCapitalReplayHandlers(options.profileId,database),
+    ...createResearchOrchestrationHandlers({coordinator:researchHost,clock}), ...createCapitalReplayHandlers(options.profileId,database), ...createCapitalContestHandlers(options.profileId,database),
     ...createDecisionHandlers(options.profileId, clock, database),
     ...createTradingActivityHandlers({ profileId: options.profileId, database, now: () => clock.nowMs(),
       mark: productId => resolveActivityMark(productId, liveMarket.snapshot().quotes, id => paperMarket.view.bars(id as never).at(-1)), ...(options.secrets===undefined?{}:{secrets:options.secrets}) }),

@@ -1,0 +1,329 @@
+{
+  "sourceBase": "a015711c29a10d768f0d0b40d467a75c1bd0adac",
+  "count": 46,
+  "sources": [
+    {
+      "path": "packages/core/src/strategies/momentum.ts",
+      "workingSha256": "d64804149791184b41064a3281a8eef4450b1bae20e2679041baa768ea54f8ae",
+      "pushedSha256": "d64804149791184b41064a3281a8eef4450b1bae20e2679041baa768ea54f8ae",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/strategies/rotation.ts",
+      "workingSha256": "c97490e9bc102467d8cbf7f92d2d36a2a327e96b4de97c050c5e3f902a2cfbf8",
+      "pushedSha256": "c97490e9bc102467d8cbf7f92d2d36a2a327e96b4de97c050c5e3f902a2cfbf8",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/strategies/trend-vol.ts",
+      "workingSha256": "00e974c5654c0a80af9b44d70a09e8d54515f64bc705b629b4648b9ab7db2454",
+      "pushedSha256": "00e974c5654c0a80af9b44d70a09e8d54515f64bc705b629b4648b9ab7db2454",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/strategies/vol-target.ts",
+      "workingSha256": "9068267a6ad6a1d4fc0f473a42c19e0ca7188520777cfae76229999cc01c42f3",
+      "pushedSha256": "9068267a6ad6a1d4fc0f473a42c19e0ca7188520777cfae76229999cc01c42f3",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/research/capital-replay.ts",
+      "workingSha256": "97fbcd15b064e67fc4b00a3a521fa31ea31bd0be9c28acf6392319f7c6e22bc3",
+      "pushedSha256": "97fbcd15b064e67fc4b00a3a521fa31ea31bd0be9c28acf6392319f7c6e22bc3",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/research/capital-replay-types.ts",
+      "workingSha256": "5f4d1275981014c15f01f42eb4b2c2b16b5d49d63a2be40dfe9478d723031b49",
+      "pushedSha256": "5f4d1275981014c15f01f42eb4b2c2b16b5d49d63a2be40dfe9478d723031b49",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/research/capital-replay-book.ts",
+      "workingSha256": "c224b2b239800fd6e7b048c2ecb181fbf866e6ebb181ac3753e1a959d36d1d00",
+      "pushedSha256": "c224b2b239800fd6e7b048c2ecb181fbf866e6ebb181ac3753e1a959d36d1d00",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/research/capital-replay-execution.ts",
+      "workingSha256": "1876a41f17d79e7ad8bf9aed0fffc9e9f6a0ae5386e6dff97eb2623050f68dac",
+      "pushedSha256": "1876a41f17d79e7ad8bf9aed0fffc9e9f6a0ae5386e6dff97eb2623050f68dac",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/research/capital-replay-accounting.ts",
+      "workingSha256": "fd4b15f6131899348ad84b8355d6ed1b721b3a55a3bfd95ce53af7791cf84a04",
+      "pushedSha256": "fd4b15f6131899348ad84b8355d6ed1b721b3a55a3bfd95ce53af7791cf84a04",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/research/capital-replay-reserves.ts",
+      "workingSha256": "e9a8fd7a952e19824a2475f910c5b3b37c9bb6c9b772b9eb23acb881af155d6d",
+      "pushedSha256": "e9a8fd7a952e19824a2475f910c5b3b37c9bb6c9b772b9eb23acb881af155d6d",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/research/capital-replay-tape.ts",
+      "workingSha256": "6380e9d9ff3496ce7dfce6818d2632fffc5d6ae37409b64076da9896d9072f43",
+      "pushedSha256": "6380e9d9ff3496ce7dfce6818d2632fffc5d6ae37409b64076da9896d9072f43",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/research/capital-replay-report.ts",
+      "workingSha256": "fb67f4ce01e2bfc108e55ebabe76400586fc93a2d2ed4a7a3bf589bd7d7bf12a",
+      "pushedSha256": "fb67f4ce01e2bfc108e55ebabe76400586fc93a2d2ed4a7a3bf589bd7d7bf12a",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/execution/account-budget.ts",
+      "workingSha256": "5addc9d44bd58ead38a595c963b762707c253f24d83e23bfc2492d14a3bc5b0d",
+      "pushedSha256": "5addc9d44bd58ead38a595c963b762707c253f24d83e23bfc2492d14a3bc5b0d",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/execution/capital-feasibility.ts",
+      "workingSha256": "d5b6132f5a22302f55add90521bf0b4319d651a3ef622f78b241f3ecd2a41caf",
+      "pushedSha256": "d5b6132f5a22302f55add90521bf0b4319d651a3ef622f78b241f3ecd2a41caf",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/portfolio/capital-performance.ts",
+      "workingSha256": "9275fdffeaa4f9fb035778e6e84b75b525e8d5f19bbc96239b5d6c912c795b73",
+      "pushedSha256": "9275fdffeaa4f9fb035778e6e84b75b525e8d5f19bbc96239b5d6c912c795b73",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/portfolio/profit-reserve.ts",
+      "workingSha256": "a896b9cc83c8e8c913b7b24bb383a640275e0a05f0d55edaaf508e885cd5491d",
+      "pushedSha256": "a896b9cc83c8e8c913b7b24bb383a640275e0a05f0d55edaaf508e885cd5491d",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/portfolio/profit-reserve-state.ts",
+      "workingSha256": "9a05caf2d21ea8052d89adb79b55aadd97052e3bf8b5e3d411795eb8be701cf9",
+      "pushedSha256": "9a05caf2d21ea8052d89adb79b55aadd97052e3bf8b5e3d411795eb8be701cf9",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/portfolio/profit-reserve-eligibility.ts",
+      "workingSha256": "535b3934a2b98ccdda535ffbf310d6ef18f594e4b6ac81b343570e7ed276a7bd",
+      "pushedSha256": "535b3934a2b98ccdda535ffbf310d6ef18f594e4b6ac81b343570e7ed276a7bd",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/portfolio/reserve-capital-witness.ts",
+      "workingSha256": "75b6e0fb895d195b9c0ef08c7b11040f4b0c0ff55bc306fb2cf5485bde01f690",
+      "pushedSha256": "75b6e0fb895d195b9c0ef08c7b11040f4b0c0ff55bc306fb2cf5485bde01f690",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/execution/remediation-planner.ts",
+      "workingSha256": "50f28c1bfd56e1b923ec81c379fa0bde28d134b2129d4682ca727c2c087d8f40",
+      "pushedSha256": "50f28c1bfd56e1b923ec81c379fa0bde28d134b2129d4682ca727c2c087d8f40",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/research/remediation-evaluation.ts",
+      "workingSha256": "2d1dc933656093e6f32bd732942ea7f6143ea7650594c169b460fbeafd925d6f",
+      "pushedSha256": "2d1dc933656093e6f32bd732942ea7f6143ea7650594c169b460fbeafd925d6f",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/research/integrity-plan.ts",
+      "workingSha256": "3822bb96e6d8fbcf367510eac946ebf0fa5ec25f41562f31698ae668b2b7b31a",
+      "pushedSha256": "3822bb96e6d8fbcf367510eac946ebf0fa5ec25f41562f31698ae668b2b7b31a",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/research/family-runner.ts",
+      "workingSha256": "2a9eb9370fb941796d86e5945cfa81ef158c315ec8d6065bf1a139bdc0b6a646",
+      "pushedSha256": "2a9eb9370fb941796d86e5945cfa81ef158c315ec8d6065bf1a139bdc0b6a646",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/backtest/integrity-engine.ts",
+      "workingSha256": "4dff5acbc762a7ddc2d150e98ae83301bbd6426c880114b265641e50024b5f8b",
+      "pushedSha256": "4dff5acbc762a7ddc2d150e98ae83301bbd6426c880114b265641e50024b5f8b",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/market/universe.ts",
+      "workingSha256": "249daba11c2612e3fd67f5630e9bbe7e52126810758130b49eeb425c519aabd4",
+      "pushedSha256": "249daba11c2612e3fd67f5630e9bbe7e52126810758130b49eeb425c519aabd4",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/research/wider-universe-dataset.ts",
+      "workingSha256": "020627780e7fa6d9c027185ae602dc4f54bfe48ac87bb83aad74802bc7c14671",
+      "pushedSha256": "020627780e7fa6d9c027185ae602dc4f54bfe48ac87bb83aad74802bc7c14671",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/backtest/execution-timing.ts",
+      "workingSha256": "49b8bfdc3aaa77ff92f03ad5703d5665cbd4cd6267b48052ef179fdcf991d8b8",
+      "pushedSha256": "49b8bfdc3aaa77ff92f03ad5703d5665cbd4cd6267b48052ef179fdcf991d8b8",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/validation/monte-carlo.ts",
+      "workingSha256": "77942940a97a0895d76cd767fc4d4ed2cff562043e673b03ebac2fc9de143900",
+      "pushedSha256": "77942940a97a0895d76cd767fc4d4ed2cff562043e673b03ebac2fc9de143900",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/validation/walk-forward.ts",
+      "workingSha256": "75b8fe0dbee1d2a2942fe4deacd734bc2d71695c0a541440a8113acf343d5a62",
+      "pushedSha256": "75b8fe0dbee1d2a2942fe4deacd734bc2d71695c0a541440a8113acf343d5a62",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/validation/purged-cv.ts",
+      "workingSha256": "1f5012cbd85e2db45c19ee5f56c1df63c5d4bba1971844e2c7fdc78cf29819d6",
+      "pushedSha256": "1f5012cbd85e2db45c19ee5f56c1df63c5d4bba1971844e2c7fdc78cf29819d6",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/validation/pre-registration.ts",
+      "workingSha256": "093d8bad02a4c745fbe75666aa4685233aeb7ecdbcd544017e912502b96768db",
+      "pushedSha256": "093d8bad02a4c745fbe75666aa4685233aeb7ecdbcd544017e912502b96768db",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/trials/index.ts",
+      "workingSha256": "5d303d062ec6b7ee47706b2f13ca2782c2c9e41e913418bed5a9669a2584ff24",
+      "pushedSha256": "5d303d062ec6b7ee47706b2f13ca2782c2c9e41e913418bed5a9669a2584ff24",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/research/cscv.ts",
+      "workingSha256": "39572bbd7472040e2d5d8a1b930497c0a5778f3e191284fc2b9bcd060a796178",
+      "pushedSha256": "39572bbd7472040e2d5d8a1b930497c0a5778f3e191284fc2b9bcd060a796178",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/significance/index.ts",
+      "workingSha256": "be86fb7800f710a4d23fccfff0afa7894f00f12ad45b2da0f170f11cfb163539",
+      "pushedSha256": "be86fb7800f710a4d23fccfff0afa7894f00f12ad45b2da0f170f11cfb163539",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/research/overlay/development.ts",
+      "workingSha256": "798bde7a3e8221bde463f19edb4851dd9979f2c6f31704db32e2c05b1c1db58e",
+      "pushedSha256": "798bde7a3e8221bde463f19edb4851dd9979f2c6f31704db32e2c05b1c1db58e",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/core/src/research/overlay/calibration.ts",
+      "workingSha256": "3b7c64923c031d2599af1a5716f5f5f213244dbf867d52341f97b95c56ab7c1c",
+      "pushedSha256": "3b7c64923c031d2599af1a5716f5f5f213244dbf867d52341f97b95c56ab7c1c",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/services/src/research/capital-replay.ts",
+      "workingSha256": "8616217ed1e823aaf4aeccb9f761a4db33214f2354c3bf4d3616ef74ef1e5520",
+      "pushedSha256": "8616217ed1e823aaf4aeccb9f761a4db33214f2354c3bf4d3616ef74ef1e5520",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/services/src/research/capital-replay-data.ts",
+      "workingSha256": "aafe114ad64b85a58b17842609f284e8f6a4fffc5d87b31fa6cede3ba1865cfc",
+      "pushedSha256": "aafe114ad64b85a58b17842609f284e8f6a4fffc5d87b31fa6cede3ba1865cfc",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/services/src/research/integrity-study.ts",
+      "workingSha256": "cc62beb7f19bcc3f28ec8ab80ffda59faee618bca44f9aca7275473f0e49ba85",
+      "pushedSha256": "cc62beb7f19bcc3f28ec8ab80ffda59faee618bca44f9aca7275473f0e49ba85",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/storage/src/repositories/capital-replay.ts",
+      "workingSha256": "08091991462f12d6db25d41a260a0c96e96d91540e2cd39644e4aa364fcd402d",
+      "pushedSha256": "08091991462f12d6db25d41a260a0c96e96d91540e2cd39644e4aa364fcd402d",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/storage/src/repositories/research-integrity.ts",
+      "workingSha256": "f3fc1950c929f8501dff023ecc8c10d747ba9e2cad3f7ec8de324e0a922f9d0d",
+      "pushedSha256": "f3fc1950c929f8501dff023ecc8c10d747ba9e2cad3f7ec8de324e0a922f9d0d",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "packages/storage/src/repositories/profile-impact.ts",
+      "workingSha256": "251515ff26d6fa607a75da359552f33362977ae9a3a20ec07d17a9cdb0a6bff5",
+      "pushedSha256": "251515ff26d6fa607a75da359552f33362977ae9a3a20ec07d17a9cdb0a6bff5",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "apps/desktop/src/main/capital-replay-handlers.ts",
+      "workingSha256": "beee1ecb67c58b2168c20f85b5783c62861c7604426b36cc2abb6e033828ec84",
+      "pushedSha256": "beee1ecb67c58b2168c20f85b5783c62861c7604426b36cc2abb6e033828ec84",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "apps/desktop/src/renderer/app/Research.tsx",
+      "workingSha256": "c121c526c7ae5291198e82fee0b27f9c20f0f6c8fa1a2c4a06657b58d8b396ca",
+      "pushedSha256": "c121c526c7ae5291198e82fee0b27f9c20f0f6c8fa1a2c4a06657b58d8b396ca",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "scripts/research-capital-replay.mjs",
+      "workingSha256": "3cfbe48fcf0b7411cf3b28aa37059939cfaa99fbb3f23b0b7cb196df8fae0aec",
+      "pushedSha256": "3cfbe48fcf0b7411cf3b28aa37059939cfaa99fbb3f23b0b7cb196df8fae0aec",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    },
+    {
+      "path": "tests/helpers/capital-replay.ts",
+      "workingSha256": "60111db39bcd3a497e9b61cae1cb86227371cde17daf9796995ec84d0f6d3a18",
+      "pushedSha256": "60111db39bcd3a497e9b61cae1cb86227371cde17daf9796995ec84d0f6d3a18",
+      "sameAsPushed": true,
+      "inspection": "targeted interface, financial, causal or governance boundary read; not a claim of whole-file audit"
+    }
+  ],
+  "note": "Planning inspection only. Pushed P4 source and unrelated current work are distinguished by hashes. No source file modified by P5 planning."
+}

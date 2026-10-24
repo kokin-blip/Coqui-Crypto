@@ -48,6 +48,7 @@
     "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm build",
     "package": "pnpm --filter @coqui/desktop package",
     "research:overlay": "pnpm build && node scripts/research-overlay.mjs",
+    "research:capital-contest": "pnpm build && node scripts/research-capital-contest.mjs",
     "research:capital-replay": "pnpm build && node scripts/research-capital-replay.mjs",
     "research:integrity": "pnpm build && node scripts/research-integrity.mjs",
     "research:remediation-report": "pnpm build && node scripts/research-remediation-report.mjs",

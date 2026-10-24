@@ -1,0 +1,246 @@
+{
+  "synthetic": true,
+  "marketRun": false,
+  "accountAccess": false,
+  "rotation": {
+    "twoAssetIncumbent": "coinbase|spot|BTC-USD",
+    "threeAssetReplacement": "coinbase|spot|LTC-USD",
+    "rawTopOneWeight": 1,
+    "meaning": "Buffer two/top one degenerates in two assets; cap targets without renormalizing leftover cash."
+  },
+  "legacyBootstrap": {
+    "invalidPriceReturns": [
+      [
+        0,
+        0.10000000000000009
+      ],
+      [
+        0,
+        0.09090909090909083
+      ]
+    ],
+    "missingDateIdentity": true,
+    "tinyBootstrap": {
+      "observedMeanExcess": 0,
+      "pValue": 1,
+      "resamples": 0
+    },
+    "meaning": "Do not use tail-length alignment, invalid-price zeroes or tiny-sample placeholders as verified P5 inference."
+  },
+  "frozenP4": [
+    {
+      "kind": "flat",
+      "specHash": "43874174a61087324e4dd11188ebb15e7634c7e059338f5b00450d72374f35d0",
+      "tapeHash": "11e69aff900083acb702bec671eec3e5ebc6179e2aa8a7bd0c62b71069cc3ad3",
+      "resultId": "69d71e88b4829c3400ce14c5efe15569ee1caeb8ea1fe7b195fae78a5b286c04",
+      "cells": 36,
+      "example500": {
+        "endingEquityUsd": "500",
+        "activeUsd": "500",
+        "reservedUsd": "0",
+        "taxHoldUsd": "0",
+        "receiptsUsd": "0",
+        "contributionsUsd": "0",
+        "outflowsUsd": "0",
+        "turnoverUsd": "25",
+        "feesUsd": "0",
+        "spreadUsd": "0",
+        "slippageUsd": "0",
+        "impactUsd": "0",
+        "externalExpenseUsd": "0",
+        "userNetOutcomeUsd": "500",
+        "requestedOrders": 1,
+        "blockedOrders": 0,
+        "executedFills": 1,
+        "floorBreaches": 0
+      },
+      "metric500": {
+        "state": "available",
+        "value": "0",
+        "method": "capital-replay-equity-minus-external-capital-v1",
+        "evidenceRefs": [
+          "eca001171d6ba875ad359fb0049fb2474af9a4c98cb80522866292c1daae04d0"
+        ]
+      }
+    },
+    {
+      "kind": "contribution",
+      "specHash": "a40484cc236f3bba6f5be79f84b61d389e8ff96e60c906e312b0580197e8ca5d",
+      "tapeHash": "11e69aff900083acb702bec671eec3e5ebc6179e2aa8a7bd0c62b71069cc3ad3",
+      "resultId": "081ee75f1e449c25777c597b8535aeed673159348acdd076b97d2fcde2dca25b",
+      "cells": 36,
+      "example500": {
+        "endingEquityUsd": "520",
+        "activeUsd": "520",
+        "reservedUsd": "0",
+        "taxHoldUsd": "0",
+        "receiptsUsd": "0",
+        "contributionsUsd": "20",
+        "outflowsUsd": "0",
+        "turnoverUsd": "26",
+        "feesUsd": "0",
+        "spreadUsd": "0",
+        "slippageUsd": "0",
+        "impactUsd": "0",
+        "externalExpenseUsd": "0",
+        "userNetOutcomeUsd": "520",
+        "requestedOrders": 2,
+        "blockedOrders": 0,
+        "executedFills": 2,
+        "floorBreaches": 0
+      },
+      "metric500": {
+        "state": "available",
+        "value": "0",
+        "method": "capital-replay-equity-minus-external-capital-v1",
+        "evidenceRefs": [
+          "7225614692adf5726fc702a2d7eb79dd70c53094bd41f334aa3f02ab1ce9d220"
+        ]
+      }
+    },
+    {
+      "kind": "received-fee",
+      "specHash": "d12fcbb22e89e2dae9e3619722d4cc7fca97093fab5fc5648e45334ef48d44a5",
+      "tapeHash": "11e69aff900083acb702bec671eec3e5ebc6179e2aa8a7bd0c62b71069cc3ad3",
+      "resultId": "71177d61b0e209a08e11ca0ecdf7af63c3093ce0c7d6a54a98c5af33841a59a5",
+      "cells": 36,
+      "example500": {
+        "endingEquityUsd": "499.9373525",
+        "activeUsd": "499.9373525",
+        "reservedUsd": "0",
+        "taxHoldUsd": "0",
+        "receiptsUsd": "0",
+        "contributionsUsd": "0",
+        "outflowsUsd": "0",
+        "turnoverUsd": "25.059",
+        "feesUsd": "0.0626475",
+        "spreadUsd": "0",
+        "slippageUsd": "0",
+        "impactUsd": "0",
+        "externalExpenseUsd": "0",
+        "userNetOutcomeUsd": "499.9373525",
+        "requestedOrders": 4,
+        "blockedOrders": 2,
+        "executedFills": 2,
+        "floorBreaches": 0
+      },
+      "metric500": {
+        "state": "available",
+        "value": "-0.0626475",
+        "method": "capital-replay-equity-minus-external-capital-v1",
+        "evidenceRefs": [
+          "b2d15189b03c08af10a8a3422fc36504827e171beeb1e178dbf0c753a8a8fc03"
+        ]
+      }
+    },
+    {
+      "kind": "partial-fill",
+      "specHash": "44150cf30dad0d7752dbbb8d470af7aa854bec0d66a22500c600aad16cfe9917",
+      "tapeHash": "5de29e9e29b5b12a3108d5be641659957810b00fba97f5cd161222b5c6665d0b",
+      "resultId": "5817c3ff83a4aff11eac13ed99c64ab24242b0fb8a7ff1eb277502cd21f7af2e",
+      "cells": 36,
+      "example500": {
+        "endingEquityUsd": "500",
+        "activeUsd": "500",
+        "reservedUsd": "0",
+        "taxHoldUsd": "0",
+        "receiptsUsd": "0",
+        "contributionsUsd": "0",
+        "outflowsUsd": "0",
+        "turnoverUsd": "25",
+        "feesUsd": "0",
+        "spreadUsd": "0",
+        "slippageUsd": "0",
+        "impactUsd": "0",
+        "externalExpenseUsd": "0",
+        "userNetOutcomeUsd": "500",
+        "requestedOrders": 1,
+        "blockedOrders": 0,
+        "executedFills": 2,
+        "floorBreaches": 0
+      },
+      "metric500": {
+        "state": "available",
+        "value": "0",
+        "method": "capital-replay-equity-minus-external-capital-v1",
+        "evidenceRefs": [
+          "60321dae4f7ca918345d1680f00cc268cd0cd8a947772d6c4919abbf4cd03f53"
+        ]
+      }
+    },
+    {
+      "kind": "unknown-flow",
+      "specHash": "97517f031bc71ee78fee4a048c12ea9828123bf8620e2a2f07d1a9d2d44bc4f2",
+      "tapeHash": "11e69aff900083acb702bec671eec3e5ebc6179e2aa8a7bd0c62b71069cc3ad3",
+      "resultId": "111269bc5b282a7d6fcc51545edb9b64022f3f27f751e34e249844806719c165",
+      "cells": 36,
+      "example500": {
+        "endingEquityUsd": null,
+        "activeUsd": null,
+        "reservedUsd": "0",
+        "taxHoldUsd": "0",
+        "receiptsUsd": "0",
+        "contributionsUsd": "0",
+        "outflowsUsd": "0",
+        "turnoverUsd": "25",
+        "feesUsd": "0",
+        "spreadUsd": "0",
+        "slippageUsd": "0",
+        "impactUsd": "0",
+        "externalExpenseUsd": "0",
+        "userNetOutcomeUsd": null,
+        "requestedOrders": 1,
+        "blockedOrders": 0,
+        "executedFills": 1,
+        "floorBreaches": 0
+      },
+      "metric500": {
+        "state": "unavailable",
+        "reasonCodes": [
+          "financial_history_incomplete"
+        ],
+        "missingEvidence": [
+          "financial_history_incomplete"
+        ],
+        "restoration": [
+          "Reconcile financial history incomplete for this scope; missing evidence is not zero."
+        ]
+      }
+    },
+    {
+      "kind": "reserve",
+      "specHash": "97a9ce2f4f6ef9e387df094e5d31892c38b211b9f19b5e7a636be6456551954c",
+      "tapeHash": "a005ac2f5dbe710dfa85827f5e72925f47ceb3ad3820900393ce63151e976bec",
+      "resultId": "33c92fe88a94a51640f54156312d6313fae7db3b31003da2a8360c8497cd470f",
+      "cells": 45,
+      "example500": {
+        "endingEquityUsd": "550",
+        "activeUsd": "537.5",
+        "reservedUsd": "12.5",
+        "taxHoldUsd": "0",
+        "receiptsUsd": "0",
+        "contributionsUsd": "0",
+        "outflowsUsd": "0",
+        "turnoverUsd": "0",
+        "feesUsd": "0",
+        "spreadUsd": "0",
+        "slippageUsd": "0",
+        "impactUsd": "0",
+        "externalExpenseUsd": "0",
+        "userNetOutcomeUsd": "550",
+        "requestedOrders": 0,
+        "blockedOrders": 0,
+        "executedFills": 0,
+        "floorBreaches": 0
+      },
+      "metric500": {
+        "state": "available",
+        "value": "50",
+        "method": "capital-replay-equity-minus-external-capital-v1",
+        "evidenceRefs": [
+          "949738734dba4bc418c1aa49f6b53ed744c279a19f95adada11bcf39a8266997"
+        ]
+      }
+    }
+  ]
+}

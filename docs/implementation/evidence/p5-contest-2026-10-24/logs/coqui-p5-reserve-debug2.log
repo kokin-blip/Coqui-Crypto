@@ -1,0 +1,29 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+stdout | tests/capital-contest-reserves.test.ts > P5 distribution policies remain simulation hypotheses > separates strict realized backing from economic cash, without inventing realized gain or weakening P3
+{"reason":[],"previews":[{"state":"unavailable","reasons":["cash_only_objective_has_positions"],"p":{"state":"available","value":"0","method":"profit-reserve-eligibility-v1","evidenceRefs":[]},"r":{"state":"unavailable","reasonCodes":["cash_only_objective_has_positions"],"missingEvidence":["cash_only_objective_has_positions"],"restoration":["Reconcile cash only objective has positions for this scope; missing evidence is not zero."]}},{"state":"unavailable","reasons":["cash_only_objective_has_positions"],"p":{"state":"available","value":"10","method":"profit-reserve-eligibility-v1","evidenceRefs":[]},"r":{"state":"unavailable","reasonCodes":["cash_only_objective_has_positions"],"missingEvidence":["cash_only_objective_has_positions"],"restoration":["Reconcile cash only objective has positions for this scope; missing evidence is not zero."]}},{"state":"unavailable","reasons":["cash_only_objective_has_positions"],"p":{"state":"available","value":"20","method":"profit-reserve-eligibility-v1","evidenceRefs":[]},"r":{"state":"unavailable","reasonCodes":["cash_only_objective_has_positions"],"missingEvidence":["cash_only_objective_has_positions"],"restoration":["Reconcile cash only objective has positions for this scope; missing evidence is not zero."]}}],"summary":{"endingEquityUsd":"530","activeUsd":"530","reservedUsd":"0","taxHoldUsd":"0","receiptsUsd":"0","contributionsUsd":"0","outflowsUsd":"0","turnoverUsd":"0","feesUsd":"0","spreadUsd":"0","slippageUsd":"0","impactUsd":"0","externalExpenseUsd":"0","userNetOutcomeUsd":"530","requestedOrders":0,"blockedOrders":0,"executedFills":0,"floorBreaches":0}}
+
+ ❯ tests/capital-contest-reserves.test.ts (2 tests | 1 failed) 321ms
+     × separates strict realized backing from economic cash, without inventing realized gain or weakening P3 136ms
+     ✓ freezes matched targets across 0/25/50% and batch/floor sensitivities 185ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/capital-contest-reserves.test.ts > P5 distribution policies remain simulation hypotheses > separates strict realized backing from economic cash, without inventing realized gain or weakening P3
+AssertionError: expected '0' to be '5' // Object.is equality
+
+Expected: "5"
+Received: "0"
+
+ ❯ tests/capital-contest-reserves.test.ts:15:297
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  02:27:53
+   Duration  1.34s (transform 772ms, setup 0ms, import 928ms, tests 321ms, environment 0ms)
+

@@ -1,0 +1,3 @@
+{"checks":9,"passed":true,"resultId":"0e0af55352958b2355bf905c995787ad37ecc7521a7f304030e4c6e70d2669a1"}
+(node:18514) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)

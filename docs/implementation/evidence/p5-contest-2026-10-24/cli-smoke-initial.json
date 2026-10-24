@@ -1,0 +1,48 @@
+{
+  "synthetic": true,
+  "accountAccess": false,
+  "runtime": {
+    "codeRevision": "a015711c29a10d768f0d0b40d467a75c1bd0adac",
+    "sourceManifestHash": "3285b8afec05689126a89646d0ac3abc715dbb4a7ca9ae5118d3adedb930a2bd",
+    "lockfileHash": "955950e91a76499274dcdf8781352612b3890a0ad7f076d6db5cd255fd0f3c79"
+  },
+  "resultId": "3f7d8f576f9cf92b5bfd7adde5d0e6f2f5ba2c1baa99b6993b5011b7b779c3fd",
+  "checks": [
+    {
+      "name": "existing inactive profile",
+      "passed": true
+    },
+    {
+      "name": "validate does not read data bodies",
+      "passed": true
+    },
+    {
+      "name": "documented separator accepted",
+      "passed": true
+    },
+    {
+      "name": "real offline result is none and grants no authority",
+      "passed": true
+    },
+    {
+      "name": "exact retry/report do not reload the panel",
+      "passed": true
+    },
+    {
+      "name": "export binds every complete base cell hash",
+      "passed": true
+    },
+    {
+      "name": "zero financial/paper/registration rows",
+      "passed": true
+    },
+    {
+      "name": "only dedicated contest integrity kinds",
+      "passed": true
+    },
+    {
+      "name": "active profile refused by actual CLI",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "p4Commit": "a015711c29a10d768f0d0b40d467a75c1bd0adac",
+  "p4RemoteTrackingRef": "a015711c29a10d768f0d0b40d467a75c1bd0adac",
+  "p4RefsMatchExpectedPush": true,
+  "preexistingDirtyEntries": 495,
+  "byteIdenticalDirtyEntries": 495,
+  "dirtyMismatches": [],
+  "protectedHashCount": 28,
+  "protectedMismatches": [],
+  "unexpectedPlanningChanges": [],
+  "allPhaseRowsRetainedOnce": true,
+  "phaseRows": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 1,
+    "P3": 1,
+    "P4": 1,
+    "P5": 1,
+    "P6": 1,
+    "P7": 1
+  },
+  "missingLocalLinks": [],
+  "jsonParsed": true,
+  "applicationCodeWrittenForP5": false,
+  "marketEvaluationPerformed": false,
+  "planSha256": "628755c48c4c35afd2e8ef03bd51ec066be544c1580334c011f8bce134649198",
+  "trackerSha256": "814ced8a5b124a2dbc8c6d4784236efa2bd3cc56ca8340174c0a028da800fa25",
+  "passed": true
+}

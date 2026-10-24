@@ -1,0 +1,10 @@
+$ eslint .
+
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/scripts/smoke-capital-contest.mjs
+  11:249  error  'Buffer' is not defined  no-undef
+  12:255  error  'Buffer' is not defined  no-undef
+  20:199  error  'Buffer' is not defined  no-undef
+
+✖ 3 problems (3 errors, 0 warnings)
+
+[ELIFECYCLE] Command failed with exit code 1.

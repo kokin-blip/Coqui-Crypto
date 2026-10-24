@@ -1,0 +1,23 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+stdout | tests/secret-leak-sweep.test.ts > a connected key never reaches the renderer > appears in no channel response
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: 'b6c7dd8d10f34d6f93bed8d719da38aa74d79cf1105dbda0ce7a94467840f73d'
+}
+
+stdout | tests/secret-leak-sweep.test.ts > a connected key never reaches the renderer > appears in no column of the database
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: 'b6c7dd8d10f34d6f93bed8d719da38aa74d79cf1105dbda0ce7a94467840f73d'
+}
+
+ ✓ tests/secret-leak-sweep.test.ts (7 tests) 154ms
+ ✓ tests/capital-contest-data.test.ts (3 tests) 10ms
+
+ Test Files  2 passed (2)
+      Tests  10 passed (10)
+   Start at  03:02:20
+   Duration  1.99s (transform 1.13s, setup 0ms, import 1.71s, tests 163ms, environment 0ms)
+

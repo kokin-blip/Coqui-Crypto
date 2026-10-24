@@ -1,0 +1,210 @@
+[
+  {
+    "path": "apps/desktop/scripts/capital-contest-smoke.mjs",
+    "sha256": "54719a8b0dc0baf65e4c7dc9649b370b214dd52fe03d8c4a99cb6a1d29c3078d"
+  },
+  {
+    "path": "apps/desktop/src/main/capital-contest-handlers.ts",
+    "sha256": "f9a517cfddf7c26833dd1f49a7b3da7e05593afefd9a90ca241ca42d147b029b"
+  },
+  {
+    "path": "apps/desktop/src/main/composition.ts",
+    "sha256": "72bf2b555141d623f19629a1fb210b81939635c4b25d02154c9f912880c79898"
+  },
+  {
+    "path": "apps/desktop/src/renderer/app/CapitalContestResults.tsx",
+    "sha256": "339cd62a3c5dc0de149373dc8d50a921c9c744877f696cda0ac1e6d2807a86e6"
+  },
+  {
+    "path": "apps/desktop/src/renderer/app/Research.tsx",
+    "sha256": "8002c1637365b3c6195242e4ce6f405bfcc3c49eda4462e4ad0b602a3f29a67b"
+  },
+  {
+    "path": "apps/desktop/src/renderer/app/capital-contest-metrics.ts",
+    "sha256": "32b4fb0c22aa2dec7d075f25ddfb686633c62590baa2709602451deb9ec85ff0"
+  },
+  {
+    "path": "apps/desktop/src/renderer/query/refetch.ts",
+    "sha256": "2bd3cfec7fb3c0f951d412175935b7fa75939fe68d5ed27129756ba01cd18a83"
+  },
+  {
+    "path": "apps/desktop/src/renderer/styles/terminal.css",
+    "sha256": "655c8cf2e7e9a52c9ea30eb7ba78e6bf6c5e99efb3c918063f0524c7064ce38f"
+  },
+  {
+    "path": "docs/studies/behavior-manifests-v1.json",
+    "sha256": "11a93dc2a5869b6f51a36a3fc4824878c4d0548da64dcf4e30250777b76e55cd"
+  },
+  {
+    "path": "package.json",
+    "sha256": "c09247094c5df7b3272489a9eb01fa288c308f407b9a521d805a320bfa571f10"
+  },
+  {
+    "path": "packages/contracts/src/channels.ts",
+    "sha256": "545059bc8e0b241f88c6950661b5e7b310adc6902db8a12204b9eaa91e91fa95"
+  },
+  {
+    "path": "packages/contracts/src/index.ts",
+    "sha256": "a845e8bda856c6ae40e910933e0a72db453e2f1d49ed34bee7a19a17ba76a821"
+  },
+  {
+    "path": "packages/contracts/src/schemas/capital-contest.ts",
+    "sha256": "775421f311574731bddcfa204fb84ea4a56bf4598f4b4f50e4482dc25afba202"
+  },
+  {
+    "path": "packages/core/src/research/capital-contest-evaluation.ts",
+    "sha256": "464310358691f59dae3eed1d16259220d8d0b4c10336ca109be82827ddb7e24b"
+  },
+  {
+    "path": "packages/core/src/research/capital-contest-execution.ts",
+    "sha256": "24558ed4c095b4fbb958877649b2e254d846f7c325d58e5d3f338fc40e67b13c"
+  },
+  {
+    "path": "packages/core/src/research/capital-contest-manifest.ts",
+    "sha256": "0fc36e6e13e6f3d86e9f0376f295d84c4a114a3f4e0467ff260a8abff47ded8d"
+  },
+  {
+    "path": "packages/core/src/research/capital-contest-paths.ts",
+    "sha256": "0103caa7c922a8db1a7805a990521bb54838209b27a2fe614bdef7a5b8e22ecd"
+  },
+  {
+    "path": "packages/core/src/research/capital-contest-report.ts",
+    "sha256": "737f78e6a56e195a0e9c731d78e385ce84dc40c6028e6c7fc3e45c81c33b5dab"
+  },
+  {
+    "path": "packages/core/src/research/capital-contest-reserves.ts",
+    "sha256": "c0eca8f70ac022de02289db5e509c4f8d67ef8891b1d93aa2436a21ae44a8b75"
+  },
+  {
+    "path": "packages/core/src/research/capital-contest-sales.ts",
+    "sha256": "3522377330b7acaae34e278781ff8fb76be7433762f99bf9c28daa3eff55a06c"
+  },
+  {
+    "path": "packages/core/src/research/capital-contest-signals.ts",
+    "sha256": "d243c7e04c7604536621e9dea4f0c3e3a558017aab2f90a600f77149a6d1bc8f"
+  },
+  {
+    "path": "packages/core/src/research/capital-contest-types.ts",
+    "sha256": "6d6d269e7bd0fc1afd65e17257a01c431048a3f1f1afd946e353ee0ce4307154"
+  },
+  {
+    "path": "packages/core/src/research/capital-contest.ts",
+    "sha256": "0573b33a74830ed51e0ef1c7e818d4df2552bdc6d5f86cabdfa92e9de4e57ccf"
+  },
+  {
+    "path": "packages/core/src/research/capital-replay-kernel.ts",
+    "sha256": "8d9e4f5fc572b089a6e2b9df774d60db5760c8353710007612110a6401b0f3b4"
+  },
+  {
+    "path": "packages/core/src/research/capital-replay.ts",
+    "sha256": "e4eac3914934b29cb11b66a739d27f0238fdfc2b32d6d26578a0cc577e99687d"
+  },
+  {
+    "path": "packages/core/src/research/index.ts",
+    "sha256": "9ed2c779dd16376b97874030215fff5a5a9ca03390a68e0d7ce40248a6a71603"
+  },
+  {
+    "path": "packages/core/src/research/study-manifests.generated.ts",
+    "sha256": "567b6d1f8b424be7c18fc04b3635fce488d15c2a56c4ddde6fb4da4f56f5ca54"
+  },
+  {
+    "path": "packages/services/src/research/capital-contest-data.ts",
+    "sha256": "dc6657673ddcd8834b4e561b55e64c8e6d595942f6da918a4332e19cb84d91a2"
+  },
+  {
+    "path": "packages/services/src/research/capital-contest.ts",
+    "sha256": "eb7e4c6fcb0f68a92d231f3741be345bf33dba758d29682bbfefa36ccb4da4bd"
+  },
+  {
+    "path": "packages/services/src/research/index.ts",
+    "sha256": "c5d1097953766283bb985321a6461fc7f522e97cdeed7864adb757e3166d8c44"
+  },
+  {
+    "path": "packages/storage/src/repositories/capital-contest.ts",
+    "sha256": "a3d00f434bf0a16c30451bfdb3ec9016e31b3d4e76ff6f4c952cf344f4c482bd"
+  },
+  {
+    "path": "packages/storage/src/repositories/index.ts",
+    "sha256": "21e6200d89e937b844f30f755240a8249ed370c5b855d079bef99e39f1070c07"
+  },
+  {
+    "path": "packages/storage/src/repositories/profile-impact.ts",
+    "sha256": "e72f6d1936a129730299d70eb03dccb2a4125edc0d1f9fbbe23e29fa01c5dc5b"
+  },
+  {
+    "path": "scripts/research-capital-contest.mjs",
+    "sha256": "3a6591116df5c8f0c2afcdaf0e4e59439208a6a5ce31dc2ada1d993c76dee01c"
+  },
+  {
+    "path": "scripts/smoke-capital-contest.mjs",
+    "sha256": "9f8f33124bf2be6feda31dac504bdcc89ee611dc5c929922e0974db2ee4819db"
+  },
+  {
+    "path": "tests/capital-contest-compatibility.test.ts",
+    "sha256": "4310fc0ef8652f847d7a0c7aaaf83ddbefd1792c0aae5238ba37080d1987526c"
+  },
+  {
+    "path": "tests/capital-contest-data.test.ts",
+    "sha256": "5eeaca565d4c8fe4256763de7184eef289f988dba75c982991ee5663685a74c0"
+  },
+  {
+    "path": "tests/capital-contest-execution.test.ts",
+    "sha256": "b1aefcf27205bc005ba847712f8b32d84c1bb7e0be46103b685a5ec26056ee9e"
+  },
+  {
+    "path": "tests/capital-contest-governance.test.ts",
+    "sha256": "bf0df107aefe36cabd8ececd0d16838d18c791a60bc6292cd036e105f87828d1"
+  },
+  {
+    "path": "tests/capital-contest-inference.test.ts",
+    "sha256": "f2ba7f3fa7f80497fdc7e30e1f1db2201e4b95a58897ce9b69b461a7f740012b"
+  },
+  {
+    "path": "tests/capital-contest-manifest.test.ts",
+    "sha256": "5921e57bcda6f46461bbbca10bf550e1eadb9a1472421b5d0623ac7353b87667"
+  },
+  {
+    "path": "tests/capital-contest-paths.test.ts",
+    "sha256": "bfcbe119acc8ca513668f850177f7526427a79516e39e62fb97c33d1702d73c7"
+  },
+  {
+    "path": "tests/capital-contest-reserves.test.ts",
+    "sha256": "d2ffb7c1080172c1270dd4899618b5b3764ccfbc993b3bcc7a780a49cde5e440"
+  },
+  {
+    "path": "tests/capital-contest-selection.test.ts",
+    "sha256": "dde7fc03c43e4de3ad0adb3e3b9278e589530d4c21bf1713d8f320d6b9314cd0"
+  },
+  {
+    "path": "tests/capital-contest-service.test.ts",
+    "sha256": "fed4ee642c0dbd64ba4189182b9990db7291d4c80c82bac5da70d60baf60d4f2"
+  },
+  {
+    "path": "tests/capital-contest-signals.test.ts",
+    "sha256": "efa658d1ed3cc0d02e12413f0e42d3ddf41c06eab62045a62ad22ba3c65672cd"
+  },
+  {
+    "path": "tests/capital-contest-storage.test.ts",
+    "sha256": "8be4441a3886e1153eafa18af55b340cbc996d1ceb96206b0672cae8c04460b0"
+  },
+  {
+    "path": "tests/capital-contest-stress.test.ts",
+    "sha256": "99d02cc0c34873a78c121d69c354418a635469769afd2c935f9f0bc5dde1c648"
+  },
+  {
+    "path": "tests/capital-contest-ui.test.ts",
+    "sha256": "8fa52696aa8dd484edf276f41d7ac48f5b1f37492d0947439302e46a3de709fb"
+  },
+  {
+    "path": "tests/contracts-channels.test.ts",
+    "sha256": "10a1d6e270348ae6c9923a924d9f425475affee05127128a6fa16d9fe6b45a21"
+  },
+  {
+    "path": "tests/helpers/capital-contest.ts",
+    "sha256": "3e148cc9320defd67156165a0f9b5a4e263ffe6527566e7fd227fec9343cb844"
+  },
+  {
+    "path": "tests/secret-leak-sweep.test.ts",
+    "sha256": "6ff1f9cacaabe1d95efea8e08df85cf1f3bc62b0c78078330d0190f038e790aa"
+  }
+]

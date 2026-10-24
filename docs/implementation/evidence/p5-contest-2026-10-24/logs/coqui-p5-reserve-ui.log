@@ -1,0 +1,27 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/capital-contest-ui.test.ts (7 tests) 2008ms
+ ❯ tests/capital-contest-reserves.test.ts (2 tests | 1 failed) 245ms
+     × separates strict realized backing from economic cash, without inventing realized gain or weakening P3 97ms
+     ✓ freezes matched targets across 0/25/50% and batch/floor sensitivities 147ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/capital-contest-reserves.test.ts > P5 distribution policies remain simulation hypotheses > separates strict realized backing from economic cash, without inventing realized gain or weakening P3
+AssertionError: expected '0' to be '5' // Object.is equality
+
+Expected: "5"
+Received: "0"
+
+ ❯ tests/capital-contest-reserves.test.ts:15:87
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 8 passed (9)
+   Start at  02:23:01
+   Duration  3.96s (transform 1.12s, setup 0ms, import 1.58s, tests 2.25s, environment 0ms)
+

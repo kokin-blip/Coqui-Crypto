@@ -1,3 +1,4 @@
+import { CapitalContestResults } from './CapitalContestResults.js';
 import { CapitalReplayResults } from './CapitalReplayResults.js';
 import { NewsStudyStatus } from './NewsPanels.js';
 import type { CoquiClient } from '@coqui/contracts';
@@ -37,6 +38,7 @@ export function Research({ client }: { readonly client: CoquiClient }): React.JS
         </details>)}
       </section>
       <CapitalReplayResults client={client} />
+      <CapitalContestResults client={client} />
       <ResearchRuns client={client} />
       <ResearchEvidenceDashboard client={client} />
       <NegativeFindings client={client} />

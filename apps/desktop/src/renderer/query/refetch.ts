@@ -27,6 +27,8 @@ export interface ChannelPolicy {
 }
 
 export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
+  'research.capital-contest.runs': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'research.capital-contest.detail': { refetchIntervalMs: false, staleTimeMs: 0 },
   'research.capital-replay.runs': { refetchIntervalMs: false, staleTimeMs: 0 },
   'research.capital-replay.detail': { refetchIntervalMs: false, staleTimeMs: 0 },
   'news.report.select-location': { refetchIntervalMs:false,staleTimeMs:0 },

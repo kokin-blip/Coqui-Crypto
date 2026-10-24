@@ -1,0 +1,13 @@
+{
+  "issueId": "COQ-39",
+  "issueUuid": "cf8d98bd-ec47-4186-80c2-88f0b4001aeb",
+  "url": "https://linear.app/coqui-crypto/issue/COQ-39/implement-p5-small-portfolio-strategy-contest-and-separate-policy",
+  "status": "In Progress",
+  "updatedAt": "2026-10-24T10:39:28.664Z",
+  "commentId": "00826f1e-b4e9-43e2-bb14-d612e60ea4bb",
+  "milestoneId": "7c291557-21bc-42fb-9d52-9a58363c3b7e",
+  "milestoneCommentId": "d9d6c20b-8024-42bf-976d-23974c163221",
+  "promptUsed": "Ok move onto building P5 using the saved plan. Preserve P0–P4 and the full P0–P7 scope, and keep the phase tracker updated.",
+  "localUncommitted": true,
+  "developmentEvaluationPending": true
+}

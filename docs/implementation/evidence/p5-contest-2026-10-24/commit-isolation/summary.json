@@ -1,0 +1,35 @@
+{
+  "candidate": "/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-p5-commit-8kxxwduz",
+  "base": "a015711c29a10d768f0d0b40d467a75c1bd0adac",
+  "mixed": [
+    "apps/desktop/src/main/composition.ts",
+    "apps/desktop/src/renderer/query/refetch.ts",
+    "apps/desktop/src/renderer/styles/terminal.css",
+    "package.json",
+    "packages/contracts/src/channels.ts",
+    "tests/contracts-channels.test.ts"
+  ],
+  "generated": [
+    "docs/studies/behavior-manifests-v1.json",
+    "packages/core/src/research/study-manifests.generated.ts"
+  ],
+  "sourceFiles": 52,
+  "snapshotEntries": 644,
+  "promptUsed": "Commit and push P5-A\u2013G, then lets move on to planning P6. Reread its full requirements in the saved roadmap and inspect the code before coding. Keep P5-H pending and preserve P0\u2013P4 and the full P0\u2013P7 scope.",
+  "status": "isolated_source_verified_before_commit",
+  "fullTestFiles": 317,
+  "fullTests": 2215,
+  "newP5Cases": 44,
+  "typecheck": "passed",
+  "lint": "passed",
+  "rootBuild": "passed",
+  "desktopBuild": "passed",
+  "cliChecks": 9,
+  "nativeP5Checks": 22,
+  "nativeGeneral": "ALL PASS",
+  "toolchain": "Node24; direct installed script binaries avoid clone pnpm auto-install; initial manager/path failures retained",
+  "scope": "P5-A\u2013G only; six mixed files reconstructed against HEAD, generated manifests from isolated closure",
+  "P5H": "pending; no actual market evaluation",
+  "P6": "planning follows; no implementation",
+  "remaining": "Human review; permitted data/objectives/registry/power/resources and actual H; operational/owner/qualification/release gates remain open."
+}

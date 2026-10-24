@@ -1,0 +1,4 @@
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/.pnpm/electron@43.4.1_supports-color@7.2.0/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron exited with signal SIGABRT
+undefined
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop:
+[ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL] Command failed with exit code 1: electron scripts/capital-contest-smoke.mjs

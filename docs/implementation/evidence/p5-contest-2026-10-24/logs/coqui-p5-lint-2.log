@@ -1,0 +1,9 @@
+$ eslint .
+
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/tests/capital-contest-reserves.test.ts
+  4:25  error  'T' is defined but never used    @typescript-eslint/no-unused-vars
+  4:41  error  'DAY' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 2 problems (2 errors, 0 warnings)
+
+[ELIFECYCLE] Command failed with exit code 1.

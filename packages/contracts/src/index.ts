@@ -19,3 +19,4 @@ export * from './schemas/news-export-permission.js';
 
 export * from './schemas/profit-reserve.js';
 export * from './schemas/capital-replay.js';
+export * from './schemas/capital-contest.js';

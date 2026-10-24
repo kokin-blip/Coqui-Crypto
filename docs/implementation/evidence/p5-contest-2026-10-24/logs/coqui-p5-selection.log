@@ -1,0 +1,10 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/capital-contest-selection.test.ts (1 test) 65ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  02:35:14
+   Duration  745ms (transform 500ms, setup 0ms, import 606ms, tests 65ms, environment 0ms)
+

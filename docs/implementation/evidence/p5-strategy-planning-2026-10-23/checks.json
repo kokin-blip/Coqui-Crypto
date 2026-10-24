@@ -1,0 +1,41 @@
+{
+  "checks": [
+    {
+      "command": [
+        "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "--check",
+        "docs/implementation/evidence/p5-strategy-planning-2026-10-23/probes.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "docs/implementation/evidence/p5-strategy-planning-2026-10-23/probes.mjs",
+        "--source-root=/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-p4-commit-xlyctq1w"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"rotationWitness\":true,\"frozenP4Cases\":6,\"legacyAlignmentWitness\":true,\"synthetic\":true}\n",
+      "stderr": "(node:81235) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        "docs/implementation/small-portfolio-phase-tracker-2026-10-23.md"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "probeJsonByteIdenticalOnRetry": true,
+  "beforeProbeSha256": "55a25eaad98736354e91120acb9090a3e1e5edcb6c653b88e71cbd5f9910d77a",
+  "afterProbeSha256": "55a25eaad98736354e91120acb9090a3e1e5edcb6c653b88e71cbd5f9910d77a",
+  "marketRun": false,
+  "applicationTestsNotRepeatedForPlanning": true
+}

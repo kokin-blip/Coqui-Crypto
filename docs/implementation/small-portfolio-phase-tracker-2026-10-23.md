@@ -8,8 +8,8 @@ The [full saved roadmap](small-portfolio-profit-policy-plan-2026-10-23.md) remai
 | P1 Capital-flow accounting and corrected performance | Committed and pushed; in review | Storage, ingestion, calculations, read projections, displays, lifecycle and acceptance checks; isolated delivery 0c3d36c | Human review; actual connected evidence completeness, owner qualification and release remain separate open gates | P0 |
 | P2 Shared budgets and small-portfolio feasibility | Committed and pushed; In Review | A–F capability; isolated commit aff6b60 passes 286 files/2,033 tests, typecheck/lint/builds/native checks; original combined-checkout 292-file/2,140-test evidence retained | Human review; account-specific rules/fees/holds/ownership and owner/release gates remain open | P1 review; P6 operational review before connected adoption |
 | P3 Profit-reserve evaluation and previews | Committed and pushed; In Review | P3-A–F in 9c6b2fc; exact isolated closure 293 files/2,106 tests, typecheck/lint/builds and both native suites (24 P3 checks); combined 299-file/2,213-test evidence retained | Human review; actual basis/fees/common-cut/retained-plan proof, account ownership, owner/qualification/release gates remain open | P1/P2; COQ-29/31 patterns; P6 operational authorization remains separate |
-| P4 Capital-aware simulation | Locally complete; In Review; uncommitted | P4-A–F capability; 309 files/2,278 tests, typecheck/lint/root and desktop builds, ten CLI checks, standard native safety and 19 P4 native checks; full nine-balance offline replay and immutable read-only results | Human review; exact source isolation before a later requested commit; actual data/cost/account evidence and P5/P7 owner/qualification/release gates remain separate | P1–P3 review; full saved P4 plan; no operational authority |
-| P5 Strategy and policy experiments | Not started | None | All hypotheses, finite trials, negative findings and evidence gates retained | P4 and adequate development data |
+| P4 Capital-aware simulation | Committed and pushed; In Review | P4-A–F in a015711; isolated 303 files/2,171 tests, typecheck/lint/root and desktop builds, ten CLI checks, standard native safety and 19 P4 native checks; original combined 309-file/2,278-test evidence retained | Human review; actual data/cost/account evidence and P5/P7 owner/qualification/release gates remain separate | P1–P3 review; full saved P4 plan; no operational authority |
+| P5 Strategy and policy experiments | A–G capability complete locally; H evaluation pending; In Progress | [Local delivery](small-portfolio-p5-delivery-2026-10-24.md): frozen-v1 compatibility, causal policies/controls, separate execution/reserve experiments, joint-path inference, immutable CLI/resume and read-only results; 323-file/2,321-test full run plus final 14-suite/44-test P5 closure, builds and CLI/native checks | Human review; isolated verification before requested commit; P5-H permitted data, fixed objectives/registry/power/resources and complete development results; all retained hypotheses and later gates remain open | P4 review; full saved P5 plan; adequate permitted evidence before actual evaluation; no operational authority |
 | P6 Optional reviewed paper integration | Not started | None | Default off; all operational/authority/review gates retained | P3/P4 and applicable paper qualification |
 | P7 Prospective evaluation and qualification | Not started | None | Fresh registration, evidence, coverage, qualification and promotion gates retained | Owner registration, valid identities, readiness and fresh data |
 
@@ -257,3 +257,74 @@ Ok move onto building P4 using the saved plan. Preserve P0–P3 and the full P0�
 **Prompt used**
 
 Ok move onto building P4 using the saved plan. Preserve P0–P3 and the full P0–P7 scope, and keep the phase tracker updated.
+
+
+## Delivery: push P4 and prepare P5
+
+- P4 committed and pushed as [a015711c29a10d768f0d0b40d467a75c1bd0adac](https://github.com/kokin-blip/Coqui-Crypto/commit/a015711c29a10d768f0d0b40d467a75c1bd0adac) on `codex/operations-crew-journal`. Exact isolated closure: **303 files / 2,171 tests**, typecheck/lint/root and desktop builds, **10 CLI checks**, **19 P4 native checks** and standard native safety smoke pass. [Isolated evidence](evidence/p4-replay-2026-10-23/commit-isolation/summary.json) is separate from the unchanged combined-checkout 309-file/2,278-test evidence. Six mixed files exclude unrelated hourly/execution edits. Root adoption preserved all working-file bytes; existing unrelated changes remain uncommitted. P4 stays In Review, not merged/released/qualified.
+- Reread the complete saved roadmap, P4 boundary and P5 strategy/data/cost/accounting/evaluation/UX/dependency/acceptance requirements. Saved the [P5 implementation plan](small-portfolio-p5-implementation-plan-2026-10-23.md) and [planning evidence](evidence/p5-strategy-planning-2026-10-23/). New source adapters must guard dated alignment, missing metrics, causal decision-time book state, two-asset buffer degeneracy and full trial history; existing legacy helpers remain unchanged. Six synthetic complete-result hashes freeze v1 compatibility before a proposed kernel extraction.
+- P5-A–G are reviewable capability batches: strict manifest and v1 compatibility; causal signals/controls; separate execution/mechanism comparisons; reserve experiments; joint-path inference/inventory/choice-or-none; immutable offline CLI/read-only UX; integrated acceptance. P5-H is the actual permitted development evaluation, separately pending adequate inputs, concrete objectives and complete evidence. Neither tooling nor synthetic fixtures complete H. Finite capital/cost/funding/trial inventories, negative outcomes and resource/precision failures stay visible.
+- No P5 application code or market evaluation, account acquisition, study registration, holdout access, shadow collector, financial action, policy/default activation, installation, deployment or release. This planning addendum/tracker/evidence is saved locally and uncommitted. No decision blocks synthetic P5-A–G; permitted sources/universe, assurance/risk controls, primary capital region, objective and compute/power choices must be explicit before H. They are not assumed user trading preferences.
+- [COQ-38](https://linear.app/coqui-crypto/issue/COQ-38/implement-p4-capital-aware-replay-and-reserve-policy-simulation) remains In Review, pushed. [COQ-39](https://linear.app/coqui-crypto/issue/COQ-39/implement-p5-small-portfolio-strategy-contest-and-separate-policy) tracks pending P5 implementation in Backlog, dependent on P4. Issue descriptions/completion comments and the milestone progress comment are synchronized; [sync record](evidence/p5-strategy-planning-2026-10-23/delivery.json). Existing milestone exits, relationships, assignees, owner/account/review/qualification/release gates are preserved. P0–P4 and every original P0–P7 requirement remain intact; P6/P7 are pending in full.
+
+**Prompt used**
+
+Commit and push P4, then lets move on to P5. Reread its full requirements in the saved roadmap, inspect the code, and prepare a concrete implementation plan before coding. Preserve P0–P4 and the full P0–P7 scope.
+
+
+## P5 implementation started — October 24, 2026
+
+- Reread the complete saved P5 plan and applicable full roadmap requirements; captured [baseline](evidence/p5-contest-2026-10-24/baseline.json), 507 existing dirty entries, 29 protected hashes, index hash and exact pre-build manifests. P0–P4/full P0–P7 are retained.
+- P5-A causal kernel extraction and strict experiment contracts are in progress. P5-A–G acceptance remains pending; P5-H actual permitted evaluation requires concrete adequate data/objectives/resources and is not claimed. COQ-39 In Progress; local/uncommitted.
+- No financial action, registration, holdout access, activation or release.
+
+**Prompt used**
+
+Ok move onto building P5 using the saved plan. Preserve P0–P4 and the full P0–P7 scope, and keep the phase tracker updated.
+
+### P5-A/B/C — first compatibility and causal mechanics batch
+
+- Extracted an internal decision-time kernel while retaining a frozen P4 wrapper. All six saved complete-result hashes reproduce exactly; P0–P3 financial modules and P4 helper semantics are unchanged. Added strict finite manifests/contracts, nine-capital inventory/chronological/resource checks and source-bound input types.
+- Added trend/cash, buffered rotation, concrete allocator, hold/passive/cash and prior-training exposure adapters; decision-time actual holdings, down-only caps/cash residual, daily defensive/risk checks and matched reference targets. A/C-style intent adjustment is separate from modeled partial fills. Initial **6 suites / 21 tests** pass, including six full P4 goldens, independent signal/execution/inference cases and real transaction rollback/resume/read isolation. This is an intermediate cut, not P5 acceptance.
+- P5-D/E/F work is in progress: separately versioned simulation-only economic cash-cap comparison, full joint-path inference, immutable offline journal/CLI and read-only Research results. Operational P3 rejects the counterfactual preview identity. Broad stress/lifecycle/cost/calibration/native/full verification remains pending.
+- Capability A–G is not accepted or complete; P5-H real development evaluation remains evidence-gated. No financial action, default/strategy activation, registration, final/holdout read, deployment or release. Local/uncommitted; COQ-39 In Progress; all P0–P7 requirements and dependencies remain retained.
+
+**Prompt used**
+
+Ok move onto building P5 using the saved plan. Preserve P0–P4 and the full P0–P7 scope, and keep the phase tracker updated.
+
+### P5-D/E/F — offline implementation delivered locally; acceptance running
+
+- Added separately versioned economic-cash counterfactual with unchanged actual realized/basis evidence and all other P3 caps; an independent $500 fixture shows strict backing reserves $0 versus $5 simulated economic-cash reserve, H=$20 and realized gain=$0. Operational P3 rejects the counterfactual preview. Full-exit native/cost/basis consequences are diagnostic only and fund no claim or order. Explicit future operating requests per balance preserve P3 sufficient-capital proof; cash-only is never substituted for a held book.
+- Added joint stationary decimal path reconstruction, full in-path policy/actual-book/fees/funding/reserve evaluation, bounded metric vectors/full-result hashes and exact read-only path reconstruction. Six v1 hashes remain unchanged. Basic paired Bonferroni intervals require the full declared replication inventory and tail resolution; DSR/PBO, per-capital/fold/rolling/cost gates and candidate-or-none remain strict. Original non-synthetic registry metadata must substantiate global trial assurance.
+- The complete S/E/R recipe validates at **1,053 cells**, split into single-scenario financial batches within unchanged P4 limits. Added declared workload/payload limits, append-only inventory/attempt/chunk/result/choice/failure records, resume, typed local reads, actual CLI and Research inspection. Explicit observed publication evidence is required when that assurance is claimed. No provider or registration/financial command is accepted.
+- Latest focused closure: **24 suites / 126 tests pass**, including 65 original P4 tests, 40 P5 cases and contract checks; actual CLI **9 checks pass**. Further integrated acceptance, final full tests/typecheck/lint/builds, native UI/safety and final preservation/issue synchronization are running. These intermediate counts do not substitute for the final source closure.
+- P5-A–G capability acceptance is still pending. P5-H actual permitted development evaluation has not run and remains pending adequate source/data/universe/cost/rules/registry/objectives/power/resources. Human review, owner/account/qualification/release and all P6/P7 gates remain open. P0–P4/full P0–P7 are preserved; local and uncommitted.
+
+**Prompt used**
+
+Ok move onto building P5 using the saved plan. Preserve P0–P4 and the full P0–P7 scope, and keep the phase tracker updated.
+
+### P5-G — local capability acceptance; P5-H development evaluation pending
+
+- **P5-A–G capability complete locally.** [Delivery record](small-portfolio-p5-delivery-2026-10-24.md), [acceptance summary](evidence/p5-contest-2026-10-24/summary.json), [preservation audit](evidence/p5-contest-2026-10-24/preservation.json), raw logs, CLI evidence and production screenshots retained. The full saved P5 design remains unchanged; no future requirement was removed.
+- Strict finite inventory validates **1,053 S/E/R cells** before separately declared V/sensitivity/cap-review additions. Nine balances share history. Prior-only controls, down-only target caps, actual causal book cuts, matched execution/reserve targets and daily required exits are implemented. Missing evidence/underpowered inference yields unavailable or none. Full joint paths rerun signals/calibration/books/costs/funding/reserves; stored hashes support exact reconstruction.
+- Final repository run: **323 files / 2,321 tests pass** before the final display-only correction. Final P5 closure after correction: **14 suites / 44 tests pass**, including independent arithmetic, property sequences, positive selection oracle, missing-evidence gates and six unchanged full P4 hashes. Final typecheck/lint and production desktop build pass; root build, actual CLI (9), existing native safety and final production P5 native checks (22) pass. All twelve final dark/narrow-light/high-contrast200% captures were inspected. Reviewer scored annual-rate labeling and intact numbers resolved; the ship verdict covers those two fixes only. Existing PRODUCT/DESIGN and pre-existing documentation drift are preserved.
+- Preservation audit passes: **498/507** pre-existing dirty entries byte-identical; nine intentional overlaps have exact inverse/archive proof. **28** protected files are byte-identical; the permitted P4 extraction has original-source archive and six full-result compatibility hashes. P0–P3 accounting/budget/reserve semantics, old reports, negative research, consumed holdouts, original roadmap/companion evidence and accepted plans remain intact. HEAD and index are unchanged. Generated current dependency manifests do not rewrite historical studies.
+- **P5-H has not run and remains pending**, not complete: freeze adequate permitted provider/source/universe/rights and point-in-time history; cost/native-rule assurance/scenarios; development/warmup boundaries; allocator/risk policy; primary capital region/weights; funding/expenses; sacrifice/downside objective; original global trial metadata; statistical power and resource budget. Then retain all declared outcomes and candidate-or-none evidence. Synthetic jobs cannot satisfy this gate. Breakout/range/blend/ML/allocation/features remain retained, unevaluated hypotheses under their original failure criteria.
+- Delivery is **local/uncommitted/unpushed**, based on P4 a015711. Human review and exact source-isolated checks before a requested commit remain open. COQ-39 stays **In Progress** because H acceptance is unmet. This delivers no study registration, prospective collector, financial command, default activation, account access, installed upgrade, deployment, qualification or release.
+- Linear synchronized: COQ-39 remains In Progress, delivery comment `00826f1e-b4e9-43e2-bb14-d612e60ea4bb` and milestone progress `d9d6c20b-8024-42bf-976d-23974c163221`; exact prompt and open gates retained. [Receipts](evidence/p5-contest-2026-10-24/linear-sync.json).
+- **P0–P4 and full P0–P7 preserved. P6/P7 remain not started in full.** Before another phase, reread its full requirements. P6 default-off operational/ownership/OMS/fencing/kill/pause/manual Resume/unknown-outcome review and P7 owner/fresh-registration/coverage/actions/statistics/final-claim-once gates remain mandatory. External payouts/live authority are absent.
+
+**Prompt used**
+
+Ok move onto building P5 using the saved plan. Preserve P0–P4 and the full P0–P7 scope, and keep the phase tracker updated.
+
+### P5-A–G isolated commit closure verified
+
+- P5-only source passes **317 files / 2,215 tests**, typecheck/lint, root/desktop builds, nine actual CLI checks, 22 P5 production-native checks and standard native safety ALL PASS. [Exact closure evidence](evidence/p5-contest-2026-10-24/commit-isolation/summary.json). Original combined-checkout evidence is retained. Six mixed files exclude unrelated edits; current manifests are regenerated using the isolated source closure.
+- Commit/push follows this record. P5-H remains pending in full; capability/review/actual research are separate. No P6 application code, activation, financial action, registration or release. P0–P4/full P0–P7 preserved.
+
+**Prompt used**
+
+Commit and push P5-A–G, then lets move on to planning P6. Reread its full requirements in the saved roadmap and inspect the code before coding. Keep P5-H pending and preserve P0–P4 and the full P0–P7 scope.

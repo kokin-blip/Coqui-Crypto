@@ -1,0 +1,108 @@
+{
+  "synthetic": true,
+  "accountAccess": false,
+  "runId": "798965951c62972231ffd1fc8a677343636d35840f04eeb6cf3a2fe9f0869be4",
+  "checks": [
+    {
+      "name": "desktop-dark: complete inventory and none",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-dark: keyboard help fits viewport",
+      "passed": true,
+      "detail": "{\"left\":570,\"right\":870,\"top\":360.5,\"bottom\":500.5,\"width\":1440,\"height\":861}"
+    },
+    {
+      "name": "desktop-dark: help returns keyboard focus",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-dark: no run or financial action",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-light: complete inventory and none",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-light: keyboard help fits viewport",
+      "passed": true,
+      "detail": "{\"left\":170,\"right\":470,\"top\":360.5,\"bottom\":500.5,\"width\":640,\"height\":861}"
+    },
+    {
+      "name": "narrow-light: help returns keyboard focus",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-light: no run or financial action",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast-zoom: complete inventory and none",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast-zoom: keyboard help fits viewport",
+      "passed": true,
+      "detail": "{\"left\":170,\"right\":470,\"top\":145.25,\"bottom\":285.25,\"width\":640,\"height\":430}"
+    },
+    {
+      "name": "contrast-zoom: help returns keyboard focus",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast-zoom: no run or financial action",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "period, exposure and trial assumptions explicit",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "production preload reads bounded results",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "interruption differs from zero return",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "read routes leave all database rows unchanged",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "no run or financial controls",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "live authority remains disabled",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "no renderer errors",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "rendererErrors": [],
+  "browserNotices": [
+    "The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.",
+    "The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.",
+    "The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element."
+  ]
+}

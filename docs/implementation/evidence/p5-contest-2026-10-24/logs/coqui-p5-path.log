@@ -1,0 +1,11 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/capital-contest-paths.test.ts (1 test) 4660ms
+   ✓ reconstructs every full-book hash from a stored path without writing or reopening input files  4659ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  02:36:49
+   Duration  6.52s (transform 1.35s, setup 0ms, import 1.79s, tests 4.66s, environment 0ms)
+
