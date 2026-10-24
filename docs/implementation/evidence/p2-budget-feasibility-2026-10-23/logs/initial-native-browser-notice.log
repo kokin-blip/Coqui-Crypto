@@ -1,0 +1,24 @@
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '373da8666cf811ab69cb6bcfdd25c866e4f5a945d8bfba232df106662c8bba98'
+}
+PASS desktop-dark: cash survives unavailable ownership 
+PASS desktop-dark: scenario names its assumptions 
+PASS desktop-dark: keyboard help fits viewport {"left":570,"right":870,"top":360.5,"bottom":500.5,"width":1440,"height":861}
+PASS narrow-light: cash survives unavailable ownership 
+PASS narrow-light: scenario names its assumptions 
+PASS narrow-light: keyboard help fits viewport {"left":170,"right":470,"top":360.5,"bottom":500.5,"width":640,"height":861}
+[13768:1023/165310.948197:ERROR:mojo/public/cpp/bindings/lib/interface_endpoint_client.cc:748] Message 2 rejected by interface blink.mojom.Widget
+PASS contrast-zoom: cash survives unavailable ownership 
+PASS contrast-zoom: scenario names its assumptions 
+PASS contrast-zoom: keyboard help fits viewport {"left":170,"right":470,"top":145.25,"bottom":285.25,"width":640,"height":430}
+PASS new channel passes production preload 
+PASS reads do not change durable state 
+PASS live authority remains disabled 
+FAIL no renderer component errors The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.; The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.; The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.
+Error: no renderer component errors
+    at check (file:///Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/scripts/capital-feasibility-smoke.mjs:20:165)
+    at run (file:///Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/scripts/capital-feasibility-smoke.mjs:84:3)
+undefined
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop:
+[ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL] Command failed with exit code 1: electron scripts/capital-feasibility-smoke.mjs

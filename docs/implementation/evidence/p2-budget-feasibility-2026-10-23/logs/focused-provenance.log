@@ -1,0 +1,11 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/capital-budget-consumers.test.ts (9 tests) 536ms
+ ✓ tests/capital-ingestion.test.ts (18 tests) 1097ms
+
+ Test Files  2 passed (2)
+      Tests  27 passed (27)
+   Start at  17:04:59
+   Duration  2.87s (transform 2.50s, setup 0ms, import 3.38s, tests 1.63s, environment 0ms)
+

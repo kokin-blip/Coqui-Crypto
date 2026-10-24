@@ -5,6 +5,7 @@ export * from './client.js';
 export * from './authenticated.js';
 export * from './alpaca-paper.js';
 export * from './alpaca-portfolio-history.js';
+export * from './alpaca-capital-rules.js';
 export * from './alpaca-paper-stream.js';
 export * from './rate-limiter.js';
 export * from './alpaca-universe.js';

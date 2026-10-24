@@ -1,0 +1,107 @@
+{
+  "baselineHead": "94b4f450692ac0e8737048799225f44d6e5d3345",
+  "preExistingCount": 495,
+  "unchangedCount": 486,
+  "intentionalOverlaps": [
+    {
+      "status": " M",
+      "path": "apps/desktop/src/main/composition.ts",
+      "sha256": "fe7f1cd0f8b1b3245a071700b37a173353f74a1284569a41a28a912c956cbba5",
+      "currentSha256": "344b3e8757a480a00d34dd0249fa8ad820f386899ff2e833cba01514e014b87b"
+    },
+    {
+      "status": " M",
+      "path": "apps/desktop/src/renderer/query/refetch.ts",
+      "sha256": "d4b1046cb31a26a53d570562e55ea78e87554867a07083d77cf54f482b5d5695",
+      "currentSha256": "cf8ee2f0245d9bbfa6a11a8211b32f008b2893798a217734aa083940254f4ce4"
+    },
+    {
+      "status": " M",
+      "path": "apps/desktop/src/renderer/styles/terminal.css",
+      "sha256": "a49a262a85e1c445bd62a4fb57c3a762d66edb39a79ddcfd16f7778bcfefb8a9",
+      "currentSha256": "2a97dab3f70fe02ed420877daf6cdfc966807790548b518633ebc2daae2b3bfa"
+    },
+    {
+      "status": " M",
+      "path": "docs/studies/behavior-manifests-v1.json",
+      "sha256": "3bff75a39b1ec1e946331b2cdbb1de976852e853f3a64fb7d6a316d54b86bc83",
+      "currentSha256": "97cbcc39860a0e7eac02c93c40a6acbb596476cff2db67b2e36ef2aa7cedde2e"
+    },
+    {
+      "status": " M",
+      "path": "packages/adapters/src/http/alpaca-paper.ts",
+      "sha256": "403f5530bf39ca5c86f51e0de3e4508adfdaf03d7174085500ff0d6d1491247e",
+      "currentSha256": "85474134631ae3153f05087bc47151665dd2cdd441a5eb88b1d6c91e975aff58"
+    },
+    {
+      "status": " M",
+      "path": "packages/contracts/src/channels.ts",
+      "sha256": "6e652deef47c9add197694a554b5131be3506cb967739204575c5625014c0af0",
+      "currentSha256": "a06646589ffa49a9f50ed8bc032a6044ae08f13dad5e45df054178af804f73d1"
+    },
+    {
+      "status": " M",
+      "path": "packages/core/src/research/study-manifests.generated.ts",
+      "sha256": "0d56757ec1ab22bc1f139211f4f10032945d3de414f102824c328b8fc55b8278",
+      "currentSha256": "6b97ab81a8a4069f4db92efdd0e604dae748ad3b21e0829612cf015c2db1b5a4"
+    },
+    {
+      "status": " M",
+      "path": "packages/services/src/paper/index.ts",
+      "sha256": "02769ad574d857d57b872bbb614ce700bf1fb4b4109954b4ebf1c3798d005a6a",
+      "currentSha256": "d7784da18456d29e4053444402d2852ff40d3d1558e80ff0159a239df6385146"
+    },
+    {
+      "status": " M",
+      "path": "tests/contracts-channels.test.ts",
+      "sha256": "2f02d00569a704e3ced08e39fb205440ae68002c9db613393117fded4df178ef",
+      "currentSha256": "ff5a6f7e030cb78e98fb80b5cc2fc104159a45324c2c490eb95adac4615fa035"
+    }
+  ],
+  "protected": [
+    {
+      "path": "docs/implementation/small-portfolio-profit-policy-plan-2026-10-23.md",
+      "sha256": "fda3c0b76897bbb4497cf0e13a7a70d5b9d0e75c441fea4a1044c500ae5cdd25",
+      "currentSha256": "fda3c0b76897bbb4497cf0e13a7a70d5b9d0e75c441fea4a1044c500ae5cdd25",
+      "matches": true
+    },
+    {
+      "path": "docs/implementation/small-portfolio-profit-policy-evidence-2026-10-23.json",
+      "sha256": "ff2b0270f0de0af52b87cd7e3f6eb168e34956b3857ab085c4290d2bfff287a4",
+      "currentSha256": "ff2b0270f0de0af52b87cd7e3f6eb168e34956b3857ab085c4290d2bfff287a4",
+      "matches": true
+    },
+    {
+      "path": "docs/implementation/small-portfolio-p2-implementation-plan-2026-10-23.md",
+      "sha256": "ece9e81c0a86dde3f69b68648a664141f17412d69cbad01d4cc87d7b405dc9f1",
+      "currentSha256": "ece9e81c0a86dde3f69b68648a664141f17412d69cbad01d4cc87d7b405dc9f1",
+      "matches": true
+    },
+    {
+      "path": "packages/core/src/portfolio/capital-performance.ts",
+      "sha256": "9275fdffeaa4f9fb035778e6e84b75b525e8d5f19bbc96239b5d6c912c795b73",
+      "currentSha256": "9275fdffeaa4f9fb035778e6e84b75b525e8d5f19bbc96239b5d6c912c795b73",
+      "matches": true
+    },
+    {
+      "path": "packages/core/src/execution/remediation-planner.ts",
+      "sha256": "50f28c1bfd56e1b923ec81c379fa0bde28d134b2129d4682ca727c2c087d8f40",
+      "currentSha256": "50f28c1bfd56e1b923ec81c379fa0bde28d134b2129d4682ca727c2c087d8f40",
+      "matches": true
+    }
+  ],
+  "generatedArchives": [
+    {
+      "path": "docs/studies/behavior-manifests-v1.json",
+      "archive": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/prebuild/behavior-manifests-v1.json",
+      "sha256": "3bff75a39b1ec1e946331b2cdbb1de976852e853f3a64fb7d6a316d54b86bc83",
+      "matchesOriginal": true
+    },
+    {
+      "path": "packages/core/src/research/study-manifests.generated.ts",
+      "archive": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/prebuild/study-manifests.generated.ts",
+      "sha256": "0d56757ec1ab22bc1f139211f4f10032945d3de414f102824c328b8fc55b8278",
+      "matchesOriginal": true
+    }
+  ]
+}

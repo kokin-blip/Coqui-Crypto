@@ -3,16 +3,18 @@ import { capitalPerformanceView, capitalScopesView, ingestLocalPaperCapital, rec
 import type { Db } from '@coqui/storage';
 
 import type { ChannelHandlers } from './dispatch.js';
+import { createCapitalFeasibilityHandlers } from './capital-feasibility-handlers.js';
 
 /** Read-only handlers accept a database, not a provider or execution client. */
 export function createCapitalHandlers(profileId: string, database: Db, initialization?: {
-  readonly nowMs: number; readonly onError: (error: unknown) => void;
+  readonly nowMs: number; readonly now?: () => number; readonly onError: (error: unknown) => void;
 }): ChannelHandlers {
   if (initialization) {
     try { ingestLocalPaperCapital(profileId, database, initialization.nowMs); }
     catch (error) { recordCapitalIngestionFailure('local_paper', initialization.nowMs, database); initialization.onError(error); }
   }
   return {
+    ...createCapitalFeasibilityHandlers(profileId, database, initialization?.now ?? (() => Date.now())),
     'capital.scopes': () => ({ ok: true, value: capitalScopesView(profileId, database) }),
     'capital.performance': (request: ChannelRequest<'capital.performance'>) => {
       try { return { ok: true, value: capitalPerformanceView(profileId, request, database) }; }

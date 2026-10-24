@@ -1,5 +1,6 @@
 import {
   instrumentKey,
+  budgetAmount,
   paperFillLedgerEntries,
   sha256Hex,
   sourceCompletionDelayMs,
@@ -11,7 +12,6 @@ import {
   type ProductRuleSnapshot,
 } from '@coqui/core';
 import {
-  appendPaperOrderEvent,
   commitExploratoryPaperFill,
   commitPaperFill,
   getPaperPendingExecution,
@@ -30,12 +30,13 @@ import {
 
 import { isApproved, type ApprovedExecution } from './execution-gate.js';
 import { availableForPaperIntentUsd } from './oms-book.js';
+import { paperBudgetTransaction, type PaperCapitalBudgetPort } from './capital-budget-port.js';
+import { appendOmsEvent, fillIsSelfConsistent } from './oms-facts.js';
 import {
   isFilled,
   paperCostModelHash,
   selectExecutionBar,
   simulateFill,
-  type VenueOutcome,
 } from './venue.js';
 
 /**
@@ -116,6 +117,7 @@ export interface PaperMarketData {
 }
 
 export interface PaperOmsDependencies {
+  readonly capitalBudget?: PaperCapitalBudgetPort;
   readonly database: Db;
   readonly clock: Clock;
   readonly market: PaperMarketData;
@@ -146,24 +148,18 @@ function orderIdFor(approval: ApprovedExecution, productId: string, side: string
  * so a fill whose arithmetic disagrees with itself would persist as a balanced
  * ledger describing a trade that never happened.
  */
-function fillIsSelfConsistent(outcome: Extract<VenueOutcome, { filled: true }>): boolean {
-  const expected = Number(outcome.quantity) * Number(outcome.executionPrice);
-  const actual = Number(outcome.notional);
-  if (!Number.isFinite(expected) || !Number.isFinite(actual)) return false;
-  const tolerance = Math.max(1e-6, Math.abs(expected) * 1e-9);
-  return Math.abs(actual - expected) <= tolerance;
-}
-
 export class PaperOmsService {
   readonly #database: Db;
   readonly #clock: Clock;
   readonly #market: PaperMarketData;
+  readonly #capitalBudget: PaperCapitalBudgetPort | undefined;
   readonly #onUnexpectedError: (productId: string, error: unknown) => void;
 
   constructor(dependencies: PaperOmsDependencies) {
     this.#database = dependencies.database;
     this.#clock = dependencies.clock;
     this.#market = dependencies.market;
+    this.#capitalBudget = dependencies.capitalBudget;
     this.#onUnexpectedError = dependencies.onUnexpectedError ?? (() => {});
   }
 
@@ -207,7 +203,10 @@ export class PaperOmsService {
       }
       const orderId = orderIdFor(approval, intent.asset.instrument.productId, intent.side);
       try {
-        inTransaction(this.#database, () => {
+        const capacity = this.#capitalBudget?.capacity(approval, intent.side, intent.asset.instrument, '1', orderId);
+        paperBudgetTransaction(this.#capitalBudget, capacity ? { profileId: approval.profileId, campaignId: approval.campaignId,
+          orderId, instrument: intent.asset.instrument, side: intent.side, requestedUsd: String(intent.amountUsd),
+          expectedRevision: capacity.revision, pending: true } : null, this.#database, () => {
           const pendingId = sha256Hex(`pending:${orderId}`);
           const prior = getPaperPendingExecution(pendingId, this.#database);
           if (prior !== null) {
@@ -299,6 +298,7 @@ export class PaperOmsService {
       const atMs = this.#clock.nowMs();
       this.#advance(order, 'expired', 4, atMs, reason);
       settlePaperPendingExecution(item.id, 'expired', atMs, this.#database);
+      this.#capitalBudget?.releaseTerminal(item.orderId);
       expiredCount += 1;
       decisionIds.add(item.decisionId);
       outcomes.push({ decisionId: item.decisionId, orderId: item.orderId, disposition: 'expired', atMs });
@@ -325,10 +325,11 @@ export class PaperOmsService {
         expire(item, 'bound_snapshot_unavailable');
         continue;
       }
+      const capacity = this.#capitalBudget?.capacity({ profileId, campaignId }, item.side, item.instrument, String(exact.open), item.orderId);
       const outcome = simulateFill({
         instrument: item.instrument, symbol: item.symbol, side: item.side,
         requestedUsd: item.requestedUsd,
-        availableCashUsd: availableForPaperIntentUsd(
+        availableCashUsd: capacity?.availableUsd ?? availableForPaperIntentUsd(
           { profileId, campaignId },
           item.side,
           item.instrument,
@@ -344,6 +345,7 @@ export class PaperOmsService {
         const reason = isFilled(outcome) ? 'inconsistent_fill' : outcome.code;
         this.#advance(order, 'expired', 4, atMs, reason);
         settlePaperPendingExecution(item.id, 'expired', atMs, this.#database);
+        this.#capitalBudget?.releaseTerminal(item.orderId);
         expiredCount += 1;
         decisionIds.add(item.decisionId);
         outcomes.push({ decisionId: item.decisionId, orderId: item.orderId,
@@ -364,10 +366,15 @@ export class PaperOmsService {
         instrument: item.instrument, side: item.side, quantity: outcome.quantity,
         executionPrice: outcome.executionPrice, venueFee: outcome.venueFee,
       });
-      if (campaignId === null) commitPaperFill(fill, order.runId, ledgerEntries, this.#database);
-      else commitExploratoryPaperFill(campaignId, fill, order.runId, ledgerEntries, this.#database);
-      this.#advance(order, 'filled', 4, outcome.filledAtMs, null);
-      settlePaperPendingExecution(item.id, 'filled', outcome.filledAtMs, this.#database);
+      paperBudgetTransaction(this.#capitalBudget, capacity ? { profileId, campaignId, orderId: item.orderId,
+        instrument: item.instrument, side: item.side, requestedUsd: item.requestedUsd, pending: false,
+        expectedRevision: capacity.revision, quantity: outcome.quantity,
+        actualDebitUsd: budgetAmount(outcome.notional).add(outcome.venueFee).toFixed() } : null, this.#database, () => {
+        if (campaignId === null) commitPaperFill(fill, order.runId, ledgerEntries, this.#database);
+        else commitExploratoryPaperFill(campaignId, fill, order.runId, ledgerEntries, this.#database);
+        this.#advance(order, 'filled', 4, outcome.filledAtMs, null);
+        settlePaperPendingExecution(item.id, 'filled', outcome.filledAtMs, this.#database);
+      });
       filledCount += 1;
       decisionIds.add(item.decisionId);
       outcomes.push({ decisionId: item.decisionId, orderId: item.orderId,
@@ -413,12 +420,15 @@ export class PaperOmsService {
       };
     }
 
+    try {
+      const capacity = this.#capitalBudget?.capacity(approval, intent.side, instrument,
+        String(selectExecutionBar(bars, approval.approvedAtMs)?.open ?? 0), orderId);
       const outcome = simulateFill({
       instrument,
       symbol: intent.asset.symbol,
       side: intent.side,
       requestedUsd: String(intent.amountUsd),
-      availableCashUsd: availableForPaperIntentUsd(
+      availableCashUsd: capacity?.availableUsd ?? availableForPaperIntentUsd(
         approval,
         intent.side,
         instrument,
@@ -430,8 +440,11 @@ export class PaperOmsService {
       decidedAtMs: approval.approvedAtMs,
     });
 
-    try {
-      return inTransaction(this.#database, () => {
+      return paperBudgetTransaction(this.#capitalBudget, capacity && isFilled(outcome) ? {
+        profileId: approval.profileId, campaignId: approval.campaignId, orderId, instrument, side: intent.side,
+        requestedUsd: String(intent.amountUsd), expectedRevision: capacity.revision, pending: false,
+        quantity: outcome.quantity, actualDebitUsd: budgetAmount(outcome.notional).add(outcome.venueFee).toFixed(),
+      } : null, this.#database, () => {
         // The rule snapshot is immutable evidence of what the venue permitted at
         // the moment the order was priced. It is written before the order so a
         // stored order can never reference a snapshot that does not exist.
@@ -563,18 +576,7 @@ export class PaperOmsService {
     at: number,
     detail: Record<string, unknown>,
   ): void {
-    appendPaperOrderEvent(
-      {
-        id: `${order.id}:${sequence}`,
-        orderId: order.id,
-        profileId: order.profileId,
-        sequence,
-        state,
-        at,
-        detailJson: JSON.stringify({ paperOnly: true, ...detail }),
-      },
-      this.#database,
-    );
+    appendOmsEvent(this.#database, order, state, sequence, at, detail);
   }
 }
 

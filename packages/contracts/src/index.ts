@@ -8,6 +8,7 @@ export * from './messages.js';
 export * from './rpc.js';
 export * from './schemas/provenance.js';
 export * from './schemas/capital-performance.js';
+export * from './schemas/capital-feasibility.js';
 export * from './schemas/news.js';
 export * from './schemas/news-intelligence.js';
 

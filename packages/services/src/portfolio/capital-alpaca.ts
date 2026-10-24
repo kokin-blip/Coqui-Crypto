@@ -5,12 +5,14 @@ import { listCapitalBindings, listCapitalEvents, type Db } from '@coqui/storage'
 
 import { ingestCapitalEvidence } from './capital-accounting.js';
 import { capitalSourceBatch, capitalSourceEvent, capitalSourceScope } from './capital-sources.js';
+import { captureAlpacaCapitalBudget, recordBudgetCaptureFailure, type AcquiredAlpacaBudgetAsset } from './capital-budget-sources.js';
 
 function instant(value: string | undefined): number | null {
   if (!value || !/^\d{4}-\d{2}-\d{2}T/u.test(value)) return null;
   const at = Date.parse(value); return Number.isSafeInteger(at) && at >= 0 ? at : null;
 }
 export interface AlpacaCapitalAcquisition {
+  readonly budgetAssets?: readonly AcquiredAlpacaBudgetAsset[];
   readonly profileId: string; readonly connectionId: string | null; readonly expectedAccountId: string;
   readonly requestedAtMs: number; readonly observedAtMs: number; readonly account: AlpacaPaperAccount;
   readonly history: AlpacaPortfolioHistory; readonly activities: readonly AlpacaPaperActivity[];
@@ -96,4 +98,6 @@ export function ingestAlpacaCapital(input: AlpacaCapitalAcquisition, database: D
         (prior.find((old) => old.id === event.id)?.observedAtMs ?? event.observedAtMs) <= valuation.atMs)));
   ingestCapitalEvidence({ profileId: input.profileId, connectionId: input.connectionId, scope, batch, events, valuations,
     opening: candidate ? { valuationId: candidate.id, reason: 'forward_tracking', historicalLimitations: ['earlier_account_performance_unavailable'] } : null }, database);
+  try { captureAlpacaCapitalBudget(scope.id, input.account, input.requestedAtMs, batch.id, database, input.budgetAssets, input.profileId); }
+  catch { recordBudgetCaptureFailure(scope.id, input.observedAtMs, database); }
 }

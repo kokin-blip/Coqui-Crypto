@@ -266,3 +266,14 @@
 .capital-performance .terminal-metric-help > button { margin: 0; }
 .capital-performance .terminal-metric-explanation { position-area: none; position-try-fallbacks: none; inset: 12px; margin: auto; height: fit-content; justify-self: auto; }
 .capital-performance select { max-inline-size: 100%; }
+
+.capital-feasibility > h3 { margin-top: 1.5rem; }
+.capital-feasibility p { max-width: 75ch; }
+.capital-scenario { margin-top: 1.25rem; }
+.capital-scenario form { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: end; margin-block: 1rem; }
+.capital-scenario label { display: grid; gap: 0.3rem; flex: 1 1 12rem; max-width: 22rem; }
+.capital-scenario input, .capital-feasibility select { min-width: 0; max-width: 100%; border: 1px solid var(--coqui-border); border-radius: 4px; background: var(--coqui-surface-2); color: var(--coqui-text); padding: 6px 8px; }
+.capital-scenario input { width: 100%; }
+.capital-scenario button[type='submit'] { min-height: 2.25rem; }
+.capital-feasibility-result { margin-top: 1rem; }
+.capital-feasibility code { overflow-wrap: anywhere; }

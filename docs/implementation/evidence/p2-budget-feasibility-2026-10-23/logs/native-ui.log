@@ -1,0 +1,17 @@
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: 'de588f81b36346a65764cb26d72d1ff0ff8bca448d495eb9450e9a042806d014'
+}
+PASS desktop-dark: cash survives unavailable ownership 
+PASS desktop-dark: scenario names its assumptions 
+PASS desktop-dark: keyboard help fits viewport {"left":570,"right":870,"top":360.5,"bottom":500.5,"width":1440,"height":861}
+PASS narrow-light: cash survives unavailable ownership 
+PASS narrow-light: scenario names its assumptions 
+PASS narrow-light: keyboard help fits viewport {"left":170,"right":470,"top":360.5,"bottom":500.5,"width":640,"height":861}
+PASS contrast-zoom: cash survives unavailable ownership 
+PASS contrast-zoom: scenario names its assumptions 
+PASS contrast-zoom: keyboard help fits viewport {"left":170,"right":470,"top":145.25,"bottom":285.25,"width":640,"height":430}
+PASS new channel passes production preload 
+PASS reads do not change durable state 
+PASS live authority remains disabled 
+PASS no renderer component errors 

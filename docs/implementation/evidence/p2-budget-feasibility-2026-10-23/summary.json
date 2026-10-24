@@ -1,0 +1,54 @@
+{
+  "status": "local_implementation_complete_review_pending",
+  "prompt": "Ok move onto building P2.",
+  "baseCommit": "94b4f450692ac0e8737048799225f44d6e5d3345",
+  "committed": false,
+  "pushed": false,
+  "installed": false,
+  "tests": {
+    "files": 292,
+    "passed": 2140,
+    "failed": 0,
+    "scope": "combined working tree including preserved unrelated work"
+  },
+  "newFocusedSuites": {
+    "core": 33,
+    "storage": 7,
+    "sourceAccessLifecycle": 7,
+    "actualConsumers": 9,
+    "rendererStates": 9
+  },
+  "checks": {
+    "typecheck": "passed",
+    "lint": "passed",
+    "rootBuild": "passed",
+    "desktopBuild": "passed",
+    "standardNativeSmoke": "passed",
+    "nativeFeasibility": "13 checks passed",
+    "diffCheck": "passed"
+  },
+  "preservation": {
+    "preExisting": 495,
+    "byteIdentical": 486,
+    "intentionalOverlaps": 9,
+    "protectedFilesUnchanged": true,
+    "prebuildGeneratedManifestsArchived": true
+  },
+  "gates": {
+    "humanReview": "open",
+    "p1ReviewDependency": "open",
+    "connectedOwnershipAndCurrentFeeHoldEvidence": "open",
+    "release": "open",
+    "p3ThroughP7": "pending in full"
+  },
+  "activation": "read-only feasibility; new simulation consumers require explicit internal injection; no production activation",
+  "evidenceIsSynthetic": true,
+  "performanceOrProfitabilityValidated": false,
+  "linear": {
+    "issue": "COQ-36",
+    "status": "In Review",
+    "synchronized": true,
+    "milestone": "03 \u00b7 Prospective studies and data integrity",
+    "milestoneExitGates": "open"
+  }
+}

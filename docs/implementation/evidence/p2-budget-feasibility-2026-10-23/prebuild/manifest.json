@@ -1,0 +1,12 @@
+[
+  {
+    "path": "docs/studies/behavior-manifests-v1.json",
+    "archive": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/prebuild/behavior-manifests-v1.json",
+    "sha256": "3bff75a39b1ec1e946331b2cdbb1de976852e853f3a64fb7d6a316d54b86bc83"
+  },
+  {
+    "path": "packages/core/src/research/study-manifests.generated.ts",
+    "archive": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/prebuild/study-manifests.generated.ts",
+    "sha256": "0d56757ec1ab22bc1f139211f4f10032945d3de414f102824c328b8fc55b8278"
+  }
+]

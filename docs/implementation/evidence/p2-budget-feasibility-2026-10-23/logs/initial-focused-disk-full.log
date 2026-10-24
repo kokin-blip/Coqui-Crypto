@@ -1,0 +1,83 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/capital-budget-storage.test.ts (7 tests) 615ms
+ ✓ tests/capital-storage.test.ts (11 tests) 891ms
+ ✓ tests/capital-performance.test.ts (33 tests) 318ms
+ ✓ tests/paper-execution-service.test.ts (8 tests) 555ms
+ ✓ tests/capital-budget.test.ts (31 tests) 86ms
+ ✓ tests/paper-oms.test.ts (8 tests) 659ms
+stdout | tests/secret-leak-sweep.test.ts > a connected key never reaches the renderer > appears in no channel response
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '373da8666cf811ab69cb6bcfdd25c866e4f5a945d8bfba232df106662c8bba98'
+}
+
+ ✓ tests/capital-budget-evidence.test.ts (6 tests) 679ms
+     ✓ retains as-of evidence and obligations through backup/restore and archives copied access  458ms
+ ✓ tests/capital-budget-consumers.test.ts (8 tests) 749ms
+stdout | tests/secret-leak-sweep.test.ts > a connected key never reaches the renderer > appears in no column of the database
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '373da8666cf811ab69cb6bcfdd25c866e4f5a945d8bfba232df106662c8bba98'
+}
+
+ ✓ tests/secret-leak-sweep.test.ts (7 tests) 426ms
+     ✓ appears in no channel response  309ms
+ ✓ tests/execution-routing.test.ts (3 tests) 119ms
+ ✓ tests/capital-feasibility-ui.test.ts (9 tests) 15ms
+ ❯ tests/capital-ingestion.test.ts (18 tests | 2 failed) 1244ms
+     ✓ does not infer paper capital from tax lots or a balance without an immutable origin 75ms
+     ✓ captures unrounded observed prices without changing legacy daily evidence 148ms
+     ✓ does not convert missing provider price timestamps into the scheduled day 116ms
+     ✓ does not reinterpret an unexplained paper reconciliation as a deposit 81ms
+     ✓ records Coinbase candidates without treating creation time or native amount as effect/valuation proof 75ms
+     ✓ uses verified Coinbase portfolio identity across credential changes 91ms
+     ✓ never manufactures a Coinbase account identity from a credential fingerprint 70ms
+     ✓ rejects a different verified portfolio instead of attributing its balances to the selected account 58ms
+     ✓ persists only whitelisted financial fields from a Coinbase acquisition 56ms
+     ✓ can rebind archived connected evidence only after fresh matching connection verification 52ms
+     ✓ wires the actual connection-sync path to capital ingestion without an extra acquisition 59ms
+     ✓ retains pending-to-completed revisions of a Coinbase event rather than another contribution 51ms
+     ✓ does not promote JNLC or a date-only cash activity into a precisely timed external flow 51ms
+     ✓ rejects a foreign broker account without recording capital evidence 48ms
+     ✓ keeps new IPC reads local, access checked, schema validated and non-mutating 100ms
+     × restores the same profile without minting new observations, identities or reports 94ms
+     × archives copied bindings and preserves exact financial payload hashes and historical reports 18ms
+     ✓ preserves schema-2 dataset hashes while retaining portfolio and transaction metadata 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/capital-ingestion.test.ts > capital source ingestion and read-only boundaries > restores the same profile without minting new observations, identities or reports
+Error: database or disk is full
+ ❯ backupDatabase packages/storage/src/sqlite/connection.ts:58:37
+     56| /** Create a consistent SQLite backup without copying a live WAL file …
+     57| export function backupDatabase(database: Db, destination: string): voi…
+     58|   database.prepare('VACUUM INTO ?').run(destination);
+       |                                     ^
+     59| }
+     60|
+ ❯ tests/capital-ingestion.test.ts:230:49
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/capital-ingestion.test.ts > capital source ingestion and read-only boundaries > archives copied bindings and preserves exact financial payload hashes and historical reports
+Error: disk I/O error
+ ❯ schemaVersion packages/storage/src/sqlite/connection.ts:19:55
+     17|
+     18| function schemaVersion(database: Db): number {
+     19|   const row = database.prepare('PRAGMA user_version').get() as
+       |                                                       ^
+     20|     | Record<string, unknown>
+     21|     | undefined;
+ ❯ openDatabase packages/storage/src/sqlite/connection.ts:125:21
+ ❯ tests/capital-ingestion.test.ts:240:54
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 11 passed (12)
+      Tests  2 failed | 147 passed (149)
+   Start at  16:49:50
+   Duration  4.65s (transform 14.88s, setup 0ms, import 25.38s, tests 6.36s, environment 1ms)
+

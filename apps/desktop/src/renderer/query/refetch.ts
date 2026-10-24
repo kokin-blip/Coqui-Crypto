@@ -126,6 +126,8 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'paper.execution.review': { refetchIntervalMs: false, staleTimeMs: 0 },
   'paper.performance': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
   'capital.scopes': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
+  'capital.budget': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 0 },
+  'capital.feasibility': { refetchIntervalMs: false, staleTimeMs: 0 },
   'capital.performance': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
   'paper.performance-day': { refetchIntervalMs: false, staleTimeMs: 30 * SECOND },
   // Reference prices move continuously, and this is the figure a user watches.

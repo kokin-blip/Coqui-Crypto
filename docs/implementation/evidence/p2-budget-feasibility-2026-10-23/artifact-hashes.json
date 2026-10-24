@@ -1,0 +1,118 @@
+[
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/baseline.json",
+    "sha256": "e29b51e19d202b3e7291dbf1531c1341ba8ee79470ebf94642ce5e867c331431"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/logs/build.log",
+    "sha256": "097d7fcd2b6c778109c1c948076ae7874e7000c1c140089671568f5850b02735"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/logs/desktop-build.log",
+    "sha256": "ebabcbf04bb4812bcb303da747521d271a50eb48e15b1f77a9ff00efc1f31da1"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/logs/focused-provenance.log",
+    "sha256": "a466455f9e8de56d70b8dd763836feb81374d006c23f7bb4a87079e26a6932d0"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/logs/initial-build-disk-full.log",
+    "sha256": "e3d127617aa51301cf7d7a63b9cd7dc6e33b83df64d100ec88c947acd5c5dbf4"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/logs/initial-focused-disk-full.log",
+    "sha256": "e824c522e16830e861a1f87ad937242dfb74cea7dc850e264badbe44bbda976e"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/logs/initial-full-stale-schema-expectations.log",
+    "sha256": "029ce9e3e2dead64cd48e1c5094cdcee23c0561613499c69052f45a47a8ffd4c"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/logs/initial-native-browser-notice.log",
+    "sha256": "06adaa87a2bc531ed20368af99c2bac60076c6f0e2f7f259be358d7a5076eb46"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/logs/lint.log",
+    "sha256": "050c69da23536758722729aeda55a8d0fb9d557495ef6d33d70873a3b64a71c1"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/logs/native-general.log",
+    "sha256": "85c9e80c82aa87c660af7c8b69a7e4cedff3b5f3783a57c7dd3ff1550d7c88b9"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/logs/native-ui.log",
+    "sha256": "1044cb2e55ebcd47b7cfa4d25300ff987b12c3e0123c48270a794e57818b644b"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/logs/tests.log",
+    "sha256": "9d8d5b1181be10ed81140153d4d2ab45982eadf39d5cec9d79883db28e9e0d2e"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/logs/typecheck.log",
+    "sha256": "9cb7e68dd67d787ad7a36816afe2abbcde7523d59230ab49ed3d8fa46afd1441"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/prebuild/behavior-manifests-v1.json",
+    "sha256": "3bff75a39b1ec1e946331b2cdbb1de976852e853f3a64fb7d6a316d54b86bc83"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/prebuild/manifest.json",
+    "sha256": "965c6a45a55c9cccf7736ecff00094019ba72ced0aff9e6e7e78a8a7d14678ae"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/prebuild/study-manifests.generated.ts",
+    "sha256": "0d56757ec1ab22bc1f139211f4f10032945d3de414f102824c328b8fc55b8278"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/preservation.json",
+    "sha256": "83b2bf9b9e2d606072d51f5813236ee4902af6100e9b8708dd8f7da6f00a3012"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/prompt-used.md",
+    "sha256": "0959a23463954ffc654d0b483cdbba9aaf50e74cf8a36747374ecbb752c254eb"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/summary.json",
+    "sha256": "b2e6d3c9b2bc983e04c0c3c18ffef93d00e79b299ac80b231ba8f5a3acb81c6d"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/ui/contrast-zoom-help.png",
+    "sha256": "a15f48ca4db51735b2a34c14003ff65233c01b850b833c8ba60e24f862a5950e"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/ui/contrast-zoom-result.png",
+    "sha256": "0093414b3b23652687c06b8c83a9555be7faead606e23d79b6b14aad7e125c65"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/ui/contrast-zoom.png",
+    "sha256": "4a19c6f5f74b1a2e0810857ac8a62f9a828bfc099d00dd8759855597a55e036a"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/ui/desktop-dark-help.png",
+    "sha256": "80aca7d21d579de6fc1ab66fc7774892f136589ec120086caafdcc1666687e0e"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/ui/desktop-dark-result.png",
+    "sha256": "8bf849b10fc8c0fa9babf168fef708cf957592e38b848b4e225444f10c401579"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/ui/desktop-dark.png",
+    "sha256": "e675d8fb9e85f139379e7fac126b9628c2478ba8e5e7b00d382492f72371ec5c"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/ui/narrow-light-help.png",
+    "sha256": "a7dbd498474242db77f5410ddb2c57f381bd526fb7e045a0256f9ab0a83f90bb"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/ui/narrow-light-result.png",
+    "sha256": "f50a5c8e17a899fc9452db2d0cc618c4e7e4254d02dc8187da4b9bf232d854ce"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/ui/narrow-light.png",
+    "sha256": "09daae58a71b675e84f89b4ad2bebc0f45c0f86bfa200b1a94c6eefbd5b83068"
+  },
+  {
+    "path": "docs/implementation/evidence/p2-budget-feasibility-2026-10-23/ui/smoke.json",
+    "sha256": "a0b64f206130cd83a5aece22de947399acb7c3dc116f37885e966d106dd953eb"
+  }
+]

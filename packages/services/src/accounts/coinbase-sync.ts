@@ -111,6 +111,7 @@ export function createDefaultCoinbaseEvidenceAcquirer(): CoinbaseEvidenceAcquire
           includeTransactions: true,
           includeFeeTier: true,
           includeCapitalEvidence: true,
+          includeBudgetEvidence: true,
         });
       } finally {
         client.destroy();

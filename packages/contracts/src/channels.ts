@@ -18,6 +18,7 @@ import { operationsChannelSchemas } from './schemas/operations.js';
 import { paperExecutionChannelSchemas } from './schemas/paper-execution.js';
 import { paperPerformanceChannelSchemas } from './schemas/paper-performance.js';
 import { capitalPerformanceChannelSchemas } from './schemas/capital-performance.js';
+import { capitalFeasibilityChannelSchemas } from './schemas/capital-feasibility.js';
 import { parallelPaperChannelSchemas } from './schemas/parallel-paper.js';
 import { portfolioChannelSchemas } from './schemas/portfolio.js';
 import { researchChannelSchemas } from './schemas/research.js';
@@ -58,6 +59,7 @@ export const CHANNEL_SCHEMAS = {
   ...paperExecutionChannelSchemas,
   ...paperPerformanceChannelSchemas,
   ...capitalPerformanceChannelSchemas,
+  ...capitalFeasibilityChannelSchemas,
   ...parallelPaperChannelSchemas,
   ...portfolioChannelSchemas,
   ...researchChannelSchemas,

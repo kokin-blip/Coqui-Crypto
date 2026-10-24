@@ -6,7 +6,7 @@ The [full saved roadmap](small-portfolio-profit-policy-plan-2026-10-23.md) remai
 |---|---|---|---|---|
 | P0 Definitions, scope, source inventory | Committed and pushed | Definitions, baseline, source inventory, exact-or-unavailable rules and independent fixtures | Review remains separate from implementation | Saved roadmap, source baseline |
 | P1 Capital-flow accounting and corrected performance | Committed and pushed; in review | Storage, ingestion, calculations, read projections, displays, lifecycle and acceptance checks; isolated delivery 0c3d36c | Human review; actual connected evidence completeness, owner qualification and release remain separate open gates | P0 |
-| P2 Shared budgets and small-portfolio feasibility | Planning complete; implementation pending | Full roadmap reread; current code/official blocking semantics inspected; concrete P2-A–F implementation plan saved | All P2 implementation, integration and acceptance requirements remain open; COQ-36 backlog | P1; existing operational review for connected adoption |
+| P2 Shared budgets and small-portfolio feasibility | Local implementation complete; In Review | A–F capability, actual isolated consumer integration, 292-file/2,140-test verification, native checks and preservation audit | Human review; account-specific rules/fees/holds/ownership and release gates remain open; uncommitted | P1 review; P6 operational review before connected adoption |
 | P3 Profit-reserve evaluation and previews | Not started | None | All requirements in saved roadmap retained | P1/P2 |
 | P4 Capital-aware simulation | Not started | None | All requirements in saved roadmap retained | P1–P3 and corrected engine compatibility |
 | P5 Strategy and policy experiments | Not started | None | All hypotheses, finite trials, negative findings and evidence gates retained | P4 and adequate development data |
@@ -86,3 +86,49 @@ Before starting P2 or any later phase, reread that phase's full architecture, re
 **Prompt used**
 
 Push and commit that then Lets move on to P2. Reread its full requirements in the saved roadmap, inspect the current code, and prepare a concrete implementation plan before writing code. Preserve P0/P1 and the complete P0–P7 scope.
+
+## P2 implementation batches (local, in progress)
+
+**Prompt used:** Ok move onto building P2.
+
+- Reread the complete saved P2 design and applicable roadmap requirements. [Implementation baseline](evidence/p2-budget-feasibility-2026-10-23/baseline.json) records HEAD, protected source hashes and 495 pre-existing changed files. Original roadmap and companion evidence remain unchanged.
+- P2-A: strict quantity-market native constraints, account scope/claim/reflection definitions and hand-calculated regression fixtures implemented. Missing values remain unknown rather than unbounded. No automatic risk-tier change.
+- P2-B/C: empty additive v97 tables, immutable revisions, identity checks, atomic local CAS and read-side acquisition hooks implemented locally. Twenty core/property cases and seven storage cases pass, including $55 deduplicated free cash, underfunding, two competing $70 commitments against $100, crash rollback and append-only history. Provider/lifecycle and full verification remain pending.
+- P2-D: joint fee-inclusive arithmetic, nine-balance grid, post-cost risk checks, native/discretionary separation and exit dust implemented locally. This proves mechanics, not a minimum starting balance, strategy efficacy or authority.
+- P2-E in progress: explicit new-version local OMS/preview/routing integration and consumer tests. Default construction and active/frozen campaigns retain legacy behavior. Connected legacy writers/unproven ownership continue to block reservation assurance.
+- P2-F pending: evidence UX, integrated lifecycle/security/native smoke and full verification. P2 is not accepted or complete; P1 human review, account-specific evidence and release gates remain open. P3–P7 remain pending in full.
+- COQ-36 is In Progress. All changes in this batch are local and uncommitted.
+
+### P2-A–D — local mechanics delivered; integration/acceptance still in progress
+
+- A: native values retain known / authoritatively inapplicable / unknown states, exact decimal units, field provenance and source precision. Contracts distinguish account evidence from hypothetical inputs. Opening scope definitions and P1 performance are unchanged.
+- B: v97 adds empty append-only rule/source/claim/report tables and an operational checkpoint. An additional immutable route-to-budget binding records the revision across service restarts; this implements the planned routing requirement without modifying legacy route identities. Existing lifecycle suites, populated P2 copy/restore, retry/conflict and source identity checks pass. Native sanitized payloads and exact feasibility inputs are retained independently of schema-2 Coinbase hashes.
+- C: reflection deduplication, unknown commitments, deficits, linked terminal revisions and atomic CAS pass. Underfunding retains obligations and records a blocking reconciliation incident at ingestion; read IPC does not write incidents or facts. No funded profit/tax reserve is enabled.
+- D: 31 arithmetic/property fixtures pass, including all nine balances, values either side of old tier/native boundaries, post-cost caps, fee currencies, fixed costs, no sale-funded earlier buys, hypothetical reserve concentration and exit dust. The algorithm uses the declared order within sell-before-buy stages. No universal minimum or operating-floor certificate is claimed.
+- E: eight actual consumer fixtures pass across the existing local OMS immediate/pending, preview/review and venue-neutral routing boundaries, including a pricing-to-commit race, failed-fill rollback, terminal release and persisted route revisions. Explicit constructor injection and authority checks isolate this version; production construction does not activate it. The new virtual-book preview is independent of registered arms. Connected acquisition adapters consume GET evidence and retain legacy-writer/ownership blocks; no submit capability is accepted by evidence ingestion.
+- F in progress: local channels and Allocation feasibility/scenario panel implemented. Current UI unit states pass. The first complete repository run found only stale schema-version expectations (96 versus 97); these are corrected and all 236 affected/focused cases now pass. Build initially hit disk exhaustion; disposable verification artifacts were removed and the root build passed on retry. No unrelated repository artifact was deleted. Native UI confirmation and the final complete run remain pending.
+- Remaining: final checks, preservation manifest, final evidence/Linear synchronization and human review. This is local implementation, not a commit, merge, installed upgrade, release, connected verification or study qualification. P3–P7 remain pending in full.
+
+**Prompt used:** Ok move onto building P2.
+
+### P2-F — local capability acceptance; review remains open
+
+- P2-A–F implementation and local verification are complete. [Delivery record](small-portfolio-p2-delivery-2026-10-23.md), [acceptance summary](evidence/p2-budget-feasibility-2026-10-23/summary.json), [preservation audit](evidence/p2-budget-feasibility-2026-10-23/preservation.json), final logs and production screenshots are saved.
+- Final complete run: **292 test files / 2,140 tests passed**. The five new suites contain 65 cases (33 core, 7 storage, 7 source/access/lifecycle, 9 actual consumers and 9 renderer states). Repository typecheck/lint, root build, production desktop build, standard native safety smoke and 13 feasibility desktop checks pass. Dark desktop, narrow light and high-contrast 200% captures were visually inspected; keyboard help and input/expiry fixes are confirmed.
+- Current local evidence now also refuses unexplained manual cash/funding rows, checks original opening/fill links, and uses current claim heads rather than old revisions. Unmatched provider holds cannot establish exact deficits. These safeguards pass alongside the original P1 ingestion and historical calculation regressions.
+- Preservation: **486 of 495** pre-existing changed files remain byte-identical; nine overlap intentionally (composition/query/styles/contracts/exports/read-account type and generated current dependency manifests). Exact pre-build generated manifests are archived. Original full roadmap, companion research evidence, accepted P2 plan, P1 calculation and frozen legacy remediation planner hashes match. Unrelated modified/untracked work and the existing Git index remain intact.
+- This delivery is **local and uncommitted**, based on 94b4f45. It is not pushed, merged, installed, deployed, released or qualified. COQ-36 moves to In Review; P1 review/dependency and account-specific native/fee/hold/ownership evidence, owner and release gates remain open.
+- P2's app mode is read-only feasibility. No production injection enables the isolated claim consumers. No strategy change, funded profit/tax reserve, provider order/cancellation, withdrawal or study registration occurred. Generated current dependency hashes are not a migration of historical registrations/results.
+- P0/P1 remain preserved. **P3–P7 remain pending in full**, with every original architecture, data, hypothesis, UX, dependency, test, acceptance and safety requirement retained. Before beginning P3 or another phase, reread its full requirements in the unchanged saved roadmap. No future phase is marked complete.
+
+**Prompt used:** Ok move onto building P2.
+
+### P2 commit isolation verified
+
+- Exact P2-only source closure: 286 files / 2,033 tests, typecheck/lint, root/desktop builds and both disposable native smoke suites pass. [Evidence](evidence/p2-budget-feasibility-2026-10-23/commit-isolation/summary.json). Original combined-checkout evidence remains retained.
+- Focused staging excludes mixed-file unrelated hourly/execution work and regenerates current dependency manifests using the committed generator. All 2,533 pre-existing working files were byte-identical before staging. P0/P1, frozen studies and original roadmap/evidence remain preserved.
+- Commit/push pending at this record; human review, account-specific evidence, owner and release gates remain open. P3 planning follows; P3–P7 implementation remains pending in full.
+
+**Prompt used**
+
+Commit and push P2, then lets move on to P3. Reread its full requirements in the saved roadmap, inspect the code, and prepare a concrete implementation plan before coding. Preserve P0–P2 and the full P0–P7 scope.

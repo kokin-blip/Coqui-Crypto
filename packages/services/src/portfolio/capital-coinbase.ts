@@ -5,6 +5,7 @@ import { listVerifiedWalletIdentities, type Db } from '@coqui/storage';
 
 import { ingestCapitalEvidence } from './capital-accounting.js';
 import { capitalSourceBatch, capitalSourceEvent, capitalSourceScope } from './capital-sources.js';
+import { captureCoinbaseCapitalBudget, recordBudgetCaptureFailure } from './capital-budget-sources.js';
 
 export function ingestCoinbaseCapital(input: {
   readonly profileId: string; readonly connectionId: string; readonly requestedAtMs: number; readonly observedAtMs: number;
@@ -129,4 +130,6 @@ export function ingestCoinbaseCapital(input: {
         ...(!allBalancesPresent ? ['account_balances_incomplete'] : [])], evidenceRefs: [input.snapshot.contentHash] });
   }
   ingestCapitalEvidence({ profileId: input.profileId, connectionId: input.connectionId, scope, batch, events, valuations, opening: null }, database);
+  try { captureCoinbaseCapitalBudget(input.profileId, scope.id, input.acquisition, input.requestedAtMs, database); }
+  catch { recordBudgetCaptureFailure(scope.id, input.observedAtMs, database); }
 }

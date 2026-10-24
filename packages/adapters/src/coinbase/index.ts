@@ -3,6 +3,7 @@ export * from './authenticated-candles.js';
 export * from './market-diagnostics.js';
 export * from './account-evidence.js';
 export * from './capital-evidence.js';
+export * from './capital-native-rules.js';
 export * from './catalog.js';
 export * from './fee-evidence.js';
 export * from './archive.js';

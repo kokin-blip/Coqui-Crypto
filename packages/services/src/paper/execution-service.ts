@@ -1,5 +1,7 @@
 import { startOperationsActivity } from '../operations/activity.js';
 import { proposalPreview } from './proposal-preview.js';
+import { paperCapitalPreview, paperCapitalPreviewIsCurrent, type PaperCapitalPreviewModel } from './capital-preview.js';
+import type { PaperCapitalBudgetPort } from './capital-budget-port.js';
 import {
   sha256Hex,
   type ExecutionIntent,
@@ -16,6 +18,7 @@ import {
   getPaperExecutionAttemptIdentity,
   getPaperExecutionPolicy,
   getPaperExecutionProposal,
+  proposalFeasibilityReport,
   linkExploratoryPaperExecution,
   getPaperProposalPendingContext,
   recordPaperExecutionAttempt,
@@ -71,6 +74,8 @@ export interface PaperExecutionResult {
 }
 
 export interface PaperExecutionDependencies {
+  readonly capitalBudget?: PaperCapitalBudgetPort;
+  readonly capitalPreviewModel?: PaperCapitalPreviewModel;
   readonly database: Db;
   readonly profileId: string;
   readonly nowMs: () => number;
@@ -121,6 +126,8 @@ export class PaperExecutionService {
   readonly #onUnexpectedError: (context: string, error: unknown) => void;
   readonly #executionOwnerId: string;
   readonly #executionLeaseMs: number;
+  readonly #capitalBudget: PaperCapitalBudgetPort | undefined;
+  readonly #capitalPreviewModel: PaperCapitalPreviewModel | undefined;
 
   constructor(dependencies: PaperExecutionDependencies) {
     this.#database = dependencies.database;
@@ -131,22 +138,35 @@ export class PaperExecutionService {
     this.#onUnexpectedError = dependencies.onUnexpectedError ?? (() => {});
     this.#executionOwnerId = dependencies.executionOwnerId ?? 'paper-execution-local';
     this.#executionLeaseMs = dependencies.executionLeaseMs ?? 5 * 60 * 1_000;
+    this.#capitalBudget = dependencies.capitalBudget;
+    this.#capitalPreviewModel = dependencies.capitalPreviewModel;
   }
 
   preview(proposalId: string, issuedAtMs = this.#nowMs()) {
     const proposal = getPaperExecutionProposal(proposalId,this.#database);
     if (!proposal || proposal.profileId !== this.#profileId) throw new Error('proposal_not_found');
     const state = this.#state();
-    return proposalPreview({ proposalHash:proposal.proposalHash, revision:proposal.revision,
+    const preview = proposalPreview({ proposalHash:proposal.proposalHash, revision:proposal.revision,
       intents:JSON.parse(proposal.intentsJson) as readonly ExecutionIntent[], holdings:state.holdings,
       ...(state.allocationPolicy ? {allocationPolicy:state.allocationPolicy}:{}),
       market:this.#market, nowMs:this.#nowMs(), issuedAtMs, killSwitchEngaged:state.killSwitchEngaged });
+    if (!this.#capitalBudget) return preview;
+    const capital = this.capitalPreview(proposalId);
+    if (capital.state !== 'feasible') return { ...preview, status: 'unavailable' as const, reason: 'capital_feasibility_unavailable', previewHash: null };
+    return { ...preview, previewHash: preview.previewHash === null ? null : sha256Hex(`${preview.previewHash}:${capital.id}`) };
+  }
+
+  capitalPreview(proposalId: string) {
+    const proposal = getPaperExecutionProposal(proposalId, this.#database);
+    if (!proposal || proposal.profileId !== this.#profileId || !this.#capitalBudget || !this.#capitalPreviewModel) throw new Error('capital_preview_unavailable');
+    return paperCapitalPreview(proposal, this.#capitalBudget, this.#capitalPreviewModel, this.#nowMs(), this.#database);
   }
 
   /** Reconcile durable simulator submissions through the same sole OMS boundary. */
   settlePending(): PaperPendingSettlementResult {
     const snapshot = this.#state();
     return new PaperOmsService({
+      ...(this.#capitalBudget ? { capitalBudget: this.#capitalBudget } : {}),
       database: this.#database,
       clock: { nowMs: this.#nowMs },
       market: this.#market,
@@ -197,6 +217,7 @@ export class PaperExecutionService {
         })
       : null; } catch(error){observation.finish('gates_finished','failed',{reasonCode:'execution_checks_failed'});throw error;} })();
     if (gates !== null && !isApproved(gates)) reasonCode = gates.code;
+    if (this.#capitalBudget && reasonCode === null && !this.#capitalPreviewModel) reasonCode = 'capital_preview_unavailable';
     observation.finish(gates===null?'eligibility':'gates_finished',reasonCode===null?'completed':'blocked',{
       reasonCode,gate:gates!==null&&!isApproved(gates)?gates.gate:null,
       gatesPassed:gates!==null&&isApproved(gates)?gates.gatesPassed.join(', '):null});
@@ -228,6 +249,7 @@ export class PaperExecutionService {
       policy: policy.mode,
       reasonCode,
     }, this.#database);
+    if (this.#capitalBudget && this.#capitalPreviewModel && reasonCode === null) this.capitalPreview(proposal.id);
 
     if (reasonCode !== null) return result(proposal, 'blocked', reasonCode);
     if (policy.mode === 'review_required' && (snapshot.admissionMode ?? 'validated') !== 'exploratory') {
@@ -324,7 +346,7 @@ export class PaperExecutionService {
     const snapshot = this.#state();
     const intents = JSON.parse(proposal.intentsJson) as readonly ExecutionIntent[];
     let refusal: ExecutionRefusalCode | 'paper_execution_off' | 'evidence_not_verified' |
-      'execution_lease_unavailable' | 'exploratory_campaign_not_active' | null = null;
+      'execution_lease_unavailable' | 'exploratory_campaign_not_active' | 'capital_budget_stale' | null = null;
     if (policy.mode === 'off') refusal = 'paper_execution_off';
     else if ((snapshot.admissionMode ?? 'validated') === 'exploratory' &&
         snapshot.exploratoryAuthorized !== true) refusal = 'exploratory_campaign_not_active';
@@ -348,6 +370,11 @@ export class PaperExecutionService {
         })
       : null;
     if (gates !== null && !isApproved(gates)) refusal = gates.code;
+    if (this.#capitalBudget) {
+      const budget = this.#capitalBudget.budget(), capital = proposalFeasibilityReport(budget.scopeId, proposal.id, this.#database);
+      if (!paperCapitalPreviewIsCurrent(capital, this.#capitalBudget, this.#capitalPreviewModel, at) ||
+        capital?.inputManifest.proposal?.hash !== proposal.proposalHash) refusal = 'capital_budget_stale';
+    }
     const authority = refusal === null && gates !== null && isApproved(gates)
       ? acquireExecutionLease(
           this.#profileId, this.#executionOwnerId, at, this.#executionLeaseMs, this.#database,
@@ -391,6 +418,7 @@ export class PaperExecutionService {
       checkSnapshotHash,
     }, this.#database);
     const oms = new PaperOmsService({
+      ...(this.#capitalBudget ? { capitalBudget: this.#capitalBudget } : {}),
       database: this.#database,
       clock: { nowMs: this.#nowMs },
       market: this.#market,

@@ -13,6 +13,7 @@ export interface AlpacaPaperCredentials {
 }
 
 export interface AlpacaPaperAccount {
+  readonly non_marginable_buying_power?: string;
   readonly created_at?: string;
   readonly id: string;
   readonly status: string;

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "base": "94b4f450692ac0e8737048799225f44d6e5d3345",
+  "scope": "P2 only; mixed-file unrelated execution/hourly changes excluded",
+  "fullTestFiles": 286,
+  "fullTests": 2033,
+  "node": "24.19.0",
+  "typecheck": "passed",
+  "lint": "passed",
+  "rootBuild": "passed",
+  "desktopBuild": "passed",
+  "nativeDesktopSmoke": "ALL PASS",
+  "nativeCapitalSmoke": "13 checks passed",
+  "mode": "Disposable synthetic profiles; no provider financial write, deployment, study registration or release",
+  "notes": [
+    "Exact committed source closure uses the committed manifest generator; generated current manifests differ from the combined checkout and do not rewrite historical studies.",
+    "Original combined checkout acceptance remains archived separately: 292 files / 2140 tests.",
+    "Temporary build setup initially lacked Git metadata; metadata was supplied from the base and the entire desktop build repeated successfully. Native smoke requires desktop sandbox access. No dependency install or version change was performed."
+  ],
+  "Prompt used": "Commit and push P2, then lets move on to P3. Reread its full requirements in the saved roadmap, inspect the code, and prepare a concrete implementation plan before coding. Preserve P0\u2013P2 and the full P0\u2013P7 scope."
+}

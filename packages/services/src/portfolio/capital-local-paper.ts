@@ -10,6 +10,7 @@ import {
 
 import { ingestCapitalEvidence } from './capital-accounting.js';
 import { capitalSourceBatch, capitalSourceEvent, capitalSourceScope } from './capital-sources.js';
+import { captureLocalCapitalBudget, recordBudgetCaptureFailure } from './capital-budget-sources.js';
 
 interface LedgerRow {
   id: string; run_id: string; fill_id: string | null; order_id: string | null; account: string;
@@ -126,4 +127,6 @@ export function ingestLocalPaperCapital(profileId: string, database: Db, recorde
     legs: [{ asset: row.asset_id ?? 'USD', quantity: row.quantity_text, role: 'asset', valueUsd: row.amount_usd_text, valuationRef: row.id }] }));
   ingestCapitalEvidence({ profileId, connectionId: null, scope, batch, events, valuations,
     opening: knownOrigin ? { valuationId: opening.id, reason: 'verified_origin', historicalLimitations: ['simulated_opening_not_tax_basis'] } : null }, database);
+  try { captureLocalCapitalBudget(profileId, recordedAtMs, database); }
+  catch { recordBudgetCaptureFailure(scope.id, recordedAtMs, database); }
 }

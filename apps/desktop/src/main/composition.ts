@@ -294,7 +294,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   if (options.disableScheduler !== true) startScheduler();
   const exploratoryRuntime = createExploratoryPaperRuntime({ profileId: options.profileId,
     database, clock, market: paperMarket, campaigns: exploratoryCampaigns, run: paperRunDependencies });
-  const handlers: ChannelHandlers = { ...overlayShadow.handlers, ...createCapitalHandlers(options.profileId, database, { nowMs: clock.nowMs(), onError: error => report('capital.initialization', error) }),
+  const handlers: ChannelHandlers = { ...overlayShadow.handlers, ...createCapitalHandlers(options.profileId, database, { nowMs: clock.nowMs(), now: () => clock.nowMs(), onError: error => report('capital.initialization', error) }),
     ...createAlpacaPaperHandlers({ profileId: options.profileId, database, clock,
       onDisconnect: () => parallel.service.pauseForDisconnect(),
       ...(options.secrets === undefined ? {} : { secrets: options.secrets }) }),

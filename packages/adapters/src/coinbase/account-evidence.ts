@@ -14,6 +14,7 @@ import { COINBASE_API_HOST, type CoinbaseReadHttpClient } from './auth.js';
 import { fetchCoinbaseTransactionEvidence } from './transaction-evidence.js';
 import { fetchCoinbaseFeeTierEvidence } from './fee-evidence.js';
 import { coinbaseCapitalPortfolioHash, type CoinbaseCapitalEvidenceEnvelope } from './capital-evidence.js';
+import { sanitizedCapitalProduct } from './capital-native-rules.js';
 
 const BASE_URL = `https://${COINBASE_API_HOST}/api/v3/brokerage`;
 const MAX_ACCOUNT_ROWS = 10_000;
@@ -47,6 +48,7 @@ export type CoinbaseEvidenceFailureCode =
   | 'proof_token_required';
 
 export interface CoinbaseEvidenceAcquisition {
+  readonly budgetEvidence?: { readonly schemaVersion: 1; readonly products: readonly Readonly<Record<string, string | boolean>>[]; readonly complete: boolean };
   readonly capitalEvidence?: CoinbaseCapitalEvidenceEnvelope;
   readonly accounts: readonly CoinbaseAccountEvidence[];
   readonly fills: readonly CoinbaseFillEvidence[];
@@ -61,6 +63,7 @@ export interface CoinbaseEvidenceAcquisition {
 export interface CoinbaseEvidenceAcquisitionOptions {
   /** Separate envelope; never participates in the historical schema-2 dataset hash. */
   readonly includeCapitalEvidence?: boolean;
+  readonly includeBudgetEvidence?: boolean;
   /** Wall-clock budget shared by the complete accounts-and-fills cursor walk. */
   readonly maxElapsedMs?: number;
   /** Enable the separate V2 transaction-evidence walk. Production sync enables this. */
@@ -402,7 +405,21 @@ export async function fetchCoinbaseAccountEvidence(
        dataset — that failure mode once blocked every sync and left the
        portfolio empty. Null degrades the evidence hash, not the pessimism. */
     const feeTierValue = feeTier.ok ? feeTier.value : null;
+    const products: Readonly<Record<string, string | boolean>>[] = [];
+    let budgetComplete = true;
+    if (options.includeBudgetEvidence === true) {
+      const symbols = [...new Set(accounts.rows.map(row => row.currency).filter(currency => currency !== 'USD'))];
+      if (symbols.length > 100) budgetComplete = false;
+      for (const symbol of symbols.slice(0, 100)) {
+        if (acquisitionSignal.aborted) { budgetComplete = false; break; }
+        try {
+          const response = await http.getJson<unknown>(`${BASE_URL}/products/${encodeURIComponent(`${symbol}-USD`)}`, { signal: acquisitionSignal });
+          if (response.ok) products.push(sanitizedCapitalProduct(response.data)); else budgetComplete = false;
+        } catch { budgetComplete = false; }
+      }
+    }
     const value = Object.freeze({
+      ...(options.includeBudgetEvidence === true ? { budgetEvidence: { schemaVersion: 1 as const, products, complete: budgetComplete } } : {}),
       ...(options.includeCapitalEvidence === true ? { capitalEvidence: {
         schemaVersion: 1 as const, accounts: capitalAccounts, transactions: capitalTransactions,
         paginationComplete: options.includeTransactions === true,

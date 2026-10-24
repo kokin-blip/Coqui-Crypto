@@ -75,5 +75,6 @@ export * from './operations-activity.js';
 export * from './operations-journal.js';
 export * from './advisor-audit-context.js';
 export * from './capital-accounting.js';
+export * from './capital-budget.js';
 
 export * from './activity-valuations.js';

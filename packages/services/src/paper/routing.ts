@@ -1,5 +1,8 @@
 import {
   routeExecutionPlan,
+  budgetAmount,
+  executionRouteCandidatesHash,
+  instrumentKey, modeledFill, DEFAULT_TRADE_COST_CONFIG,
   type ExecutionPlanV1,
   type ExecutionRouteCandidateV1,
   type ExecutionRouteV1,
@@ -16,10 +19,15 @@ import {
   linkExecutionPlanEvidence,
   saveExecutionPlan,
   validateExecutionLease,
+  saveCapitalRouteBudgetBinding, capitalRouteBudgetBinding, inTransaction,
   type Db,
 } from '@coqui/storage';
+import type { PaperCapitalBudgetPort } from './capital-budget-port.js';
+import type { capitalRouteCandidates } from './capital-routing.js';
 
 export interface VenueNeutralRoutingDependencies {
+  /** New isolated local version only; never installed into connected campaigns. */
+  readonly capitalBudget?: PaperCapitalBudgetPort;
   readonly database: Db;
   readonly adapters: readonly PaperVenueAdapter[];
   /** Rebuilds the exact capability/balance/rule/health assumption immediately before placement. */
@@ -36,6 +44,7 @@ export class VenueNeutralPaperRoutingService {
   readonly #ownerId: string;
   readonly #fencingToken: () => number | null;
   readonly #nowMs: () => number;
+  readonly #capitalBudget: PaperCapitalBudgetPort | undefined;
 
   constructor(dependencies: VenueNeutralRoutingDependencies) {
     this.#database = dependencies.database;
@@ -44,15 +53,37 @@ export class VenueNeutralPaperRoutingService {
     this.#ownerId = dependencies.ownerId;
     this.#fencingToken = dependencies.fencingToken;
     this.#nowMs = dependencies.nowMs;
+    this.#capitalBudget = dependencies.capitalBudget;
   }
 
   plan(
     plan: ExecutionPlanV1,
     candidates: readonly ExecutionRouteCandidateV1[],
     executionPlannedEventId?: string,
+    budgetContext?: ReturnType<typeof capitalRouteCandidates>,
   ): ExecutionRoutingResultV1 {
-    const routing = routeExecutionPlan(plan, candidates);
-    saveExecutionPlan(plan, routing.routes, this.#database);
+    let routing = routeExecutionPlan(plan, candidates);
+    if (this.#capitalBudget) {
+      const budget = this.#capitalBudget.budget();
+      if (!budget.executionEligible || budget.scopeId !== budgetContext?.scopeId || budget.revision !== budgetContext.revision ||
+        executionRouteCandidatesHash(candidates) !== executionRouteCandidatesHash(budgetContext.candidates)) throw new Error('budget_revision_stale');
+      let cash = budgetAmount(budget.spendableUsd!);
+      const quantities = Object.fromEntries(Object.entries(budget.quantities).map(([id, quantity]) => [id, budgetAmount(quantity)]));
+      const routes: ExecutionRouteV1[] = [], rejected = [...routing.unrouteable];
+      for (const route of routing.routes) {
+        const debit = route.side === 'buy' ? budgetAmount(modeledFill('buy', route.amountUsd, '1', DEFAULT_TRADE_COST_CONFIG).cashChange).neg() : budgetAmount('0');
+        const key = instrumentKey(route.instrument), mark = budgetContext.marks[key];
+        const quantity = route.side === 'sell' && mark && budgetAmount(mark).gt(0) ? budgetAmount(route.amountUsd).div(mark) : null;
+        if (cash.lt(debit) || route.side === 'sell' && (!quantity || quantity.gt(quantities[key] ?? '0'))) rejected.push({ exposureKey: route.exposureKey, side: route.side, amountUsd: route.amountUsd });
+        else { routes.push(route); cash = cash.sub(debit); if (quantity) quantities[key] = quantities[key]!.sub(quantity); }
+      }
+      routing = { routes, unrouteable: rejected };
+    }
+    inTransaction(this.#database, () => {
+      saveExecutionPlan(plan, routing.routes, this.#database);
+      if (this.#capitalBudget && budgetContext) for (const route of routing.routes) saveCapitalRouteBudgetBinding({
+        scopeId: budgetContext.scopeId, routeId: route.id, budgetRevision: budgetContext.revision, assumptionHash: route.assumptionHash }, this.#database);
+    });
     const campaign = latestMultiConnectionPaperCampaign(plan.profileId, this.#database);
     if (campaign !== null) {
       for (const route of routing.routes) {
@@ -103,6 +134,12 @@ export class VenueNeutralPaperRoutingService {
         idempotencyKey: route.idempotencyKey,
       });
     }
-    return adapter.place(route);
+    if (!this.#capitalBudget) return adapter.place(route);
+    const budget = this.#capitalBudget.budget();
+    const binding = capitalRouteBudgetBinding(budget.scopeId, route.id, this.#database);
+    if (!budget.executionEligible || binding?.budgetRevision !== budget.revision || binding.assumptionHash !== route.assumptionHash) return {
+      accepted: false, providerOrderId: null, reasonCode: 'assumption_changed', idempotencyKey: route.idempotencyKey };
+    return this.#capitalBudget.withIntent({ profileId, campaignId: null, orderId: route.id, instrument: route.instrument,
+      side: route.side, requestedUsd: route.amountUsd, expectedRevision: budget.revision, pending: true }, () => adapter.place(route));
   }
 }

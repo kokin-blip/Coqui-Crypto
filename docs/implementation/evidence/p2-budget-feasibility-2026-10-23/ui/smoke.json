@@ -1,0 +1,77 @@
+{
+  "synthetic": true,
+  "accountAccess": false,
+  "checks": [
+    {
+      "name": "desktop-dark: cash survives unavailable ownership",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-dark: scenario names its assumptions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-dark: keyboard help fits viewport",
+      "passed": true,
+      "detail": "{\"left\":570,\"right\":870,\"top\":360.5,\"bottom\":500.5,\"width\":1440,\"height\":861}"
+    },
+    {
+      "name": "narrow-light: cash survives unavailable ownership",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-light: scenario names its assumptions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-light: keyboard help fits viewport",
+      "passed": true,
+      "detail": "{\"left\":170,\"right\":470,\"top\":360.5,\"bottom\":500.5,\"width\":640,\"height\":861}"
+    },
+    {
+      "name": "contrast-zoom: cash survives unavailable ownership",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast-zoom: scenario names its assumptions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast-zoom: keyboard help fits viewport",
+      "passed": true,
+      "detail": "{\"left\":170,\"right\":470,\"top\":145.25,\"bottom\":285.25,\"width\":640,\"height\":430}"
+    },
+    {
+      "name": "new channel passes production preload",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "reads do not change durable state",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "live authority remains disabled",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "no renderer component errors",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "rendererErrors": [],
+  "browserNotices": [
+    "The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.",
+    "The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.",
+    "The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element."
+  ]
+}

@@ -50,7 +50,7 @@ describe('channel registry', () => {
       'app.about', 'app.chart.snapshot.save', 'app.chart.workspace', 'app.chart.workspace.set', 'app.evidence-export', 'app.incidents',
       'app.onboarding.complete', 'app.onboarding.restart', 'app.onboarding.skip', 'app.onboarding.status',
       'app.performance-trace', 'app.person', 'app.person.set', 'app.profile-readiness', 'app.recovery.verify',
-      'app.status-rail', 'capital.performance', 'capital.scopes',
+      'app.status-rail', 'capital.budget', 'capital.feasibility', 'capital.performance', 'capital.scopes',
       'chart-extensions.catalog', 'chart-extensions.evaluate', 'chart-extensions.install', 'chart-extensions.install.pick',
       'chart-extensions.remove', 'chart-extensions.set', 'chart-extensions.signer.remove', 'chart-extensions.signer.trust',
       'connections.connect-file', 'connections.disconnect', 'connections.list', 'connections.removal-preview', 'connections.remove', 'connections.rename',
