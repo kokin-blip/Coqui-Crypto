@@ -1,3 +1,4 @@
+import { PaperProfitReserves } from './PaperProfitReserves.js';
 import { useState } from 'react';
 import type { ChannelResponse, CoquiClient } from '@coqui/contracts';
 import { formatPercent, formatUsd } from '@coqui/ui-kit';
@@ -127,13 +128,14 @@ export function Allocation({ client }: { readonly client: CoquiClient }): React.
         {/* estimateOnly is true on the wire; saying so is not decoration. */}
         <p className="opacity-70">
           Estimate only — turnover {formatUsd(view.plan.turnoverUsd)?.text ?? '—'}, max drift{' '}
-          {view.plan.maxDriftPct.toFixed(1)}%. This build has no executor, and meeting the
-          evidence gate would not add one.
+          {view.plan.maxDriftPct.toFixed(1)}%. This allocation estimate is informational. Internal paper execution requires
+          its own qualification and review; live execution remains disabled.
         </p>
       </div>
 
       <CapitalFeasibility client={client} />
       <ProfitReserves client={client} />
+      <PaperProfitReserves client={client} />
       <DeferredPanel
         title="Contribution planner"
         phase="P8"

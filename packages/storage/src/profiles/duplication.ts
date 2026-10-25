@@ -143,7 +143,7 @@ export function createFileProfileDatabaseDuplicator(profilesDirectory: string): 
           SELECT DISTINCT m.name AS table_name
           FROM sqlite_master m
           JOIN pragma_table_info(m.name) p ON p.name = 'profile_id'
-          WHERE m.type = 'table' AND m.name NOT LIKE 'sqlite_%'
+          WHERE m.type = 'table' AND m.name NOT LIKE 'sqlite_%' AND m.name NOT IN ('profitability_estimate_evidence_v1','forward_edge_observations_v1')
           ORDER BY m.name
         `).all() as Array<Record<string, unknown>>;
         const tableNames = tableRows.map((row) => row['table_name']);

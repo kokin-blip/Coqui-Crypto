@@ -1,0 +1,19 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/paper-profit-reserve-service.test.ts (8 tests) 647ms
+ ✓ tests/paper-profit-reserve-consumers.test.ts (5 tests) 572ms
+ ✓ tests/paper-profit-reserve-authority.test.ts (4 tests) 344ms
+ ✓ tests/paper-profit-reserve-lifecycle.test.ts (1 test) 178ms
+ ✓ tests/paper-profit-reserve-runtime.test.ts (1 test) 172ms
+ ✓ tests/paper-profit-reserve-ui.test.ts (4 tests) 147ms
+ ✓ tests/paper-profit-reserve-accounting.test.ts (14 tests) 301ms
+ ✓ tests/paper-profit-reserve-contracts.test.ts (2 tests) 134ms
+ ✓ tests/paper-profit-reserve-storage.test.ts (2 tests) 116ms
+ ✓ tests/paper-profit-reserve-scheduler.test.ts (2 tests) 67ms
+
+ Test Files  10 passed (10)
+      Tests  43 passed (43)
+   Start at  18:36:54
+   Duration  7.52s (transform 1.30s, setup 0ms, import 4.22s, tests 2.68s, environment 0ms)
+

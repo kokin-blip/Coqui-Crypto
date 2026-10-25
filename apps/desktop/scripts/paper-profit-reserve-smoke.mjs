@@ -1,0 +1,52 @@
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
+import { mkdtempSync,mkdirSync,rmSync,writeFileSync } from 'node:fs';
+import { dirname,join } from 'node:path';import { tmpdir } from 'node:os';import { fileURLToPath,pathToFileURL } from 'node:url';import { setTimeout as delay } from 'node:timers/promises';
+import { openDatabase, assignAuthoritativeHost } from '@coqui/storage';
+import { seedCoinbaseSmokeProfile } from './coinbase-settings-smoke.mjs';
+import { assertNoTextClipping } from './visual-overflow-audit.mjs';
+const root=dirname(dirname(fileURLToPath(import.meta.url))),repo=dirname(dirname(root)),out=join(repo,'docs/implementation/evidence/p6-paper-2026-10-24/ui'),folder=mkdtempSync(join(tmpdir(),'coqui-p6-native-'));
+app.setPath('userData',join(folder,'browser'));app.setPath('sessionData',join(folder,'browser'));
+const {createRuntimeProfileController}=await import('../dist/main/profile-runtime.js'),{createDispatcher}=await import('../dist/main/dispatch.js'),{applyWindowHardening,WEB_PREFERENCES}=await import('../dist/main/security.js');
+let runtime,window,db;const checks=[],errors=[];
+const check=(name,passed,detail='')=>{checks.push({name,passed,detail});console.log(`${passed?'PASS':'FAIL'} ${name} ${detail}`);if(!passed)throw new Error(name);};
+const js=source=>window.webContents.executeJavaScript(source);
+const wait=async source=>{for(let i=0;i<100;i++){if(await js(source))return;await delay(80);}throw new Error(`P6 wait: ${source}`);};
+const expect=(v)=>({commandId:globalThis.crypto.randomUUID(),bookId:v.book.id,scopeId:v.binding.scope_id,generation:v.binding.generation,policyId:v.binding.policy_id,stateId:v.binding.state_id,budgetRevision:v.budget.revision,authorityHash:v.authorityHash});
+async function run(){
+  mkdirSync(out,{recursive:true});globalThis.WebSocket=class{close(){}send(){}};globalThis.fetch=async()=>new globalThis.Response('{}',{status:503});await seedCoinbaseSmokeProfile(folder);
+  runtime=createRuntimeProfileController({dataDirectory:folder,legacyDatabaseFilename:'coqui.db',disableScheduler:true,runtime:{hostId:'p6-native'}});db=openDatabase(join(folder,'coqui.db'));
+  const dispatch=createDispatcher({handlers:()=>runtime.handlers()});await dispatch('app.onboarding.skip',{commandId:globalThis.crypto.randomUUID()});ipcMain.handle('coqui:query',(_event,channel,payload)=>dispatch(channel,payload));
+  const entry=join(root,'dist/renderer/index.html');window=new BrowserWindow({show:true,width:1440,height:1000,useContentSize:true,webPreferences:{...WEB_PREFERENCES,preload:join(root,'dist/preload/index.cjs'),backgroundThrottling:false}});
+  window.webContents.on('console-message',event=>{if(event.level==='error'&&!event.message.includes("frame-ancestors"))errors.push(event.message);});applyWindowHardening(window.webContents,pathToFileURL(entry).href,shell);
+  await window.loadFile(entry,{hash:'/portfolio/allocation'});await wait("document.querySelector('.paper-profit-reserves')?.innerText.includes('Create simulated cash book')");
+  check('default explicit $500 example and no enrollment',(await js("document.querySelector('.paper-profit-reserves input').value"))==='500'&&db.prepare('SELECT COUNT(*) n FROM paper_capital_book_origins_v1').get().n===0);
+  await js("document.querySelector('.paper-profit-reserves button[type=submit]').focus()");window.webContents.sendInputEvent({type:'keyDown',keyCode:'Space'});window.webContents.sendInputEvent({type:'keyUp',keyCode:'Space'});
+  await wait("document.querySelector('.paper-profit-reserves')?.innerText.includes('Paper reserve status: off')");
+  check('keyboard creation reaches production preload and records cash once',db.prepare("SELECT quantity_text FROM paper_balances_v3 WHERE asset_id='USD'").get().quantity_text==='500');
+  let view=await dispatch('paper.reserve.view',{});check('book creation grants no authority',view.status==='ok'&&!view.value.armed&&view.value.binding.disabled===1);
+  assignAuthoritativeHost(runtime.activeProfile().id,'p6-native','desktop',Date.now(),db);
+  view=await dispatch('paper.reserve.view',{});
+  const settings={goal:'preview',trigger:{kind:'profit_usd',value:'50'},shareBps:2500,retainedCapitalUsd:'100',minimumBatchUsd:'1',cadence:'manual',reviewWinCount:null,taxHold:{amountUsd:'0',backing:'principal'}};
+  const saved=await dispatch('paper.reserve.policy.save',{...expect(view.value),settings});check('operational policy save is disarmed',saved.status==='ok'&&!saved.value.armed,JSON.stringify(saved.status==='ok'?saved.value.binding:saved));
+  const blocked=await dispatch('paper.reserve.authorize',expect(saved.value));check('new exact strategy has no inherited qualification',blocked.status!=='ok'&&JSON.stringify(blocked).includes('qualification_missing'),JSON.stringify(blocked));
+  check('refused authorization leaves claims/H unchanged',db.prepare('SELECT COUNT(*) n FROM capital_cash_claim_revisions_v1').get().n===0);
+  const snapshot=()=>JSON.stringify(['paper_capital_book_origins_v1','paper_reserve_policy_versions_v1','paper_reserve_state_revisions_v1','paper_reserve_events_v1','capital_cash_claim_revisions_v1','paper_orders_v3','paper_fills_v3','paper_ledger_entries_v3'].map(t=>[t,db.prepare(`SELECT * FROM ${t}`).all()]));
+  const before=snapshot();for(const c of ['paper.reserve.books','paper.reserve.view','paper.reserve.preview','paper.reserve.operations'])await dispatch(c,{});check('new reads have no durable financial or lifecycle writes',before===snapshot());
+  let loaded=true;
+  for(const [name,theme,width,height,zoom] of [['desktop-dark','dark',1440,1000,1],['narrow-light','light',640,900,1],['contrast-zoom','high_contrast',1280,1000,2]]){
+    await dispatch('accounts.settings.set',{commandId:globalThis.crypto.randomUUID(),patch:{theme,density:'compact',motion:'none'}});window.setContentSize(width,height);window.webContents.setZoomFactor(zoom);
+    if(loaded){const ready=new Promise(resolve=>window.webContents.once('did-finish-load',resolve));window.webContents.reload();await ready;}loaded=true;
+    await wait("document.querySelector('.paper-profit-reserves')?.innerText.includes('Paper reserve status: off')");await js("document.querySelector('.paper-profit-reserves').scrollIntoView({block:'start'})");await delay(150);
+    check(`${name}: scope and recovery wording`,await js("document.querySelector('.paper-profit-reserves').innerText.includes('Resume') && document.querySelector('.paper-profit-reserves').innerText.includes('No external withdrawal')"));
+    await assertNoTextClipping(window.webContents,`p6-${name}`);writeFileSync(join(out,`${name}.png`),(await window.webContents.capturePage()).toPNG());
+    const labels=await js("[...document.querySelectorAll('.paper-profit-reserves input,.paper-profit-reserves select')].every(e=>e.labels?.length>0)");check(`${name}: inputs have associated labels`,labels);
+    await js("document.querySelector('.paper-profit-reserves form').scrollIntoView({block:'start'})");writeFileSync(join(out,`${name}-policy.png`),(await window.webContents.capturePage()).toPNG());
+    check(`${name}: no horizontally overflowing paper form`,await js("(()=>{const e=document.querySelector('.paper-profit-reserves');return e.scrollWidth<=e.clientWidth+2;})()"));
+  }
+  await js("[...document.querySelectorAll('.paper-profit-reserves button')].find(e=>e.textContent==='Review and authorize policy').focus()");window.webContents.sendInputEvent({type:'keyDown',keyCode:'Space'});window.webContents.sendInputEvent({type:'keyUp',keyCode:'Space'});
+  await wait("document.querySelector('.paper-profit-reserves [aria-live]')?.innerText.includes('qualification missing')");
+  check('keyboard refusal returns focus to the status heading',await js("document.activeElement===document.querySelector('.paper-profit-reserves h4')"));
+  const gate=await dispatch('risk.evidence-gate',{});check('live execution remains disabled',gate.status==='ok'&&gate.value.liveExecutionPermitted===false);check('no renderer errors',errors.length===0,errors.join('; '));
+  writeFileSync(join(out,'smoke.json'),JSON.stringify({synthetic:true,accountAccess:false,schedulerDisabled:true,checks,errors},null,2)+'\n');
+}
+app.whenReady().then(run).catch(error=>{console.error(error);process.exitCode=1;}).finally(()=>{window?.destroy();db?.close();runtime?.dispose();rmSync(folder,{recursive:true,force:true});app.exit(process.exitCode??0);});

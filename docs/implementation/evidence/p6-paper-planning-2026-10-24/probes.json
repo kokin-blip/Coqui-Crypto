@@ -1,0 +1,59 @@
+{
+  "synthetic": true,
+  "accountAccess": false,
+  "applicationCodeChanged": false,
+  "sourceBase": "775950a0f3c539755a626a1fe058b55ef8f5787f",
+  "checks": [
+    {
+      "name": "legacy initializer refuses cash-funded empty book",
+      "actual": "Paper opening snapshot must be complete, priced, and use zero cash.",
+      "expected": "Paper opening snapshot must be complete, priced, and use zero cash."
+    },
+    {
+      "name": "refusal leaves opening and balance tables empty",
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "name": "P2 generic writer rejects funded reserve claim",
+      "actual": "p2_funded_reserves_disabled",
+      "expected": "p2_funded_reserves_disabled"
+    },
+    {
+      "name": "rejected reserve creates no cash claim",
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "name": "P2 existing claim deducts once from active equity and cash",
+      "actual": [
+        "680",
+        "680"
+      ],
+      "expected": [
+        "680",
+        "680"
+      ]
+    },
+    {
+      "name": "unsafe direct reuse of modeled P3 with funded budget deducts reserve a second time",
+      "actual": [
+        "660",
+        "630"
+      ],
+      "expected": [
+        "660",
+        "630"
+      ]
+    },
+    {
+      "name": "required P6 hand arithmetic for the same funded book",
+      "existingCashReserveUsd": "20",
+      "accountEquityUsd": "700",
+      "newReserveUsd": "30",
+      "correctCashCapacityUsd": "680",
+      "correctRetainedActiveUsd": "650",
+      "note": "P6 specification requirement; no operational P6 implementation exists. Preserve P3 preview semantics."
+    }
+  ]
+}

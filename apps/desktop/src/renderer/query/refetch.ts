@@ -27,6 +27,18 @@ export interface ChannelPolicy {
 }
 
 export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
+  'paper.reserve.observe': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.reserve.books': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.reserve.view': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.reserve.preview': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.reserve.operations': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.reserve.book.create': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.reserve.policy.save': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.reserve.authorize': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.reserve.pause': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.reserve.resume': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.reserve.review': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.reserve.release': { refetchIntervalMs: false, staleTimeMs: 0 },
   'research.capital-contest.runs': { refetchIntervalMs: false, staleTimeMs: 0 },
   'research.capital-contest.detail': { refetchIntervalMs: false, staleTimeMs: 0 },
   'research.capital-replay.runs': { refetchIntervalMs: false, staleTimeMs: 0 },

@@ -1,0 +1,13 @@
+{
+  "base": "775950a0f3c539755a626a1fe058b55ef8f5787f",
+  "head": "775950a0f3c539755a626a1fe058b55ef8f5787f",
+  "preexistingDirtyEntries": 495,
+  "byteIdentical": 495,
+  "changedPreexisting": [],
+  "protectedFiles": 81,
+  "protectedChanged": [],
+  "trackerOriginalArchived": true,
+  "unexpectedNewChanges": [],
+  "indexUnchanged": true,
+  "passed": true
+}

@@ -1,3 +1,4 @@
+import { assertPaperCapitalBudgetCoverage } from './capital-budget-port.js';
 import {
   instrumentKey,
   budgetAmount,
@@ -172,6 +173,7 @@ export class PaperOmsService {
    * evidence, not an absence of evidence.
    */
   execute(approval: ApprovedExecution): OmsRunResult {
+    assertPaperCapitalBudgetCoverage(approval.profileId,this.#capitalBudget,this.#database);
     const orders: OmsOrderResult[] = [];
 
     for (const intent of approval.intents) {
@@ -192,6 +194,7 @@ export class PaperOmsService {
     approval: ApprovedExecution,
     context: PaperPendingPlacementContext,
   ): PaperPendingSubmitResult {
+    assertPaperCapitalBudgetCoverage(approval.profileId,this.#capitalBudget,this.#database);
     const orderIds: string[] = [];
     let refusedCount = 0;
     for (const intent of approval.intents) {
@@ -278,6 +281,7 @@ export class PaperOmsService {
 
   /** Settle only the recorded execution interval; never substitute a later bar. */
   settlePending(profileId: string, campaignId: string | null = null): PaperPendingSettlementResult {
+    assertPaperCapitalBudgetCoverage(profileId,this.#capitalBudget,this.#database);
     let filledCount = 0;
     let expiredCount = 0;
     let pendingCount = 0;

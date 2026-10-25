@@ -129,3 +129,37 @@ export function withBudgetClaim<T>(profileId: string, scopeId: string, expectedR
     return result;
   });
 }
+
+/** Purpose-bound P6 transaction only. Public saveCashClaim retains its funded-purpose refusal. */
+export function appendReviewedPaperReserveClaims(input: { profileId:string; scopeId:string; expectedRevision:string; beforeStateId:string; assessmentId:string; nowMs:number; claims:readonly CashClaimV1[]; revalidateAuthority:()=>void }, db:Db): void {
+  inTransaction(db,()=>{
+    input.revalidateAuthority();
+    const binding=db.prepare('SELECT * FROM paper_reserve_runtime_bindings_v1 WHERE profile_id=? AND scope_id=? AND archived=0 AND disabled=0').get(input.profileId,input.scopeId) as {state_id:string}|undefined;
+    const row=db.prepare('SELECT content_json FROM paper_reserve_assessments_v1 WHERE id=? AND scope_id=? AND before_id=?').get(input.assessmentId,input.scopeId,input.beforeStateId) as {content_json:string}|undefined;
+    const assessment=row?JSON.parse(row.content_json) as {claimIds:string[];afterId:string}:null;
+    const stateRow=assessment?db.prepare('SELECT content_json FROM paper_reserve_state_revisions_v1 WHERE id=?').get(assessment.afterId) as {content_json:string}|undefined:null;
+    const beforeRow=db.prepare('SELECT content_json FROM paper_reserve_state_revisions_v1 WHERE id=?').get(input.beforeStateId) as {content_json:string}|undefined;
+    const current=currentBudget(input.scopeId,input.nowMs,db);
+    if(!binding || binding.state_id!==input.beforeStateId || !assessment || !stateRow || !beforeRow || !current?.executionEligible || current.revision!==input.expectedRevision ||
+      capitalHash([...assessment.claimIds].sort())!==capitalHash(input.claims.map(c=>c.id).sort()))throw new Error('paper_reserve_claim_authority_stale');
+    const before=JSON.parse(beforeRow.content_json) as {reservedUsd:string;taxHoldUsd:string},after=JSON.parse(stateRow.content_json) as typeof before;
+    for(const purpose of ['profit_reserve','tax_hold'] as const) {
+      let delta=budgetAmountForReserve('0');
+      for(const raw of input.claims.filter(c=>c.purpose===purpose)) {
+        const claim=cashClaimSchema.parse(raw);
+        if(claim.scopeId!==input.scopeId || claim.assetId!=='USD' || claim.reflectedIn.length || claim.state!=='committed' && claim.state!=='released' || cashClaim(claim).id!==claim.id)throw new Error('paper_reserve_claim_invalid');
+        const prior=claim.replacesId?listCashClaims(input.scopeId,db).find(c=>c.id===claim.replacesId):null;
+        if(prior && (prior.originKey!==claim.originKey || prior.purpose!==purpose || !['committed','unknown'].includes(prior.state)) || claim.replacesId && !prior)throw new Error('paper_reserve_claim_lineage');
+        delta=delta.add(claim.state==='released'?'0':claim.amount).sub(prior?.amount??'0');
+        append('capital_cash_claim_revisions_v1',claim,{scope_id:claim.scopeId,origin_key:claim.originKey,replaces_id:claim.replacesId},db);
+      }
+      const field=purpose==='profit_reserve'?'reservedUsd':'taxHoldUsd';
+      if(!delta.eq(budgetAmountForReserve(after[field]).sub(before[field])))throw new Error('paper_reserve_claim_conservation');
+    }
+    if(input.claims.some(c=>!['profit_reserve','tax_hold'].includes(c.purpose)))throw new Error('paper_reserve_claim_purpose');
+    const post=currentBudget(input.scopeId,input.nowMs,db)!;
+    if(!post.executionEligible)throw new Error('paper_reserve_capacity_exceeded');
+    db.prepare('UPDATE capital_budget_checkpoints_v1 SET generation=generation+1 WHERE scope_id=?').run(input.scopeId);
+  });
+}
+import { budgetAmount as budgetAmountForReserve } from '@coqui/core';

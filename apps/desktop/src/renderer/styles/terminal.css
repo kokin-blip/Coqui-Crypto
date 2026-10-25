@@ -330,3 +330,10 @@
 
 .capital-contest .metric-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); }
 .capital-contest-metric-value { white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+.paper-profit-reserves :is(p, dd, summary) { overflow-wrap: anywhere; }
+.paper-profit-reserves .terminal-metric-help > button { margin: 0; }
+.paper-profit-reserves .terminal-metric-explanation { position-area: none; position-try-fallbacks: none; inset: 12px; margin: auto; height: fit-content; justify-self: auto; }
+.paper-profit-reserves button:not([popoverTarget]) { min-height: 32px; padding: 6px 10px; border: 1px solid var(--coqui-border); border-radius: 4px; background: var(--coqui-surface-2); color: var(--coqui-text); cursor: pointer; }
+.paper-profit-reserves button:not([popoverTarget]):hover:enabled { background: var(--coqui-surface-3); border-color: var(--coqui-text-muted); }
+.paper-profit-reserves button:not([popoverTarget]):disabled { border-style: dashed; color: var(--coqui-text-muted); cursor: not-allowed; }

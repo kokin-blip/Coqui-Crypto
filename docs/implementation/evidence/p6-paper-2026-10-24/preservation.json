@@ -1,0 +1,26 @@
+{
+  "base": "775950a0f3c539755a626a1fe058b55ef8f5787f",
+  "unrelatedDirtyEntries": 508,
+  "unrelatedChanges": [],
+  "indexUnchanged": true,
+  "protectedCount": 82,
+  "protectedUnchanged": 71,
+  "expectedIntegrationChanges": [
+    "apps/desktop/src/main/composition.ts",
+    "apps/desktop/src/renderer/query/refetch.ts",
+    "apps/desktop/src/renderer/styles/terminal.css",
+    "docs/studies/behavior-manifests-v1.json",
+    "packages/contracts/src/channels.ts",
+    "packages/contracts/src/index.ts",
+    "packages/core/src/research/study-manifests.generated.ts",
+    "packages/storage/src/repositories/index.ts",
+    "packages/storage/src/repositories/profile-impact.ts",
+    "tests/contracts-channels.test.ts",
+    "tests/secret-leak-sweep.test.ts"
+  ],
+  "unexpectedProtectedChanges": [],
+  "mixedReconstruction": true,
+  "previouslyDeletedPathsPreserved": [
+    "output/pdf/coqui-app-review-evidence-2026-10-09.zip"
+  ]
+}

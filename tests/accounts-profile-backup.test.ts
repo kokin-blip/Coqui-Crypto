@@ -103,7 +103,7 @@ describe('file profile backup store', () => {
         backupId: BACKUP_ID,
         profileId: PROFILE_ID,
         createdAtMs: 50,
-        schemaVersion: 98,
+        schemaVersion: 99,
         totalDurableRecords: 0,
         credentialKinds: ['advisor_gemini', 'coinbase'],
         credentialsIncluded: false,

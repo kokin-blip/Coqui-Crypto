@@ -5,6 +5,8 @@ export function archiveCapitalBindingsForCopy(database: Db, profileId: string): 
   if (!database.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='capital_scope_bindings_v1'").get()) return;
   if (database.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='capital_reserve_preview_heads_v1'").get())
     database.prepare('UPDATE capital_reserve_preview_heads_v1 SET archived=1').run();
+  if (database.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='paper_reserve_runtime_bindings_v1'").get())
+    database.prepare('UPDATE paper_reserve_runtime_bindings_v1 SET archived=1,disabled=1,generation=generation+1').run();
   database.prepare("UPDATE capital_scope_bindings_v1 SET mode='archived',connection_id=NULL,last_batch_id=NULL WHERE profile_id=?").run(profileId);
 }
 

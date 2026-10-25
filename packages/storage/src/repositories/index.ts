@@ -82,3 +82,5 @@ export * from './activity-valuations.js';
 export * from './profit-reserve.js';
 export * from './capital-replay.js';
 export * from './capital-contest.js';
+export * from './paper-capital-book.js';
+export * from './paper-profit-reserve.js';

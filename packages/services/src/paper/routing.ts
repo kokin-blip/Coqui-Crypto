@@ -1,3 +1,4 @@
+import { assertPaperCapitalBudgetCoverage } from './capital-budget-port.js';
 import {
   routeExecutionPlan,
   budgetAmount,
@@ -11,7 +12,7 @@ import {
   type PaperVenuePlacement,
 } from '@coqui/core';
 import {
-  connectionRemoval, getProfileConnectionV2, connectionEligible,
+  paperReserveBinding, connectionRemoval, getProfileConnectionV2, connectionEligible,
   getExecutionPlan,
   latestMultiConnectionPaperCampaign,
   linkPaperConnectionRoute,
@@ -62,6 +63,8 @@ export class VenueNeutralPaperRoutingService {
     executionPlannedEventId?: string,
     budgetContext?: ReturnType<typeof capitalRouteCandidates>,
   ): ExecutionRoutingResultV1 {
+    assertPaperCapitalBudgetCoverage(plan.profileId,this.#capitalBudget,this.#database);
+    if (paperReserveBinding(plan.profileId,this.#database)) throw new Error('paper_reserve_connected_routing_pending');
     let routing = routeExecutionPlan(plan, candidates);
     if (this.#capitalBudget) {
       const budget = this.#capitalBudget.budget();
@@ -101,6 +104,8 @@ export class VenueNeutralPaperRoutingService {
   }
 
   place(profileId: string, planId: string, routeId: string): PaperVenuePlacement {
+    assertPaperCapitalBudgetCoverage(profileId,this.#capitalBudget,this.#database);
+    if(paperReserveBinding(profileId,this.#database))throw new Error('paper_reserve_connected_routing_pending');
     const plan = getExecutionPlan(planId, profileId, this.#database);
     const route = listExecutionRoutes(planId, profileId, this.#database)
       .find((candidate) => candidate.id === routeId);

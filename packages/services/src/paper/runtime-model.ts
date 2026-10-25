@@ -82,6 +82,8 @@ export interface PaperRunSummary {
 }
 
 export interface PaperRunLoopDependencies {
+  readonly capitalRun?: (scheduledForMs:number)=>PaperRunSummary;
+  readonly reserveObserve?: ()=>void;
   readonly database: Db;
   readonly clock: Clock;
   readonly profileId: string;

@@ -1,0 +1,390 @@
+{
+  "base": "775950a0f3c539755a626a1fe058b55ef8f5787f",
+  "files": [
+    {
+      "path": "packages/core/src/portfolio/profit-reserve.ts",
+      "workingSha256": "a896b9cc83c8e8c913b7b24bb383a640275e0a05f0d55edaaf508e885cd5491d",
+      "committedSha256": "a896b9cc83c8e8c913b7b24bb383a640275e0a05f0d55edaaf508e885cd5491d",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/core/src/portfolio/profit-reserve-state.ts",
+      "workingSha256": "9a05caf2d21ea8052d89adb79b55aadd97052e3bf8b5e3d411795eb8be701cf9",
+      "committedSha256": "9a05caf2d21ea8052d89adb79b55aadd97052e3bf8b5e3d411795eb8be701cf9",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/core/src/portfolio/profit-reserve-eligibility.ts",
+      "workingSha256": "535b3934a2b98ccdda535ffbf310d6ef18f594e4b6ac81b343570e7ed276a7bd",
+      "committedSha256": "535b3934a2b98ccdda535ffbf310d6ef18f594e4b6ac81b343570e7ed276a7bd",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/core/src/portfolio/reserve-capital-witness.ts",
+      "workingSha256": "75b6e0fb895d195b9c0ef08c7b11040f4b0c0ff55bc306fb2cf5485bde01f690",
+      "committedSha256": "75b6e0fb895d195b9c0ef08c7b11040f4b0c0ff55bc306fb2cf5485bde01f690",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/core/src/portfolio/capital-performance.ts",
+      "workingSha256": "9275fdffeaa4f9fb035778e6e84b75b525e8d5f19bbc96239b5d6c912c795b73",
+      "committedSha256": "9275fdffeaa4f9fb035778e6e84b75b525e8d5f19bbc96239b5d6c912c795b73",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/core/src/execution/account-budget.ts",
+      "workingSha256": "5addc9d44bd58ead38a595c963b762707c253f24d83e23bfc2492d14a3bc5b0d",
+      "committedSha256": "5addc9d44bd58ead38a595c963b762707c253f24d83e23bfc2492d14a3bc5b0d",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/contracts/src/schemas/profit-reserve.ts",
+      "workingSha256": "686bc4079d95caad58649f88229f9b6c6efdb22d65e8d8bb854ec9f330c5ed3f",
+      "committedSha256": "686bc4079d95caad58649f88229f9b6c6efdb22d65e8d8bb854ec9f330c5ed3f",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/contracts/src/schemas/paper-execution.ts",
+      "workingSha256": "fb1638780202e7323fc4d1cc4a770fa2c4061220d65600d6cd2a029355416443",
+      "committedSha256": "fb1638780202e7323fc4d1cc4a770fa2c4061220d65600d6cd2a029355416443",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/services/src/portfolio/profit-reserve.ts",
+      "workingSha256": "eec5d5d7b709b72c99235c5bb680d7a4e4b131a202feef77df4d7ff772c68125",
+      "committedSha256": "eec5d5d7b709b72c99235c5bb680d7a4e4b131a202feef77df4d7ff772c68125",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/services/src/portfolio/profit-reserve-state.ts",
+      "workingSha256": "d94cae65b78c06dcf3890f0d7919370006d52b79fe88bcd0e6f6df516243b408",
+      "committedSha256": "d94cae65b78c06dcf3890f0d7919370006d52b79fe88bcd0e6f6df516243b408",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/services/src/portfolio/profit-reserve-eligibility.ts",
+      "workingSha256": "cce1d9bb9cc26f1f434c8f4a0f537df8aa2f43e81aea8c57039630f1a3efac3d",
+      "committedSha256": "cce1d9bb9cc26f1f434c8f4a0f537df8aa2f43e81aea8c57039630f1a3efac3d",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/services/src/portfolio/capital-accounting.ts",
+      "workingSha256": "86b9f911e40400a2302a91cbba4de69ed40431db7426990f5256b36ea76602d0",
+      "committedSha256": "86b9f911e40400a2302a91cbba4de69ed40431db7426990f5256b36ea76602d0",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/services/src/portfolio/capital-sources.ts",
+      "workingSha256": "f8e1f91c79d17a9a62da5e0fbf71d186ac807ac061afa9ab2e436674383f18a6",
+      "committedSha256": "f8e1f91c79d17a9a62da5e0fbf71d186ac807ac061afa9ab2e436674383f18a6",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/services/src/portfolio/capital-budget.ts",
+      "workingSha256": "de570594e07dd7ba2579c3be691ca1e4f5fbd5e431d31eb45c82d9cbaee82d4d",
+      "committedSha256": "de570594e07dd7ba2579c3be691ca1e4f5fbd5e431d31eb45c82d9cbaee82d4d",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/services/src/portfolio/capital-budget-sources.ts",
+      "workingSha256": "8079ceb6135c1605bec96b00b0ce7a96dbe0f4177d668c1e1abe39f461c06a82",
+      "committedSha256": "8079ceb6135c1605bec96b00b0ce7a96dbe0f4177d668c1e1abe39f461c06a82",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/services/src/paper/capital-budget-port.ts",
+      "workingSha256": "b7fa4983047753aea1e8178cdcc060531948ed8550285e8b3543819aa3ad79f4",
+      "committedSha256": "b7fa4983047753aea1e8178cdcc060531948ed8550285e8b3543819aa3ad79f4",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/services/src/paper/capital-preview.ts",
+      "workingSha256": "9a64a88af0ea82fd70b00bb1a443df336ff358da2a106372f11e6d3ae91cb3a3",
+      "committedSha256": "9a64a88af0ea82fd70b00bb1a443df336ff358da2a106372f11e6d3ae91cb3a3",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/services/src/paper/oms.ts",
+      "workingSha256": "7e74c50613a224382961237b8817055d0f1eeb10a3538ebe97573b385c36a554",
+      "committedSha256": "7e74c50613a224382961237b8817055d0f1eeb10a3538ebe97573b385c36a554",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/services/src/paper/execution-service.ts",
+      "workingSha256": "7eecc3b55b8cb8bec9632ac1efc6211f6f28793c5dc03722afcb099bccc9298d",
+      "committedSha256": "7eecc3b55b8cb8bec9632ac1efc6211f6f28793c5dc03722afcb099bccc9298d",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/services/src/paper/execution-gate.ts",
+      "workingSha256": "4dcd3f3fd969d8180aca6916123fd2ebe9e4a9564b6ae5aa3194d6cb637e2d28",
+      "committedSha256": "4dcd3f3fd969d8180aca6916123fd2ebe9e4a9564b6ae5aa3194d6cb637e2d28",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/services/src/paper/runtime-model.ts",
+      "workingSha256": "3c64c8eea5c92fce139654db4bccfb45d761e426d38f85c825a9558fa8944a79",
+      "committedSha256": "3c64c8eea5c92fce139654db4bccfb45d761e426d38f85c825a9558fa8944a79",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/services/src/paper/run-loop.ts",
+      "workingSha256": "704bb975713654c611b8b99899f060b7a0ee3c2149a8816a25cf523ab01d6c83",
+      "committedSha256": "704bb975713654c611b8b99899f060b7a0ee3c2149a8816a25cf523ab01d6c83",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/services/src/paper/paper-scheduler-task.ts",
+      "workingSha256": "4df77ab085bc4fff52d00d49e4f294a498a61c0c23321f50db169fee31ea9448",
+      "committedSha256": "4df77ab085bc4fff52d00d49e4f294a498a61c0c23321f50db169fee31ea9448",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/services/src/paper/routing.ts",
+      "workingSha256": "e413d9500feb08b720b8eda67fa30627b218cae2f4942833e87a8fe1c8961a46",
+      "committedSha256": "e413d9500feb08b720b8eda67fa30627b218cae2f4942833e87a8fe1c8961a46",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/services/src/paper/kill-switch.ts",
+      "workingSha256": "7d42b76c4dd42d5361416bb86ead64770e8492d37765121ab3c0d64259a4e0ce",
+      "committedSha256": "7d42b76c4dd42d5361416bb86ead64770e8492d37765121ab3c0d64259a4e0ce",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/services/src/paper/parallel-paper-service.ts",
+      "workingSha256": "da59e9c95038ed36051b33a5251d7af5bd18892a8d192728ce67818c09049569",
+      "committedSha256": "0ac3591af75e2315e27e353e9e3b49b7e6f1e7b8afabf668b15b08fe56dd2142",
+      "uncommitted": true,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/services/src/paper/parallel-execution-safety.ts",
+      "workingSha256": "1cfe219c3cb2d1dbb059caf736f28e005e0d98ea607f638ceea9603591bb63b5",
+      "committedSha256": "f1c2113a108aff74db422db3927f53baa4ae4a5a09026e7751e0c80152e5ddb6",
+      "uncommitted": true,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/storage/src/repositories/profit-reserve.ts",
+      "workingSha256": "7bff9407fd4265c30e6acccce4969740789bb22c13980e1aeae84c4562dc8a0c",
+      "committedSha256": "7bff9407fd4265c30e6acccce4969740789bb22c13980e1aeae84c4562dc8a0c",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/storage/src/repositories/capital-budget.ts",
+      "workingSha256": "c08adc2cc4f93c1460401a02b19eb71db306db57b5dbab7b27e04d209062dec4",
+      "committedSha256": "c08adc2cc4f93c1460401a02b19eb71db306db57b5dbab7b27e04d209062dec4",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/storage/src/repositories/capital-accounting.ts",
+      "workingSha256": "c2d5f9deb8069e3746cc2dd09c9f399fd6dc7ef8ec185e00b6a347683432979f",
+      "committedSha256": "c2d5f9deb8069e3746cc2dd09c9f399fd6dc7ef8ec185e00b6a347683432979f",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/storage/src/repositories/paper-runtime.ts",
+      "workingSha256": "9773820c70f2e84b9b13d939a9728ac65522f0eb2eacb2b957efdab0869097bf",
+      "committedSha256": "9773820c70f2e84b9b13d939a9728ac65522f0eb2eacb2b957efdab0869097bf",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/storage/src/repositories/execution-authority.ts",
+      "workingSha256": "5efd62777911069a2569d563069e052fad8269ba0e3ddf80c6b8c8d771b0bdc3",
+      "committedSha256": "5efd62777911069a2569d563069e052fad8269ba0e3ddf80c6b8c8d771b0bdc3",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/storage/src/repositories/profile-impact.ts",
+      "workingSha256": "e72f6d1936a129730299d70eb03dccb2a4125edc0d1f9fbbe23e29fa01c5dc5b",
+      "committedSha256": "e72f6d1936a129730299d70eb03dccb2a4125edc0d1f9fbbe23e29fa01c5dc5b",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/storage/src/profiles/duplication.ts",
+      "workingSha256": "9576938261fb9eb4e7680cb68d05a8a79d5dc221f9a30400e40b568c9ed80e79",
+      "committedSha256": "9576938261fb9eb4e7680cb68d05a8a79d5dc221f9a30400e40b568c9ed80e79",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/storage/src/profiles/duplication-transient-counts.ts",
+      "workingSha256": "e300ff67f87bc8764e82763f6d8a1ad38300fbfbfe24ce46d043c1c62a986105",
+      "committedSha256": "e300ff67f87bc8764e82763f6d8a1ad38300fbfbfe24ce46d043c1c62a986105",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/storage/src/profiles/restore-proof.ts",
+      "workingSha256": "61c339be7a214da1e118c0622e96e41d08ed46d2a402b560711a5a2f10cf4ecd",
+      "committedSha256": "61c339be7a214da1e118c0622e96e41d08ed46d2a402b560711a5a2f10cf4ecd",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/storage/src/migrations/v98.ts",
+      "workingSha256": "5acfdbb22d52ac0c18695af27513bd1e964618464c4702555536601ea40ebc2d",
+      "committedSha256": "5acfdbb22d52ac0c18695af27513bd1e964618464c4702555536601ea40ebc2d",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/storage/src/migrations/index.ts",
+      "workingSha256": "d75eec060309ef5b0c88a1df110fed1e3da86ba21b35fee2807689e9af9911b0",
+      "committedSha256": "d75eec060309ef5b0c88a1df110fed1e3da86ba21b35fee2807689e9af9911b0",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "apps/desktop/src/main/composition.ts",
+      "workingSha256": "ae19a0eb7fd292e24ad8ebf4f9fcfa74a87a8160d05d228f6613dab46f98583d",
+      "committedSha256": "72bf2b555141d623f19629a1fb210b81939635c4b25d02154c9f912880c79898",
+      "uncommitted": true,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "apps/desktop/src/main/scheduler-runtime.ts",
+      "workingSha256": "b6911af2bb307b8d227061142a54b322e5a643f8a4557cce63632ed292048f7a",
+      "committedSha256": "b86680aa83aa0fe4df2bac84ceb25cc182a51f96836a87a297ce8853e356be4c",
+      "uncommitted": true,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "apps/desktop/src/main/profit-reserve-handlers.ts",
+      "workingSha256": "cf64d99ab230dbdd0eb5b880c8dcdeb23289aac01b91cf89f60188aa2f58279d",
+      "committedSha256": "cf64d99ab230dbdd0eb5b880c8dcdeb23289aac01b91cf89f60188aa2f58279d",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "apps/desktop/src/main/paper-review-handlers.ts",
+      "workingSha256": "8b0e64cf7a536d5d9839d5a84245ff1119d057ec5e2c61cb3745d92562e38b03",
+      "committedSha256": "8b0e64cf7a536d5d9839d5a84245ff1119d057ec5e2c61cb3745d92562e38b03",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "apps/desktop/src/main/paper-performance-evidence.ts",
+      "workingSha256": "22b8b6353a709a2e59629790280e6f2a97ea6f36cc430547fc1c205c93165915",
+      "committedSha256": "22b8b6353a709a2e59629790280e6f2a97ea6f36cc430547fc1c205c93165915",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "apps/desktop/src/main/profile-runtime.ts",
+      "workingSha256": "89bf11c357ecd1f36338a460e8af14579ce323523af3d1210512a09393ebaaa8",
+      "committedSha256": "89bf11c357ecd1f36338a460e8af14579ce323523af3d1210512a09393ebaaa8",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "apps/desktop/src/main/profile-contexts.ts",
+      "workingSha256": "7252c0db29c5431f05dc502614107b62cd7e056a126b857cdfdd3324fa1bfcb4",
+      "committedSha256": "7252c0db29c5431f05dc502614107b62cd7e056a126b857cdfdd3324fa1bfcb4",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "apps/desktop/src/main/parallel-paper-runtime.ts",
+      "workingSha256": "4067b7d46d40c5b9aa5b09ea236814aaf23f2eea70c251f29be1676af95142f2",
+      "committedSha256": "fa76b11e0c28962d815e62a95f43d02af954854d1df4e9cb957935670d3d23b6",
+      "uncommitted": true,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "apps/desktop/src/renderer/app/ProfitReserves.tsx",
+      "workingSha256": "c38f6375f2957728ec8eb4644babfea25d720579d819ffe0fcc6c3043b736f96",
+      "committedSha256": "c38f6375f2957728ec8eb4644babfea25d720579d819ffe0fcc6c3043b736f96",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "tests/capital-budget-consumers.test.ts",
+      "workingSha256": "95d89643844655488d56bbf5b36c890c1f266f0bcce5219a5e7b60d4360f9e8e",
+      "committedSha256": "95d89643844655488d56bbf5b36c890c1f266f0bcce5219a5e7b60d4360f9e8e",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "tests/helpers/profit-reserve.ts",
+      "workingSha256": "3021f711e441d3bef6739da415d93420e0dc1cbccb347d59aee56ae1701b8cd1",
+      "committedSha256": "3021f711e441d3bef6739da415d93420e0dc1cbccb347d59aee56ae1701b8cd1",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "tests/helpers/feasibility.ts",
+      "workingSha256": "459622e0cb090ed1e2c79755b78536eace061c0a0bb5606bdcfc77693afb92c8",
+      "committedSha256": "459622e0cb090ed1e2c79755b78536eace061c0a0bb5606bdcfc77693afb92c8",
+      "uncommitted": false,
+      "use": "source/interface and dependency inventory; critical findings/probes documented in plan"
+    },
+    {
+      "path": "packages/core/src/execution/permissions.ts",
+      "workingSha256": "895e665977c4028bba0f8f0b384152878aa0c35e5d04a585583cc9c67524d7c1",
+      "committedSha256": "895e665977c4028bba0f8f0b384152878aa0c35e5d04a585583cc9c67524d7c1",
+      "uncommitted": false,
+      "use": "Supplemental cash-only consequence/denominator and qualification binding inspection"
+    },
+    {
+      "path": "packages/storage/src/repositories/bound-profitability.ts",
+      "workingSha256": "ab5e7a008be9bc711acd3ca9d0faf1336efa690ec2e90e0d725924e587efbde1",
+      "committedSha256": "ab5e7a008be9bc711acd3ca9d0faf1336efa690ec2e90e0d725924e587efbde1",
+      "uncommitted": false,
+      "use": "Supplemental cash-only consequence/denominator and qualification binding inspection"
+    },
+    {
+      "path": "packages/services/src/paper/proposal-preview.ts",
+      "workingSha256": "0c46abe3e92bca21a29b290204b20471d9cd8c4f34dfb3d3e8e85a467a9c393f",
+      "committedSha256": "0c46abe3e92bca21a29b290204b20471d9cd8c4f34dfb3d3e8e85a467a9c393f",
+      "uncommitted": false,
+      "use": "Supplemental cash-only consequence/denominator and qualification binding inspection"
+    },
+    {
+      "path": "apps/desktop/src/main/forward-edge-runtime.ts",
+      "workingSha256": "2a4041316307248d04adbb33790f15ee7531f5b59c4b84cbe5b88bb17f08a202",
+      "committedSha256": "2a4041316307248d04adbb33790f15ee7531f5b59c4b84cbe5b88bb17f08a202",
+      "uncommitted": false,
+      "use": "Supplemental cash-only consequence/denominator and qualification binding inspection"
+    },
+    {
+      "path": "packages/services/src/paper/exploratory-run-loop.ts",
+      "workingSha256": "05088a95df2589bcf8a9d914c8c4850b3e763f26abfec2678bfaa021b046fe9f",
+      "committedSha256": "05088a95df2589bcf8a9d914c8c4850b3e763f26abfec2678bfaa021b046fe9f",
+      "uncommitted": false,
+      "use": "Supplemental cash-only consequence/denominator and qualification binding inspection"
+    }
+  ]
+}

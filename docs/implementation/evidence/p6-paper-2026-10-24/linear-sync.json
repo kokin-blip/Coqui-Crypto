@@ -1,0 +1,17 @@
+{
+  "issueId": "COQ-40",
+  "status": "In Progress",
+  "commentId": "eba92220-634f-4823-8292-6fc1e8df7d52",
+  "milestoneId": "3912e58c-9923-4c05-9e78-230a6404eeda",
+  "milestoneCommentId": "fd7e3aaf-edd9-4cf8-87c6-2a4e1503f3a4",
+  "implementation": "local uncommitted",
+  "remaining": [
+    "human source/merge/release review",
+    "actual strategy qualification and owner approval",
+    "P5-H",
+    "P6-G",
+    "P6-H",
+    "P7"
+  ],
+  "promptUsed": "Ok move onto building P6 using the saved plan. Preserve P0–P4 and P5-A–G, keep P5-H pending and the full P0–P7 scope intact, and keep the phase tracker updated."
+}

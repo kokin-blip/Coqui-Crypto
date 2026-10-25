@@ -1,0 +1,23 @@
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: 'd353f61eef7348793c8db37aa2d01bc07104c7fc1cb3ef5ab646b6c185c64d78'
+}
+PASS default explicit $500 example and no enrollment 
+PASS keyboard creation reaches production preload and records cash once 
+PASS book creation grants no authority 
+PASS operational policy save is disarmed {"profile_id":"main","book_id":"999b2f4032a2097b50104ee80c0515bfee78d058421b4ca1666c9cc012c73a28","scope_id":"93ccfc39a1aa89ba549068362bdeab551f754c0268624350bd143bd616c54c93","policy_id":"9b1d5b3a43ff8f6454f582c93a9427fd7b1e8d6b58526164693bccee38924ab2","state_id":"1ed61299f1fa0f61d0f4d2146bee21700c7a3dd61d51a464c3327f4f40162f1e","requirements_id":"ff275bdfad1040ae57edb6ade9d8ba4b7be69c9cb0712ab3adf995345fc8fe7f","generation":1,"archived":0,"disabled":1}
+PASS new exact strategy has no inherited qualification {"status":"blocked","issues":[{"path":[],"code":"paper_reserve_qualification_missing"}]}
+PASS refused authorization leaves claims/H unchanged 
+PASS new reads have no durable financial or lifecycle writes 
+PASS desktop-dark: scope and recovery wording 
+PASS desktop-dark: inputs have associated labels 
+PASS desktop-dark: no horizontally overflowing paper form 
+PASS narrow-light: scope and recovery wording 
+PASS narrow-light: inputs have associated labels 
+PASS narrow-light: no horizontally overflowing paper form 
+PASS contrast-zoom: scope and recovery wording 
+PASS contrast-zoom: inputs have associated labels 
+PASS contrast-zoom: no horizontally overflowing paper form 
+PASS keyboard refusal returns focus to the status heading 
+PASS live execution remains disabled 
+PASS no renderer errors 

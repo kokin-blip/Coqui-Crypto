@@ -27,3 +27,6 @@ export * from './profit-reserve.js';
 export * from './profit-reserve-state.js';
 export * from './profit-reserve-eligibility.js';
 export * from './reserve-capital-witness.js';
+export * from './paper-profit-reserve-types.js';
+export * from './paper-profit-reserve.js';
+export * from './paper-profit-reserve-state.js';

@@ -1,0 +1,23 @@
+{
+  "promptUsed": "Commit and push P5-A–G, then lets move on to planning P6. Reread its full requirements in the saved roadmap and inspect the code before coding. Keep P5-H pending and preserve P0–P4 and the full P0–P7 scope.",
+  "p5": {
+    "id": "COQ-39",
+    "url": "https://linear.app/coqui-crypto/issue/COQ-39/implement-p5-small-portfolio-strategy-contest-and-separate-policy",
+    "status": "In Progress",
+    "commit": "775950a0f3c539755a626a1fe058b55ef8f5787f",
+    "pushed": true,
+    "developmentEvaluationPending": true,
+    "commentId": "37cc51ee-05f0-4476-aa54-918c53bdf331",
+    "milestoneCommentId": "6030dbf2-f59f-4a8d-a544-b530ff3d7928"
+  },
+  "p6": {
+    "id": "COQ-40",
+    "url": "https://linear.app/coqui-crypto/issue/COQ-40/implement-p6-reviewed-internal-paper-profit-reserves",
+    "status": "Backlog",
+    "implementationStarted": false,
+    "planningArtifactsUncommitted": true,
+    "commentId": "aff6e725-b3c7-4dae-8ccf-7cbede70545d",
+    "milestoneCommentId": "0e587f9b-ae07-48da-9417-88cb60513204"
+  },
+  "contextEndpointUnavailable": true
+}

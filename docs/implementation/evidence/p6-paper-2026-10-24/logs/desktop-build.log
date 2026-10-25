@@ -1,0 +1,91 @@
+$ tsc -b && node scripts/build-preload.mjs && vite build && node scripts/build-metadata.mjs
+vite v8.2.2 building client environment for production...
+transforming...
+✓ 2880 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/renderer/assets/LINK-DJpGk1Iv.svg                                          0.39 kB │ gzip:   0.25 kB
+dist/renderer/assets/ETH-Bm67nEK8.svg                                           0.91 kB │ gzip:   0.36 kB
+dist/renderer/assets/DOGE-Dzd7iX0A.svg                                          1.41 kB │ gzip:   0.61 kB
+dist/renderer/index.html                                                        1.49 kB │ gzip:   0.70 kB
+dist/renderer/assets/BTC-B8KjHMa1.svg                                           1.88 kB │ gzip:   0.93 kB
+dist/renderer/assets/ADA-C5ZswnYe.svg                                           5.93 kB │ gzip:   2.65 kB
+dist/renderer/assets/coqui-mark-7AG2SAQ7.png                                    7.89 kB
+dist/renderer/assets/ibm-plex-sans-vietnamese-wght-normal-Dg1JeJN0.woff2       13.16 kB
+dist/renderer/assets/ibm-plex-sans-greek-wght-normal-CmyJS8uq.woff2            19.50 kB
+dist/renderer/assets/ibm-plex-sans-cyrillic-ext-wght-normal-d45eAU9y.woff2     23.56 kB
+dist/renderer/assets/ibm-plex-sans-cyrillic-wght-normal-BAAhND-U.woff2         29.51 kB
+dist/renderer/assets/ibm-plex-sans-latin-ext-wght-normal-CIII54If.woff2        30.96 kB
+dist/renderer/assets/ibm-plex-sans-latin-wght-normal-IvpUvPa2.woff2            45.71 kB
+dist/renderer/assets/dot-accent-C6sXN3aP.png                                   77.86 kB
+dist/renderer/assets/index-DriwM_QL.css                                       188.15 kB │ gzip:  31.56 kB
+dist/renderer/assets/Markets-OhAnHG2r.js                                        0.07 kB │ gzip:   0.08 kB
+dist/renderer/assets/p-D0YpjgON-Mn7xcsSk.js                                     0.08 kB │ gzip:   0.09 kB
+dist/renderer/assets/p-BmVRXR1y-BuSzS74A.js                                     0.08 kB │ gzip:   0.10 kB
+dist/renderer/assets/p-D7-vHX0A-BKMU_1s2.js                                     0.08 kB │ gzip:   0.10 kB
+dist/renderer/assets/p-CG_zZq_I-BxNeWkcl.js                                     0.08 kB │ gzip:   0.10 kB
+dist/renderer/assets/p-5ldEpNdG-DgJ2P42x.js                                     0.09 kB │ gzip:   0.10 kB
+dist/renderer/assets/p-ZjP4CjeZ-DJ1DGIsW.js                                     0.14 kB │ gzip:   0.13 kB │ map:     0.49 kB
+dist/renderer/assets/chevron-down-Dkh51bRn.js                                   0.16 kB │ gzip:   0.16 kB │ map:     0.82 kB
+dist/renderer/assets/p-BWoa-cki-BLou2doW.js                                     0.24 kB │ gzip:   0.18 kB
+dist/renderer/assets/evidence-visualization-DsDSJ95F.js                         0.33 kB │ gzip:   0.24 kB │ map:     1.33 kB
+dist/renderer/assets/file-up-OhjmBEiP.js                                        0.38 kB │ gzip:   0.27 kB │ map:     1.24 kB
+dist/renderer/assets/DeferredPanel-Ctaeyo4u.js                                  0.43 kB │ gzip:   0.31 kB │ map:     1.36 kB
+dist/renderer/assets/ChartViewControl-CCRT9QUh.js                               0.47 kB │ gzip:   0.33 kB │ map:     1.87 kB
+dist/renderer/assets/sparkles-B4GQ7Jjh.js                                       0.52 kB │ gzip:   0.31 kB │ map:     1.42 kB
+dist/renderer/assets/p-BT9-hMMz-Dk_dGyhU.js                                     0.55 kB │ gzip:   0.39 kB │ map:     1.16 kB
+dist/renderer/assets/p-BMPN55of-C0P_qWS_.js                                     0.58 kB │ gzip:   0.40 kB │ map:     1.60 kB
+dist/renderer/assets/p-CWuIRJQN-B2-v2LB8.js                                     0.67 kB │ gzip:   0.49 kB │ map:     1.76 kB
+dist/renderer/assets/CoquiComponents-BKmi-RBV.js                                0.85 kB │ gzip:   0.42 kB │ map:     2.17 kB
+dist/renderer/assets/advisor-navigation-CbNO-8pT.js                             0.91 kB │ gzip:   0.52 kB │ map:     2.70 kB
+dist/renderer/assets/EvidenceExplainButton-DSUaK5LA.js                          1.12 kB │ gzip:   0.68 kB │ map:     2.62 kB
+dist/renderer/assets/badges-jU54efrw.js                                         1.31 kB │ gzip:   0.61 kB │ map:     4.71 kB
+dist/renderer/assets/format-B9VBX1wM.js                                         1.57 kB │ gzip:   0.81 kB │ map:     7.45 kB
+dist/renderer/assets/p-BQyuFxYc-BP5sUz4F.js                                     1.62 kB │ gzip:   0.84 kB │ map:     3.88 kB
+dist/renderer/assets/AllocationLegend-lMY95dLS.js                               1.67 kB │ gzip:   0.84 kB │ map:     4.89 kB
+dist/renderer/assets/FinancialChart-Bnv2G0oA.js                                 2.05 kB │ gzip:   1.07 kB │ map:     6.71 kB
+dist/renderer/assets/OperationsFloor-CxS2hbcc.js                                2.24 kB │ gzip:   0.93 kB │ map:     4.99 kB
+dist/renderer/assets/use-command-D1I-zzjc.js                                    2.27 kB │ gzip:   0.94 kB │ map:    10.29 kB
+dist/renderer/assets/Alerts-sgzazrwp.js                                         2.68 kB │ gzip:   1.16 kB │ map:     6.93 kB
+dist/renderer/assets/p-C09TXohi-BME7HMRv.js                                     3.24 kB │ gzip:   1.55 kB │ map:     6.95 kB
+dist/renderer/assets/CoinbaseMarketContext-CTI8s7Wx.js                          3.52 kB │ gzip:   1.34 kB │ map:     8.02 kB
+dist/renderer/assets/WalletNames-BbinYFPG.js                                    3.66 kB │ gzip:   1.56 kB │ map:     8.41 kB
+dist/renderer/assets/CrewRobot-CyvlOeIU.js                                      3.79 kB │ gzip:   1.20 kB │ map:     8.34 kB
+dist/renderer/assets/Tax-CDvIG_-b.js                                            4.09 kB │ gzip:   1.41 kB │ map:     8.72 kB
+dist/renderer/assets/TerminalPerformance-Wd_SMA4p.js                            4.50 kB │ gzip:   1.77 kB │ map:     7.68 kB
+dist/renderer/assets/Events-CJJ_TDhT.js                                         4.67 kB │ gzip:   1.85 kB │ map:     9.10 kB
+dist/renderer/assets/DecisionEvidencePanel-JWF3Yr85.js                          4.77 kB │ gzip:   1.50 kB │ map:    10.00 kB
+dist/renderer/assets/p-C-NbvXu4-B7aHKh_2.js                                     4.78 kB │ gzip:   2.11 kB │ map:    10.78 kB
+dist/renderer/assets/Reconciliation-CRMXH_Xo.js                                 5.56 kB │ gzip:   2.23 kB │ map:    15.51 kB
+dist/renderer/assets/PaperProposalReview-ClVNY0kv.js                            5.70 kB │ gzip:   2.10 kB │ map:    12.44 kB
+dist/renderer/assets/Activity-OK0t04WK.js                                       6.31 kB │ gzip:   2.33 kB │ map:    16.03 kB
+dist/renderer/assets/CapitalPerformance-D1fmtQzb.js                             6.79 kB │ gzip:   2.49 kB │ map:    14.40 kB
+dist/renderer/assets/Risk-CWx_r95M.js                                           7.83 kB │ gzip:   2.61 kB │ map:    17.97 kB
+dist/renderer/assets/Scoreboard-D4YyEjLS.js                                     8.00 kB │ gzip:   2.60 kB │ map:    19.97 kB
+dist/renderer/assets/jsx-runtime-B-hcVAMW.js                                    8.60 kB │ gzip:   3.31 kB │ map:    29.16 kB
+dist/renderer/assets/NewsPanels-DHBD7-4m.js                                     9.00 kB │ gzip:   3.00 kB │ map:    16.49 kB
+dist/renderer/assets/dist-HZ_C_A0A.js                                           9.36 kB │ gzip:   4.18 kB │ map:    16.18 kB
+dist/renderer/assets/p-C4VpVfrJ-52_OBYkE.js                                     9.61 kB │ gzip:   3.89 kB │ map:    21.16 kB
+dist/renderer/assets/OperationsJournal-CRmmi_IP.js                             10.41 kB │ gzip:   3.78 kB │ map:    28.89 kB
+dist/renderer/assets/ParallelPaperRecovery-CF-wlDau.js                         12.88 kB │ gzip:   4.18 kB │ map:    22.95 kB
+dist/renderer/assets/Performance-CELCnTPa.js                                   15.48 kB │ gzip:   4.17 kB │ map:    34.51 kB
+dist/renderer/assets/Portfolio-B8WgS8us.js                                     17.20 kB │ gzip:   4.73 kB │ map:    33.99 kB
+dist/renderer/assets/PaperTrading-Dt1efTQc.js                                  32.50 kB │ gzip:   9.11 kB │ map:    65.99 kB
+dist/renderer/assets/p-1sJ0ZDPe-YkMm5iKi.js                                    36.61 kB │ gzip:  13.92 kB │ map:    88.55 kB
+dist/renderer/assets/use-channel-CpkuEH_i.js                                   37.74 kB │ gzip:  10.41 kB │ map:   135.01 kB
+dist/renderer/assets/Research-e_lk6izv.js                                      41.36 kB │ gzip:  11.08 kB │ map:    84.39 kB
+dist/renderer/assets/Settings-DXG4QZrX.js                                      55.07 kB │ gzip:  13.15 kB │ map:   117.03 kB
+dist/renderer/assets/Overview-CFL2DkR6.js                                      61.01 kB │ gzip:  16.85 kB │ map:   122.57 kB
+dist/renderer/assets/AdvancedMarkets-D8S9dCqs.js                               72.90 kB │ gzip:  22.03 kB │ map:   225.47 kB
+dist/renderer/assets/chart-lifecycle-B-Mh56uu.js                              178.32 kB │ gzip:  57.67 kB │ map:   474.88 kB
+dist/renderer/assets/Allocation-CWxzUywu.js                                   242.77 kB │ gzip:  61.94 kB │ map:   847.69 kB
+dist/renderer/assets/index-Byf1WmgP.js                                        249.46 kB │ gzip:  77.02 kB │ map:   984.71 kB
+dist/renderer/assets/AllocationRingChart-NEu9Bikt.js                          357.11 kB │ gzip:  95.14 kB │ map: 1,517.64 kB
+dist/renderer/assets/IonicCommandPopover-C3kqDsua.js                        1,067.53 kB │ gzip: 212.90 kB │ map: 1,779.38 kB
+
+✓ built in 529ms
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

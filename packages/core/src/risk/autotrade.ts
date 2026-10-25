@@ -90,11 +90,13 @@ export function applyAutoTradeGuardrails(
   intents: readonly ExecutionIntent[],
   holdings: readonly Holding[],
   guardrails: AutoTradeGuardrails = DEFAULT_AUTO_TRADE_GUARDRAILS,
+  activeCapitalUsd?: string,
 ): GuardedAutoRebalance {
   const warnings: string[] = [];
   const skippedTrades: SkippedAutoTrade[] = [];
   let kept: ExecutionIntent[] = [];
-  const value = portfolioValue(holdings);
+  const value = activeCapitalUsd === undefined ? portfolioValue(holdings) : new Decimal(activeCapitalUsd);
+  if (!value.isFinite() || value.lt(0)) throw new TypeError('invalid_active_capital');
   const heldValue = valueByAsset(holdings);
 
   if (guardrails.blockReason) {

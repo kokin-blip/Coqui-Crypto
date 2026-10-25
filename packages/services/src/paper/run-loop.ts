@@ -1,3 +1,4 @@
+import { getPaperCapitalBook } from '@coqui/storage';
 import { startOperationsActivity } from '../operations/activity.js';
 import {
   canonicalJson,
@@ -485,6 +486,7 @@ function evaluatePaperDecision(
 }
 
 export function runPaperDecision(dependencies: PaperRunLoopDependencies, scheduledForMs: number): PaperRunSummary {
+  if(getPaperCapitalBook(dependencies.profileId,dependencies.database)){if(!dependencies.capitalRun)throw new Error('paper_capital_runtime_required');return dependencies.capitalRun(scheduledForMs);}
   const decisionId=strategyDecisionId(dependencies.profileId,scheduledForMs);
   const existing=dependencies.database.prepare(`SELECT 1 FROM strategy_decisions_v1 d JOIN wallet_decision_runs w ON w.id=d.run_id WHERE d.decision_id=? AND d.profile_id=? AND w.status='completed'`)
     .get(decisionId,dependencies.profileId);

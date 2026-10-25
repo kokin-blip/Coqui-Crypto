@@ -17,3 +17,6 @@ export * from './capital-coinbase.js';
 export * from './profit-reserve.js';
 export * from './profit-reserve-eligibility.js';
 export * from './profit-reserve-state.js';
+export * from './paper-capital-evidence.js';
+export * from './paper-profit-reserve.js';
+export * from './paper-active-sleeve.js';

@@ -1,0 +1,103 @@
+{
+  "synthetic": true,
+  "accountAccess": false,
+  "schedulerDisabled": true,
+  "checks": [
+    {
+      "name": "default explicit $500 example and no enrollment",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "keyboard creation reaches production preload and records cash once",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "book creation grants no authority",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "operational policy save is disarmed",
+      "passed": true,
+      "detail": "{\"profile_id\":\"main\",\"book_id\":\"999b2f4032a2097b50104ee80c0515bfee78d058421b4ca1666c9cc012c73a28\",\"scope_id\":\"93ccfc39a1aa89ba549068362bdeab551f754c0268624350bd143bd616c54c93\",\"policy_id\":\"9b1d5b3a43ff8f6454f582c93a9427fd7b1e8d6b58526164693bccee38924ab2\",\"state_id\":\"1ed61299f1fa0f61d0f4d2146bee21700c7a3dd61d51a464c3327f4f40162f1e\",\"requirements_id\":\"ff275bdfad1040ae57edb6ade9d8ba4b7be69c9cb0712ab3adf995345fc8fe7f\",\"generation\":1,\"archived\":0,\"disabled\":1}"
+    },
+    {
+      "name": "new exact strategy has no inherited qualification",
+      "passed": true,
+      "detail": "{\"status\":\"blocked\",\"issues\":[{\"path\":[],\"code\":\"paper_reserve_qualification_missing\"}]}"
+    },
+    {
+      "name": "refused authorization leaves claims/H unchanged",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "new reads have no durable financial or lifecycle writes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-dark: scope and recovery wording",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-dark: inputs have associated labels",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-dark: no horizontally overflowing paper form",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-light: scope and recovery wording",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-light: inputs have associated labels",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-light: no horizontally overflowing paper form",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast-zoom: scope and recovery wording",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast-zoom: inputs have associated labels",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast-zoom: no horizontally overflowing paper form",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "keyboard refusal returns focus to the status heading",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "live execution remains disabled",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "no renderer errors",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": []
+}

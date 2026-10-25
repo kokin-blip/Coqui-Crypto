@@ -1,3 +1,6 @@
+import { paperCapitalProposalPreview } from './paper-capital-proposal-preview.js';
+import { getPaperCapitalBook, listSubmittedPaperExecutions } from '@coqui/storage';
+import { assertPaperCapitalBudgetCoverage } from './capital-budget-port.js';
 import { startOperationsActivity } from '../operations/activity.js';
 import { proposalPreview } from './proposal-preview.js';
 import { paperCapitalPreview, paperCapitalPreviewIsCurrent, type PaperCapitalPreviewModel } from './capital-preview.js';
@@ -140,13 +143,14 @@ export class PaperExecutionService {
     this.#executionLeaseMs = dependencies.executionLeaseMs ?? 5 * 60 * 1_000;
     this.#capitalBudget = dependencies.capitalBudget;
     this.#capitalPreviewModel = dependencies.capitalPreviewModel;
+    assertPaperCapitalBudgetCoverage(this.#profileId,this.#capitalBudget,this.#database);
   }
 
   preview(proposalId: string, issuedAtMs = this.#nowMs()) {
     const proposal = getPaperExecutionProposal(proposalId,this.#database);
     if (!proposal || proposal.profileId !== this.#profileId) throw new Error('proposal_not_found');
     const state = this.#state();
-    const preview = proposalPreview({ proposalHash:proposal.proposalHash, revision:proposal.revision,
+    const preview = getPaperCapitalBook(this.#profileId,this.#database) && this.#capitalBudget ? paperCapitalProposalPreview({proposalHash:proposal.proposalHash,revision:proposal.revision,intents:JSON.parse(proposal.intentsJson) as readonly ExecutionIntent[],budget:this.#capitalBudget.budget(),market:this.#market,nowMs:this.#nowMs(),issuedAtMs,killSwitchEngaged:state.killSwitchEngaged}) : proposalPreview({ proposalHash:proposal.proposalHash, revision:proposal.revision,
       intents:JSON.parse(proposal.intentsJson) as readonly ExecutionIntent[], holdings:state.holdings,
       ...(state.allocationPolicy ? {allocationPolicy:state.allocationPolicy}:{}),
       market:this.#market, nowMs:this.#nowMs(), issuedAtMs, killSwitchEngaged:state.killSwitchEngaged });
@@ -181,6 +185,7 @@ export class PaperExecutionService {
   }
 
   prepare(action: ProposedPaperAction): PaperExecutionResult {
+    if(getPaperCapitalBook(this.#profileId,this.#database) && listSubmittedPaperExecutions(this.#profileId,this.#database).length)throw new Error('paper_capital_pending_settlement');
     const at = this.#nowMs();
     const intentsJson = serializedIntents(action.intents);
     const hash = proposalHash(this.#profileId, action, intentsJson);
@@ -209,6 +214,7 @@ export class PaperExecutionService {
           killSwitchEngaged: snapshot.killSwitchEngaged,
           intents: action.intents,
           holdings: snapshot.holdings,
+          ...(this.#capitalBudget ? { activeCapitalUsd: this.#capitalBudget.budget().activeEquityUsd ?? '0' } : {}),
           admissionMode: snapshot.admissionMode ?? 'validated',
           campaignId: snapshot.campaignId ?? null,
           historicalGrossEdgeLowerBoundPct: snapshot.historicalGrossEdgeLowerBoundPct,
@@ -347,7 +353,8 @@ export class PaperExecutionService {
     const intents = JSON.parse(proposal.intentsJson) as readonly ExecutionIntent[];
     let refusal: ExecutionRefusalCode | 'paper_execution_off' | 'evidence_not_verified' |
       'execution_lease_unavailable' | 'exploratory_campaign_not_active' | 'capital_budget_stale' | null = null;
-    if (policy.mode === 'off') refusal = 'paper_execution_off';
+    if (getPaperCapitalBook(this.#profileId,this.#database) && listSubmittedPaperExecutions(this.#profileId,this.#database).length) refusal = 'capital_budget_stale';
+    else if (policy.mode === 'off') refusal = 'paper_execution_off';
     else if ((snapshot.admissionMode ?? 'validated') === 'exploratory' &&
         snapshot.exploratoryAuthorized !== true) refusal = 'exploratory_campaign_not_active';
     else if ((snapshot.admissionMode ?? 'validated') === 'validated' && !snapshot.evidenceVerified) {
@@ -362,6 +369,7 @@ export class PaperExecutionService {
           killSwitchEngaged: snapshot.killSwitchEngaged,
           intents,
           holdings: snapshot.holdings,
+          ...(this.#capitalBudget ? { activeCapitalUsd: this.#capitalBudget.budget().activeEquityUsd ?? '0' } : {}),
           admissionMode: snapshot.admissionMode ?? 'validated',
           campaignId: snapshot.campaignId ?? null,
           historicalGrossEdgeLowerBoundPct: snapshot.historicalGrossEdgeLowerBoundPct,

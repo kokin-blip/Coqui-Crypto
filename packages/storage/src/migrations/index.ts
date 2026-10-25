@@ -1,3 +1,4 @@
+import { migrations99 } from './v99.js';
 import { migrations95 } from './v95.js';
 import { migrations96 } from './v96.js';
 import { migrations97 } from './v97.js';
@@ -151,4 +152,5 @@ export const migrations = [
   ...migrations96,
   ...migrations97,
   ...migrations98,
+  ...migrations99,
 ] as const;

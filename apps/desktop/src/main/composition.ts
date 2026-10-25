@@ -1,4 +1,4 @@
-import { createCapitalContestHandlers } from './capital-contest-handlers.js'; import { createCapitalReplayHandlers } from './capital-replay-handlers.js'; import { createPaperReviewHandlers } from './paper-review-handlers.js';
+import { paperCapitalExecutionOperations } from './paper-capital-execution-handlers.js'; import { createMainPaperReserveRuntime } from './paper-reserve-runtime.js'; import { createPaperReserveHandlers } from './paper-reserve-handlers.js'; import { getPaperCapitalBook } from '@coqui/storage'; import { createCapitalContestHandlers } from './capital-contest-handlers.js'; import { createCapitalReplayHandlers } from './capital-replay-handlers.js'; import { createPaperReviewHandlers } from './paper-review-handlers.js';
 import { createWorkstationHandlers } from './workstation-handlers.js';
 import { runtimeRecoveryHandlers, type RecoveryOptions } from './recovery-handlers.js';
 import { createNewsHandlers } from './news-handlers.js';
@@ -238,8 +238,8 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
         onUnexpectedError: report,
       });
 
-  let paperHoldings: readonly PricedHolding[] = [];
-  const paperExecution = () => new PaperExecutionService({
+  let paperHoldings: readonly PricedHolding[] = []; const paperReserve=createMainPaperReserveRuntime({profileId:options.profileId,database,clock,hostId,market:paperMarket.view,preparation:paperMarket.preparation,priceSource,operationAllowed:()=>!disposed});
+  const paperCapitalOperations=paperCapitalExecutionOperations({profileId:options.profileId,database,runtime:paperReserve,refresh:async()=>{await paperMarket.refresh(clock.nowMs());},...(options.operationGate?{gate:options.operationGate}:{})}); const paperExecution = () => getPaperCapitalBook(options.profileId,database) ? paperReserve.execution() : new PaperExecutionService({
     database,
     profileId: options.profileId,
     nowMs: () => clock.nowMs(),
@@ -255,7 +255,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     onUnexpectedError: report, executionOwnerId: hostId,
   });
   const paperRunDependencies = {
-    database, clock, profileId: options.profileId, market: paperMarket.view,
+    database, clock, profileId: options.profileId, market: paperMarket.view, capitalRun:paperReserve.runDecision,reserveObserve:paperReserve.observe,
     preparation: paperMarket.preparation, holdings: () => paperHoldings,
     policy: () => {
       const policy = getAllocationPolicy(database);
@@ -277,11 +277,11 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     if (disposed || scheduler !== null) return;
     if (!isAuthoritativeHost(options.profileId, hostId, database)) return;
     liveMarket.start(paperInstruments().map((instrument) => instrument.productId));
-    scheduler = startSchedulerRuntime({ overlayShadow, news,
+    scheduler = startSchedulerRuntime({ reserveDisarm:paperReserve.disarm, overlayShadow, news,
         database, clock, ...(options.operationGate === undefined ? {} : {operationGate:options.operationGate}),
         profileId: options.profileId, hostId, onUnexpectedError: report, research: researchHost,
         async prepare(nowMs) {
-          await paperMarket.refresh(nowMs);
+          await paperMarket.refresh(nowMs); if(getPaperCapitalBook(options.profileId,database))await paperReserve.refreshMarketEvidence();
           liveMarket.configure(paperInstruments().map((instrument) => instrument.productId));
           paperHoldings = (await portfolio.portfolioView()).holdings;
           // Deliver alerts raised by this refresh in the same tick.
@@ -294,7 +294,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
   if (options.disableScheduler !== true) startScheduler();
   const exploratoryRuntime = createExploratoryPaperRuntime({ profileId: options.profileId,
     database, clock, market: paperMarket, campaigns: exploratoryCampaigns, run: paperRunDependencies });
-  const handlers: ChannelHandlers = { ...overlayShadow.handlers, ...createCapitalHandlers(options.profileId, database, { nowMs: clock.nowMs(), now: () => clock.nowMs(), ...(options.operationGate ? { operationGate: options.operationGate } : {}), onError: error => report('capital.initialization', error) }),
+  const handlers: ChannelHandlers = { ...createPaperReserveHandlers(options.profileId,database,()=>clock.nowMs(),paperReserve.service,options.operationGate,paperReserve.refreshMarketEvidence), ...overlayShadow.handlers, ...createCapitalHandlers(options.profileId, database, { nowMs: clock.nowMs(), now: () => clock.nowMs(), ...(options.operationGate ? { operationGate: options.operationGate } : {}), onError: error => report('capital.initialization', error) }),
     ...createAlpacaPaperHandlers({ profileId: options.profileId, database, clock,
       onDisconnect: () => parallel.service.pauseForDisconnect(),
       ...(options.secrets === undefined ? {} : { secrets: options.secrets }) }),
@@ -408,7 +408,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
         ? { ok: false, issues: [{ code: 'proposal_not_found' }] }
         : { ok: true, value: paperProposalView(proposal, database) };
     },
-    'paper.execution.prepare': async (payload: { readonly commandId: string }) => {
+    'paper.execution.prepare': async (payload: { readonly commandId: string }) => { if(getPaperCapitalBook(options.profileId,database))return paperCapitalOperations.prepare(payload.commandId);
       const exploratory = exploratoryRuntime.status();
       if (exploratory !== null && exploratory.status === 'active') {
         const evaluated = await exploratoryRuntime.evaluate();
@@ -443,10 +443,10 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
         }),
       };
     },
-    ...createPaperReviewHandlers({ service:paperExecution,
+    ...paperCapitalOperations.reviewHandlers(createPaperReviewHandlers({ service:paperExecution,
       refreshPreview:async()=>{paperHoldings=(await portfolio.portfolioView()).holdings;},
       refreshReview:async()=>{await paperMarket.refresh(clock.nowMs());paperHoldings=(await portfolio.portfolioView()).holdings;},
-    }),
+    })),
     ...createMarketHandlers(marketData, displayData, liveMarket, marketDiagnostics),
     'research.runs': () => research.runs(),
     'research.performance': () => research.performance(),
@@ -560,7 +560,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     startScheduler,
     dispose() {
       if (disposed) return;
-      disposed = true;
+      disposed = true; paperReserve.disarm();
       scheduler?.dispose(); news.dispose();
       liveMarket.dispose();
       if (coinGeckoHttp !== http) coinGeckoHttp.destroy();

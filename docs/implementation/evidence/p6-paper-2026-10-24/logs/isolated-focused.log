@@ -1,0 +1,19 @@
+
+ RUN  v4.1.8 /private/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-p6-isolated-fhjvxnb1
+
+ ✓ tests/paper-profit-reserve-service.test.ts (8 tests) 646ms
+ ✓ tests/paper-profit-reserve-consumers.test.ts (5 tests) 566ms
+ ✓ tests/paper-profit-reserve-authority.test.ts (4 tests) 344ms
+ ✓ tests/paper-profit-reserve-accounting.test.ts (14 tests) 300ms
+ ✓ tests/paper-profit-reserve-lifecycle.test.ts (1 test) 182ms
+ ✓ tests/paper-profit-reserve-runtime.test.ts (1 test) 177ms
+ ✓ tests/paper-profit-reserve-ui.test.ts (4 tests) 146ms
+ ✓ tests/paper-profit-reserve-contracts.test.ts (2 tests) 133ms
+ ✓ tests/paper-profit-reserve-storage.test.ts (2 tests) 118ms
+ ✓ tests/paper-profit-reserve-scheduler.test.ts (2 tests) 67ms
+
+ Test Files  10 passed (10)
+      Tests  43 passed (43)
+   Start at  18:37:59
+   Duration  7.70s (transform 1.40s, setup 0ms, import 4.37s, tests 2.68s, environment 0ms)
+

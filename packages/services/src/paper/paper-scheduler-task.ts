@@ -1,4 +1,4 @@
-import { currentExploratoryPaperCampaign, recoverInterruptedPaperOrders } from '@coqui/storage';
+import { getPaperCapitalBook, currentExploratoryPaperCampaign, recoverInterruptedPaperOrders } from '@coqui/storage';
 
 import { PaperExecutionService } from './execution-service.js';
 import { exploratoryPaperPortfolioView } from './exploratory-portfolio.js';
@@ -37,6 +37,7 @@ export function createPaperRunLoopTask(
     catchUpPolicy: 'recompute_current',
     async execute(context) {
       try {
+        if(getPaperCapitalBook(dependencies.profileId,dependencies.database)){dependencies.reserveObserve?.();runPaperDecision(dependencies,context.scheduledForMs);return {status:'completed'};}
         const exploratory = currentExploratoryPaperCampaign(
           dependencies.profileId, dependencies.database,
         );

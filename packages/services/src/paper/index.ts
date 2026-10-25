@@ -24,3 +24,7 @@ export * from './paper-scheduler-task.js';
 export * from './venue.js';
 export * from './execution-remediation-shadow.js';
 export * from './parallel-execution-measurement.js';
+export * from './paper-reserve-authority.js';
+export * from './paper-capital-decision.js';
+export * from './paper-capital-proposal-preview.js';
+export * from './paper-reserve-runtime.js';

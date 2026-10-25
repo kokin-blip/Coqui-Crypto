@@ -1,0 +1,429 @@
+{
+  "base": "775950a0f3c539755a626a1fe058b55ef8f5787f",
+  "branch": "codex/operations-crew-journal",
+  "state": "local uncommitted; A–F technical capability verified; human review pending; G/H pending",
+  "fullRoot": {
+    "suites": 333,
+    "tests": 2365
+  },
+  "fullIsolated": {
+    "suites": 327,
+    "tests": 2258
+  },
+  "focused": {
+    "suites": 10,
+    "tests": 43
+  },
+  "checks": [
+    "root-tests",
+    "isolated-tests",
+    "focused",
+    "isolated-focused",
+    "typecheck",
+    "lint",
+    "isolated-typecheck",
+    "isolated-lint",
+    "build",
+    "desktop-build",
+    "isolated-build",
+    "isolated-desktop-build",
+    "native",
+    "isolated-native",
+    "isolated-safety"
+  ],
+  "uiReview": "two listed fixes resolved; ordinary-extension documentation handoff complete",
+  "defaultOff": true,
+  "installedAccountAccess": false,
+  "sourceFiles": [
+    {
+      "path": "apps/desktop/scripts/paper-profit-reserve-smoke.mjs",
+      "combinedSha256": "bc22f18e8e0348bec42612e4b1e82924925a3bd56c3b275744fa398c0d08a4dd",
+      "isolatedSha256": "bc22f18e8e0348bec42612e4b1e82924925a3bd56c3b275744fa398c0d08a4dd"
+    },
+    {
+      "path": "apps/desktop/src/main/composition.ts",
+      "combinedSha256": "c881169f4cbf2d881f2ff1caf69d0afa9d7beecce671a7002084de8e06681624",
+      "isolatedSha256": "f2a00a0105a27d96b564f097b4d70bf758fe1d3f8f0a7a2be521630da0d1f86f"
+    },
+    {
+      "path": "apps/desktop/src/main/dispatch.ts",
+      "combinedSha256": "ba1177ecd525bf0dffae61d7672565169700fb8b2018d239b3f5ecc8bacf57e0",
+      "isolatedSha256": "c60ffcebf60bf092be6cd9bb57ffb679af979d676580571c60a562b9ef8d159a"
+    },
+    {
+      "path": "apps/desktop/src/main/paper-capital-execution-handlers.ts",
+      "combinedSha256": "c041975b40185b833c4eba68a54537d79b2897a702e841546fdd98fbd150fb08",
+      "isolatedSha256": "c041975b40185b833c4eba68a54537d79b2897a702e841546fdd98fbd150fb08"
+    },
+    {
+      "path": "apps/desktop/src/main/paper-reserve-handlers.ts",
+      "combinedSha256": "686c110edbad68fbe1ca8c82e5f9fdc6cbe8b955aa96aaa191ddbd8c45e607fb",
+      "isolatedSha256": "686c110edbad68fbe1ca8c82e5f9fdc6cbe8b955aa96aaa191ddbd8c45e607fb"
+    },
+    {
+      "path": "apps/desktop/src/main/paper-reserve-runtime.ts",
+      "combinedSha256": "cea099130376b01b46adb0dc8d8f1bece13ab4a054c97e2c9c1693529004afd8",
+      "isolatedSha256": "cea099130376b01b46adb0dc8d8f1bece13ab4a054c97e2c9c1693529004afd8"
+    },
+    {
+      "path": "apps/desktop/src/main/scheduler-runtime.ts",
+      "combinedSha256": "cefdf2f6a6a36033301d46500ad72be2da4ab4923a2a30bf112fc88d09dbdc45",
+      "isolatedSha256": "4229850acdf458eb5c7be529f6e9c390f4a9cc9801fc2ec7b9ed2e37ff402a27"
+    },
+    {
+      "path": "apps/desktop/src/renderer/app/Allocation.tsx",
+      "combinedSha256": "84d9669ab50495a6d0d081c00738408bdd5e17c89bd0728d43ef7be9a7903725",
+      "isolatedSha256": "84d9669ab50495a6d0d081c00738408bdd5e17c89bd0728d43ef7be9a7903725"
+    },
+    {
+      "path": "apps/desktop/src/renderer/app/PaperProfitReserves.tsx",
+      "combinedSha256": "c3435ad991213b98ebfcbad9ad2d6c8d98e644cc1161572772cfe28f7009b323",
+      "isolatedSha256": "c3435ad991213b98ebfcbad9ad2d6c8d98e644cc1161572772cfe28f7009b323"
+    },
+    {
+      "path": "apps/desktop/src/renderer/query/refetch.ts",
+      "combinedSha256": "393f847332afd2d1d8029d7adde0faa9b75e47be230e5e70892b1c40062b31f5",
+      "isolatedSha256": "cc10b88783a5d4798779d9c48f36fa26def9e5418c8a3733af361c946ccd986d"
+    },
+    {
+      "path": "apps/desktop/src/renderer/styles/terminal.css",
+      "combinedSha256": "bf51c87ec84227a4b1a52fe428d809bac643cc161623814793b77fc653f7a2ab",
+      "isolatedSha256": "fcbf7516f3f9b66b02218c4ffb3b8f5c1abdbc8ffd27e1cb98b51b50778a8679"
+    },
+    {
+      "path": "packages/contracts/src/channels.ts",
+      "combinedSha256": "6c256308b7fb0b1dc9c1ffeba0643a6fafbbedbc59b3acee1390053366ce2ae1",
+      "isolatedSha256": "3fa6cb6b1f2a64aac40e6f3f3a3d564a4addec4d71609d22d232944ea9459a3c"
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "combinedSha256": "51e8366ca57daec4b5addb084bbf35f9ddf3e03557270ef0d8c5114e0debf666",
+      "isolatedSha256": "51e8366ca57daec4b5addb084bbf35f9ddf3e03557270ef0d8c5114e0debf666"
+    },
+    {
+      "path": "packages/contracts/src/schemas/paper-profit-reserve.ts",
+      "combinedSha256": "e866b2f018344b7026b1dd58b82ba945b8f15cbcdd5ae22b194154138996b756",
+      "isolatedSha256": "e866b2f018344b7026b1dd58b82ba945b8f15cbcdd5ae22b194154138996b756"
+    },
+    {
+      "path": "packages/core/src/portfolio/index.ts",
+      "combinedSha256": "fe99fb9ef11afcb3d8f1c2884b8cc91d1522b9328cce6dbec13b3dd0a2634a12",
+      "isolatedSha256": "fe99fb9ef11afcb3d8f1c2884b8cc91d1522b9328cce6dbec13b3dd0a2634a12"
+    },
+    {
+      "path": "packages/core/src/portfolio/paper-profit-reserve-state.ts",
+      "combinedSha256": "b38c09d6e9f9efff91272fcc1b58d6b48de1b404bb6d961425fc23f1493cd877",
+      "isolatedSha256": "b38c09d6e9f9efff91272fcc1b58d6b48de1b404bb6d961425fc23f1493cd877"
+    },
+    {
+      "path": "packages/core/src/portfolio/paper-profit-reserve-types.ts",
+      "combinedSha256": "165b2fe78e79cbce4ee6a763cddc0f65c004321a2fe95ba781ac5abe4c348fb8",
+      "isolatedSha256": "165b2fe78e79cbce4ee6a763cddc0f65c004321a2fe95ba781ac5abe4c348fb8"
+    },
+    {
+      "path": "packages/core/src/portfolio/paper-profit-reserve.ts",
+      "combinedSha256": "c5330cdb86a778ab09af4424bdaf0f92403eedc02aac4a150438bebb1be3f1bb",
+      "isolatedSha256": "c5330cdb86a778ab09af4424bdaf0f92403eedc02aac4a150438bebb1be3f1bb"
+    },
+    {
+      "path": "packages/core/src/risk/autotrade.ts",
+      "combinedSha256": "075285c63af68b2b6f565845e2fdd9fc07bf3da32c738a64691922b70697c2b1",
+      "isolatedSha256": "075285c63af68b2b6f565845e2fdd9fc07bf3da32c738a64691922b70697c2b1"
+    },
+    {
+      "path": "packages/services/src/paper/capital-budget-port.ts",
+      "combinedSha256": "552882a9ea66ae9c9c677c2cb00bd6795cd7c3f1095dbf9fc4da7f8cb3687ee6",
+      "isolatedSha256": "552882a9ea66ae9c9c677c2cb00bd6795cd7c3f1095dbf9fc4da7f8cb3687ee6"
+    },
+    {
+      "path": "packages/services/src/paper/execution-gate.ts",
+      "combinedSha256": "b433a2723bd7d3eb54f10776b72f8bb40f9d4c62c7b74e92ea7da145528267b0",
+      "isolatedSha256": "b433a2723bd7d3eb54f10776b72f8bb40f9d4c62c7b74e92ea7da145528267b0"
+    },
+    {
+      "path": "packages/services/src/paper/execution-service.ts",
+      "combinedSha256": "4cd590896d90b59f4c0a63000e4187f515d11422e660bf8a58a239180025de4f",
+      "isolatedSha256": "4cd590896d90b59f4c0a63000e4187f515d11422e660bf8a58a239180025de4f"
+    },
+    {
+      "path": "packages/services/src/paper/index.ts",
+      "combinedSha256": "27ad5ef19b07ab14f5857822c22ebe92cc1f1efaee76083a7ab86863858943b3",
+      "isolatedSha256": "c8f45a017170a34f6f3addbb2c1998b3800ed476f8b352b68d6b2a02baef3e34"
+    },
+    {
+      "path": "packages/services/src/paper/oms.ts",
+      "combinedSha256": "fe8361aa395d1d803854f54eadb75ff27dbc4218774dc449fc9bae807b5e7de3",
+      "isolatedSha256": "fe8361aa395d1d803854f54eadb75ff27dbc4218774dc449fc9bae807b5e7de3"
+    },
+    {
+      "path": "packages/services/src/paper/paper-capital-decision.ts",
+      "combinedSha256": "f4eb8ed2736ce16732355b1aa60a169fb6dca15670dabb3fa99bc448f554f6f4",
+      "isolatedSha256": "f4eb8ed2736ce16732355b1aa60a169fb6dca15670dabb3fa99bc448f554f6f4"
+    },
+    {
+      "path": "packages/services/src/paper/paper-capital-proposal-preview.ts",
+      "combinedSha256": "3642a1c7441c0bdc2dc2a573ae9744046fe62923bf7a336ea99b4f8e21929e1b",
+      "isolatedSha256": "3642a1c7441c0bdc2dc2a573ae9744046fe62923bf7a336ea99b4f8e21929e1b"
+    },
+    {
+      "path": "packages/services/src/paper/paper-reserve-authority.ts",
+      "combinedSha256": "2a5e151a4f508b653170ed60b44b63c3d3ff8743d82bf88fb2b770941387cced",
+      "isolatedSha256": "2a5e151a4f508b653170ed60b44b63c3d3ff8743d82bf88fb2b770941387cced"
+    },
+    {
+      "path": "packages/services/src/paper/paper-reserve-runtime.ts",
+      "combinedSha256": "4a920394b164dcea793e9d8285cd98a61383a0dc17775c8d587f3c4945ff4d05",
+      "isolatedSha256": "4a920394b164dcea793e9d8285cd98a61383a0dc17775c8d587f3c4945ff4d05"
+    },
+    {
+      "path": "packages/services/src/paper/paper-scheduler-task.ts",
+      "combinedSha256": "8102b1b747227852fd61ae97323fd98b320e7528cee1e98c529f1b08a8f03e20",
+      "isolatedSha256": "8102b1b747227852fd61ae97323fd98b320e7528cee1e98c529f1b08a8f03e20"
+    },
+    {
+      "path": "packages/services/src/paper/routing.ts",
+      "combinedSha256": "5cdf177e2881b41f0639d9c8ec35e373d131279019696c159beff193de1019d0",
+      "isolatedSha256": "5cdf177e2881b41f0639d9c8ec35e373d131279019696c159beff193de1019d0"
+    },
+    {
+      "path": "packages/services/src/paper/run-loop.ts",
+      "combinedSha256": "a0e9ce00b922943e8dec35a3ea0d894eadfbd52cfd8c9500fa33a6ab78343873",
+      "isolatedSha256": "a0e9ce00b922943e8dec35a3ea0d894eadfbd52cfd8c9500fa33a6ab78343873"
+    },
+    {
+      "path": "packages/services/src/paper/runtime-model.ts",
+      "combinedSha256": "26a9e70476afe689ebed198895b852945a574c612d91a34b4bb23f18c10122b4",
+      "isolatedSha256": "26a9e70476afe689ebed198895b852945a574c612d91a34b4bb23f18c10122b4"
+    },
+    {
+      "path": "packages/services/src/portfolio/index.ts",
+      "combinedSha256": "8219dbaa403efb0513f9f8afa35b1d77b3bb60ad4c3f0797035d9a61f4fa188b",
+      "isolatedSha256": "8219dbaa403efb0513f9f8afa35b1d77b3bb60ad4c3f0797035d9a61f4fa188b"
+    },
+    {
+      "path": "packages/services/src/portfolio/paper-active-sleeve.ts",
+      "combinedSha256": "7dd5c9997d60d2d66194f423fded63355bf1d6137c64651b04a98ee3b3f5b89a",
+      "isolatedSha256": "7dd5c9997d60d2d66194f423fded63355bf1d6137c64651b04a98ee3b3f5b89a"
+    },
+    {
+      "path": "packages/services/src/portfolio/paper-capital-evidence.ts",
+      "combinedSha256": "1c3c8f4e626037d2a76dd7af4d295d71867317b38b6feed62f3e07f10f330403",
+      "isolatedSha256": "1c3c8f4e626037d2a76dd7af4d295d71867317b38b6feed62f3e07f10f330403"
+    },
+    {
+      "path": "packages/services/src/portfolio/paper-profit-reserve.ts",
+      "combinedSha256": "cc8d93293656691914bc0024c762a459959a582d64bbf9fd9fb113a0497b9ae6",
+      "isolatedSha256": "cc8d93293656691914bc0024c762a459959a582d64bbf9fd9fb113a0497b9ae6"
+    },
+    {
+      "path": "packages/storage/src/migrations/index.ts",
+      "combinedSha256": "6e91d95116ba3141afb0aa4e7f7d3f5592c6f43fcc1199154460199e96736066",
+      "isolatedSha256": "6e91d95116ba3141afb0aa4e7f7d3f5592c6f43fcc1199154460199e96736066"
+    },
+    {
+      "path": "packages/storage/src/migrations/v99.ts",
+      "combinedSha256": "e09322aaaa49e08cac716d1cae43f91319afd3102d557955450e90da5cda1e66",
+      "isolatedSha256": "e09322aaaa49e08cac716d1cae43f91319afd3102d557955450e90da5cda1e66"
+    },
+    {
+      "path": "packages/storage/src/profiles/duplication-transient-counts.ts",
+      "combinedSha256": "6310c800856674ff6023cd001c94e10350f7c93f8fdfd3cf40cf921a22a1e6bb",
+      "isolatedSha256": "6310c800856674ff6023cd001c94e10350f7c93f8fdfd3cf40cf921a22a1e6bb"
+    },
+    {
+      "path": "packages/storage/src/profiles/duplication.ts",
+      "combinedSha256": "1f543d5144d693cb93d0700a3f3a5a037c9c2e02b4a61839942bdf40418076b6",
+      "isolatedSha256": "1f543d5144d693cb93d0700a3f3a5a037c9c2e02b4a61839942bdf40418076b6"
+    },
+    {
+      "path": "packages/storage/src/repositories/capital-budget.ts",
+      "combinedSha256": "71af3e7b96338db45b8723480be07f8ac4b2f2082c196a37eacdef19d977a4c2",
+      "isolatedSha256": "71af3e7b96338db45b8723480be07f8ac4b2f2082c196a37eacdef19d977a4c2"
+    },
+    {
+      "path": "packages/storage/src/repositories/index.ts",
+      "combinedSha256": "c9b7fabde36257d0b46ed5ab420d408abcf1c6b3516fa9968b5dad6f4f7c4d1a",
+      "isolatedSha256": "c9b7fabde36257d0b46ed5ab420d408abcf1c6b3516fa9968b5dad6f4f7c4d1a"
+    },
+    {
+      "path": "packages/storage/src/repositories/paper-capital-book.ts",
+      "combinedSha256": "ffe53624b43d2781650033f24f2d2e8dbd8dba198efb9137dfa7008fbe3cba38",
+      "isolatedSha256": "ffe53624b43d2781650033f24f2d2e8dbd8dba198efb9137dfa7008fbe3cba38"
+    },
+    {
+      "path": "packages/storage/src/repositories/paper-profit-reserve.ts",
+      "combinedSha256": "75f464246f566b11563cca0758f2d5f6252489cd69b652a2a2e6c241fa57cdc2",
+      "isolatedSha256": "75f464246f566b11563cca0758f2d5f6252489cd69b652a2a2e6c241fa57cdc2"
+    },
+    {
+      "path": "packages/storage/src/repositories/paper-runtime.ts",
+      "combinedSha256": "68329d2e90cefc0080fcd2c1613a94492c2317b1f2cdc0d28f5b432331fd9b02",
+      "isolatedSha256": "68329d2e90cefc0080fcd2c1613a94492c2317b1f2cdc0d28f5b432331fd9b02"
+    },
+    {
+      "path": "packages/storage/src/repositories/profile-impact.ts",
+      "combinedSha256": "31d952fe5dcf98a8e0f8d911d7f207eba12ba623523db05a2d49c83007e4c0b2",
+      "isolatedSha256": "31d952fe5dcf98a8e0f8d911d7f207eba12ba623523db05a2d49c83007e4c0b2"
+    },
+    {
+      "path": "tests/accounts-profile-backup.test.ts",
+      "combinedSha256": "3e819389c25c8768b3ffedd76d14681ae7e7858e187de5c0ed7060b67aeafd23",
+      "isolatedSha256": "3e819389c25c8768b3ffedd76d14681ae7e7858e187de5c0ed7060b67aeafd23"
+    },
+    {
+      "path": "tests/accounts-profile-comparison.test.ts",
+      "combinedSha256": "d340ddca60c8f6becf09db0cf2f06a671cabbfa92e75a7dab7e2733c1fe80b6d",
+      "isolatedSha256": "d340ddca60c8f6becf09db0cf2f06a671cabbfa92e75a7dab7e2733c1fe80b6d"
+    },
+    {
+      "path": "tests/accounts-profile-duplication.test.ts",
+      "combinedSha256": "b6a44cae7d807fefa6cff67956e64d95d7ea7829fe2a2eb65bf085a181c60c1b",
+      "isolatedSha256": "b6a44cae7d807fefa6cff67956e64d95d7ea7829fe2a2eb65bf085a181c60c1b"
+    },
+    {
+      "path": "tests/accounts-profiles-service.test.ts",
+      "combinedSha256": "733141b6b64ec6a7ebdf8b13dbba4dbe75fa6b1dea858bb774bec59b1a1e5327",
+      "isolatedSha256": "733141b6b64ec6a7ebdf8b13dbba4dbe75fa6b1dea858bb774bec59b1a1e5327"
+    },
+    {
+      "path": "tests/contracts-channels.test.ts",
+      "combinedSha256": "23cbb73b07e963266854e14b02aecc4cb0bd9d269a406267b53fa14b8a789c1a",
+      "isolatedSha256": "089cb1ba5836b5c8ae0463af513f698aa661426252648049597904c36c81976b"
+    },
+    {
+      "path": "tests/helpers/paper-profit-reserve.ts",
+      "combinedSha256": "9f31e80ab6b3c0e102bfb2c4e6b7477f9bcbcaef611c882d91df3f199e35e9fb",
+      "isolatedSha256": "9f31e80ab6b3c0e102bfb2c4e6b7477f9bcbcaef611c882d91df3f199e35e9fb"
+    },
+    {
+      "path": "tests/isolated-restore.test.ts",
+      "combinedSha256": "5df058597b083eb3475cc1dba4d2b8469c495c8257bccbc0b60cba9255913560",
+      "isolatedSha256": "5df058597b083eb3475cc1dba4d2b8469c495c8257bccbc0b60cba9255913560"
+    },
+    {
+      "path": "tests/news-intelligence-storage.test.ts",
+      "combinedSha256": "42fee35fe03b9c27aec06de4b14ae8dedd8d391e84ca7b3ee22e395773069a5e",
+      "isolatedSha256": "42fee35fe03b9c27aec06de4b14ae8dedd8d391e84ca7b3ee22e395773069a5e"
+    },
+    {
+      "path": "tests/news-quota.test.ts",
+      "combinedSha256": "ad7a9325172f2fd48673991fcaf0370a3f0035e1211948a49d81cd0a70f858d7",
+      "isolatedSha256": "ad7a9325172f2fd48673991fcaf0370a3f0035e1211948a49d81cd0a70f858d7"
+    },
+    {
+      "path": "tests/news-rollout.test.ts",
+      "combinedSha256": "76933ceeb901e1d2911c1eba202afdb294af88cca099ba81f4265ecc8bbce540",
+      "isolatedSha256": "76933ceeb901e1d2911c1eba202afdb294af88cca099ba81f4265ecc8bbce540"
+    },
+    {
+      "path": "tests/news-storage.test.ts",
+      "combinedSha256": "5a25ede7765d7d13e756b1b180ba77550c7c89a7fdb12036ee493648a0e8ef96",
+      "isolatedSha256": "5a25ede7765d7d13e756b1b180ba77550c7c89a7fdb12036ee493648a0e8ef96"
+    },
+    {
+      "path": "tests/paper-profit-reserve-accounting.test.ts",
+      "combinedSha256": "1e7da95c6df525f00577eff9773affbdf0a36ebebac0e48c71d500025ddafc6c",
+      "isolatedSha256": "1e7da95c6df525f00577eff9773affbdf0a36ebebac0e48c71d500025ddafc6c"
+    },
+    {
+      "path": "tests/paper-profit-reserve-authority.test.ts",
+      "combinedSha256": "2a8396c34ae7f932b34fa5f67543ee6f778528b8065e31122db7edc890257906",
+      "isolatedSha256": "2a8396c34ae7f932b34fa5f67543ee6f778528b8065e31122db7edc890257906"
+    },
+    {
+      "path": "tests/paper-profit-reserve-consumers.test.ts",
+      "combinedSha256": "0a34563afdeb04cb68fa701949ca45b2e38c2ecfd6ff67f7124cd3a7e536098d",
+      "isolatedSha256": "0a34563afdeb04cb68fa701949ca45b2e38c2ecfd6ff67f7124cd3a7e536098d"
+    },
+    {
+      "path": "tests/paper-profit-reserve-contracts.test.ts",
+      "combinedSha256": "ff0ae23aaa2d2043c0aad6cf5d2a4e964308fd1cb19d5bd205240687b4847b61",
+      "isolatedSha256": "ff0ae23aaa2d2043c0aad6cf5d2a4e964308fd1cb19d5bd205240687b4847b61"
+    },
+    {
+      "path": "tests/paper-profit-reserve-lifecycle.test.ts",
+      "combinedSha256": "652362f1022e66ba72205f3d7421cd64be23901f783a511d560283af8ae35af6",
+      "isolatedSha256": "652362f1022e66ba72205f3d7421cd64be23901f783a511d560283af8ae35af6"
+    },
+    {
+      "path": "tests/paper-profit-reserve-runtime.test.ts",
+      "combinedSha256": "12b9942c91e026ae4b2b612e1458155f433979a931323ae72c2fe777756eb128",
+      "isolatedSha256": "12b9942c91e026ae4b2b612e1458155f433979a931323ae72c2fe777756eb128"
+    },
+    {
+      "path": "tests/paper-profit-reserve-scheduler.test.ts",
+      "combinedSha256": "56b798a73866bd368390d024c7c9fbe4d0b42a97c8740589a260983407e731e4",
+      "isolatedSha256": "56b798a73866bd368390d024c7c9fbe4d0b42a97c8740589a260983407e731e4"
+    },
+    {
+      "path": "tests/paper-profit-reserve-service.test.ts",
+      "combinedSha256": "c9f96e3d94276b00b77d8022a790d49f16bf4f0e0cfb085ff12f116766919799",
+      "isolatedSha256": "c9f96e3d94276b00b77d8022a790d49f16bf4f0e0cfb085ff12f116766919799"
+    },
+    {
+      "path": "tests/paper-profit-reserve-storage.test.ts",
+      "combinedSha256": "014208190be618d80406c12bff67f98a5e880e7788d49c53557d32642c37143d",
+      "isolatedSha256": "014208190be618d80406c12bff67f98a5e880e7788d49c53557d32642c37143d"
+    },
+    {
+      "path": "tests/paper-profit-reserve-ui.test.ts",
+      "combinedSha256": "ff356f22794b38a859deb8ee88079cad8c24a853b53d4b91be16adee6dddc306",
+      "isolatedSha256": "ff356f22794b38a859deb8ee88079cad8c24a853b53d4b91be16adee6dddc306"
+    },
+    {
+      "path": "tests/portfolio-snapshot-evidence.test.ts",
+      "combinedSha256": "adf132ab48ba1f058c42410baca83c78fcf07af890757c01481b7930497d6ccc",
+      "isolatedSha256": "adf132ab48ba1f058c42410baca83c78fcf07af890757c01481b7930497d6ccc"
+    },
+    {
+      "path": "tests/profit-reserve-storage.test.ts",
+      "combinedSha256": "6b9d3e6b76785018c042a4816110de5fb1f7d3e3ce698004c5c081178e4d0370",
+      "isolatedSha256": "6b9d3e6b76785018c042a4816110de5fb1f7d3e3ce698004c5c081178e4d0370"
+    },
+    {
+      "path": "tests/risk-dashboard.test.ts",
+      "combinedSha256": "acf74040a43e445bcec7655583a7840a84a5cda5de39ec1dd1258fee2b140c35",
+      "isolatedSha256": "96190624799ef3cc731798a0dcd373410f5f557610ca2720a20e536c04ea65fa"
+    },
+    {
+      "path": "tests/secret-leak-sweep.test.ts",
+      "combinedSha256": "e9c122aa680ed9a031f8a21154628142ba630077eefab2f6499c5e55b6aa278a",
+      "isolatedSha256": "e9c122aa680ed9a031f8a21154628142ba630077eefab2f6499c5e55b6aa278a"
+    },
+    {
+      "path": "tests/storage-canonical-assets.test.ts",
+      "combinedSha256": "8dca9e51934d398ddb3d37ae310fb6a1f35c7cafa1863a318d2bbd64f8b22524",
+      "isolatedSha256": "8dca9e51934d398ddb3d37ae310fb6a1f35c7cafa1863a318d2bbd64f8b22524"
+    },
+    {
+      "path": "tests/storage-migrations.test.ts",
+      "combinedSha256": "47bb47fe3b73bd1a633e2fe2950f5642f754c895ef8fdabddc324370eaa0bd6e",
+      "isolatedSha256": "47bb47fe3b73bd1a633e2fe2950f5642f754c895ef8fdabddc324370eaa0bd6e"
+    },
+    {
+      "path": "tests/storage-portfolio-repository.test.ts",
+      "combinedSha256": "9f6c2a5c597109aa037070c3062565e1c0c5cb47a67868893caa4abc52622380",
+      "isolatedSha256": "9f6c2a5c597109aa037070c3062565e1c0c5cb47a67868893caa4abc52622380"
+    }
+  ],
+  "currentManifests": [
+    {
+      "path": "docs/studies/behavior-manifests-v1.json",
+      "combinedSha256": "8fa61275fc9b221389e69376f8c5ee59523735dd81b9cbd44e178ec280f2542f",
+      "isolatedSha256": "07c6d632b5a8ddacb6f7ae2dc80c62b98b1107061ad2196e60a090681cea2a25"
+    },
+    {
+      "path": "packages/core/src/research/study-manifests.generated.ts",
+      "combinedSha256": "cd5afb02fa5dbbbe1453247ef7774974b6ccec20ecd31c64e539fc229d0bb9a1",
+      "isolatedSha256": "353d340f5b2705854d2aff8ba8eb60ea5ae94e247a7185dcd8ce60e5abe3a04a"
+    }
+  ],
+  "retainedPending": [
+    "P5-H",
+    "P6-F human review/merge/release",
+    "P6-G optional sales",
+    "P6-H connected ownership and evidence",
+    "P7 entire phase"
+  ],
+  "promptUsed": "Ok move onto building P6 using the saved plan. Preserve P0–P4 and P5-A–G, keep P5-H pending and the full P0–P7 scope intact, and keep the phase tracker updated."
+}

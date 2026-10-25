@@ -35,6 +35,15 @@ export function readProfileDeletionImpact(
         (SELECT COUNT(*) FROM capital_reserve_preview_reports_v1) +
         (SELECT COUNT(*) FROM capital_reserve_assessments_v1) +
         (SELECT COUNT(*) FROM capital_reserve_commands_v1) +
+        (SELECT COUNT(*) FROM paper_capital_book_origins_v1) +
+        (SELECT COUNT(*) FROM paper_reserve_requirements_v1) +
+        (SELECT COUNT(*) FROM paper_reserve_policy_versions_v1) +
+        (SELECT COUNT(*) FROM paper_reserve_state_revisions_v1) +
+        (SELECT COUNT(*) FROM paper_reserve_proposals_v1) +
+        (SELECT COUNT(*) FROM paper_reserve_assessments_v1) +
+        (SELECT COUNT(*) FROM paper_reserve_events_v1) +
+        (SELECT COUNT(*) FROM paper_reserve_commands_v1) +
+
 
         (SELECT COUNT(*) FROM capital_native_rule_evidence_v1) +
         (SELECT COUNT(*) FROM capital_budget_source_evidence_v1) +

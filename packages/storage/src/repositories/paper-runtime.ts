@@ -41,6 +41,7 @@ export function initializePaperBook(
     throw new TypeError('Paper opening snapshot must be complete, priced, and use zero cash.');
   }
   const stored = content(snapshot);
+  if(database.prepare('SELECT 1 FROM paper_capital_book_origins_v1 WHERE origin_profile_id=?').get(snapshot.profileId))throw new Error('paper_capital_book_cannot_convert_to_legacy');
   return inTransaction(database, () => {
     const existing = getPaperBookOrigin(snapshot.profileId, database);
     if (existing !== null) {

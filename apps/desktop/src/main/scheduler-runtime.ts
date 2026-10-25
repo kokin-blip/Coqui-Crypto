@@ -41,6 +41,7 @@ import { appendRemediationEvidence, getAuthoritativeHost, listRemediationEvidenc
 const DEFAULT_POLL_MS = 60_000;
 
 export interface SchedulerRuntimeOptions {
+  readonly reserveDisarm?:()=>void;
   readonly database: Db;
   readonly operationGate?: ProfileOperationGate;
   readonly clock: Clock;
@@ -165,6 +166,7 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
     },
     tick,
     stop() {
+      options.reserveDisarm?.();
       options.news?.suspend();
       if (timer !== null) clearInterval(timer);
       timer = null;
@@ -180,7 +182,7 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
     stop: () => host.stop(),
     status: () => host.status(),
     dispose: () => { options.news?.dispose(); options.parallelPaper?.suspend?.(); record('shutdown'); host.stop(); },
-    suspend: () => { suspended = true; options.news?.suspend(); options.parallelPaper?.suspend?.(); record('suspend'); },
+    suspend: () => { options.reserveDisarm?.(); suspended = true; options.news?.suspend(); options.parallelPaper?.suspend?.(); record('suspend'); },
     resume: () => { record('resume'); options.news?.resume(); options.parallelPaper?.resume?.(); suspended = false; void host.tick(); },
   };
 }

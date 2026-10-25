@@ -106,6 +106,7 @@ export interface ExecutionGateInput {
   readonly killSwitchEngaged: boolean;
   readonly intents: readonly ExecutionIntent[];
   readonly holdings: readonly Holding[];
+  readonly activeCapitalUsd?: string;
   /**
    * Optional, and defaulted to the shared profile. Invariant 14: every
    * backtest, sweep, paper fill and preview reads the *same* venue profile —
@@ -174,7 +175,7 @@ export function runExecutionGates(input: ExecutionGateInput): ExecutionGateOutco
     maxTrades: riskState.maxTradeCount,
     ...(riskState.blockReason === null ? {} : { blockReason: riskState.blockReason }),
   };
-  const guarded = applyAutoTradeGuardrails(input.intents, input.holdings, guardrails);
+  const guarded = applyAutoTradeGuardrails(input.intents, input.holdings, guardrails, input.activeCapitalUsd);
   if (guarded.intents.length === 0) {
     return {
       refused: true,

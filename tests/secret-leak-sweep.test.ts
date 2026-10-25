@@ -76,11 +76,25 @@ const LOCAL_CHANNELS: readonly ChannelName[] = [
   'capital.scopes', 'capital.performance', 'capital.budget', 'capital.feasibility',
   'research.capital-replay.runs', 'research.capital-replay.detail',
   'research.capital-contest.runs', 'research.capital-contest.detail',
+  'paper.reserve.books','paper.reserve.view','paper.reserve.preview','paper.reserve.operations','paper.reserve.book.create','paper.reserve.policy.save','paper.reserve.authorize','paper.reserve.pause','paper.reserve.resume','paper.reserve.review','paper.reserve.release','paper.reserve.observe',
   'capital.reserve.view', 'capital.reserve.preview', 'capital.reserve.settings.save', 'capital.reserve.inspect',
   'paper.performance-day',
 ];
 
 const PAYLOADS: Partial<Record<ChannelName, unknown>> = {
+  'paper.reserve.books': {},
+  'paper.reserve.view': {},
+  'paper.reserve.preview': {},
+  'paper.reserve.operations': {},
+  'paper.reserve.book.create': {"commandId":"11111111-1111-4111-8111-111111111111","bookId":"11111111-1111-4111-8111-111111111111","openingUsd":"500"},
+  'paper.reserve.policy.save': {"commandId":"11111111-1111-4111-8111-111111111111","bookId":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","scopeId":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","generation":0,"policyId":null,"stateId":null,"authorityHash":"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","budgetRevision":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","settings":{"goal":"keep_invested","trigger":{"kind":"profit_usd","value":"50"},"shareBps":0,"retainedCapitalUsd":"500","minimumBatchUsd":"1","cadence":"manual","reviewWinCount":null,"taxHold":{"amountUsd":"0","backing":"principal"}}},
+  'paper.reserve.authorize': {"commandId":"11111111-1111-4111-8111-111111111111","bookId":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","scopeId":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","generation":0,"policyId":null,"stateId":null,"authorityHash":"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","budgetRevision":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"},
+  'paper.reserve.pause': {"commandId":"11111111-1111-4111-8111-111111111111","bookId":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","scopeId":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","generation":0,"policyId":null,"stateId":null,"authorityHash":"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","budgetRevision":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"},
+  'paper.reserve.resume': {"commandId":"11111111-1111-4111-8111-111111111111","bookId":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","scopeId":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","generation":0,"policyId":null,"stateId":null,"authorityHash":"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","budgetRevision":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"},
+  'paper.reserve.review': {"commandId":"11111111-1111-4111-8111-111111111111","bookId":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","scopeId":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","generation":0,"policyId":null,"stateId":null,"authorityHash":"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","budgetRevision":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","proposalId":"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"},
+  'paper.reserve.release': {"commandId":"11111111-1111-4111-8111-111111111111","bookId":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","scopeId":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","generation":0,"policyId":null,"stateId":null,"authorityHash":"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","budgetRevision":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","proposalId":"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd","purpose":"profit_reserve","amountUsd":"1"},
+  'paper.reserve.observe': {"commandId":"11111111-1111-4111-8111-111111111111","bookId":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","scopeId":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","generation":0,"policyId":null,"stateId":null,"authorityHash":"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","budgetRevision":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"},
+
   'news.report.select-location': {commandId:'11111111-1111-4111-8111-111111111111',reportHash:'a'.repeat(64)},
   'app.recovery.verify': {commandId:'11111111-1111-4111-8111-111111111111',expectedDatabaseHash:'a'.repeat(64)},
   'app.evidence-export': {commandId:'11111111-1111-4111-8111-111111111111'},

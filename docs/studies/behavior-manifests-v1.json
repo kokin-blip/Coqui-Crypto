@@ -281,7 +281,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "545059bc8e0b241f88c6950661b5e7b310adc6902db8a12204b9eaa91e91fa95"
+        "3fa6cb6b1f2a64aac40e6f3f3a3d564a4addec4d71609d22d232944ea9459a3c"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -289,7 +289,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "a845e8bda856c6ae40e910933e0a72db453e2f1d49ed34bee7a19a17ba76a821"
+        "51e8366ca57daec4b5addb084bbf35f9ddf3e03557270ef0d8c5114e0debf666"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -406,6 +406,10 @@
       [
         "packages/contracts/src/schemas/paper-performance.ts",
         "10a016491c7c89274a4663448a7f1b4e576bbe27c35847aeca38e31fffc74efd"
+      ],
+      [
+        "packages/contracts/src/schemas/paper-profit-reserve.ts",
+        "e866b2f018344b7026b1dd58b82ba945b8f15cbcdd5ae22b194154138996b756"
       ],
       [
         "packages/contracts/src/schemas/parallel-paper.ts",
@@ -693,7 +697,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "6ce047a8ace746894142109e1e717ea67049454fb1a7b989daf0cd8568b2478f"
+        "fe99fb9ef11afcb3d8f1c2884b8cc91d1522b9328cce6dbec13b3dd0a2634a12"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -702,6 +706,18 @@
       [
         "packages/core/src/portfolio/paper-performance.ts",
         "fa5898d3d80f9f423dab6262cb9a2c8ad9d0d70cdc7b881fd4335e17ce093e26"
+      ],
+      [
+        "packages/core/src/portfolio/paper-profit-reserve-state.ts",
+        "b38c09d6e9f9efff91272fcc1b58d6b48de1b404bb6d961425fc23f1493cd877"
+      ],
+      [
+        "packages/core/src/portfolio/paper-profit-reserve-types.ts",
+        "165b2fe78e79cbce4ee6a763cddc0f65c004321a2fe95ba781ac5abe4c348fb8"
+      ],
+      [
+        "packages/core/src/portfolio/paper-profit-reserve.ts",
+        "c5330cdb86a778ab09af4424bdaf0f92403eedc02aac4a150438bebb1be3f1bb"
       ],
       [
         "packages/core/src/portfolio/performance.ts",
@@ -1001,7 +1017,7 @@
       ],
       [
         "packages/core/src/risk/autotrade.ts",
-        "d1afcfa69d7c56946348af5de7e49c7fda34358491786fa05b3614ddfa70b35c"
+        "075285c63af68b2b6f565845e2fdd9fc07bf3da32c738a64691922b70697c2b1"
       ],
       [
         "packages/core/src/risk/index.ts",
@@ -1341,7 +1357,7 @@
       ],
       [
         "packages/services/src/paper/capital-budget-port.ts",
-        "b7fa4983047753aea1e8178cdcc060531948ed8550285e8b3543819aa3ad79f4"
+        "552882a9ea66ae9c9c677c2cb00bd6795cd7c3f1095dbf9fc4da7f8cb3687ee6"
       ],
       [
         "packages/services/src/paper/capital-preview.ts",
@@ -1365,7 +1381,7 @@
       ],
       [
         "packages/services/src/paper/execution-gate.ts",
-        "4dcd3f3fd969d8180aca6916123fd2ebe9e4a9564b6ae5aa3194d6cb637e2d28"
+        "b433a2723bd7d3eb54f10776b72f8bb40f9d4c62c7b74e92ea7da145528267b0"
       ],
       [
         "packages/services/src/paper/execution-remediation-shadow.ts",
@@ -1373,7 +1389,7 @@
       ],
       [
         "packages/services/src/paper/execution-service.ts",
-        "7eecc3b55b8cb8bec9632ac1efc6211f6f28793c5dc03722afcb099bccc9298d"
+        "4cd590896d90b59f4c0a63000e4187f515d11422e660bf8a58a239180025de4f"
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
@@ -1393,7 +1409,7 @@
       ],
       [
         "packages/services/src/paper/index.ts",
-        "e66821e282a37337e87efbe40eba4f461bb3943e4616252fe1997accbc0bdcd1"
+        "c8f45a017170a34f6f3addbb2c1998b3800ed476f8b352b68d6b2a02baef3e34"
       ],
       [
         "packages/services/src/paper/kill-switch.ts",
@@ -1409,15 +1425,31 @@
       ],
       [
         "packages/services/src/paper/oms.ts",
-        "7e74c50613a224382961237b8817055d0f1eeb10a3538ebe97573b385c36a554"
+        "fe8361aa395d1d803854f54eadb75ff27dbc4218774dc449fc9bae807b5e7de3"
+      ],
+      [
+        "packages/services/src/paper/paper-capital-decision.ts",
+        "f4eb8ed2736ce16732355b1aa60a169fb6dca15670dabb3fa99bc448f554f6f4"
+      ],
+      [
+        "packages/services/src/paper/paper-capital-proposal-preview.ts",
+        "3642a1c7441c0bdc2dc2a573ae9744046fe62923bf7a336ea99b4f8e21929e1b"
       ],
       [
         "packages/services/src/paper/paper-portfolio.ts",
         "671cbf9870585b273ef0e27150e35133780abd0dbc0f3abac35fa2a5185da814"
       ],
       [
+        "packages/services/src/paper/paper-reserve-authority.ts",
+        "2a5e151a4f508b653170ed60b44b63c3d3ff8743d82bf88fb2b770941387cced"
+      ],
+      [
+        "packages/services/src/paper/paper-reserve-runtime.ts",
+        "4a920394b164dcea793e9d8285cd98a61383a0dc17775c8d587f3c4945ff4d05"
+      ],
+      [
         "packages/services/src/paper/paper-scheduler-task.ts",
-        "4df77ab085bc4fff52d00d49e4f294a498a61c0c23321f50db169fee31ea9448"
+        "8102b1b747227852fd61ae97323fd98b320e7528cee1e98c529f1b08a8f03e20"
       ],
       [
         "packages/services/src/paper/parallel-broker-evidence.ts",
@@ -1537,15 +1569,15 @@
       ],
       [
         "packages/services/src/paper/routing.ts",
-        "e413d9500feb08b720b8eda67fa30627b218cae2f4942833e87a8fe1c8961a46"
+        "5cdf177e2881b41f0639d9c8ec35e373d131279019696c159beff193de1019d0"
       ],
       [
         "packages/services/src/paper/run-loop.ts",
-        "704bb975713654c611b8b99899f060b7a0ee3c2149a8816a25cf523ab01d6c83"
+        "a0e9ce00b922943e8dec35a3ea0d894eadfbd52cfd8c9500fa33a6ab78343873"
       ],
       [
         "packages/services/src/paper/runtime-model.ts",
-        "3c64c8eea5c92fce139654db4bccfb45d761e426d38f85c825a9558fa8944a79"
+        "26a9e70476afe689ebed198895b852945a574c612d91a34b4bb23f18c10122b4"
       ],
       [
         "packages/services/src/paper/venue.ts",
@@ -1601,11 +1633,23 @@
       ],
       [
         "packages/services/src/portfolio/index.ts",
-        "f07059d4411dab4fc259c197e612c7fd06dd1cb2e454523c3a2987b383a0427b"
+        "8219dbaa403efb0513f9f8afa35b1d77b3bb60ad4c3f0797035d9a61f4fa188b"
       ],
       [
         "packages/services/src/portfolio/ledger.ts",
         "9658693466db53b960ce8e0119809f11cebc09233ffb4a02e872bac2d6c2b87e"
+      ],
+      [
+        "packages/services/src/portfolio/paper-active-sleeve.ts",
+        "7dd5c9997d60d2d66194f423fded63355bf1d6137c64651b04a98ee3b3f5b89a"
+      ],
+      [
+        "packages/services/src/portfolio/paper-capital-evidence.ts",
+        "1c3c8f4e626037d2a76dd7af4d295d71867317b38b6feed62f3e07f10f330403"
+      ],
+      [
+        "packages/services/src/portfolio/paper-profit-reserve.ts",
+        "cc8d93293656691914bc0024c762a459959a582d64bbf9fd9fb113a0497b9ae6"
       ],
       [
         "packages/services/src/portfolio/profit-reserve-consequences.ts",
@@ -1825,7 +1869,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "d75eec060309ef5b0c88a1df110fed1e3da86ba21b35fee2807689e9af9911b0"
+        "6e91d95116ba3141afb0aa4e7f7d3f5592c6f43fcc1199154460199e96736066"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -2128,6 +2172,10 @@
         "5acfdbb22d52ac0c18695af27513bd1e964618464c4702555536601ea40ebc2d"
       ],
       [
+        "packages/storage/src/migrations/v99.ts",
+        "e09322aaaa49e08cac716d1cae43f91319afd3102d557955450e90da5cda1e66"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -2157,11 +2205,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
-        "e300ff67f87bc8764e82763f6d8a1ad38300fbfbfe24ce46d043c1c62a986105"
+        "6310c800856674ff6023cd001c94e10350f7c93f8fdfd3cf40cf921a22a1e6bb"
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "9576938261fb9eb4e7680cb68d05a8a79d5dc221f9a30400e40b568c9ed80e79"
+        "1f543d5144d693cb93d0700a3f3a5a037c9c2e02b4a61839942bdf40418076b6"
       ],
       [
         "packages/storage/src/profiles/index.ts",
@@ -2241,7 +2289,7 @@
       ],
       [
         "packages/storage/src/repositories/capital-budget.ts",
-        "c08adc2cc4f93c1460401a02b19eb71db306db57b5dbab7b27e04d209062dec4"
+        "71af3e7b96338db45b8723480be07f8ac4b2f2082c196a37eacdef19d977a4c2"
       ],
       [
         "packages/storage/src/repositories/capital-contest.ts",
@@ -2321,7 +2369,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "21e6200d89e937b844f30f755240a8249ed370c5b855d079bef99e39f1070c07"
+        "c9b7fabde36257d0b46ed5ab420d408abcf1c6b3516fa9968b5dad6f4f7c4d1a"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -2400,6 +2448,10 @@
         "7af88aef6b793a751ee49a261f48db5ae84df43ab2a13cef948a32b3d42bac05"
       ],
       [
+        "packages/storage/src/repositories/paper-capital-book.ts",
+        "ffe53624b43d2781650033f24f2d2e8dbd8dba198efb9137dfa7008fbe3cba38"
+      ],
+      [
         "packages/storage/src/repositories/paper-connection-books.ts",
         "7efe0a8c80adf9787281ab6d0ca8cf53ce0bb95c47c185c9fb6608500125714c"
       ],
@@ -2412,8 +2464,12 @@
         "b348bc7a56a09bea9c4d95b9b462c8f5be148381310cafe26e7fd20858176116"
       ],
       [
+        "packages/storage/src/repositories/paper-profit-reserve.ts",
+        "75f464246f566b11563cca0758f2d5f6252489cd69b652a2a2e6c241fa57cdc2"
+      ],
+      [
         "packages/storage/src/repositories/paper-runtime.ts",
-        "9773820c70f2e84b9b13d939a9728ac65522f0eb2eacb2b957efdab0869097bf"
+        "68329d2e90cefc0080fcd2c1613a94492c2317b1f2cdc0d28f5b432331fd9b02"
       ],
       [
         "packages/storage/src/repositories/paper.ts",
@@ -2437,7 +2493,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "e72f6d1936a129730299d70eb03dccb2a4125edc0d1f9fbbe23e29fa01c5dc5b"
+        "31d952fe5dcf98a8e0f8d911d7f207eba12ba623523db05a2d49c83007e4c0b2"
       ],
       [
         "packages/storage/src/repositories/profit-reserve.ts",
@@ -2536,7 +2592,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "1c753d299a640a8799055d7d71cfb9ee0b877f83bf31244049e76c835f40d119"
+    "hash": "fef0d441f95f5bacd134feb732feef7583bbd29703dada7ef50a55de4a0bb4f9"
   },
   "wider-breakout-v1": {
     "version": 1,
@@ -2820,7 +2876,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "545059bc8e0b241f88c6950661b5e7b310adc6902db8a12204b9eaa91e91fa95"
+        "3fa6cb6b1f2a64aac40e6f3f3a3d564a4addec4d71609d22d232944ea9459a3c"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -2828,7 +2884,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "a845e8bda856c6ae40e910933e0a72db453e2f1d49ed34bee7a19a17ba76a821"
+        "51e8366ca57daec4b5addb084bbf35f9ddf3e03557270ef0d8c5114e0debf666"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -2945,6 +3001,10 @@
       [
         "packages/contracts/src/schemas/paper-performance.ts",
         "10a016491c7c89274a4663448a7f1b4e576bbe27c35847aeca38e31fffc74efd"
+      ],
+      [
+        "packages/contracts/src/schemas/paper-profit-reserve.ts",
+        "e866b2f018344b7026b1dd58b82ba945b8f15cbcdd5ae22b194154138996b756"
       ],
       [
         "packages/contracts/src/schemas/parallel-paper.ts",
@@ -3232,7 +3292,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "6ce047a8ace746894142109e1e717ea67049454fb1a7b989daf0cd8568b2478f"
+        "fe99fb9ef11afcb3d8f1c2884b8cc91d1522b9328cce6dbec13b3dd0a2634a12"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -3241,6 +3301,18 @@
       [
         "packages/core/src/portfolio/paper-performance.ts",
         "fa5898d3d80f9f423dab6262cb9a2c8ad9d0d70cdc7b881fd4335e17ce093e26"
+      ],
+      [
+        "packages/core/src/portfolio/paper-profit-reserve-state.ts",
+        "b38c09d6e9f9efff91272fcc1b58d6b48de1b404bb6d961425fc23f1493cd877"
+      ],
+      [
+        "packages/core/src/portfolio/paper-profit-reserve-types.ts",
+        "165b2fe78e79cbce4ee6a763cddc0f65c004321a2fe95ba781ac5abe4c348fb8"
+      ],
+      [
+        "packages/core/src/portfolio/paper-profit-reserve.ts",
+        "c5330cdb86a778ab09af4424bdaf0f92403eedc02aac4a150438bebb1be3f1bb"
       ],
       [
         "packages/core/src/portfolio/performance.ts",
@@ -3540,7 +3612,7 @@
       ],
       [
         "packages/core/src/risk/autotrade.ts",
-        "d1afcfa69d7c56946348af5de7e49c7fda34358491786fa05b3614ddfa70b35c"
+        "075285c63af68b2b6f565845e2fdd9fc07bf3da32c738a64691922b70697c2b1"
       ],
       [
         "packages/core/src/risk/index.ts",
@@ -3880,7 +3952,7 @@
       ],
       [
         "packages/services/src/paper/capital-budget-port.ts",
-        "b7fa4983047753aea1e8178cdcc060531948ed8550285e8b3543819aa3ad79f4"
+        "552882a9ea66ae9c9c677c2cb00bd6795cd7c3f1095dbf9fc4da7f8cb3687ee6"
       ],
       [
         "packages/services/src/paper/capital-preview.ts",
@@ -3904,7 +3976,7 @@
       ],
       [
         "packages/services/src/paper/execution-gate.ts",
-        "4dcd3f3fd969d8180aca6916123fd2ebe9e4a9564b6ae5aa3194d6cb637e2d28"
+        "b433a2723bd7d3eb54f10776b72f8bb40f9d4c62c7b74e92ea7da145528267b0"
       ],
       [
         "packages/services/src/paper/execution-remediation-shadow.ts",
@@ -3912,7 +3984,7 @@
       ],
       [
         "packages/services/src/paper/execution-service.ts",
-        "7eecc3b55b8cb8bec9632ac1efc6211f6f28793c5dc03722afcb099bccc9298d"
+        "4cd590896d90b59f4c0a63000e4187f515d11422e660bf8a58a239180025de4f"
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
@@ -3932,7 +4004,7 @@
       ],
       [
         "packages/services/src/paper/index.ts",
-        "e66821e282a37337e87efbe40eba4f461bb3943e4616252fe1997accbc0bdcd1"
+        "c8f45a017170a34f6f3addbb2c1998b3800ed476f8b352b68d6b2a02baef3e34"
       ],
       [
         "packages/services/src/paper/kill-switch.ts",
@@ -3948,15 +4020,31 @@
       ],
       [
         "packages/services/src/paper/oms.ts",
-        "7e74c50613a224382961237b8817055d0f1eeb10a3538ebe97573b385c36a554"
+        "fe8361aa395d1d803854f54eadb75ff27dbc4218774dc449fc9bae807b5e7de3"
+      ],
+      [
+        "packages/services/src/paper/paper-capital-decision.ts",
+        "f4eb8ed2736ce16732355b1aa60a169fb6dca15670dabb3fa99bc448f554f6f4"
+      ],
+      [
+        "packages/services/src/paper/paper-capital-proposal-preview.ts",
+        "3642a1c7441c0bdc2dc2a573ae9744046fe62923bf7a336ea99b4f8e21929e1b"
       ],
       [
         "packages/services/src/paper/paper-portfolio.ts",
         "671cbf9870585b273ef0e27150e35133780abd0dbc0f3abac35fa2a5185da814"
       ],
       [
+        "packages/services/src/paper/paper-reserve-authority.ts",
+        "2a5e151a4f508b653170ed60b44b63c3d3ff8743d82bf88fb2b770941387cced"
+      ],
+      [
+        "packages/services/src/paper/paper-reserve-runtime.ts",
+        "4a920394b164dcea793e9d8285cd98a61383a0dc17775c8d587f3c4945ff4d05"
+      ],
+      [
         "packages/services/src/paper/paper-scheduler-task.ts",
-        "4df77ab085bc4fff52d00d49e4f294a498a61c0c23321f50db169fee31ea9448"
+        "8102b1b747227852fd61ae97323fd98b320e7528cee1e98c529f1b08a8f03e20"
       ],
       [
         "packages/services/src/paper/parallel-broker-evidence.ts",
@@ -4076,15 +4164,15 @@
       ],
       [
         "packages/services/src/paper/routing.ts",
-        "e413d9500feb08b720b8eda67fa30627b218cae2f4942833e87a8fe1c8961a46"
+        "5cdf177e2881b41f0639d9c8ec35e373d131279019696c159beff193de1019d0"
       ],
       [
         "packages/services/src/paper/run-loop.ts",
-        "704bb975713654c611b8b99899f060b7a0ee3c2149a8816a25cf523ab01d6c83"
+        "a0e9ce00b922943e8dec35a3ea0d894eadfbd52cfd8c9500fa33a6ab78343873"
       ],
       [
         "packages/services/src/paper/runtime-model.ts",
-        "3c64c8eea5c92fce139654db4bccfb45d761e426d38f85c825a9558fa8944a79"
+        "26a9e70476afe689ebed198895b852945a574c612d91a34b4bb23f18c10122b4"
       ],
       [
         "packages/services/src/paper/venue.ts",
@@ -4140,11 +4228,23 @@
       ],
       [
         "packages/services/src/portfolio/index.ts",
-        "f07059d4411dab4fc259c197e612c7fd06dd1cb2e454523c3a2987b383a0427b"
+        "8219dbaa403efb0513f9f8afa35b1d77b3bb60ad4c3f0797035d9a61f4fa188b"
       ],
       [
         "packages/services/src/portfolio/ledger.ts",
         "9658693466db53b960ce8e0119809f11cebc09233ffb4a02e872bac2d6c2b87e"
+      ],
+      [
+        "packages/services/src/portfolio/paper-active-sleeve.ts",
+        "7dd5c9997d60d2d66194f423fded63355bf1d6137c64651b04a98ee3b3f5b89a"
+      ],
+      [
+        "packages/services/src/portfolio/paper-capital-evidence.ts",
+        "1c3c8f4e626037d2a76dd7af4d295d71867317b38b6feed62f3e07f10f330403"
+      ],
+      [
+        "packages/services/src/portfolio/paper-profit-reserve.ts",
+        "cc8d93293656691914bc0024c762a459959a582d64bbf9fd9fb113a0497b9ae6"
       ],
       [
         "packages/services/src/portfolio/profit-reserve-consequences.ts",
@@ -4364,7 +4464,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "d75eec060309ef5b0c88a1df110fed1e3da86ba21b35fee2807689e9af9911b0"
+        "6e91d95116ba3141afb0aa4e7f7d3f5592c6f43fcc1199154460199e96736066"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -4667,6 +4767,10 @@
         "5acfdbb22d52ac0c18695af27513bd1e964618464c4702555536601ea40ebc2d"
       ],
       [
+        "packages/storage/src/migrations/v99.ts",
+        "e09322aaaa49e08cac716d1cae43f91319afd3102d557955450e90da5cda1e66"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -4696,11 +4800,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
-        "e300ff67f87bc8764e82763f6d8a1ad38300fbfbfe24ce46d043c1c62a986105"
+        "6310c800856674ff6023cd001c94e10350f7c93f8fdfd3cf40cf921a22a1e6bb"
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "9576938261fb9eb4e7680cb68d05a8a79d5dc221f9a30400e40b568c9ed80e79"
+        "1f543d5144d693cb93d0700a3f3a5a037c9c2e02b4a61839942bdf40418076b6"
       ],
       [
         "packages/storage/src/profiles/index.ts",
@@ -4780,7 +4884,7 @@
       ],
       [
         "packages/storage/src/repositories/capital-budget.ts",
-        "c08adc2cc4f93c1460401a02b19eb71db306db57b5dbab7b27e04d209062dec4"
+        "71af3e7b96338db45b8723480be07f8ac4b2f2082c196a37eacdef19d977a4c2"
       ],
       [
         "packages/storage/src/repositories/capital-contest.ts",
@@ -4860,7 +4964,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "21e6200d89e937b844f30f755240a8249ed370c5b855d079bef99e39f1070c07"
+        "c9b7fabde36257d0b46ed5ab420d408abcf1c6b3516fa9968b5dad6f4f7c4d1a"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -4939,6 +5043,10 @@
         "7af88aef6b793a751ee49a261f48db5ae84df43ab2a13cef948a32b3d42bac05"
       ],
       [
+        "packages/storage/src/repositories/paper-capital-book.ts",
+        "ffe53624b43d2781650033f24f2d2e8dbd8dba198efb9137dfa7008fbe3cba38"
+      ],
+      [
         "packages/storage/src/repositories/paper-connection-books.ts",
         "7efe0a8c80adf9787281ab6d0ca8cf53ce0bb95c47c185c9fb6608500125714c"
       ],
@@ -4951,8 +5059,12 @@
         "b348bc7a56a09bea9c4d95b9b462c8f5be148381310cafe26e7fd20858176116"
       ],
       [
+        "packages/storage/src/repositories/paper-profit-reserve.ts",
+        "75f464246f566b11563cca0758f2d5f6252489cd69b652a2a2e6c241fa57cdc2"
+      ],
+      [
         "packages/storage/src/repositories/paper-runtime.ts",
-        "9773820c70f2e84b9b13d939a9728ac65522f0eb2eacb2b957efdab0869097bf"
+        "68329d2e90cefc0080fcd2c1613a94492c2317b1f2cdc0d28f5b432331fd9b02"
       ],
       [
         "packages/storage/src/repositories/paper.ts",
@@ -4976,7 +5088,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "e72f6d1936a129730299d70eb03dccb2a4125edc0d1f9fbbe23e29fa01c5dc5b"
+        "31d952fe5dcf98a8e0f8d911d7f207eba12ba623523db05a2d49c83007e4c0b2"
       ],
       [
         "packages/storage/src/repositories/profit-reserve.ts",
@@ -5075,7 +5187,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "84ef4dffe9ad90f5db96ed63683b7b3e761328823131490ff156117eaba134d2"
+    "hash": "90ea847c56440586d4c625bbc93d377c9ab81a3599d2f3ae165896e965077e9e"
   },
   "wider-range-rotation-v1": {
     "version": 1,
@@ -5359,7 +5471,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "545059bc8e0b241f88c6950661b5e7b310adc6902db8a12204b9eaa91e91fa95"
+        "3fa6cb6b1f2a64aac40e6f3f3a3d564a4addec4d71609d22d232944ea9459a3c"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -5367,7 +5479,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "a845e8bda856c6ae40e910933e0a72db453e2f1d49ed34bee7a19a17ba76a821"
+        "51e8366ca57daec4b5addb084bbf35f9ddf3e03557270ef0d8c5114e0debf666"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -5484,6 +5596,10 @@
       [
         "packages/contracts/src/schemas/paper-performance.ts",
         "10a016491c7c89274a4663448a7f1b4e576bbe27c35847aeca38e31fffc74efd"
+      ],
+      [
+        "packages/contracts/src/schemas/paper-profit-reserve.ts",
+        "e866b2f018344b7026b1dd58b82ba945b8f15cbcdd5ae22b194154138996b756"
       ],
       [
         "packages/contracts/src/schemas/parallel-paper.ts",
@@ -5771,7 +5887,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "6ce047a8ace746894142109e1e717ea67049454fb1a7b989daf0cd8568b2478f"
+        "fe99fb9ef11afcb3d8f1c2884b8cc91d1522b9328cce6dbec13b3dd0a2634a12"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -5780,6 +5896,18 @@
       [
         "packages/core/src/portfolio/paper-performance.ts",
         "fa5898d3d80f9f423dab6262cb9a2c8ad9d0d70cdc7b881fd4335e17ce093e26"
+      ],
+      [
+        "packages/core/src/portfolio/paper-profit-reserve-state.ts",
+        "b38c09d6e9f9efff91272fcc1b58d6b48de1b404bb6d961425fc23f1493cd877"
+      ],
+      [
+        "packages/core/src/portfolio/paper-profit-reserve-types.ts",
+        "165b2fe78e79cbce4ee6a763cddc0f65c004321a2fe95ba781ac5abe4c348fb8"
+      ],
+      [
+        "packages/core/src/portfolio/paper-profit-reserve.ts",
+        "c5330cdb86a778ab09af4424bdaf0f92403eedc02aac4a150438bebb1be3f1bb"
       ],
       [
         "packages/core/src/portfolio/performance.ts",
@@ -6079,7 +6207,7 @@
       ],
       [
         "packages/core/src/risk/autotrade.ts",
-        "d1afcfa69d7c56946348af5de7e49c7fda34358491786fa05b3614ddfa70b35c"
+        "075285c63af68b2b6f565845e2fdd9fc07bf3da32c738a64691922b70697c2b1"
       ],
       [
         "packages/core/src/risk/index.ts",
@@ -6419,7 +6547,7 @@
       ],
       [
         "packages/services/src/paper/capital-budget-port.ts",
-        "b7fa4983047753aea1e8178cdcc060531948ed8550285e8b3543819aa3ad79f4"
+        "552882a9ea66ae9c9c677c2cb00bd6795cd7c3f1095dbf9fc4da7f8cb3687ee6"
       ],
       [
         "packages/services/src/paper/capital-preview.ts",
@@ -6443,7 +6571,7 @@
       ],
       [
         "packages/services/src/paper/execution-gate.ts",
-        "4dcd3f3fd969d8180aca6916123fd2ebe9e4a9564b6ae5aa3194d6cb637e2d28"
+        "b433a2723bd7d3eb54f10776b72f8bb40f9d4c62c7b74e92ea7da145528267b0"
       ],
       [
         "packages/services/src/paper/execution-remediation-shadow.ts",
@@ -6451,7 +6579,7 @@
       ],
       [
         "packages/services/src/paper/execution-service.ts",
-        "7eecc3b55b8cb8bec9632ac1efc6211f6f28793c5dc03722afcb099bccc9298d"
+        "4cd590896d90b59f4c0a63000e4187f515d11422e660bf8a58a239180025de4f"
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
@@ -6471,7 +6599,7 @@
       ],
       [
         "packages/services/src/paper/index.ts",
-        "e66821e282a37337e87efbe40eba4f461bb3943e4616252fe1997accbc0bdcd1"
+        "c8f45a017170a34f6f3addbb2c1998b3800ed476f8b352b68d6b2a02baef3e34"
       ],
       [
         "packages/services/src/paper/kill-switch.ts",
@@ -6487,15 +6615,31 @@
       ],
       [
         "packages/services/src/paper/oms.ts",
-        "7e74c50613a224382961237b8817055d0f1eeb10a3538ebe97573b385c36a554"
+        "fe8361aa395d1d803854f54eadb75ff27dbc4218774dc449fc9bae807b5e7de3"
+      ],
+      [
+        "packages/services/src/paper/paper-capital-decision.ts",
+        "f4eb8ed2736ce16732355b1aa60a169fb6dca15670dabb3fa99bc448f554f6f4"
+      ],
+      [
+        "packages/services/src/paper/paper-capital-proposal-preview.ts",
+        "3642a1c7441c0bdc2dc2a573ae9744046fe62923bf7a336ea99b4f8e21929e1b"
       ],
       [
         "packages/services/src/paper/paper-portfolio.ts",
         "671cbf9870585b273ef0e27150e35133780abd0dbc0f3abac35fa2a5185da814"
       ],
       [
+        "packages/services/src/paper/paper-reserve-authority.ts",
+        "2a5e151a4f508b653170ed60b44b63c3d3ff8743d82bf88fb2b770941387cced"
+      ],
+      [
+        "packages/services/src/paper/paper-reserve-runtime.ts",
+        "4a920394b164dcea793e9d8285cd98a61383a0dc17775c8d587f3c4945ff4d05"
+      ],
+      [
         "packages/services/src/paper/paper-scheduler-task.ts",
-        "4df77ab085bc4fff52d00d49e4f294a498a61c0c23321f50db169fee31ea9448"
+        "8102b1b747227852fd61ae97323fd98b320e7528cee1e98c529f1b08a8f03e20"
       ],
       [
         "packages/services/src/paper/parallel-broker-evidence.ts",
@@ -6615,15 +6759,15 @@
       ],
       [
         "packages/services/src/paper/routing.ts",
-        "e413d9500feb08b720b8eda67fa30627b218cae2f4942833e87a8fe1c8961a46"
+        "5cdf177e2881b41f0639d9c8ec35e373d131279019696c159beff193de1019d0"
       ],
       [
         "packages/services/src/paper/run-loop.ts",
-        "704bb975713654c611b8b99899f060b7a0ee3c2149a8816a25cf523ab01d6c83"
+        "a0e9ce00b922943e8dec35a3ea0d894eadfbd52cfd8c9500fa33a6ab78343873"
       ],
       [
         "packages/services/src/paper/runtime-model.ts",
-        "3c64c8eea5c92fce139654db4bccfb45d761e426d38f85c825a9558fa8944a79"
+        "26a9e70476afe689ebed198895b852945a574c612d91a34b4bb23f18c10122b4"
       ],
       [
         "packages/services/src/paper/venue.ts",
@@ -6679,11 +6823,23 @@
       ],
       [
         "packages/services/src/portfolio/index.ts",
-        "f07059d4411dab4fc259c197e612c7fd06dd1cb2e454523c3a2987b383a0427b"
+        "8219dbaa403efb0513f9f8afa35b1d77b3bb60ad4c3f0797035d9a61f4fa188b"
       ],
       [
         "packages/services/src/portfolio/ledger.ts",
         "9658693466db53b960ce8e0119809f11cebc09233ffb4a02e872bac2d6c2b87e"
+      ],
+      [
+        "packages/services/src/portfolio/paper-active-sleeve.ts",
+        "7dd5c9997d60d2d66194f423fded63355bf1d6137c64651b04a98ee3b3f5b89a"
+      ],
+      [
+        "packages/services/src/portfolio/paper-capital-evidence.ts",
+        "1c3c8f4e626037d2a76dd7af4d295d71867317b38b6feed62f3e07f10f330403"
+      ],
+      [
+        "packages/services/src/portfolio/paper-profit-reserve.ts",
+        "cc8d93293656691914bc0024c762a459959a582d64bbf9fd9fb113a0497b9ae6"
       ],
       [
         "packages/services/src/portfolio/profit-reserve-consequences.ts",
@@ -6903,7 +7059,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "d75eec060309ef5b0c88a1df110fed1e3da86ba21b35fee2807689e9af9911b0"
+        "6e91d95116ba3141afb0aa4e7f7d3f5592c6f43fcc1199154460199e96736066"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -7206,6 +7362,10 @@
         "5acfdbb22d52ac0c18695af27513bd1e964618464c4702555536601ea40ebc2d"
       ],
       [
+        "packages/storage/src/migrations/v99.ts",
+        "e09322aaaa49e08cac716d1cae43f91319afd3102d557955450e90da5cda1e66"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -7235,11 +7395,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
-        "e300ff67f87bc8764e82763f6d8a1ad38300fbfbfe24ce46d043c1c62a986105"
+        "6310c800856674ff6023cd001c94e10350f7c93f8fdfd3cf40cf921a22a1e6bb"
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "9576938261fb9eb4e7680cb68d05a8a79d5dc221f9a30400e40b568c9ed80e79"
+        "1f543d5144d693cb93d0700a3f3a5a037c9c2e02b4a61839942bdf40418076b6"
       ],
       [
         "packages/storage/src/profiles/index.ts",
@@ -7319,7 +7479,7 @@
       ],
       [
         "packages/storage/src/repositories/capital-budget.ts",
-        "c08adc2cc4f93c1460401a02b19eb71db306db57b5dbab7b27e04d209062dec4"
+        "71af3e7b96338db45b8723480be07f8ac4b2f2082c196a37eacdef19d977a4c2"
       ],
       [
         "packages/storage/src/repositories/capital-contest.ts",
@@ -7399,7 +7559,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "21e6200d89e937b844f30f755240a8249ed370c5b855d079bef99e39f1070c07"
+        "c9b7fabde36257d0b46ed5ab420d408abcf1c6b3516fa9968b5dad6f4f7c4d1a"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -7478,6 +7638,10 @@
         "7af88aef6b793a751ee49a261f48db5ae84df43ab2a13cef948a32b3d42bac05"
       ],
       [
+        "packages/storage/src/repositories/paper-capital-book.ts",
+        "ffe53624b43d2781650033f24f2d2e8dbd8dba198efb9137dfa7008fbe3cba38"
+      ],
+      [
         "packages/storage/src/repositories/paper-connection-books.ts",
         "7efe0a8c80adf9787281ab6d0ca8cf53ce0bb95c47c185c9fb6608500125714c"
       ],
@@ -7490,8 +7654,12 @@
         "b348bc7a56a09bea9c4d95b9b462c8f5be148381310cafe26e7fd20858176116"
       ],
       [
+        "packages/storage/src/repositories/paper-profit-reserve.ts",
+        "75f464246f566b11563cca0758f2d5f6252489cd69b652a2a2e6c241fa57cdc2"
+      ],
+      [
         "packages/storage/src/repositories/paper-runtime.ts",
-        "9773820c70f2e84b9b13d939a9728ac65522f0eb2eacb2b957efdab0869097bf"
+        "68329d2e90cefc0080fcd2c1613a94492c2317b1f2cdc0d28f5b432331fd9b02"
       ],
       [
         "packages/storage/src/repositories/paper.ts",
@@ -7515,7 +7683,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "e72f6d1936a129730299d70eb03dccb2a4125edc0d1f9fbbe23e29fa01c5dc5b"
+        "31d952fe5dcf98a8e0f8d911d7f207eba12ba623523db05a2d49c83007e4c0b2"
       ],
       [
         "packages/storage/src/repositories/profit-reserve.ts",
@@ -7614,7 +7782,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "0080f2417a568b0dfaeca2f9c135e4f357bec1abac8fd94dab4376bfcd3ee989"
+    "hash": "747c44f82d2f5e935f5f0d657528ad75324a5a770df4cb0b1286bbdc41670730"
   },
   "paper-market-selector-v1": {
     "version": 1,
@@ -7898,7 +8066,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "545059bc8e0b241f88c6950661b5e7b310adc6902db8a12204b9eaa91e91fa95"
+        "3fa6cb6b1f2a64aac40e6f3f3a3d564a4addec4d71609d22d232944ea9459a3c"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -7906,7 +8074,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "a845e8bda856c6ae40e910933e0a72db453e2f1d49ed34bee7a19a17ba76a821"
+        "51e8366ca57daec4b5addb084bbf35f9ddf3e03557270ef0d8c5114e0debf666"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -8023,6 +8191,10 @@
       [
         "packages/contracts/src/schemas/paper-performance.ts",
         "10a016491c7c89274a4663448a7f1b4e576bbe27c35847aeca38e31fffc74efd"
+      ],
+      [
+        "packages/contracts/src/schemas/paper-profit-reserve.ts",
+        "e866b2f018344b7026b1dd58b82ba945b8f15cbcdd5ae22b194154138996b756"
       ],
       [
         "packages/contracts/src/schemas/parallel-paper.ts",
@@ -8310,7 +8482,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "6ce047a8ace746894142109e1e717ea67049454fb1a7b989daf0cd8568b2478f"
+        "fe99fb9ef11afcb3d8f1c2884b8cc91d1522b9328cce6dbec13b3dd0a2634a12"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -8319,6 +8491,18 @@
       [
         "packages/core/src/portfolio/paper-performance.ts",
         "fa5898d3d80f9f423dab6262cb9a2c8ad9d0d70cdc7b881fd4335e17ce093e26"
+      ],
+      [
+        "packages/core/src/portfolio/paper-profit-reserve-state.ts",
+        "b38c09d6e9f9efff91272fcc1b58d6b48de1b404bb6d961425fc23f1493cd877"
+      ],
+      [
+        "packages/core/src/portfolio/paper-profit-reserve-types.ts",
+        "165b2fe78e79cbce4ee6a763cddc0f65c004321a2fe95ba781ac5abe4c348fb8"
+      ],
+      [
+        "packages/core/src/portfolio/paper-profit-reserve.ts",
+        "c5330cdb86a778ab09af4424bdaf0f92403eedc02aac4a150438bebb1be3f1bb"
       ],
       [
         "packages/core/src/portfolio/performance.ts",
@@ -8618,7 +8802,7 @@
       ],
       [
         "packages/core/src/risk/autotrade.ts",
-        "d1afcfa69d7c56946348af5de7e49c7fda34358491786fa05b3614ddfa70b35c"
+        "075285c63af68b2b6f565845e2fdd9fc07bf3da32c738a64691922b70697c2b1"
       ],
       [
         "packages/core/src/risk/index.ts",
@@ -8958,7 +9142,7 @@
       ],
       [
         "packages/services/src/paper/capital-budget-port.ts",
-        "b7fa4983047753aea1e8178cdcc060531948ed8550285e8b3543819aa3ad79f4"
+        "552882a9ea66ae9c9c677c2cb00bd6795cd7c3f1095dbf9fc4da7f8cb3687ee6"
       ],
       [
         "packages/services/src/paper/capital-preview.ts",
@@ -8982,7 +9166,7 @@
       ],
       [
         "packages/services/src/paper/execution-gate.ts",
-        "4dcd3f3fd969d8180aca6916123fd2ebe9e4a9564b6ae5aa3194d6cb637e2d28"
+        "b433a2723bd7d3eb54f10776b72f8bb40f9d4c62c7b74e92ea7da145528267b0"
       ],
       [
         "packages/services/src/paper/execution-remediation-shadow.ts",
@@ -8990,7 +9174,7 @@
       ],
       [
         "packages/services/src/paper/execution-service.ts",
-        "7eecc3b55b8cb8bec9632ac1efc6211f6f28793c5dc03722afcb099bccc9298d"
+        "4cd590896d90b59f4c0a63000e4187f515d11422e660bf8a58a239180025de4f"
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
@@ -9010,7 +9194,7 @@
       ],
       [
         "packages/services/src/paper/index.ts",
-        "e66821e282a37337e87efbe40eba4f461bb3943e4616252fe1997accbc0bdcd1"
+        "c8f45a017170a34f6f3addbb2c1998b3800ed476f8b352b68d6b2a02baef3e34"
       ],
       [
         "packages/services/src/paper/kill-switch.ts",
@@ -9026,15 +9210,31 @@
       ],
       [
         "packages/services/src/paper/oms.ts",
-        "7e74c50613a224382961237b8817055d0f1eeb10a3538ebe97573b385c36a554"
+        "fe8361aa395d1d803854f54eadb75ff27dbc4218774dc449fc9bae807b5e7de3"
+      ],
+      [
+        "packages/services/src/paper/paper-capital-decision.ts",
+        "f4eb8ed2736ce16732355b1aa60a169fb6dca15670dabb3fa99bc448f554f6f4"
+      ],
+      [
+        "packages/services/src/paper/paper-capital-proposal-preview.ts",
+        "3642a1c7441c0bdc2dc2a573ae9744046fe62923bf7a336ea99b4f8e21929e1b"
       ],
       [
         "packages/services/src/paper/paper-portfolio.ts",
         "671cbf9870585b273ef0e27150e35133780abd0dbc0f3abac35fa2a5185da814"
       ],
       [
+        "packages/services/src/paper/paper-reserve-authority.ts",
+        "2a5e151a4f508b653170ed60b44b63c3d3ff8743d82bf88fb2b770941387cced"
+      ],
+      [
+        "packages/services/src/paper/paper-reserve-runtime.ts",
+        "4a920394b164dcea793e9d8285cd98a61383a0dc17775c8d587f3c4945ff4d05"
+      ],
+      [
         "packages/services/src/paper/paper-scheduler-task.ts",
-        "4df77ab085bc4fff52d00d49e4f294a498a61c0c23321f50db169fee31ea9448"
+        "8102b1b747227852fd61ae97323fd98b320e7528cee1e98c529f1b08a8f03e20"
       ],
       [
         "packages/services/src/paper/parallel-broker-evidence.ts",
@@ -9154,15 +9354,15 @@
       ],
       [
         "packages/services/src/paper/routing.ts",
-        "e413d9500feb08b720b8eda67fa30627b218cae2f4942833e87a8fe1c8961a46"
+        "5cdf177e2881b41f0639d9c8ec35e373d131279019696c159beff193de1019d0"
       ],
       [
         "packages/services/src/paper/run-loop.ts",
-        "704bb975713654c611b8b99899f060b7a0ee3c2149a8816a25cf523ab01d6c83"
+        "a0e9ce00b922943e8dec35a3ea0d894eadfbd52cfd8c9500fa33a6ab78343873"
       ],
       [
         "packages/services/src/paper/runtime-model.ts",
-        "3c64c8eea5c92fce139654db4bccfb45d761e426d38f85c825a9558fa8944a79"
+        "26a9e70476afe689ebed198895b852945a574c612d91a34b4bb23f18c10122b4"
       ],
       [
         "packages/services/src/paper/venue.ts",
@@ -9218,11 +9418,23 @@
       ],
       [
         "packages/services/src/portfolio/index.ts",
-        "f07059d4411dab4fc259c197e612c7fd06dd1cb2e454523c3a2987b383a0427b"
+        "8219dbaa403efb0513f9f8afa35b1d77b3bb60ad4c3f0797035d9a61f4fa188b"
       ],
       [
         "packages/services/src/portfolio/ledger.ts",
         "9658693466db53b960ce8e0119809f11cebc09233ffb4a02e872bac2d6c2b87e"
+      ],
+      [
+        "packages/services/src/portfolio/paper-active-sleeve.ts",
+        "7dd5c9997d60d2d66194f423fded63355bf1d6137c64651b04a98ee3b3f5b89a"
+      ],
+      [
+        "packages/services/src/portfolio/paper-capital-evidence.ts",
+        "1c3c8f4e626037d2a76dd7af4d295d71867317b38b6feed62f3e07f10f330403"
+      ],
+      [
+        "packages/services/src/portfolio/paper-profit-reserve.ts",
+        "cc8d93293656691914bc0024c762a459959a582d64bbf9fd9fb113a0497b9ae6"
       ],
       [
         "packages/services/src/portfolio/profit-reserve-consequences.ts",
@@ -9442,7 +9654,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "d75eec060309ef5b0c88a1df110fed1e3da86ba21b35fee2807689e9af9911b0"
+        "6e91d95116ba3141afb0aa4e7f7d3f5592c6f43fcc1199154460199e96736066"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -9745,6 +9957,10 @@
         "5acfdbb22d52ac0c18695af27513bd1e964618464c4702555536601ea40ebc2d"
       ],
       [
+        "packages/storage/src/migrations/v99.ts",
+        "e09322aaaa49e08cac716d1cae43f91319afd3102d557955450e90da5cda1e66"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -9774,11 +9990,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
-        "e300ff67f87bc8764e82763f6d8a1ad38300fbfbfe24ce46d043c1c62a986105"
+        "6310c800856674ff6023cd001c94e10350f7c93f8fdfd3cf40cf921a22a1e6bb"
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "9576938261fb9eb4e7680cb68d05a8a79d5dc221f9a30400e40b568c9ed80e79"
+        "1f543d5144d693cb93d0700a3f3a5a037c9c2e02b4a61839942bdf40418076b6"
       ],
       [
         "packages/storage/src/profiles/index.ts",
@@ -9858,7 +10074,7 @@
       ],
       [
         "packages/storage/src/repositories/capital-budget.ts",
-        "c08adc2cc4f93c1460401a02b19eb71db306db57b5dbab7b27e04d209062dec4"
+        "71af3e7b96338db45b8723480be07f8ac4b2f2082c196a37eacdef19d977a4c2"
       ],
       [
         "packages/storage/src/repositories/capital-contest.ts",
@@ -9938,7 +10154,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "21e6200d89e937b844f30f755240a8249ed370c5b855d079bef99e39f1070c07"
+        "c9b7fabde36257d0b46ed5ab420d408abcf1c6b3516fa9968b5dad6f4f7c4d1a"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -10017,6 +10233,10 @@
         "7af88aef6b793a751ee49a261f48db5ae84df43ab2a13cef948a32b3d42bac05"
       ],
       [
+        "packages/storage/src/repositories/paper-capital-book.ts",
+        "ffe53624b43d2781650033f24f2d2e8dbd8dba198efb9137dfa7008fbe3cba38"
+      ],
+      [
         "packages/storage/src/repositories/paper-connection-books.ts",
         "7efe0a8c80adf9787281ab6d0ca8cf53ce0bb95c47c185c9fb6608500125714c"
       ],
@@ -10029,8 +10249,12 @@
         "b348bc7a56a09bea9c4d95b9b462c8f5be148381310cafe26e7fd20858176116"
       ],
       [
+        "packages/storage/src/repositories/paper-profit-reserve.ts",
+        "75f464246f566b11563cca0758f2d5f6252489cd69b652a2a2e6c241fa57cdc2"
+      ],
+      [
         "packages/storage/src/repositories/paper-runtime.ts",
-        "9773820c70f2e84b9b13d939a9728ac65522f0eb2eacb2b957efdab0869097bf"
+        "68329d2e90cefc0080fcd2c1613a94492c2317b1f2cdc0d28f5b432331fd9b02"
       ],
       [
         "packages/storage/src/repositories/paper.ts",
@@ -10054,7 +10278,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "e72f6d1936a129730299d70eb03dccb2a4125edc0d1f9fbbe23e29fa01c5dc5b"
+        "31d952fe5dcf98a8e0f8d911d7f207eba12ba623523db05a2d49c83007e4c0b2"
       ],
       [
         "packages/storage/src/repositories/profit-reserve.ts",
@@ -10153,7 +10377,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "48673bccb0252444604a7b2acb75f77eff46956c7c02dc43a5bd0468470f5614"
+    "hash": "fc1e51781c14127e6bae8a9582df6d027099b36b194545d38002b455303330d8"
   },
   "trendvol-hourly-execution-v1": {
     "version": 1,
@@ -10425,7 +10649,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "545059bc8e0b241f88c6950661b5e7b310adc6902db8a12204b9eaa91e91fa95"
+        "3fa6cb6b1f2a64aac40e6f3f3a3d564a4addec4d71609d22d232944ea9459a3c"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -10433,7 +10657,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "a845e8bda856c6ae40e910933e0a72db453e2f1d49ed34bee7a19a17ba76a821"
+        "51e8366ca57daec4b5addb084bbf35f9ddf3e03557270ef0d8c5114e0debf666"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -10550,6 +10774,10 @@
       [
         "packages/contracts/src/schemas/paper-performance.ts",
         "10a016491c7c89274a4663448a7f1b4e576bbe27c35847aeca38e31fffc74efd"
+      ],
+      [
+        "packages/contracts/src/schemas/paper-profit-reserve.ts",
+        "e866b2f018344b7026b1dd58b82ba945b8f15cbcdd5ae22b194154138996b756"
       ],
       [
         "packages/contracts/src/schemas/parallel-paper.ts",
@@ -10837,7 +11065,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "6ce047a8ace746894142109e1e717ea67049454fb1a7b989daf0cd8568b2478f"
+        "fe99fb9ef11afcb3d8f1c2884b8cc91d1522b9328cce6dbec13b3dd0a2634a12"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -10846,6 +11074,18 @@
       [
         "packages/core/src/portfolio/paper-performance.ts",
         "fa5898d3d80f9f423dab6262cb9a2c8ad9d0d70cdc7b881fd4335e17ce093e26"
+      ],
+      [
+        "packages/core/src/portfolio/paper-profit-reserve-state.ts",
+        "b38c09d6e9f9efff91272fcc1b58d6b48de1b404bb6d961425fc23f1493cd877"
+      ],
+      [
+        "packages/core/src/portfolio/paper-profit-reserve-types.ts",
+        "165b2fe78e79cbce4ee6a763cddc0f65c004321a2fe95ba781ac5abe4c348fb8"
+      ],
+      [
+        "packages/core/src/portfolio/paper-profit-reserve.ts",
+        "c5330cdb86a778ab09af4424bdaf0f92403eedc02aac4a150438bebb1be3f1bb"
       ],
       [
         "packages/core/src/portfolio/performance.ts",
@@ -11145,7 +11385,7 @@
       ],
       [
         "packages/core/src/risk/autotrade.ts",
-        "d1afcfa69d7c56946348af5de7e49c7fda34358491786fa05b3614ddfa70b35c"
+        "075285c63af68b2b6f565845e2fdd9fc07bf3da32c738a64691922b70697c2b1"
       ],
       [
         "packages/core/src/risk/index.ts",
@@ -11309,7 +11549,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "d75eec060309ef5b0c88a1df110fed1e3da86ba21b35fee2807689e9af9911b0"
+        "6e91d95116ba3141afb0aa4e7f7d3f5592c6f43fcc1199154460199e96736066"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -11612,6 +11852,10 @@
         "5acfdbb22d52ac0c18695af27513bd1e964618464c4702555536601ea40ebc2d"
       ],
       [
+        "packages/storage/src/migrations/v99.ts",
+        "e09322aaaa49e08cac716d1cae43f91319afd3102d557955450e90da5cda1e66"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -11641,11 +11885,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
-        "e300ff67f87bc8764e82763f6d8a1ad38300fbfbfe24ce46d043c1c62a986105"
+        "6310c800856674ff6023cd001c94e10350f7c93f8fdfd3cf40cf921a22a1e6bb"
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "9576938261fb9eb4e7680cb68d05a8a79d5dc221f9a30400e40b568c9ed80e79"
+        "1f543d5144d693cb93d0700a3f3a5a037c9c2e02b4a61839942bdf40418076b6"
       ],
       [
         "packages/storage/src/profiles/index.ts",
@@ -11725,7 +11969,7 @@
       ],
       [
         "packages/storage/src/repositories/capital-budget.ts",
-        "c08adc2cc4f93c1460401a02b19eb71db306db57b5dbab7b27e04d209062dec4"
+        "71af3e7b96338db45b8723480be07f8ac4b2f2082c196a37eacdef19d977a4c2"
       ],
       [
         "packages/storage/src/repositories/capital-contest.ts",
@@ -11805,7 +12049,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "21e6200d89e937b844f30f755240a8249ed370c5b855d079bef99e39f1070c07"
+        "c9b7fabde36257d0b46ed5ab420d408abcf1c6b3516fa9968b5dad6f4f7c4d1a"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -11884,6 +12128,10 @@
         "7af88aef6b793a751ee49a261f48db5ae84df43ab2a13cef948a32b3d42bac05"
       ],
       [
+        "packages/storage/src/repositories/paper-capital-book.ts",
+        "ffe53624b43d2781650033f24f2d2e8dbd8dba198efb9137dfa7008fbe3cba38"
+      ],
+      [
         "packages/storage/src/repositories/paper-connection-books.ts",
         "7efe0a8c80adf9787281ab6d0ca8cf53ce0bb95c47c185c9fb6608500125714c"
       ],
@@ -11896,8 +12144,12 @@
         "b348bc7a56a09bea9c4d95b9b462c8f5be148381310cafe26e7fd20858176116"
       ],
       [
+        "packages/storage/src/repositories/paper-profit-reserve.ts",
+        "75f464246f566b11563cca0758f2d5f6252489cd69b652a2a2e6c241fa57cdc2"
+      ],
+      [
         "packages/storage/src/repositories/paper-runtime.ts",
-        "9773820c70f2e84b9b13d939a9728ac65522f0eb2eacb2b957efdab0869097bf"
+        "68329d2e90cefc0080fcd2c1613a94492c2317b1f2cdc0d28f5b432331fd9b02"
       ],
       [
         "packages/storage/src/repositories/paper.ts",
@@ -11921,7 +12173,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "e72f6d1936a129730299d70eb03dccb2a4125edc0d1f9fbbe23e29fa01c5dc5b"
+        "31d952fe5dcf98a8e0f8d911d7f207eba12ba623523db05a2d49c83007e4c0b2"
       ],
       [
         "packages/storage/src/repositories/profit-reserve.ts",
@@ -12020,7 +12272,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "df956ecc3209a02ef04fb7967c1db5aa2a0becdb9659aa26a812ae1f23231b8b"
+    "hash": "d353f61eef7348793c8db37aa2d01bc07104c7fc1cb3ef5ab646b6c185c64d78"
   },
   "trendvol-execution-remediation-v1": {
     "version": 1,
@@ -12292,7 +12544,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "545059bc8e0b241f88c6950661b5e7b310adc6902db8a12204b9eaa91e91fa95"
+        "3fa6cb6b1f2a64aac40e6f3f3a3d564a4addec4d71609d22d232944ea9459a3c"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -12300,7 +12552,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "a845e8bda856c6ae40e910933e0a72db453e2f1d49ed34bee7a19a17ba76a821"
+        "51e8366ca57daec4b5addb084bbf35f9ddf3e03557270ef0d8c5114e0debf666"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -12417,6 +12669,10 @@
       [
         "packages/contracts/src/schemas/paper-performance.ts",
         "10a016491c7c89274a4663448a7f1b4e576bbe27c35847aeca38e31fffc74efd"
+      ],
+      [
+        "packages/contracts/src/schemas/paper-profit-reserve.ts",
+        "e866b2f018344b7026b1dd58b82ba945b8f15cbcdd5ae22b194154138996b756"
       ],
       [
         "packages/contracts/src/schemas/parallel-paper.ts",
@@ -12704,7 +12960,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "6ce047a8ace746894142109e1e717ea67049454fb1a7b989daf0cd8568b2478f"
+        "fe99fb9ef11afcb3d8f1c2884b8cc91d1522b9328cce6dbec13b3dd0a2634a12"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -12713,6 +12969,18 @@
       [
         "packages/core/src/portfolio/paper-performance.ts",
         "fa5898d3d80f9f423dab6262cb9a2c8ad9d0d70cdc7b881fd4335e17ce093e26"
+      ],
+      [
+        "packages/core/src/portfolio/paper-profit-reserve-state.ts",
+        "b38c09d6e9f9efff91272fcc1b58d6b48de1b404bb6d961425fc23f1493cd877"
+      ],
+      [
+        "packages/core/src/portfolio/paper-profit-reserve-types.ts",
+        "165b2fe78e79cbce4ee6a763cddc0f65c004321a2fe95ba781ac5abe4c348fb8"
+      ],
+      [
+        "packages/core/src/portfolio/paper-profit-reserve.ts",
+        "c5330cdb86a778ab09af4424bdaf0f92403eedc02aac4a150438bebb1be3f1bb"
       ],
       [
         "packages/core/src/portfolio/performance.ts",
@@ -13012,7 +13280,7 @@
       ],
       [
         "packages/core/src/risk/autotrade.ts",
-        "d1afcfa69d7c56946348af5de7e49c7fda34358491786fa05b3614ddfa70b35c"
+        "075285c63af68b2b6f565845e2fdd9fc07bf3da32c738a64691922b70697c2b1"
       ],
       [
         "packages/core/src/risk/index.ts",
@@ -13168,7 +13436,7 @@
       ],
       [
         "packages/storage/src/migrations/index.ts",
-        "d75eec060309ef5b0c88a1df110fed1e3da86ba21b35fee2807689e9af9911b0"
+        "6e91d95116ba3141afb0aa4e7f7d3f5592c6f43fcc1199154460199e96736066"
       ],
       [
         "packages/storage/src/migrations/types.ts",
@@ -13471,6 +13739,10 @@
         "5acfdbb22d52ac0c18695af27513bd1e964618464c4702555536601ea40ebc2d"
       ],
       [
+        "packages/storage/src/migrations/v99.ts",
+        "e09322aaaa49e08cac716d1cae43f91319afd3102d557955450e90da5cda1e66"
+      ],
+      [
         "packages/storage/src/profiles/backup.ts",
         "a756a9f5d1bc562e4fa75dbbf6a96f9b41ee3b999705d10fd7d1c8943428c9df"
       ],
@@ -13500,11 +13772,11 @@
       ],
       [
         "packages/storage/src/profiles/duplication-transient-counts.ts",
-        "e300ff67f87bc8764e82763f6d8a1ad38300fbfbfe24ce46d043c1c62a986105"
+        "6310c800856674ff6023cd001c94e10350f7c93f8fdfd3cf40cf921a22a1e6bb"
       ],
       [
         "packages/storage/src/profiles/duplication.ts",
-        "9576938261fb9eb4e7680cb68d05a8a79d5dc221f9a30400e40b568c9ed80e79"
+        "1f543d5144d693cb93d0700a3f3a5a037c9c2e02b4a61839942bdf40418076b6"
       ],
       [
         "packages/storage/src/profiles/index.ts",
@@ -13584,7 +13856,7 @@
       ],
       [
         "packages/storage/src/repositories/capital-budget.ts",
-        "c08adc2cc4f93c1460401a02b19eb71db306db57b5dbab7b27e04d209062dec4"
+        "71af3e7b96338db45b8723480be07f8ac4b2f2082c196a37eacdef19d977a4c2"
       ],
       [
         "packages/storage/src/repositories/capital-contest.ts",
@@ -13664,7 +13936,7 @@
       ],
       [
         "packages/storage/src/repositories/index.ts",
-        "21e6200d89e937b844f30f755240a8249ed370c5b855d079bef99e39f1070c07"
+        "c9b7fabde36257d0b46ed5ab420d408abcf1c6b3516fa9968b5dad6f4f7c4d1a"
       ],
       [
         "packages/storage/src/repositories/market-data.ts",
@@ -13743,6 +14015,10 @@
         "7af88aef6b793a751ee49a261f48db5ae84df43ab2a13cef948a32b3d42bac05"
       ],
       [
+        "packages/storage/src/repositories/paper-capital-book.ts",
+        "ffe53624b43d2781650033f24f2d2e8dbd8dba198efb9137dfa7008fbe3cba38"
+      ],
+      [
         "packages/storage/src/repositories/paper-connection-books.ts",
         "7efe0a8c80adf9787281ab6d0ca8cf53ce0bb95c47c185c9fb6608500125714c"
       ],
@@ -13755,8 +14031,12 @@
         "b348bc7a56a09bea9c4d95b9b462c8f5be148381310cafe26e7fd20858176116"
       ],
       [
+        "packages/storage/src/repositories/paper-profit-reserve.ts",
+        "75f464246f566b11563cca0758f2d5f6252489cd69b652a2a2e6c241fa57cdc2"
+      ],
+      [
         "packages/storage/src/repositories/paper-runtime.ts",
-        "9773820c70f2e84b9b13d939a9728ac65522f0eb2eacb2b957efdab0869097bf"
+        "68329d2e90cefc0080fcd2c1613a94492c2317b1f2cdc0d28f5b432331fd9b02"
       ],
       [
         "packages/storage/src/repositories/paper.ts",
@@ -13780,7 +14060,7 @@
       ],
       [
         "packages/storage/src/repositories/profile-impact.ts",
-        "e72f6d1936a129730299d70eb03dccb2a4125edc0d1f9fbbe23e29fa01c5dc5b"
+        "31d952fe5dcf98a8e0f8d911d7f207eba12ba623523db05a2d49c83007e4c0b2"
       ],
       [
         "packages/storage/src/repositories/profit-reserve.ts",
@@ -13879,6 +14159,6 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "68ab17ae2735cfb9bf0d9bcf4341c41750ebedf881701e7f6d031004a3796f9d"
+    "hash": "d67f7dd962c0edab4bfdcccbf0bc0e460c19748768b65f5445a13e42445e94e3"
   }
 }

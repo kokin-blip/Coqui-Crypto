@@ -1,7 +1,8 @@
 import { budgetAmount, budgetClaimHeads, budgetText, capitalHash, cashClaim, instrumentKey,
   modeledFill, DEFAULT_TRADE_COST_CONFIG, projectAccountBudget, type BudgetReportV1, type InstrumentIdentity } from '@coqui/core';
-import { advanceLocalBudgetSource, currentBudget, getBudgetSource, getCapitalScope, getPaperBookOrigin, getPaperOrder,
+import { advanceLocalBudgetSource, currentBudget, getBudgetSource, getCapitalScope, getPaperBookOrigin, getPaperCapitalBook, paperReserveBinding, getPaperOrder,
   inTransaction, listCapitalBindings, listCashClaims, saveCashClaim, withBudgetClaim, type Db } from '@coqui/storage';
+import { capturePaperCapitalEvidence, readPaperCapitalEvidence } from '../portfolio/paper-capital-evidence.js';
 import { localCapitalBudgetEvidence, recordBudgetDeficit } from '../portfolio/capital-budget-sources.js';
 
 export interface PaperBudgetIntent {
@@ -17,10 +18,19 @@ export interface PaperCapitalBudgetPort {
   withIntent<T>(intent: PaperBudgetIntent, persistExistingIntent: () => T): T;
   releaseTerminal(orderId: string): void;
 }
+const paperCapitalPorts=new WeakMap<PaperCapitalBudgetPort,{profileId:string;scopeId:string}>();
+export function assertPaperCapitalBudgetCoverage(profileId:string,port:PaperCapitalBudgetPort|undefined,db:Db):void {
+  const b=paperReserveBinding(profileId,db);if(!getPaperCapitalBook(profileId,db) && !b)return;
+  const proof=port?paperCapitalPorts.get(port):null;if(!b || b.archived || !proof || proof.profileId!==profileId || proof.scopeId!==b.scope_id)throw new Error('paper_capital_budget_port_required');
+}
 export function createPaperCapitalBudgetPort(input: { profileId: string; scopeId: string; database: Db;
-  now: () => number; guardAuthority: () => boolean }): PaperCapitalBudgetPort {
+  now: () => number; guardAuthority: () => boolean; version?: 'paper-reserve-cash-v1'; marks?: () => Readonly<Record<string,{priceUsd:string;atMs:number;ref:string}>> }): PaperCapitalBudgetPort {
   const { profileId, scopeId, database: db } = input;
   const guard = () => {
+    if(input.version==='paper-reserve-cash-v1'){const book=getPaperCapitalBook(profileId,db),binding=paperReserveBinding(profileId,db);
+      if(!book || !binding || binding.archived || binding.scope_id!==scopeId || binding.book_id!==book.id || !input.guardAuthority())throw new Error('budget_authority_unavailable');return;
+    }
+    if(getPaperCapitalBook(profileId,db))throw new Error('paper_capital_budget_port_required');
     const scope = getCapitalScope(scopeId, db), origin = getPaperBookOrigin(profileId, db);
     if (!input.guardAuthority() || !origin || origin.snapshot.profileId !== profileId || scope?.originProfileId !== profileId ||
       scope.provider !== 'local_paper' || scope.environment !== 'simulation' ||
@@ -29,6 +39,13 @@ export function createPaperCapitalBudgetPort(input: { profileId: string; scopeId
   };
   const observe = (): BudgetReportV1 => {
     guard();
+    if(input.version==='paper-reserve-cash-v1'){
+      if(!input.marks)throw new Error('paper_capital_marks_required');
+      const read=readPaperCapitalEvidence(profileId,input.now(),db);
+      if(read.financial.reasonCodes.includes('paper_reserve_source_stale') || input.now()>=read.source.expiresAtMs)capturePaperCapitalEvidence(profileId,input.now(),input.marks(),db);
+      const report=currentBudget(scopeId,input.now(),db)!;recordBudgetDeficit(report,db,profileId);
+      if(readPaperCapitalEvidence(profileId,input.now(),db).financial.reasonCodes.length)throw new Error('paper_capital_reconciliation_required');return report;
+    }
     const previous = currentBudget(scopeId, input.now(), db), fresh = localCapitalBudgetEvidence(profileId, input.now(), db, true);
     if (!previous || !fresh || fresh.scopeId !== scopeId) throw new Error('budget_source_missing');
     const source = getBudgetSource(previous.sourceId, db)!;
@@ -45,7 +62,7 @@ export function createPaperCapitalBudgetPort(input: { profileId: string; scopeId
     if (head && !['settled', 'released'].includes(head.state)) saveCashClaim(cashClaim({ ...head, replacesId: head.id,
       state: order.state === 'filled' ? 'settled' : 'released', evidenceRefs: [...head.evidenceRefs, `paper-terminal:${orderId}:${order.state}`] }), db);
   };
-  return {
+  const port:PaperCapitalBudgetPort = {
     budget: observe,
     capacity(context, side, instrument, priceUsd, orderId) {
       if (context.profileId !== profileId || context.campaignId !== null) throw new Error('budget_book_mismatch');
@@ -81,6 +98,7 @@ export function createPaperCapitalBudgetPort(input: { profileId: string; scopeId
     },
     releaseTerminal,
   };
+  if(input.version==='paper-reserve-cash-v1')paperCapitalPorts.set(port,{profileId,scopeId});return port;
 }
 export function paperBudgetTransaction<T>(port: PaperCapitalBudgetPort | undefined, intent: PaperBudgetIntent | null,
   database: Db, operation: () => T): T {

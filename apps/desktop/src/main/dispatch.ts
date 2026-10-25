@@ -27,6 +27,7 @@ export type ChannelHandlers = Readonly<Partial<Record<ChannelName, ChannelHandle
  * service's issue codes and the wire's four-way outcome.
  */
 const BLOCKED_CODES: ReadonlySet<string> = new Set([
+  'paper_reserve_revision_stale','paper_reserve_proposal_stale','paper_reserve_host_or_lease_unavailable','paper_reserve_qualification_missing','paper_reserve_manual_resume_required','paper_reserve_use_manual_resume','paper_reserve_policy_disabled','paper_reserve_operating_requirement_unavailable','paper_reserve_risk_exposure_reconciliation_required','paper_reserve_competing_writer','paper_book_requires_empty_dedicated_profile',
   'connection_in_use', 'connection_operation_in_progress', 'removal_preview_stale', 'confirmation_required',
   'kill_switch_engaged',
   'guardrail_rejected',
