@@ -30,3 +30,4 @@ export * from './reserve-capital-witness.js';
 export * from './paper-profit-reserve-types.js';
 export * from './paper-profit-reserve.js';
 export * from './paper-profit-reserve-state.js';
+export * from './paper-reserve-sale.js';

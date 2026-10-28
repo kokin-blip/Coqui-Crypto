@@ -1,0 +1,18 @@
+import {describe,it,expect,vi} from 'vitest';
+import {createPaperReserveSaleHandlers} from '../apps/desktop/src/main/paper-reserve-sale-handlers.js';
+import type {createMainPaperReserveRuntime} from '../apps/desktop/src/main/paper-reserve-runtime.js';
+import {createProfileOperationGate} from '@coqui/services';
+const request={commandId:'10000000-0000-4000-8000-000000000001',bookId:'book',scopeId:'scope',generation:1,policyId:'policy',stateId:'state',budgetRevision:'budget',authorityHash:'authority'};
+function fixture(){let allowed=true;const observe=vi.fn(()=>({})),disarm=vi.fn(),refresh=vi.fn(async()=>{}),market=vi.fn(async()=>{}),gate=createProfileOperationGate();
+ const sale={status:vi.fn(()=>({scopeId:'scope'})),preview:vi.fn(()=>({})),proposals:vi.fn(()=>[]),prepare:vi.fn(),orderPreview:vi.fn(),review:vi.fn(),reconcile:vi.fn(),disarm};
+ const runtime={sale,service:{view:()=>({book:{id:'book'},binding:{scope_id:'scope',generation:1,policy_id:'policy',state_id:'state'},budget:{revision:'budget'},authorityHash:'authority'}),observe},refreshMarketEvidence:market} as unknown as ReturnType<typeof createMainPaperReserveRuntime>;
+ const handlers=createPaperReserveSaleHandlers({runtime,gate,operationAllowed:()=>allowed,now:()=>1000,refresh});return {handlers:handlers as Record<string,(request:unknown)=>unknown|Promise<unknown>>,refresh,market,observe,disarm,sale,gate,deny:()=>{allowed=false;}};
+}
+describe('P6-G Main-only acquisition boundary',()=>{
+ it('keeps reads local and does not acquire or observe',async()=>{const f=fixture();for(const channel of ['paper.reserve.sale.status','paper.reserve.sale.preview','paper.reserve.sale.proposals'] as const)await f.handlers[channel]!({});expect(f.refresh).not.toHaveBeenCalled();expect(f.market).not.toHaveBeenCalled();expect(f.observe).not.toHaveBeenCalled();});
+ it('rejects stale observation identity before acquisition',async()=>{const f=fixture(),r=await f.handlers['paper.reserve.sale.observe']!({...request,generation:2});expect(r).toMatchObject({ok:false});expect(f.refresh).not.toHaveBeenCalled();expect(f.observe).not.toHaveBeenCalled();});
+ it('acquires only on the explicit command and releases the profile gate',async()=>{const f=fixture();expect(await f.handlers['paper.reserve.sale.observe']!(request)).toMatchObject({ok:true});expect(f.refresh).toHaveBeenCalledOnce();expect(f.market).toHaveBeenCalledOnce();expect(f.observe).toHaveBeenCalledWith(request);expect(f.disarm).toHaveBeenCalledOnce();expect(f.gate.begin()).toBe(true);f.gate.end();});
+ it('blocks a completion crossing profile disposal without recording an observation',async()=>{const f=fixture();f.refresh.mockImplementation(async()=>{f.deny();});expect(await f.handlers['paper.reserve.sale.observe']!(request)).toMatchObject({ok:false});expect(f.observe).not.toHaveBeenCalled();});
+ it('does not promote deadline failure into a fresh observation',async()=>{const f=fixture();f.refresh.mockRejectedValue(new Error('deadline_exceeded'));expect(await f.handlers['paper.reserve.sale.observe']!(request)).toMatchObject({ok:false,issues:[{code:'sale_observation_deadline'}]});expect(f.observe).not.toHaveBeenCalled();expect(f.gate.begin()).toBe(true);f.gate.end();});
+ it('refuses overlapping writes and financial commands after disposal',async()=>{const f=fixture();f.gate.begin();expect(await f.handlers['paper.reserve.sale.prepare']!({})).toMatchObject({ok:false});f.gate.end();f.deny();expect(await f.handlers['paper.reserve.sale.reconcile']!({})).toMatchObject({ok:false});expect(f.sale.prepare).not.toHaveBeenCalled();expect(f.sale.reconcile).not.toHaveBeenCalled();});
+});

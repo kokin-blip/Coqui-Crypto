@@ -1,0 +1,138 @@
+import {
+  isChannelName,
+  transportFailure,
+  CHANNEL_SCHEMAS,
+  type ChannelName,
+  type ContractIssue,
+  type Outcome,
+} from '@coqui/contracts';
+
+/**
+ * What a service hands back: the `{ ok, value } | { ok, issues }` shape every
+ * Coqui service already returns, or a bare value for a call that cannot fail.
+ */
+export type ServiceResult<TValue> =
+  | { readonly ok: true; readonly value: TValue }
+  | { readonly ok: false; readonly issues: readonly ContractIssue[] };
+
+export type ChannelHandler = (payload: never) => Promise<ServiceResult<unknown>> | ServiceResult<unknown>;
+
+export type ChannelHandlers = Readonly<Partial<Record<ChannelName, ChannelHandler>>>;
+
+/**
+ * Issue codes that mean "a guardrail said no", not "something broke".
+ *
+ * `docs/UI-UX.md` §3.1 requires a surface to distinguish these, and the
+ * distinction has to be made here because only the boundary sees both the
+ * service's issue codes and the wire's four-way outcome.
+ */
+const BLOCKED_CODES: ReadonlySet<string> = new Set([
+  'paper_reserve_revision_stale','paper_reserve_proposal_stale','paper_reserve_host_or_lease_unavailable','paper_reserve_qualification_missing','paper_reserve_manual_resume_required','paper_reserve_use_manual_resume','paper_reserve_policy_disabled','paper_reserve_operating_requirement_unavailable','paper_reserve_risk_exposure_reconciliation_required','paper_reserve_competing_writer','paper_book_requires_empty_dedicated_profile',
+  'connection_in_use', 'connection_operation_in_progress', 'removal_preview_stale', 'confirmation_required',
+  'kill_switch_engaged', 'hourly_study_preview_stale', 'stale_host_authority',
+  'guardrail_rejected',
+  'execution_not_permitted',
+  'permission_denied',
+  'gate_not_met',
+  // Invariant 12 declining to record a match against a lot that does not
+  // exist. Nothing broke — a rule refused, and the surface must say so rather
+  // than showing an error the user would read as a bug.
+  'unknown_lot',
+]);
+
+/** Codes describing an outcome the application genuinely cannot determine. */
+const UNKNOWN_CODES: ReadonlySet<string> = new Set([
+  'removal_recovery_required',
+  'source_cancelled',
+  'source_shutdown',
+  'recovery_required',
+  'ambiguous_outcome',
+]);
+
+function classify<TValue>(issues: readonly ContractIssue[]): Outcome<TValue> {
+  if (issues.some((issue) => BLOCKED_CODES.has(issue.code)||/^sale_[a-z_]+$/u.test(issue.code))) {
+    return { status: 'blocked', issues };
+  }
+  if (issues.some((issue) => UNKNOWN_CODES.has(issue.code))) {
+    return { status: 'unknown', issues };
+  }
+  return { status: 'failed', issues };
+}
+
+export interface DispatcherOptions {
+  /** Resolve at dispatch time so an atomic profile switch cannot leave stale closures behind. */
+  readonly handlers: ChannelHandlers | (() => ChannelHandlers);
+  /**
+   * Called with a thrown error so it reaches the log with full detail. The
+   * dispatcher itself never puts a message on the wire.
+   */
+  readonly onUnexpectedError?: (channel: ChannelName, error: unknown) => void;
+  /** Receives only a stable channel identity; request values never enter deprecation telemetry. */
+  readonly onDeprecatedChannel?: (channel: ChannelName) => void;
+}
+
+const DEPRECATED_COMPATIBILITY_CHANNELS: ReadonlySet<ChannelName> = new Set([
+  'accounts.coinbase.status', 'accounts.coinbase.connect', 'accounts.coinbase.connect-json',
+  'accounts.coinbase.disconnect', 'accounts.coinbase.sync', 'portfolio.view', 'paper.campaign',
+]);
+
+/**
+ * The single entry point from `ipcMain` into the application.
+ *
+ * Four properties matter here, and none of them can be delegated to a service.
+ *
+ * A channel absent from the registry is refused rather than forwarded, so
+ * adding an `ipcMain.handle` elsewhere cannot widen the surface. Request
+ * payloads are validated against the contract before a service sees them, so
+ * every service can trust its input. Responses are validated on the way out,
+ * because a service that drifts from the contract should fail here rather than
+ * produce a screen that renders wrong. And nothing throws: an unexpected error
+ * becomes a stable `failed` outcome, since an exception crossing IPC would
+ * arrive at the renderer as a string built from the error's own message —
+ * exactly the leak invariant 3 forbids.
+ */
+export function createDispatcher(options: DispatcherOptions) {
+  const { handlers, onUnexpectedError, onDeprecatedChannel } = options;
+
+  return async function dispatch(channel: unknown, payload: unknown): Promise<Outcome<unknown>> {
+    if (!isChannelName(channel)) return transportFailure('unknown_channel');
+
+    const schemas = CHANNEL_SCHEMAS[channel];
+    const request = schemas.request.safeParse(payload);
+    if (!request.success) return transportFailure('invalid_request_payload');
+    if (DEPRECATED_COMPATIBILITY_CHANNELS.has(channel)) {
+      try { onDeprecatedChannel?.(channel); } catch { /* Telemetry cannot change dispatch. */ }
+    }
+
+    // The whole body stays inside the guard. Reading `.ok` on a handler that
+    // returned nothing would otherwise throw past it, and a dispatcher that
+    // can throw defeats the point of having one.
+    try {
+      const available = typeof handlers === 'function' ? handlers() : handlers;
+      const handler = available[channel];
+      if (handler === undefined) {
+        onUnexpectedError?.(channel, new TypeError(`No handler registered for ${channel}.`));
+        return transportFailure('transport_unavailable');
+      }
+      const result: ServiceResult<unknown> = await handler(request.data as never);
+
+      if (typeof result !== 'object' || result === null || typeof result.ok !== 'boolean') {
+        onUnexpectedError?.(channel, new TypeError(`Handler for ${channel} returned a non-result.`));
+        return transportFailure('transport_unavailable');
+      }
+
+      if (!result.ok) return classify(result.issues);
+
+      const response = schemas.response.safeParse(result.value);
+      if (!response.success) {
+        onUnexpectedError?.(channel, response.error);
+        return transportFailure('invalid_response_payload');
+      }
+
+      return { status: 'ok', value: response.data };
+    } catch (error) {
+      onUnexpectedError?.(channel, error);
+      return transportFailure('transport_unavailable');
+    }
+  };
+}

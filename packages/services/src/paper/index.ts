@@ -28,3 +28,6 @@ export * from './paper-reserve-authority.js';
 export * from './paper-capital-decision.js';
 export * from './paper-capital-proposal-preview.js';
 export * from './paper-reserve-runtime.js';
+export * from './paper-reserve-sale.js';
+export * from './paper-reserve-sale-app.js';
+export * from './paper-reserve-sale-reviews.js';

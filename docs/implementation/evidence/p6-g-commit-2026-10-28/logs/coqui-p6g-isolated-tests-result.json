@@ -1,0 +1,13 @@
+{
+  "check": "tests",
+  "exitCode": 0,
+  "log": "/tmp/coqui-p6g-isolated-tests-final.log",
+  "commands": [
+    [
+      "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/vitest/vitest.mjs",
+      "run",
+      "--maxWorkers=1"
+    ]
+  ]
+}

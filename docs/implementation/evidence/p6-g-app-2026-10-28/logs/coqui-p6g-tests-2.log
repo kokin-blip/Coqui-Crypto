@@ -1,0 +1,120 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ❯ tests/paper-reserve-sale-app.test.ts (6 tests | 6 failed) 388ms
+     × reads current FIFO evidence and models without granting review or writing facts 89ms
+     × never accepts financial facts, review switches, duplicates or malformed preferences from IPC 61ms
+     × requires an owner-approved source receipt tied to the exact artifact, scope and policy 62ms
+     × prepares once, restores the proposal across restart, and still requires a separate reviewed order 59ms
+     × invalidates session drafts on disarm and changed objectives, preserving historical receipts 58ms
+     × expires exact financial consequences and refuses a foreign proposal before execution 58ms
+ ❯ tests/paper-profit-reserve-ui.test.ts (4 tests | 2 failed) 132ms
+     ✓ offers an explicit $500 simulated opening without enrolling or arming existing books 4ms
+     × separates policy authorization, review, release, and manual Resume with unavailable evidence explicit 74ms
+     ✓ copied archived evidence offers no operational action 0ms
+     × explains missing trade-plan evidence with readable caps and recovery 54ms
+ ✓ tests/paper-reserve-sale-service.test.ts (6 tests) 896ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/paper-profit-reserve-ui.test.ts > P6 truthful default-off controls > separates policy authorization, review, release, and manual Resume with unavailable evidence explicit
+ FAIL  tests/paper-profit-reserve-ui.test.ts > P6 truthful default-off controls > explains missing trade-plan evidence with readable caps and recovery
+Error: No QueryClient set, use QueryClientProvider to set one
+ ❯ useQueryClient node_modules/.pnpm/@tanstack+react-query@5.101.4_react@19.2.8/node_modules/@tanstack/react-query/src/QueryClientProvider.tsx:18:10
+ ❯ PaperReserveSale apps/desktop/src/renderer/app/PaperReserveSale.tsx:60:148
+
+ ❯ Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:9808:18
+ ❯ renderWithHooks node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:5062:19
+ ❯ renderElement node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:5497:23
+ ❯ retryNode node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6428:21
+ ❯ renderNodeDestructive node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6367:11
+ ❯ renderNode node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6905:18
+ ❯ renderChildrenArray node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6674:11
+ ❯ retryNode node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6441:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  tests/paper-reserve-sale-app.test.ts > P6-G app integration with Main-owned evidence > reads current FIFO evidence and models without granting review or writing facts
+TypeError: f.service.view is not a function
+ ❯ fixture tests/paper-reserve-sale-app.test.ts:8:92
+      6| import {saleServiceFixture} from './helpers/paper-reserve-sale.js';
+      7| function fixture(){
+      8|   const f=saleServiceFixture(),artifact=capitalHash('synthetic-app-onl…
+       |                                                                                            ^
+      9|   const {reserveUsd,retainedFloorUsd,maxCostUsd,maxNotionalUsd,maxExpo…
+     10|   const preferences={reserveUsd,retainedFloorUsd,maxCostUsd,maxNotiona…
+ ❯ tests/paper-reserve-sale-app.test.ts:16:101
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  tests/paper-reserve-sale-app.test.ts > P6-G app integration with Main-owned evidence > never accepts financial facts, review switches, duplicates or malformed preferences from IPC
+TypeError: f.service.view is not a function
+ ❯ fixture tests/paper-reserve-sale-app.test.ts:8:92
+      6| import {saleServiceFixture} from './helpers/paper-reserve-sale.js';
+      7| function fixture(){
+      8|   const f=saleServiceFixture(),artifact=capitalHash('synthetic-app-onl…
+       |                                                                                            ^
+      9|   const {reserveUsd,retainedFloorUsd,maxCostUsd,maxNotionalUsd,maxExpo…
+     10|   const preferences={reserveUsd,retainedFloorUsd,maxCostUsd,maxNotiona…
+ ❯ tests/paper-reserve-sale-app.test.ts:21:114
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  tests/paper-reserve-sale-app.test.ts > P6-G app integration with Main-owned evidence > requires an owner-approved source receipt tied to the exact artifact, scope and policy
+TypeError: f.service.view is not a function
+ ❯ fixture tests/paper-reserve-sale-app.test.ts:8:92
+      6| import {saleServiceFixture} from './helpers/paper-reserve-sale.js';
+      7| function fixture(){
+      8|   const f=saleServiceFixture(),artifact=capitalHash('synthetic-app-onl…
+       |                                                                                            ^
+      9|   const {reserveUsd,retainedFloorUsd,maxCostUsd,maxNotionalUsd,maxExpo…
+     10|   const preferences={reserveUsd,retainedFloorUsd,maxCostUsd,maxNotiona…
+ ❯ tests/paper-reserve-sale-app.test.ts:25:108
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  tests/paper-reserve-sale-app.test.ts > P6-G app integration with Main-owned evidence > prepares once, restores the proposal across restart, and still requires a separate reviewed order
+TypeError: f.service.view is not a function
+ ❯ fixture tests/paper-reserve-sale-app.test.ts:8:92
+      6| import {saleServiceFixture} from './helpers/paper-reserve-sale.js';
+      7| function fixture(){
+      8|   const f=saleServiceFixture(),artifact=capitalHash('synthetic-app-onl…
+       |                                                                                            ^
+      9|   const {reserveUsd,retainedFloorUsd,maxCostUsd,maxNotionalUsd,maxExpo…
+     10|   const preferences={reserveUsd,retainedFloorUsd,maxCostUsd,maxNotiona…
+ ❯ tests/paper-reserve-sale-app.test.ts:32:119
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+ FAIL  tests/paper-reserve-sale-app.test.ts > P6-G app integration with Main-owned evidence > invalidates session drafts on disarm and changed objectives, preserving historical receipts
+TypeError: f.service.view is not a function
+ ❯ fixture tests/paper-reserve-sale-app.test.ts:8:92
+      6| import {saleServiceFixture} from './helpers/paper-reserve-sale.js';
+      7| function fixture(){
+      8|   const f=saleServiceFixture(),artifact=capitalHash('synthetic-app-onl…
+       |                                                                                            ^
+      9|   const {reserveUsd,retainedFloorUsd,maxCostUsd,maxNotionalUsd,maxExpo…
+     10|   const preferences={reserveUsd,retainedFloorUsd,maxCostUsd,maxNotiona…
+ ❯ tests/paper-reserve-sale-app.test.ts:44:113
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+
+ FAIL  tests/paper-reserve-sale-app.test.ts > P6-G app integration with Main-owned evidence > expires exact financial consequences and refuses a foreign proposal before execution
+TypeError: f.service.view is not a function
+ ❯ fixture tests/paper-reserve-sale-app.test.ts:8:92
+      6| import {saleServiceFixture} from './helpers/paper-reserve-sale.js';
+      7| function fixture(){
+      8|   const f=saleServiceFixture(),artifact=capitalHash('synthetic-app-onl…
+       |                                                                                            ^
+      9|   const {reserveUsd,retainedFloorUsd,maxCostUsd,maxNotionalUsd,maxExpo…
+     10|   const preferences={reserveUsd,retainedFloorUsd,maxCostUsd,maxNotiona…
+ ❯ tests/paper-reserve-sale-app.test.ts:49:106
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/8]⎯
+
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  8 failed | 8 passed (16)
+   Start at  15:04:53
+   Duration  3.90s (transform 1.23s, setup 0ms, import 2.28s, tests 1.42s, environment 0ms)
+

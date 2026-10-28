@@ -177,7 +177,7 @@
       ],
       [
         "packages/adapters/src/http/deadline.ts",
-        "d873db18498585f56c5a87fcb91cd018d97a98c83d0cb232550f8afd38b6a127"
+        "7cc1f636d6f7df532ba03520966afbcd3d9a789f22b5216cdedb6d35fc7f1a8c"
       ],
       [
         "packages/adapters/src/http/download.ts",
@@ -281,7 +281,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "3fa6cb6b1f2a64aac40e6f3f3a3d564a4addec4d71609d22d232944ea9459a3c"
+        "181058bb99b53ec0aa987f898f7389f459021f82bc86a66328c24db324238ecb"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -289,7 +289,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "51e8366ca57daec4b5addb084bbf35f9ddf3e03557270ef0d8c5114e0debf666"
+        "d3987a39efcab464f5cc7ce42ca1e2e9b2aa1fe1545ae2bef1694f6c43e00254"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -410,6 +410,10 @@
       [
         "packages/contracts/src/schemas/paper-profit-reserve.ts",
         "e866b2f018344b7026b1dd58b82ba945b8f15cbcdd5ae22b194154138996b756"
+      ],
+      [
+        "packages/contracts/src/schemas/paper-reserve-sale.ts",
+        "41306f2ee42c1a1896283eff1f26957aa70720b9923c53adc19931b85024a11d"
       ],
       [
         "packages/contracts/src/schemas/parallel-paper.ts",
@@ -697,7 +701,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "fe99fb9ef11afcb3d8f1c2884b8cc91d1522b9328cce6dbec13b3dd0a2634a12"
+        "0865b30b878a050f14bf240a8ef88b7f5066d4225935206426ad4e6e2d92ed09"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -718,6 +722,10 @@
       [
         "packages/core/src/portfolio/paper-profit-reserve.ts",
         "c5330cdb86a778ab09af4424bdaf0f92403eedc02aac4a150438bebb1be3f1bb"
+      ],
+      [
+        "packages/core/src/portfolio/paper-reserve-sale.ts",
+        "bf3f147c7a723495a70dc60af1ddcda95f237007ab8217fdb20c8a4e6cb8254c"
       ],
       [
         "packages/core/src/portfolio/performance.ts",
@@ -1389,7 +1397,7 @@
       ],
       [
         "packages/services/src/paper/execution-service.ts",
-        "4cd590896d90b59f4c0a63000e4187f515d11422e660bf8a58a239180025de4f"
+        "ab346014bcd4f78a88c15894f7a0e22d3803980727111e474366b2ba4b96bad9"
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
@@ -1409,7 +1417,7 @@
       ],
       [
         "packages/services/src/paper/index.ts",
-        "c8f45a017170a34f6f3addbb2c1998b3800ed476f8b352b68d6b2a02baef3e34"
+        "26b3669ee7dae5ccf1ad327a6071c8e5a6aa147cf1ae1c27c7fe9e97c5d23d6d"
       ],
       [
         "packages/services/src/paper/kill-switch.ts",
@@ -1445,7 +1453,19 @@
       ],
       [
         "packages/services/src/paper/paper-reserve-runtime.ts",
-        "4a920394b164dcea793e9d8285cd98a61383a0dc17775c8d587f3c4945ff4d05"
+        "f4aee3115e6508f130ba30d1feef01fb3713e77387f50f1304fc0caffcb59309"
+      ],
+      [
+        "packages/services/src/paper/paper-reserve-sale-app.ts",
+        "dc723fde6a073f5ab39cbfaee4937c336b80a915c735c76f3f7eb59e9a8d5968"
+      ],
+      [
+        "packages/services/src/paper/paper-reserve-sale-reviews.ts",
+        "ddaceaf8506bbbf0ab72c2df86d21f9222a57233ae9f82543ee383555388f4fc"
+      ],
+      [
+        "packages/services/src/paper/paper-reserve-sale.ts",
+        "4fe3fe9b57b2571f62dc966b6de1355c3ea92f23b68d78813bee533d585be535"
       ],
       [
         "packages/services/src/paper/paper-scheduler-task.ts",
@@ -1633,7 +1653,7 @@
       ],
       [
         "packages/services/src/portfolio/index.ts",
-        "8219dbaa403efb0513f9f8afa35b1d77b3bb60ad4c3f0797035d9a61f4fa188b"
+        "e6c6ef1ff2731a3b5c75b460ed606d4cb20a6f7971d1ac2ef9d94550d773c380"
       ],
       [
         "packages/services/src/portfolio/ledger.ts",
@@ -1650,6 +1670,10 @@
       [
         "packages/services/src/portfolio/paper-profit-reserve.ts",
         "cc8d93293656691914bc0024c762a459959a582d64bbf9fd9fb113a0497b9ae6"
+      ],
+      [
+        "packages/services/src/portfolio/paper-reserve-sale-evidence.ts",
+        "fde09a7ba102dfdc60b8cbae3a15e4e92dc54a1584008e34f65a6deae9870f39"
       ],
       [
         "packages/services/src/portfolio/profit-reserve-consequences.ts",
@@ -2457,7 +2481,7 @@
       ],
       [
         "packages/storage/src/repositories/paper-execution.ts",
-        "26cb1942634053d71e8f4a4121c46617cc2f94a9c7fd63398b4cc1b1dfc4329e"
+        "2a24a5198115815c95f79e516da63341d47cf9f1adfadc402ec4d2c690cc5089"
       ],
       [
         "packages/storage/src/repositories/paper-performance.ts",
@@ -2592,7 +2616,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "fef0d441f95f5bacd134feb732feef7583bbd29703dada7ef50a55de4a0bb4f9"
+    "hash": "5832127ea02aad042d0c1800077b7328af5dbc440a7967602a582d081fb18892"
   },
   "wider-breakout-v1": {
     "version": 1,
@@ -2772,7 +2796,7 @@
       ],
       [
         "packages/adapters/src/http/deadline.ts",
-        "d873db18498585f56c5a87fcb91cd018d97a98c83d0cb232550f8afd38b6a127"
+        "7cc1f636d6f7df532ba03520966afbcd3d9a789f22b5216cdedb6d35fc7f1a8c"
       ],
       [
         "packages/adapters/src/http/download.ts",
@@ -2876,7 +2900,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "3fa6cb6b1f2a64aac40e6f3f3a3d564a4addec4d71609d22d232944ea9459a3c"
+        "181058bb99b53ec0aa987f898f7389f459021f82bc86a66328c24db324238ecb"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -2884,7 +2908,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "51e8366ca57daec4b5addb084bbf35f9ddf3e03557270ef0d8c5114e0debf666"
+        "d3987a39efcab464f5cc7ce42ca1e2e9b2aa1fe1545ae2bef1694f6c43e00254"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -3005,6 +3029,10 @@
       [
         "packages/contracts/src/schemas/paper-profit-reserve.ts",
         "e866b2f018344b7026b1dd58b82ba945b8f15cbcdd5ae22b194154138996b756"
+      ],
+      [
+        "packages/contracts/src/schemas/paper-reserve-sale.ts",
+        "41306f2ee42c1a1896283eff1f26957aa70720b9923c53adc19931b85024a11d"
       ],
       [
         "packages/contracts/src/schemas/parallel-paper.ts",
@@ -3292,7 +3320,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "fe99fb9ef11afcb3d8f1c2884b8cc91d1522b9328cce6dbec13b3dd0a2634a12"
+        "0865b30b878a050f14bf240a8ef88b7f5066d4225935206426ad4e6e2d92ed09"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -3313,6 +3341,10 @@
       [
         "packages/core/src/portfolio/paper-profit-reserve.ts",
         "c5330cdb86a778ab09af4424bdaf0f92403eedc02aac4a150438bebb1be3f1bb"
+      ],
+      [
+        "packages/core/src/portfolio/paper-reserve-sale.ts",
+        "bf3f147c7a723495a70dc60af1ddcda95f237007ab8217fdb20c8a4e6cb8254c"
       ],
       [
         "packages/core/src/portfolio/performance.ts",
@@ -3984,7 +4016,7 @@
       ],
       [
         "packages/services/src/paper/execution-service.ts",
-        "4cd590896d90b59f4c0a63000e4187f515d11422e660bf8a58a239180025de4f"
+        "ab346014bcd4f78a88c15894f7a0e22d3803980727111e474366b2ba4b96bad9"
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
@@ -4004,7 +4036,7 @@
       ],
       [
         "packages/services/src/paper/index.ts",
-        "c8f45a017170a34f6f3addbb2c1998b3800ed476f8b352b68d6b2a02baef3e34"
+        "26b3669ee7dae5ccf1ad327a6071c8e5a6aa147cf1ae1c27c7fe9e97c5d23d6d"
       ],
       [
         "packages/services/src/paper/kill-switch.ts",
@@ -4040,7 +4072,19 @@
       ],
       [
         "packages/services/src/paper/paper-reserve-runtime.ts",
-        "4a920394b164dcea793e9d8285cd98a61383a0dc17775c8d587f3c4945ff4d05"
+        "f4aee3115e6508f130ba30d1feef01fb3713e77387f50f1304fc0caffcb59309"
+      ],
+      [
+        "packages/services/src/paper/paper-reserve-sale-app.ts",
+        "dc723fde6a073f5ab39cbfaee4937c336b80a915c735c76f3f7eb59e9a8d5968"
+      ],
+      [
+        "packages/services/src/paper/paper-reserve-sale-reviews.ts",
+        "ddaceaf8506bbbf0ab72c2df86d21f9222a57233ae9f82543ee383555388f4fc"
+      ],
+      [
+        "packages/services/src/paper/paper-reserve-sale.ts",
+        "4fe3fe9b57b2571f62dc966b6de1355c3ea92f23b68d78813bee533d585be535"
       ],
       [
         "packages/services/src/paper/paper-scheduler-task.ts",
@@ -4228,7 +4272,7 @@
       ],
       [
         "packages/services/src/portfolio/index.ts",
-        "8219dbaa403efb0513f9f8afa35b1d77b3bb60ad4c3f0797035d9a61f4fa188b"
+        "e6c6ef1ff2731a3b5c75b460ed606d4cb20a6f7971d1ac2ef9d94550d773c380"
       ],
       [
         "packages/services/src/portfolio/ledger.ts",
@@ -4245,6 +4289,10 @@
       [
         "packages/services/src/portfolio/paper-profit-reserve.ts",
         "cc8d93293656691914bc0024c762a459959a582d64bbf9fd9fb113a0497b9ae6"
+      ],
+      [
+        "packages/services/src/portfolio/paper-reserve-sale-evidence.ts",
+        "fde09a7ba102dfdc60b8cbae3a15e4e92dc54a1584008e34f65a6deae9870f39"
       ],
       [
         "packages/services/src/portfolio/profit-reserve-consequences.ts",
@@ -5052,7 +5100,7 @@
       ],
       [
         "packages/storage/src/repositories/paper-execution.ts",
-        "26cb1942634053d71e8f4a4121c46617cc2f94a9c7fd63398b4cc1b1dfc4329e"
+        "2a24a5198115815c95f79e516da63341d47cf9f1adfadc402ec4d2c690cc5089"
       ],
       [
         "packages/storage/src/repositories/paper-performance.ts",
@@ -5187,7 +5235,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "90ea847c56440586d4c625bbc93d377c9ab81a3599d2f3ae165896e965077e9e"
+    "hash": "ed237a4efb63f076de373e9b368d0c68772fffea0a5d52ece711470ecec195cc"
   },
   "wider-range-rotation-v1": {
     "version": 1,
@@ -5367,7 +5415,7 @@
       ],
       [
         "packages/adapters/src/http/deadline.ts",
-        "d873db18498585f56c5a87fcb91cd018d97a98c83d0cb232550f8afd38b6a127"
+        "7cc1f636d6f7df532ba03520966afbcd3d9a789f22b5216cdedb6d35fc7f1a8c"
       ],
       [
         "packages/adapters/src/http/download.ts",
@@ -5471,7 +5519,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "3fa6cb6b1f2a64aac40e6f3f3a3d564a4addec4d71609d22d232944ea9459a3c"
+        "181058bb99b53ec0aa987f898f7389f459021f82bc86a66328c24db324238ecb"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -5479,7 +5527,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "51e8366ca57daec4b5addb084bbf35f9ddf3e03557270ef0d8c5114e0debf666"
+        "d3987a39efcab464f5cc7ce42ca1e2e9b2aa1fe1545ae2bef1694f6c43e00254"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -5600,6 +5648,10 @@
       [
         "packages/contracts/src/schemas/paper-profit-reserve.ts",
         "e866b2f018344b7026b1dd58b82ba945b8f15cbcdd5ae22b194154138996b756"
+      ],
+      [
+        "packages/contracts/src/schemas/paper-reserve-sale.ts",
+        "41306f2ee42c1a1896283eff1f26957aa70720b9923c53adc19931b85024a11d"
       ],
       [
         "packages/contracts/src/schemas/parallel-paper.ts",
@@ -5887,7 +5939,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "fe99fb9ef11afcb3d8f1c2884b8cc91d1522b9328cce6dbec13b3dd0a2634a12"
+        "0865b30b878a050f14bf240a8ef88b7f5066d4225935206426ad4e6e2d92ed09"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -5908,6 +5960,10 @@
       [
         "packages/core/src/portfolio/paper-profit-reserve.ts",
         "c5330cdb86a778ab09af4424bdaf0f92403eedc02aac4a150438bebb1be3f1bb"
+      ],
+      [
+        "packages/core/src/portfolio/paper-reserve-sale.ts",
+        "bf3f147c7a723495a70dc60af1ddcda95f237007ab8217fdb20c8a4e6cb8254c"
       ],
       [
         "packages/core/src/portfolio/performance.ts",
@@ -6579,7 +6635,7 @@
       ],
       [
         "packages/services/src/paper/execution-service.ts",
-        "4cd590896d90b59f4c0a63000e4187f515d11422e660bf8a58a239180025de4f"
+        "ab346014bcd4f78a88c15894f7a0e22d3803980727111e474366b2ba4b96bad9"
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
@@ -6599,7 +6655,7 @@
       ],
       [
         "packages/services/src/paper/index.ts",
-        "c8f45a017170a34f6f3addbb2c1998b3800ed476f8b352b68d6b2a02baef3e34"
+        "26b3669ee7dae5ccf1ad327a6071c8e5a6aa147cf1ae1c27c7fe9e97c5d23d6d"
       ],
       [
         "packages/services/src/paper/kill-switch.ts",
@@ -6635,7 +6691,19 @@
       ],
       [
         "packages/services/src/paper/paper-reserve-runtime.ts",
-        "4a920394b164dcea793e9d8285cd98a61383a0dc17775c8d587f3c4945ff4d05"
+        "f4aee3115e6508f130ba30d1feef01fb3713e77387f50f1304fc0caffcb59309"
+      ],
+      [
+        "packages/services/src/paper/paper-reserve-sale-app.ts",
+        "dc723fde6a073f5ab39cbfaee4937c336b80a915c735c76f3f7eb59e9a8d5968"
+      ],
+      [
+        "packages/services/src/paper/paper-reserve-sale-reviews.ts",
+        "ddaceaf8506bbbf0ab72c2df86d21f9222a57233ae9f82543ee383555388f4fc"
+      ],
+      [
+        "packages/services/src/paper/paper-reserve-sale.ts",
+        "4fe3fe9b57b2571f62dc966b6de1355c3ea92f23b68d78813bee533d585be535"
       ],
       [
         "packages/services/src/paper/paper-scheduler-task.ts",
@@ -6823,7 +6891,7 @@
       ],
       [
         "packages/services/src/portfolio/index.ts",
-        "8219dbaa403efb0513f9f8afa35b1d77b3bb60ad4c3f0797035d9a61f4fa188b"
+        "e6c6ef1ff2731a3b5c75b460ed606d4cb20a6f7971d1ac2ef9d94550d773c380"
       ],
       [
         "packages/services/src/portfolio/ledger.ts",
@@ -6840,6 +6908,10 @@
       [
         "packages/services/src/portfolio/paper-profit-reserve.ts",
         "cc8d93293656691914bc0024c762a459959a582d64bbf9fd9fb113a0497b9ae6"
+      ],
+      [
+        "packages/services/src/portfolio/paper-reserve-sale-evidence.ts",
+        "fde09a7ba102dfdc60b8cbae3a15e4e92dc54a1584008e34f65a6deae9870f39"
       ],
       [
         "packages/services/src/portfolio/profit-reserve-consequences.ts",
@@ -7647,7 +7719,7 @@
       ],
       [
         "packages/storage/src/repositories/paper-execution.ts",
-        "26cb1942634053d71e8f4a4121c46617cc2f94a9c7fd63398b4cc1b1dfc4329e"
+        "2a24a5198115815c95f79e516da63341d47cf9f1adfadc402ec4d2c690cc5089"
       ],
       [
         "packages/storage/src/repositories/paper-performance.ts",
@@ -7782,7 +7854,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "747c44f82d2f5e935f5f0d657528ad75324a5a770df4cb0b1286bbdc41670730"
+    "hash": "2426baf45175dbece6a3e5b8653a8809753ac803aba05b7652b5bd55286d0275"
   },
   "paper-market-selector-v1": {
     "version": 1,
@@ -7962,7 +8034,7 @@
       ],
       [
         "packages/adapters/src/http/deadline.ts",
-        "d873db18498585f56c5a87fcb91cd018d97a98c83d0cb232550f8afd38b6a127"
+        "7cc1f636d6f7df532ba03520966afbcd3d9a789f22b5216cdedb6d35fc7f1a8c"
       ],
       [
         "packages/adapters/src/http/download.ts",
@@ -8066,7 +8138,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "3fa6cb6b1f2a64aac40e6f3f3a3d564a4addec4d71609d22d232944ea9459a3c"
+        "181058bb99b53ec0aa987f898f7389f459021f82bc86a66328c24db324238ecb"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -8074,7 +8146,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "51e8366ca57daec4b5addb084bbf35f9ddf3e03557270ef0d8c5114e0debf666"
+        "d3987a39efcab464f5cc7ce42ca1e2e9b2aa1fe1545ae2bef1694f6c43e00254"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -8195,6 +8267,10 @@
       [
         "packages/contracts/src/schemas/paper-profit-reserve.ts",
         "e866b2f018344b7026b1dd58b82ba945b8f15cbcdd5ae22b194154138996b756"
+      ],
+      [
+        "packages/contracts/src/schemas/paper-reserve-sale.ts",
+        "41306f2ee42c1a1896283eff1f26957aa70720b9923c53adc19931b85024a11d"
       ],
       [
         "packages/contracts/src/schemas/parallel-paper.ts",
@@ -8482,7 +8558,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "fe99fb9ef11afcb3d8f1c2884b8cc91d1522b9328cce6dbec13b3dd0a2634a12"
+        "0865b30b878a050f14bf240a8ef88b7f5066d4225935206426ad4e6e2d92ed09"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -8503,6 +8579,10 @@
       [
         "packages/core/src/portfolio/paper-profit-reserve.ts",
         "c5330cdb86a778ab09af4424bdaf0f92403eedc02aac4a150438bebb1be3f1bb"
+      ],
+      [
+        "packages/core/src/portfolio/paper-reserve-sale.ts",
+        "bf3f147c7a723495a70dc60af1ddcda95f237007ab8217fdb20c8a4e6cb8254c"
       ],
       [
         "packages/core/src/portfolio/performance.ts",
@@ -9174,7 +9254,7 @@
       ],
       [
         "packages/services/src/paper/execution-service.ts",
-        "4cd590896d90b59f4c0a63000e4187f515d11422e660bf8a58a239180025de4f"
+        "ab346014bcd4f78a88c15894f7a0e22d3803980727111e474366b2ba4b96bad9"
       ],
       [
         "packages/services/src/paper/exploratory-campaign.ts",
@@ -9194,7 +9274,7 @@
       ],
       [
         "packages/services/src/paper/index.ts",
-        "c8f45a017170a34f6f3addbb2c1998b3800ed476f8b352b68d6b2a02baef3e34"
+        "26b3669ee7dae5ccf1ad327a6071c8e5a6aa147cf1ae1c27c7fe9e97c5d23d6d"
       ],
       [
         "packages/services/src/paper/kill-switch.ts",
@@ -9230,7 +9310,19 @@
       ],
       [
         "packages/services/src/paper/paper-reserve-runtime.ts",
-        "4a920394b164dcea793e9d8285cd98a61383a0dc17775c8d587f3c4945ff4d05"
+        "f4aee3115e6508f130ba30d1feef01fb3713e77387f50f1304fc0caffcb59309"
+      ],
+      [
+        "packages/services/src/paper/paper-reserve-sale-app.ts",
+        "dc723fde6a073f5ab39cbfaee4937c336b80a915c735c76f3f7eb59e9a8d5968"
+      ],
+      [
+        "packages/services/src/paper/paper-reserve-sale-reviews.ts",
+        "ddaceaf8506bbbf0ab72c2df86d21f9222a57233ae9f82543ee383555388f4fc"
+      ],
+      [
+        "packages/services/src/paper/paper-reserve-sale.ts",
+        "4fe3fe9b57b2571f62dc966b6de1355c3ea92f23b68d78813bee533d585be535"
       ],
       [
         "packages/services/src/paper/paper-scheduler-task.ts",
@@ -9418,7 +9510,7 @@
       ],
       [
         "packages/services/src/portfolio/index.ts",
-        "8219dbaa403efb0513f9f8afa35b1d77b3bb60ad4c3f0797035d9a61f4fa188b"
+        "e6c6ef1ff2731a3b5c75b460ed606d4cb20a6f7971d1ac2ef9d94550d773c380"
       ],
       [
         "packages/services/src/portfolio/ledger.ts",
@@ -9435,6 +9527,10 @@
       [
         "packages/services/src/portfolio/paper-profit-reserve.ts",
         "cc8d93293656691914bc0024c762a459959a582d64bbf9fd9fb113a0497b9ae6"
+      ],
+      [
+        "packages/services/src/portfolio/paper-reserve-sale-evidence.ts",
+        "fde09a7ba102dfdc60b8cbae3a15e4e92dc54a1584008e34f65a6deae9870f39"
       ],
       [
         "packages/services/src/portfolio/profit-reserve-consequences.ts",
@@ -10242,7 +10338,7 @@
       ],
       [
         "packages/storage/src/repositories/paper-execution.ts",
-        "26cb1942634053d71e8f4a4121c46617cc2f94a9c7fd63398b4cc1b1dfc4329e"
+        "2a24a5198115815c95f79e516da63341d47cf9f1adfadc402ec4d2c690cc5089"
       ],
       [
         "packages/storage/src/repositories/paper-performance.ts",
@@ -10377,7 +10473,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "fc1e51781c14127e6bae8a9582df6d027099b36b194545d38002b455303330d8"
+    "hash": "a08b17cca51b7b84f46db660305dd23d641ca774e3d0888d221c86c47a96415c"
   },
   "trendvol-hourly-execution-v1": {
     "version": 1,
@@ -10545,7 +10641,7 @@
       ],
       [
         "packages/adapters/src/http/deadline.ts",
-        "d873db18498585f56c5a87fcb91cd018d97a98c83d0cb232550f8afd38b6a127"
+        "7cc1f636d6f7df532ba03520966afbcd3d9a789f22b5216cdedb6d35fc7f1a8c"
       ],
       [
         "packages/adapters/src/http/download.ts",
@@ -10649,7 +10745,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "3fa6cb6b1f2a64aac40e6f3f3a3d564a4addec4d71609d22d232944ea9459a3c"
+        "181058bb99b53ec0aa987f898f7389f459021f82bc86a66328c24db324238ecb"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -10657,7 +10753,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "51e8366ca57daec4b5addb084bbf35f9ddf3e03557270ef0d8c5114e0debf666"
+        "d3987a39efcab464f5cc7ce42ca1e2e9b2aa1fe1545ae2bef1694f6c43e00254"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -10778,6 +10874,10 @@
       [
         "packages/contracts/src/schemas/paper-profit-reserve.ts",
         "e866b2f018344b7026b1dd58b82ba945b8f15cbcdd5ae22b194154138996b756"
+      ],
+      [
+        "packages/contracts/src/schemas/paper-reserve-sale.ts",
+        "41306f2ee42c1a1896283eff1f26957aa70720b9923c53adc19931b85024a11d"
       ],
       [
         "packages/contracts/src/schemas/parallel-paper.ts",
@@ -11065,7 +11165,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "fe99fb9ef11afcb3d8f1c2884b8cc91d1522b9328cce6dbec13b3dd0a2634a12"
+        "0865b30b878a050f14bf240a8ef88b7f5066d4225935206426ad4e6e2d92ed09"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -11086,6 +11186,10 @@
       [
         "packages/core/src/portfolio/paper-profit-reserve.ts",
         "c5330cdb86a778ab09af4424bdaf0f92403eedc02aac4a150438bebb1be3f1bb"
+      ],
+      [
+        "packages/core/src/portfolio/paper-reserve-sale.ts",
+        "bf3f147c7a723495a70dc60af1ddcda95f237007ab8217fdb20c8a4e6cb8254c"
       ],
       [
         "packages/core/src/portfolio/performance.ts",
@@ -12137,7 +12241,7 @@
       ],
       [
         "packages/storage/src/repositories/paper-execution.ts",
-        "26cb1942634053d71e8f4a4121c46617cc2f94a9c7fd63398b4cc1b1dfc4329e"
+        "2a24a5198115815c95f79e516da63341d47cf9f1adfadc402ec4d2c690cc5089"
       ],
       [
         "packages/storage/src/repositories/paper-performance.ts",
@@ -12272,7 +12376,7 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "d353f61eef7348793c8db37aa2d01bc07104c7fc1cb3ef5ab646b6c185c64d78"
+    "hash": "3c52d8d7b07f2255a5bcbdfb8e45729d23151820ffa0b018d253f7033860c4ad"
   },
   "trendvol-execution-remediation-v1": {
     "version": 1,
@@ -12440,7 +12544,7 @@
       ],
       [
         "packages/adapters/src/http/deadline.ts",
-        "d873db18498585f56c5a87fcb91cd018d97a98c83d0cb232550f8afd38b6a127"
+        "7cc1f636d6f7df532ba03520966afbcd3d9a789f22b5216cdedb6d35fc7f1a8c"
       ],
       [
         "packages/adapters/src/http/download.ts",
@@ -12544,7 +12648,7 @@
       ],
       [
         "packages/contracts/src/channels.ts",
-        "3fa6cb6b1f2a64aac40e6f3f3a3d564a4addec4d71609d22d232944ea9459a3c"
+        "181058bb99b53ec0aa987f898f7389f459021f82bc86a66328c24db324238ecb"
       ],
       [
         "packages/contracts/src/client.ts",
@@ -12552,7 +12656,7 @@
       ],
       [
         "packages/contracts/src/index.ts",
-        "51e8366ca57daec4b5addb084bbf35f9ddf3e03557270ef0d8c5114e0debf666"
+        "d3987a39efcab464f5cc7ce42ca1e2e9b2aa1fe1545ae2bef1694f6c43e00254"
       ],
       [
         "packages/contracts/src/lifecycle.ts",
@@ -12673,6 +12777,10 @@
       [
         "packages/contracts/src/schemas/paper-profit-reserve.ts",
         "e866b2f018344b7026b1dd58b82ba945b8f15cbcdd5ae22b194154138996b756"
+      ],
+      [
+        "packages/contracts/src/schemas/paper-reserve-sale.ts",
+        "41306f2ee42c1a1896283eff1f26957aa70720b9923c53adc19931b85024a11d"
       ],
       [
         "packages/contracts/src/schemas/parallel-paper.ts",
@@ -12960,7 +13068,7 @@
       ],
       [
         "packages/core/src/portfolio/index.ts",
-        "fe99fb9ef11afcb3d8f1c2884b8cc91d1522b9328cce6dbec13b3dd0a2634a12"
+        "0865b30b878a050f14bf240a8ef88b7f5066d4225935206426ad4e6e2d92ed09"
       ],
       [
         "packages/core/src/portfolio/paper-activity.ts",
@@ -12981,6 +13089,10 @@
       [
         "packages/core/src/portfolio/paper-profit-reserve.ts",
         "c5330cdb86a778ab09af4424bdaf0f92403eedc02aac4a150438bebb1be3f1bb"
+      ],
+      [
+        "packages/core/src/portfolio/paper-reserve-sale.ts",
+        "bf3f147c7a723495a70dc60af1ddcda95f237007ab8217fdb20c8a4e6cb8254c"
       ],
       [
         "packages/core/src/portfolio/performance.ts",
@@ -14024,7 +14136,7 @@
       ],
       [
         "packages/storage/src/repositories/paper-execution.ts",
-        "26cb1942634053d71e8f4a4121c46617cc2f94a9c7fd63398b4cc1b1dfc4329e"
+        "2a24a5198115815c95f79e516da63341d47cf9f1adfadc402ec4d2c690cc5089"
       ],
       [
         "packages/storage/src/repositories/paper-performance.ts",
@@ -14159,6 +14271,6 @@
         "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8"
       ]
     ],
-    "hash": "d67f7dd962c0edab4bfdcccbf0bc0e460c19748768b65f5445a13e42445e94e3"
+    "hash": "faa589364e891e2fcdfdfaf214dbabf3ae58e083748f578e3233c37b5a2cc8a9"
   }
 }

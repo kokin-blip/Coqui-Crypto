@@ -15,6 +15,12 @@ export function createRequestDeadline(now: () => number, durationMs = 30_000,
   windowEndMs = Number.MAX_SAFE_INTEGER, elapsedNow: () => number = () => performance.now()): RequestDeadline {
   for (const research of researchDeadlines) research.dispose();
   researchDeadlines.clear();
+  return createIsolatedRequestDeadline(now, durationMs, windowEndMs, elapsedNow);
+}
+
+/** Independent read lanes cannot cancel an execution or another research budget. */
+export function createIsolatedRequestDeadline(now: () => number, durationMs = 10_000,
+  windowEndMs = Number.MAX_SAFE_INTEGER, elapsedNow: () => number = () => performance.now()): RequestDeadline {
   const started = elapsedNow(), expiresAtMs = Math.min(now() + durationMs, windowEndMs);
   const controller = new AbortController();
   const remainingMs = () => controller.signal.aborted ? 0 : Math.max(0, Math.min(expiresAtMs - now(), durationMs - (elapsedNow() - started)));

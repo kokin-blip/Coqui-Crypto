@@ -3,9 +3,10 @@ import { reserveServiceFixture } from './helpers/paper-profit-reserve.js';import
 const channels=vi.hoisted(()=>({} as Record<string,unknown>));
 vi.mock('../apps/desktop/src/renderer/query/use-channel.js',()=>({useChannel:(_c:unknown,name:string)=>channels[name]??{kind:'loading'}}));
 vi.mock('../apps/desktop/src/renderer/query/use-command.js',()=>({useCommand:()=>({state:{kind:'idle'},run:vi.fn(),value:null,reset:vi.fn()})}));
-const require=createRequire(new URL('../apps/desktop/package.json',import.meta.url)),React=require('react') as {createElement:(component:unknown,props:object)=>unknown},server=require('react-dom/server') as {renderToStaticMarkup:(v:unknown)=>string};
+const require=createRequire(new URL('../apps/desktop/package.json',import.meta.url)),React=require('react') as {createElement:(component:unknown,props:object,...children:unknown[])=>unknown},server=require('react-dom/server') as {renderToStaticMarkup:(v:unknown)=>string};
 // @ts-expect-error TS6142: Vitest compiles renderer JSX; root test config excludes JSX.
 const {PaperProfitReserves}=await import('../apps/desktop/src/renderer/app/PaperProfitReserves.js');
+vi.mock('../apps/desktop/src/renderer/app/PaperReserveSale.js',()=>({PaperReserveSale:()=>null}));
 const render=()=>server.renderToStaticMarkup(React.createElement(PaperProfitReserves,{client:{}}));
 beforeEach(()=>{for(const key of Object.keys(channels))Reflect.deleteProperty(channels,key);});afterEach(()=>vi.restoreAllMocks());
 describe('P6 truthful default-off controls',()=>{

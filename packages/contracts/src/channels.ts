@@ -1,4 +1,5 @@
 import { paperProfitReserveChannelSchemas } from './schemas/paper-profit-reserve.js';
+import {paperReserveSaleChannelSchemas} from './schemas/paper-reserve-sale.js';
 import { capitalContestChannelSchemas } from './schemas/capital-contest.js';
 import { capitalReplayChannelSchemas } from './schemas/capital-replay.js';
 import { operationsJournalChannelSchemas } from './schemas/operations-journal.js';
@@ -46,6 +47,7 @@ import type { ContractSchema, DeepReadonly } from './messages.js';
  */
 export const CHANNEL_SCHEMAS = {
   ...paperProfitReserveChannelSchemas,
+  ...paperReserveSaleChannelSchemas,
   ...capitalContestChannelSchemas,
   ...capitalReplayChannelSchemas,
   ...operationsJournalChannelSchemas,
@@ -111,6 +113,7 @@ export function isChannelName(value: unknown): value is ChannelName {
  * which changes no balance and no tax lot.
  */
 const WRITE_CHANNELS = [
+  'paper.reserve.sale.observe','paper.reserve.sale.prepare','paper.reserve.sale.order.preview','paper.reserve.sale.order.review','paper.reserve.sale.reconcile',
   'paper.reserve.observe','paper.reserve.book.create','paper.reserve.policy.save','paper.reserve.authorize','paper.reserve.pause','paper.reserve.resume','paper.reserve.review','paper.reserve.release',
   'news.report.select-location',
   'app.recovery.verify',

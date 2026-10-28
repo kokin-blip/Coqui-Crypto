@@ -50,7 +50,7 @@ const UNKNOWN_CODES: ReadonlySet<string> = new Set([
 ]);
 
 function classify<TValue>(issues: readonly ContractIssue[]): Outcome<TValue> {
-  if (issues.some((issue) => BLOCKED_CODES.has(issue.code))) {
+  if (issues.some((issue) => BLOCKED_CODES.has(issue.code)||/^sale_[a-z_]+$/u.test(issue.code))) {
     return { status: 'blocked', issues };
   }
   if (issues.some((issue) => UNKNOWN_CODES.has(issue.code))) {

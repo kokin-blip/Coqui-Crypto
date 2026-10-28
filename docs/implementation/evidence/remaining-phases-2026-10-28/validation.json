@@ -1,0 +1,49 @@
+{
+  "scope": "combined working checkout, local uncommitted; prior isolated P0-P7 receipts remain historical",
+  "finalFull": {
+    "suites": 350,
+    "tests": 2436,
+    "passed": true,
+    "log": "logs/coqui-remaining-full-tests-final.log"
+  },
+  "directFocused": {
+    "suites": 4,
+    "tests": 25,
+    "passed": true,
+    "log": "logs/coqui-remaining-direct-final.log"
+  },
+  "typecheck": {
+    "passed": true,
+    "log": "logs/coqui-remaining-typecheck-final.log"
+  },
+  "lint": {
+    "passed": true,
+    "log": "logs/coqui-remaining-lint-final.log"
+  },
+  "rootBuild": {
+    "passed": true,
+    "log": "logs/coqui-remaining-build-final.log"
+  },
+  "desktopBuild": {
+    "passed": true,
+    "log": "logs/coqui-remaining-desktop-build-final.log",
+    "knownWarning": "existing Ionic chunk exceeds500kB"
+  },
+  "nativeSafety": {
+    "passed": true,
+    "log": "logs/coqui-remaining-native-final.log",
+    "disposableProfile": true,
+    "schedulerDisabled": true,
+    "providerStubs": true
+  },
+  "installedInventory": "installed-readiness-final.json",
+  "sourceClosure": "source-closure.json",
+  "preservation": "preservation.json",
+  "actualResearchRun": false,
+  "registrationOrCollector": false,
+  "holdoutReadOrClaim": false,
+  "installedMigrationOrDeployment": false,
+  "brokerOrderOrWithdrawal": false,
+  "scopeComplete": false,
+  "remaining": "Full retained P5-H, G app/review/acceptance, H ownership/connected proof, and actual P7-H-J evidence requirements"
+}

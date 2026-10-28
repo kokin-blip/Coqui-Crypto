@@ -1,0 +1,46 @@
+[
+  {
+    "path": "data/research-archive/datasets/017d877a893d9f31dd91b60b5158cccbfef765a3ee68701e27dfeb7281f68370/manifest.json",
+    "sha256": "8e87393a8c9786f4bd0da515c48cc921244dbabe3fee2e38875ba1932f62c783",
+    "datasetHash": "017d877a893d9f31dd91b60b5158cccbfef765a3ee68701e27dfeb7281f68370",
+    "recordCount": 3334,
+    "firstStartTimeMs": 1502928000000,
+    "lastStartTimeMs": 1790899200000,
+    "sourceArtifactCount": 141,
+    "exampleSourceId": "binance-public-data:spot/daily/klines/ETHUSDT/1d/ETHUSDT-1d-2026-09-01.zip",
+    "performanceBodiesRead": false
+  },
+  {
+    "path": "data/research-archive/datasets/58fa1bead01ab7f3b0fd4e7da71c37fccb24c0d5a532d602e183b29653681b2b/manifest.json",
+    "sha256": "534c186d6eb8e354b6503b663968c6bfe8079abba8427698aec6d9ddb40267c6",
+    "datasetHash": "58fa1bead01ab7f3b0fd4e7da71c37fccb24c0d5a532d602e183b29653681b2b",
+    "recordCount": 4639,
+    "firstStartTimeMs": 1381017600000,
+    "lastStartTimeMs": 1782777600000,
+    "sourceArtifactCount": 1,
+    "exampleSourceId": "kraken-ohlcvt-archive:fc81b54cba6e12af3e9422dde9416179e6ef76af4831d48d839fbdb43018eaa4:XBTUSD",
+    "performanceBodiesRead": false
+  },
+  {
+    "path": "data/research-archive/datasets/9f36801872148fc14eaac4ba8e3aaed896b6c8c97d9b9e6bb74551bb29f81c0b/manifest.json",
+    "sha256": "bbef972b01a0cc3a05ed70e3d61949a3cc9eb07bc6df440c0c1c629147f38858",
+    "datasetHash": "9f36801872148fc14eaac4ba8e3aaed896b6c8c97d9b9e6bb74551bb29f81c0b",
+    "recordCount": 3334,
+    "firstStartTimeMs": 1502928000000,
+    "lastStartTimeMs": 1790899200000,
+    "sourceArtifactCount": 141,
+    "exampleSourceId": "binance-public-data:spot/daily/klines/BTCUSDT/1d/BTCUSDT-1d-2026-09-01.zip",
+    "performanceBodiesRead": false
+  },
+  {
+    "path": "data/research-archive/datasets/e0daf1ebeed234c173e809ce332334d8c7b65471267401bf349513c73b796e5f/manifest.json",
+    "sha256": "f90b76c0cfdc42b2d66b1c301b68b2949b63abbb562862c6253f4cf3ada1fb81",
+    "datasetHash": "e0daf1ebeed234c173e809ce332334d8c7b65471267401bf349513c73b796e5f",
+    "recordCount": 3975,
+    "firstStartTimeMs": 1438905600000,
+    "lastStartTimeMs": 1782777600000,
+    "sourceArtifactCount": 1,
+    "exampleSourceId": "kraken-ohlcvt-archive:fc81b54cba6e12af3e9422dde9416179e6ef76af4831d48d839fbdb43018eaa4:ETHUSD",
+    "performanceBodiesRead": false
+  }
+]

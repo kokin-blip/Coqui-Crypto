@@ -1,0 +1,49 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+stdout | tests/secret-leak-sweep.test.ts > a connected key never reaches the renderer > appears in no channel response
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: 'd28813e5a1ab464963883fb301b86088d9adb4bf60ffe564a9a898ffd9e2201b'
+}
+
+stdout | tests/secret-leak-sweep.test.ts > a connected key never reaches the renderer > appears in no column of the database
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: 'd28813e5a1ab464963883fb301b86088d9adb4bf60ffe564a9a898ffd9e2201b'
+}
+
+ ✓ tests/secret-leak-sweep.test.ts (7 tests) 1014ms
+     ✓ appears in no channel response  735ms
+ ❯ tests/paper-profit-reserve-ui.test.ts (4 tests | 2 failed) 130ms
+     ✓ offers an explicit $500 simulated opening without enrolling or arming existing books 4ms
+     × separates policy authorization, review, release, and manual Resume with unavailable evidence explicit 74ms
+     ✓ copied archived evidence offers no operational action 0ms
+     × explains missing trade-plan evidence with readable caps and recovery 52ms
+ ✓ tests/contracts-channels.test.ts (21 tests) 11ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/paper-profit-reserve-ui.test.ts > P6 truthful default-off controls > separates policy authorization, review, release, and manual Resume with unavailable evidence explicit
+ FAIL  tests/paper-profit-reserve-ui.test.ts > P6 truthful default-off controls > explains missing trade-plan evidence with readable caps and recovery
+Error: No QueryClient set, use QueryClientProvider to set one
+ ❯ useQueryClient node_modules/.pnpm/@tanstack+react-query@5.101.4_react@19.2.8/node_modules/@tanstack/react-query/src/QueryClientProvider.tsx:18:10
+ ❯ PaperReserveSale apps/desktop/src/renderer/app/PaperReserveSale.tsx:60:148
+
+ ❯ Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:9808:18
+ ❯ renderWithHooks node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:5062:19
+ ❯ renderElement node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:5497:23
+ ❯ retryNode node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6428:21
+ ❯ renderNodeDestructive node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6367:11
+ ❯ renderNode node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6905:18
+ ❯ renderChildrenArray node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6674:11
+ ❯ retryNode node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6441:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  2 failed | 30 passed (32)
+   Start at  14:56:32
+   Duration  3.61s (transform 1.43s, setup 0ms, import 2.26s, tests 1.15s, environment 0ms)
+

@@ -1,0 +1,189 @@
+{
+  "version": "small-portfolio-evidence-inventory-v1",
+  "asOfMs": 1793222087015,
+  "schema": 95,
+  "profileId": "main",
+  "sourceClass": "installed_exposed_development_and_operations",
+  "account": {
+    "ownerRequestedNumberHash": "712d9c7cfa84e615134538c8af0c931a835ac5c5f0ecb1f890ae082eaada9b4c",
+    "installedAccountIdentityHashes": [
+      "8f26e524246bd54147f8ebbb0c49e6bf7301e51867a03106e6965b53dd2efbce"
+    ],
+    "numberToIdentityVerified": false
+  },
+  "market": [
+    {
+      "source": "coinbase",
+      "asset_id": "coinbase|spot|BTC-USD",
+      "interval": "1d",
+      "rows": 443,
+      "firstMs": 1754784000000,
+      "lastMs": 1793059200000,
+      "firstAcquiredMs": 1789428290174,
+      "lastAcquiredMs": 1792973100614,
+      "completeRows": 442
+    },
+    {
+      "source": "coinbase",
+      "asset_id": "coinbase|spot|ETH-USD",
+      "interval": "1d",
+      "rows": 432,
+      "firstMs": 1755734400000,
+      "lastMs": 1793059200000,
+      "firstAcquiredMs": 1790373745931,
+      "lastAcquiredMs": 1792973100614,
+      "completeRows": 431
+    },
+    {
+      "source": "coinbase",
+      "asset_id": "coinbase|spot|LTC-USD",
+      "interval": "1d",
+      "rows": 432,
+      "firstMs": 1755734400000,
+      "lastMs": 1793059200000,
+      "firstAcquiredMs": 1790373745931,
+      "lastAcquiredMs": 1792973100614,
+      "completeRows": 431
+    }
+  ],
+  "jointDaily": {
+    "assets": [
+      "coinbase|spot|BTC-USD",
+      "coinbase|spot|ETH-USD",
+      "coinbase|spot|LTC-USD"
+    ],
+    "completeMatchedDates": 431,
+    "protectedBeforeMs": 1786233600000,
+    "datesAfterProtectedBoundary": 78,
+    "longestContiguousDatesAfterBoundary": 78,
+    "firstAfterBoundaryMs": 1786233600000,
+    "lastAfterBoundaryMs": 1792972800000,
+    "requiredSeedWarmupDays": 120,
+    "seedWarmupReady": false,
+    "membershipVerified": false,
+    "nativeHistoryVerified": false,
+    "rightsVerified": false
+  },
+  "algorithm": [
+    {
+      "kind": "broker_position_snapshot",
+      "rows": 6413,
+      "firstAtMs": 1791186378382,
+      "lastAtMs": 1793048663291
+    },
+    {
+      "kind": "external_fee",
+      "rows": 49,
+      "firstAtMs": 1790708653514,
+      "lastAtMs": 1792742063354
+    },
+    {
+      "kind": "external_fill",
+      "rows": 49,
+      "firstAtMs": 1790424514314,
+      "lastAtMs": 1792670476688
+    },
+    {
+      "kind": "external_intent",
+      "rows": 18,
+      "firstAtMs": 1790424453970,
+      "lastAtMs": 1792670417591
+    },
+    {
+      "kind": "external_order",
+      "rows": 34,
+      "firstAtMs": 1790424454070,
+      "lastAtMs": 1792670476550
+    },
+    {
+      "kind": "local_settled",
+      "rows": 13,
+      "firstAtMs": 1790559518296,
+      "lastAtMs": 1792722596112
+    },
+    {
+      "kind": "paused",
+      "rows": 274,
+      "firstAtMs": 1790318619567,
+      "lastAtMs": 1792741989595
+    },
+    {
+      "kind": "reconciliation_error",
+      "rows": 2151,
+      "firstAtMs": 1790625483110,
+      "lastAtMs": 1792994579373
+    },
+    {
+      "kind": "resumed",
+      "rows": 271,
+      "firstAtMs": 1790364838530,
+      "lastAtMs": 1792722588323
+    },
+    {
+      "kind": "runtime_build",
+      "rows": 30,
+      "firstAtMs": 1791356929493,
+      "lastAtMs": 1792741943788
+    },
+    {
+      "kind": "submission_rejected",
+      "rows": 1,
+      "firstAtMs": 1792645244103,
+      "lastAtMs": 1792645244103
+    }
+  ],
+  "latestPause": {
+    "atMs": 1792741989595,
+    "reason": "runtime_restart",
+    "manualResumeRequired": 1
+  },
+  "registry": {
+    "completeness": "known-lower-bound",
+    "localIntegrityEvents": 1,
+    "legacyRegistrations": 0,
+    "prospectiveRegistrations": null,
+    "authoritativeCustodyVerified": false
+  },
+  "phaseBlockers": {
+    "P5_H": [
+      "permitted_physical_panel_and_manifest_required",
+      "original_global_trial_and_consumption_inventory_required",
+      "rights_membership_native_cost_evidence_required",
+      "insufficient_unprotected_history_for_120_day_seed"
+    ],
+    "P6_G": [
+      "cash_only_capability_review_and_sale_objective_required",
+      "exact_strategy_qualification_required",
+      "settled_financial_evidence_required"
+    ],
+    "P6_H": [
+      "account_number_uuid_mapping_unverified",
+      "exact_integrated_recovery_source_review_required",
+      "exclusive_account_wide_fencing_and_claims_unverified",
+      "intended_host_and_current_account_evidence_required",
+      "installed_schema_predates_p6_no_enrollment"
+    ],
+    "P7_H": [
+      "p5_h_development_or_separately_reviewed_design_required",
+      "owner_independent_reviewer_and_registry_custody_required",
+      "approved_future_dates_power_protocol_and_resources_required"
+    ],
+    "P7_I": [
+      "approved_registration_and_explicit_collector_required",
+      "genuine_elapsed_evidence_required"
+    ],
+    "P7_J": [
+      "timely_candidate_or_none_freeze_required",
+      "untouched_elapsed_final_and_claim_once_required",
+      "independent_exact_configuration_review_required"
+    ]
+  },
+  "reads": {
+    "marketPrices": false,
+    "finalBodies": false,
+    "credentials": false,
+    "accountBalances": false
+  },
+  "authorityGranted": false,
+  "databaseHash": "173e80b556e0f0fdf9199c0584ab5f9543dc86dd8ffbf9d86ed59f94212fec60"
+}

@@ -1,0 +1,22 @@
+.paper-reserve-sale { min-inline-size: 0; max-inline-size: 100%; margin-block: 1.5rem; padding-block: 1rem; border-block: 1px solid var(--coqui-border); }
+.paper-reserve-sale > summary { cursor: pointer; font-weight: 600; }
+.paper-reserve-sale :is(h5, section) { margin-block-start: 1.25rem; }
+.paper-reserve-sale h5 { margin-block-end: .5rem; font-size: inherit; }
+.paper-reserve-sale label { display: grid; gap: .3rem; min-inline-size: 0; }
+.paper-reserve-sale .sale-assets { margin-block: 1rem; padding: 0; border: 0; }
+.paper-reserve-sale .sale-assets label { display: flex; align-items: baseline; gap: .5rem; margin-block: .5rem; }
+.paper-reserve-sale .sale-assets input { accent-color: var(--coqui-accent); }
+.paper-reserve-sale :is(input, select) { box-sizing: border-box; inline-size: 100%; min-block-size: 32px; }
+.paper-reserve-sale input[type='checkbox'] { inline-size: auto; min-block-size: auto; }
+.paper-reserve-sale .sale-candidate-scroll { inline-size: 100%; contain: inline-size; max-inline-size: 100%; overflow-x: auto; margin-block: 1rem; scrollbar-color: var(--coqui-text-muted) var(--coqui-surface-2); }
+.paper-reserve-sale table { border-collapse: collapse; inline-size: 100%; font-variant-numeric: tabular-nums; }
+.paper-reserve-sale caption { text-align: start; padding-block-end: .5rem; }
+.paper-reserve-sale :is(th, td) { padding: .5rem .65rem; border-block-end: 1px solid var(--coqui-border); text-align: end; vertical-align: top; }
+.paper-reserve-sale th:first-child { text-align: start; min-inline-size: 9rem; }
+.paper-reserve-sale td { white-space: nowrap; }
+.paper-reserve-sale :is(input, select, summary, .sale-candidate-scroll):focus-visible { outline: 2px solid var(--coqui-accent); outline-offset: 2px; }
+.paper-reserve-sale details p { overflow-wrap: anywhere; }
+
+.paper-reserve-sale .sale-exact dd { margin-inline-start: 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.paper-reserve-sale .sale-field-error { color: var(--coqui-text); font-size: .9em; }
+.paper-reserve-sale [aria-invalid='true'] { border-color: var(--coqui-text); }

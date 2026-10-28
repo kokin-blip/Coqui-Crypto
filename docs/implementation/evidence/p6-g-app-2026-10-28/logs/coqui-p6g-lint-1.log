@@ -1,0 +1,14 @@
+$ eslint .
+
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/src/main/composition.ts
+  573:1  error  File has too many lines (501). Maximum allowed is 500  max-lines
+
+/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/tests/helpers/paper-reserve-sale.ts
+  1:67   error  'sourceCompletionDelayMs' is defined but never used           @typescript-eslint/no-unused-vars
+  3:57   error  'listCashClaims' is defined but never used                    @typescript-eslint/no-unused-vars
+  3:73   error  'getPaperExecutionProposal' is defined but never used         @typescript-eslint/no-unused-vars
+  3:100  error  'paperProposalRequiresHumanReview' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 5 problems (5 errors, 0 warnings)
+
+[ELIFECYCLE] Command failed with exit code 1.

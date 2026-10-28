@@ -354,6 +354,21 @@ export function appendPaperExecutionEvent(
   );
 }
 
+/** A purpose-specific review requirement survives retries, reconstruction and policy changes. */
+export function paperProposalRequiresHumanReview(proposalId: string, profileId: string, database: Db): boolean {
+  return database.prepare(`SELECT 1 FROM paper_execution_events_v1 WHERE proposal_id=? AND profile_id=?
+    AND kind='prepared' AND json_extract(detail_json,'$.requireHumanReview')=1 LIMIT 1`).get(proposalId, profileId) !== undefined;
+}
+
+export function paperProposalPurpose(proposalId: string, profileId: string, database: Db): { purpose: string; commandId: string; requestHash: string } | null {
+  const row = database.prepare(`SELECT detail_json FROM paper_execution_events_v1 WHERE proposal_id=? AND profile_id=?
+    AND kind='prepared' AND json_extract(detail_json,'$.purpose') IS NOT NULL ORDER BY sequence LIMIT 1`).get(proposalId, profileId) as { detail_json: string } | undefined;
+  if (!row) return null;
+  const value = JSON.parse(row.detail_json) as { purpose: string; commandId: string; requestHash: string };
+  if (typeof value.purpose !== 'string' || typeof value.commandId !== 'string' || typeof value.requestHash !== 'string') throw new Error('paper_proposal_purpose_invalid');
+  return { purpose: value.purpose, commandId: value.commandId, requestHash: value.requestHash };
+}
+
 export function recordPaperExecutionReview(
   input: {
     readonly commandId: string;

@@ -27,6 +27,14 @@ export interface ChannelPolicy {
 }
 
 export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
+  'paper.reserve.sale.status': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.reserve.sale.preview': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.reserve.sale.proposals': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.reserve.sale.observe': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.reserve.sale.prepare': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.reserve.sale.order.preview': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.reserve.sale.order.review': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'paper.reserve.sale.reconcile': { refetchIntervalMs: false, staleTimeMs: 0 },
   'paper.reserve.observe': { refetchIntervalMs: false, staleTimeMs: 0 },
   'paper.reserve.books': { refetchIntervalMs: false, staleTimeMs: 0 },
   'paper.reserve.view': { refetchIntervalMs: false, staleTimeMs: 0 },

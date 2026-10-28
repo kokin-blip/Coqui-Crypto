@@ -1,0 +1,16 @@
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: 'b5ffcde85830e17a9d1289dd80c9491fc5121ccfbeb99512c4c68bd8a4b971f9'
+}
+PASS policy stays disarmed 
+PASS Main-owned source evidence produces a bounded local consequence {"state":"modeled","reasons":["hypothetical_only","post_fill_reassessment_required","separate_order_review_required"]}
+PASS source review remains pending and preparation refuses 
+PASS preview and refusal create no financial or lifecycle facts 
+PASS desktop-dark: preparation visibly blocked by actual source/authority gates 
+PASS desktop-dark: labels and bounded overflow 
+PASS narrow-light: preparation visibly blocked by actual source/authority gates 
+PASS narrow-light: labels and bounded overflow 
+PASS contrast-zoom: preparation visibly blocked by actual source/authority gates 
+PASS contrast-zoom: labels and bounded overflow 
+PASS zero order, reserve or lifecycle side effects 
+PASS no renderer errors 

@@ -1,0 +1,453 @@
+$ /Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/vitest/vitest.mjs run --maxWorkers=1
+
+ RUN  v4.1.8 /private/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-p6g-isolated-gf_4by9w
+
+ ✓ tests/wider-universe.test.ts (14 tests) 23676ms
+     ✓ compares all three candidates at both costs on a complete registered development calendar  23525ms
+ ✓ tests/overlay-development.test.ts (4 tests) 8572ms
+     ✓ reports every treatment and scenario without loading a holdout; insufficient ML cannot earn selection  7607ms
+     ✓ uses disjoint training/calibration windows and future perturbations cannot alter fitted parameters  942ms
+ ✓ tests/research-integrity-governance.test.ts (14 tests) 6815ms
+     ✓ registers exactly two spread-floor candidates and rejects invalid values  850ms
+     ✓ supports all four existing families with chronological embargo and all candidates reported  2922ms
+     ✓ claims before reading, records failure and prevents renamed plans reopening overlapping data  848ms
+     ✓ allows only one concurrent loader and returns completed evidence without reopening data  928ms
+     ✓ freezes none without loading a holdout and refuses freezes after it starts  832ms
+ ✓ tests/storage-migrations.test.ts (6 tests) 4695ms
+     ✓ preserves exact rows when upgrading from every preceding schema version  4492ms
+ ✓ tests/capital-replay-stress.test.ts (9 tests) 4627ms
+     ✓ retains the complete capital grid under decline  1021ms
+     ✓ retains the complete capital grid under rebound  977ms
+     ✓ retains the complete capital grid under outage  361ms
+     ✓ retains the complete capital grid under missing  479ms
+     ✓ retains the complete capital grid under delayed-fees  470ms
+     ✓ replays a joint correlation shock across both instruments and every capital cell  979ms
+ ✓ tests/capital-contest-service.test.ts (3 tests) 4599ms
+     ✓ stores all nine-size inventories, reads without writes and retries without loading data  2307ms
+     ✓ rolls back cell chunks on real root failure and requires explicit resume  2242ms
+ ✓ tests/news-rollout.test.ts (15 tests) 4391ms
+     ✓ processes over 250 observations across restarts and overlapping connections, retaining actual availability  471ms
+     ✓ finishes more than ten thousand historical observations without a full-history batch  2413ms
+     ✓ evaluates synthetic daily and hourly studies without fitting on test outcomes  716ms
+ ✓ tests/capital-contest-paths.test.ts (1 test) 4603ms
+   ✓ reconstructs every full-book hash from a stored path without writing or reopening input files  4602ms
+ ✓ tests/parallel-paper-deadlines.test.ts (14 tests) 2826ms
+     ✓ recovers a paused large journal after slow reconciliation without reserving submission time  1195ms
+     ✓ reconciles paginated fills and fees with 40,000 diagnostic events using one history read  1025ms
+ ✓ tests/desktop-scheduler-runtime.test.ts (16 tests) 2931ms
+     ✓ isolates pending news work from paper preparation and execution  398ms
+     ✓ records suspend/resume and restart gaps durably without inferring their cause  457ms
+ ✓ tests/accounts-profile-deletion.test.ts (6 tests) 3268ms
+     ✓ commits manifest removal, deletes only the target database and credentials, and retains the backup  2762ms
+ ✓ tests/overlay-governance.test.ts (4 tests) 2920ms
+     ✓ retains permanent controls and refuses qualification without account costs or enough eligible actions  2794ms
+ ✓ tests/capital-contest-compatibility.test.ts (6 tests) 2640ms
+     ✓ received-fee  492ms
+     ✓ reserve  1583ms
+ ✓ tests/capital-contest-inference.test.ts (4 tests) 2264ms
+     ✓ keeps sparse/missing replicas unavailable and produces none, never a fallback leader  2248ms
+ ✓ tests/market-selector.test.ts (7 tests) 2262ms
+     ✓ stores profile-scoped immutable studies and reports only matched, completed evidence  1567ms
+ ✓ tests/capital-contest-ui.test.ts (8 tests) 2229ms
+ ✓ tests/remediation-manifest.test.ts (3 tests) 2106ms
+     ✓ binds the ML worker boundary and inference implementation to the shadow candidate  764ms
+     ✓ invalidates relevant changes but ignores an unrelated renderer change and diagnostic manifest output  1115ms
+ ✓ tests/news-intelligence.test.ts (24 tests) 1759ms
+ ✓ tests/capital-contest-storage.test.ts (1 test) 1707ms
+   ✓ keeps populated reports unchanged across backup/restore/copy, archives origin, and counts each durable fact once  1707ms
+ ✓ tests/capital-contest-governance.test.ts (2 tests) 1645ms
+     ✓ retains complete cells after an interrupted attempt, resumes once, and keeps queries nonmutating  1581ms
+ ✓ tests/range-rotation.test.ts (5 tests) 1218ms
+     ✓ requires complete matched evidence and never promotes a replay result  866ms
+ ✓ tests/parallel-ml-runtime.test.ts (7 tests) 1139ms
+ ✓ tests/capital-replay-service.test.ts (5 tests) 1156ms
+     ✓ strictly validates and roundtrips actual stored results and exact retries  458ms
+     ✓ rolls back a crash after chunks and before root publication and does not write finances  399ms
+ ✓ tests/rate-limiter.test.ts (7 tests) 1022ms
+     ✓ grants tokens immediately and queues overflow in FIFO order  1001ms
+ ✓ tests/capital-ingestion.test.ts (18 tests) 1074ms
+ ✓ tests/capital-replay-storage.test.ts (2 tests) 1020ms
+     ✓ preserves populated results through backup and copy, with archived origin and no authority  505ms
+     ✓ links corrected calculations to old immutable reports and rejects unproved lineage  514ms
+ ✓ tests/paper-run-loop.test.ts (17 tests) 981ms
+ ✓ tests/paper-reserve-sale-service.test.ts (6 tests) 937ms
+ ✓ tests/activity-overview.test.ts (14 tests) 820ms
+     ✓ keeps the newest executions visible after the cost-basis history cap  566ms
+stdout | tests/market-events.test.ts > immutable market-event dataset > validates local ingestion and temporal reads across the renderer boundary
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: '3c52d8d7b07f2255a5bcbdfb8e45729d23151820ffa0b018d253f7033860c4ad'
+}
+
+stdout | tests/market-events.test.ts > immutable market-event dataset > selects and reads a local fixture in main before ingestion
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: '3c52d8d7b07f2255a5bcbdfb8e45729d23151820ffa0b018d253f7033860c4ad'
+}
+
+ ✓ tests/market-events.test.ts (10 tests) 840ms
+ ✓ tests/news-quota.test.ts (15 tests) 787ms
+ ✓ tests/parallel-paper.test.ts (16 tests) 816ms
+ ✓ tests/paper-reserve-sale-app.test.ts (6 tests) 844ms
+     ✓ prepares once, restores the proposal across restart, and still requires a separate reviewed order  375ms
+stdout | tests/advisor-handlers.test.ts > advisor IPC boundary > prepares bounded context and deduplicates explicit local generation
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: '3c52d8d7b07f2255a5bcbdfb8e45729d23151820ffa0b018d253f7033860c4ad'
+}
+
+stdout | tests/advisor-handlers.test.ts > advisor IPC boundary > reports three provider states without returning secret fields
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: '3c52d8d7b07f2255a5bcbdfb8e45729d23151820ffa0b018d253f7033860c4ad'
+}
+
+stdout | tests/advisor-handlers.test.ts > advisor IPC boundary > explains a decision from storage and accepts only typed navigation
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: '3c52d8d7b07f2255a5bcbdfb8e45729d23151820ffa0b018d253f7033860c4ad'
+}
+
+ ✓ tests/advisor-handlers.test.ts (3 tests) 814ms
+ ✓ tests/overlay-replay.test.ts (9 tests) 743ms
+     ✓ future scrambling and appending cannot change prior targets, orders or books  399ms
+ ✓ tests/accounts-profile-duplication.test.ts (9 tests) 699ms
+ ✓ tests/connector-removal.test.ts (14 tests) 668ms
+ ✓ tests/wallet-scheduler-service.test.ts (10 tests) 706ms
+ ✓ tests/profit-reserve-service.test.ts (14 tests) 705ms
+ ✓ tests/news-host-runtime.test.ts (9 tests) 650ms
+ ✓ tests/accounts-coinbase-sync.test.ts (14 tests) 636ms
+ ✓ tests/paper-seven-day-run.test.ts (8 tests) 598ms
+ ✓ tests/news-storage.test.ts (11 tests) 584ms
+stdout | tests/secret-leak-sweep.test.ts > a connected key never reaches the renderer > appears in no channel response
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: '3c52d8d7b07f2255a5bcbdfb8e45729d23151820ffa0b018d253f7033860c4ad'
+}
+
+stdout | tests/secret-leak-sweep.test.ts > a connected key never reaches the renderer > appears in no column of the database
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: '3c52d8d7b07f2255a5bcbdfb8e45729d23151820ffa0b018d253f7033860c4ad'
+}
+
+ ✓ tests/secret-leak-sweep.test.ts (7 tests) 645ms
+     ✓ appears in no channel response  354ms
+ ✓ tests/paper-profit-reserve-service.test.ts (8 tests) 635ms
+ ✓ tests/parallel-paper-execution.test.ts (10 tests) 569ms
+ ✓ tests/news-runtime.test.ts (10 tests) 558ms
+stdout | tests/chart-snapshot-save.test.ts > validated chart snapshot boundary > saves a valid PNG once and durably replays a duplicate command
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: '3c52d8d7b07f2255a5bcbdfb8e45729d23151820ffa0b018d253f7033860c4ad'
+}
+
+stdout | tests/chart-snapshot-save.test.ts > validated chart snapshot boundary > rejects invalid PNG content and command reuse with changed input
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: '3c52d8d7b07f2255a5bcbdfb8e45729d23151820ffa0b018d253f7033860c4ad'
+}
+
+ ✓ tests/chart-snapshot-save.test.ts (2 tests) 578ms
+     ✓ saves a valid PNG once and durably replays a duplicate command  302ms
+ ✓ tests/capital-storage.test.ts (11 tests) 526ms
+ ✓ tests/research-read-models.test.ts (12 tests) 535ms
+ ✓ tests/capital-budget-consumers.test.ts (9 tests) 507ms
+ ✓ tests/portfolio-reconciliation-ledger.test.ts (13 tests) 534ms
+ ✓ tests/breakout.test.ts (5 tests) 530ms
+     ✓ replays a complete matched calendar without changing the real paper portfolio  389ms
+ ✓ tests/risk-evidence-tracker-service.test.ts (6 tests) 512ms
+ ✓ tests/profit-reserve-storage.test.ts (9 tests) 533ms
+ ✓ tests/paper-profit-reserve-consumers.test.ts (5 tests) 571ms
+ ✓ tests/operations-journal-integration.test.ts (10 tests) 520ms
+ ✓ tests/paper-reconciliation.test.ts (10 tests) 528ms
+ ✓ tests/portfolio-read-models.test.ts (11 tests) 536ms
+ ✓ tests/capital-replay-reserves.test.ts (10 tests) 518ms
+ ✓ tests/research-scoreboard.test.ts (11 tests) 537ms
+ ✓ tests/profit-reserve-ui.test.ts (10 tests) 521ms
+ ✓ tests/desktop-profile-contexts.test.ts (8 tests) 514ms
+ ✓ tests/capital-replay-execution.test.ts (10 tests) 514ms
+     ✓ counts each friction component once across generated exact purchases  438ms
+ ✓ tests/parallel-ml-inference.test.ts (6 tests) 499ms
+ ✓ tests/accounts-settings.test.ts (10 tests) 471ms
+ ✓ tests/desktop-diagnostics.test.ts (10 tests) 443ms
+ ✓ tests/trading-activity-sources.test.ts (2 tests) 110ms
+ ✓ tests/risk-dashboard.test.ts (9 tests) 358ms
+ ✓ tests/accounts-profile-comparison.test.ts (5 tests) 416ms
+ ✓ tests/paper-oms.test.ts (8 tests) 416ms
+ ✓ tests/capital-replay-book.test.ts (5 tests) 399ms
+ ✓ tests/paper-execution-service.test.ts (8 tests) 377ms
+ ✓ tests/paper-portfolio-view.test.ts (8 tests) 377ms
+ ✓ tests/accounts-profiles-service.test.ts (12 tests) 380ms
+ ✓ tests/connection-handlers.test.ts (8 tests) 378ms
+ ✓ tests/boundaries.test.ts (11 tests) 346ms
+     ✓ rejects Electron in core  329ms
+ ✓ tests/decision-dataset-service.test.ts (7 tests) 365ms
+ ✓ tests/portfolio-csv-import-service.test.ts (8 tests) 357ms
+ ✓ tests/wider-universe-runtime.test.ts (3 tests) 349ms
+ ✓ tests/forward-evidence.test.ts (8 tests) 359ms
+ ✓ tests/capital-replay-metrics.test.ts (5 tests) 370ms
+ ✓ tests/status-rail.test.ts (8 tests) 359ms
+ ✓ tests/capital-replay-ui.test.ts (8 tests) 372ms
+ ✓ tests/overlay-shadow.test.ts (5 tests) 343ms
+ ✓ tests/capital-budget-storage.test.ts (7 tests) 336ms
+ ✓ tests/paper-profit-reserve-authority.test.ts (4 tests) 319ms
+ ✓ tests/advisor-analyst.test.ts (7 tests) 327ms
+ ✓ tests/alpaca-performance.test.ts (8 tests) 306ms
+ ✓ tests/capital-budget-evidence.test.ts (7 tests) 322ms
+ ✓ tests/research-worker-pool.test.ts (7 tests) 310ms
+ ✓ tests/exploratory-paper-evaluate.test.ts (6 tests) 308ms
+ ✓ tests/accounts-profile-dashboard.test.ts (5 tests) 318ms
+ ✓ tests/accounts-profile-backup.test.ts (4 tests) 311ms
+ ✓ tests/chart-extension-service.test.ts (6 tests) 313ms
+stdout | tests/coinbase-runtime-wiring.test.ts > Coinbase desktop runtime wiring > connects, reports status, synchronizes evidence, and disconnects through IPC contracts
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-recovery-budget-v3',
+  behaviorHash: '3c52d8d7b07f2255a5bcbdfb8e45729d23151820ffa0b018d253f7033860c4ad'
+}
+
+ ✓ tests/coinbase-runtime-wiring.test.ts (1 test) 342ms
+     ✓ connects, reports status, synchronizes evidence, and disconnects through IPC contracts  342ms
+ ✓ tests/capital-contest-reserves.test.ts (2 tests) 294ms
+ ✓ tests/activity-feed.test.ts (6 tests) 286ms
+ ✓ tests/news-intelligence-storage.test.ts (5 tests) 308ms
+ ✓ tests/forward-edge-study.test.ts (12 tests) 294ms
+ ✓ tests/storage-portfolio-repository.test.ts (6 tests) 291ms
+ ✓ tests/portfolio-tax-service.test.ts (6 tests) 294ms
+ ✓ tests/display-universe-service.test.ts (6 tests) 289ms
+ ✓ tests/portfolio-ledger-service.test.ts (5 tests) 290ms
+ ✓ tests/paper-campaign-control.test.ts (6 tests) 293ms
+ ✓ tests/prepared-decision-dataset.test.ts (5 tests) 289ms
+ ✓ tests/accounts-profile-deletion-preview.test.ts (7 tests) 288ms
+ ✓ tests/paper-profit-reserve-accounting.test.ts (14 tests) 294ms
+ ✓ tests/storage-market-research.test.ts (6 tests) 285ms
+ ✓ tests/advisor-service.test.ts (6 tests) 276ms
+ ✓ tests/exploratory-paper-campaign.test.ts (5 tests) 261ms
+ ✓ tests/http-client.test.ts (17 tests) 251ms
+ ✓ tests/research-trial-registry.test.ts (5 tests) 238ms
+ ✓ tests/paper-reserve-sale-evidence.test.ts (3 tests) 224ms
+ ✓ tests/advisor-decision-evidence.test.ts (5 tests) 239ms
+ ✓ tests/alerts-service.test.ts (5 tests) 232ms
+ ✓ tests/paper-attainable-open.test.ts (6 tests) 237ms
+ ✓ tests/storage-coinbase-evidence.test.ts (5 tests) 231ms
+ ✓ tests/news-report-association.test.ts (4 tests) 230ms
+ ✓ tests/storage-display-universe.test.ts (5 tests) 230ms
+ ✓ tests/storage-wallet-repository.test.ts (5 tests) 228ms
+ ✓ tests/profit-reserve.test.ts (18 tests) 245ms
+ ✓ tests/research-host-coordinator.test.ts (4 tests) 225ms
+ ✓ tests/capital-performance.test.ts (33 tests) 226ms
+ ✓ tests/trendvol-research-evaluator.test.ts (1 test) 220ms
+ ✓ tests/market-acquisition.test.ts (9 tests) 184ms
+ ✓ tests/operations-journal.test.ts (4 tests) 201ms
+ ✓ tests/paper-profit-reserve-lifecycle.test.ts (1 test) 171ms
+ ✓ tests/predecessor-vault-recovery.test.ts (8 tests) 191ms
+ ✓ tests/connections.test.ts (5 tests) 194ms
+ ✓ tests/wallet-nicknames.test.ts (6 tests) 193ms
+ ✓ tests/universe-storage-service.test.ts (4 tests) 193ms
+ ✓ tests/decision-evidence.test.ts (5 tests) 192ms
+ ✓ tests/portfolio-allocation-policy-service.test.ts (4 tests) 187ms
+ ✓ tests/contracts-service-conformance.test.ts (8 tests) 190ms
+ ✓ tests/storage-paper-repository.test.ts (4 tests) 183ms
+ ✓ tests/execution-gate.test.ts (17 tests) 188ms
+ ✓ tests/paper-runtime-storage.test.ts (2 tests) 182ms
+ ✓ tests/capital-contest-stress.test.ts (4 tests) 190ms
+ ✓ tests/desktop-notifications.test.ts (12 tests) 185ms
+ ✓ tests/storage-canonical-assets.test.ts (4 tests) 184ms
+ ✓ tests/parallel-ml-signal.test.ts (5 tests) 191ms
+ ✓ tests/paper-profit-reserve-runtime.test.ts (1 test) 163ms
+ ✓ tests/isolated-restore.test.ts (1 test) 141ms
+ ✓ tests/coinbase-authenticated-candles.test.ts (7 tests) 171ms
+ ✓ tests/trading-activity.test.ts (7 tests) 169ms
+ ✓ tests/capital-replay-governance.test.ts (5 tests) 161ms
+ ✓ tests/capital-replay-flows.test.ts (6 tests) 163ms
+ ✓ tests/alpaca-paper.test.ts (19 tests) 153ms
+ ✓ tests/research-nested-study.test.ts (4 tests) 156ms
+ ✓ tests/portfolio-snapshot-evidence.test.ts (5 tests) 145ms
+ ✓ tests/chart-workspace-handlers.test.ts (3 tests) 142ms
+ ✓ tests/research-evolution.test.ts (4 tests) 140ms
+ ✓ tests/paper-profit-reserve-ui.test.ts (4 tests) 137ms
+ ✓ tests/paper-profit-reserve-storage.test.ts (2 tests) 109ms
+ ✓ tests/capital-contest-signals.test.ts (4 tests) 136ms
+ ✓ tests/paper-profit-reserve-contracts.test.ts (2 tests) 125ms
+ ✓ tests/paper-connection-campaign.test.ts (2 tests) 103ms
+ ✓ tests/remediation-evaluation.test.ts (6 tests) 119ms
+ ✓ tests/news-location-clone.test.ts (1 test) 108ms
+ ✓ tests/news-usefulness.test.ts (2 tests) 112ms
+ ✓ tests/hourly-execution.test.ts (5 tests) 106ms
+ ✓ tests/execution-routing.test.ts (3 tests) 106ms
+ ✓ tests/research-integrity-duplication.test.ts (1 test) 103ms
+ ✓ tests/news-export-permissions.test.ts (2 tests) 97ms
+ ✓ tests/remediation-integrity.test.ts (10 tests) 102ms
+ ✓ tests/market-data-observability.test.ts (2 tests) 101ms
+ ✓ tests/research-integrity-engine.test.ts (9 tests) 102ms
+ ✓ tests/host-authority.test.ts (3 tests) 97ms
+ ✓ tests/display-workstation-data.test.ts (2 tests) 94ms
+ ✓ tests/advisor-copied-key.test.ts (2 tests) 94ms
+ ✓ tests/parallel-paper-ui.test.ts (12 tests) 84ms
+ ✓ tests/service-dependencies.test.ts (2 tests) 101ms
+ ✓ tests/paper-profit-reserve-scheduler.test.ts (2 tests) 62ms
+ ✓ tests/paper-reserve-sale.test.ts (15 tests) 60ms
+ ✓ tests/icon-assets.test.ts (1 test) 60ms
+ ✓ tests/market-download.test.ts (5 tests) 50ms
+ ✓ tests/secrets.test.ts (18 tests) 5ms
+ ✓ tests/paper-performance.test.ts (10 tests) 53ms
+ ✓ tests/alpaca-paper-stream.test.ts (5 tests) 57ms
+ ✓ tests/ui-evidence-refinement.test.ts (5 tests) 51ms
+ ✓ tests/operational-metrics.test.ts (4 tests) 56ms
+ ✓ tests/capital-contest-selection.test.ts (1 test) 54ms
+ ✓ tests/recovery-commands.test.ts (1 test) 55ms
+ ✓ tests/research-pre-registration.test.ts (4 tests) 51ms
+ ✓ tests/onboarding.test.ts (5 tests) 52ms
+ ✓ tests/binance-bulk.test.ts (5 tests) 51ms
+ ✓ tests/kraken-bulk.test.ts (4 tests) 50ms
+ ✓ tests/chart-extension-pick.test.ts (1 test) 49ms
+ ✓ tests/tradingview-boundary.test.ts (2 tests) 70ms
+ ✓ tests/execution-authority.test.ts (1 test) 49ms
+ ✓ tests/capital-budget.test.ts (33 tests) 50ms
+ ✓ tests/market-bar-archive.test.ts (4 tests) 44ms
+ ✓ tests/overlay-audit.test.ts (6 tests) 37ms
+ ✓ tests/kraken-market-download.test.ts (4 tests) 40ms
+ ✓ tests/parallel-paper-recovery-reporting.test.ts (20 tests) 29ms
+ ✓ tests/strategy-backtest.test.ts (21 tests) 23ms
+ ✓ tests/capital-contest-manifest.test.ts (4 tests) 23ms
+ ✓ tests/overlay-models.test.ts (4 tests) 23ms
+ ✓ tests/monte-carlo.test.ts (6 tests) 23ms
+ ✓ tests/capital-feasibility-ui.test.ts (9 tests) 21ms
+ ✓ tests/capital-ui.test.ts (10 tests) 18ms
+ ✓ tests/accounts-coinbase-connection.test.ts (13 tests) 18ms
+ ✓ tests/benchmark-confidence.test.ts (3 tests) 18ms
+ ✓ tests/profit-reserve-state.test.ts (5 tests) 16ms
+ ✓ tests/news-providers.test.ts (26 tests) 15ms
+ ✓ tests/parallel-execution-reliability.test.ts (9 tests) 14ms
+ ✓ tests/indexed-research.test.ts (1 test) 14ms
+ ✓ tests/coinbase-auth.test.ts (11 tests) 13ms
+ ✓ tests/coinbase-account-evidence-adapter.test.ts (15 tests) 14ms
+ ✓ tests/robinhood-crypto.test.ts (4 tests) 13ms
+ ✓ tests/operations-journal-ui.test.ts (3 tests) 12ms
+ ✓ tests/accounts-profile-refresh.test.ts (5 tests) 9ms
+ ✓ tests/coinbase-market-diagnostics.test.ts (5 tests) 12ms
+ ✓ tests/contracts-channels.test.ts (21 tests) 11ms
+ ✓ tests/paper-execution-boundary.test.ts (3 tests) 13ms
+ ✓ tests/capital-contest-data.test.ts (3 tests) 10ms
+ ✓ tests/point-in-time-universe.test.ts (5 tests) 9ms
+ ✓ tests/coinbase-public.test.ts (8 tests) 10ms
+ ✓ tests/provider-auth.test.ts (3 tests) 10ms
+ ✓ tests/news-contracts.test.ts (23 tests) 9ms
+ ✓ tests/coinbase-catalog-adapter.test.ts (8 tests) 9ms
+ ✓ tests/reserve-capital-witness.test.ts (6 tests) 9ms
+ ✓ tests/coinbase-evidence-core.test.ts (3 tests) 8ms
+ ✓ tests/coinbase-archive.test.ts (4 tests) 9ms
+ ✓ tests/remediation-planner.test.ts (11 tests) 7ms
+ ✓ tests/allocation-policy.test.ts (9 tests) 7ms
+ ✓ tests/parallel-paper-minor-recovery.test.ts (15 tests) 7ms
+ ✓ tests/notification-truth.test.ts (5 tests) 6ms
+ ✓ tests/desktop-dispatch.test.ts (13 tests) 6ms
+ ✓ tests/service-runtime.test.ts (8 tests) 6ms
+ ✓ tests/golden-backtest.test.ts (1 test) 6ms
+ ✓ tests/evidence.test.ts (5 tests) 6ms
+ ✓ tests/terminal-market-depth.test.ts (8 tests) 6ms
+ ✓ tests/parallel-paper-quote-scope.test.ts (4 tests) 6ms
+ ✓ tests/coinbase-product-rules.test.ts (16 tests) 6ms
+ ✓ tests/paper-venue.test.ts (16 tests) 6ms
+ ✓ tests/realism.test.ts (11 tests) 5ms
+ ✓ tests/profit-reserve-eligibility.test.ts (11 tests) 5ms
+ ✓ tests/desktop-security.test.ts (24 tests) 5ms
+ ✓ tests/contribution.test.ts (8 tests) 5ms
+ ✓ tests/autotrade.test.ts (11 tests) 4ms
+ ✓ tests/contracts-messages.test.ts (7 tests) 4ms
+ ✓ tests/import-csv-plan.test.ts (11 tests) 4ms
+ ✓ tests/mockup-fidelity-ui.test.ts (6 tests) 4ms
+ ✓ tests/observability-logger.test.ts (5 tests) 4ms
+ ✓ tests/market-bars.test.ts (8 tests) 3ms
+ ✓ tests/broker-cash-reconciliation.test.ts (16 tests) 4ms
+ ✓ tests/momentum-spread-floor.test.ts (11 tests) 4ms
+ ✓ tests/capital-contest-execution.test.ts (1 test) 4ms
+ ✓ tests/coingecko-public.test.ts (11 tests) 4ms
+ ✓ tests/coinbase-settings-ui.test.ts (8 tests) 3ms
+ ✓ tests/ui-kit.test.ts (24 tests) 4ms
+ ✓ tests/risk-long-term-service.test.ts (4 tests) 4ms
+ ✓ tests/risk-reality-check-service.test.ts (4 tests) 4ms
+ ✓ tests/paper-reserve-sale-handlers.test.ts (6 tests) 3ms
+ ✓ tests/allocation.test.ts (12 tests) 4ms
+ ✓ tests/reference-feeds.test.ts (12 tests) 4ms
+ ✓ tests/costbasis.test.ts (7 tests) 4ms
+ ✓ tests/tax-aware.test.ts (4 tests) 3ms
+ ✓ tests/execution-replay.test.ts (3 tests) 3ms
+ ✓ tests/coinbase-market-stream.test.ts (4 tests) 3ms
+ ✓ tests/provider-market-data.test.ts (4 tests) 3ms
+ ✓ tests/market-display-queries.test.ts (13 tests) 3ms
+ ✓ tests/import-csv.test.ts (5 tests) 3ms
+ ✓ tests/coinbase-transaction-evidence.test.ts (4 tests) 3ms
+ ✓ tests/coinbase-permission-probe.test.ts (14 tests) 4ms
+ ✓ tests/handler-inventory.test.ts (2 tests) 3ms
+ ✓ tests/trials.test.ts (5 tests) 3ms
+ ✓ tests/tax.test.ts (3 tests) 3ms
+ ✓ tests/buy-candidates.test.ts (5 tests) 3ms
+ ✓ tests/trendvol-targets.test.ts (5 tests) 3ms
+ ✓ tests/coinbase-fee-evidence.test.ts (4 tests) 3ms
+ ✓ tests/coingecko-connection.test.ts (10 tests) 3ms
+ ✓ tests/rotation.test.ts (6 tests) 2ms
+ ✓ tests/negative-findings.test.ts (6 tests) 3ms
+ ✓ tests/trade-costs.test.ts (7 tests) 3ms
+ ✓ tests/chart-advisor-architecture.test.ts (4 tests) 3ms
+ ✓ tests/risk-budget.test.ts (6 tests) 3ms
+ ✓ tests/signal-tilt.test.ts (12 tests) 2ms
+ ✓ tests/help-copy.test.ts (7 tests) 3ms
+ ✓ tests/performance.test.ts (5 tests) 3ms
+ ✓ tests/long-term.test.ts (8 tests) 2ms
+ ✓ tests/paper-orders.test.ts (5 tests) 3ms
+ ✓ tests/profile-runtime-boundary.test.ts (4 tests) 2ms
+ ✓ tests/harvest.test.ts (4 tests) 3ms
+ ✓ tests/risk-controls.test.ts (3 tests) 2ms
+ ✓ tests/reality-check.test.ts (6 tests) 2ms
+ ✓ tests/command-outcomes.test.ts (6 tests) 3ms
+ ✓ tests/provider-comparison.test.ts (2 tests) 2ms
+ ✓ tests/significance.test.ts (16 tests) 2ms
+ ✓ tests/walk-forward.test.ts (4 tests) 2ms
+ ✓ tests/coinbase-universe.test.ts (3 tests) 2ms
+ ✓ tests/overlay-observer-adapter.test.ts (1 test) 2ms
+ ✓ tests/core-types.test.ts (11 tests) 2ms
+ ✓ tests/cscv-pbo.test.ts (4 tests) 2ms
+ ✓ tests/momentum.test.ts (8 tests) 2ms
+ ✓ tests/contracts-transport.test.ts (1 test) 2ms
+ ✓ tests/responsive-shell.test.ts (3 tests) 2ms
+ ✓ tests/chart-indicators.test.ts (4 tests) 2ms
+ ✓ tests/algorithm-report.test.ts (2 tests) 2ms
+ ✓ tests/vol-target.test.ts (7 tests) 2ms
+ ✓ tests/purged-cv.test.ts (2 tests) 2ms
+ ✓ tests/semaphore.test.ts (4 tests) 2ms
+ ✓ tests/host-lifecycle.test.ts (1 test) 2ms
+ ✓ tests/renderer-routes.test.ts (4 tests) 2ms
+ ✓ tests/overview-presets.test.ts (3 tests) 2ms
+ ✓ tests/allocation-ring.test.ts (4 tests) 2ms
+ ✓ tests/chart-observations.test.ts (2 tests) 2ms
+ ✓ tests/paper-reserve-sale-ui.test.ts (3 tests) 2ms
+ ✓ tests/cache.test.ts (4 tests) 2ms
+ ✓ tests/chart-range-control.test.ts (2 tests) 2ms
+ ✓ tests/workspace-recovery-ui.test.ts (4 tests) 2ms
+ ✓ tests/clock.test.ts (6 tests) 2ms
+ ✓ tests/portfolio-sizing.test.ts (4 tests) 2ms
+ ✓ tests/advisor-provider-adapters.test.ts (1 test) 2ms
+ ✓ tests/coinbase-view-only-harness.test.ts (3 tests) 2ms
+ ✓ tests/responsive-markets-ui.test.ts (3 tests) 2ms
+ ✓ tests/connected-portfolio-ui.test.ts (3 tests) 2ms
+ ✓ tests/chart-link-controller.test.ts (1 test) 2ms
+ ✓ tests/settings-information-architecture.test.ts (3 tests) 2ms
+ ✓ tests/indicators.test.ts (3 tests) 1ms
+ ✓ tests/oct19-readiness.test.ts (4 tests) 1ms
+ ✓ tests/evidence-visualization.test.ts (3 tests) 2ms
+ ✓ tests/time-format.test.ts (2 tests) 2ms
+ ✓ tests/execution-permissions.test.ts (4 tests) 1ms
+ ✓ tests/action-notices.test.ts (3 tests) 1ms
+ ✓ tests/advanced-overview-layout.test.ts (2 tests) 1ms
+ ✓ tests/chart-history-range.test.ts (2 tests) 1ms
+ ✓ tests/operations-assets.test.ts (1 test) 1ms
+ ✓ tests/sha256.test.ts (1 test) 1ms
+ ✓ tests/crew-robot.test.ts (2 tests) 1ms
+ ✓ tests/news-intelligence-contracts.test.ts (1 test) 1ms
+
+ Test Files  333 passed (333)
+      Tests  2297 passed (2297)
+   Start at  15:25:49
+   Duration  226.17s (transform 3.76s, setup 0ms, import 57.73s, tests 149.27s, environment 12ms)
+

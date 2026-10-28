@@ -1,0 +1,88 @@
+{
+  "atUtc": "2026-10-28T22:20:51.983367+00:00",
+  "prompt": "Ok continue building P6-G\u2019s app integration and the remaining unblocked work. Preserve completed work and the full P0\u2013P7 scope, keep unmet evidence gates pending, and update the phase tracker.",
+  "scope": "local combined working tree; not committed, source-isolated, merged or released",
+  "checks": [
+    {
+      "name": "typecheck",
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "log": "logs/coqui-p6g-typecheck-acceptance.log",
+      "sha256": "9cb7e68dd67d787ad7a36816afe2abbcde7523d59230ab49ed3d8fa46afd1441"
+    },
+    {
+      "name": "lint",
+      "command": "pnpm lint",
+      "exitCode": 0,
+      "log": "logs/coqui-p6g-lint-acceptance.log",
+      "sha256": "050c69da23536758722729aeda55a8d0fb9d557495ef6d33d70873a3b64a71c1"
+    },
+    {
+      "name": "tests",
+      "command": "pnpm test",
+      "exitCode": 0,
+      "log": "logs/coqui-p6g-full-tests-final.log",
+      "sha256": "8099e61b0555db2348507817cdcac9cc3fbd0512c3f2a96c86b56e4d26ac589a"
+    },
+    {
+      "name": "root-build",
+      "command": "pnpm build",
+      "exitCode": 0,
+      "log": "logs/coqui-p6g-build-final.log",
+      "sha256": "097d7fcd2b6c778109c1c948076ae7874e7000c1c140089671568f5850b02735"
+    },
+    {
+      "name": "desktop-build",
+      "command": "pnpm --filter @coqui/desktop build",
+      "exitCode": 0,
+      "log": "logs/coqui-p6g-desktop-review.log",
+      "sha256": "be7074107d90ff2bb402b93d7992ebf0ce22eca5b3d70cc0858181b847be640b"
+    },
+    {
+      "name": "native-safety",
+      "command": "Electron scripts/smoke.mjs",
+      "exitCode": 0,
+      "log": "logs/coqui-p6g-standard-native-final.log",
+      "sha256": "fcf19a8940f1fd59e0e37db571c611838be8d50b9a8054fbc29cbcc4a287e3bd"
+    },
+    {
+      "name": "P6-G-native",
+      "command": "Electron scripts/paper-reserve-sale-smoke.mjs",
+      "exitCode": 0,
+      "log": "logs/coqui-p6g-native-review-4.log",
+      "sha256": "6bee707d7ac58fb62ca98ed05fe6316e684b8e37a394b9fcae2b8bcc537fe543"
+    }
+  ],
+  "testFiles": 354,
+  "tests": 2454,
+  "directGSuites": 6,
+  "directGCases": 39,
+  "nativeSaleChecks": 18,
+  "nativeSafety": "ALL PASS including fullscreen and focus",
+  "uiReview": {
+    "initialDisposition": "fix",
+    "finalDisposition": "ship",
+    "scope": "both scored material fixes resolved, not whole-surface or economic/owner/release approval",
+    "review": "finish-review.md",
+    "verdict": "finish-verdict.md",
+    "documentation": "documentation-review.md",
+    "detector": "logs/coqui-p6g-detector.json",
+    "detectorFindings": [],
+    "captureMatrix": "ui/smoke.json",
+    "beforeFixCaptures": "ui-before-review-fix/"
+  },
+  "preservation": "preservation.json",
+  "sourceClosure": "source-closure.json",
+  "linear": "linear-sync.json",
+  "advisories": [
+    "Existing Vite chunk larger than 500 kB warning remains.",
+    "Initial failed checks and corrected fixture expectations remain in logs."
+  ],
+  "pending": [
+    "P6-G actual F/source/objective-policy/strategy/native/cost qualification and full operational acceptance",
+    "P6-H COQ-12/14 current account/host/financial/rights/exclusive account-wide ownership protocol",
+    "P5-H actual permitted sufficient data/trial inventory and frozen development run",
+    "P7-H independent owner/reviewer/future protocol/registry/resources, I actual elapsed evidence, J timely freeze/final once/exact acceptance",
+    "Source-isolated human review, merge and release"
+  ]
+}

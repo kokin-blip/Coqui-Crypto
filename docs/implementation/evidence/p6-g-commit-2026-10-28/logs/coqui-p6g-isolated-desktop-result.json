@@ -1,0 +1,25 @@
+{
+  "check": "desktop",
+  "exitCode": 0,
+  "log": "/tmp/coqui-p6g-isolated-desktop-final.log",
+  "commands": [
+    [
+      "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/typescript/bin/tsc",
+      "-b"
+    ],
+    [
+      "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "scripts/build-preload.mjs"
+    ],
+    [
+      "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/node_modules/vite/bin/vite.js",
+      "build"
+    ],
+    [
+      "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "scripts/build-metadata.mjs"
+    ]
+  ]
+}

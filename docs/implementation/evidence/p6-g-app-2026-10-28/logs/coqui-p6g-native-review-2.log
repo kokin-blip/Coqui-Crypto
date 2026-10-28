@@ -1,0 +1,12 @@
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: 'b5ffcde85830e17a9d1289dd80c9491fc5121ccfbeb99512c4c68bd8a4b971f9'
+}
+PASS policy stays disarmed 
+TypeError: reserve_invalid_fill
+    at projectReserveInvestment (file:///Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/packages/core/dist/portfolio/profit-reserve-eligibility.js:15:19)
+    at file:///Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/packages/services/dist/portfolio/paper-capital-evidence.js:123:28
+    at inTransaction (file:///Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/packages/storage/dist/sqlite/connection.js:80:24)
+    at paperCapitalEvidence (file:///Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/packages/services/dist/portfolio/paper-capital-evidence.js:38:12)
+    at capturePaperCapitalEvidence (file:///Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/packages/services/dist/portfolio/paper-capital-evidence.js:145:12)
+    at run (file:///Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/scripts/paper-reserve-sale-smoke.mjs:30:44)

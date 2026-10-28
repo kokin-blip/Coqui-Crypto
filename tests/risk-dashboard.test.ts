@@ -115,6 +115,7 @@ describe('the gate cannot be edited from the UI', () => {
     // stronger guarantee than a disabled control, and this test is what keeps
     // one from being added without the reasoning being revisited.
     expect(CHANNEL_KINDS.write).toEqual([
+      'paper.reserve.sale.observe', 'paper.reserve.sale.prepare', 'paper.reserve.sale.order.preview', 'paper.reserve.sale.order.review', 'paper.reserve.sale.reconcile',
       'paper.reserve.observe', 'paper.reserve.book.create', 'paper.reserve.policy.save', 'paper.reserve.authorize', 'paper.reserve.pause', 'paper.reserve.resume', 'paper.reserve.review', 'paper.reserve.release',
       'news.report.select-location', 'app.recovery.verify',
       'app.evidence-export',

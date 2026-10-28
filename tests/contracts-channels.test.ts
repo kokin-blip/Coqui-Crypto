@@ -39,7 +39,7 @@ describe('channel registry', () => {
   });
 
   it('matches the boundaries that actually have tested services today', () => {
-    expect([...CHANNEL_NAMES].sort()).toEqual(['paper.reserve.authorize', 'paper.reserve.book.create', 'paper.reserve.books', 'paper.reserve.observe', 'paper.reserve.operations', 'paper.reserve.pause', 'paper.reserve.policy.save', 'paper.reserve.preview', 'paper.reserve.release', 'paper.reserve.resume', 'paper.reserve.review', 'paper.reserve.view',
+    expect([...CHANNEL_NAMES].sort()).toEqual(['paper.reserve.sale.status', 'paper.reserve.sale.preview', 'paper.reserve.sale.proposals', 'paper.reserve.sale.observe', 'paper.reserve.sale.prepare', 'paper.reserve.sale.order.preview', 'paper.reserve.sale.order.review', 'paper.reserve.sale.reconcile', 'paper.reserve.authorize', 'paper.reserve.book.create', 'paper.reserve.books', 'paper.reserve.observe', 'paper.reserve.operations', 'paper.reserve.pause', 'paper.reserve.policy.save', 'paper.reserve.preview', 'paper.reserve.release', 'paper.reserve.resume', 'paper.reserve.review', 'paper.reserve.view',
       'accounts.coinbase.connect', 'accounts.coinbase.connect-json', 'accounts.coinbase.disconnect', 'accounts.coinbase.status', 'accounts.coinbase.sync',
       'accounts.profile.switch', 'accounts.profiles', 'accounts.settings', 'accounts.settings.set',
       'accounts.workspace', 'accounts.workspace.set', 'activity.feed',
@@ -117,7 +117,7 @@ describe('channel registry', () => {
   it('classifies every channel, and names the one write', () => {
     expect([...CHANNEL_KINDS.read, ...CHANNEL_KINDS.write].sort())
       .toEqual([...CHANNEL_NAMES].sort());
-    expect(CHANNEL_KINDS.write).toEqual(['paper.reserve.observe', 'paper.reserve.book.create', 'paper.reserve.policy.save', 'paper.reserve.authorize', 'paper.reserve.pause', 'paper.reserve.resume', 'paper.reserve.review', 'paper.reserve.release',
+    expect(CHANNEL_KINDS.write).toEqual(['paper.reserve.sale.observe', 'paper.reserve.sale.prepare', 'paper.reserve.sale.order.preview', 'paper.reserve.sale.order.review', 'paper.reserve.sale.reconcile', 'paper.reserve.observe', 'paper.reserve.book.create', 'paper.reserve.policy.save', 'paper.reserve.authorize', 'paper.reserve.pause', 'paper.reserve.resume', 'paper.reserve.review', 'paper.reserve.release',
       'news.report.select-location', 'app.recovery.verify',
       'app.evidence-export', 'research.overlay-shadow.set',
       'alpaca.paper.connect', 'alpaca.paper.refresh', 'alpaca.paper.disconnect',

@@ -1,0 +1,49 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ❯ tests/paper-reserve-sale-app.test.ts (6 tests | 1 failed) 730ms
+     ✓ reads current FIFO evidence and models without granting review or writing facts 114ms
+     × never accepts financial facts, review switches, duplicates or malformed preferences from IPC 60ms
+     ✓ requires an owner-approved source receipt tied to the exact artifact, scope and policy 68ms
+     ✓ prepares once, restores the proposal across restart, and still requires a separate reviewed order  317ms
+     ✓ invalidates session drafts on disarm and changed objectives, preserving historical receipts 95ms
+     ✓ expires exact financial consequences and refuses a foreign proposal before execution 76ms
+ ❯ tests/paper-profit-reserve-ui.test.ts (4 tests | 2 failed) 126ms
+     ✓ offers an explicit $500 simulated opening without enrolling or arming existing books 3ms
+     × separates policy authorization, review, release, and manual Resume with unavailable evidence explicit 70ms
+     ✓ copied archived evidence offers no operational action 0ms
+     × explains missing trade-plan evidence with readable caps and recovery 52ms
+ ✓ tests/paper-reserve-sale-service.test.ts (6 tests) 833ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/paper-profit-reserve-ui.test.ts > P6 truthful default-off controls > separates policy authorization, review, release, and manual Resume with unavailable evidence explicit
+ FAIL  tests/paper-profit-reserve-ui.test.ts > P6 truthful default-off controls > explains missing trade-plan evidence with readable caps and recovery
+Error: No QueryClient set, use QueryClientProvider to set one
+ ❯ useQueryClient node_modules/.pnpm/@tanstack+react-query@5.101.4_react@19.2.8/node_modules/@tanstack/react-query/src/QueryClientProvider.tsx:18:10
+ ❯ PaperReserveSale apps/desktop/src/renderer/app/PaperReserveSale.tsx:60:148
+
+ ❯ Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:9808:18
+ ❯ renderWithHooks node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:5062:19
+ ❯ renderElement node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:5497:23
+ ❯ retryNode node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6428:21
+ ❯ renderNodeDestructive node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6367:11
+ ❯ renderNode node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6905:18
+ ❯ renderChildrenArray node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6674:11
+ ❯ retryNode node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6441:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/paper-reserve-sale-app.test.ts > P6-G app integration with Main-owned evidence > never accepts financial facts, review switches, duplicates or malformed preferences from IPC
+TypeError: Cannot read properties of undefined (reading 'paper.reserve.sale.preview')
+ ❯ tests/paper-reserve-sale-app.test.ts:21:141
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  3 failed | 13 passed (16)
+   Start at  15:05:08
+   Duration  3.85s (transform 1.09s, setup 0ms, import 1.98s, tests 1.69s, environment 0ms)
+

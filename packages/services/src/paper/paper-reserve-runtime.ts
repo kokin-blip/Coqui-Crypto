@@ -38,7 +38,8 @@ export function createPaperReserveRuntime(input:{profileId:string;database:Db;cl
     const asset=input.assets().find(x=>instrumentKey(x.instrument)===id),mark=frame.assets.find(x=>x.assetId===id)?.markUsd;
     if(!asset || !mark)throw new Error('paper_capital_target_price_missing');return {asset,quantity:decimal(q),priceUsd:decimal(mark),valueUsd:decimal(a(q).mul(mark).toFixed()),avgCostUsd:decimal(basis(id,q)),unrealizedPnlUsd:null,unrealizedPnlPct:null};
   });};
-  const execution=()=>new PaperExecutionService({database:db,profileId,nowMs:()=>clock.nowMs(),market:input.market,capitalBudget:budgetPort(),capitalPreviewModel:input.previewModel,executionOwnerId:input.authorityContext().ownerId,
+  const execution=(proposalPurposeGuard?: (proposalId:string)=>boolean,capitalPreviewModel=input.previewModel)=>new PaperExecutionService({database:db,profileId,nowMs:()=>clock.nowMs(),market:input.market,capitalBudget:budgetPort(),capitalPreviewModel,executionOwnerId:input.authorityContext().ownerId,
+    ...(proposalPurposeGuard?{proposalPurposeGuard}:{}),
     state:()=>{const b=paperReserveBinding(profileId,db);if(!b?.policy_id)throw new Error('paper_reserve_policy_missing');const proof=authority.check(b.policy_id,b.generation);
       return {holdings:holdings(),allocationPolicy:input.targets(),killSwitchEngaged:false,evidenceVerified:true,historicalGrossEdgeLowerBoundPct:proof.grossEdgeLowerBoundPct};}});
   const pendingFor=(runId:string,scheduledForMs:number,decision:ReturnType<typeof paperCapitalDecision>)=>{

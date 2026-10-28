@@ -1,0 +1,19 @@
+{
+  "scope": "incremental local software/identity changes over captured baseline; not a clean isolated checkout",
+  "files": {
+    "packages/core/src/portfolio/index.ts": "0865b30b878a050f14bf240a8ef88b7f5066d4225935206426ad4e6e2d92ed09",
+    "packages/core/src/portfolio/paper-reserve-sale.ts": "bf3f147c7a723495a70dc60af1ddcda95f237007ab8217fdb20c8a4e6cb8254c",
+    "packages/core/src/research/capital-prospective-book.ts": "5a8dacb7cf85336574fbbe1342f1a213f655a8996866282dbaf989ac1aec1d47",
+    "packages/core/src/research/study-manifests.generated.ts": "7252f17a1533511ca7379acd840030ebac94bbe3c37609ab22d81f548d681001",
+    "packages/services/src/paper/index.ts": "f2342f4b9ea43eaaae2af8be6925895a843e61c4ab732376dbcff534270ee4c9",
+    "packages/services/src/paper/execution-service.ts": "ab346014bcd4f78a88c15894f7a0e22d3803980727111e474366b2ba4b96bad9",
+    "packages/services/src/paper/paper-reserve-sale.ts": "0d5f1a60ca8b5f097a38dbf4f0e795323543f1e6b1af6b130ffcf377af60ef13",
+    "packages/storage/src/repositories/paper-execution.ts": "2a24a5198115815c95f79e516da63341d47cf9f1adfadc402ec4d2c690cc5089",
+    "scripts/inspect-small-portfolio-evidence.mjs": "0d789ada66b0aefa654b4cbb514b7b30adfd017ff613582118628ef7a1ad6da2",
+    "tests/paper-reserve-sale.test.ts": "30336b28cc1173f0f9947e5ff118af70a9004682a8c44910c66ad9a56cbde888",
+    "tests/paper-reserve-sale-service.test.ts": "7add0b1b077d5c184cabcd1caf9117bdcff2574118cf687a091c2986886e2ab2",
+    "tests/capital-prospective-action-classes.test.ts": "a502445dbe7e4713f51c48a143c5cfc29a616dc15783260edea37181b9bc909a",
+    "tests/small-portfolio-evidence-inventory.test.ts": "5742a0e8270bc9b1ef03690083dbf34d7c775b702de20770c8a45636e76e1203",
+    "docs/studies/behavior-manifests-v1.json": "38ee9d67d8b1ef56cac00736417b8c6e4c8cf389e4080ffba46e6e259af3220c"
+  }
+}

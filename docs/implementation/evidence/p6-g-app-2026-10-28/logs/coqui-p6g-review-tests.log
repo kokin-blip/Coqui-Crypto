@@ -1,0 +1,12 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/risk-dashboard.test.ts (9 tests) 379ms
+ ✓ tests/paper-reserve-sale-evidence.test.ts (3 tests) 244ms
+ ✓ tests/paper-reserve-sale-ui.test.ts (3 tests) 2ms
+
+ Test Files  3 passed (3)
+      Tests  15 passed (15)
+   Start at  15:13:57
+   Duration  2.85s (transform 1.17s, setup 0ms, import 2.04s, tests 626ms, environment 0ms)
+

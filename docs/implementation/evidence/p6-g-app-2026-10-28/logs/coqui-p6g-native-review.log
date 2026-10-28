@@ -1,0 +1,13 @@
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: 'b5ffcde85830e17a9d1289dd80c9491fc5121ccfbeb99512c4c68bd8a4b971f9'
+}
+PASS policy stays disarmed 
+PASS Main-owned source evidence produces a bounded local consequence {"state":"modeled","reasons":["hypothetical_only","post_fill_reassessment_required","separate_order_review_required"]}
+PASS source review remains pending and preparation refuses 
+PASS preview and refusal create no financial or lifecycle facts 
+PASS desktop-dark: invalid input has associated recovery 
+FAIL desktop-dark: financial review is readable and preserves exact values 
+Error: desktop-dark: financial review is readable and preserves exact values
+    at check (file:///Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/scripts/paper-reserve-sale-smoke.mjs:10:207)
+    at run (file:///Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/scripts/paper-reserve-sale-smoke.mjs:43:3)

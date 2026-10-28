@@ -1,0 +1,99 @@
+{
+  "synthetic": true,
+  "accountAccess": false,
+  "schedulerDisabled": true,
+  "checks": [
+    {
+      "name": "policy stays disarmed",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Main-owned source evidence produces a bounded local consequence",
+      "passed": true,
+      "detail": "{\"state\":\"modeled\",\"reasons\":[\"hypothetical_only\",\"post_fill_reassessment_required\",\"separate_order_review_required\"]}"
+    },
+    {
+      "name": "source review remains pending and preparation refuses",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "preview and refusal create no financial or lifecycle facts",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-dark: invalid input has associated recovery",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-dark: financial review is readable and preserves exact values",
+      "passed": true,
+      "detail": "{\"table\":\"Single-asset FIFO candidates. Dollar fields are USD; costs and gains are modeled.\\nAsset / result\\tSale quantity\\tSale value\\tCost\\tRealized gain\\tNet proceeds\\tQuantity left\\nBTC-USD\\nmodeled · selected\\t6.55130833\\t≈ 359.42\\t≈ 3.06\\t≈ 29.69\\t≈ 357.26\\t3.44869167\",\"exact\":\"Sale quantity6.55130833Sale value (USD)359.421153254625Cost (USD)3.0627368604681748900000000001837641986565Realized gain (USD)29.6938047895318251099999999998162358013435Net proceeds (USD)357.2592212895318251099999999998162358013435Quantity left3.44869167\"}"
+    },
+    {
+      "name": "desktop-dark: preparation visibly blocked by actual source/authority gates",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-dark: labels and bounded overflow",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-light: invalid input has associated recovery",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-light: financial review is readable and preserves exact values",
+      "passed": true,
+      "detail": "{\"table\":\"Single-asset FIFO candidates. Dollar fields are USD; costs and gains are modeled.\\nAsset / result\\tSale quantity\\tSale value\\tCost\\tRealized gain\\tNet proceeds\\tQuantity left\\nBTC-USD\\nmodeled · selected\\t6.55130833\\t≈ 359.42\\t≈ 3.06\\t≈ 29.69\\t≈ 357.26\\t3.44869167\",\"exact\":\"Sale quantity6.55130833Sale value (USD)359.421153254625Cost (USD)3.0627368604681748900000000001837641986565Realized gain (USD)29.6938047895318251099999999998162358013435Net proceeds (USD)357.2592212895318251099999999998162358013435Quantity left3.44869167\"}"
+    },
+    {
+      "name": "narrow-light: preparation visibly blocked by actual source/authority gates",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-light: labels and bounded overflow",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast-zoom: invalid input has associated recovery",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast-zoom: financial review is readable and preserves exact values",
+      "passed": true,
+      "detail": "{\"table\":\"Single-asset FIFO candidates. Dollar fields are USD; costs and gains are modeled.\\nAsset / result\\tSale quantity\\tSale value\\tCost\\tRealized gain\\tNet proceeds\\tQuantity left\\nBTC-USD\\nmodeled · selected\\t6.55130833\\t≈ 359.42\\t≈ 3.06\\t≈ 29.69\\t≈ 357.26\\t3.44869167\",\"exact\":\"Sale quantity6.55130833Sale value (USD)359.421153254625Cost (USD)3.0627368604681748900000000001837641986565Realized gain (USD)29.6938047895318251099999999998162358013435Net proceeds (USD)357.2592212895318251099999999998162358013435Quantity left3.44869167\"}"
+    },
+    {
+      "name": "contrast-zoom: preparation visibly blocked by actual source/authority gates",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast-zoom: labels and bounded overflow",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "zero order, reserve or lifecycle side effects",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "no renderer errors",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "round": 3
+}

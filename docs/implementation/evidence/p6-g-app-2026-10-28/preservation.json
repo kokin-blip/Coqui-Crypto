@@ -1,0 +1,33 @@
+{
+  "baselineFiles": 3168,
+  "unchangedFiles": 3148,
+  "intendedChangedFiles": [
+    "apps/desktop/src/main/composition.ts",
+    "apps/desktop/src/main/dispatch.ts",
+    "apps/desktop/src/main/paper-reserve-handlers.ts",
+    "apps/desktop/src/main/paper-reserve-runtime.ts",
+    "apps/desktop/src/renderer/app/PaperProfitReserves.tsx",
+    "apps/desktop/src/renderer/query/refetch.ts",
+    "docs/implementation/small-portfolio-phase-tracker-2026-10-23.md",
+    "docs/studies/behavior-manifests-v1.json",
+    "packages/contracts/src/channels.ts",
+    "packages/contracts/src/index.ts",
+    "packages/core/src/research/study-manifests.generated.ts",
+    "packages/services/src/paper/index.ts",
+    "packages/services/src/paper/paper-reserve-runtime.ts",
+    "packages/services/src/paper/paper-reserve-sale.ts",
+    "packages/services/src/portfolio/index.ts",
+    "tests/contracts-channels.test.ts",
+    "tests/paper-profit-reserve-ui.test.ts",
+    "tests/paper-reserve-sale-service.test.ts",
+    "tests/risk-dashboard.test.ts",
+    "tests/secret-leak-sweep.test.ts"
+  ],
+  "unexpectedChangedFiles": [],
+  "missingFiles": [],
+  "headUnchanged": true,
+  "indexUnchanged": true,
+  "installedDatabaseAccessed": false,
+  "installedDatabaseModified": false,
+  "scope": "local combined checkout; prior isolated checks are historical"
+}

@@ -1,0 +1,69 @@
+{
+  "recordedAt": "2026-10-28 21:17:42 UTC",
+  "promptUsed": "**Prompt used**\n\nWork on implementng P5-H, P6-G/H and P7-H–J.\n\nRelevant follow-up answers:\n\n> use the installed data we have from brokers, as well as the experienced data from the algorithm we have stored. interpret the data from the algorithm yourself using research-backed evidence before using it.\n\n> The only paper account we have. Paper Account [financial account number redacted; ending YT3T]",
+  "receipts": [
+    {
+      "label": "prepend COQ-40",
+      "id": "COQ-40",
+      "isError": false
+    },
+    {
+      "label": "comment COQ-40",
+      "id": "89492238-d938-46f1-a899-62f2d39409b7",
+      "isError": false
+    },
+    {
+      "label": "prepend COQ-17",
+      "id": "COQ-17",
+      "isError": false
+    },
+    {
+      "label": "comment COQ-17",
+      "id": "74dcc6d7-1b80-4332-89ab-5497e02fef37",
+      "isError": false
+    },
+    {
+      "label": "comment COQ-10",
+      "id": "9854107f-00c6-4016-9dc9-125ea8413c53",
+      "isError": false
+    },
+    {
+      "label": "comment COQ-18",
+      "id": "c3558ce8-7f77-432e-a97e-681c4ae21999",
+      "isError": false
+    },
+    {
+      "label": "comment COQ-14",
+      "id": "3db30d8b-8aeb-4a41-a5cd-21714f3af3b6",
+      "isError": false
+    },
+    {
+      "label": "milestone 3912e58c-9923-4c05-9e78-230a6404eeda",
+      "id": "21fbb3b3-a2d8-46e9-9fe5-9e55534df24c",
+      "isError": false
+    },
+    {
+      "label": "milestone 7c291557-21bc-42fb-9d52-9a58363c3b7e",
+      "id": "9600aac2-3fc8-403d-a955-0343a787ae5c",
+      "isError": false
+    },
+    {
+      "label": "milestone d21bc6a1-3dde-40ea-a98a-a20e20f4d572",
+      "id": "ab8a1fb2-c17e-4e97-b1eb-6d816ef02069",
+      "isError": false
+    },
+    {
+      "label": "comment COQ-39",
+      "id": "866ab110-3c86-4e34-ac6f-728dddf49f2d",
+      "isError": false
+    },
+    {
+      "label": "comment COQ-16",
+      "id": "cd4e2835-c21f-4a35-8170-4b2eba831338",
+      "isError": false
+    }
+  ],
+  "allSucceeded": true,
+  "states": "COQ-39/40 In Progress; COQ-10 Todo; COQ-14/16/17/18 Backlog retained; milestone dates/dependencies unchanged",
+  "completion": "Incremental local backend/evidence work only. No actual research/account/elapsed/release gate closed."
+}

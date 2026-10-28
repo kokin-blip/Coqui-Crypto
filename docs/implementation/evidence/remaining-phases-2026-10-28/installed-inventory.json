@@ -1,0 +1,298 @@
+{
+  "sourceHash": "173e80b556e0f0fdf9199c0584ab5f9543dc86dd8ffbf9d86ed59f94212fec60",
+  "snapshotAtMs": 1793220032585,
+  "schema": 95,
+  "walAbsentAtBoundaries": true,
+  "tables": {
+    "account_preferences_v1": {
+      "rows": 1,
+      "columns": [
+        "profile_id",
+        "theme",
+        "density",
+        "motion",
+        "language",
+        "updated_at_ms",
+        "workspace_mode",
+        "overview_chart",
+        "portfolio_chart",
+        "markets_chart",
+        "performance_chart",
+        "inspector_open",
+        "inspector_width_px",
+        "chart_ranges_json",
+        "advanced_overview_preset",
+        "advanced_overview_panels_json",
+        "overview_series_style",
+        "overview_benchmark_visible",
+        "market_volume_visible",
+        "market_indicators_json",
+        "market_interval",
+        "market_scale_mode",
+        "market_live_candle",
+        "market_layout"
+      ]
+    },
+    "account_settings_commands_v1": {
+      "rows": 79,
+      "columns": [
+        "command_id",
+        "profile_id",
+        "request_hash",
+        "outcome_json",
+        "recorded_at_ms"
+      ]
+    },
+    "breakout_hourly_bars_v1": {
+      "rows": 26610,
+      "columns": [
+        "profile_id",
+        "asset_id",
+        "start_ms",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume",
+        "source",
+        "retrieved_at_ms",
+        "content_hash"
+      ]
+    },
+    "connection_account_snapshots_v2": {
+      "rows": 3,
+      "columns": [
+        "id",
+        "profile_id",
+        "connection_id",
+        "provider",
+        "as_of",
+        "complete",
+        "health",
+        "content_json",
+        "content_hash",
+        "created_at"
+      ]
+    },
+    "connection_removals_v1": {
+      "rows": 2,
+      "columns": [
+        "connection_id",
+        "profile_id",
+        "command_id",
+        "state",
+        "requested_at",
+        "updated_at"
+      ]
+    },
+    "connection_wallet_identities_v1": {
+      "rows": 1,
+      "columns": [
+        "id",
+        "profile_id",
+        "connection_id",
+        "provider",
+        "identity_kind",
+        "identity_hash",
+        "canonical_key",
+        "masked_suffix",
+        "verified_at"
+      ]
+    },
+    "display_market_bars_v1": {
+      "rows": 2016,
+      "columns": [
+        "profile_id",
+        "product_id",
+        "interval",
+        "start_time_ms",
+        "end_time_ms",
+        "open_text",
+        "high_text",
+        "low_text",
+        "close_text",
+        "volume_text",
+        "retrieved_at_ms",
+        "expires_at_ms",
+        "source",
+        "informational_only",
+        "decision_eligible"
+      ]
+    },
+    "forward_edge_study_plans_v1": {
+      "rows": 1,
+      "columns": [
+        "plan_hash",
+        "registered_at",
+        "code_revision",
+        "cost_profile_hash",
+        "plan_json"
+      ]
+    },
+    "market_bars_v2": {
+      "rows": 1307,
+      "columns": [
+        "source",
+        "asset_id",
+        "provider_asset_id",
+        "interval",
+        "start_time_ms",
+        "end_time_ms",
+        "open_text",
+        "high_text",
+        "low_text",
+        "close_text",
+        "volume_text",
+        "is_complete",
+        "quality",
+        "retrieved_at_ms"
+      ]
+    },
+    "ml_signal_hourly_bars_v1": {
+      "rows": 30846,
+      "columns": [
+        "profile_id",
+        "product_id",
+        "start_ms",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume",
+        "source",
+        "retrieved_at_ms"
+      ]
+    },
+    "multi_connection_paper_campaigns_v1": {
+      "rows": 1,
+      "columns": [
+        "id",
+        "profile_id",
+        "command_id",
+        "source_unified_snapshot_id",
+        "started_at",
+        "content_json",
+        "content_hash"
+      ]
+    },
+    "paper_connection_book_snapshots_v1": {
+      "rows": 1,
+      "columns": [
+        "id",
+        "campaign_id",
+        "profile_id",
+        "connection_id",
+        "provider",
+        "source_connection_snapshot_id",
+        "created_at",
+        "content_json",
+        "content_hash"
+      ]
+    },
+    "parallel_paper_events_v1": {
+      "rows": 167752,
+      "columns": [
+        "id",
+        "experiment_id",
+        "profile_id",
+        "kind",
+        "at",
+        "detail_json"
+      ]
+    },
+    "parallel_paper_experiments_v1": {
+      "rows": 1,
+      "columns": [
+        "id",
+        "profile_id",
+        "source_connection_snapshot_id",
+        "alpaca_account_id",
+        "opening_coqui_cash",
+        "opening_alpaca_cash",
+        "opening_alpaca_equity",
+        "anchor_json",
+        "started_at",
+        "config_version"
+      ]
+    },
+    "profile_connection_migration_links_v1": {
+      "rows": 1,
+      "columns": [
+        "v1_connection_id",
+        "v2_connection_id",
+        "created_at"
+      ]
+    },
+    "profile_connections_v1": {
+      "rows": 1,
+      "columns": [
+        "id",
+        "profile_id",
+        "provider",
+        "label",
+        "external_identity_hash",
+        "capabilities_json",
+        "status",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    "profile_connections_v2": {
+      "rows": 3,
+      "columns": [
+        "id",
+        "profile_id",
+        "provider",
+        "credential_fingerprint",
+        "capabilities_json",
+        "status",
+        "label",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    "provider_account_refs_v1": {
+      "rows": 2,
+      "columns": [
+        "id",
+        "profile_id",
+        "connection_id",
+        "provider",
+        "provider_identity_hash",
+        "masked_display_suffix",
+        "created_at"
+      ]
+    },
+    "research_integrity_events": {
+      "rows": 1,
+      "columns": [
+        "sequence",
+        "namespace",
+        "kind",
+        "record_key",
+        "at_ms",
+        "body_json",
+        "content_hash"
+      ]
+    },
+    "robinhood_connection_setups_v1": {
+      "rows": 1,
+      "columns": [
+        "id",
+        "profile_id",
+        "public_key_base64",
+        "status",
+        "created_at_ms",
+        "expires_at_ms",
+        "completed_at_ms"
+      ]
+    },
+    "trial_registry_meta": {
+      "rows": 1,
+      "columns": [
+        "singleton",
+        "completeness"
+      ]
+    }
+  }
+}

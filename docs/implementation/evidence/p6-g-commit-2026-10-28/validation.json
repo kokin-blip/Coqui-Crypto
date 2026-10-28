@@ -1,0 +1,114 @@
+{
+  "prompt": "Commit and push P6-G\u2019s app integration, then continue the remaining unblocked work. Preserve unrelated work and the full P0\u2013P7 scope, keep unmet evidence gates pending, and update the phase tracker.",
+  "base": "5af1b92de230a42c3464cd63be16ddf0d60893d1",
+  "candidate": "/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-p6g-isolated-gf_4by9w",
+  "checks": {
+    "typecheck": {
+      "check": "typecheck",
+      "exitCode": 0,
+      "log": "/tmp/coqui-p6g-isolated-typecheck-final.log",
+      "commands": [
+        [
+          "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/typescript/bin/tsc",
+          "-p",
+          "tsconfig.check.json",
+          "--noEmit"
+        ],
+        [
+          "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/typescript/bin/tsc",
+          "-p",
+          "apps/desktop/tsconfig.renderer.json",
+          "--noEmit"
+        ]
+      ]
+    },
+    "lint": {
+      "check": "lint",
+      "exitCode": 0,
+      "log": "/tmp/coqui-p6g-isolated-lint-final.log",
+      "commands": [
+        [
+          "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/eslint/bin/eslint.js",
+          "."
+        ]
+      ]
+    },
+    "build": {
+      "check": "build",
+      "exitCode": 0,
+      "log": "/tmp/coqui-p6g-isolated-build-final.log",
+      "commands": [
+        [
+          "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "scripts/build-study-manifests.mjs"
+        ],
+        [
+          "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/typescript/bin/tsc",
+          "-b",
+          "--force"
+        ]
+      ]
+    },
+    "desktop": {
+      "check": "desktop",
+      "exitCode": 0,
+      "log": "/tmp/coqui-p6g-isolated-desktop-final.log",
+      "commands": [
+        [
+          "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/typescript/bin/tsc",
+          "-b"
+        ],
+        [
+          "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "scripts/build-preload.mjs"
+        ],
+        [
+          "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/node_modules/vite/bin/vite.js",
+          "build"
+        ],
+        [
+          "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "scripts/build-metadata.mjs"
+        ]
+      ]
+    },
+    "tests": {
+      "check": "tests",
+      "exitCode": 0,
+      "log": "/tmp/coqui-p6g-isolated-tests-final.log",
+      "commands": [
+        [
+          "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/vitest/vitest.mjs",
+          "run",
+          "--maxWorkers=1"
+        ]
+      ]
+    }
+  },
+  "testFiles": 333,
+  "tests": 2297,
+  "nativeSaleChecks": 18,
+  "nativeSafety": "ALL PASS",
+  "sourceManifest": "source-manifest.json",
+  "scope": "isolated source technical acceptance only; actual owner/economic/connected/release gates pending",
+  "preservedWorkingFilesAtBaseline": 3256,
+  "requiredSharedDependency": "packages/adapters/src/http/deadline.ts independent deadline helper only",
+  "excludedApplicationWork": [
+    "P7 prospective code",
+    "hourly-study changes",
+    "broker recovery changes"
+  ],
+  "sideEffects": {
+    "installedAccount": false,
+    "brokerMutation": false,
+    "studyRegistration": false,
+    "deployment": false
+  }
+}

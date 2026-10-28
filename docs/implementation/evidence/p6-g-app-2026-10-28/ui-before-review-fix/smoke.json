@@ -1,0 +1,69 @@
+{
+  "synthetic": true,
+  "accountAccess": false,
+  "schedulerDisabled": true,
+  "checks": [
+    {
+      "name": "policy stays disarmed",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Main-owned source evidence produces a bounded local consequence",
+      "passed": true,
+      "detail": "{\"state\":\"modeled\",\"reasons\":[\"hypothetical_only\",\"post_fill_reassessment_required\",\"separate_order_review_required\"]}"
+    },
+    {
+      "name": "source review remains pending and preparation refuses",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "preview and refusal create no financial or lifecycle facts",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-dark: preparation visibly blocked by actual source/authority gates",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-dark: labels and bounded overflow",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-light: preparation visibly blocked by actual source/authority gates",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-light: labels and bounded overflow",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast-zoom: preparation visibly blocked by actual source/authority gates",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast-zoom: labels and bounded overflow",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "zero order, reserve or lifecycle side effects",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "no renderer errors",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "round": 3
+}

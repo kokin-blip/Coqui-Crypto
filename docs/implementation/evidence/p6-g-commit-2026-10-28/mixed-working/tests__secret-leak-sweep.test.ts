@@ -1,0 +1,322 @@
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+
+import { createRuntime } from '../apps/desktop/src/main/composition.js';
+import { createDispatcher, type ChannelHandlers } from '../apps/desktop/src/main/dispatch.js';
+import { createMemorySecretStore } from '../packages/adapters/src/index.js';
+import { CHANNEL_NAMES, type ChannelName } from '../packages/contracts/src/index.js';
+import { FixedClock } from '../packages/core/src/index.js';
+import { CoinGeckoConnectionService } from '../packages/services/src/index.js';
+import type { Db } from '../packages/storage/src/index.js';
+
+/**
+ * The canary sweep P7 requires.
+ *
+ * `tests/secrets.test.ts` is a good unit suite over the store itself. This is
+ * the broader thing invariant 3 actually claims: a known secret is injected,
+ * and every route out of the main process is swept for it — IPC responses,
+ * error paths, the reporting hook's *wire* output, and every value in every
+ * column of the database.
+ *
+ * The canary is deliberately distinctive. A test that searched for something
+ * short would pass on a coincidence.
+ */
+
+const CANARY = 'CG-CANARYd0n0tl3ak99';
+const T0 = 1_800_000_000_000;
+
+let directory: string;
+let databasePath: string;
+
+beforeEach(() => {
+  directory = mkdtempSync(join(tmpdir(), 'coqui-canary-'));
+  databasePath = join(directory, 'wallet-main.db');
+});
+
+afterEach(() => {
+  rmSync(directory, { recursive: true, force: true });
+});
+
+/** Channels that answer from local state. The rest would reach the network. */
+const LOCAL_CHANNELS: readonly ChannelName[] = [
+  'news.report.select-location', 'app.recovery.verify',
+  'app.about','app.performance-trace','app.evidence-export','news.report','research.integrity-workspace',
+  'news.timeline', 'news.detail', 'news.health', 'news.analysis.set-enabled',
+  'research.overlay-shadow.status', 'research.overlay-shadow.set',
+  'trading.activity.scopes', 'trading.activity.summary', 'trading.activity.trail',
+  'trading.activity.overview', 'trading.activity.orders', 'trading.activity.order-detail',
+  'activity.feed',
+  'decision.timeline',
+  'operations.floor', 'operations.journal', 'operations.journal.group',
+  'market-events.timeline',
+  'research.runs',
+  'research.lineage',
+  'research.edge-study',
+  'research.jobs',
+  'research.job',
+  'research.scoreboard',
+  'research.negative-findings',
+  'research.performance',
+  'risk.evidence-gate',
+  'risk.dashboard',
+  'portfolio.tax',
+  'portfolio.reconciliation',
+  'accounts.settings',
+  'accounts.workspace',
+  'app.status-rail',
+  'alerts.view',
+  'app.incidents',
+  'paper.execution.policy',
+  'paper.campaign.connections',
+  'paper.execution.proposals',
+  'paper.performance',
+  'capital.scopes', 'capital.performance', 'capital.budget', 'capital.feasibility',
+  'research.prospective.instances', 'research.prospective.coverage', 'research.prospective.development', 'research.prospective.report',
+  'research.capital-replay.runs', 'research.capital-replay.detail',
+  'research.capital-contest.runs', 'research.capital-contest.detail',
+  'paper.reserve.sale.status',
+  'paper.reserve.sale.preview',
+  'paper.reserve.sale.proposals',
+  'paper.reserve.sale.observe',
+  'paper.reserve.sale.prepare',
+  'paper.reserve.sale.order.preview',
+  'paper.reserve.sale.order.review',
+  'paper.reserve.sale.reconcile',
+  'paper.reserve.books','paper.reserve.view','paper.reserve.preview','paper.reserve.operations','paper.reserve.book.create','paper.reserve.policy.save','paper.reserve.authorize','paper.reserve.pause','paper.reserve.resume','paper.reserve.review','paper.reserve.release','paper.reserve.observe',
+  'capital.reserve.view', 'capital.reserve.preview', 'capital.reserve.settings.save', 'capital.reserve.inspect',
+  'paper.performance-day',
+];
+
+const PAYLOADS: Partial<Record<ChannelName, unknown>> = {
+  'research.prospective.instances': {limit:50},
+  'research.prospective.coverage': {registrationId:'a'.repeat(64)},
+  'research.prospective.development': {registrationId:'a'.repeat(64)},
+  'research.prospective.report': {registrationId:'a'.repeat(64),reportId:'b'.repeat(64)},
+  'paper.reserve.books': {},
+  'paper.reserve.view': {},
+  'paper.reserve.preview': {},
+  'paper.reserve.operations': {},
+  'paper.reserve.book.create': {"commandId":"11111111-1111-4111-8111-111111111111","bookId":"11111111-1111-4111-8111-111111111111","openingUsd":"500"},
+  'paper.reserve.policy.save': {"commandId":"11111111-1111-4111-8111-111111111111","bookId":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","scopeId":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","generation":0,"policyId":null,"stateId":null,"authorityHash":"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","budgetRevision":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","settings":{"goal":"keep_invested","trigger":{"kind":"profit_usd","value":"50"},"shareBps":0,"retainedCapitalUsd":"500","minimumBatchUsd":"1","cadence":"manual","reviewWinCount":null,"taxHold":{"amountUsd":"0","backing":"principal"}}},
+  'paper.reserve.authorize': {"commandId":"11111111-1111-4111-8111-111111111111","bookId":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","scopeId":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","generation":0,"policyId":null,"stateId":null,"authorityHash":"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","budgetRevision":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"},
+  'paper.reserve.pause': {"commandId":"11111111-1111-4111-8111-111111111111","bookId":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","scopeId":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","generation":0,"policyId":null,"stateId":null,"authorityHash":"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","budgetRevision":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"},
+  'paper.reserve.resume': {"commandId":"11111111-1111-4111-8111-111111111111","bookId":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","scopeId":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","generation":0,"policyId":null,"stateId":null,"authorityHash":"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","budgetRevision":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"},
+  'paper.reserve.review': {"commandId":"11111111-1111-4111-8111-111111111111","bookId":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","scopeId":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","generation":0,"policyId":null,"stateId":null,"authorityHash":"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","budgetRevision":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","proposalId":"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"},
+  'paper.reserve.release': {"commandId":"11111111-1111-4111-8111-111111111111","bookId":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","scopeId":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","generation":0,"policyId":null,"stateId":null,"authorityHash":"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","budgetRevision":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","proposalId":"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd","purpose":"profit_reserve","amountUsd":"1"},
+  'paper.reserve.sale.status': {},
+  'paper.reserve.sale.proposals': {},
+  'paper.reserve.sale.preview': {reserveUsd:'1',retainedFloorUsd:'100',maxCostUsd:'1',maxNotionalUsd:'100',maxExposureReductionUsd:'100',eligibleAssetIds:['coinbase|spot|BTC-USD']},
+  'paper.reserve.sale.prepare': {commandId:'11111111-1111-4111-8111-111111111111',consequenceId:'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd'},
+  'paper.reserve.sale.order.preview': {commandId:'11111111-1111-4111-8111-111111111111',proposalId:'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd'},
+  'paper.reserve.sale.order.review': {commandId:'11111111-1111-4111-8111-111111111111',proposalId:'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd',proposalHash:'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc',decision:'reject',previewHash:null,previewExpiresAtMs:0},
+  'paper.reserve.sale.reconcile': {commandId:'11111111-1111-4111-8111-111111111111',proposalId:'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd'},
+  'paper.reserve.sale.observe': {"commandId":"11111111-1111-4111-8111-111111111111","bookId":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","scopeId":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","generation":0,"policyId":null,"stateId":null,"authorityHash":"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","budgetRevision":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"},
+  'paper.reserve.observe': {"commandId":"11111111-1111-4111-8111-111111111111","bookId":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","scopeId":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","generation":0,"policyId":null,"stateId":null,"authorityHash":"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","budgetRevision":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"},
+
+  'news.report.select-location': {commandId:'11111111-1111-4111-8111-111111111111',reportHash:'a'.repeat(64)},
+  'app.recovery.verify': {commandId:'11111111-1111-4111-8111-111111111111',expectedDatabaseHash:'a'.repeat(64)},
+  'app.evidence-export': {commandId:'11111111-1111-4111-8111-111111111111'},
+  'news.timeline': { asOfMs: null, limit: 100 },
+  'news.detail': { observationId: 'a'.repeat(64), asOfMs: null },
+  'news.analysis.set-enabled': { commandId: '11111111-1111-4111-8111-111111111111', enabled: false },
+  'research.overlay-shadow.set': { commandId: 'shadow-fixture-disable', enabled: false },
+  'trading.activity.overview': {scopeId:'ledger',connectionId:null,productId:null,period:'7d',timeZone:'UTC'},
+  'trading.activity.orders': {scopeId:'ledger',connectionId:null,productId:null,period:'7d',timeZone:'UTC',cursor:null,limit:20},
+  'trading.activity.order-detail': {scopeId:'ledger',connectionId:null,productId:null,period:'7d',timeZone:'UTC',orderKey:'missing',cursor:null},
+  'trading.activity.summary': {scopeId:'ledger',connectionId:null,productId:'BTC-USD'},
+  'trading.activity.trail': {scopeId:'ledger',connectionId:null,productId:'BTC-USD',cursor:null,limit:30},
+  'activity.feed': { limit: 40, cursor: null },
+  'operations.journal':{worker:null,limit:5,cursor:null},
+  'operations.journal.group':{groupId:'unavailable',worker:null,limit:50,cursor:null},
+  'research.jobs': { limit: 10 },
+  'research.job': { id: 'a'.repeat(64) },
+  'research.lineage': { limit: 50 },
+  'app.incidents': { limit: 50 },
+  'paper.execution.proposals': { limit: 50 },
+  'paper.performance-day': { dayUtc: 1_799_971_200_000 },
+  'capital.performance': { scopeId: 'a'.repeat(64), epochId: null, fromMs: null, toMs: null },
+  'research.capital-contest.runs': {limit:10},
+  'research.capital-contest.detail': {runId:'a'.repeat(64),cellId:null,page:0,limit:10},
+  'research.capital-replay.runs': {limit:10},
+  'research.capital-replay.detail': {runId:'a'.repeat(64),cellId:null,page:0,limit:10},
+  'capital.reserve.view': {scopeId:'a'.repeat(64)},
+  'capital.reserve.preview': {mode:'observed',scopeId:'a'.repeat(64)},
+  'capital.reserve.settings.save': {commandId:'11111111-1111-4111-8111-111111111111',scopeId:'a'.repeat(64),expectedPolicyId:null,expectedStateId:null,expectedInputHash:'b'.repeat(64),settings:{goal:'keep_invested',trigger:{kind:'profit_usd',value:'50'},shareBps:0,retainedCapitalUsd:'0',minimumBatchUsd:'1',cadence:'manual',reviewWinCount:null,taxHold:{amountUsd:'0',backing:'principal'}}},
+  'capital.reserve.inspect': {commandId:'11111111-1111-4111-8111-111111111111',scopeId:'a'.repeat(64),expectedPolicyId:null,expectedStateId:null,expectedInputHash:'b'.repeat(64)},
+  'capital.budget': { scopeId: 'a'.repeat(64) },
+  'capital.feasibility': { mode: 'scenario', scopeId: null, capitalUsd: '500', tradeUsd: '25', minimumQuantity: '0.01', quantityIncrement: '0.01' },
+  'market-events.timeline': { asOfMs: null, limit: 50 },
+  'decision.timeline': { assetScope: null, asOfMs: null, limit: 50 },
+};
+
+/** Every value in every column of every table, as one string. */
+function everyStoredValue(database: Db): string {
+  const tables = database.prepare(
+    "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'",
+  ).all() as unknown as Array<{ name: string }>;
+
+  const seen: string[] = [];
+  for (const table of tables) {
+    const rows = database.prepare(`SELECT * FROM "${table.name}"`).all() as unknown as Array<
+      Record<string, unknown>
+    >;
+    for (const row of rows) seen.push(JSON.stringify(row));
+  }
+  return seen.join('\n');
+}
+
+describe('a connected key never reaches the renderer', () => {
+  it('appears in no channel response', async () => {
+    const runtime = createRuntime({
+      databasePath,
+      profileId: 'main',
+      disableScheduler: true,
+      // The one place the key legitimately exists inside the process.
+      coinGeckoApiKey: CANARY,
+    });
+    const dispatch = createDispatcher({ handlers: runtime.handlers });
+
+    for (const channel of LOCAL_CHANNELS) {
+      const outcome = await dispatch(channel, PAYLOADS[channel] ?? {});
+      // Serialised, not inspected field by field: a leak in a nested provenance
+      // object is still a leak, and a field-by-field check would miss the field
+      // nobody thought to add to the list.
+      expect(JSON.stringify(outcome)).not.toContain(CANARY);
+    }
+
+    runtime.dispose();
+  });
+
+  it('appears in no column of the database', () => {
+    const runtime = createRuntime({
+      databasePath,
+      profileId: 'main',
+      disableScheduler: true,
+      coinGeckoApiKey: CANARY,
+    });
+
+    // Invariant 3 names the database explicitly. A key cached "just for
+    // convenience" in a settings row is the classic version of this.
+    expect(everyStoredValue(runtime.database)).not.toContain(CANARY);
+    runtime.dispose();
+  });
+
+  it('is reachable to the process that needs it, which is the point of the test', async () => {
+    // Guards against a sweep that passes because the canary was never injected
+    // anywhere. The secret store holds it; the wire never does.
+    const store = createMemorySecretStore({ 'coingecko-api-key': CANARY });
+    const service = new CoinGeckoConnectionService({
+      clock: new FixedClock(T0),
+      secretStore: store,
+      verifier: { verify: async () => ({ ok: true }) },
+    });
+
+    expect(await store.read('coingecko-api-key', null)).toEqual({ ok: true, value: CANARY });
+    expect(JSON.stringify(await service.status())).not.toContain(CANARY);
+  });
+});
+
+describe('an error carrying a secret does not carry it across IPC', () => {
+  const handlers = {
+    'research.runs': () => {
+      throw new Error(`upstream rejected key ${CANARY}`);
+    },
+  } as unknown as ChannelHandlers;
+
+  it('reports a stable code instead of the message', async () => {
+    const dispatch = createDispatcher({ handlers });
+    const outcome = await dispatch('research.runs', {});
+
+    // An exception crossing IPC arrives at the renderer as a string built from
+    // the error's own message — which is exactly how a secret in an upstream
+    // error escapes.
+    expect(JSON.stringify(outcome)).not.toContain(CANARY);
+    expect(outcome).toMatchObject({ status: 'failed' });
+  });
+
+  it('gives the full error to the local reporter and nothing to the wire', async () => {
+    const reported: unknown[] = [];
+    const dispatch = createDispatcher({
+      handlers,
+      onUnexpectedError: (_channel, error) => reported.push(error),
+    });
+    const outcome = await dispatch('research.runs', {});
+
+    // The detail has to go *somewhere* or a failure is undiagnosable. It goes
+    // to the local reporter, and the asymmetry is the guarantee.
+    expect(JSON.stringify(reported.map(String))).toContain(CANARY);
+    expect(JSON.stringify(outcome)).not.toContain(CANARY);
+  });
+
+  it('drops a value a handler tried to return', async () => {
+    const leaky = {
+      'research.negative-findings': () => ({
+        ok: true,
+        value: { findings: [], ledgerNote: CANARY, apiKey: CANARY },
+      }),
+    } as unknown as ChannelHandlers;
+
+    // Response validation runs on the way out for this reason: a service that
+    // drifts from the contract fails at the boundary rather than shipping a
+    // field nobody declared.
+    const outcome = await createDispatcher({ handlers: leaky })('research.negative-findings', {});
+    expect(JSON.stringify(outcome)).not.toContain(CANARY);
+    expect(outcome).toMatchObject({ status: 'failed' });
+  });
+});
+
+describe('the sweep covers the whole registry', () => {
+  it('names every channel it does not exercise', () => {
+    const unexercised = CHANNEL_NAMES.filter((channel) => !LOCAL_CHANNELS.includes(channel));
+
+    // Not a gap being hidden: these reach the network, so exercising them here
+    // would test the internet. They are swept by the packaged smoke gate
+    // instead, which runs them against a live main process.
+    expect(unexercised.every((channel) =>
+      channel === 'trading.activity.shared' // Detached profile controller context; covered by native smoke.
+      || channel.startsWith('market-data.')
+      || channel === 'market-events.ingest-local'
+      || channel === 'market-events.ingest-file'
+      || channel === 'portfolio.view'
+      || channel === 'portfolio.allocation'
+      || channel === 'paper.portfolio'
+      || channel === 'paper.execution.preview' // Portfolio refresh is exercised by proposal service fixtures.
+      || channel === 'paper.execution.proposal'
+      || channel === 'paper.campaign'
+      || channel === 'paper.campaign.kill-switch'
+      || channel === 'paper.campaign.connections.start'
+      || channel === 'paper.execution.policy.set'
+      || channel === 'paper.execution.prepare'
+      || channel === 'paper.execution.review'
+      || channel.startsWith('paper.exploratory.')
+      || channel.startsWith('alpaca.paper.')
+      || channel.startsWith('parallel.paper.')
+      || channel === 'accounts.profiles'
+      || channel === 'accounts.profile.switch'
+      || channel.startsWith('accounts.coinbase.')
+      || channel === 'accounts.settings.set'
+      || channel === 'accounts.workspace.set'
+      || channel === 'app.chart.snapshot.save'
+      || channel === 'app.chart.workspace'
+      || channel === 'app.chart.workspace.set'
+      || channel.startsWith('app.person')
+      || channel.startsWith('app.onboarding.')
+      || channel === 'app.profile-readiness'
+      || channel.startsWith('chart-extensions.')
+      || channel.startsWith('advisor.')
+      || channel.startsWith('connections.')
+      || channel === 'portfolio.current'
+      || channel === 'portfolio.history'
+      || channel === 'portfolio.reconciliation.resolve'
+      || channel === 'decision.detail'
+      || channel === 'research.trigger-status'
+      || channel === 'research.candidate.review'
+      || channel === 'research.candidate.rollback'
+      || channel === 'connections.removal-preview' || channel === 'connections.remove'
+      || channel === 'wallets.list' || channel === 'wallets.nickname.set',
+    )).toBe(true);
+  });
+});

@@ -28,6 +28,8 @@ import {
   recordPaperExecutionReview,
   savePaperExecutionProposal,
   savePaperProposalPendingContext,
+  paperProposalRequiresHumanReview,
+  paperProposalPurpose,
   updatePaperExecutionProposalStatus,
   validateExecutionLease,
   type Db,
@@ -60,6 +62,8 @@ export interface ProposedPaperAction {
   readonly runId: string;
   readonly revision: number;
   readonly intents: readonly ExecutionIntent[];
+  /** Purpose-specific callers may require a human review even under an unattended policy. */
+  readonly requireHumanReview?: true;
   readonly pending?: {
     readonly decisionId: string;
     readonly requiredExecutionBarStartMs: number;
@@ -77,6 +81,8 @@ export interface PaperExecutionResult {
 }
 
 export interface PaperExecutionDependencies {
+  /** Purpose-bound proposals refuse submission from a constructor without its revalidation port. */
+  readonly proposalPurposeGuard?: (proposalId: string) => boolean;
   readonly capitalBudget?: PaperCapitalBudgetPort;
   readonly capitalPreviewModel?: PaperCapitalPreviewModel;
   readonly database: Db;
@@ -131,6 +137,7 @@ export class PaperExecutionService {
   readonly #executionLeaseMs: number;
   readonly #capitalBudget: PaperCapitalBudgetPort | undefined;
   readonly #capitalPreviewModel: PaperCapitalPreviewModel | undefined;
+  readonly #proposalPurposeGuard: ((proposalId: string) => boolean) | undefined;
 
   constructor(dependencies: PaperExecutionDependencies) {
     this.#database = dependencies.database;
@@ -143,6 +150,7 @@ export class PaperExecutionService {
     this.#executionLeaseMs = dependencies.executionLeaseMs ?? 5 * 60 * 1_000;
     this.#capitalBudget = dependencies.capitalBudget;
     this.#capitalPreviewModel = dependencies.capitalPreviewModel;
+    this.#proposalPurposeGuard = dependencies.proposalPurposeGuard;
     assertPaperCapitalBudgetCoverage(this.#profileId,this.#capitalBudget,this.#database);
   }
 
@@ -254,11 +262,12 @@ export class PaperExecutionService {
       proposalHash: hash,
       policy: policy.mode,
       reasonCode,
+      ...(action.requireHumanReview ? { requireHumanReview: true } : {}),
     }, this.#database);
     if (this.#capitalBudget && this.#capitalPreviewModel && reasonCode === null) this.capitalPreview(proposal.id);
 
     if (reasonCode !== null) return result(proposal, 'blocked', reasonCode);
-    if (policy.mode === 'review_required' && (snapshot.admissionMode ?? 'validated') !== 'exploratory') {
+    if (paperProposalRequiresHumanReview(proposal.id, this.#profileId, this.#database) || policy.mode === 'review_required' && (snapshot.admissionMode ?? 'validated') !== 'exploratory') {
       return result(proposal, 'pending', 'human_review_required');
     }
 
@@ -352,8 +361,9 @@ export class PaperExecutionService {
     const snapshot = this.#state();
     const intents = JSON.parse(proposal.intentsJson) as readonly ExecutionIntent[];
     let refusal: ExecutionRefusalCode | 'paper_execution_off' | 'evidence_not_verified' |
-      'execution_lease_unavailable' | 'exploratory_campaign_not_active' | 'capital_budget_stale' | null = null;
-    if (getPaperCapitalBook(this.#profileId,this.#database) && listSubmittedPaperExecutions(this.#profileId,this.#database).length) refusal = 'capital_budget_stale';
+      'execution_lease_unavailable' | 'exploratory_campaign_not_active' | 'capital_budget_stale' | 'purpose_revalidation_required' | null = null;
+    if (paperProposalPurpose(proposal.id, this.#profileId, this.#database) && this.#proposalPurposeGuard?.(proposal.id) !== true) refusal = 'purpose_revalidation_required';
+    else if (getPaperCapitalBook(this.#profileId,this.#database) && listSubmittedPaperExecutions(this.#profileId,this.#database).length) refusal = 'capital_budget_stale';
     else if (policy.mode === 'off') refusal = 'paper_execution_off';
     else if ((snapshot.admissionMode ?? 'validated') === 'exploratory' &&
         snapshot.exploratoryAuthorized !== true) refusal = 'exploratory_campaign_not_active';

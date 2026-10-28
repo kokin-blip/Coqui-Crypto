@@ -1,0 +1,2 @@
+tests/paper-reserve-sale-service.test.ts(12,27): error TS2345: Argument of type '{ profileId: string; commandId: string; mode: "review_required"; confirmedAt: number; }' is not assignable to parameter of type 'SetPaperExecutionPolicyInput'.
+  Property 'explicitUnattendedConfirmation' is missing in type '{ profileId: string; commandId: string; mode: "review_required"; confirmedAt: number; }' but required in type 'SetPaperExecutionPolicyInput'.

@@ -1,0 +1,200 @@
+import { describe, expect, it } from 'vitest';
+
+import { CHANNEL_KINDS, CHANNEL_NAMES } from '../packages/contracts/src/index.js';
+import { FixedClock, type UsdAmount } from '../packages/core/src/index.js';
+import { RiskDashboardService } from '../packages/services/src/index.js';
+import { openDatabase, savePortfolioSnapshot, type Db } from '../packages/storage/src/index.js';
+
+const DAY = 86_400_000;
+const T0 = Date.UTC(2026, 0, 1);
+
+function seeded(values: readonly number[]): Db {
+  const database = openDatabase(':memory:');
+  values.forEach((value, index) => {
+    savePortfolioSnapshot(
+      {
+        at: T0 + index * DAY,
+        valueUsd: value.toFixed(2) as UsdAmount,
+        costUsd: '10000.00' as UsdAmount,
+        realizedPnlUsd: '0' as UsdAmount,
+      },
+      database,
+    );
+  });
+  return database;
+}
+
+function view(values: readonly number[], atMs = T0 + values.length * DAY) {
+  const database = seeded(values);
+  const result = new RiskDashboardService({ database, clock: new FixedClock(atMs) }).view();
+  database.close();
+  return result;
+}
+
+/** A flat then falling series, deep enough to trip the hard stop. */
+function crash(): number[] {
+  const rising = Array.from({ length: 40 }, (_, index) => 10_000 + index * 10);
+  const falling = Array.from({ length: 20 }, (_, index) => 10_400 * (1 - (index + 1) * 0.03));
+  return [...rising, ...falling];
+}
+
+describe('the ladder is derived, never stored', () => {
+  it('reports normal on a steady series', () => {
+    const result = view(Array.from({ length: 40 }, (_, index) => 10_000 + index * 5));
+    expect(result.stage).toBe('normal');
+    expect(result.exposureScale).toBe(1);
+  });
+
+  it('drops exposure as the drawdown deepens', () => {
+    const result = view(crash());
+    // The rung is a consequence of the equity curve, computed on this read.
+    // Nothing persists it, so nothing can be out of date with the curve.
+    expect(result.stage).toBe('hard_stop');
+    expect(result.exposureScale).toBe(0);
+    expect(result.maxTradeCount).toBe(0);
+    expect(result.blockReason).not.toBeNull();
+  });
+
+  it('always describes every rung, including the ones not active', () => {
+    const result = view(Array.from({ length: 40 }, (_, index) => 10_000 + index * 5));
+    // A ladder showing only the current rung teaches the user that the absence
+    // of a warning means nothing was checked.
+    expect(result.ladder.map((rung) => rung.stage)).toEqual([
+      'normal',
+      'caution',
+      'defense',
+      'hard_stop',
+    ]);
+    expect(result.ladder.filter((rung) => rung.active)).toHaveLength(1);
+  });
+});
+
+describe('a short history says so', () => {
+  it('flags an insufficient sample rather than reporting a confident zero', () => {
+    const result = view([10_000, 10_050]);
+    // A drawdown computed over two points is arithmetic, not information, and
+    // it renders identically to a real measurement unless it is labelled.
+    expect(result.insufficientHistory).toBe(true);
+    expect(result.sampleCount).toBe(2);
+    expect(result.assessmentState).toBe('unassessed');
+    expect(result.stage).toBeNull();
+    expect(result.exposureScale).toBeNull();
+    expect(result.drawdownPct).toBeNull();
+    expect(result.expectedShortfallPct).toBeNull();
+    expect(result.ladder.every((rung) => !rung.active)).toBe(true);
+  });
+
+  it('stops flagging once there is enough', () => {
+    const result = view(Array.from({ length: 40 }, () => 10_000));
+    expect(result.insufficientHistory).toBe(false);
+    expect(result.assessmentState).toBe('assessed');
+    expect(result.stage).toBe('normal');
+  });
+});
+
+describe('snapshot age is reported, and is not price staleness', () => {
+  it('reports how old the equity history is', () => {
+    const result = view(Array.from({ length: 40 }, () => 10_000), T0 + 60 * DAY);
+    expect(result.snapshotAgeMs).toBe(21 * DAY);
+  });
+
+  it('does not turn a daily snapshot cadence into a permanent hard stop', () => {
+    // The staleness control measures a *price feed*, whose timeout is two
+    // hours. Feeding it snapshot age would hard-stop a perfectly healthy
+    // application every day — and the dashboard would then disagree with the
+    // gate, which is worse than showing nothing.
+    const result = view(Array.from({ length: 40 }, () => 10_000), T0 + 60 * DAY);
+    expect(result.staleMarketData).toBe(false);
+    expect(result.stage).toBe('normal');
+  });
+});
+
+describe('the gate cannot be edited from the UI', () => {
+  it('exposes no write channel that could change it', () => {
+    // P8's exit criterion, asserted structurally. The absence of a channel is a
+    // stronger guarantee than a disabled control, and this test is what keeps
+    // one from being added without the reasoning being revisited.
+    expect(CHANNEL_KINDS.write).toEqual([
+      'paper.reserve.observe', 'paper.reserve.book.create', 'paper.reserve.policy.save', 'paper.reserve.authorize', 'paper.reserve.pause', 'paper.reserve.resume', 'paper.reserve.review', 'paper.reserve.release',
+      'news.report.select-location', 'app.recovery.verify',
+      'app.evidence-export',
+      'research.overlay-shadow.set',
+      'alpaca.paper.connect',
+      'alpaca.paper.refresh',
+      'alpaca.paper.disconnect',
+      'parallel.paper.start',
+      'parallel.paper.reconcile',
+      'parallel.paper.pause',
+      'parallel.paper.resume',
+      'parallel.paper.stop', 'parallel.paper.hourly-study.restart',
+      'capital.reserve.inspect', 'capital.reserve.settings.save',
+      'accounts.coinbase.connect',
+      'accounts.coinbase.connect-json',
+      'accounts.coinbase.disconnect',
+      'accounts.coinbase.sync',
+      'accounts.profile.switch',
+      'accounts.settings.set',
+      'accounts.workspace.set',
+      'app.person.set',
+      'app.onboarding.skip',
+      'app.onboarding.restart',
+      'app.onboarding.complete',
+      'connections.connect-file',
+      'connections.robinhood.keypair.begin',
+      'connections.robinhood.keypair.complete',
+      'connections.robinhood.keypair.cancel',
+      'connections.remove', 'wallets.nickname.set', 'connections.rename',
+      'connections.disconnect',
+      'connections.sync',
+      'app.chart.snapshot.save',
+      'app.chart.workspace.set',
+      'advisor.chat.history.delete',
+      'advisor.chat.history.export',
+      'advisor.chat.send',
+      'advisor.decision.explain',
+      'advisor.evidence.explain',
+      'advisor.facts.generate',
+      'advisor.navigation',
+      'advisor.provider.connect',
+      'advisor.provider.connect-copied',
+      'advisor.provider.verify',
+      'advisor.provider.disconnect',
+      'chart-extensions.install',
+      'chart-extensions.install.pick',
+      'chart-extensions.remove',
+      'chart-extensions.set',
+      'chart-extensions.signer.remove',
+      'chart-extensions.signer.trust',
+      'market-events.ingest-local',
+      'market-events.ingest-file',
+      'paper.campaign.kill-switch',
+      'paper.campaign.connections.start',
+      'paper.exploratory.start',
+      'paper.exploratory.pause',
+      'paper.exploratory.resume',
+      'paper.exploratory.stop',
+      'paper.exploratory.evaluate-now',
+      'paper.execution.policy.set',
+      'paper.execution.prepare',
+      'paper.execution.review',
+      'portfolio.reconciliation.resolve',
+      'research.candidate.review',
+      'research.candidate.rollback',
+    ]);
+    expect(CHANNEL_NAMES.filter((channel) => channel.startsWith('risk.'))).toEqual([
+      'risk.dashboard',
+      'risk.evidence-gate',
+    ]);
+    for (const channel of CHANNEL_NAMES) {
+      if (channel.startsWith('risk.')) expect(CHANNEL_KINDS.write).not.toContain(channel);
+    }
+  });
+
+  it('offers no setter on the service', () => {
+    const database = openDatabase(':memory:');
+    const service = new RiskDashboardService({ database, clock: new FixedClock(T0) });
+    const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(service));
+    expect(methods.filter((name) => name !== 'constructor')).toEqual(['view']);
+    database.close();
+  });
+});

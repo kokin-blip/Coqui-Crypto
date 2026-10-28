@@ -1,0 +1,12 @@
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: 'b5ffcde85830e17a9d1289dd80c9491fc5121ccfbeb99512c4c68bd8a4b971f9'
+}
+PASS policy stays disarmed 
+PASS Main-owned source evidence produces a bounded local consequence {"state":"modeled","reasons":["hypothetical_only","post_fill_reassessment_required","separate_order_review_required"]}
+PASS source review remains pending and preparation refuses 
+PASS preview and refusal create no financial or lifecycle facts 
+PASS desktop-dark: preparation visibly blocked by actual source/authority gates 
+Error: Visual integrity failure in p6g-desktop-dark: off-canvas controls [{"element":"<a class=\"terminal-brand\" href=\"#/overview\" aria-label=\"Coqui Crypto terminal\"><img alt=\"\" src=\"file:///Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/","bounds":{"x":-10,"y":-2478,"width":132.2734375,"height":40,"top":-2478,"right":122.2734375,"bottom":-2438,"left":-10}},{"element":"<select aria-label=\"Active profile\"><option value=\"main\">Main Wallet</option><option value=\"00000000-0000-4000-8000-000000000001\">Smoke isolated profile</option","bounds":{"x":-10,"y":-2433,"width":178.5,"height":28,"top":-2433,"right":168.5,"bottom":-2405,"left":-10}}]; document overflow 1440 -> 1483
+    at assertNoTextClipping (file:///Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/scripts/visual-overflow-audit.mjs:73:34)
+    at async run (file:///Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/scripts/paper-reserve-sale-smoke.mjs:41:110)

@@ -1,0 +1,32 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/paper-reserve-sale-evidence.test.ts (3 tests) 285ms
+stdout | tests/secret-leak-sweep.test.ts > a connected key never reaches the renderer > appears in no channel response
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: 'b5ffcde85830e17a9d1289dd80c9491fc5121ccfbeb99512c4c68bd8a4b971f9'
+}
+
+stdout | tests/secret-leak-sweep.test.ts > a connected key never reaches the renderer > appears in no column of the database
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: 'b5ffcde85830e17a9d1289dd80c9491fc5121ccfbeb99512c4c68bd8a4b971f9'
+}
+
+ ✓ tests/secret-leak-sweep.test.ts (7 tests) 1094ms
+     ✓ appears in no channel response  769ms
+     ✓ appears in no column of the database  321ms
+ ✓ tests/paper-reserve-sale-service.test.ts (6 tests) 1043ms
+ ✓ tests/paper-reserve-sale-app.test.ts (6 tests) 953ms
+     ✓ prepares once, restores the proposal across restart, and still requires a separate reviewed order  427ms
+ ✓ tests/paper-profit-reserve-ui.test.ts (4 tests) 160ms
+ ✓ tests/paper-reserve-sale.test.ts (15 tests) 65ms
+ ✓ tests/contracts-channels.test.ts (21 tests) 15ms
+ ✓ tests/paper-reserve-sale-handlers.test.ts (6 tests) 4ms
+
+ Test Files  8 passed (8)
+      Tests  68 passed (68)
+   Start at  15:10:39
+   Duration  8.44s (transform 1.70s, setup 0ms, import 4.27s, tests 3.62s, environment 0ms)
+

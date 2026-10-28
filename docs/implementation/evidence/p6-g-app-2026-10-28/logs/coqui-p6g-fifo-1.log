@@ -1,0 +1,27 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ❯ tests/paper-reserve-sale-evidence.test.ts (3 tests | 1 failed) 226ms
+     ✓ includes the actual buy fee in remaining basis after a partial sell 91ms
+     ✓ does not repair incoherent quantities or missing acquisition history 66ms
+     × refuses same-asset equal-time ordering rather than using receipt or row ID order 68ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/paper-reserve-sale-evidence.test.ts > Main FIFO sale evidence > refuses same-asset equal-time ordering rather than using receipt or row ID order
+AssertionError: expected [Function] to throw error including 'sale_fifo_order_unverified' but got 'sale_fifo_history_unavailable'
+
+Expected: "sale_fifo_order_unverified"
+Received: "sale_fifo_history_unavailable"
+
+ ❯ tests/paper-reserve-sale-evidence.test.ts:24:120
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  15:08:35
+   Duration  1.64s (transform 1.05s, setup 0ms, import 1.36s, tests 226ms, environment 0ms)
+
