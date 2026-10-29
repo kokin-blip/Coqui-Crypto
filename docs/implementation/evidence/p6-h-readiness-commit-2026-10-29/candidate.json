@@ -1,0 +1,40 @@
+{
+  "base": "24afeadc8bfeaa5023bc871b45b79ec789f6b2ee",
+  "candidate": "/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-h-readiness-commit-vr4mtr99",
+  "paths": [
+    "docs/implementation/evidence/p6-h-readiness-2026-10-29/focused-result.json",
+    "docs/implementation/evidence/p6-h-readiness-2026-10-29/focused.log",
+    "docs/implementation/evidence/p6-h-readiness-2026-10-29/isolated-focused-result.json",
+    "docs/implementation/evidence/p6-h-readiness-2026-10-29/isolated-focused.log",
+    "docs/implementation/evidence/p6-h-readiness-2026-10-29/linear-sync.json",
+    "docs/implementation/evidence/p6-h-readiness-2026-10-29/lint-result.json",
+    "docs/implementation/evidence/p6-h-readiness-2026-10-29/lint.log",
+    "docs/implementation/evidence/p6-h-readiness-2026-10-29/typecheck-result.json",
+    "docs/implementation/evidence/p6-h-readiness-2026-10-29/typecheck.log",
+    "docs/implementation/evidence/p6-h-readiness-2026-10-29/validation.json",
+    "docs/implementation/evidence/p7-commit-2026-10-29/commit-receipt.json",
+    "docs/implementation/small-portfolio-p6-h-readiness-plan-2026-10-29.md",
+    "docs/implementation/small-portfolio-p7-commit-delivery-2026-10-29.md",
+    "docs/implementation/small-portfolio-phase-tracker-2026-10-23.md",
+    "scripts/inspect-small-portfolio-evidence.mjs",
+    "tests/small-portfolio-evidence-inventory.test.ts"
+  ],
+  "hashes": {
+    "scripts/inspect-small-portfolio-evidence.mjs": "e145addb2ac2ba0079a2c26236d00da3813b60247a971d33c8d04bf52e5ebcef",
+    "tests/small-portfolio-evidence-inventory.test.ts": "3883d65d64ab35bca05a7a8b642fdaa79fc0b9ad6a2f58457d5b723009b018e3",
+    "docs/implementation/small-portfolio-p6-h-readiness-plan-2026-10-29.md": "41ec99e27f2884f0bacab19d084247ed78d5a131264c959c7d236413ddae2a5e",
+    "docs/implementation/small-portfolio-phase-tracker-2026-10-23.md": "afcf396fa65351ae6706552a52bac0f6794402108d089ab75c93989b09743cd2",
+    "docs/implementation/small-portfolio-p7-commit-delivery-2026-10-29.md": "8e1aee1e7f95a31ed3e0d985ccb0f7590a2bd3fce64598d2d667093d580d0a83",
+    "docs/implementation/evidence/p7-commit-2026-10-29/commit-receipt.json": "2ad009e82481481ef4bf44f07b0448cb43598d133d0b4f6c9af9ea620682a69d",
+    "docs/implementation/evidence/p6-h-readiness-2026-10-29/lint.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/implementation/evidence/p6-h-readiness-2026-10-29/isolated-focused.log": "fb7f1b23c2109f28aca65b34999e7a3e57898c4ffdf78d0be5b82006e67041c0",
+    "docs/implementation/evidence/p6-h-readiness-2026-10-29/typecheck.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/implementation/evidence/p6-h-readiness-2026-10-29/lint-result.json": "507b859063ab56ac8e3db89ac8fcd0f7f6beb90b8e6cd3ebaad94f2af525afaa",
+    "docs/implementation/evidence/p6-h-readiness-2026-10-29/linear-sync.json": "e6c94e795ae6b30ac67b292cf76835fbdf6491e76d13310f9dde5d9c1677da29",
+    "docs/implementation/evidence/p6-h-readiness-2026-10-29/typecheck-result.json": "282cb8de0862539dddd295e4674a5dd6797228bdda681dc78d73a4e11431a2b9",
+    "docs/implementation/evidence/p6-h-readiness-2026-10-29/validation.json": "da3e46268c19607d328527dcf63420fc34d1f301419f8422b302342b3b5cd51d",
+    "docs/implementation/evidence/p6-h-readiness-2026-10-29/isolated-focused-result.json": "82671cf4fb721d4950782652f8300659a35e27263cae68cc7689e29a255fd31d",
+    "docs/implementation/evidence/p6-h-readiness-2026-10-29/focused-result.json": "6896596ed98ef6aff76ceb213274bb1bae21d8470fbe7848c125c73078b87fb6",
+    "docs/implementation/evidence/p6-h-readiness-2026-10-29/focused.log": "23c188d32a5ce401ab02531f648250bcd865eff78da49b79e2e45bc3d45f6ebc"
+  }
+}

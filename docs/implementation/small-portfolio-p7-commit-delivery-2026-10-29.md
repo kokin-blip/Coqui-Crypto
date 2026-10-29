@@ -11,3 +11,9 @@ Exact isolated verification: **349 suites / 2,357 tests**, root/renderer typeche
 **Prompt used**
 
 Commit and push P7-A–G and the 13 regression tests, then continue the remaining unblocked P0–P7 work. Preserve unrelated work, keep unmet evidence gates pending, and update the phase tracker.
+
+## Post-push record
+
+Committed and pushed as [24afeadc8bfeaa5023bc871b45b79ec789f6b2ee](https://github.com/kokin-blip/Coqui-Crypto/commit/24afeadc8bfeaa5023bc871b45b79ec789f6b2ee) on `codex/operations-crew-journal`; remote ref verified. All 73 selected source hashes and 180 staged paths matched the isolated closure. The index was clean after commit. No merge, release, installed migration, actual study registration, collector, final access or qualification is claimed. [Commit receipt](evidence/p7-commit-2026-10-29/commit-receipt.json).
+
+Subsequent local, uncommitted work is separately described in the [P6-H readiness specification](small-portfolio-p6-h-readiness-plan-2026-10-29.md) and tracker. It is not included in the pushed commit or its application acceptance result.

@@ -1,0 +1,9 @@
+{
+  "command": [
+    "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/eslint/bin/eslint.js",
+    "scripts/inspect-small-portfolio-evidence.mjs",
+    "tests/small-portfolio-evidence-inventory.test.ts"
+  ],
+  "exitCode": 0
+}

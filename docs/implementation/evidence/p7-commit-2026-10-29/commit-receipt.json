@@ -1,0 +1,23 @@
+{
+  "commit": "24afeadc8bfeaa5023bc871b45b79ec789f6b2ee",
+  "parent": "02b8171e74f079c68dbd9da8a3d8f9d4359cd306",
+  "remoteVerified": "24afeadc8bfeaa5023bc871b45b79ec789f6b2ee",
+  "remoteRef": "refs/heads/codex/operations-crew-journal",
+  "branch": "codex/operations-crew-journal",
+  "stagedPaths": 180,
+  "sourceHashesVerified": 73,
+  "isolatedSuites": 349,
+  "isolatedTests": 2357,
+  "cliChecks": 12,
+  "p7NativeChecks": 11,
+  "nativeSafety": "ALL PASS",
+  "regressionCasesIncluded": 13,
+  "preservedOriginalFiles": 3309,
+  "baselineFiles": 3310,
+  "intendedChange": "tracker only",
+  "unrelatedChanged": [],
+  "indexClean": true,
+  "merged": false,
+  "released": false,
+  "actualRegistrationOrQualification": false
+}

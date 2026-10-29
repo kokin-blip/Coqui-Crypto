@@ -1,0 +1,12 @@
+
+ RUN  v4.1.8 /private/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-h-readiness-commit-vr4mtr99
+
+ ✓ tests/host-authority.test.ts (3 tests) 105ms
+ ✓ tests/small-portfolio-evidence-inventory.test.ts (6 tests) 217ms
+ ✓ tests/paper-profit-reserve-authority.test.ts (4 tests) 368ms
+
+ Test Files  3 passed (3)
+      Tests  13 passed (13)
+   Start at  16:12:27
+   Duration  2.22s (transform 2.84s, setup 0ms, import 4.09s, tests 690ms, environment 0ms)
+

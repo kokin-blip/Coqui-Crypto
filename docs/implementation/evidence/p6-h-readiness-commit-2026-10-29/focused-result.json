@@ -1,0 +1,11 @@
+{
+  "command": [
+    "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/vitest/vitest.mjs",
+    "run",
+    "tests/small-portfolio-evidence-inventory.test.ts",
+    "tests/host-authority.test.ts",
+    "tests/paper-profit-reserve-authority.test.ts"
+  ],
+  "exitCode": 0
+}

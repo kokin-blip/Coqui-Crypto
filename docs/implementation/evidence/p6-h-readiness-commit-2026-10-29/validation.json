@@ -1,0 +1,17 @@
+{
+  "base": "24afeadc8bfeaa5023bc871b45b79ec789f6b2ee",
+  "status": "readiness_only",
+  "suites": 3,
+  "tests": 13,
+  "focusedLint": "pass",
+  "rootTypecheck": "pass",
+  "baselineFiles": 3354,
+  "unexpectedChanges": [],
+  "selectedSourceHashes": {
+    "scripts/inspect-small-portfolio-evidence.mjs": "e145addb2ac2ba0079a2c26236d00da3813b60247a971d33c8d04bf52e5ebcef",
+    "tests/small-portfolio-evidence-inventory.test.ts": "3883d65d64ab35bca05a7a8b642fdaa79fc0b9ad6a2f58457d5b723009b018e3"
+  },
+  "applicationBehaviorChanged": false,
+  "connectedAuthorityGranted": false,
+  "fullScopeAndEvidenceGatesPreserved": true
+}
