@@ -26,7 +26,7 @@ export function listIntegrityEvents(namespace: string | null, kind: string, db: 
 }
 export function claimIntegrityHoldout(input: { readonly planHash: string; readonly startMs: number;
   readonly endExclusiveMs: number; readonly assets: readonly string[]; readonly dataLineage: string;
-  readonly freezeHash: string; readonly atMs: number }, db: Db): void {
+  readonly freezeHash: string; readonly atMs: number }, db: Db, afterClaim?:()=>void): void {
   if (!Number.isSafeInteger(input.startMs) || !Number.isSafeInteger(input.endExclusiveMs) ||
       input.startMs >= input.endExclusiveMs || input.assets.length === 0) throw new TypeError('Invalid holdout claim');
   db.exec('BEGIN IMMEDIATE');
@@ -48,6 +48,7 @@ export function claimIntegrityHoldout(input: { readonly planHash: string; readon
     }
     appendIntegrityEvent({ namespace: input.planHash, kind: 'final_claim', key: 'once', atMs: input.atMs,
       body: input as unknown as CanonicalJsonValue }, db);
+    afterClaim?.();
     db.exec('COMMIT');
   } catch (error) { db.exec('ROLLBACK'); throw error; }
 }

@@ -1,0 +1,63 @@
+{
+  "synthetic": true,
+  "providersStubbed": true,
+  "schedulerDisabled": true,
+  "checks": [
+    {
+      "name": "boot has no enrollment or paper permission",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "explicit study selection keeps outcome bodies unopened",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "sealed final action evidence and correction gaps survive production preload",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-dark: labels and narrow scrolling",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-light: labels and narrow scrolling",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "contrast-zoom: labels and narrow scrolling",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "keyboard reaches the study selector",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "read projection has no financial or lifecycle writes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "no write UI is exposed",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "live execution remains disabled",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "no renderer errors",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": []
+}

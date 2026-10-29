@@ -1,0 +1,17 @@
+{
+  "commit": "02b8171e74f079c68dbd9da8a3d8f9d4359cd306",
+  "branch": "codex/operations-crew-journal",
+  "parent": "5af1b92de230a42c3464cd63be16ddf0d60893d1",
+  "remote": "origin",
+  "remoteRef": "refs/heads/codex/operations-crew-journal",
+  "remoteVerified": "02b8171e74f079c68dbd9da8a3d8f9d4359cd306",
+  "commitPaths": 189,
+  "sourceHashesVerified": 38,
+  "isolatedSuites": 333,
+  "isolatedTests": 2297,
+  "nativeSaleChecks": 18,
+  "nativeSafety": "ALL PASS",
+  "mergeOrRelease": false,
+  "scope": "P6-G app/solver/backend/deadline dependency and evidence; P7/hourly/broker recovery application code excluded",
+  "followup": "new recovery/deadline tests remain local/uncommitted"
+}

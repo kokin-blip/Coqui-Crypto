@@ -1,0 +1,127 @@
+{
+  "prompt": "Commit and push P7-A\u2013G and the 13 regression tests, then continue the remaining unblocked P0\u2013P7 work. Preserve unrelated work, keep unmet evidence gates pending, and update the phase tracker.",
+  "base": "02b8171e74f079c68dbd9da8a3d8f9d4359cd306",
+  "candidate": "/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-p7-commit-j1500tsp",
+  "checks": {
+    "typecheck": {
+      "check": "typecheck",
+      "exitCode": 0,
+      "log": "/tmp/coqui-p7-commit-isolated-typecheck-final.log",
+      "commands": [
+        [
+          "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/typescript/bin/tsc",
+          "-p",
+          "tsconfig.check.json",
+          "--noEmit"
+        ],
+        [
+          "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/typescript/bin/tsc",
+          "-p",
+          "apps/desktop/tsconfig.renderer.json",
+          "--noEmit"
+        ]
+      ]
+    },
+    "lint": {
+      "check": "lint",
+      "exitCode": 0,
+      "log": "/tmp/coqui-p7-commit-isolated-lint-final.log",
+      "commands": [
+        [
+          "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/eslint/bin/eslint.js",
+          "."
+        ]
+      ]
+    },
+    "build": {
+      "check": "build",
+      "exitCode": 0,
+      "log": "/tmp/coqui-p7-commit-isolated-build-final.log",
+      "commands": [
+        [
+          "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "scripts/build-study-manifests.mjs"
+        ],
+        [
+          "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/typescript/bin/tsc",
+          "-b",
+          "--force"
+        ]
+      ]
+    },
+    "desktop": {
+      "check": "desktop",
+      "exitCode": 0,
+      "log": "/tmp/coqui-p7-commit-isolated-desktop-final.log",
+      "commands": [
+        [
+          "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/typescript/bin/tsc",
+          "-b"
+        ],
+        [
+          "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "scripts/build-preload.mjs"
+        ],
+        [
+          "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/apps/desktop/node_modules/vite/bin/vite.js",
+          "build"
+        ],
+        [
+          "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "scripts/build-metadata.mjs"
+        ]
+      ]
+    },
+    "tests": {
+      "check": "tests",
+      "exitCode": 0,
+      "log": "/tmp/coqui-p7-commit-isolated-tests-final.log",
+      "commands": [
+        [
+          "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/vitest/vitest.mjs",
+          "run",
+          "--maxWorkers=1"
+        ]
+      ]
+    }
+  },
+  "isolatedSuites": 349,
+  "isolatedTests": 2357,
+  "cliChecks": 12,
+  "nativeP7Checks": 11,
+  "nativeSafety": "ALL PASS",
+  "regressionTestsIncluded": 13,
+  "scope": "P7-A\u2013G and later zero-friction action-count correction plus13 G recovery/deadline regressions over pushed G; actual H\u2013J pending",
+  "priorEvidence": "original P7 340/2304 isolated and346/2411 combined, G333/2297 isolated retained as historical",
+  "sourceManifest": "source-manifest.json",
+  "rawLogs": "preserved byte-for-byte; whitespace checks exclude raw .log only",
+  "actualStudyRegistered": false,
+  "actualCollectorEnabled": false,
+  "actualFinalOpened": false,
+  "actualQualification": false,
+  "installedAccountAccess": false,
+  "brokerMutation": false,
+  "deployment": false,
+  "uiSource": "unchanged from prior reviewed P7; existing fix-list ship scope retained",
+  "excluded": [
+    "hourly-study changes",
+    "broker recovery application changes",
+    "unrelated package/secrets changes"
+  ],
+  "pending": [
+    "P5-H",
+    "P6-G operational approval/qualification",
+    "P6-H",
+    "P7-H",
+    "P7-I",
+    "P7-J",
+    "human review/merge/release"
+  ]
+}

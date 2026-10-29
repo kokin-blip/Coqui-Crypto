@@ -1,0 +1,27 @@
+{
+  "commit": "5af1b92de230a42c3464cd63be16ddf0d60893d1",
+  "branch": "codex/operations-crew-journal",
+  "remoteRef": "5af1b92de230a42c3464cd63be16ddf0d60893d1",
+  "remoteVerified": true,
+  "sourceHashesVerified": 74,
+  "stagedPaths": 142,
+  "priorBase": "775950a0f3c539755a626a1fe058b55ef8f5787f",
+  "isolatedValidation": {
+    "suites": 327,
+    "tests": 2258,
+    "focusedCases": 43,
+    "typecheck": true,
+    "lint": true,
+    "builds": true,
+    "native": true
+  },
+  "merged": false,
+  "released": false,
+  "pending": [
+    "P5-H",
+    "P6-G",
+    "P6-H",
+    "human source/release/owner/qualification review",
+    "P7 implementation and actual study"
+  ]
+}

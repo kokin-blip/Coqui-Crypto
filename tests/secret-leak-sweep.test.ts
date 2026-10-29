@@ -74,6 +74,7 @@ const LOCAL_CHANNELS: readonly ChannelName[] = [
   'paper.execution.proposals',
   'paper.performance',
   'capital.scopes', 'capital.performance', 'capital.budget', 'capital.feasibility',
+  'research.prospective.instances', 'research.prospective.coverage', 'research.prospective.development', 'research.prospective.report',
   'research.capital-replay.runs', 'research.capital-replay.detail',
   'research.capital-contest.runs', 'research.capital-contest.detail',
   'paper.reserve.sale.status',
@@ -90,6 +91,10 @@ const LOCAL_CHANNELS: readonly ChannelName[] = [
 ];
 
 const PAYLOADS: Partial<Record<ChannelName, unknown>> = {
+  'research.prospective.instances': {limit:50},
+  'research.prospective.coverage': {registrationId:'a'.repeat(64)},
+  'research.prospective.development': {registrationId:'a'.repeat(64)},
+  'research.prospective.report': {registrationId:'a'.repeat(64),reportId:'b'.repeat(64)},
   'paper.reserve.books': {},
   'paper.reserve.view': {},
   'paper.reserve.preview': {},

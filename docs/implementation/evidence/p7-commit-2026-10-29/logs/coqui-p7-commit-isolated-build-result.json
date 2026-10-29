@@ -1,0 +1,17 @@
+{
+  "check": "build",
+  "exitCode": 0,
+  "log": "/tmp/coqui-p7-commit-isolated-build-final.log",
+  "commands": [
+    [
+      "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "scripts/build-study-manifests.mjs"
+    ],
+    [
+      "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/typescript/bin/tsc",
+      "-b",
+      "--force"
+    ]
+  ]
+}

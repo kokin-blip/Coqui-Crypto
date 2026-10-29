@@ -1,0 +1,22 @@
+{
+  "baseCommit": "02b8171e74f079c68dbd9da8a3d8f9d4359cd306",
+  "scope": "local test-only continuation; no application changes",
+  "newSuites": 2,
+  "newCases": 13,
+  "isolatedNewCasesPassed": 13,
+  "combinedFocusedSuites": 6,
+  "combinedFocusedCases": 34,
+  "typecheck": 0,
+  "focusedLint": 0,
+  "sourceHashes": {
+    "tests/paper-reserve-sale-recovery.test.ts": "a41700966d70066b52578f0ece355282c6f59be48d347e76b0f0c891de8f05b6",
+    "tests/paper-reserve-sale-deadlines.test.ts": "5115156be010f37fa9d0df98ec9345e2fbaeb853ccb95967cb1827385fa662f4"
+  },
+  "sideEffects": {
+    "installedDatabaseAccess": false,
+    "providerOrBrokerMutation": false,
+    "studyRegistration": false,
+    "deployment": false
+  },
+  "gatesClosed": []
+}

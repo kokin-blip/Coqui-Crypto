@@ -50,6 +50,9 @@ export function loadTrialRegistry(database: Db): TrialRegistrySnapshot {
   const rows = database.prepare(
     'SELECT * FROM trial_registry_records ORDER BY sequence',
   ).all() as unknown as TrialRow[];
+  if (database.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='prospective_trial_declarations_v1'").get()) {
+    rows.push(...database.prepare('SELECT * FROM prospective_trial_declarations_v1 ORDER BY sequence').all() as unknown as TrialRow[]);
+  }
   let registry = createTrialRegistry(meta.completeness);
   for (const row of rows) {
     const record = recordFromRow(row);
@@ -90,8 +93,9 @@ export function setTrialRegistryCompleteness(
 /** Append one validated search; there is deliberately no update or delete path. */
 export function appendTrialRecord(record: TrialRecord, database: Db): void {
   registerTrials(loadTrialRegistry(database), record);
+  const table = record.evidenceStatus === 'prospective-declared' ? 'prospective_trial_declarations_v1' : 'trial_registry_records';
   database.prepare(`
-    INSERT INTO trial_registry_records (
+    INSERT INTO ${table} (
       id, family, search_kind, evidence_status, parameter_space_json, trial_count,
       searched_at, dataset_hash, cost_profile_hash, code_revision,
       produced_defaults_json, study_ref, record_hash

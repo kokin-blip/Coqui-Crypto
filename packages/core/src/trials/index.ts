@@ -2,7 +2,7 @@ import { sha256Hex } from '../crypto/sha256.js';
 
 export type StrategyFamily = 'momentum' | 'voltarget' | 'trendvol' | 'signal-tilt' | 'rotation';
 export type SearchKind = 'grid' | 'random' | 'bayesian' | 'human-guided' | 'feature-screen' | 'other';
-export type TrialEvidenceStatus = 'verified' | 'legacy-unresolved';
+export type TrialEvidenceStatus = 'verified' | 'legacy-unresolved' | 'prospective-declared';
 /**
  * How much of the historical search this registry represents.
  *
@@ -80,7 +80,7 @@ function validateRecord(record: TrialRecord): void {
   if (!STRATEGY_FAMILIES.includes(record.family) || !SEARCH_KINDS.includes(record.searchKind)) {
     throw new TypeError('A trial record has an unsupported family or search kind');
   }
-  if (record.evidenceStatus !== 'verified' && record.evidenceStatus !== 'legacy-unresolved') {
+  if (record.evidenceStatus !== 'verified' && record.evidenceStatus !== 'legacy-unresolved' && record.evidenceStatus !== 'prospective-declared') {
     throw new TypeError('A trial record has an unsupported evidence status');
   }
   if (!Number.isSafeInteger(record.trialCount) || record.trialCount <= 0) {
@@ -89,6 +89,7 @@ function validateRecord(record: TrialRecord): void {
   if (record.codeRevision.length === 0 || record.codeRevision.length > 200) {
     throw new TypeError('A trial record requires an explicit code revision');
   }
+  if (record.evidenceStatus === 'prospective-declared' && (record.datasetHash !== null || !record.parameterSpace['acquisitionProtocol']?.every(value => typeof value === 'string' && DATASET_HASH_PATTERN.test(value)) || !record.parameterSpace['registrationId']?.every(value => typeof value === 'string' && DATASET_HASH_PATTERN.test(value)))) throw new TypeError('Prospective declarations require protocol and registration identity, with future dataset unavailable');
   if (record.evidenceStatus === 'verified') {
     if (record.datasetHash === null || !DATASET_HASH_PATTERN.test(record.datasetHash)) {
       throw new TypeError('Verified trials require a lowercase SHA-256 dataset hash');

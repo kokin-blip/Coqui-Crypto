@@ -1,0 +1,54 @@
+{
+  "synthetic": true,
+  "realProviders": false,
+  "checks": [
+    {
+      "name": "prepare succeeds without registration",
+      "passed": true
+    },
+    {
+      "name": "prepare does not append",
+      "passed": true
+    },
+    {
+      "name": "owner flag required",
+      "passed": true
+    },
+    {
+      "name": "explicit reviewed future registration",
+      "passed": true
+    },
+    {
+      "name": "exact retry returns original receipt",
+      "passed": true
+    },
+    {
+      "name": "inspect local read",
+      "passed": true
+    },
+    {
+      "name": "coverage local read",
+      "passed": true
+    },
+    {
+      "name": "development local read",
+      "passed": true
+    },
+    {
+      "name": "registry local read",
+      "passed": true
+    },
+    {
+      "name": "report cannot open absent sealed result",
+      "passed": true
+    },
+    {
+      "name": "write command cannot omit host/manifest/approval",
+      "passed": true
+    },
+    {
+      "name": "registration stays paused and creates no orders or claim",
+      "passed": true
+    }
+  ]
+}

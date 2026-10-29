@@ -1,0 +1,47 @@
+{
+  "status": "synchronized",
+  "commit": "5af1b92de230a42c3464cd63be16ddf0d60893d1",
+  "records": [
+    {
+      "label": "COQ-40 commit record",
+      "id": "COQ-40",
+      "status": "In Progress",
+      "url": "https://linear.app/coqui-crypto/issue/COQ-40/implement-p6-reviewed-internal-paper-profit-reserves"
+    },
+    {
+      "label": "COQ-40 push comment",
+      "id": "a2acc96d-22ef-41fb-87ba-7bac7d20d0b1"
+    },
+    {
+      "label": "COQ-17 plan",
+      "id": "COQ-17",
+      "status": "Backlog",
+      "url": "https://linear.app/coqui-crypto/issue/COQ-17/track-valid-prospective-observations-and-coverage"
+    },
+    {
+      "label": "COQ-17 planning comment",
+      "id": "7017e6ab-b057-4aa1-b807-97e46fe99e72"
+    },
+    {
+      "label": "COQ-10 owner prerequisite",
+      "id": "07ccbfc6-8f17-468c-96c2-635d393158f8"
+    },
+    {
+      "label": "COQ-18 final prerequisite",
+      "id": "f1cd118a-5c44-4cd1-b102-e4412cc008d0"
+    },
+    {
+      "label": "milestone 3912e58c-9923-4c05-9e78-230a6404eeda",
+      "id": "cec007dd-318e-4fe1-8ecc-52c0e364570b"
+    },
+    {
+      "label": "milestone 7c291557-21bc-42fb-9d52-9a58363c3b7e",
+      "id": "efd2c817-56d0-4b5e-a2d6-3c7eb654dea7"
+    },
+    {
+      "label": "milestone d21bc6a1-3dde-40ea-a98a-a20e20f4d572",
+      "id": "b310e03e-2e92-4f89-95ea-7384408f6f3d"
+    }
+  ],
+  "promptUsed": "Commit and push P6-A–F, then plan P7. Reread its full requirements in the saved roadmap and inspect the code before coding. Keep P5-H and P6-G/H pending, preserve completed work and the full P0–P7 scope, and update the phase tracker."
+}

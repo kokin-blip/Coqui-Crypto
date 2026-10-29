@@ -1,0 +1,16 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/paper-reserve-sale-deadlines.test.ts (3 tests) 2ms
+ ✓ tests/paper-reserve-sale-recovery.test.ts (10 tests) 1828ms
+ ✓ tests/paper-reserve-sale-service.test.ts (6 tests) 875ms
+ ✓ tests/paper-reserve-sale-app.test.ts (6 tests) 819ms
+     ✓ prepares once, restores the proposal across restart, and still requires a separate reviewed order  366ms
+ ✓ tests/paper-profit-reserve-consumers.test.ts (5 tests) 507ms
+ ✓ tests/paper-profit-reserve-authority.test.ts (4 tests) 307ms
+
+ Test Files  6 passed (6)
+      Tests  34 passed (34)
+   Start at  15:34:24
+   Duration  7.35s (transform 1.17s, setup 0ms, import 2.67s, tests 4.34s, environment 0ms)
+

@@ -5,7 +5,7 @@ const input={profileId:'main',bookId:'31fda7d7-2a8c-4ef4-9e07-8b731c9dad3d',comm
 describe('P6 explicit cash origin and additive migration',()=>{
   it('starts empty, atomically creates $500 in the existing ledger and P1/P2; exact retry returns original',()=>{
     const db=openDatabase(':memory:');try {
-      expect(db.prepare('PRAGMA user_version').get()?.['user_version']).toBe(99);expect(getPaperCapitalBook('main',db)).toBeNull();
+      expect(db.prepare('PRAGMA user_version').get()?.['user_version']).toBe(100);expect(getPaperCapitalBook('main',db)).toBeNull();
       const book=createPaperCapitalBook(input,db),binding=paperReserveBinding('main',db)!;
       expect(binding).toMatchObject({disabled:1,archived:0,policy_id:null,state_id:null});expect(getPaperBookOrigin('main',db)).toBeNull();
       expect(listPaperBalances('main',db)).toMatchObject([{assetId:'USD',quantity:'500'}]);

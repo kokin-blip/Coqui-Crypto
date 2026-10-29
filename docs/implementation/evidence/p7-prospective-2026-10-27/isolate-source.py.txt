@@ -1,0 +1,49 @@
+from pathlib import Path
+import json,hashlib,subprocess,difflib,os,shutil
+root=Path.cwd();base=json.loads((root/'docs/implementation/evidence/p7-prospective-2026-10-27/baseline.json').read_text());out=Path('/tmp/coqui-p7-final');out.mkdir(exist_ok=True)
+archive=subprocess.Popen(['git','archive',base['base']],stdout=subprocess.PIPE,cwd=root)
+subprocess.run(['tar','-x','-C',str(out)],stdin=archive.stdout,check=True);archive.stdout.close();assert archive.wait()==0
+sources=base['sourceHashes'];dirty={r['path']:r['sha256'] for r in base['dirtyFiles']};changed=[p for p,h in sources.items() if (root/p).is_file() and hashlib.sha256((root/p).read_bytes()).hexdigest()!=h]
+# All new P7 application/tests/scripts, plus deliberate clean-file migration expectations.
+new=[str(p.relative_to(root)) for pattern in ['packages/**/capital-prospective*.ts','packages/**/prospective-qualification.ts','packages/core/src/research/paper-qualification.ts','packages/storage/src/migrations/v100.ts','apps/desktop/src/main/capital-prospective*.ts','apps/desktop/src/renderer/app/CapitalProspectiveEvidence.tsx','apps/desktop/src/renderer/styles/capital-prospective.css','apps/desktop/scripts/capital-prospective-smoke.mjs','scripts/research-capital-prospective.mjs','tests/capital-prospective*.test.ts','tests/helpers/capital-prospective.ts'] for p in root.glob(pattern)]
+changes=[];preserved=[]
+for p in sorted(set(changed+new)):
+ if p in ['docs/studies/behavior-manifests-v1.json','packages/core/src/research/study-manifests.generated.ts']:continue
+ current=(root/p).read_text()
+ if p not in dirty:
+  target=current
+ else:
+  before=current
+  if p=='apps/desktop/src/main/composition.ts':
+   before=before.replace("import {createMainProspectiveRuntime} from './capital-prospective-runtime.js'; import {createProspectiveHandlers} from './capital-prospective-handlers.js'; ",'').replace(' ...createProspectiveHandlers(createMainProspectiveRuntime({profileId:options.profileId,database,clock}).reads),','')
+  elif p=='apps/desktop/src/renderer/query/refetch.ts':before=''.join(line for line in before.splitlines(True) if "'research.prospective." not in line)
+  elif p=='packages/contracts/src/channels.ts':before=before.replace("import {prospectiveChannelSchemas} from './schemas/capital-prospective.js';\n",'').replace('  ...prospectiveChannelSchemas,\n','')
+  elif p=='tests/contracts-channels.test.ts':before=before.replace(", 'research.prospective.coverage', 'research.prospective.development', 'research.prospective.instances', 'research.prospective.report'",'')
+  elif p=='scripts/build-study-manifests.mjs':
+   before=before.replace("import {execFileSync} from 'node:child_process';\n",'').replace("  'capital-prospective-study-v1': 'packages/services/src/research/capital-prospective-governance.ts',\n",'')
+   before=before.replace(";\\nexport const STUDY_BUILD_LOCK_HASH = '+JSON.stringify(hash(readFileSync(resolve('pnpm-lock.yaml'))))+';\\nexport const STUDY_BUILD_REVISION = '+JSON.stringify(execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim())+';\\n",';\\n')
+  else:raise RuntimeError('unhandled mixed '+p)
+  assert hashlib.sha256(before.encode()).hexdigest()==dirty[p],('baseline reconstruction mismatch',p,hashlib.sha256(before.encode()).hexdigest(),dirty[p])
+  original=subprocess.check_output(['git','show',base['base']+':'+p],cwd=root).decode()
+  patch=''.join(difflib.unified_diff(before.splitlines(True),current.splitlines(True),fromfile='a/'+p,tofile='b/'+p,n=0))
+  subprocess.run(['git','apply','--unidiff-zero','--unsafe-paths','-'],input=patch.encode(),cwd=out,check=True)
+  target=(out/p).read_text();preserved.append(p)
+ (out/p).parent.mkdir(parents=True,exist_ok=True);(out/p).write_text(target);changes.append(p)
+# Dependency resolution: each workspace points to isolated Coqui packages, external dependencies reuse installed bytes.
+if not (out/'node_modules').exists():(out/'node_modules').symlink_to(root/'node_modules',target_is_directory=True)
+for folder in list((out/'packages').iterdir())+list((out/'apps').iterdir()):
+ nm=folder/'node_modules';original=root/folder.relative_to(out)/'node_modules'
+ if not original.is_dir():continue
+ nm.mkdir(exist_ok=True)
+ for dep in original.iterdir():
+  if dep.name=='@coqui':continue
+  target=nm/dep.name
+  if not target.exists():target.symlink_to(dep.resolve(),target_is_directory=dep.is_dir())
+ coqui=nm/'@coqui';coqui.mkdir(exist_ok=True)
+ for pkg in list((out/'packages').iterdir())+list((out/'apps').iterdir()):
+  if not (pkg/'package.json').exists():continue
+  link=coqui/pkg.name
+  if not link.exists():link.symlink_to(pkg,target_is_directory=True)
+result={'base':base['base'],'path':str(out),'sourcePaths':sorted(changes),'mixedReconstructed':preserved,'prompts':[base['promptUsed'],'Ok continue building P7 from where you stopped, using the saved plan. Preserve completed work and the full P0–P7 scope, keep P5-H and P6-G/H pending, and keep the phase tracker updated.']}
+(root/'docs/implementation/evidence/p7-prospective-2026-10-27/source-closure.json').write_text(json.dumps(result,indent=2)+'\n')
+print(json.dumps({'path':str(out),'sources':len(changes),'mixed':preserved}))

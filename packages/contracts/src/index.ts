@@ -22,3 +22,4 @@ export * from './schemas/capital-replay.js';
 export * from './schemas/capital-contest.js';
 export * from './schemas/paper-profit-reserve.js';
 export * from './schemas/paper-reserve-sale.js';
+export * from './schemas/capital-prospective.js';

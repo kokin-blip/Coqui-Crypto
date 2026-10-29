@@ -1,0 +1,1 @@
+tests/paper-reserve-sale-deadlines.test.ts(2,61): error TS2724: '"@coqui/adapters"' has no exported member named 'createResearchRequestDeadline'. Did you mean 'createResearchDeadline'?

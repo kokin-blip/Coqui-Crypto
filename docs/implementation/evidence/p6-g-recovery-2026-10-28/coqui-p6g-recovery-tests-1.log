@@ -1,0 +1,24 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/paper-reserve-sale-recovery.test.ts (10 tests) 1809ms
+ ❯ tests/paper-reserve-sale-deadlines.test.ts (3 tests | 1 failed) 3ms
+     × does not preempt an existing execution or research budget 2ms
+     ✓ expires at the earlier wall or monotonic bound without extending another lane 1ms
+     ✓ refuses an aborted noncancellable read even if its underlying result arrives later 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/paper-reserve-sale-deadlines.test.ts > P6-G independent observation deadline > does not preempt an existing execution or research budget
+TypeError: createResearchRequestDeadline is not a function
+ ❯ tests/paper-reserve-sale-deadlines.test.ts:4:127
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 12 passed (13)
+   Start at  15:33:32
+   Duration  3.41s (transform 1.07s, setup 0ms, import 1.48s, tests 1.81s, environment 0ms)
+

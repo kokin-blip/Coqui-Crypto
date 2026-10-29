@@ -1,0 +1,31 @@
+{
+  "planningOnly": true,
+  "synthetic": true,
+  "installedAccountAccess": false,
+  "checks": [
+    {
+      "name": "legacy study instance accepts its frozen100000 opening",
+      "passed": true
+    },
+    {
+      "name": "legacy study instance refuses small-capital identity instead of adapting it",
+      "passed": true
+    },
+    {
+      "name": "final claim is durable before any result is available",
+      "passed": true
+    },
+    {
+      "name": "changing plan and lineage aliases cannot reopen overlapping consumed instruments/time",
+      "passed": true
+    },
+    {
+      "name": "missing exact operational profitability binding remains unavailable",
+      "passed": true
+    },
+    {
+      "name": "legacy collection construction can append failure evidence; it is not a pure read facade",
+      "passed": true
+    }
+  ]
+}

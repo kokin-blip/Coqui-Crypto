@@ -22,3 +22,6 @@ export * from './capital-replay.js';
 export * from './capital-replay-data.js';
 export * from './capital-contest.js';
 export * from './capital-contest-data.js';
+export * from './capital-prospective-collection.js';
+export * from './capital-prospective-reports.js';
+export * from './capital-prospective-governance.js';

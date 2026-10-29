@@ -67,6 +67,16 @@ export function readProfileDeletionImpact(
         (SELECT COUNT(*) FROM paper_ledger_entries_v3 WHERE profile_id = ?))
         AS paper_evidence_records,
       ((SELECT COUNT(*) FROM research_jobs) +
+        (SELECT COUNT(*) FROM prospective_designs_v1) +
+        (SELECT COUNT(*) FROM prospective_registrations_v1) +
+        (SELECT COUNT(*) FROM prospective_captures_v1) +
+        (SELECT COUNT(*) FROM prospective_book_revisions_v1) +
+        (SELECT COUNT(*) FROM prospective_reports_v1) +
+        (SELECT COUNT(*) FROM prospective_decisions_v1) +
+        (SELECT COUNT(*) FROM prospective_commands_v1) +
+        (SELECT COUNT(*) FROM prospective_bindings_v1) +
+        (SELECT COUNT(*) FROM prospective_trial_declarations_v1) +
+
         (SELECT COUNT(*) FROM research_preregistrations) +
         (SELECT COUNT(*) FROM research_study_runs) +
         (SELECT COUNT(*) FROM research_evidence_snapshots_v2) +

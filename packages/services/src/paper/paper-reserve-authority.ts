@@ -1,5 +1,5 @@
 import { capitalHash, type PaperReserveStrategy, type PaperReserveAuthorityProof } from '@coqui/core';
-import { assertDedicatedPaperCapitalProfile, getAuthoritativeHost, getPaperExecutionPolicy, getWalletRiskState, readBoundProfitabilityEvidence,
+import { assertDedicatedPaperCapitalProfile, getAuthoritativeHost, getPaperExecutionPolicy, getWalletRiskState, readApplicablePaperQualification,
   validateExecutionLease, type Db } from '@coqui/storage';
 import { resolveKillSwitch } from './kill-switch.js';
 export interface PaperReserveAuthorityContext {
@@ -15,7 +15,7 @@ export function checkPaperReserveAuthority(c:PaperReserveAuthorityContext,nowMs:
     !validateExecutionLease(c.profileId,c.ownerId,c.fencingToken,nowMs,db))throw new Error('paper_reserve_host_or_lease_unavailable');
   if(policy.mode==='off' || resolveKillSwitch(c.profileId,db).engaged || risk?.stage==='hard_stop' || c.strategyPaused())throw new Error('paper_reserve_stopped_or_paused');
   if(risk && risk.stage!=='normal')throw new Error('paper_reserve_risk_exposure_reconciliation_required');
-  const evidence=readBoundProfitabilityEvidence(c.profileId,db,{profileId:c.profileId,...c.strategy},nowMs);
+  const evidence=readApplicablePaperQualification(c.profileId,db,{profileId:c.profileId,...c.strategy},nowMs);
   if(!evidence)throw new Error('paper_reserve_qualification_missing');
   const body={profileId:c.profileId,hostGeneration:c.hostGeneration,fencingToken:c.fencingToken,evidenceHash:evidence.resultHash,policyHash:capitalHash({policy,risk}),grossEdgeLowerBoundPct:evidence.grossEdgeLowerBoundPct};
   return {...body,hash:capitalHash(body)};

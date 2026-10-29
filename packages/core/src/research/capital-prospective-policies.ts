@@ -1,0 +1,35 @@
+import {capitalHash} from '../portfolio/capital-ledger.js';
+import {budgetAmount as a,budgetText as t,BudgetDecimal as D,nativeExecutionRules} from '../execution/native-rules.js';
+import {stationaryBootstrapIndices,mulberry32} from '../validation/monte-carlo.js';
+import {advanceProspectiveBook,prospectiveBookPerformance} from './capital-prospective-book.js';
+import {PROSPECTIVE_DAY as DAY,type ProspectiveDesign,type ProspectiveFrame,type ProspectiveBookRevision,type ProspectivePolicyAssessment} from './capital-prospective-types.js';
+/** Conditional joint-market stress: reconstruct every book, fee, funding and policy transition.
+ * These scenarios never count as prospective observations or independent alpha trials. */
+export function assessProspectivePolicies(d:ProspectiveDesign,registrationId:string,frames:readonly ProspectiveFrame[],original:readonly ProspectiveBookRevision[],check:()=>void):readonly ProspectivePolicyAssessment[]{
+ const policies=d.arms.filter(arm=>arm.group==='reserve'||arm.group==='execution');if(!policies.length)return [];
+ const inputHash=capitalHash({design:d.id,frames:frames.map(f=>f.batchHash),books:original.map(r=>r.id)}),reasons:string[]=[];
+ if(frames[0]?.slotMs!==d.startMs||frames.at(-1)?.slotMs!==d.developmentEndMs||frames.some((f,i)=>i>0&&f.slotMs!==frames[i-1]!.slotMs+DAY))reasons.push('policy_path_calendar_incomplete');
+ if(frames.some(f=>!f.complete||d.assets.some(id=>!f.market.assets[id]?.tradable||!f.rules[id]?.tradable)))reasons.push('policy_path_membership_incomplete');
+ if((frames.length-1)/d.gates.blockDays<d.gates.minEffectiveBlocks)reasons.push('policy_path_effective_blocks_insufficient');
+ if(d.resources.maxPolicyPaths*0.025/policies.length<d.gates.minPolicyTailReplications)reasons.push('policy_path_tail_replications_insufficient');
+ const arms=d.arms.filter(arm=>policies.some(p=>p.id===arm.id||p.controlOf===arm.id));
+ if(arms.length*d.openings.length*d.costs.length*frames.length*d.resources.maxPolicyPaths>1_000_000)reasons.push('policy_path_work_bound');
+ const unavailable=(armId:string,referenceId:string,rs:readonly string[]):ProspectivePolicyAssessment=>({armId,referenceId,status:'unavailable',reasons:rs,pathCount:0,lowerOutcomeDifferencePct:null,upperOutcomeDifferencePct:null,inputHash});
+ if(reasons.length)return policies.map(p=>unavailable(p.id,p.controlOf??'',reasons));
+ const outcome=(rows:readonly ProspectiveBookRevision[]):string|null=>{const report=prospectiveBookPerformance(rows,d.originProfileId).total;if(report.length!==1||report[0]!.metrics.equityUsd.state!=='available')return null;const last=rows.at(-1)!;return t(a(report[0]!.metrics.equityUsd.value).add(last.book.receipts).sub(d.externalExpenses.filter(e=>e.atMs>=d.startMs&&e.atMs<=d.developmentEndMs).reduce((s,e)=>s.add(e.amountUsd),a('0'))));};
+ const compare=(rows:readonly ProspectiveBookRevision[],policyId:string,referenceId:string)=>{const outcomes:number[]=[];for(const cost of d.costs){let sum=a('0');for(const [capital,w] of Object.entries(d.capitalWeights)){if(!a(w).gt(0))continue;const left=rows.filter(r=>r.armId===policyId&&r.capitalUsd===capital&&r.costId===cost.id),right=rows.filter(r=>r.armId===referenceId&&r.capitalUsd===capital&&r.costId===cost.id),l=outcome(left),r=outcome(right);if(l===null||r===null||left.some(b=>b.reasons.length)||right.some(b=>b.reasons.length))return null;sum=sum.add(a(l).sub(r).div(capital).mul(100).mul(w));}outcomes.push(sum.toNumber());}return outcomes.length?Math.min(...outcomes):null;};
+ const differences=new Map(policies.map(p=>[p.id,[] as number[]]));
+ for(let path=0;path<d.resources.maxPolicyPaths;path++){
+  check();const indices=stationaryBootstrapIndices(frames.length-1,frames.length-1,d.gates.blockDays,mulberry32((d.gates.seed+path)>>>0)),generated:ProspectiveFrame[]=[frames[0]!],last=Object.fromEntries(d.assets.map(id=>[id,frames[0]!.market.assets[id]!.closeUsd!]));
+  for(const [i,index] of indices.entries()){
+   const source=frames[index+1]!,prior=frames[index]!,destination=frames[i+1]!,assets=Object.fromEntries(d.assets.map(id=>{const m=source.market.assets[id]!,base=a(prior.market.assets[id]!.closeUsd!),close=a(last[id]!).mul(a(m.closeUsd!).div(base)).toSignificantDigits(20,D.ROUND_DOWN),open=close.mul(a(m.openUsd!).div(m.closeUsd!)).toSignificantDigits(20,D.ROUND_DOWN);last[id]=t(close);return [id,{...m,openUsd:t(open),closeUsd:t(close),bidUsd:t(open.mul(m.bidUsd!).div(m.openUsd!)),askUsd:t(open.mul(m.askUsd!).div(m.openUsd!)),quoteAtMs:destination.market.atMs,sourceRef:`conditional_prospective_policy_path:${path}:${index}`}];}));
+   const history=[...frames[0]!.history.filter(h=>h.endMs<d.startMs),...generated.map(f=>({endMs:f.slotMs,observedAtMs:f.observedAtMs,closes:Object.fromEntries(d.assets.map(id=>[id,f.market.assets[id]!.closeUsd!])),sourceHash:f.batchHash})),{endMs:destination.slotMs,observedAtMs:destination.observedAtMs,closes:Object.fromEntries(d.assets.map(id=>[id,assets[id]!.closeUsd!])),sourceHash:capitalHash({path,index})}].slice(-d.protocol.historyDays);
+   const rules=Object.fromEntries(d.assets.map(id=>{const {id:_id,...rule}=destination.rules[id]!;void _id;return [id,nativeExecutionRules({...rule,assurance:'scenario',source:'conditional_policy_path'})];}));
+   generated.push({...destination,market:{...destination.market,assets},history,rules,batchHash:capitalHash({inputHash,path,index,slot:destination.slotMs})});
+  }
+  const rows:ProspectiveBookRevision[]=[];for(const arm of arms)for(const opening of d.openings)for(const cost of d.costs){let prior:ProspectiveBookRevision|null=null;for(const frame of generated){check();prior=advanceProspectiveBook(d,registrationId,capitalHash({inputHash,path,slot:frame.slotMs}),frame,arm,opening,cost,prior);rows.push(prior);}}
+  for(const policy of policies){const value=compare(rows,policy.id,policy.controlOf!);if(value!==null)differences.get(policy.id)!.push(value);}
+ }
+ return policies.map(policy=>{const referenceId=policy.controlOf!,values=differences.get(policy.id)!,estimate=compare(original,policy.id,referenceId),reasons:string[]=[];if(estimate===null||values.length!==d.resources.maxPolicyPaths)return unavailable(policy.id,referenceId,['policy_path_financial_evidence_unavailable']);values.sort((x,y)=>x-y);const tail=.025/policies.length,low=2*estimate-values[Math.min(values.length-1,Math.ceil((1-tail)*values.length)-1)]!,high=2*estimate-values[Math.max(0,Math.floor(tail*values.length))]!;
+  const primary=original.filter(r=>r.armId===policy.id&&a(d.capitalWeights[r.capitalUsd]??'0').gt(0)&&r.slotMs===d.developmentEndMs);if(!primary.length||primary.some(r=>r.floorBreaches>d.gates.maxFloorBreaches))reasons.push('policy_floor_gate');if(primary.some(r=>a(r.book.reserved).add(r.book.receipts).lt(d.gates.minimumReservedUsd)))reasons.push('policy_cash_objective_gate');if(low< -d.gates.maxOutcomeSacrificePct)reasons.push('policy_outcome_sacrifice_gate');return {armId:policy.id,referenceId,status:reasons.length?'none' as const:'meets_declared_objective' as const,reasons,pathCount:values.length,lowerOutcomeDifferencePct:low,upperOutcomeDifferencePct:high,inputHash};});
+}

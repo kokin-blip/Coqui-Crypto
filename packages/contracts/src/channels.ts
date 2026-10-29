@@ -1,3 +1,4 @@
+import {prospectiveChannelSchemas} from './schemas/capital-prospective.js';
 import { paperProfitReserveChannelSchemas } from './schemas/paper-profit-reserve.js';
 import {paperReserveSaleChannelSchemas} from './schemas/paper-reserve-sale.js';
 import { capitalContestChannelSchemas } from './schemas/capital-contest.js';
@@ -46,6 +47,7 @@ import type { ContractSchema, DeepReadonly } from './messages.js';
  * more than the services can honour.
  */
 export const CHANNEL_SCHEMAS = {
+  ...prospectiveChannelSchemas,
   ...paperProfitReserveChannelSchemas,
   ...paperReserveSaleChannelSchemas,
   ...capitalContestChannelSchemas,

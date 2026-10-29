@@ -1,0 +1,27 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/capital-prospective-qualification.test.ts (3 tests) 220ms
+ ✓ tests/capital-prospective-storage.test.ts (3 tests) 246ms
+ ✓ tests/capital-prospective-book.test.ts (4 tests) 312ms
+ ✓ tests/capital-prospective-collection.test.ts (3 tests) 388ms
+ ✓ tests/capital-prospective-lifecycle.test.ts (1 test) 149ms
+ ✓ tests/capital-prospective-design.test.ts (4 tests) 209ms
+ ✓ tests/capital-prospective-channels.test.ts (1 test) 69ms
+ ✓ tests/capital-prospective-ui.test.ts (7 tests) 130ms
+ ✓ tests/capital-prospective-coverage.test.ts (1 test) 58ms
+ ✓ tests/capital-prospective-accounting.test.ts (4 tests) 1645ms
+     ✓ generated deposit/withdrawal amounts conserve cash without creating gains  1355ms
+ ✓ tests/capital-prospective-governance.test.ts (9 tests) 1744ms
+     ✓ consumes before evaluating and never reloads after a failed result write  1280ms
+ ✓ tests/capital-prospective-faults.test.ts (4 tests) 2594ms
+     ✓ actually reaches the shared claim hook fault, leaving neither a claim nor financial reads  1214ms
+     ✓ selects only the frozen arm and controls after claim; corrections retain the claim and supersede availability  1216ms
+ ✓ tests/capital-prospective-policies.test.ts (2 tests) 7113ms
+     ✓ rebuilds each path across all nine capital books with funding and reserve state  7035ms
+
+ Test Files  13 passed (13)
+      Tests  46 passed (46)
+   Start at  10:51:35
+   Duration  8.96s (transform 10.13s, setup 0ms, import 16.69s, tests 14.88s, environment 1ms)
+

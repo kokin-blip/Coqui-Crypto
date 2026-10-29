@@ -1,0 +1,7 @@
+P7 prospective shadow evidence (disabled until explicit owner review).
+Read: identity | registry | inspect | coverage | development | report
+Owner: register | start | pause | continue | assess-development | freeze | final | inspect-final | review | revoke | correction
+All data commands require --database=existing --profile-id=ID --workspace=existing.
+Owner commands also require --profile-manifest=existing --host-id=authoritative --request=JSON --approval=JSON --owner-reviewed.
+start/continue require --source-directory=existing --duration-ms=1..3600000; this invocation owns the collector and releases its in-memory permit on exit. No boot enrollment or historical catch-up.
+--prepare prints the exact approval digest without changing evidence. No default installed profile, migration, date change, provider or financial capability.

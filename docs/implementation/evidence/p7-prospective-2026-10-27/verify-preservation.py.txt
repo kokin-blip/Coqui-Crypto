@@ -1,0 +1,28 @@
+from pathlib import Path
+import json,hashlib,subprocess
+root=Path('/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto');e=root/'docs/implementation/evidence/p7-prospective-2026-10-27';b=json.loads((e/'baseline.json').read_text());closure=json.loads((e/'source-closure.json').read_text());sha=lambda data:hashlib.sha256(data).hexdigest();current=lambda p:sha((root/p).read_bytes()) if (root/p).is_file() else None
+intentional=set(closure['sourcePaths'])|{'docs/implementation/small-portfolio-phase-tracker-2026-10-23.md','docs/studies/behavior-manifests-v1.json','packages/core/src/research/study-manifests.generated.ts'}
+records=[]
+for item in b['dirtyFiles']:
+ p=item['path'];actual=current(p);same=actual==item['sha256'];assert same or p in intentional,('unrelated change',p);records.append({'path':p,'before':item['sha256'],'after':actual,'byteUnchanged':same,'intentionalP7Integration':not same})
+source=[]
+for p,h in b['sourceHashes'].items():
+ actual=current(p);same=actual==h;assert same or p in intentional,('unrelated source change',p);source.append({'path':p,'before':h,'after':actual,'byteUnchanged':same})
+proofs=[]
+for p in closure['mixedReconstructed']:
+ s=(root/p).read_text()
+ if p.endswith('composition.ts'):s=s.replace("import {createMainProspectiveRuntime} from './capital-prospective-runtime.js'; import {createProspectiveHandlers} from './capital-prospective-handlers.js'; ",'').replace(' ...createProspectiveHandlers(createMainProspectiveRuntime({profileId:options.profileId,database,clock}).reads),','')
+ elif p.endswith('refetch.ts'):s=''.join(l for l in s.splitlines(True) if "'research.prospective." not in l)
+ elif p=='packages/contracts/src/channels.ts':s=s.replace("import {prospectiveChannelSchemas} from './schemas/capital-prospective.js';\n",'').replace('  ...prospectiveChannelSchemas,\n','')
+ elif p.endswith('contracts-channels.test.ts'):s=s.replace(", 'research.prospective.coverage', 'research.prospective.development', 'research.prospective.instances', 'research.prospective.report'",'')
+ elif p.endswith('build-study-manifests.mjs'):
+  s=s.replace("import {execFileSync} from 'node:child_process';\n",'').replace("  'capital-prospective-study-v1': 'packages/services/src/research/capital-prospective-governance.ts',\n",'')
+  s=s.replace(";\\nexport const STUDY_BUILD_LOCK_HASH = '+JSON.stringify(hash(readFileSync(resolve('pnpm-lock.yaml'))))+';\\nexport const STUDY_BUILD_REVISION = '+JSON.stringify(execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim())+';\\n",';\\n')
+ expected=next(x['sha256'] for x in b['dirtyFiles'] if x['path']==p);assert sha(s.encode())==expected,p;proofs.append({'path':p,'reconstructedBaselineHash':expected,'verified':True})
+assert sha((root/'.git/index').read_bytes())==b['indexSha256'];plan='docs/implementation/small-portfolio-p7-implementation-plan-2026-10-24.md';assert current(plan)==b['planSha256']
+roadmap='docs/implementation/small-portfolio-profit-policy-plan-2026-10-23.md';assert sha(subprocess.check_output(['git','show',b['base']+':'+roadmap],cwd=root))==current(roadmap)
+for original,retained in [('docs/studies/behavior-manifests-v1.json','behavior-manifests-v1.before.json'),('packages/core/src/research/study-manifests.generated.ts','study-manifests.generated.before.ts.txt')]:assert sha((e/retained).read_bytes())==b['sourceHashes'][original]
+closure['sourceHashes']={p:current(p) for p in closure['sourcePaths']};closure['isolatedHashes']={p:sha((Path('/tmp/coqui-p7-final')/p).read_bytes()) for p in closure['sourcePaths']};closure['byteMatchedUnmixedSourceCount']=sum(closure['sourceHashes'][p]==closure['isolatedHashes'][p] for p in closure['sourcePaths'] if p not in closure['mixedReconstructed']);assert closure['byteMatchedUnmixedSourceCount']==len(closure['sourcePaths'])-len(proofs)
+(e/'source-closure.json').write_text(json.dumps(closure,indent=2)+'\n')
+result={'base':b['base'],'dirtyPathCount':len(records),'unchangedDirtyPaths':sum(r['byteUnchanged'] for r in records),'intentionalChangedDirtyPaths':[r['path'] for r in records if not r['byteUnchanged']],'sourceInventoryCount':len(source),'unchangedInventoriedSources':sum(r['byteUnchanged'] for r in source),'indexUnchanged':True,'indexSha256':b['indexSha256'],'roadmapUnchanged':True,'p7SavedPlanUnchanged':True,'preP7GeneratedBytesRecoveredExactly':True,'mixedReconstruction':proofs,'dirtyPaths':records,'inventoriedSources':source}
+(e/'preservation.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps({k:v for k,v in result.items() if k not in ['dirtyPaths','inventoriedSources','mixedReconstruction']},indent=2))

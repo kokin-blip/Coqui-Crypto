@@ -19,7 +19,7 @@ function setup(path=':memory:'){
   return {db,f,inspection,commit};
 }
 describe('P3 append-only preview storage and real transactional modeled boundary',()=>{
-  it('migration adds empty tables and does not enable a policy',()=>{const db=openDatabase(':memory:');dbs.push(db);expect(db.prepare('PRAGMA user_version').get()?.['user_version']).toBe(99);expect(reserveHead(SCOPE,db)).toBeNull();expect(db.prepare('SELECT COUNT(*) n FROM capital_reserve_commands_v1').get()?.['n']).toBe(0);});
+  it('migration adds empty tables and does not enable a policy',()=>{const db=openDatabase(':memory:');dbs.push(db);expect(db.prepare('PRAGMA user_version').get()?.['user_version']).toBe(100);expect(reserveHead(SCOPE,db)).toBeNull();expect(db.prepare('SELECT COUNT(*) n FROM capital_reserve_commands_v1').get()?.['n']).toBe(0);});
   it('stores immutable versions/reports, exact retries and rejects fabricated or financial-domain state',()=>{
     const {db,f,inspection}=setup();expect(saveReservePolicy(f.policy,db)).toBe(false);expect(saveReserveInspection(inspection,db)).toBe(false);
     for(const table of ['capital_reserve_policy_versions_v1','capital_reserve_state_revisions_v1','capital_reserve_preview_reports_v1']){

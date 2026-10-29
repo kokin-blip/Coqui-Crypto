@@ -1,0 +1,74 @@
+{
+  "synchronized": true,
+  "issue": "COQ-17",
+  "status": "Backlog: actual registration/elapsed evidence unmet",
+  "ownerIssue": "COQ-10 Todo",
+  "finalDecisionIssue": "COQ-18 Backlog",
+  "actualStudyGatesClosed": false,
+  "localTechnicalCapability": "P7 A–G",
+  "committed": false,
+  "finalReceipts": [
+    {
+      "id": "COQ-17",
+      "url": "https://linear.app/coqui-crypto/issue/COQ-17/track-valid-prospective-observations-and-coverage",
+      "status": "Backlog",
+      "name": null,
+      "isError": false
+    },
+    {
+      "id": "5b0698de-3c30-4d24-b34f-ec7bd7b3ae1b",
+      "url": null,
+      "status": null,
+      "name": null,
+      "isError": false
+    },
+    {
+      "id": "7074500a-2e99-49a0-bbef-31c6de06917a",
+      "url": null,
+      "status": null,
+      "name": null,
+      "isError": false
+    },
+    {
+      "id": "b32c67d3-bc85-4122-a0e5-e3a938ffb257",
+      "url": null,
+      "status": null,
+      "name": null,
+      "isError": false
+    },
+    {
+      "id": "7c291557-21bc-42fb-9d52-9a58363c3b7e",
+      "url": null,
+      "status": null,
+      "name": "03 · Prospective studies and data integrity",
+      "isError": false
+    },
+    {
+      "id": "d21bc6a1-3dde-40ea-a98a-a20e20f4d572",
+      "url": null,
+      "status": null,
+      "name": "04 · Candidate evaluation and promotion decision",
+      "isError": false
+    }
+  ],
+  "earlierLockedHostCheckpointReceipts": [
+    {
+      "id": "COQ-17",
+      "isError": false
+    },
+    {
+      "id": "f85c9669-5cb1-40ef-b4b8-4bbe793b8fcd",
+      "isError": false
+    },
+    {
+      "id": "d9fca62c-8106-4f95-8bdf-57e5e89bce0b",
+      "isError": false
+    },
+    {
+      "id": "76dc1e68-7e9f-4a07-a4ad-417a252a163f",
+      "isError": false
+    }
+  ],
+  "promptUsed": "Ok continue building P7 from where you stopped, using the saved plan. Preserve completed work and the full P0–P7 scope, keep P5-H and P6-G/H pending, and keep the phase tracker updated.",
+  "followup": "I’ve unlocked it—finish the check"
+}

@@ -1,0 +1,72 @@
+{
+  "base": "5af1b92de230a42c3464cd63be16ddf0d60893d1",
+  "branch": "codex/operations-crew-journal",
+  "state": "Local A\u2013G technical capability verified; human review and P7-H\u2013J remain pending",
+  "committed": false,
+  "pushed": false,
+  "merged": false,
+  "released": false,
+  "combined": {
+    "suites": 346,
+    "tests": 2411
+  },
+  "isolated": {
+    "suites": 340,
+    "tests": 2304
+  },
+  "focused": {
+    "suites": 13,
+    "tests": 46
+  },
+  "typecheck": "pass: both trees",
+  "lint": "pass: both trees",
+  "build": "pass: both root and desktop trees",
+  "cli": {
+    "combinedChecks": 12,
+    "isolatedChecks": 12,
+    "status": "pass; disposable synthetic profiles only"
+  },
+  "native": {
+    "p7Checks": 11,
+    "status": "pass; production composition/preload with stubbed providers and disabled schedulers",
+    "standardSafety": "pass after user manually unlocked the Mac; original assertions and timeouts unchanged",
+    "computerUseReportedLocked": true,
+    "restoration": "Completed after user follow-up: I\u2019ve unlocked it\u2014finish the check",
+    "lockedHostBlockResolved": true
+  },
+  "uiReview": {
+    "fullReview": "fix",
+    "verdict": "ship at the two-fix-list scope; both resolved",
+    "documentation": "ordinary extension; system files preserved",
+    "detectorRuns": 1
+  },
+  "preservation": "preservation.json",
+  "sourceClosure": "source-closure.json",
+  "softwareSourceCount": 79,
+  "mixedFiles": [
+    "apps/desktop/src/main/composition.ts",
+    "apps/desktop/src/renderer/query/refetch.ts",
+    "packages/contracts/src/channels.ts",
+    "scripts/build-study-manifests.mjs",
+    "tests/contracts-channels.test.ts"
+  ],
+  "actualStudyRegistered": false,
+  "actualCollectorEnabled": false,
+  "actualHoldoutOpened": false,
+  "actualQualification": false,
+  "installedAccountAccess": false,
+  "providerWrites": false,
+  "liveExecutionPermitted": false,
+  "withdrawalPermitted": false,
+  "retainedPending": [
+    "P5-H",
+    "P6-G",
+    "P6-H",
+    "P7-H",
+    "P7-I",
+    "P7-J"
+  ],
+  "promptUsed": "Ok continue building P7 from where you stopped, using the saved plan. Preserve completed work and the full P0\u2013P7 scope, keep P5-H and P6-G/H pending, and keep the phase tracker updated.",
+  "initialPrompt": "Ok now move onto building p7.",
+  "followupPrompt": "I\u2019ve unlocked it\u2014finish the check"
+}

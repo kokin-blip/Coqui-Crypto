@@ -1,0 +1,317 @@
+{
+  "base": "5af1b92de230a42c3464cd63be16ddf0d60893d1",
+  "files": [
+    {
+      "path": "docs/implementation/small-portfolio-profit-policy-plan-2026-10-23.md",
+      "committedSha256": "fda3c0b76897bbb4497cf0e13a7a70d5b9d0e75c441fea4a1044c500ae5cdd25",
+      "workingSha256": "fda3c0b76897bbb4497cf0e13a7a70d5b9d0e75c441fea4a1044c500ae5cdd25",
+      "workingDiffers": false
+    },
+    {
+      "path": "docs/implementation/small-portfolio-p5-implementation-plan-2026-10-23.md",
+      "committedSha256": "628755c48c4c35afd2e8ef03bd51ec066be544c1580334c011f8bce134649198",
+      "workingSha256": "628755c48c4c35afd2e8ef03bd51ec066be544c1580334c011f8bce134649198",
+      "workingDiffers": false
+    },
+    {
+      "path": "docs/implementation/small-portfolio-p6-implementation-plan-2026-10-24.md",
+      "committedSha256": "007189be759cb3ede06664eb52cb5570b3f422bfdfdec724cdd601e7dd91f39d",
+      "workingSha256": "007189be759cb3ede06664eb52cb5570b3f422bfdfdec724cdd601e7dd91f39d",
+      "workingDiffers": false
+    },
+    {
+      "path": "docs/studies/trendvol-replacement-v1-2026-08-09.md",
+      "committedSha256": "497833300c62cdb5b893fe9cef0224f686e1c232ce144404b34c3a7a7f4acaac",
+      "workingSha256": "497833300c62cdb5b893fe9cef0224f686e1c232ce144404b34c3a7a7f4acaac",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/core/src/research/study-instance.ts",
+      "committedSha256": "0643ed6fa99c6cd92c5e65e08306201c9f2b81a300a829e0b405dc9bcf929322",
+      "workingSha256": "0643ed6fa99c6cd92c5e65e08306201c9f2b81a300a829e0b405dc9bcf929322",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/core/src/research/capital-replay-types.ts",
+      "committedSha256": "5f4d1275981014c15f01f42eb4b2c2b16b5d49d63a2be40dfe9478d723031b49",
+      "workingSha256": "5f4d1275981014c15f01f42eb4b2c2b16b5d49d63a2be40dfe9478d723031b49",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/core/src/research/capital-replay-book.ts",
+      "committedSha256": "c224b2b239800fd6e7b048c2ecb181fbf866e6ebb181ac3753e1a959d36d1d00",
+      "workingSha256": "c224b2b239800fd6e7b048c2ecb181fbf866e6ebb181ac3753e1a959d36d1d00",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/core/src/research/capital-replay-execution.ts",
+      "committedSha256": "1876a41f17d79e7ad8bf9aed0fffc9e9f6a0ae5386e6dff97eb2623050f68dac",
+      "workingSha256": "1876a41f17d79e7ad8bf9aed0fffc9e9f6a0ae5386e6dff97eb2623050f68dac",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/core/src/research/capital-replay-kernel.ts",
+      "committedSha256": "8d9e4f5fc572b089a6e2b9df774d60db5760c8353710007612110a6401b0f3b4",
+      "workingSha256": "8d9e4f5fc572b089a6e2b9df774d60db5760c8353710007612110a6401b0f3b4",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/core/src/research/capital-contest-evaluation.ts",
+      "committedSha256": "464310358691f59dae3eed1d16259220d8d0b4c10336ca109be82827ddb7e24b",
+      "workingSha256": "464310358691f59dae3eed1d16259220d8d0b4c10336ca109be82827ddb7e24b",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/core/src/research/holdout-evidence.ts",
+      "committedSha256": "9192fa686def9f6545dbf50162ea6626b8ef36ee1208e9c2ca1530620089fbda",
+      "workingSha256": "9192fa686def9f6545dbf50162ea6626b8ef36ee1208e9c2ca1530620089fbda",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/core/src/research/remediation-evaluation.ts",
+      "committedSha256": "2d1dc933656093e6f32bd732942ea7f6143ea7650594c169b460fbeafd925d6f",
+      "workingSha256": "2d1dc933656093e6f32bd732942ea7f6143ea7650594c169b460fbeafd925d6f",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/core/src/research/forward-edge.ts",
+      "committedSha256": "d687d4a11fa8a317f969b8c2077fb8dff0d555fa15d2dc0498a1303052f4af8d",
+      "workingSha256": "d687d4a11fa8a317f969b8c2077fb8dff0d555fa15d2dc0498a1303052f4af8d",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/core/src/research/integrity-plan.ts",
+      "committedSha256": "3822bb96e6d8fbcf367510eac946ebf0fa5ec25f41562f31698ae668b2b7b31a",
+      "workingSha256": "3822bb96e6d8fbcf367510eac946ebf0fa5ec25f41562f31698ae668b2b7b31a",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/core/src/validation/pre-registration.ts",
+      "committedSha256": "093d8bad02a4c745fbe75666aa4685233aeb7ecdbcd544017e912502b96768db",
+      "workingSha256": "093d8bad02a4c745fbe75666aa4685233aeb7ecdbcd544017e912502b96768db",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/services/src/research/registered-study.ts",
+      "committedSha256": "73f0423326585c7c4409aa63da7886911b1939e7d84062e360b1a379fa2381e6",
+      "workingSha256": "73f0423326585c7c4409aa63da7886911b1939e7d84062e360b1a379fa2381e6",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/services/src/research/pre-registration.ts",
+      "committedSha256": "ea291df8b7e7c6d1919c20daab40bc07f2a1a51b2fe2ced7be2baeefd898ebe9",
+      "workingSha256": "ea291df8b7e7c6d1919c20daab40bc07f2a1a51b2fe2ced7be2baeefd898ebe9",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/services/src/research/study-collection.ts",
+      "committedSha256": "a88ee5870aa2302bbc333a90d8ae9fbdabdb6d4c5f5ec322e641793868a289d7",
+      "workingSha256": "86f33360bd2ad423ccf1837f3baa784dd6c2f92f9c83b367c811b2943149ea36",
+      "workingDiffers": true
+    },
+    {
+      "path": "packages/services/src/research/remediation-report.ts",
+      "committedSha256": "c682b82594597506af5cd580236bec5d8f8c43b17af8afd52f1b1bbe01fb5d2d",
+      "workingSha256": "c682b82594597506af5cd580236bec5d8f8c43b17af8afd52f1b1bbe01fb5d2d",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/services/src/research/integrity-study.ts",
+      "committedSha256": "cc62beb7f19bcc3f28ec8ab80ffda59faee618bca44f9aca7275473f0e49ba85",
+      "workingSha256": "cc62beb7f19bcc3f28ec8ab80ffda59faee618bca44f9aca7275473f0e49ba85",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/services/src/research/capital-contest.ts",
+      "committedSha256": "eb7e4c6fcb0f68a92d231f3741be345bf33dba758d29682bbfefa36ccb4da4bd",
+      "workingSha256": "eb7e4c6fcb0f68a92d231f3741be345bf33dba758d29682bbfefa36ccb4da4bd",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/services/src/research/capital-replay-data.ts",
+      "committedSha256": "aafe114ad64b85a58b17842609f284e8f6a4fffc5d87b31fa6cede3ba1865cfc",
+      "workingSha256": "aafe114ad64b85a58b17842609f284e8f6a4fffc5d87b31fa6cede3ba1865cfc",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/services/src/research/host-coordinator.ts",
+      "committedSha256": "0b501773b40f0e25d0e8e6ae44f84ffea5dafee50f086bf647430511de139b0d",
+      "workingSha256": "0b501773b40f0e25d0e8e6ae44f84ffea5dafee50f086bf647430511de139b0d",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/services/src/research/evolution.ts",
+      "committedSha256": "fe4b2af597edf48804603fe1453b48fc8f23569038a9628607520d624a35855d",
+      "workingSha256": "fe4b2af597edf48804603fe1453b48fc8f23569038a9628607520d624a35855d",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/services/src/paper/paper-reserve-authority.ts",
+      "committedSha256": "2a5e151a4f508b653170ed60b44b63c3d3ff8743d82bf88fb2b770941387cced",
+      "workingSha256": "2a5e151a4f508b653170ed60b44b63c3d3ff8743d82bf88fb2b770941387cced",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/services/src/paper/paper-scheduler-task.ts",
+      "committedSha256": "8102b1b747227852fd61ae97323fd98b320e7528cee1e98c529f1b08a8f03e20",
+      "workingSha256": "8102b1b747227852fd61ae97323fd98b320e7528cee1e98c529f1b08a8f03e20",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/storage/src/repositories/study-instances.ts",
+      "committedSha256": "aa2151e1f51a102c3acc9ad508bfda091f15f310c65524e2b87b4157a7d503ab",
+      "workingSha256": "aa2151e1f51a102c3acc9ad508bfda091f15f310c65524e2b87b4157a7d503ab",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/storage/src/repositories/remediation-evidence.ts",
+      "committedSha256": "1695b89344ff3efa6e8711088c584ad9e299f2d3b82724a7de7153f172ce1fd4",
+      "workingSha256": "1695b89344ff3efa6e8711088c584ad9e299f2d3b82724a7de7153f172ce1fd4",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/storage/src/repositories/research-integrity.ts",
+      "committedSha256": "f3fc1950c929f8501dff023ecc8c10d747ba9e2cad3f7ec8de324e0a922f9d0d",
+      "workingSha256": "f3fc1950c929f8501dff023ecc8c10d747ba9e2cad3f7ec8de324e0a922f9d0d",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/storage/src/repositories/bound-profitability.ts",
+      "committedSha256": "ab5e7a008be9bc711acd3ca9d0faf1336efa690ec2e90e0d725924e587efbde1",
+      "workingSha256": "ab5e7a008be9bc711acd3ca9d0faf1336efa690ec2e90e0d725924e587efbde1",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/storage/src/repositories/research-study-runs.ts",
+      "committedSha256": "fc480fdbcaaaaa4ee104db4b2252eb6cd1f40a316f0a720ddfe0a075fa8b6898",
+      "workingSha256": "fc480fdbcaaaaa4ee104db4b2252eb6cd1f40a316f0a720ddfe0a075fa8b6898",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/storage/src/repositories/pre-registrations.ts",
+      "committedSha256": "7b1315a1c90a99cb6c8c011759a48f33baba17c9c0c750fa476d9addefc889f0",
+      "workingSha256": "7b1315a1c90a99cb6c8c011759a48f33baba17c9c0c750fa476d9addefc889f0",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/storage/src/profiles/duplication.ts",
+      "committedSha256": "1f543d5144d693cb93d0700a3f3a5a037c9c2e02b4a61839942bdf40418076b6",
+      "workingSha256": "1f543d5144d693cb93d0700a3f3a5a037c9c2e02b4a61839942bdf40418076b6",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/storage/src/profiles/duplication-research-triggers.ts",
+      "committedSha256": "23b62521a212764237be81a3b47516853559569624cb242c7209764064a92a4f",
+      "workingSha256": "23b62521a212764237be81a3b47516853559569624cb242c7209764064a92a4f",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/storage/src/repositories/profile-impact.ts",
+      "committedSha256": "31d952fe5dcf98a8e0f8d911d7f207eba12ba623523db05a2d49c83007e4c0b2",
+      "workingSha256": "31d952fe5dcf98a8e0f8d911d7f207eba12ba623523db05a2d49c83007e4c0b2",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/storage/src/migrations/index.ts",
+      "committedSha256": "6e91d95116ba3141afb0aa4e7f7d3f5592c6f43fcc1199154460199e96736066",
+      "workingSha256": "6e91d95116ba3141afb0aa4e7f7d3f5592c6f43fcc1199154460199e96736066",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/contracts/src/schemas/research.ts",
+      "committedSha256": "d60eadb9a7d3955fcd983d338a6b679cc0221633f640cac5807ce499336af4da",
+      "workingSha256": "d60eadb9a7d3955fcd983d338a6b679cc0221633f640cac5807ce499336af4da",
+      "workingDiffers": false
+    },
+    {
+      "path": "packages/contracts/src/channels.ts",
+      "committedSha256": "3fa6cb6b1f2a64aac40e6f3f3a3d564a4addec4d71609d22d232944ea9459a3c",
+      "workingSha256": "6c256308b7fb0b1dc9c1ffeba0643a6fafbbedbc59b3acee1390053366ce2ae1",
+      "workingDiffers": true
+    },
+    {
+      "path": "apps/desktop/src/main/research-handlers.ts",
+      "committedSha256": "9c8ee3057c89f2ef32a8de19f696cba40ee069f831db7e73c6cbfc2ba52e81b5",
+      "workingSha256": "9c8ee3057c89f2ef32a8de19f696cba40ee069f831db7e73c6cbfc2ba52e81b5",
+      "workingDiffers": false
+    },
+    {
+      "path": "apps/desktop/src/main/forward-edge-runtime.ts",
+      "committedSha256": "2a4041316307248d04adbb33790f15ee7531f5b59c4b84cbe5b88bb17f08a202",
+      "workingSha256": "2a4041316307248d04adbb33790f15ee7531f5b59c4b84cbe5b88bb17f08a202",
+      "workingDiffers": false
+    },
+    {
+      "path": "apps/desktop/src/main/forward-edge-plan.ts",
+      "committedSha256": "44271027c42716664bdf51432fa21cb3c48ef22155267b1333cc26d2129366bd",
+      "workingSha256": "44271027c42716664bdf51432fa21cb3c48ef22155267b1333cc26d2129366bd",
+      "workingDiffers": false
+    },
+    {
+      "path": "apps/desktop/src/main/composition.ts",
+      "committedSha256": "f2a00a0105a27d96b564f097b4d70bf758fe1d3f8f0a7a2be521630da0d1f86f",
+      "workingSha256": "c881169f4cbf2d881f2ff1caf69d0afa9d7beecce671a7002084de8e06681624",
+      "workingDiffers": true
+    },
+    {
+      "path": "apps/desktop/src/main/scheduler-runtime.ts",
+      "committedSha256": "4229850acdf458eb5c7be529f6e9c390f4a9cc9801fc2ec7b9ed2e37ff402a27",
+      "workingSha256": "cefdf2f6a6a36033301d46500ad72be2da4ab4923a2a30bf112fc88d09dbdc45",
+      "workingDiffers": true
+    },
+    {
+      "path": "apps/desktop/src/main/paper-reserve-runtime.ts",
+      "committedSha256": "cea099130376b01b46adb0dc8d8f1bece13ab4a054c97e2c9c1693529004afd8",
+      "workingSha256": "cea099130376b01b46adb0dc8d8f1bece13ab4a054c97e2c9c1693529004afd8",
+      "workingDiffers": false
+    },
+    {
+      "path": "apps/desktop/src/renderer/app/Research.tsx",
+      "committedSha256": "8002c1637365b3c6195242e4ce6f405bfcc3c49eda4462e4ad0b602a3f29a67b",
+      "workingSha256": "8002c1637365b3c6195242e4ce6f405bfcc3c49eda4462e4ad0b602a3f29a67b",
+      "workingDiffers": false
+    },
+    {
+      "path": "apps/desktop/src/renderer/app/ResearchEvidenceDashboard.tsx",
+      "committedSha256": "0c4da2a92b8192ca30c7832f720f2dc356def38e2d49c74d954e1a16f8c01e20",
+      "workingSha256": "0c4da2a92b8192ca30c7832f720f2dc356def38e2d49c74d954e1a16f8c01e20",
+      "workingDiffers": false
+    },
+    {
+      "path": "scripts/register-research-plan.mjs",
+      "committedSha256": "6e50fba4a17aff9212eac8cf7b6ae78158e94549dc6601be3dfb9e93cbbb5a2a",
+      "workingSha256": "6e50fba4a17aff9212eac8cf7b6ae78158e94549dc6601be3dfb9e93cbbb5a2a",
+      "workingDiffers": false
+    },
+    {
+      "path": "scripts/build-study-manifests.mjs",
+      "committedSha256": "8102a26b6b94fd209416a5c96d3ba964ceed0bc431506a30563bbe8b97145ca8",
+      "workingSha256": "f154f557929d49b3b2f422726e5d036d1d4933622791bcff3e65e9fb2ccd9555",
+      "workingDiffers": true
+    },
+    {
+      "path": "tests/remediation-integrity.test.ts",
+      "committedSha256": "ee3280dc12922f9fb088b92a13e42352ca3cb55c0f3d95cc9f24b5fdd3ceae59",
+      "workingSha256": "ee3280dc12922f9fb088b92a13e42352ca3cb55c0f3d95cc9f24b5fdd3ceae59",
+      "workingDiffers": false
+    },
+    {
+      "path": "tests/research-integrity-governance.test.ts",
+      "committedSha256": "56356743ebe1ffc3916e099829ad1b79e2b5b286256bf278f1078778c950431f",
+      "workingSha256": "56356743ebe1ffc3916e099829ad1b79e2b5b286256bf278f1078778c950431f",
+      "workingDiffers": false
+    },
+    {
+      "path": "tests/research-integrity-duplication.test.ts",
+      "committedSha256": "2d684dc235ab94e28c61c1be4e034b3d7b797dc3f0faba7735e84c33a698c27a",
+      "workingSha256": "2d684dc235ab94e28c61c1be4e034b3d7b797dc3f0faba7735e84c33a698c27a",
+      "workingDiffers": false
+    },
+    {
+      "path": "tests/paper-profit-reserve-authority.test.ts",
+      "committedSha256": "2a8396c34ae7f932b34fa5f67543ee6f778528b8065e31122db7edc890257906",
+      "workingSha256": "2a8396c34ae7f932b34fa5f67543ee6f778528b8065e31122db7edc890257906",
+      "workingDiffers": false
+    }
+  ]
+}
