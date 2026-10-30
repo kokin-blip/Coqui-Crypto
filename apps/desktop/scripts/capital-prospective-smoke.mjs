@@ -28,10 +28,16 @@ async function run(){
  check('sealed final action evidence and correction gaps survive production preload',await js("document.querySelector('.capital-prospective').innerText.includes('Sealed / unverified') && document.querySelector('.capital-prospective').innerText.includes('Collector health has not been verified')"));
  for(const [name,theme,width,height,zoom] of [['desktop-dark','dark',1440,1000,1],['narrow-light','light',640,900,1],['contrast-zoom','high_contrast',1280,1000,2]]){
   await dispatch('accounts.settings.set',{commandId:globalThis.crypto.randomUUID(),patch:{theme,density:'compact',motion:'none'}});window.setContentSize(width,height);window.webContents.setZoomFactor(zoom);const ready=new Promise(resolve=>window.webContents.once('did-finish-load',resolve));window.webContents.reload();await ready;await wait("document.querySelector('.capital-prospective select')");await select();await js("document.querySelector('.capital-prospective').scrollIntoView({block:'start'})");await delay(120);
-  check(`${name}: labels and narrow scrolling`,await js("(()=>{const e=document.querySelector('.capital-prospective');return [...e.querySelectorAll('select')].every(s=>s.labels.length>0)&&e.scrollWidth<=e.clientWidth+2;})()"));await assertNoTextClipping(window.webContents,`p7-${name}`);writeFileSync(join(out,`${name}.png`),(await window.webContents.capturePage()).toPNG());
+  check(`${name}: labels and narrow scrolling`,await js("(()=>{const e=document.querySelector('.capital-prospective');return [...e.querySelectorAll('select')].every(s=>s.labels.length>0)&&e.scrollWidth<=e.clientWidth+2;})()"));await assertNoTextClipping(window.webContents,`p7-${name}`);
+  await js("new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))");
+  // Capture the actual view at native zoom; Electron's surface-copy capture rejects 200% zoom on this host.
+  window.webContents.debugger.attach('1.3');try{const screenshot=await window.webContents.debugger.sendCommand('Page.captureScreenshot',{format:'png',fromSurface:false,captureBeyondViewport:false});writeFileSync(join(out,`${name}.png`),Buffer.from(screenshot.data,'base64'));}finally{window.webContents.debugger.detach();}
   await js("[...document.querySelectorAll('.capital-prospective details')].forEach(e=>e.open=['Scope, timing and provenance','Calculation and input identity'].includes(e.querySelector('summary')?.textContent))");
   await js("window.scrollTo(0,0)");
+  // Layout after expanding provenance must reach the compositor before the full capture.
+  await js("new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))");
   const geometry=await js("(()=>{const r=document.querySelector('.capital-prospective').getBoundingClientRect();return {x:0,y:Math.max(0,r.top+scrollY),width:innerWidth,height:r.height,scale:1};})()");
+  console.log('P7 full target capture requested',name,JSON.stringify(geometry));
   window.webContents.debugger.attach('1.3');try{const screenshot=await window.webContents.debugger.sendCommand('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,clip:{x:geometry.x*zoom,y:geometry.y*zoom,width:geometry.width*zoom,height:geometry.height*zoom,scale:1}});writeFileSync(join(out,`${name}-full.png`),Buffer.from(screenshot.data,'base64'));}finally{window.webContents.debugger.detach();}
   console.log('P7 full target capture',name,JSON.stringify(geometry));
   await js("[...document.querySelectorAll('.capital-prospective details')].forEach(e=>e.open=false)");

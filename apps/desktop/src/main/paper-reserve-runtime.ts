@@ -8,9 +8,12 @@ import {withinDeadline,type RequestDeadline} from '@coqui/adapters';
 export function createMainPaperReserveRuntime(input:{profileId:string;database:Db;clock:Clock;hostId:string;market:PaperMarketData;preparation:()=>PaperDecisionPreparation;operationAllowed:()=>boolean;priceSource:PriceSource}) {
   const {profileId,database:db,clock}=input;
   let currentQuotes:ReadonlyMap<string,SpotPriceObservation>=new Map();
-  const codeRevision=fullApplicationArtifactHash();
+  // Disabled/legacy startup needs no compiled-artifact proof. Resolve it only for a P6 operation;
+  // a missing build must still throw and cannot become a synthetic qualified identity.
+  let artifactRevision:string|undefined;
+  const codeRevision=()=>artifactRevision??=fullApplicationArtifactHash();
   const basePolicy=()=>getAllocationPolicy(db);
-  const strategy=(settings?:ReserveSettings)=>{const b=paperReserveBinding(profileId,db),policy=b?.policy_id?readPaperReserveFact<PaperReservePolicy>('policy',b.policy_id,db):null;return {strategyId:`${PAPER_CAPITAL_DECISION_VERSION}:${capitalHash({allocation:basePolicy(),reserve:settings??policy?.settings??null,momentum:DEFAULT_MOMENTUM_CONFIG,volTarget:DEFAULT_VOL_TARGET_CONFIG})}`,codeRevision,costProfileHash:paperCostModelHash(),horizonMs:86_400_000,normalization:'gross_pct_per_turnover' as const};};
+  const strategy=(settings?:ReserveSettings)=>{const b=paperReserveBinding(profileId,db),policy=b?.policy_id?readPaperReserveFact<PaperReservePolicy>('policy',b.policy_id,db):null;return {strategyId:`${PAPER_CAPITAL_DECISION_VERSION}:${capitalHash({allocation:basePolicy(),reserve:settings??policy?.settings??null,momentum:DEFAULT_MOMENTUM_CONFIG,volTarget:DEFAULT_VOL_TARGET_CONFIG})}`,codeRevision:codeRevision(),costProfileHash:paperCostModelHash(),horizonMs:86_400_000,normalization:'gross_pct_per_turnover' as const};};
   const targets=():AllocationPolicy=>{
     const p=basePolicy(),prep=input.preparation();if(!prep.ok || !p.targets.some(t=>t.weight>0))return {...p,targets:[]};
     const positive=p.targets.filter(t=>t.weight>0),total=positive.reduce((s,t)=>s+t.weight,0);
@@ -52,7 +55,7 @@ export function createMainPaperReserveRuntime(input:{profileId:string;database:D
   const sale=createPaperReserveSaleApp({profileId,database:db,now:()=>clock.nowMs(),service:runtime.service,authority:runtime.authority,
     current:(preferences,atMs)=>assemblePaperReserveSaleInput(profileId,atMs,preferences,{...frame(atMs),fees:saleFees()},db),
     asset:id=>{const asset=assets().find(x=>instrumentKey(x.instrument)===id);if(!asset)throw new Error('sale_asset_identity_mismatch');return asset;},
-    evidence:policy=>readPaperReserveSaleSourceReview(profileId,policy,codeRevision,db),execution:guard=>runtime.execution(guard,{assets:previewAssets,fees:saleFees,policy:riskPolicy}),
+    evidence:policy=>readPaperReserveSaleSourceReview(profileId,policy,codeRevision(),db),execution:guard=>runtime.execution(guard,{assets:previewAssets,fees:saleFees,policy:riskPolicy}),
     pending:(consequence,runId)=>{const prep=input.preparation(),atMs=clock.nowMs();if(!prep.ok)throw new Error('paper_capital_strategy_history_missing');
       const decisionId=capitalHash({profileId,runId,purpose:'profit_reserve_sale'}),target=targets(),weights=target.targets.map(x=>({assetId:instrumentKey(x.instrument),weight:x.weight}));
       const decision=saveStrategyDecision({schemaVersion:1,decisionId,profileId,runId,scheduledForMs:atMs,strategy:{id:strategy().strategyId,version:'paper-reserve-sale-v1',configHash:capitalHash({strategy:strategy(),consequenceId:consequence.id})},

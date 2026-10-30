@@ -1,0 +1,25 @@
+{
+  "base": "12f1769258109837aa63d67d107a7dd5770155ec",
+  "version": "0.1.0-beta.23",
+  "macOnly": true,
+  "priorCandidateUnpublished": true,
+  "priorTagRetained": true,
+  "coldTests": {
+    "suites": 359,
+    "cases": 2491,
+    "builtFirst": false
+  },
+  "coldTypecheck": "pass",
+  "lint": "pass",
+  "previousFailuresReproducedAndCorrected": true,
+  "sourceHashes": {
+    ".github/workflows/release.yml": "c4302d53131593c6c32c8fb6420bf2eb7f4a1c1dfad085987cdf1f09b6dbb6d3",
+    "package.json": "ebe063bef7c02fac27e1ae7eeba5fc2abf894a80530cf65531409047ef05b1e5",
+    "apps/desktop/package.json": "80bd480117ad1d71abdcbfd977182fde8d78eb1e5828a72c215c053ae316ef8f",
+    "apps/desktop/scripts/capital-prospective-smoke.mjs": "e37f84a28ad29f310999922bac93127c6e23e649392aed6e1d06ea4233b168b1",
+    "apps/desktop/src/main/paper-reserve-runtime.ts": "e420534d20d653553429be4a068ae6536f4cf53fd43edcd87b5fcb2504c67a8d",
+    "tests/paper-reserve-cold-start.test.ts": "d594fdf405cf6e74153b886c9e171d12c359b668b29a2839c8381d3c060fee43",
+    "packages/core/src/research/study-manifests.generated.ts": "9dd9e550df7ac23644da050e08df058da0fc45a261d73dd0feaf38c8bfedce68"
+  },
+  "operationalAndResearchGatesPreserved": true
+}

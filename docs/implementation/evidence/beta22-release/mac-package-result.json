@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-beta22-f50n9z0n/apps/desktop/node_modules/electron-builder/cli.js",
+    "--config",
+    "electron-builder.yml",
+    "--mac",
+    "--arm64",
+    "--publish",
+    "never"
+  ],
+  "exitCode": 0
+}

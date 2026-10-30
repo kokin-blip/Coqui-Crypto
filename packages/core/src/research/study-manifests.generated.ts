@@ -9,4 +9,4 @@ export const STUDY_BEHAVIOR_HASHES: Readonly<Record<string,string>> = {
   "trendvol-execution-remediation-v1": "f0d46555ec1e8c1bf71137db534c837463937f75fe459911f93a5775d48bb502"
 };
 export const STUDY_BUILD_LOCK_HASH = "e3343c4a83e9d793f2f8d13def27f5deb470022570559efd466a255d9e94f580";
-export const STUDY_BUILD_REVISION = "9164e163af667c82d66cd3b7cd15146a046e4a96";
+export const STUDY_BUILD_REVISION = "12f1769258109837aa63d67d107a7dd5770155ec";

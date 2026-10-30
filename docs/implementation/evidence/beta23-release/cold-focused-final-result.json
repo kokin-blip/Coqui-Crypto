@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/vitest/vitest.mjs",
+    "run",
+    "tests/paper-reserve-cold-start.test.ts",
+    "tests/advisor-handlers.test.ts",
+    "tests/chart-snapshot-save.test.ts",
+    "tests/coinbase-runtime-wiring.test.ts",
+    "tests/market-events.test.ts",
+    "tests/secret-leak-sweep.test.ts",
+    "--maxWorkers=1"
+  ],
+  "exitCode": 0,
+  "builtBeforeTests": false
+}

@@ -1,0 +1,105 @@
+
+ RUN  v4.1.8 /private/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-beta22-f50n9z0n
+
+stdout | tests/market-events.test.ts > immutable market-event dataset > validates local ingestion and temporal reads across the renderer boundary
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '21cfcd1eaabe8502dc490f0877cee0ee50559d26634ee8f0c9047035b33c47e2'
+}
+
+stdout | tests/market-events.test.ts > immutable market-event dataset > selects and reads a local fixture in main before ingestion
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '21cfcd1eaabe8502dc490f0877cee0ee50559d26634ee8f0c9047035b33c47e2'
+}
+
+ ✓ tests/market-events.test.ts (10 tests) 380ms
+stdout | tests/advisor-handlers.test.ts > advisor IPC boundary > prepares bounded context and deduplicates explicit local generation
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '21cfcd1eaabe8502dc490f0877cee0ee50559d26634ee8f0c9047035b33c47e2'
+}
+
+stdout | tests/advisor-handlers.test.ts > advisor IPC boundary > reports three provider states without returning secret fields
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '21cfcd1eaabe8502dc490f0877cee0ee50559d26634ee8f0c9047035b33c47e2'
+}
+
+stdout | tests/advisor-handlers.test.ts > advisor IPC boundary > explains a decision from storage and accepts only typed navigation
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '21cfcd1eaabe8502dc490f0877cee0ee50559d26634ee8f0c9047035b33c47e2'
+}
+
+ ✓ tests/advisor-handlers.test.ts (3 tests) 184ms
+stdout | tests/secret-leak-sweep.test.ts > a connected key never reaches the renderer > appears in no channel response
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '21cfcd1eaabe8502dc490f0877cee0ee50559d26634ee8f0c9047035b33c47e2'
+}
+
+stdout | tests/secret-leak-sweep.test.ts > a connected key never reaches the renderer > appears in no column of the database
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '21cfcd1eaabe8502dc490f0877cee0ee50559d26634ee8f0c9047035b33c47e2'
+}
+
+ ✓ tests/secret-leak-sweep.test.ts (7 tests) 176ms
+stdout | tests/chart-snapshot-save.test.ts > validated chart snapshot boundary > saves a valid PNG once and durably replays a duplicate command
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '21cfcd1eaabe8502dc490f0877cee0ee50559d26634ee8f0c9047035b33c47e2'
+}
+
+stdout | tests/chart-snapshot-save.test.ts > validated chart snapshot boundary > rejects invalid PNG content and command reuse with changed input
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '21cfcd1eaabe8502dc490f0877cee0ee50559d26634ee8f0c9047035b33c47e2'
+}
+
+ ✓ tests/chart-snapshot-save.test.ts (2 tests) 119ms
+stdout | tests/coinbase-runtime-wiring.test.ts > Coinbase desktop runtime wiring > connects, reports status, synchronizes evidence, and disconnects through IPC contracts
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '21cfcd1eaabe8502dc490f0877cee0ee50559d26634ee8f0c9047035b33c47e2'
+}
+
+ ✓ tests/coinbase-runtime-wiring.test.ts (1 test) 81ms
+ ❯ tests/paper-reserve-cold-start.test.ts (3 tests | 2 failed) 133ms
+     × constructs and observes an empty legacy profile without compiled-artifact access 47ms
+     × withholds authority when an explicit operation cannot prove the compiled artifact 44ms
+     ✓ caches a successful identity only on demand and does not convert it into permission 42ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/paper-reserve-cold-start.test.ts > disabled reserve cold startup > constructs and observes an empty legacy profile without compiled-artifact access
+Error: compiled_artifact_unavailable
+ ❯ tests/paper-reserve-cold-start.test.ts:19:46
+     17| describe('disabled reserve cold startup', () => {
+     18|   it('constructs and observes an empty legacy profile without compiled…
+     19|     artifact.mockImplementation(() => {throw new Error('compiled_artif…
+       |                                              ^
+     20|     fixture(runtime => {
+     21|       runtime.observe();runtime.disarm();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/paper-reserve-cold-start.test.ts > disabled reserve cold startup > withholds authority when an explicit operation cannot prove the compiled artifact
+Error: compiled_artifact_unavailable
+ ❯ tests/paper-reserve-cold-start.test.ts:26:46
+     24|   });
+     25|   it('withholds authority when an explicit operation cannot prove the …
+     26|     artifact.mockImplementation(() => {throw new Error('compiled_artif…
+       |                                              ^
+     27|     fixture((runtime,database) => {
+     28|       expect(() => runtime.authority.arm(sha256Hex('policy'),0)).toThr…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 5 passed (6)
+      Tests  2 failed | 24 passed (26)
+   Start at  17:25:46
+   Duration  4.29s (transform 1.24s, setup 0ms, import 2.88s, tests 1.07s, environment 0ms)
+

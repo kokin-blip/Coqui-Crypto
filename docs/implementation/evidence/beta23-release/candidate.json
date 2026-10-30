@@ -1,0 +1,9 @@
+{
+  "candidate": "/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-beta22-f50n9z0n",
+  "previousTag": "experimental-v0.1.0-beta.22",
+  "previousSource": "12f1769258109837aa63d67d107a7dd5770155ec",
+  "version": "0.1.0-beta.23",
+  "reason": "clean-checkout tests exposed eager compiled-artifact access during disabled startup",
+  "oldTagRetained": true,
+  "oldReleasePublished": false
+}

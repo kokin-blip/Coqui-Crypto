@@ -609,3 +609,17 @@ Ok release a new release with all these new updates. mac build only.
 Annotation follow-up: **commit those**
 
 Scope clarification: **No comit those and add all the new changes in the new release.**
+
+### October 29 — clean-checkout release gate correction; beta.23 candidate
+
+- Beta.22 source was committed/pushed as 12f1769, but **was not published**. Exact-tag CI exposed eager compiled-artifact hashing during default/disabled reserve startup: ten tests in five suites failed with absent `dist` evidence. Prior local build-first checks missed this condition. The original tag and failed run/logs remain retained; no failed gate is relabeled or bypassed.
+- Corrected only the proof acquisition timing: lazy successful caching for actual P6 operations; missing proof still refuses authority. Added three cold-start/authority regressions and validation from an unbuilt checkout. The capture-only verifier correction is included in the replacement source. Beta.23 is the new Mac-only candidate; beta.22's tag is not moved. [Delivery](beta23-macos-release-2026-10-29.md).
+- Full P0–P7 scope and all unmet evidence/human/account/research/connected gates remain pending as before. Distribution status will be recorded only after successful native/package/CI/download verification and publication. No actual profile or financial/research authority was changed.
+
+**Prompt used**
+
+Ok release a new release with all these new updates. mac build only.
+
+Annotation follow-up: **commit those**
+
+Scope clarification: **No comit those and add all the new changes in the new release.**

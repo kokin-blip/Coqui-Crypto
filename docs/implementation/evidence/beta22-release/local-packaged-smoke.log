@@ -1,0 +1,12 @@
+PASS  packaged application located  (./release/mac-arm64/Coqui.app/Contents/MacOS/Coqui)
+PASS  bundle carries an ad-hoc signature  (Apple Silicon refuses an unsigned bundle outright)
+PASS  arbitrary loads are denied  (afterPackHardening)
+PASS  NSCameraUsageDescription stripped  (a declared capability is one macOS will prompt for)
+PASS  NSMicrophoneUsageDescription stripped  (a declared capability is one macOS will prompt for)
+FAIL  packaged process ran the smoke and exited  (exit=null)
+FAIL  node:sqlite opened a database under asar
+FAIL  news analysis worker loaded inside the package
+FAIL  migrations applied inside the package  (user_version=undefined)
+
+=== PACKAGED SMOKE (ADR-0003 gate) ===
+=== 4 FAILED ===
