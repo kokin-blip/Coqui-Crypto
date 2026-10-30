@@ -1,0 +1,270 @@
+{
+  "productSourceCommit": "b33ddcf6680f5973591f4c4d288117e8be0b6d36",
+  "captures": {
+    "native-prospective": [
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-prospective/contrast-zoom-full.png",
+        "sha256": "f9bbbe56761a6b6bddcf2bdc71592c8d8415f12ff1191a745eeb4acb15cb90a9",
+        "capturedAtMs": 1793321966839
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-prospective/contrast-zoom.png",
+        "sha256": "335406173f9f69667e914a63b242e07d7bf7d12ea954afdbb2549d499f0f266b",
+        "capturedAtMs": 1793321966426
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-prospective/desktop-dark-full.png",
+        "sha256": "4a1f19baeb80ff12c67b3af761980bd4aefcb203de1f980ae3aa9eecd7727eac",
+        "capturedAtMs": 1793321964555
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-prospective/desktop-dark.png",
+        "sha256": "4397b2218312b26ad0ab13ffa31b172a67e04a8cf4db09ea7c6d55b3b0a904ca",
+        "capturedAtMs": 1793321964332
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-prospective/narrow-light-full.png",
+        "sha256": "674821a2af88b93c8d244d0c70517389b4807d62e317e42b9358154516e6cb5b",
+        "capturedAtMs": 1793321965568
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-prospective/narrow-light.png",
+        "sha256": "7a32be05a771235eebcc9895da2d2c651f1bf9149ba05a68ab6b635ac2662239",
+        "capturedAtMs": 1793321965378
+      }
+    ],
+    "native-sale-coherent-fixture": [
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-sale-coherent-fixture/contrast-zoom-consequence.png",
+        "sha256": "56d707a5d84a223132cb04c1f34bc36b346c2970d88a410fc68d1cac05e340dd",
+        "capturedAtMs": 1793322104151
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-sale-coherent-fixture/contrast-zoom-validation.png",
+        "sha256": "2ebc81876991e3cf7ee7eda8887d5d93dbc7944a7d65df1db2332b0277a9aef5",
+        "capturedAtMs": 1793322103062
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-sale-coherent-fixture/contrast-zoom.png",
+        "sha256": "d613d2f03132d5a05fcb13ed342e05a4e9a442de61383cc79b15cb5c3e16945b",
+        "capturedAtMs": 1793322103666
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-sale-coherent-fixture/desktop-dark-consequence.png",
+        "sha256": "bb6ab2376f5f44a6c036c7c7ba2bfc88d61571555261ffe41ae93b17bb216aca",
+        "capturedAtMs": 1793322100482
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-sale-coherent-fixture/desktop-dark-validation.png",
+        "sha256": "ce9941bdac198131a4b8d24eca35e17bd38aa3ce287ca68dcdd9ce175f54054b",
+        "capturedAtMs": 1793322099360
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-sale-coherent-fixture/desktop-dark.png",
+        "sha256": "d2c2a2122111705a5b00f045f4a30e3fc0a84048fefad36475bcba982cfddf9a",
+        "capturedAtMs": 1793322099983
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-sale-coherent-fixture/narrow-light-consequence.png",
+        "sha256": "8d5d2eb7025c976456dd5e33dae59069261d3dea8e9c309af52093b3638d3ce1",
+        "capturedAtMs": 1793322102286
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-sale-coherent-fixture/narrow-light-validation.png",
+        "sha256": "15e8aa91466f343c302524b72bb4e7dda19b7d5c91313cf9ff9c56c4cec53dfe",
+        "capturedAtMs": 1793322101245
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-sale-coherent-fixture/narrow-light.png",
+        "sha256": "067c33118e053748bb12d5b065060acb58f0fbe6126e1cbcad54f0e699039a23",
+        "capturedAtMs": 1793322101825
+      }
+    ],
+    "native-activity": [
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-activity/algo-activity-alpaca-missing-evidence.png",
+        "sha256": "2390251103ef569800cb21e7c2b92eec885b69b22f7520d5886914011ad24b16",
+        "capturedAtMs": 1793321977115
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-activity/algo-activity-contrast-960.png",
+        "sha256": "2d6a1987dd3cd737e3ef8da048cbc920b7d06711cf7b3fd78ee684d14ad0de87",
+        "capturedAtMs": 1793321981860
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-activity/algo-activity-dark-1440.png",
+        "sha256": "1687c34470663bd94ba2307347257cd9ed39fbc4a8d1a0eca81e29d72beff65b",
+        "capturedAtMs": 1793321979561
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-activity/algo-activity-dark-1920.png",
+        "sha256": "5e7eb5cfbd5052515c973b96929097dd3f040dba2bb3b707c500056f3282c38b",
+        "capturedAtMs": 1793321978357
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-activity/algo-activity-information-contrast-960.png",
+        "sha256": "67303026bb715c992f2e04b5b8d6878fb5f60175caac6e5fd9228ab49efb9634",
+        "capturedAtMs": 1793321981556
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-activity/algo-activity-information-dark-1440.png",
+        "sha256": "521e02136d747e806a7e43e9974106866e4e7c12d933dbbe526670e669af6095",
+        "capturedAtMs": 1793321979217
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-activity/algo-activity-information-dark-1920.png",
+        "sha256": "30b91aacde5e2fb3e9a27f0f4511e6f525d871a8ae435fd491aeef087560fb03",
+        "capturedAtMs": 1793321977980
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-activity/algo-activity-information-light-1280.png",
+        "sha256": "4747edadc030336293474b362c50f320b3b490b92401a2f6ba7b07fb77497108",
+        "capturedAtMs": 1793321980422
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-activity/algo-activity-information-narrow-640.png",
+        "sha256": "22fd3b5fd370f671395955c04d18330a39a106e7398df314cef055342c06bd6d",
+        "capturedAtMs": 1793321982655
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-activity/algo-activity-information-zoom-1280.png",
+        "sha256": "ef375c0143c758c9d0658d4b373a6d452ae46b22c429b4dc03c6deb2da573c91",
+        "capturedAtMs": 1793321983738
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-activity/algo-activity-light-1280.png",
+        "sha256": "ff4bf48e5070f67f89de28a435c142f86ff5f427779c86cb6c8cb616408ffe0d",
+        "capturedAtMs": 1793321980752
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-activity/algo-activity-metric-information.png",
+        "sha256": "fa066960eaf4b8ef85f7fad026f30fb6a0ace98768e7cd1073f951c1e9e709e3",
+        "capturedAtMs": 1793321976767
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-activity/algo-activity-narrow-640.png",
+        "sha256": "e7bde6e09519321b7a62e812c7310d55e49c43ddc3e7fd0be19237341833af3f",
+        "capturedAtMs": 1793321982951
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-activity/algo-activity-panel.png",
+        "sha256": "cd77e7bef963b3b893c16424eaefd99e3a14d66f2061a897cb52faf8d56f6b64",
+        "capturedAtMs": 1793321979582
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-activity/algo-activity-zoom-1280.png",
+        "sha256": "f0bbd05b394996a0814289efdaa00e6aac2bf67cb17ef02843db7f6ca24944bc",
+        "capturedAtMs": 1793321984040
+      },
+      {
+        "path": "docs/implementation/evidence/beta24-release/native-activity/order-book-dark-1920.png",
+        "sha256": "2f37a9e60d192f46e07fc581f1cfee9f163441ae64c9f31767fe6c7de3035ea5",
+        "capturedAtMs": 1793321975697
+      }
+    ]
+  },
+  "removedDuplicateHistoricalCopies": [
+    {
+      "duplicateCopy": "docs/implementation/evidence/beta24-release/native-activity/focused-tests.log",
+      "preservedOriginal": "docs/implementation/evidence/coq33/focused-tests.log",
+      "sha256": "e08377f46404667543d7f6c188a8d7e1e229c0bb9f9390c17c88ad7cc3ebc0eb"
+    },
+    {
+      "duplicateCopy": "docs/implementation/evidence/beta24-release/native-activity/lint.log",
+      "preservedOriginal": "docs/implementation/evidence/coq33/lint.log",
+      "sha256": "050c69da23536758722729aeda55a8d0fb9d557495ef6d33d70873a3b64a71c1"
+    },
+    {
+      "duplicateCopy": "docs/implementation/evidence/beta24-release/native-activity/repository-build.log",
+      "preservedOriginal": "docs/implementation/evidence/coq33/repository-build.log",
+      "sha256": "097d7fcd2b6c778109c1c948076ae7874e7000c1c140089671568f5850b02735"
+    },
+    {
+      "duplicateCopy": "docs/implementation/evidence/beta24-release/native-activity/typecheck.log",
+      "preservedOriginal": "docs/implementation/evidence/coq33/typecheck.log",
+      "sha256": "9cb7e68dd67d787ad7a36816afe2abbcde7523d59230ab49ed3d8fa46afd1441"
+    },
+    {
+      "duplicateCopy": "docs/implementation/evidence/beta24-release/native-activity/terminal-smoke.log",
+      "preservedOriginal": "docs/implementation/evidence/coq33/terminal-smoke.log",
+      "sha256": "d06f94f48c7619d9bd7d517d877aed2ac8a42f9aae178a445f1ed905bad1ac40"
+    },
+    {
+      "duplicateCopy": "docs/implementation/evidence/beta24-release/native-activity/activity-smoke.log",
+      "preservedOriginal": "docs/implementation/evidence/coq33/activity-smoke.log",
+      "sha256": "a738a9461d45040a209faf9ced7f7c31fd2e8f835c59085a2a87e63ddf2faab9"
+    },
+    {
+      "duplicateCopy": "docs/implementation/evidence/beta24-release/native-activity/terminal-performance.log",
+      "preservedOriginal": "docs/implementation/evidence/coq33/terminal-performance.log",
+      "sha256": "ce442bde5c65d1299f450109aadd7d1876a1dee7ab1bf486b8097429901dca12"
+    },
+    {
+      "duplicateCopy": "docs/implementation/evidence/beta24-release/native-activity/performance.json",
+      "preservedOriginal": "docs/implementation/evidence/coq33/performance.json",
+      "sha256": "3b48e0b390745fd775b61660845f797b3d0cc0a2d05075e85d3ac0996d14258e"
+    },
+    {
+      "duplicateCopy": "docs/implementation/evidence/beta24-release/native-activity/full-tests.log",
+      "preservedOriginal": "docs/implementation/evidence/coq33/full-tests.log",
+      "sha256": "7ff3c964bddd7003cf71f88d90b36e591c3a8ebe0f63cb85f5b6ccb5d10d3043"
+    },
+    {
+      "duplicateCopy": "docs/implementation/evidence/beta24-release/native-activity/verification.json",
+      "preservedOriginal": "docs/implementation/evidence/coq33/verification.json",
+      "sha256": "e44316dd5210b314a20ba92654ec5b02c2181e221f93bff6501d47cccc6f963b"
+    },
+    {
+      "duplicateCopy": "docs/implementation/evidence/beta24-release/native-activity/desktop-build.log",
+      "preservedOriginal": "docs/implementation/evidence/coq33/desktop-build.log",
+      "sha256": "6a293cbffd3f1a950a7c63fbe2e03341a486ad104feda2d527d1d3495a213bdc"
+    },
+    {
+      "duplicateCopy": "docs/implementation/evidence/beta24-release/native-activity/prompts.md",
+      "preservedOriginal": "docs/implementation/evidence/coq33/prompts.md",
+      "sha256": "504aad8b1a2c605461a7a02809383ac485bc3a64db5a5457ecbe17e78954754b"
+    },
+    {
+      "duplicateCopy": "docs/implementation/evidence/beta24-release/native-activity/performance/terminal-activity-1920.png",
+      "preservedOriginal": "docs/implementation/evidence/coq33/performance/terminal-activity-1920.png",
+      "sha256": "a638a008be6577a000b1e09fd942f2c8d1406e091fb04e2407df350a13e2dd31"
+    },
+    {
+      "duplicateCopy": "docs/implementation/evidence/beta24-release/native-activity/performance/terminal-activity-1280.png",
+      "preservedOriginal": "docs/implementation/evidence/coq33/performance/terminal-activity-1280.png",
+      "sha256": "43af872c83cc0e86c6d6a109de0f2c7f96244d8c68e091f56916d67b7b411dc0"
+    },
+    {
+      "duplicateCopy": "docs/implementation/evidence/beta24-release/native-activity/performance/terminal-activity-1440.png",
+      "preservedOriginal": "docs/implementation/evidence/coq33/performance/terminal-activity-1440.png",
+      "sha256": "cb05539d11c488dfbf4ac970fa97e05b73fa7c8ac6eae469198fef5003f2e839"
+    },
+    {
+      "duplicateCopy": "docs/implementation/evidence/beta24-release/native-prospective/documentation-check.md",
+      "preservedOriginal": "docs/implementation/evidence/p7-prospective-2026-10-27/ui/documentation-check.md",
+      "sha256": "d50e7e78a906ff78720bc9817ff252a51de353874e5e8db62b5d6399bf5457dc"
+    },
+    {
+      "duplicateCopy": "docs/implementation/evidence/beta24-release/native-prospective/finish-review.md",
+      "preservedOriginal": "docs/implementation/evidence/p7-prospective-2026-10-27/ui/finish-review.md",
+      "sha256": "e29151093315612e86a60cc66ea2bb6e459e3bf18c38a44bd0e3d07dd4a804e0"
+    },
+    {
+      "duplicateCopy": "docs/implementation/evidence/beta24-release/native-prospective/finish-verdict.md",
+      "preservedOriginal": "docs/implementation/evidence/p7-prospective-2026-10-27/ui/finish-verdict.md",
+      "sha256": "aa58285eb8d8d831844a3fcad26885a140976ab5461bc14c884d5f3cea581eaf"
+    },
+    {
+      "duplicateCopy": "docs/implementation/evidence/beta24-release/native-prospective/finish-review-full.md",
+      "preservedOriginal": "docs/implementation/evidence/p7-prospective-2026-10-27/ui/finish-review-full.md",
+      "sha256": "0a692ce1743ccf02bb61a9a406a017f6f04505de248aac5a03d02aed2c02147a"
+    },
+    {
+      "duplicateCopy": "docs/implementation/evidence/beta24-release/native-prospective/detector.json",
+      "preservedOriginal": "docs/implementation/evidence/p7-prospective-2026-10-27/ui/detector.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    }
+  ],
+  "originalHistoricalEvidenceUnchanged": true,
+  "syntheticFixtureIsInputNotANewResearchResult": true
+}
