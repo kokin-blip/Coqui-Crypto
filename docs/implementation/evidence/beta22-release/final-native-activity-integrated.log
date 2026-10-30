@@ -1,0 +1,80 @@
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '21cfcd1eaabe8502dc490f0877cee0ee50559d26634ee8f0c9047035b33c47e2'
+}
+PASS default is Algo Activity with all assets, 7D and Closed P/L 
+PASS account selectors share source state with the main chart 
+PASS chart, metrics and recorded grouped orders render 
+PASS metric information opens with keyboard and explains missing evidence 
+PASS Escape dismisses information and retains the trigger focus 
+{"timestamp":"2026-10-30T00:06:47.045Z","level":"warn","event":"coinbase_candles.fetch_failed","context":{"profileId":"main","source":"public","productId":"BTC-USD","interval":"1d","status":503,"reason":"http"}}
+PASS refresh retains expanded order and keyboard focus 
+PASS chart keyboard inspection exposes an exact observation 
+PASS grouped orders paginate without replaying the latest page 
+PASS Total chart uses existing valuations and labels its effective start 
+PASS Order Book retains depth and adds a scoped performance strip 
+PASS tab switching preserves chart mode and reuses the overview query 
+PASS source/account change rejects late prior-source display data 
+PASS broker missing fees and Total history remain explicitly unavailable 
+PASS disconnected capital evidence is not selected automatically 
+PASS legacy cash proof does not manufacture canonical investment profit Broker account equity · $104,929.64
+
+Alpaca paper · ••••123456 · all assets · read Oct 29, 2026, 5:06 PM
+
+Opening equity
+$1,000.00
+Equity change since opening
+$103,929.64
+Cash adjustments in history
+$12,190.60
+
+Alpaca paper · ••••123456 · USD · disconnected evidence · Last source read Oct 29, 2026, 5:06 PM
+
+Historical evidence only. This account has no active accounting connection.
+
+Earlier performance is unavailable until a supported economic opening is recorded.
+
+Economic P&L
+Unavailable
+Time-weighted return
+Unavailable
+Maximum daily drawdown
+Unavailable
+
+Balance changes include funding. Economic P&L excludes verified external capital; account costs are counted once. Selling into cash is not a payment to the user.
+
+Evidence and calculation details
+
+Legacy execution cash proof reconciled · 1 fill. Capital performance additionally requires verified flow classification, timing and account coverage. Journal details are unavailable from Alpaca; the initiator and purpose remain unknown.
+
+Latest daily history · $104,929.64 · Oct 29, 2026, 5:06 PM. The current account read can differ.
+PASS all account and order metric explanations open individually 
+PASS dark-1920 compact panel fits without internal clipping {"innerWidth":1920,"innerHeight":861,"width":338,"scrollWidth":338,"overflow":false,"metricsOverflow":false,"figma":["3:30","3:28","3:26","3:56","3:56","3:56","3:56","3:46","3:37","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:37","3:37"],"theme":"dark"}
+PASS dark-1920 uses Figma dropdown, badge and row primitives 
+PASS dark-1920 information remains inside the viewport {"left":1197.703125,"right":1497.703125,"top":212,"bottom":352,"width":1920,"height":861}
+PASS dark-1440 compact panel fits without internal clipping {"innerWidth":1440,"innerHeight":861,"width":338,"scrollWidth":338,"overflow":false,"metricsOverflow":false,"figma":["3:30","3:28","3:26","3:56","3:56","3:56","3:56","3:46","3:37","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:37","3:37"],"theme":"dark"}
+PASS dark-1440 uses Figma dropdown, badge and row primitives 
+PASS dark-1440 information remains inside the viewport {"left":1059.703125,"right":1359.703125,"top":212,"bottom":352,"width":1440,"height":861}
+{"timestamp":"2026-10-30T00:06:55.102Z","level":"warn","event":"coinbase_candles.fetch_failed","context":{"profileId":"main","source":"public","productId":"BTC-USD","interval":"1d","status":503,"reason":"http"}}
+PASS light-1280 compact panel fits without internal clipping {"innerWidth":1280,"innerHeight":800,"width":338,"scrollWidth":338,"overflow":false,"metricsOverflow":false,"figma":["3:30","3:28","3:26","3:56","3:56","3:56","3:56","3:46","3:37","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:37","3:37"],"theme":"light"}
+PASS light-1280 uses Figma dropdown, badge and row primitives 
+PASS light-1280 information remains inside the viewport {"left":899.703125,"right":1199.703125,"top":212,"bottom":352,"width":1280,"height":800}
+{"timestamp":"2026-10-30T00:06:56.183Z","level":"warn","event":"coinbase_candles.fetch_failed","context":{"profileId":"main","source":"public","productId":"BTC-USD","interval":"1d","status":503,"reason":"http"}}
+PASS contrast-960 compact panel fits without internal clipping {"innerWidth":960,"innerHeight":861,"width":942,"scrollWidth":942,"overflow":false,"metricsOverflow":false,"figma":["3:30","3:28","3:26","3:56","3:56","3:56","3:56","3:46","3:37","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:37","3:37"],"theme":"high-contrast"}
+PASS contrast-960 uses Figma dropdown, badge and row primitives 
+PASS contrast-960 information remains inside the viewport {"left":277.703125,"right":577.703125,"top":212,"bottom":352,"width":960,"height":861}
+{"timestamp":"2026-10-30T00:06:57.289Z","level":"warn","event":"coinbase_candles.fetch_failed","context":{"profileId":"main","source":"public","productId":"BTC-USD","interval":"1d","status":503,"reason":"http"}}
+PASS narrow-640 compact panel fits without internal clipping {"innerWidth":640,"innerHeight":861,"width":622,"scrollWidth":622,"overflow":false,"metricsOverflow":false,"figma":["3:30","3:28","3:26","3:56","3:56","3:56","3:56","3:46","3:37","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:37","3:37"],"theme":"dark"}
+PASS narrow-640 uses Figma dropdown, badge and row primitives 
+PASS narrow-640 information remains inside the viewport {"left":117.703125,"right":417.703125,"top":212,"bottom":352,"width":640,"height":861}
+{"timestamp":"2026-10-30T00:06:58.599Z","level":"warn","event":"coinbase_candles.fetch_failed","context":{"profileId":"main","source":"public","productId":"BTC-USD","interval":"1d","status":503,"reason":"http"}}
+PASS zoom-1280 compact panel fits without internal clipping {"innerWidth":640,"innerHeight":430,"width":622,"scrollWidth":622,"overflow":false,"metricsOverflow":false,"figma":["3:30","3:28","3:26","3:56","3:56","3:56","3:56","3:46","3:37","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:72","3:37","3:37","3:37"],"theme":"high-contrast"}
+PASS zoom-1280 uses Figma dropdown, badge and row primitives 
+PASS zoom-1280 information remains inside the viewport {"left":117.703125,"right":417.703125,"top":212,"bottom":352,"width":640,"height":430}
+{"timestamp":"2026-10-30T00:06:59.513Z","level":"warn","event":"coinbase_candles.fetch_failed","context":{"profileId":"main","source":"public","productId":"BTC-USD","interval":"1d","status":503,"reason":"http"}}
+PASS confirmed empty selection is distinct from an unavailable read 
+PASS failed reads do not retain another selection’s results 
+PASS renderer has no uncaught chart or component errors 
+{"checks":37,"readP95Ms":2.412666999999942}
+{"timestamp":"2026-10-30T00:06:59.791Z","level":"warn","event":"coinbase_candles.fetch_failed","context":{"profileId":"main","source":"public","productId":"BTC-USD","interval":"1d","status":0,"reason":"shutdown"}}
+{"timestamp":"2026-10-30T00:06:59.791Z","level":"warn","event":"coinbase_candles.fetch_failed","context":{"profileId":"main","source":"public","productId":"ADA-USD","interval":"1d","status":0,"reason":"shutdown"}}

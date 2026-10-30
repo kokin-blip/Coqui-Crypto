@@ -4,8 +4,11 @@ import type { ParallelPaperEvent, ParallelPaperExperiment } from '@coqui/storage
 import type { ParallelPaperDependencies } from './parallel-paper-service.js';
 import { ParallelBudgetError, ParallelReconciliationError, type PaperPositionDifference } from './parallel-paper-utils.js';
 import type { PaperDecisionPreparation } from './runtime-model.js';
+import { parallelRefusalReceipts, parallelRejectedSubmissions } from './parallel-paper-rejections.js';
 
 export function parallelAttemptsResolved(events: readonly ParallelPaperEvent[]): boolean {
+  const rejected = parallelRejectedSubmissions(events);
+  const refused = parallelRefusalReceipts(events);
   const orders = new Map<unknown, ParallelPaperEvent>(), fills = new Map<unknown, Decimal>();
   for (const event of events) {
     if (event.kind === 'external_order') orders.set(event.detail['clientOrderId'], event);
@@ -15,7 +18,9 @@ export function parallelAttemptsResolved(events: readonly ParallelPaperEvent[]):
     }
   }
   return events.filter(event => event.kind === 'submit_attempt').every(attempt => {
+    if (rejected.has(attempt.detail['clientOrderId'])) return true;
     const order = orders.get(attempt.detail['clientOrderId']);
+    if (order && refused.has(String(attempt.detail['clientOrderId']))) return false;
     return order?.detail['status'] === 'filled' && (fills.get(order.detail['orderId']) ?? new Decimal(0)).eq(String(order.detail['filledQty']));
   });
 }
@@ -47,9 +52,8 @@ export async function prepareParallelPass(input: Pick<ParallelPaperDependencies,
   finally { preparationDeadline.dispose(); }
 }
 
-/** A clean opening account has zero quantities; unexplained residuals never auto-resume. */
-export async function validateParallelPositions(client: ReturnType<typeof createAlpacaPaperClient>,
-  events: readonly ParallelPaperEvent[], observe?: (positions: readonly { symbol: string; quantity: string }[]) => void): Promise<void> {
+/** Exact accounting view. Execution settlement evidence never changes this ledger. */
+export function parallelPositionLedger(events: readonly ParallelPaperEvent[]): Map<string, Decimal> {
   const expected = new Map<string, Decimal>();
   const symbolKey = (value: unknown) => String(value).replaceAll('/', '');
   const add = (symbol: string, qty: Decimal) => expected.set(symbol, (expected.get(symbol) ?? new Decimal(0)).plus(qty));
@@ -70,6 +74,14 @@ export async function validateParallelPositions(client: ReturnType<typeof create
     }
 
   } catch { throw new ParallelReconciliationError('broker_positions_mismatch', 'positions'); }
+  return expected;
+}
+
+/** A clean opening account has zero quantities; unexplained residuals never auto-resume. */
+export async function validateParallelPositions(client: ReturnType<typeof createAlpacaPaperClient>,
+  events: readonly ParallelPaperEvent[], observe?: (positions: readonly { symbol: string; quantity: string }[]) => void): Promise<void> {
+  const expected = parallelPositionLedger(events);
+  const symbolKey = (value: unknown) => String(value).replaceAll('/', '');
   const positions = await client.positions();
   const differences: PaperPositionDifference[] = [];
   const observedPositions: { symbol: string; quantity: string }[] = [];

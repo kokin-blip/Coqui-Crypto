@@ -27,6 +27,20 @@ function filledHistory() {
 }
 
 describe('complete paper recovery evidence', () => {
+  it('full audits request every activity type and reject unexplained asset adjustments', async () => {
+    const activities = vi.fn(async () => [{ id: 'asset-transfer', activity_type: 'JNLS', symbol: 'BTCUSD', qty: '-0.0025' }]);
+    await expect(reconcileParallelPaper({ experiment, fullAudit: true, client: { activities } as never,
+      events: () => [], now: () => start, append: vi.fn() })).rejects.toMatchObject({ message: 'unexpected_alpaca_activity' });
+    expect(activities).toHaveBeenCalledWith(new Date(start).toISOString(), undefined, true);
+  });
+  it('restarts a legacy filtered audit instead of using its cursor for an all-type audit', async () => {
+    const history = [event('activity_audit_progress', { day: '2026-10-02', afterMs: start,
+      pagesCompleted: 1, pageToken: 'filtered-cursor', auditId: 'old-audit' })];
+    const activities = vi.fn(async () => []);
+    await reconcileParallelPaper({ experiment, client: { activities } as never, events: () => history,
+      now: () => start, append: vi.fn() });
+    expect(activities).toHaveBeenCalledExactlyOnceWith(new Date(start).toISOString(), undefined, true);
+  });
   it('round-trips pending fee diagnostics safely and clears attention only after successful checks',()=>{
     const pendingFeeEvidence={status:'awaiting' as const,oldestFillAtMs:start,latestFillAtMs:start,reviewAfterMs:start+2*86_400_000};
     const detail=parallelPaperFailureDetail(new ParallelReconciliationError('broker_positions_mismatch','positions',undefined,[],undefined,pendingFeeEvidence),'unknown');
@@ -161,13 +175,13 @@ describe('complete paper recovery evidence', () => {
     const next = vi.fn(async () => [{ id: 'fee-100', activity_type: 'CFEE', symbol: 'USD', net_amount: '-1' }]);
     await reconcileParallelPaper({ experiment, client: { activities: next } as never,
       events: () => history.slice(), now: () => start + 60_000, append });
-    expect(next).toHaveBeenCalledExactlyOnceWith(new Date(start).toISOString(), 'fee-99');
+    expect(next).toHaveBeenCalledExactlyOnceWith(new Date(start).toISOString(), 'fee-99', true);
     expect(history.filter(row => row.kind === 'external_fee')).toHaveLength(101);
     expect(history.filter(row => row.kind === 'activity_audit')).toHaveLength(1);
     const fresh = vi.fn(async () => []);
     await reconcileParallelPaper({ experiment, fullAudit: true, client: { activities: fresh } as never,
       events: () => history.slice(), now: () => start + 120_000, append });
-    expect(fresh).toHaveBeenCalledExactlyOnceWith(new Date(start).toISOString(), undefined);
+    expect(fresh).toHaveBeenCalledExactlyOnceWith(new Date(start).toISOString(), undefined, true);
   });
 
   it('does not checkpoint a partially validated page or reuse a previous day cursor', async () => {
@@ -182,17 +196,17 @@ describe('complete paper recovery evidence', () => {
     const reads = vi.fn(async () => []);
     await reconcileParallelPaper({ experiment, client: { activities: reads } as never,
       events: () => history, now: () => start + 86_400_000, append });
-    expect(reads).toHaveBeenCalledExactlyOnceWith(new Date(start).toISOString(), undefined);
+    expect(reads).toHaveBeenCalledExactlyOnceWith(new Date(start).toISOString(), undefined, true);
   });
 
   it('uses recent overlap after a daily audit even when the experiment has no fills', async () => {
     const now = start + 5 * 86_400_000;
-    const history = [event('activity_audit', { day: '2026-10-07', afterMs: start }, now),
+    const history = [event('activity_audit', { day: '2026-10-07', afterMs: start, scope: 'all_activity_types' }, now),
       event('readiness', { operation: 'activity_reconciliation', status: 'validated' }, now)];
     const reads = vi.fn(async () => []);
     await reconcileParallelPaper({ experiment, client: { activities: reads } as never,
       events: () => history, now: () => now + 60_000, append: vi.fn() });
-    expect(reads).toHaveBeenCalledExactlyOnceWith(new Date(now - 86_400_000).toISOString(), undefined);
+    expect(reads).toHaveBeenCalledExactlyOnceWith(new Date(now - 86_400_000).toISOString(), undefined, false);
   });
 
   it('rejects a client ID lookup returning a different order identity', async () => {

@@ -6,6 +6,8 @@ const command = z.strictObject({ commandId: z.string().uuid() }).readonly();
 const activity = z.strictObject({
   id: z.string().length(64),
   atMs: epochMillisecondsSchema,
+  firstAtMs: epochMillisecondsSchema.optional(),
+  repeatCount: z.number().int().positive().optional(),
   kind: z.enum(['decision', 'intent', 'submission', 'order', 'fill', 'fee', 'retry', 'no_trade', 'complete', 'paused', 'resumed', 'stopped', 'missed', 'check', 'skip', 'policy', 'ml']),
   title: z.string().max(120),
   detail: z.string().max(300),
@@ -60,6 +62,8 @@ const status = z.strictObject({
   }),
   hourlyShadow: z.strictObject({
     version: z.literal('trendvol-hourly-execution-v1'), mode: z.literal('shadow'),
+    registrationState: z.enum(['unregistered', 'source_mismatch', 'scheduled', 'collecting', 'ended', 'invalid']),
+    studyInstanceId: z.string().length(64).nullable(),
     startMs: epochMillisecondsSchema.nullable(), lastSlotMs: epochMillisecondsSchema.nullable(),
     observationCount: z.number().int().nonnegative(), completeDays: z.number().int().nonnegative(),
     lastModeledOrderCount: z.number().int().nonnegative(),
@@ -106,6 +110,10 @@ const status = z.strictObject({
     unresolvedOrders: z.array(z.strictObject({ clientOrderId: z.string().max(128), orderId: z.string().max(128).nullable() })),
   }),
   brokerEvidence: z.strictObject({
+    settlement: z.strictObject({ atMs: epochMillisecondsSchema, oldestFillAtMs: epochMillisecondsSchema,
+      reviewAfterMs: epochMillisecondsSchema, status: z.enum(['pending', 'overdue']),
+      assets: z.array(z.strictObject({ symbol: z.enum(['BTCUSD', 'ETHUSD', 'LTCUSD']), quantity: z.string(),
+        unreportedDebitQty: z.string() })).min(1).max(3) }).nullable().optional(),
     tradeStream: z.enum(['connecting', 'listening', 'unavailable']),
     quoteStatus: z.enum(['fresh', 'stale', 'unknown', 'unavailable']),
     quoteAssets: z.array(z.strictObject({ symbol: z.enum(['BTC/USD', 'ETH/USD', 'LTC/USD']),
@@ -124,6 +132,14 @@ const status = z.strictObject({
 }).readonly();
 
 export const parallelPaperChannelSchemas = {
+  'parallel.paper.hourly-study.preview': { request: z.strictObject({}).readonly(), response: z.strictObject({
+    previewHash: z.string().length(64), alreadyRegistered: z.boolean(), previousStudyId: z.string().length(64).nullable(),
+    artifactHash: z.string().length(64), behaviorHash: z.string().length(64), startMs: epochMillisecondsSchema,
+    foldEndsMs: z.array(epochMillisecondsSchema).min(1).max(12), holdoutEndMs: epochMillisecondsSchema,
+    opening: z.literal('common_cash_100000'), costVersion: z.string().max(120),
+  }).readonly() },
+  'parallel.paper.hourly-study.restart': { request: z.strictObject({ commandId: z.string().uuid(), previewHash: z.string().length(64) }).readonly(),
+    response: z.strictObject({ studyInstanceId: z.string().length(64), startMs: epochMillisecondsSchema }).readonly() },
   'parallel.paper.status': { request: z.strictObject({}).readonly(), response: status },
   'parallel.paper.start': { request: z.strictObject({ commandId: z.string().uuid(),
     smokeVerified: z.literal(true) }).readonly(), response: status },

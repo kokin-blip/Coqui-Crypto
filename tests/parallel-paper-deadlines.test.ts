@@ -12,7 +12,8 @@ import { canonicalJson, createStudyInstance, HOURLY_EXECUTION_V1, assetExposureK
   type ConnectionAccountSnapshotV2, type DecisionMarketDataset } from '../packages/core/src/index.js';
 import { ParallelPaperService, PARALLEL_INSTRUMENTS } from '../packages/services/src/index.js';
 import { appendParallelEvent, openDatabase, saveConnectionAccountSnapshotV2, saveProfileConnectionV2,
-  appendHourlyExecutionRecord, appendRemediationEvidence, listRemediationEvidence, registerStudyInstance, createParallelEventReader, listParallelEvents, setSetting } from '../packages/storage/src/index.js';
+  appendHourlyExecutionRecord, appendRemediationEvidence, listRemediationEvidence, registerStudyInstance, createParallelEventReader, listParallelEvents, setSetting,
+  acquireExecutionLease, assignAuthoritativeHost, recordHostReconciliation, relinquishAuthoritativeHost, takeoverAuthoritativeHost } from '../packages/storage/src/index.js';
 
 const TODAY = Date.parse('2026-09-24T00:06:00Z');
 const DAY = 86_400_000;
@@ -97,6 +98,138 @@ const prepared = () => ({ ok: true as const, dataset: dataset(), datasetHash: sh
   latestCompletedStartMs: TODAY - DAY, expectedCompletedStartMs: TODAY - DAY, ruleSnapshotHash: sha256Hex('rules') });
 
 describe('bounded paper passes', () => {
+  it.each(['unchanged', 'unassigned', 'new-generation', 'user-pause', 'unassigned-user-pause'])('rechecks on wake with %s authority without overriding a pause', async mode => {
+    const { database, clock, secrets } = await setup(), mock = mockClient(false, 'filled', () => clock.nowMs());
+    const owner = mode.startsWith('unassigned') ? null : assignAuthoritativeHost('main', 'desktop-main-test', 'desktop', clock.nowMs(), database);
+    const service = new ParallelPaperService({ profileId: 'main', hostId: 'desktop-main-test', database, clock, secrets,
+      preparation: prepared, refreshFor: async () => prepared(), clientFactory: () => mock.client as never,
+      killSwitchEngaged: () => false });
+    await service.start(`wake-${mode}`, true); service.suspend(); service.suspend();
+    await service.tick(); expect(mock.submit).not.toHaveBeenCalled();
+    if (mode === 'new-generation') {
+      relinquishAuthoritativeHost('main', owner!.hostId!, owner!.fencingGeneration, clock.nowMs(), database);
+      assignAuthoritativeHost('main', 'desktop-main-test', 'desktop', clock.nowMs(), database);
+    }
+    if (mode.endsWith('user-pause')) service.transition('paused', 'pause-during-sleep');
+    service.resume(); await service.tick();
+    const active = mode === 'unchanged' || mode === 'unassigned';
+    expect(service.summary().state).toBe(active ? 'active' : 'paused');
+    if (active) expect(mock.submit).toHaveBeenCalled();
+    else { expect(mock.submit).not.toHaveBeenCalled(); expect(service.summary().lastReason).toBe(mode.endsWith('user-pause') ? 'user_action' : 'ownership_transfer'); }
+    database.close();
+  });
+  it.each(['new-assignment', 'relinquished', 'other-host', 'headless-kind', 'headless-id'])('keeps wake fenced for %s', async mode => {
+    const { database, clock, secrets } = await setup(), mock = mockClient(false, 'filled', () => clock.nowMs());
+    try {
+      const owner = ['relinquished', 'other-host'].includes(mode)
+        ? assignAuthoritativeHost('main', 'desktop-main-test', 'desktop', clock.nowMs(), database) : null;
+      const service = new ParallelPaperService({ profileId: 'main', database, clock, secrets,
+        hostId: mode === 'headless-id' ? 'headless-test' : 'desktop-main-test',
+        ...(mode === 'headless-kind' ? { hostKind: 'headless' as const } : {}),
+        preparation: prepared, refreshFor: async () => prepared(), clientFactory: () => mock.client as never,
+        killSwitchEngaged: () => false });
+      expect((await service.start(`wake-fenced-${mode}`, true)).ok).toBe(true);
+      service.suspend();
+      if (mode === 'new-assignment') assignAuthoritativeHost('main', 'desktop-main-test', 'desktop', clock.nowMs(), database);
+      if (mode === 'relinquished') relinquishAuthoritativeHost('main', owner!.hostId!, owner!.fencingGeneration, clock.nowMs(), database);
+      if (mode === 'other-host') {
+        const reconciliationId = recordHostReconciliation({ profileId: 'main', hostId: 'headless-test',
+          observedGeneration: owner!.fencingGeneration, at: clock.nowMs(), detail: { reconciled: true } }, database);
+        takeoverAuthoritativeHost({ profileId: 'main', hostId: 'headless-test', hostKind: 'headless',
+          reconciliationId, at: clock.nowMs() }, database);
+      }
+      service.suspend(); service.resume(); service.resume();
+      expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'ownership_transfer' });
+      if (['other-host', 'headless-kind', 'headless-id'].includes(mode)) await expect(service.tick()).rejects.toThrow('stale_host_authority');
+      else await service.tick();
+      expect(mock.submit).not.toHaveBeenCalled();
+      expect(service.status().events.filter(e => e.kind === 'paused')).toHaveLength(1);
+    } finally { database.close(); }
+  });
+  it.each(['kill', 'stale-quote', 'unknown-order', 'lease', 'stop'])('revalidates %s after an unassigned desktop wakes', async mode => {
+    const { database, clock, secrets } = await setup(), mock = mockClient(false, 'filled', mode === 'stale-quote' ? TODAY - 120_000 : () => clock.nowMs());
+    let killed = false;
+    try {
+      const service = new ParallelPaperService({ profileId: 'main', hostId: 'desktop-main-test', database, clock, secrets,
+        preparation: prepared, refreshFor: async () => prepared(), clientFactory: () => mock.client as never,
+        killSwitchEngaged: () => killed });
+      expect((await service.start(`wake-gate-${mode}`, true)).ok).toBe(true);
+      service.suspend();
+      if (mode === 'kill') killed = true;
+      if (mode === 'unknown-order') {
+        const experimentId = service.status().experiment!.id;
+        appendParallelEvent({ experimentId, profileId: 'main', kind: 'external_intent', key: 'unknown-intent',
+          at: clock.nowMs(), detail: { clientOrderId: 'unknown-client', day: '2026-09-23', symbol: 'BTCUSD', side: 'buy', qty: '1' } }, database);
+        appendParallelEvent({ experimentId, profileId: 'main', kind: 'submit_attempt', key: 'unknown-attempt',
+          at: clock.nowMs(), detail: { clientOrderId: 'unknown-client', day: '2026-09-23' } }, database);
+      }
+      if (mode === 'lease') expect(acquireExecutionLease('main', 'desktop-other', clock.nowMs(), 30_000, database)).not.toBeNull();
+      if (mode === 'stop') expect(service.transition('stopped', 'stop-during-sleep')).toBe(true);
+      service.resume();
+      if (mode === 'lease') await expect(service.tick()).rejects.toThrow('execution_lease_unavailable');
+      else await service.tick();
+      expect(mock.submit).not.toHaveBeenCalled();
+      expect(service.status().events.some(e => e.kind === 'resumed')).toBe(false);
+      expect(service.status().events.some(e => e.kind === 'paused' && e.detail['reason'] === 'ownership_transfer')).toBe(false);
+      if (mode === 'kill') expect(service.summary().lastReason).toBe('kill_switch_engaged');
+      if (mode === 'unknown-order') expect(service.summary().reconciliationAttention.blocked).toBe(true);
+      if (mode === 'stop') expect(service.status().status).toBe('stopped');
+    } finally { database.close(); }
+  });
+  it('automatically clears an active delayed-fee wait only after exact activities arrive, preserving manual pauses', async () => {
+    const { database, clock, secrets } = await setup(), mock = mockClient(false, 'filled', () => clock.nowMs());
+    let charged = false, published = false, factor = '0.9975';
+    const service = new ParallelPaperService({ profileId: 'main', database, clock, secrets,
+      preparation: prepared, refreshFor: async () => prepared(), killSwitchEngaged: () => false,
+      clientFactory: () => ({ ...mock.client,
+        positions: async () => (await mock.client.positions()).map(p => ({ ...p,
+          qty: charged ? money(p.qty).mul(factor).toString() : p.qty })),
+        activities: async () => {
+          const fills = await mock.client.activities();
+          return [...fills, ...(published ? fills.map(f => ({ id: `fee-${f.id}`, activity_type: 'CFEE',
+            symbol: f.symbol, qty: money(f.qty).mul('-0.0025').toString(), created_at: new Date(TODAY).toISOString() })) : [])];
+        } }) as never });
+    await service.start('fee-wait', true); await service.tick();
+    expect(mock.submit).toHaveBeenCalledTimes(3); charged = true;
+    await service.tick(); await service.tick();
+    expect(service.summary()).toMatchObject({ state: 'active', runtimeState: 'attention', latestPass: { outcome: 'deferred' },
+      reconciliationAttention: { blocked: true, latestFailure: { pendingFeeEvidence: { status: 'awaiting' } } } });
+    expect(service.status().events.filter(e => e.kind === 'external_fee')).toHaveLength(0);
+    expect(mock.submit).toHaveBeenCalledTimes(3);
+    published = true; await service.tick();
+    expect(service.summary()).toMatchObject({ state: 'active', latestPass: { outcome: 'completed' },
+      reconciliationAttention: { blocked: false } });
+    expect(mock.submit).toHaveBeenCalledTimes(3);
+    expect(service.status().events.filter(e => e.kind === 'external_fee')).toHaveLength(3);
+    expect(service.status().events.some(e => e.kind === 'resumed')).toBe(false);
+    factor = '0.99'; await service.tick();
+    expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'broker_positions_mismatch' });
+    expect(mock.submit).toHaveBeenCalledTimes(3);
+    service.transition('paused', 'operator-pause'); await service.tick();
+    expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'user_action' });
+    expect(mock.submit).toHaveBeenCalledTimes(3); database.close();
+  });
+  it.each(['account', 'market', 'rules'])('waits through a transient %s failure without disarming an active experiment', async phase => {
+    const { database, clock, secrets } = await setup(), mock = mockClient(false, 'filled', () => clock.nowMs());
+    let fail = false;
+    const preparation = () => fail && phase !== 'account'
+      ? { ok: false as const, code: phase === 'rules' ? 'stale_product_rules' as const : 'market_fetch_failed' as const }
+      : prepared();
+    const service = new ParallelPaperService({ profileId: 'main', database, clock, secrets,
+      preparation, refreshFor: async () => preparation(), killSwitchEngaged: () => false,
+      clientFactory: () => ({ ...mock.client, account: async () => {
+        if (fail && phase === 'account') throw new AlpacaPaperError('unavailable', 'account', 503);
+        return mock.client.account();
+      } }) as never });
+    await service.start(`read-retry-${phase}`, true); fail = true;
+    await service.tick();
+    expect(service.status().status).toBe('active'); expect(mock.submit).not.toHaveBeenCalled();
+    expect(service.summary().latestPass?.outcome).toBe('deferred');
+    fail = false; clock.set(clock.nowMs() + 60_000); await service.tick();
+    expect(service.status().status).toBe('active'); expect(mock.submit).toHaveBeenCalled();
+    expect(service.status().events.some(e => e.kind === 'resumed')).toBe(false);
+    database.close();
+  });
   it.each([false, true])('preserves a newer pause during Resume (new pause: %s)', async (pauseAgain) => {
     const { database, clock, secrets } = await setup();
     const mock = mockClient();
@@ -292,6 +425,7 @@ describe('current shadow provenance', () => {
     appendRemediationEvidence({profileId:'main',namespace:instance.id,kind:'failure',key:'old-mismatch',atMs:TODAY+2,
       body:{reason:'registered_study_source_changed'}},database);
     const before=listRemediationEvidence('main',instance.id,'failure',database);
+    expect(hourlyShadowStatus('main',database,TODAY).registrationState).toBe(kind==='valid'?'scheduled':kind==='changed'?'source_mismatch':'invalid');
     expect(hourlyShadowStatus('main',database).lastFailureReason).toBe(kind==='valid'?null:
       kind==='changed'?'registered_study_source_changed':'invalid_candidate_definition');
     expect(listRemediationEvidence('main',instance.id,'failure',database)).toEqual(before);

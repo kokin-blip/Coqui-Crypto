@@ -1,0 +1,15 @@
+P7 native module imports loaded
+P7 native Main imports loaded false
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '4b5fcf51e709f6e4ac700797c029438aca13acffe8ff3b016c5f2f5abeb2b8c8'
+}
+PASS boot has no enrollment or paper permission 
+PASS explicit study selection keeps outcome bodies unopened 
+PASS sealed final action evidence and correction gaps survive production preload 
+PASS desktop-dark: labels and narrow scrolling 
+P7 full target capture desktop-dark {"x":0,"y":704.78125,"width":1440,"height":1246.6875,"scale":1}
+PASS narrow-light: labels and narrow scrolling 
+P7 full target capture narrow-light {"x":0,"y":840.78125,"width":640,"height":1643.1875,"scale":1}
+PASS contrast-zoom: labels and narrow scrolling 
+[Error: UnknownVizError]

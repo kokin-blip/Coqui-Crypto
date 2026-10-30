@@ -1,9 +1,10 @@
 import { Decimal } from 'decimal.js';
-import { HOURLY_EXECUTION_V1 } from '@coqui/core';
+import { canonicalJson, HOURLY_EXECUTION_V1, sha256Hex } from '@coqui/core';
 import type { createAlpacaPaperClient } from '@coqui/adapters';
 import type { ParallelPaperEvent, ParallelPaperExperiment } from '@coqui/storage';
 import { validateParallelPositions } from './parallel-paper-recovery.js';
 import { ParallelReconciliationError, type PaperPendingFeeDetail, type PaperPositionDifference } from './parallel-paper-utils.js';
+import { verifyPaperSettlement } from './parallel-paper-settlement.js';
 
 const DAY_MS = 86_400_000;
 /** A diagnostic hypothesis only: never a booked fee or permission to trade. */
@@ -31,7 +32,21 @@ function pendingFeeEvidence(events: readonly ParallelPaperEvent[], differences: 
         if (!quantity.isFinite() || quantity.lte(0)) return;
         gross = gross.plus(quantity); timestamps.push(row.time);
       }
-      const candidate = gross.mul(String(HOURLY_EXECUTION_V1.takerFeeRate));
+      let reported = new Decimal(0);
+      for (const fee of events.filter(event => event.kind === 'external_fee' &&
+        String(event.detail['symbol']).replaceAll('/', '') === difference.symbol)) {
+        const metadata = events.findLast(event => event.kind === 'broker_activity_metadata' &&
+          event.detail['activityId'] === fee.detail['activityId']);
+        const created = Date.parse(String(metadata?.detail['createdAt']));
+        // Publication/billing dates cannot identify a fee's trade day. Only
+        // provider creation evidence can explain a partially reported buy fee.
+        if (!Number.isFinite(created) || created > now || Math.floor(created / DAY_MS) !== lastDay) continue;
+        const quantity = new Decimal(String(fee.detail['quantity']));
+        if (!quantity.isFinite() || quantity.gte(0)) return;
+        reported = reported.plus(quantity.abs());
+      }
+      const candidate = gross.mul(String(HOURLY_EXECUTION_V1.takerFeeRate)).minus(reported);
+      if (candidate.lte(0)) return;
       if (residual.abs().minus(candidate).abs().gt(new Decimal('0.000000003').mul(latest.length))) return;
     }
   } catch { return; }
@@ -43,22 +58,28 @@ function pendingFeeEvidence(events: readonly ParallelPaperEvent[], differences: 
   return { status: now >= reviewAfterMs ? 'overdue' : 'awaiting', oldestFillAtMs, latestFillAtMs, reviewAfterMs };
 }
 
-/** Exact fee evidence is required at every value; historical allowances cannot clear a check. */
+/** Exact ledger accounting or independently verified broker execution positions. */
 export async function reconcilePaperPositionEvidence(input: {
   experiment: ParallelPaperExperiment; client: ReturnType<typeof createAlpacaPaperClient>;
   events(): readonly ParallelPaperEvent[]; now(): number; fullAudit(): Promise<void>;
   append(kind: string, key: string, detail: Record<string, unknown>): void;
-}): Promise<void> {
+}): Promise<'ledger' | 'broker_trade_updates'> {
   const observe = (positions: readonly { symbol: string; quantity: string }[]) => input.append('broker_position_snapshot',
     `positions:${input.events().length}`, { accountId: input.experiment.alpacaAccountId, positions, observedAtMs: input.now() });
-  try { await validateParallelPositions(input.client, input.events(), observe); return; }
+  try { await validateParallelPositions(input.client, input.events(), observe); return 'ledger'; }
   catch (error) {
     if (!(error instanceof ParallelReconciliationError) || error.positionDifferences.length === 0) throw error;
   }
   await input.fullAudit();
-  try { await validateParallelPositions(input.client, input.events(), observe); }
+  try { await validateParallelPositions(input.client, input.events(), observe); return 'ledger'; }
   catch (error) {
     if (!(error instanceof ParallelReconciliationError) || error.positionDifferences.length === 0) throw error;
+    const settlement = verifyPaperSettlement({ experiment: input.experiment, events: input.events(),
+      differences: error.positionDifferences, nowMs: input.now() });
+    if (settlement) {
+      input.append('broker_settlement_verified', `settlement:${sha256Hex(canonicalJson(settlement))}`, settlement);
+      return 'broker_trade_updates';
+    }
     const pending = pendingFeeEvidence(input.events(), error.positionDifferences, input.experiment.startedAt, input.now());
     throw new ParallelReconciliationError('broker_positions_mismatch', 'positions', undefined,
       error.positionDifferences, undefined, pending);

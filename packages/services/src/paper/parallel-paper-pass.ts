@@ -5,6 +5,10 @@ import { appendParallelEvent, createParallelEventReader, parallelExperimentStatu
 import { parallelAttemptsResolved } from './parallel-paper-recovery.js';
 import { parallelPaperFailureDetail } from './parallel-paper-utils.js';
 
+const RETRYABLE_READ_FAILURES = new Set(['deadline_exceeded', 'alpaca_unavailable', 'alpaca_rate_limited',
+  'alpaca_timeout', 'credentials_unavailable', 'secret_store_unavailable', 'market_fetch_failed',
+  'stale_market_data', 'stale_product_rules', 'stale_alpaca_quote']);
+
 /** Per-pass journal view and diagnostics. This object never changes activation state. */
 export class ParallelPaperPass {
   readonly events: ReturnType<typeof createParallelEventReader>;
@@ -37,7 +41,8 @@ export class ParallelPaperPass {
   }
   defer(experiment: ParallelPaperExperiment, error: unknown): boolean {
     const detail = this.failure(error, 'paper_execution_unknown');
-    if (detail.reason !== 'deadline_exceeded') return false;
+    const awaitingFees = detail.reason === 'broker_positions_mismatch' && detail.pendingFeeEvidence !== undefined;
+    if (!RETRYABLE_READ_FAILURES.has(detail.reason) && !awaitingFees) return false;
     const events = this.events(experiment.id);
     let resolved: boolean;
     try { resolved = parallelAttemptsResolved(events); } catch { return false; }

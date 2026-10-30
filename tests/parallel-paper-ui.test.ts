@@ -54,7 +54,7 @@ describe('Alpaca paper activity panel', () => {
         modelHash: null, datasetHash: null, predictedAtMs: null, evidence: null,
         lastSlot: null, lastApplied: null, lastReason: null,
         lastBaseline: [], lastProposed: [], lastCombined: [] },
-      hourlyShadow: { version: 'trendvol-hourly-execution-v1', mode: 'shadow', startMs: null,
+      hourlyShadow: { version: 'trendvol-hourly-execution-v1', mode: 'shadow', registrationState: 'unregistered', studyInstanceId: null, startMs: null,
         lastSlotMs: null, observationCount: 0, completeDays: 0,
         lastModeledOrderCount: 0, lastModeledOrders: [], lastBlockedReasons: [], lastFailureReason: null },
       activity: [{ id: 'a'.repeat(64), atMs: Date.now(), kind: 'no_trade',
@@ -65,7 +65,7 @@ describe('Alpaca paper activity panel', () => {
     expect(html).toContain('Alpaca broker evidence');
     expect(html).toContain('Alpaca quote freshness');
     expect(html).toContain('Completeness unconfirmed');
-    expect(html).toContain('Captured stream positions do not replace the accounting guard');
+    expect(html).toContain('Fee accounting remains separate');
     expect(html).toContain('Across 3 recorded daily decisions');
     expect(html).toContain('No intraday order needed');
     expect(html).toContain('not execution-matched');
@@ -74,13 +74,18 @@ describe('Alpaca paper activity panel', () => {
     expect(html).toContain('Hourly execution candidate · shadow only');
     expect(html).toContain('awaiting registration');
     const waiting = mocked.channels['parallel.paper.status'] as { value: Record<string, unknown> };
-    mocked.channels['parallel.paper.status'] = { kind: 'ready', value: { ...waiting.value,
+    mocked.channels['parallel.paper.status'] = { kind: 'ready', value: { ...waiting.value, runtimeState: 'attention',
       latestPass: { outcome: 'deferred', phase: 'market_preparation', atMs: Date.now(), retryAtMs: Date.now() + 60_000 } } };
-    expect(render()).toContain('Waiting for a complete check');
-    expect(render()).toContain('orders wait for complete checks');
+    expect(render()).toContain('Check pending · retrying automatically');
+    expect(render()).toContain('new orders wait until all checks pass');
+    expect(render()).not.toContain('Scheduler check overdue');
+    expect(render()).not.toContain('Scheduler has not checked recently');
+    mocked.channels['parallel.paper.status'] = { kind: 'ready', value: { ...waiting.value, runtimeState: 'attention',
+      latestPass: { outcome: 'deferred', phase: 'market_preparation', atMs: Date.now() - 181_000, retryAtMs: Date.now() - 121_000 } } };
+    expect(render()).toContain('Scheduler check overdue');
     const shadowReady = mocked.channels['parallel.paper.status'] as { kind: string; value: Record<string, unknown> };
     mocked.channels['parallel.paper.status'] = { ...shadowReady, value: { ...shadowReady.value,
-      hourlyShadow: { version: 'trendvol-hourly-execution-v1', mode: 'shadow',
+      hourlyShadow: { version: 'trendvol-hourly-execution-v1', mode: 'shadow', registrationState: 'collecting', studyInstanceId: 'a'.repeat(64),
         startMs: Date.now() - 86_400_000, lastSlotMs: Date.now() - 3_600_000,
         observationCount: 24, completeDays: 1, lastModeledOrderCount: 1,
         lastModeledOrders: [{ symbol: 'BTCUSD', side: 'buy', quantity: '1', filledQuantity: '0.5', remainingQuantity: '0.5' }],
@@ -203,14 +208,15 @@ it('shows exact broker quantity differences in recovery while retaining the paus
 it('explains pending and overdue fee evidence without offering an automatic waiver', async () => {
   // @ts-expect-error TS6142: the root test compiler intentionally omits JSX support.
   const {ParallelPaperRecovery}=await import('../apps/desktop/src/renderer/app/ParallelPaperRecovery.js');
-  for(const status of ['awaiting','overdue']){
-    const html=server.renderToStaticMarkup(react.createElement(ParallelPaperRecovery,{client:{},data:{state:'paused',experimentId:'paper',
+  for(const [status,state] of [['awaiting','active'],['awaiting','paused'],['overdue','paused']]){
+    const html=server.renderToStaticMarkup(react.createElement(ParallelPaperRecovery,{client:{},data:{state,experimentId:'paper',
       reconciliationAttention:{blocked:true,lastSuccessfulAtMs:null,unresolvedOrders:[],latestFailure:{atMs:Date.parse('2026-10-22T00:00:00Z'),
         operation:'positions',reason:'broker_positions_mismatch',pendingFeeEvidence:{status,oldestFillAtMs:Date.parse('2026-10-20T12:00:00Z'),
           latestFillAtMs:Date.parse('2026-10-20T12:00:00Z'),reviewAfterMs:Date.parse('2026-10-22T00:00:00Z')}}}}}));
     expect(html).toContain(status==='awaiting'?'Waiting for fee evidence':'Fee evidence overdue');
     expect(html).toContain('not booked estimated fees');expect(html).toContain('36h before the latest check');
-    expect(html).toContain('never resumes trading automatically');expect(html).toContain('Retry reconciliation');
+    expect(html).toContain(state==='active'?'no Resume is needed for this wait':'Press Resume only after the checks pass');
+    expect(html).toContain('Retry reconciliation');
     expect(html).not.toContain('Recovery complete');
     if(status==='overdue')expect(html).toContain('elapsed time does not clear this block');
   }
@@ -266,6 +272,21 @@ it('shows ready to resume after recovery without claiming that trading was enabl
   expect(html).toContain('Trading remains paused until you press Resume');
   expect(html).toContain('Fee attribution remains unconfirmed');
   expect(html).not.toContain('New paper orders blocked');
+});
+
+it('distinguishes exact execution-position verification from pending fee accounting', async () => {
+  // @ts-expect-error TS6142: the root test compiler intentionally omits JSX support.
+  const { ParallelPaperRecovery } = await import('../apps/desktop/src/renderer/app/ParallelPaperRecovery.js');
+  const html = server.renderToStaticMarkup(react.createElement(ParallelPaperRecovery, { client: {}, data: {
+    state: 'active', experimentId: 'paper', reconciliationAttention: { blocked: false, latestFailure: null, lastSuccessfulAtMs: 1, unresolvedOrders: [] },
+    brokerEvidence: { tradeStream: 'listening', quoteStatus: 'fresh', positionStatus: 'reconciled', feeCoverage: 'unconfirmed',
+      capturedExecutionCount: 2, latestFeeCreatedAtMs: null, latestFillAtMs: null,
+      settlement: { status: 'pending', assets: [{ symbol: 'BTCUSD', quantity: '0.9975', unreportedDebitQty: '0.0025' }] } },
+  } }));
+  expect(html).toContain('Broker positions verified · fee accounting');
+  expect(html).toContain('Estimated fees have not been booked');
+  expect(html).toContain('New orders still require all execution checks');
+  expect(html).not.toContain('Waiting for fee evidence');
 });
 
 it('labels a submitted local simulation as waiting for its execution bar rather than executing', async () => {

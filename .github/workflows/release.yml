@@ -40,8 +40,8 @@ jobs:
         id: targets
         shell: bash
         run: |
-          # beta.16 is intentionally macOS-only; future tags retain both platforms.
-          if [[ "$GITHUB_REF_NAME" == "experimental-v0.1.0-beta.16" ]]; then
+          # These releases are intentionally macOS-only; other tags retain both platforms.
+          if [[ "$GITHUB_REF_NAME" == "experimental-v0.1.0-beta.16" || "$GITHUB_REF_NAME" == "experimental-v0.1.0-beta.22" ]]; then
             echo 'matrix={"include":[{"os":"macos-latest","script":"package:mac","artifact":"macos-arm64"}]}' >> "$GITHUB_OUTPUT"
           else
             echo 'matrix={"include":[{"os":"macos-latest","script":"package:mac","artifact":"macos-arm64"},{"os":"windows-latest","script":"package:win","artifact":"windows-x64"}]}' >> "$GITHUB_OUTPUT"

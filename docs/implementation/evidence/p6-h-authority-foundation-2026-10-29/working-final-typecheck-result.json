@@ -1,0 +1,10 @@
+{
+  "command": [
+    "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "node_modules/typescript/bin/tsc",
+    "-p",
+    "tsconfig.check.json",
+    "--noEmit"
+  ],
+  "exitCode": 0
+}

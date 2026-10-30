@@ -5,6 +5,7 @@ import { AlpacaPaperError, type RequestDeadline, type createAlpacaPaperClient } 
 import { activeParallelEvents } from './parallel-paper-plans.js';
 import { ParallelReconciliationError } from './parallel-paper-utils.js';
 import type { ParallelPaperEvent, ParallelPaperExperiment } from '@coqui/storage';
+import { parallelRefusalReceipts, parallelRejectedSubmissions } from './parallel-paper-rejections.js';
 
 /** Reconcile persisted intents before allowing another paper submission. */
 export async function reconcileParallelPaper(input: {
@@ -19,6 +20,8 @@ export async function reconcileParallelPaper(input: {
   const { experiment, client } = input;
   const DAY_MS = 86_400_000;
   const events = activeParallelEvents(input.events());
+  const refusals = parallelRefusalReceipts(events), rejected = parallelRejectedSubmissions(events);
+  const pendingRefusals: { id: string; attempt: ParallelPaperEvent; receipt: ParallelPaperEvent }[] = [];
   const intents = events.filter((event) => event.kind === 'external_intent');
   const attempts = new Set(events.filter(e => e.kind === 'submit_attempt').map(e => e.detail['clientOrderId']));
   const orders = new Map(events.filter(e => e.kind === 'external_order').map(e => [e.detail['clientOrderId'], e]));
@@ -32,16 +35,23 @@ export async function reconcileParallelPaper(input: {
     const id = String(intent.detail['clientOrderId']);
     if (!attempts.has(id)) continue;
     const last = orders.get(id);
+    if (last && refusals.has(id)) throw new ParallelReconciliationError('broker_order_identity_mismatch', 'order_lookup');
     if (last?.detail['status'] === 'filled' && (filled.get(last.detail['orderId']) ?? new Decimal(0))
       .equals(String(last.detail['filledQty']))) continue;
     let order;
     try { order = await client.orderByClientId(id); }
     catch (error) {
       if (error instanceof AlpacaPaperError && error.code === 'not_found') {
+        const refusal = refusals.get(id);
+        if (error.httpStatus === 404 && refusal) {
+          pendingRefusals.push({ id, ...refusal });
+          continue;
+        }
         throw new ParallelReconciliationError('submission_outcome_unknown', 'order_lookup', error);
       }
       throw error;
     }
+    if (refusals.has(id)) throw new ParallelReconciliationError('broker_order_identity_mismatch', 'order_lookup');
     if (order.client_order_id !== id || order.symbol.replace('/', '') !== String(intent.detail['symbol']).replace('/', '') ||
         order.side !== intent.detail['side']) throw new ParallelReconciliationError('broker_order_identity_mismatch', 'order_lookup');
     input.append('external_order', `order:${order.id}:${order.status}:${order.filled_qty}`,
@@ -55,9 +65,9 @@ export async function reconcileParallelPaper(input: {
   const openingDayMs = Date.parse(new Date(experiment.startedAt).toISOString().slice(0, 10));
   const lastAudit = events.findLast(event => ['activity_audit_started', 'activity_audit_progress', 'activity_audit'].includes(event.kind));
   const pendingAudit = lastAudit && lastAudit.kind !== 'activity_audit' && lastAudit.detail['day'] === auditDay &&
-    lastAudit.detail['afterMs'] === openingDayMs ? lastAudit : undefined;
-  const fullAudit = input.fullAudit === true || pendingAudit !== undefined ||
-    !events.some((event) => event.kind === 'activity_audit' && event.detail['day'] === auditDay);
+    lastAudit.detail['afterMs'] === openingDayMs && lastAudit.detail['scope'] === 'all_activity_types' ? lastAudit : undefined;
+  const fullAudit = input.fullAudit === true || pendingRefusals.some(refusal => !rejected.has(refusal.id)) || pendingAudit !== undefined ||
+    !events.some((event) => event.kind === 'activity_audit' && event.detail['day'] === auditDay && event.detail['scope'] === 'all_activity_types');
   const lastReconciled = events.findLast(event => event.kind === 'readiness' &&
     event.detail['operation'] === 'activity_reconciliation' && event.detail['status'] === 'validated');
   // Re-read a day of overlap for delayed publication; the daily audit still covers all history.
@@ -74,15 +84,20 @@ export async function reconcileParallelPaper(input: {
   if (!Number.isSafeInteger(pagesCompleted) || pagesCompleted < 0 || pagesCompleted >= 20)
     throw new ParallelReconciliationError('alpaca_activity_page_limit', 'activities');
   if (fullAudit && !pendingAudit) input.append('activity_audit_started', auditId!,
-    { auditId, day: auditDay, afterMs, pagesCompleted: 0 });
+    { auditId, day: auditDay, afterMs, pagesCompleted: 0, scope: 'all_activity_types' });
   for (let page = pagesCompleted; page < 20; page += 1) {
     input.deadline?.check();
     const previousCursor = cursor;
-    const activities = await client.activities(new Date(afterMs).toISOString(), cursor);
+    const activities = await client.activities(new Date(afterMs).toISOString(), cursor, fullAudit);
     if (!Array.isArray(activities)) throw new ParallelReconciliationError('invalid_alpaca_activity', 'activities');
     for (const item of activities) {
       if (!item || typeof item !== 'object' || typeof item.id !== 'string' || !item.id || item.id.length > 256 || typeof item.activity_type !== 'string')
         throw new ParallelReconciliationError('invalid_alpaca_activity', 'activities');
+      // Full audits also expose asset transfers/corrections that a fill/fee-only
+      // query could hide. An execution checkpoint cannot explain these changes.
+      if (!['FILL', 'CFEE', 'FEE'].includes(item.activity_type) && item.symbol != null &&
+          !['', 'USD'].includes(item.symbol.replaceAll('/', '')) && (item.qty == null || !new Decimal(item.qty).isZero()))
+        throw new ParallelReconciliationError('unexpected_alpaca_activity', 'activities');
       // Separate evidence records keep previously booked immutable fills/fees identical on replay.
       if (['FILL', 'CFEE', 'FEE'].includes(item.activity_type)) {
         for (const value of [item.created_at, item.transaction_time, item.date, item.side, item.order_id])
@@ -116,7 +131,7 @@ export async function reconcileParallelPaper(input: {
     if (activities.length < 100) {
       input.deadline?.check();
       if (fullAudit) input.append('activity_audit', `${auditId}:complete`,
-        { auditId, day: auditDay, afterMs, feeStatus: 'queried_not_proof_of_zero_fees' });
+        { auditId, day: auditDay, afterMs, scope: 'all_activity_types', feeStatus: 'queried_not_proof_of_zero_fees' });
       break;
     }
     if (page === 19) throw new ParallelReconciliationError('alpaca_activity_page_limit', 'activities');
@@ -124,10 +139,14 @@ export async function reconcileParallelPaper(input: {
     if (cursor === undefined || cursor === previousCursor)
       throw new ParallelReconciliationError('alpaca_activity_page_limit', 'activities');
     if (fullAudit) input.append('activity_audit_progress', `${auditId}:page:${page + 1}`,
-      { auditId, day: auditDay, afterMs, pagesCompleted: page + 1, pageToken: cursor });
+        { auditId, day: auditDay, afterMs, pagesCompleted: page + 1, pageToken: cursor, scope: 'all_activity_types' });
   }
   input.append('readiness', `reconciled:${input.now()}:${input.events().length}`, { operation: 'activity_reconciliation',
     status: 'validated', observedAtMs: input.now(), intentCount: intents.length });
+  for (const refusal of pendingRefusals) if (!rejected.has(refusal.id)) {
+    input.append('submission_rejected', `rejected:${refusal.attempt.id}`, { clientOrderId: refusal.id,
+      attemptId: refusal.attempt.id, refusalEventId: refusal.receipt.id, auditId, httpStatus: 403 });
+  }
   const measurementEvents = input.events().filter(event => ['external_order', 'submit_attempt', 'pre_order_quote',
     'external_fill', 'intraday_check', 'execution_measurement'].includes(event.kind));
   const measured = new Set(measurementEvents.filter(event => event.kind === 'execution_measurement').map(event => event.detail['measurementId']));

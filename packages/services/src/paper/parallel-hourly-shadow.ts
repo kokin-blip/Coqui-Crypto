@@ -6,7 +6,7 @@ import { canonicalJson, sha256Hex, STUDY_BEHAVIOR_HASHES, HOURLY_EXECUTION_V1, h
   studySourceMatches, type CanonicalJsonValue, type HourlyExecutionObservation, type HourlyVirtualOrder, type HourlyVirtualState } from '@coqui/core';
 import { type createAlpacaPaperClient } from '@coqui/adapters';
 import { appendRemediationEvidence, latestParallelExperiment, listRemediationEvidence, listStudyInstances, appendHourlyExecutionRecord, getHourlyExecutionRecord, hourlyExecutionCoverage,
-  latestHourlyExecutionRecord, listHourlyExecutionRecords, type Db } from '@coqui/storage';
+  latestHourlyExecutionRecord, listHourlyExecutionRecords, inTransaction, type Db } from '@coqui/storage';
 
 import { parallelSafeFailureReason } from './parallel-paper-utils.js';
 import { parallelQuotes } from './parallel-paper-intraday.js';
@@ -17,7 +17,7 @@ type Client = ReturnType<typeof createAlpacaPaperClient>;
 const DAY_MS = 86_400_000;
 const CANDIDATE = HOURLY_EXECUTION_V1.id;
 
-export function hourlyShadowStatus(profileId: string, db: Db) {
+export function hourlyShadowStatus(profileId: string, db: Db, nowMs = Date.now()) {
   const instance = listStudyInstances(profileId, CANDIDATE, db).at(-1);
   const list = (kind: string) => instance ? listRemediationEvidence(profileId, instance.id, kind, db) : [];
   const study = instance ? { body: instance.definition.candidateDefinition } : getHourlyExecutionRecord(profileId, 'study', CANDIDATE, db);
@@ -41,7 +41,11 @@ export function hourlyShadowStatus(profileId: string, db: Db) {
   const body = last?.body as { result?: { orders?: readonly HourlyVirtualOrder[];
     blocked?: readonly { reason: string }[] } } | undefined;
   const startMs = (study?.body as { startMs?: number } | undefined)?.startMs ?? null;
-  return { version: CANDIDATE, mode: 'shadow' as const, startMs,
+  const endMs = (study?.body as { holdoutEndMs?: number } | undefined)?.holdoutEndMs;
+  const registrationState = !study ? 'unregistered' as const : provenanceFailure === 'invalid_candidate_definition' ? 'invalid' as const
+    : provenanceFailure ? 'source_mismatch' as const : startMs === null || !Number.isSafeInteger(endMs) ? 'invalid' as const
+    : nowMs < startMs ? 'scheduled' as const : nowMs >= endMs! ? 'ended' as const : 'collecting' as const;
+  return { registrationState, studyInstanceId: instance?.id ?? null, version: CANDIDATE, mode: 'shadow' as const, startMs,
     lastSlotMs: last?.atMs ?? null, observationCount: coverage.observations,
     completeDays: coverage.completeDays, lastModeledOrderCount: body?.result?.orders?.length ?? 0,
     lastModeledOrders: (body?.result?.orders ?? []).slice(0, 3).map((order) => ({
@@ -57,6 +61,7 @@ export function hourlyShadowStatus(profileId: string, db: Db) {
 /** A read-only broker collector and virtual book. No Alpaca submit method is accepted. */
 export async function collectParallelHourlyShadow(input: {
   readonly profileId: string; readonly experimentId: string; readonly db: Db; readonly nowMs: number;
+  readonly beforeAppend?: () => void; readonly now?: () => number;
   readonly datasetHash: string; readonly decision: { readonly day: string;
     readonly weights: Record<string, number> };
   readonly read: Pick<Client, 'latestCryptoQuotes' | 'asset' | 'account' | 'positions'>;
@@ -67,6 +72,7 @@ export async function collectParallelHourlyShadow(input: {
   const planHash = sha256Hex(canonicalJson(HOURLY_EXECUTION_V1));
   const scoped = studyCollection({ profileId: input.profileId, experimentId: input.experimentId, candidateId: CANDIDATE,
     db: input.db, nowMs: input.nowMs, legacyHash: sourceHash,
+    ...(input.beforeAppend ? { beforeAppend: input.beforeAppend } : {}),
     legacyList: (kind) => listHourlyExecutionRecords(input.profileId, kind as 'study' | 'observation' | 'shadow' | 'failure', input.db),
     legacyAppend: (kind,key,body) => appendHourlyExecutionRecord(input.profileId,
       { kind: kind as 'study' | 'observation' | 'shadow' | 'failure', key, atMs: input.nowMs, body }, input.db) });
@@ -87,9 +93,10 @@ export async function collectParallelHourlyShadow(input: {
   if (existing === null) {
     const [rawQuotes, ...assets] = await Promise.all([input.read.latestCryptoQuotes(),
       ...PARALLEL_SYMBOLS.map((symbol) => input.read.asset(symbol))]);
-    const quoteRead = parallelQuotes(rawQuotes, input.nowMs);
+    const capturedAtMs = input.now?.() ?? input.nowMs;
+    const quoteRead = parallelQuotes(rawQuotes, capturedAtMs);
     const targets = PARALLEL_INSTRUMENTS.map((instrument) => input.decision.weights[instrumentKey(instrument)] ?? 0);
-    const observation: HourlyExecutionObservation = { slotMs, capturedAtMs: input.nowMs,
+    const observation: HourlyExecutionObservation = { slotMs, capturedAtMs,
       decisionDay: input.decision.day, datasetHash: input.datasetHash,
       targetHash: sha256Hex(canonicalJson({ day: input.decision.day, targets })), targets,
       quotes: PARALLEL_SYMBOLS.map((symbol) => ({ bid: Number(quoteRead.sides[symbol]!.bid),
@@ -140,6 +147,8 @@ export async function collectParallelHourlyShadowSafely(input: Parameters<typeof
     const reason = parallelSafeFailureReason(error, 'hourly_shadow_unavailable');
     const slotMs = Math.floor(input.nowMs / 3_600_000) * 3_600_000;
     try {
+      inTransaction(input.db, () => {
+      input.beforeAppend?.();
       const instance = listStudyInstances(input.profileId, CANDIDATE, input.db).at(-1);
       if (instance) {
         const key = `${slotMs}:${reason}`;
@@ -148,6 +157,7 @@ export async function collectParallelHourlyShadowSafely(input: Parameters<typeof
             atMs:input.nowMs,body:{reason,slotMs} as CanonicalJsonValue},input.db);
       } else appendHourlyExecutionRecord(input.profileId, { kind: 'failure',
         key: `${slotMs}:${reason}`, atMs: slotMs, body: { reason, slotMs } }, input.db);
+      });
     } catch { /* Research storage cannot interrupt authoritative paper execution. */ }
   }
 }

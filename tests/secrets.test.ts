@@ -156,6 +156,26 @@ describe('createMemorySecretStore', () => {
 });
 
 describe('createCachedSecretStore', () => {
+  it.each(['resolve', 'reject'])('retries a hung read and ignores its late %s result', async outcome => {
+    vi.useFakeTimers();
+    try {
+      let resolveOld!: (value: string) => void, rejectOld!: (reason: Error) => void;
+      const get = vi.fn().mockImplementationOnce(() => new Promise<string>((resolve, reject) => {
+        resolveOld = resolve; rejectOld = reject;
+      })).mockResolvedValue('fresh-paper-key');
+      const store = createCachedSecretStore({ get, set: async () => {}, delete: async () => {} });
+      const first = store.read('alpaca-paper-credentials'), second = store.read('alpaca-paper-credentials');
+      await vi.advanceTimersByTimeAsync(10_000);
+      expect(await first).toMatchObject({ ok: false, code: 'unavailable' });
+      expect(await second).toEqual(await first); expect(get).toHaveBeenCalledOnce();
+      expect(await store.read('alpaca-paper-credentials')).toEqual({ ok: true, value: 'fresh-paper-key' });
+      await store.write('alpaca-paper-credentials', 'newer-paper-key');
+      if (outcome === 'resolve') resolveOld('stale-private-material'); else rejectOld(new Error('private backend error'));
+      await vi.advanceTimersByTimeAsync(0);
+      expect(await store.read('alpaca-paper-credentials')).toEqual({ ok: true, value: 'newer-paper-key' });
+      expect(get).toHaveBeenCalledTimes(2);
+    } finally { vi.useRealTimers(); }
+  });
   function backend() {
     const values = new Map<string, string>();
     let reads = 0;
@@ -258,6 +278,36 @@ describe('createCachedSecretStore', () => {
 });
 
 describe('createOsKeyringSecretStore', () => {
+  it('does not reuse a native read across credential removal or resurrect its late value', async () => {
+    let finish!: (value: string) => void;
+    const getPassword = vi.fn().mockImplementationOnce(() => new Promise<string>(resolve => { finish = resolve; }))
+      .mockResolvedValue(null);
+    const store = createOsKeyringSecretStore(async () => ({ getPassword,
+      setPassword: async () => {}, deletePassword: async () => true }));
+    const oldRead = store.read('alpaca-paper-credentials');
+    await vi.waitFor(() => expect(getPassword).toHaveBeenCalledOnce());
+    await store.remove('alpaca-paper-credentials');
+    expect(await store.read('alpaca-paper-credentials')).toEqual({ ok: true, value: null });
+    finish('removed-private-material'); await oldRead;
+    expect(await store.read('alpaca-paper-credentials')).toEqual({ ok: true, value: null });
+    expect(getPassword).toHaveBeenCalledTimes(2);
+  });
+  it('bounds repeated cache waits without queuing more uncancellable native reads', async () => {
+    vi.useFakeTimers();
+    try {
+      let finish!: (value: string) => void;
+      const getPassword = vi.fn(() => new Promise<string>(resolve => { finish = resolve; }));
+      const store = createOsKeyringSecretStore(async () => ({ getPassword,
+        setPassword: async () => {}, deletePassword: async () => true }));
+      const first = store.read('alpaca-paper-credentials'); await vi.advanceTimersByTimeAsync(10_000);
+      expect(await first).toMatchObject({ ok: false, code: 'unavailable' });
+      const next = store.read('alpaca-paper-credentials'); await vi.advanceTimersByTimeAsync(1);
+      expect(getPassword).toHaveBeenCalledOnce();
+      finish('existing-paper-key'); await vi.advanceTimersByTimeAsync(0);
+      expect(await next).toEqual({ ok: true, value: 'existing-paper-key' });
+      expect(await store.read('alpaca-paper-credentials')).toEqual({ ok: true, value: 'existing-paper-key' });
+    } finally { vi.useRealTimers(); }
+  });
   it('uses asynchronous native entries with exact service and account identity', async () => {
     const calls: string[] = [];
     const values = new Map<string, string>();

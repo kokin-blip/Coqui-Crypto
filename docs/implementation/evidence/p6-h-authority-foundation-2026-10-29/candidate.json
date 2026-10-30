@@ -1,0 +1,35 @@
+{
+  "base": "9164e163af667c82d66cd3b7cd15146a046e4a96",
+  "candidate": "/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-h-authority-ft85h6vj",
+  "paths": [
+    "packages/core/src/execution/account-capital-authority.ts",
+    "packages/core/src/execution/index.ts",
+    "packages/storage/src/repositories/account-capital-authority.ts",
+    "packages/storage/src/repositories/index.ts",
+    "packages/services/src/paper/account-capital-runtime.ts",
+    "packages/services/src/paper/index.ts",
+    "tests/account-capital-authority.test.ts"
+  ],
+  "mixed": [
+    "packages/services/src/paper/index.ts"
+  ],
+  "hashes": {
+    "packages/core/src/execution/account-capital-authority.ts": "ef8cf991eca31f1c8d02640f8d2f1cde9cefdb2d1084bb06297037966cf7482b",
+    "packages/core/src/execution/index.ts": "da323fc29591b7e94fdf521f7b0c091575e1527f2b28279c78cfa93f9aae8b29",
+    "packages/storage/src/repositories/account-capital-authority.ts": "a36b4fb93b38ef628d0e874d9705cbdff8dd241b412ac2117ec18dabb706dcc1",
+    "packages/storage/src/repositories/index.ts": "283ea72c56e5c7272fd8ef1b8f9d84f0b2339352dea89cfbaa011319ee82f142",
+    "packages/services/src/paper/account-capital-runtime.ts": "d5a044847d279a24970e81393d74a3ebce3f37e6e2a1d162c0dfb182b5c29400",
+    "packages/services/src/paper/index.ts": "704afb4d01a02af0a76666f2ccb4327a1d14e18088091332c74025fb4b8fa44a",
+    "tests/account-capital-authority.test.ts": "8b4981943ad00f97079d6b9250fea4dc6254f23d6f66e8de2131c320f06565d9"
+  },
+  "workingHashes": {
+    "packages/core/src/execution/account-capital-authority.ts": "ef8cf991eca31f1c8d02640f8d2f1cde9cefdb2d1084bb06297037966cf7482b",
+    "packages/core/src/execution/index.ts": "da323fc29591b7e94fdf521f7b0c091575e1527f2b28279c78cfa93f9aae8b29",
+    "packages/storage/src/repositories/account-capital-authority.ts": "a36b4fb93b38ef628d0e874d9705cbdff8dd241b412ac2117ec18dabb706dcc1",
+    "packages/storage/src/repositories/index.ts": "283ea72c56e5c7272fd8ef1b8f9d84f0b2339352dea89cfbaa011319ee82f142",
+    "packages/services/src/paper/account-capital-runtime.ts": "d5a044847d279a24970e81393d74a3ebce3f37e6e2a1d162c0dfb182b5c29400",
+    "packages/services/src/paper/index.ts": "a5a135ceaf59092064dac05313af052da8a2042db8d4f44428f2382e6e1565e9",
+    "tests/account-capital-authority.test.ts": "8b4981943ad00f97079d6b9250fea4dc6254f23d6f66e8de2131c320f06565d9"
+  },
+  "correction": "Recorded scope without mutable head refuses as an integrity gap; cannot initialize fresh."
+}

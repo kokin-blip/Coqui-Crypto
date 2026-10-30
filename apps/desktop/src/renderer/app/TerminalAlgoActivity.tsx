@@ -79,10 +79,10 @@ export function AlgoActivity({client,activity,state,filter,onProductChange,mode,
   return <div className="terminal-algo-activity">
     <div className="terminal-algo-context"><CoquiBadge>Paper</CoquiBadge><span title={`${value.scope.label} · ${scopeLabel(activity,filter)}`}>{value.scope.label} · {scopeLabel(activity,filter)}</span></div>
     <dl className="terminal-algo-metrics">
-      <TerminalMetric label={`Realized net · ${periodLabel(filter.period)}`} tone={tone(value.realizedPnlUsd)}>{signed(value.realizedPnlUsd)}</TerminalMetric>
-      <TerminalMetric label="Open P/L · now" tone={tone(value.unrealizedPnlUsd)}>{signed(value.unrealizedPnlUsd)}</TerminalMetric>
-      <TerminalMetric label="Winning / losing exits">{value.wins} / {value.losses}</TerminalMetric>
-      <TerminalMetric label="Executed orders">{value.executedOrders}{!value.historyComplete?' · partial':''}</TerminalMetric>
+      <TerminalMetric label={`Realized net · ${periodLabel(filter.period)}`} info="Profit or loss on recorded sell executions in the selected source, assets and period, after recorded fees. Missing entry cost, fees or fill history makes the total unavailable. A known subtotal covers only executions with enough evidence." tone={tone(value.realizedPnlUsd)}>{signed(value.realizedPnlUsd)}</TerminalMetric>
+      <TerminalMetric label="Open P/L · now" info="Unrealized profit or loss on the remaining recorded positions, using their cost basis, recorded fees and latest recorded prices. It is not cash received. Missing evidence makes the total unavailable; stale prices are labeled." tone={tone(value.unrealizedPnlUsd)}>{signed(value.unrealizedPnlUsd)}</TerminalMetric>
+      <TerminalMetric label="Winning / losing exits" info="Recorded sell orders with known positive or negative net P/L in this selection. Multiple fills from one order count as one exit. Breakeven exits and exits with unknown P/L are excluded from these two counts.">{value.wins} / {value.losses}</TerminalMetric>
+      <TerminalMetric label="Executed orders" info="Distinct orders with at least one recorded fill in the selected source, assets and period. This counts orders, not individual fills or proposed orders. Partial means the available history is incomplete.">{value.executedOrders}{!value.historyComplete?' · partial':''}</TerminalMetric>
     </dl>
     {value.scope.source==='alpaca_paper'&&filter.productId===null&&<BrokerAccountPerformance key={`${value.profileId}:${value.scope.id}:${value.connectionId}`}
       client={client} profileId={value.profileId} scopeId={value.scope.id} connectionId={value.connectionId}/>}

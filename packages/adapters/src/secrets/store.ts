@@ -267,10 +267,19 @@ export function createCachedSecretStore(backend: SecretBackend): SecretStore {
       if (cached !== undefined) return cached;
       const pending = inflight.get(resolved);
       if (pending !== undefined) return pending;
-      const request = backend.get(resolved).then<SecretReadResult, SecretReadResult>(
-        (value) => ({ ok: true, value }),
-        () => unavailable(),
-      );
+      // Native reads cannot always be cancelled. Release the single-flight
+      // entry on timeout so one hung keychain request cannot poison every pass.
+      const request = new Promise<SecretReadResult>((resolve) => {
+        let settled = false;
+        const finish = (result: SecretReadResult) => {
+          if (settled) return;
+          settled = true; clearTimeout(timer); resolve(result);
+        };
+        const timer = setTimeout(() => finish(unavailable()), 10_000);
+        timer.unref?.();
+        void Promise.resolve().then(() => backend.get(resolved)).then(
+          value => finish({ ok: true, value }), () => finish(unavailable()));
+      });
       inflight.set(resolved, request);
       void request.then((result) => {
         if (inflight.get(resolved) !== request) return;
@@ -319,6 +328,7 @@ export function createOsKeyringSecretStore(
   loader: KeyringModuleLoader = loadKeyring,
 ): SecretStore {
   let module: Promise<KeyringModuleLike> | undefined;
+  const nativeReads = new Map<string, Promise<string | null>>();
   const keyring = () => {
     module ??= loader().catch((error: unknown) => {
       module = undefined;
@@ -328,13 +338,22 @@ export function createOsKeyringSecretStore(
   };
   return createCachedSecretStore({
     async get(account) {
-      return await (await keyring()).getPassword(SECRET_STORE_SERVICE, account);
+      let request = nativeReads.get(account);
+      if (request === undefined) {
+        request = keyring().then(backend => backend.getPassword(SECRET_STORE_SERVICE, account));
+        nativeReads.set(account, request);
+        const finished = () => { if (nativeReads.get(account) === request) nativeReads.delete(account); };
+        void request.then(finished, finished);
+      }
+      return await request;
     },
     async set(account, value) {
       await (await keyring()).setPassword(SECRET_STORE_SERVICE, account, value);
+      nativeReads.delete(account);
     },
     async delete(account) {
       await (await keyring()).deletePassword(SECRET_STORE_SERVICE, account);
+      nativeReads.delete(account);
     },
   });
 }

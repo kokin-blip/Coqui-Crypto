@@ -1,0 +1,15 @@
+{
+  "commit": "9164e163af667c82d66cd3b7cd15146a046e4a96",
+  "parent": "24afeadc8bfeaa5023bc871b45b79ec789f6b2ee",
+  "remoteVerified": "9164e163af667c82d66cd3b7cd15146a046e4a96",
+  "remoteRef": "refs/heads/codex/operations-crew-journal",
+  "pathsVerified": 25,
+  "isolatedSuites": 3,
+  "isolatedTests": 13,
+  "focusedLint": "pass",
+  "rootTypecheck": "pass",
+  "merged": false,
+  "released": false,
+  "actualConnectedVerification": false,
+  "rawHistoricalLogsPreserved": true
+}

@@ -261,6 +261,9 @@
   .terminal-microstructure { max-height: 560px; }
 }
 
+.hourly-study-preview { margin-block-start: var(--space-4, 1rem); }
+.hourly-study-preview code { overflow-wrap: anywhere; }
+.hourly-study-preview .settings-actions { display: flex; flex-wrap: wrap; gap: var(--space-3, 0.75rem); }
 .capital-performance code, .capital-performance dd { overflow-wrap: anywhere; }
 .capital-performance dd { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
 .capital-performance .terminal-metric-help > button { margin: 0; }

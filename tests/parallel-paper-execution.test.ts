@@ -89,7 +89,7 @@ function mockClient(submitFailure = false, fillStatus = 'filled', quoteAtMs: num
 }
 
 describe('paper execution diagnostics and recovery', () => {
-  it('waits for delayed fees, deduplicates partial publication, and requires manual resume after exact recovery',async()=>{
+  it('preserves legacy fee pauses, deduplicates partial publication, and requires manual resume after exact recovery',async()=>{
     const {database,clock,secrets}=await setup();
     const mock=mockClient(false,'filled',()=>clock.nowMs());
     const grossPositions=mock.client.positions, fills=mock.client.activities;
@@ -108,6 +108,9 @@ describe('paper execution diagnostics and recovery', () => {
       for(let i=0;i<3;i++){await service.tick();clock.set(clock.nowMs()+60000);}
       const attempts=mock.submit.mock.calls.length;expect(attempts).toBeGreaterThan(0);
       deducted=true;await service.tick();
+      expect(service.summary().state).toBe('active');
+      appendParallelEvent({experimentId:service.status().experiment!.id,profileId:'main',kind:'paused',
+        key:'legacy-fee-pause',at:clock.nowMs(),detail:service.status().events.findLast(e=>e.kind==='pass_deferred')!.detail},database);
       expect(service.summary()).toMatchObject({state:'paused',reconciliationAttention:{blocked:true,
         latestFailure:{pendingFeeEvidence:{status:'awaiting'}}}});
       expect(service.transition('resumed','premature')).toBe(false);
@@ -267,22 +270,15 @@ describe('paper execution diagnostics and recovery', () => {
       clientFactory: () => mock.client as never, killSwitchEngaged: () => false });
     await service.start('stale-quotes', true);
     await service.tick();
-    expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'stale_alpaca_quote' });
+    expect(service.summary()).toMatchObject({ state: 'active', latestPass: { outcome: 'deferred' } });
     expect(mock.submit).not.toHaveBeenCalled();
-    await service.retryReconciliation();
-    expect(service.summary().reconciliationAttention.blocked).toBe(false);
-    expect(service.transition('resumed', 'resume-without-orders')).toBe(true);
     await service.tick();
-    expect(service.summary().state).toBe('paused');
+    expect(service.summary().state).toBe('active');
     expect(mock.submit).not.toHaveBeenCalled();
     mock.client.latestCryptoQuotes = mockClient(false, 'filled', TODAY).client.latestCryptoQuotes;
     await service.tick();
-    expect(service.summary().state).toBe('paused');
-    expect(service.summary().reconciliationAttention.blocked).toBe(false);
-    expect(mock.submit).not.toHaveBeenCalled();
-    expect(service.transition('resumed', 'manual-resume')).toBe(true);
-    await service.tick();
     expect(service.summary().state).toBe('active');
+    expect(service.status().events.some(e => e.kind === 'resumed')).toBe(false);
     expect(mock.submit).toHaveBeenCalledTimes(3);
     database.close();
   });

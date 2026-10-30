@@ -59,7 +59,7 @@ export function observedParallelClient(client: Client, now: () => number, append
         return result;
       } catch (error) {
         const failure = error instanceof AlpacaPaperError ? new AlpacaPaperError(error.code, operation,
-          error.httpStatus, error.attemptCount, error.elapsedMs, error.budgetMs, error.remainingMs, safeAlpacaNetworkCode(error.networkCode)) : new AlpacaPaperError(
+          error.httpStatus, error.attemptCount, error.elapsedMs, error.budgetMs, error.remainingMs, safeAlpacaNetworkCode(error.networkCode), error.rejection) : new AlpacaPaperError(
           error instanceof Error && error.message === 'deadline_exceeded' ? 'deadline_exceeded' :
           error instanceof TypeError ? 'invalid_response' : 'unavailable', operation, null, 0, performance.now() - started,
           budgetMs, deadline?.remainingMs() ?? null);
@@ -73,10 +73,10 @@ export function observedParallelClient(client: Client, now: () => number, append
     };
   return Object.freeze({
     portfolioHistory: wrap('portfolio_history', client.portfolioHistory),
-    allActivities: wrap('account_activities', client.allActivities),
     account: wrap('account', client.account), positions: wrap('positions', client.positions),
     orders: wrap('orders', client.orders), orderByClientId: wrap('order_lookup', client.orderByClientId),
     asset: wrap('asset', client.asset), activities: wrap('activities', client.activities),
+    allActivities: wrap('account_activities', client.allActivities),
     latestCryptoQuotes: wrap('quote', client.latestCryptoQuotes), cryptoAssets: wrap('assets', client.cryptoAssets),
     latestCryptoOrderbooks: wrap('orderbook', client.latestCryptoOrderbooks),
     submit: wrap('submit', client.submit), cancel: wrap('cancel', client.cancel),

@@ -1,0 +1,12 @@
+{
+  "command": [
+    "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "tests/account-capital-authority.test.ts",
+    "tests/small-portfolio-evidence-inventory.test.ts",
+    "tests/host-authority.test.ts",
+    "tests/paper-profit-reserve-authority.test.ts"
+  ],
+  "exitCode": 0
+}

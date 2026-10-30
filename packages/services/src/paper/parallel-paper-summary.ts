@@ -10,8 +10,10 @@ import { hourlyShadowStatus } from './parallel-hourly-shadow.js';
 import { parallelFeeAccounting } from './parallel-fee-accounting.js';
 import { parallelBrokerEvidence } from './parallel-broker-evidence.js';
 import { money } from './parallel-paper-utils.js';
+import { parallelRejectedSubmissions } from './parallel-paper-rejections.js';
 export function parallelPaperSummary(current: {experiment: ParallelPaperExperiment | null; status: 'none' | 'active' | 'paused' | 'stopped'; events: readonly ParallelPaperEvent[]}, input: ParallelPaperDependencies, lastCheckAtMs: number | null, checking: boolean, tradeStreamStatus: 'connecting' | 'listening' | 'unavailable' = 'unavailable') {
     const experiment = current.experiment, events = current.events;
+    const rejected = parallelRejectedSubmissions(events);
     // Scheduler checks are durable; a renderer query after restart must retain
     // the last observed check rather than imply the scheduler has never run.
     lastCheckAtMs ??= events.findLast((event) => event.kind === 'scheduler_check')?.at ?? null;
@@ -24,6 +26,7 @@ export function parallelPaperSummary(current: {experiment: ParallelPaperExperime
       nowMs: input.clock.nowMs(), decisionDay, completed,
       dailyWindowMissed: events.some((event) => event.kind === 'daily_window_missed' && event.detail['day'] === decisionDay),
       intradayPending: activeParallelEvents(events).some((event) => event.kind === 'external_intent' && event.detail['slot'] !== undefined &&
+        !rejected.has(event.detail['clientOrderId']) &&
         !events.some((other) => other.kind === 'external_order' &&
           other.detail['clientOrderId'] === event.detail['clientOrderId'] && other.detail['status'] === 'filled')) });
     const coquiEquity = mark === undefined ? null : String(mark.detail['coquiEquityUsd']),
@@ -49,10 +52,11 @@ export function parallelPaperSummary(current: {experiment: ParallelPaperExperime
       latestPass: pass ? { outcome: pass.kind === 'pass_complete' ? 'completed' as const : pass.kind === 'pass_deferred' ? 'deferred' as const : 'blocked' as const,
         phase: String(pass.detail['operation'] ?? 'unknown'), atMs: pass.at,
         retryAtMs: pass.kind === 'pass_deferred' ? Number(pass.detail['retryAtMs']) : null } : null,
-      runtimeState, lastCheckAtMs: lastCheckAtMs,
+      runtimeState: current.status === 'active' && pass?.kind === 'pass_deferred' ? 'attention' as const : runtimeState,
+      lastCheckAtMs: lastCheckAtMs,
       lastDecisionAtMs, latestDecision, activity, filterSummary,
       mlSignal: projectParallelMlStatus(events, readParallelMlSignal(input.mlSignal)),
-      hourlyShadow: hourlyShadowStatus(input.profileId, input.database),
+      hourlyShadow: hourlyShadowStatus(input.profileId, input.database, input.clock.nowMs()),
       coquiFillCount: events.filter((event) => event.kind === 'local_fill').length,
       alpacaFillCount: events.filter((event) => event.kind === 'external_fill').length,
       alpacaOrderCount: events.filter((event) => event.kind === 'external_intent').length,

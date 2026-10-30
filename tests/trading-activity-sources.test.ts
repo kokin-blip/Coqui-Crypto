@@ -21,6 +21,17 @@ function seedParallel(db:Db) {
   return {connection,experiment};
 }
 describe('persisted activity sources',()=>{
+  it('keeps complete fills and the latest mark when diagnostic history exceeds the financial cap',()=>{
+    const db=openDatabase(':memory:');try{
+      const {experiment}=seedParallel(db),scope=tradingActivityScopes('main',db).scopes.find(s=>s.source==='alpaca_paper')!;
+      const insert=db.prepare('INSERT INTO parallel_paper_events_v1 VALUES (?,?,?,?,?,?)');
+      db.exec('BEGIN');for(let i=0;i<50001;i++)insert.run(sha256Hex(`diagnostic:${i}`),experiment,'main','readiness',200+i,'{}');db.exec('COMMIT');
+      appendParallelEvent({profileId:'main',experimentId:experiment,kind:'account_mark',key:'recent-mark',at:60000,detail:{markedAtMs:60000,positions:[{symbol:'BTCUSD',alpacaQty:'3',alpacaValueUsd:'390'}]}},db);
+      const facts=readTradingActivity('main',scope,null,'*',db,{fillsOnly:true});
+      expect(facts.historyComplete).toBe(true);expect(facts.fills).toHaveLength(1);expect(facts.fills[0]?.feeUsd).toBeNull();
+      expect(facts.marks['BTC-USD']).toMatchObject({priceUsd:'130',atMs:60000});
+    }finally{db.close();}
+  });
   it('keeps parallel sources and wallets separate, deduplicates broker activities, and flags unseen inventory',async()=>{
     const db=openDatabase(':memory:');try{
       const {connection,experiment}=seedParallel(db);

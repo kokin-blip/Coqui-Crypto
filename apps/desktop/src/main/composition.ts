@@ -277,7 +277,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     if (disposed || scheduler !== null) return;
     if (!isAuthoritativeHost(options.profileId, hostId, database)) return;
     liveMarket.start(paperInstruments().map((instrument) => instrument.productId));
-    scheduler = startSchedulerRuntime({ reserveDisarm:paperReserve.disarm, overlayShadow, news,
+    scheduler = startSchedulerRuntime({ reserveDisarm:paperReserve.disarm, overlayShadow, hourlyShadow: parallel.hourlyShadow, news,
         database, clock, ...(options.operationGate === undefined ? {} : {operationGate:options.operationGate}),
         profileId: options.profileId, hostId, onUnexpectedError: report, research: researchHost,
         async prepare(nowMs) {
@@ -298,7 +298,7 @@ export function createRuntime(options: RuntimeOptions): CoquiRuntime {
     ...createAlpacaPaperHandlers({ profileId: options.profileId, database, clock,
       onDisconnect: () => parallel.service.pauseForDisconnect(),
       ...(options.secrets === undefined ? {} : { secrets: options.secrets }) }),
-    ...createParallelPaperHandlers(parallel.service),
+    ...createParallelPaperHandlers(parallel.service, { profileId: options.profileId, hostId, database, clock, ...(options.operationGate ? { operationGate: options.operationGate } : {}) }),
     ...createCoinbaseSyncHandlers({
       ...(options.operationGate===undefined?{}:{operationGate:options.operationGate}), profileId: options.profileId, database, clock, priceSource,
       ...(options.secrets === undefined ? {} : { secrets: options.secrets }),

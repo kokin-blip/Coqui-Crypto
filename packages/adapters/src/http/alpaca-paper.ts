@@ -3,6 +3,7 @@ import type { RequestDeadline } from './deadline.js';
 import { alpacaUniverseSymbols, parseAlpacaUniverseAssets } from './alpaca-universe.js';
 import { alpacaNetworkFailureCode, type AlpacaNetworkCode } from './alpaca-network.js';
 import { parseAlpacaPortfolioHistory } from './alpaca-portfolio-history.js';
+import { readAlpacaRejection, type AlpacaRejection } from './alpaca-rejection.js';
 /** Alpaca Trading API client. The host is intentionally not configurable: paper only. */
 export const ALPACA_PAPER_ORIGIN = 'https://paper-api.alpaca.markets/v2' as const;
 const ALPACA_CRYPTO_DATA_ORIGIN = 'https://data.alpaca.markets' as const;
@@ -71,7 +72,7 @@ export class AlpacaPaperError extends Error {
   constructor(readonly code: 'unauthorized' | 'forbidden' | 'not_found' | 'rate_limited' | 'unavailable' | 'invalid_response' | 'timeout' | 'deadline_exceeded',
     readonly operation: string = 'unknown', readonly httpStatus: number | null = null, readonly attemptCount = 0,
     readonly elapsedMs = 0, readonly budgetMs: number | null = null, readonly remainingMs: number | null = null,
-    readonly networkCode: AlpacaNetworkCode | null = null) {
+    readonly networkCode: AlpacaNetworkCode | null = null, readonly rejection: AlpacaRejection | null = null) {
     super(`Alpaca paper ${code}`);
   }
 }
@@ -101,10 +102,10 @@ export function createAlpacaPaperClient(credentials: AlpacaPaperCredentials, fet
     if (!path.startsWith('/') || path.startsWith('//')) throw new AlpacaPaperError('invalid_response');
     const started = performance.now(), budgetMs = Math.min(10_000, deadline?.remainingMs() ?? 10_000);
     const method = options.method ?? 'GET';
-    let attemptCount = 0, status: number | null = null;
+    let attemptCount = 0, status: number | null = null, rejection: AlpacaRejection | null = null;
     const remaining = () => Math.max(0, Math.min(budgetMs - (performance.now() - started), deadline?.remainingMs() ?? Infinity));
     const fail = (code: AlpacaPaperError['code'], networkCode: AlpacaNetworkCode | null = null) => new AlpacaPaperError(code, options.operation, status,
-      attemptCount, performance.now() - started, budgetMs, remaining(), networkCode);
+      attemptCount, performance.now() - started, budgetMs, remaining(), networkCode, rejection);
     for (let attempt = 0; attempt < (method === 'GET' ? 2 : 1); attempt += 1) {
       if (deadline?.signal.aborted || (deadline && deadline.remainingMs() <= 0)) throw fail('deadline_exceeded');
       if (remaining() <= 0) throw fail('timeout');
@@ -128,6 +129,8 @@ export function createAlpacaPaperClient(credentials: AlpacaPaperCredentials, fet
           });
           if (signal.aborted) throw fail(deadline?.signal.aborted ? 'deadline_exceeded' : 'timeout');
           status = response.status;
+          if (method === 'POST' && options.operation === 'submit' && response.status === 403)
+            rejection = await readAlpacaRejection(response);
           if (!response.ok) throw fail(response.status === 401 ? 'unauthorized' : response.status === 403 ? 'forbidden'
             : response.status === 404 ? 'not_found' : response.status === 429 ? 'rate_limited' : 'unavailable');
           if (response.status === 204) return undefined as T;

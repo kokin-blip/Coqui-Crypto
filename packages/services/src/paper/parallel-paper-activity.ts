@@ -1,3 +1,4 @@
+import { groupFeeWaitActivity } from './parallel-fee-wait-activity.js';
 import { activeParallelEvents } from './parallel-paper-plans.js';
 import { Decimal } from 'decimal.js';
 import { safeAlpacaNetworkCode } from '@coqui/adapters';
@@ -70,7 +71,7 @@ export function projectParallelPaperActivity(events: readonly ParallelPaperEvent
     .map((event) => [String(event.detail['clientOrderId']), event]));
   const orders = new Map(events.filter((event) => event.kind === 'external_order')
     .map((event) => [String(event.detail['orderId']), event]));
-  const activity = events.flatMap((event) => {
+  const activity = groupFeeWaitActivity(events).flatMap(({ event, firstAtMs, repeatCount }) => {
     const eventDay = String(event.detail['day'] ?? '');
     const id = String(event.detail['clientOrderId'] ?? '');
     const intent = intents.get(id);
@@ -79,8 +80,17 @@ export function projectParallelPaperActivity(events: readonly ParallelPaperEvent
     const qty = String(event.detail['qty'] ?? intent?.detail['qty'] ?? '');
     const orderId = event.detail['orderId'] === undefined ? null : String(event.detail['orderId']);
     const item = (kind: string, title: string, detail: string, alpacaOrderId: string | null = null) =>
-      [{ id: event.id, atMs: event.at, kind, title, detail, alpacaOrderId }];
+      [{ id: event.id, atMs: event.at, kind, title, detail, alpacaOrderId,
+        ...(repeatCount === undefined ? {} : { firstAtMs, repeatCount }) }];
     switch (event.kind) {
+      case 'pass_deferred': {
+        const fees = paperPendingFeeDetail(event.detail['pendingFeeEvidence']);
+        if (event.detail['reason'] === 'broker_positions_mismatch' && fees) return item('retry',
+          fees.status === 'overdue' ? 'Fee evidence overdue · review Alpaca' : 'Waiting for fee evidence',
+          'Possible delayed crypto fees · exact accounting required · new orders wait for complete checks');
+        return item('retry', 'Paper check waiting · retrying automatically',
+        `${String(event.detail['reason']).replaceAll('_', ' ')} · new orders wait for complete checks`);
+      }
       case 'decision': return item('decision', 'Daily targets evaluated', `Completed Coinbase bar ${eventDay}`);
       case 'execution_policy_started': return item('policy', 'Intraday paper rebalances enabled',
         'The daily TrendVol target is unchanged; Alpaca may rebalance at five later UTC slots');
@@ -101,6 +111,10 @@ export function projectParallelPaperActivity(events: readonly ParallelPaperEvent
         `Slot ${String(event.detail['slot'])} UTC · TrendVol will remain the target if the signal is still unavailable`);
       case 'external_intent': return item('intent', `Planned Alpaca paper ${side} · ${symbol}`, `${qty} units · client ID ${id}`);
       case 'submit_attempt': return item('submission', `Submitting Alpaca paper ${side} · ${symbol}`, `Client ID ${id}; Alpaca acknowledgement pending`);
+      case 'submission_refused': return item('order', `Alpaca paper order refused · ${symbol}`,
+        `HTTP 403 · ${String((event.detail['rejection'] as Record<string, unknown> | undefined)?.['reason'] ?? 'reason unavailable').replaceAll('_', ' ')} · reconciliation required · client ID ${id}`);
+      case 'submission_rejected': return item('order', `Alpaca refusal reconciled · ${symbol}`,
+        `Submission refusal and broker absence audited · original attempt retired · client ID ${id}`);
       case 'external_order': return item('order', `Alpaca order ${String(event.detail['status']).replaceAll('_', ' ')} · ${symbol}`,
         `${side} ${qty} units · filled ${String(event.detail['filledQty'])} · client ID ${id}`, orderId);
       case 'external_fee': return item('fee', 'Alpaca reported fee activity',
@@ -129,6 +143,9 @@ export function projectParallelPaperActivity(events: readonly ParallelPaperEvent
         return item('retry', `${title} ${event.detail['reason'] === 'deadline_exceeded' || event.detail['reason'] === 'alpaca_timeout' ? 'timed out' : 'failed'}`,
           `${String(event.detail['reason'])}${operation}${httpStatus}${networkCode ? ` · ${networkCode}` : ''}${timing('elapsedMs', 'elapsed')}${timing('remainingMs', 'remaining')} · original pause retained`);
       }
+      case 'broker_settlement_verified':
+        return item('fee', 'Broker positions verified · fee accounting pending',
+          'Exact execution records match current holdings · fee records remain pending · no estimated fee booked');
       case 'external_fill': {
         const related = orders.get(String(event.detail['orderId']));
         return item('fill', `Alpaca paper fill · ${String(event.detail['symbol'] ?? '')}`,

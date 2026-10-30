@@ -452,7 +452,12 @@ UTC midnight after the oldest affected trade day. This is a review reminder, not
 an Alpaca SLA. At or beyond that threshold the message becomes overdue; time
 never grants permission or dismisses the difference. A restart derives the same
 threshold from immutable fill timestamps. Full-history audits continue while
-open, including after UTC rollover. Exact recovery still requires manual Resume.
+open, including after UTC rollover. Already paused experiments still require
+manual Resume after exact recovery. An active run now records a deferred pass
+for a recognized pending-fee gap instead of disarming itself. New orders remain
+blocked; exact reported fees and current positions must agree before the next
+eligible window can proceed. Partial fee reports use provider creation times
+to identify the remaining diagnostic gap, never billing dates or booked estimates.
 
 After recovery, a best-effort quote health read updates diagnostics. An unavailable
 or old health quote does not invalidate a successful broker reconciliation.
@@ -471,7 +476,8 @@ The journal is loaded once per service pass; subsequent reads synchronize newly
 appended rows so an external user pause or broker update remains visible.
 Reconciliation indexes financial events rather than repeatedly parsing history.
 
-A deadline during a read-only pass defers work to the next scheduler check when
+A deadline, transient broker/credential outage, stale execution evidence, or
+recognized pending-fee gap during a read-only pass defers work to the next scheduler check when
 all earlier attempts are resolved and this pass has made no submission attempt.
 An already active experiment stays active, with orders waiting for complete
 checks. A paused experiment never resumes automatically. Uncertain submissions
@@ -479,6 +485,25 @@ remain blocked and are reconciled before any further submission. Durable pass
 records include the operation, elapsed and remaining time, and required reserve
 when an internal budget guard fires. Status exposes the latest completed,
 deferred, or blocked pass independently from position reconciliation.
+The desktop gives Alpaca checks a separate single-flight lane. A stalled local
+portfolio refresh or research task cannot suppress subsequent broker checks.
+Both lanes retain one shared profile-operation gate until all in-flight work
+finishes, and suspend/stop prevents new passes. Nothing runs while the host is
+closed or asleep; missed slots remain recorded rather than replayed as orders.
+On wake, an armed run retains its intent when the same assigned host and fencing
+generation still own execution, or when a desktop-only session remains unassigned
+both before sleep and after wake. The unassigned case never authorizes a headless
+worker. The next pass reacquires its execution lease and repeats all broker,
+market and quote guards. A new assignment, changed generation, relinquished or
+unverified owner, application restart, or explicit pause still requires manual
+recovery; waking never clears a pause.
+Native credential reads also have a ten-second cache boundary. A hung read is
+not reused forever: the next pass can retry, and a late result cannot overwrite
+the cache or a newer credential write. Credentials and backend error messages
+stay inside the secret store's existing main-process boundary.
+The OS adapter retains at most one uncancellable native read per credential
+while macOS is withholding access; retries cannot fill the native work queue.
+An OS Keychain authorization or unlock requirement still needs owner action.
 Recovery activity and the recovery panel identify the failing phase and display
 elapsed and remaining budget. A market-preparation timeout is labeled separately
 from an Alpaca read failure; older records without a phase remain unknown.
@@ -497,3 +522,87 @@ failures remain in history but do not replace valid current provenance; current
 source changes and malformed registrations still block collection. The runtime
 records its scheduler version and research behavior hash at startup, making
 loaded-build differences visible without exposing credentials.
+
+### Fee-wait activity and prospective hourly collection (October 20 local candidate)
+
+The activity panel groups consecutive fee checks with unchanged quantity gaps into
+one entry with first/latest check times and a check count. Changed gaps, overdue
+status, new financial events, successful recovery, or activation changes begin a
+new entry. Grouping happens before the display limit; the underlying journal
+remains complete and append-only.
+
+The hourly study panel distinguishes missing, changed-source, scheduled,
+collecting, ended, and invalid registrations. Counts refer to the current study
+namespace, not all historical studies. Review fresh hourly study previews the next
+UTC-midnight start, fold/end dates, behavior hash, and app artifact. Confirmation is
+bound to that preview and refuses changed context; repeated commands are
+idempotent. Earlier studies remain intact. Registration is an explicit operator
+action and never happens on startup, update, or status reads.
+
+Hourly collection now has an independent read-only scheduler lane and a 10-second
+budget. It can observe the completed daily TrendVol target while broker execution
+is fee-paused, using a separate $100,000 modeled book. Quotes, asset rules,
+completed-bar freshness, the original 15-minute hourly capture window, and frozen
+costs still apply. Suspension, experiment stop, kill switch, changed host authority,
+or expired/cancelled work fence all research appends. Missed slots are not backfilled.
+This lane cannot submit or cancel Alpaca orders and does not promote research.
+
+### Execution positions during delayed fee settlement beta.19
+
+Beta.19 separates execution-position verification from final fee accounting. After
+a full all-type activity audit, Coqui can continue an already active paper run when
+every fill since the latest clean ledger baseline has matching broker execution
+evidence. The execution ID, attempted client/order identity, side, symbol, price,
+quantity, cumulative order fills, and broker net-position sequence must agree.
+The final net quantities must match fresh REST positions exactly. Each observed
+buy debit must be nonnegative and no greater than the existing 0.25% bound rounded
+up per fill to nine decimals; sell asset quantities must match exactly. The bound
+rejects unexplained changes and never supplies a fee amount.
+
+These independent observations do not create `external_fee` entries or historical
+position allowances. The exact financial ledger remains unchanged and its
+accounting validator continues to reject an unreported debit. Actual published
+fees reduce the pending debit exactly; once the ledger matches holdings, normal
+ledger validation takes over without another deduction. The UI identifies broker
+positions as verified while fee accounting remains pending, and retains an overdue
+review reminder. No stale success or saved proof alone can authorize a new pass.
+
+Missing execution records, changed quantities, invalid identities, unexplained
+asset transfers, incomplete audits, and unresolved orders still block execution.
+Full audits now query all activity types and reject unexplained non-fee asset
+adjustments. Legacy filtered pagination cursors are restarted under the wider
+scope. The account, lease/fencing, kill switch, cash/holdings limits, asset rules,
+fresh prices, and order identity checks remain in force. Explicit and existing
+pauses still require manual Resume after a fresh preflight; an update never arms
+the scheduler. This supersedes beta.18's unconditional requirement to wait for
+fee publication even when complete independent net-position evidence is present.
+
+See [the beta.19 installation and verification record](studies/execution-settlement-beta19-2026-10-21.md).
+
+### Beta.20: refused submissions and recovery activity
+
+A received HTTP 403 from paper order submission is recorded as a refusal rather
+than a transport uncertainty. Only allowlisted rejection categories, a numeric
+provider code, and a validated request UUID are retained; raw response messages,
+balances, and headers are excluded. A legacy submit observation can establish the
+same refusal only when it belongs to the single attempt in flight, has a recorded
+403/forbidden response, and falls within the bounded submission request.
+
+Recovery looks up the exact client identity. A 404 can retire the attempt only
+when the original refusal receipt exists and a complete all-activity audit has
+finished without unexplained activity. The new rejection record references the
+original attempt, refusal, and completed audit. Timeouts, broken transport, server
+failures, missing receipts, incomplete audits, and a 404 alone remain uncertain.
+Any contradictory accepted order, including a fully filled order, blocks recovery.
+No fill, fee, position, or original journal record is fabricated or rewritten.
+
+Retiring a refused attempt does not enable trading. Open-order checks, exact
+position or independent settlement validation, market readiness, lease/fencing,
+the kill switch, fresh per-order quotes, and manual Resume remain required. The
+refused leg cannot be retried in its original daily or intraday window; later
+windows use fresh plans and new identities through the existing execution gates.
+
+Repeated unchanged recovery errors now share one activity entry with the first
+check time and repeat count. Changed failure codes, operations, quantities,
+recovery limits, or meaningful journal events start another entry. The complete
+append-only diagnostic history remains intact.

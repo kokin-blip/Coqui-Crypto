@@ -127,7 +127,7 @@ describe('the gate cannot be edited from the UI', () => {
       'parallel.paper.reconcile',
       'parallel.paper.pause',
       'parallel.paper.resume',
-      'parallel.paper.stop',
+      'parallel.paper.stop', 'parallel.paper.hourly-study.restart',
       'capital.reserve.inspect', 'capital.reserve.settings.save',
       'accounts.coinbase.connect',
       'accounts.coinbase.connect-json',

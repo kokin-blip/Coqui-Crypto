@@ -1,0 +1,7 @@
+{
+  "command": [
+    "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "scripts/build-metadata.mjs"
+  ],
+  "exitCode": 0
+}

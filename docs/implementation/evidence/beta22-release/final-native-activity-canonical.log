@@ -1,0 +1,22 @@
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '21cfcd1eaabe8502dc490f0877cee0ee50559d26634ee8f0c9047035b33c47e2'
+}
+PASS default is Algo Activity with all assets, 7D and Closed P/L 
+PASS account selectors share source state with the main chart 
+PASS chart, metrics and recorded grouped orders render 
+PASS metric information opens with keyboard and explains missing evidence 
+PASS Escape dismisses information and retains the trigger focus 
+{"timestamp":"2026-10-30T00:03:44.928Z","level":"warn","event":"coinbase_candles.fetch_failed","context":{"profileId":"main","source":"public","productId":"BTC-USD","interval":"1d","status":503,"reason":"http"}}
+PASS refresh retains expanded order and keyboard focus 
+PASS chart keyboard inspection exposes an exact observation 
+PASS grouped orders paginate without replaying the latest page 
+PASS Total chart uses existing valuations and labels its effective start 
+PASS Order Book retains depth and adds a scoped performance strip 
+PASS tab switching preserves chart mode and reuses the overview query 
+PASS source/account change rejects late prior-source display data 
+PASS broker missing fees and Total history remain explicitly unavailable 
+FAIL legacy cash proof does not manufacture canonical investment profit 
+Error: legacy cash proof does not manufacture canonical investment profit
+    at check (file:///private/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-beta22-f50n9z0n/apps/desktop/scripts/algo-activity-smoke.mjs:24:147)
+    at run (file:///private/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-beta22-f50n9z0n/apps/desktop/scripts/algo-activity-smoke.mjs:131:3)

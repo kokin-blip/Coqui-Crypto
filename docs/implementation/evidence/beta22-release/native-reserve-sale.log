@@ -1,0 +1,22 @@
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '4b5fcf51e709f6e4ac700797c029438aca13acffe8ff3b016c5f2f5abeb2b8c8'
+}
+PASS policy stays disarmed 
+PASS Main-owned source evidence produces a bounded local consequence {"state":"modeled","reasons":["hypothetical_only","post_fill_reassessment_required","separate_order_review_required"]}
+PASS source review remains pending and preparation refuses 
+PASS preview and refusal create no financial or lifecycle facts 
+PASS desktop-dark: invalid input has associated recovery 
+PASS desktop-dark: financial review is readable and preserves exact values {"table":"Single-asset FIFO candidates. Dollar fields are USD; costs and gains are modeled.\nAsset / result\tSale quantity\tSale value\tCost\tRealized gain\tNet proceeds\tQuantity left\nBTC-USD\nmodeled · selected\t6.55130833\t≈ 359.42\t≈ 3.06\t≈ 29.69\t≈ 357.26\t3.44869167","exact":"Sale quantity6.55130833Sale value (USD)359.421153254625Cost (USD)3.0627368604681748900000000001837641986565Realized gain (USD)29.6938047895318251099999999998162358013435Net proceeds (USD)357.2592212895318251099999999998162358013435Quantity left3.44869167"}
+PASS desktop-dark: preparation visibly blocked by actual source/authority gates 
+PASS desktop-dark: labels and bounded overflow 
+PASS narrow-light: invalid input has associated recovery 
+PASS narrow-light: financial review is readable and preserves exact values {"table":"Single-asset FIFO candidates. Dollar fields are USD; costs and gains are modeled.\nAsset / result\tSale quantity\tSale value\tCost\tRealized gain\tNet proceeds\tQuantity left\nBTC-USD\nmodeled · selected\t6.55130833\t≈ 359.42\t≈ 3.06\t≈ 29.69\t≈ 357.26\t3.44869167","exact":"Sale quantity6.55130833Sale value (USD)359.421153254625Cost (USD)3.0627368604681748900000000001837641986565Realized gain (USD)29.6938047895318251099999999998162358013435Net proceeds (USD)357.2592212895318251099999999998162358013435Quantity left3.44869167"}
+PASS narrow-light: preparation visibly blocked by actual source/authority gates 
+PASS narrow-light: labels and bounded overflow 
+PASS contrast-zoom: invalid input has associated recovery 
+PASS contrast-zoom: financial review is readable and preserves exact values {"table":"Single-asset FIFO candidates. Dollar fields are USD; costs and gains are modeled.\nAsset / result\tSale quantity\tSale value\tCost\tRealized gain\tNet proceeds\tQuantity left\nBTC-USD\nmodeled · selected\t6.55130833\t≈ 359.42\t≈ 3.06\t≈ 29.69\t≈ 357.26\t3.44869167","exact":"Sale quantity6.55130833Sale value (USD)359.421153254625Cost (USD)3.0627368604681748900000000001837641986565Realized gain (USD)29.6938047895318251099999999998162358013435Net proceeds (USD)357.2592212895318251099999999998162358013435Quantity left3.44869167"}
+PASS contrast-zoom: preparation visibly blocked by actual source/authority gates 
+PASS contrast-zoom: labels and bounded overflow 
+PASS zero order, reserve or lifecycle side effects 
+PASS no renderer errors 

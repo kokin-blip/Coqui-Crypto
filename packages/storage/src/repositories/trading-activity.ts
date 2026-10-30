@@ -74,8 +74,13 @@ export function readTradingActivity(profileId:string,scope:ActivityScope,connect
   }else{
     const experiment=rows(db,'SELECT * FROM parallel_paper_experiments_v1 WHERE id=? AND profile_id=?',scope.campaignId!,profileId)[0];
     const wallet=experiment===undefined?null:`alpaca:${String(experiment['alpaca_account_id'])}`;
-    const events=rows(db,`SELECT * FROM parallel_paper_events_v1 WHERE experiment_id=? AND profile_id=? ORDER BY rowid ${options.recent?'DESC':'ASC'} LIMIT ?`,scope.campaignId!,profileId,CAP+1);historyComplete=events.length<=CAP;
-    const parsed=(options.recent?events.slice(0,CAP).reverse():events.slice(0,CAP)).map(row=>({id:String(row['id']),kind:String(row['kind']),at:Number(row['at']),detail:JSON.parse(String(row['detail_json'])) as Record<string,unknown>}));
+    const kinds=scope.source==='parallel_coqui'?"'local_fill'":"'external_fill','external_intent','external_order','submit_attempt'";
+    const events=rows(db,`SELECT rowid AS event_row,* FROM parallel_paper_events_v1 WHERE experiment_id=? AND profile_id=? AND kind IN (${kinds}) ORDER BY rowid ${options.recent?'DESC':'ASC'} LIMIT ?`,scope.campaignId!,profileId,CAP+1);historyComplete=events.length<=CAP;
+    // Operational diagnostics never consume the bounded financial-history window.
+    const context=['decision','account_mark','started,paused,resumed,stopped'].flatMap(kinds=>
+      rows(db,`SELECT rowid AS event_row,* FROM parallel_paper_events_v1 WHERE experiment_id=? AND profile_id=? AND kind IN (${kinds.split(',').map(()=>'?').join(',')}) ORDER BY rowid DESC LIMIT 1`,scope.campaignId!,profileId,...kinds.split(',')));
+    const selected=[...events.slice(0,CAP),...context].sort((a,b)=>Number(a['event_row'])-Number(b['event_row']));
+    const parsed=selected.map(row=>({id:String(row['id']),kind:String(row['kind']),at:Number(row['at']),detail:JSON.parse(String(row['detail_json'])) as Record<string,unknown>}));
     const latestDecision=[...parsed].reverse().find(e=>e['kind']==='decision');
     const control=[...parsed].reverse().find(e=>['started','paused','resumed','stopped'].includes(e.kind));
     parallelWatching=latestDecision===undefined?null:{...latestDecision.detail,recordedAtMs:Number(latestDecision['at']),activityState:control?.kind??'unknown',activityReason:control?.detail['reason']??null};

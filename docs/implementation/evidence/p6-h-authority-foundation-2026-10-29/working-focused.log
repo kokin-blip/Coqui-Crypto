@@ -1,0 +1,13 @@
+
+ RUN  v4.1.8 /Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto
+
+ ✓ tests/host-authority.test.ts (3 tests) 107ms
+ ✓ tests/account-capital-authority.test.ts (16 tests) 146ms
+ ✓ tests/small-portfolio-evidence-inventory.test.ts (6 tests) 226ms
+ ✓ tests/paper-profit-reserve-authority.test.ts (4 tests) 306ms
+
+ Test Files  4 passed (4)
+      Tests  29 passed (29)
+   Start at  16:28:12
+   Duration  1.91s (transform 3.30s, setup 0ms, import 4.51s, tests 784ms, environment 0ms)
+

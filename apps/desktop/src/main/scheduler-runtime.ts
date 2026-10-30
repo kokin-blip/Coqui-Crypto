@@ -59,6 +59,7 @@ export interface SchedulerRuntimeOptions {
   readonly news?: NewsHostRuntime;
   readonly research?: { recover():unknown; tick():Promise<void> };
   readonly overlayShadow?: { tick(): Promise<void> };
+  readonly hourlyShadow?: { tick(): Promise<void>; suspend(): void; resume(): void };
   readonly parallelPaper?: { tick(): Promise<void>; suspend?(): void; resume?(): void };
 }
 
@@ -79,6 +80,32 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
 
   let scheduler: WalletSchedulerService | null = null;
   let running = false, suspended = false, sequence = listRemediationEvidence(options.profileId, `host-lifecycle-v1:${hostId}`, 'launch', options.database).length * 1000000;
+  let paperPass: Promise<void> | null = null, hourlyPass: Promise<void> | null = null, operationUsers = 0;
+  // Both host lanes share one gate ownership. External profile operations stay
+  // excluded until every lane finishes, including a stalled local refresh.
+  const beginOperation = () => {
+    if (operationUsers === 0 && options.operationGate && !options.operationGate.begin()) return false;
+    operationUsers++;
+    return true;
+  };
+  const endOperation = () => { if (--operationUsers === 0) options.operationGate?.end(); };
+  const tickPaper = (): Promise<void> => {
+    if (paperPass) return paperPass;
+    const parallel = options.parallelPaper;
+    if (suspended || !parallel || !beginOperation()) return Promise.resolve();
+    paperPass = Promise.resolve().then(() => parallel.tick())
+      .catch(error => report('parallel_paper_tick', error))
+      .finally(() => { paperPass = null; endOperation(); });
+    return paperPass;
+  };
+  const tickHourly = (): Promise<void> => {
+    if (hourlyPass) return hourlyPass;
+    if (suspended || !options.hourlyShadow || !beginOperation()) return Promise.resolve();
+    hourlyPass = Promise.resolve().then(() => options.hourlyShadow!.tick())
+      .catch(error => report('hourly_shadow_tick', error))
+      .finally(() => { hourlyPass = null; endOperation(); });
+    return hourlyPass;
+  };
   const namespace = `host-lifecycle-v1:${hostId}`;
   const record = (kind: string, detail: Record<string, string | number | null> = {}) => {
     const atMs = options.clock.nowMs();
@@ -101,10 +128,11 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
   try { record('launch', { artifactHash: fullApplicationArtifactHash() }); }
   catch { record('launch', { artifactHash: null, artifactReason: 'artifact_unavailable' }); }
   const tick = async (): Promise<void> => {
-    // Ticks never overlap. The scheduler bounds concurrency across profiles,
-    // but nothing stops a slow tick from being re-entered by the timer.
-    if (running || suspended) return;
-    if (options.operationGate && !options.operationGate.begin()) return;
+    if (suspended) return;
+    // Broker checks have their own single-flight lane: unrelated local work
+    // must not suppress the next minute's execution/recovery check.
+    const paper = Promise.all([tickPaper(), tickHourly()]);
+    if (running || !beginOperation()) { await paper; return; }
     running = true;
     const started = performance.now();
     recordMissingSlots();
@@ -113,9 +141,8 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
     catch { report('news_host_tick', new Error('News collector failed.')); }
     try {
       // The narrow Alpaca window must not wait behind local portfolio/research work.
-      if (options.parallelPaper !== undefined) {
-        try { await options.parallelPaper.tick(); } catch (error) { report('parallel_paper_tick', error); }
-      }
+      await paper;
+      if (suspended) return;
       if (options.prepare !== undefined) {
         try {
           await options.prepare(options.clock.nowMs());
@@ -134,7 +161,7 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
       record('tick_finish', { durationMs: performance.now() - started });
       lastFinishedAtMs = options.clock.nowMs();
       running = false;
-      options.operationGate?.end();
+      endOperation();
     }
   };
 
@@ -152,7 +179,10 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
       try { options.research?.recover(); } catch (error) { report('research_recovery',error); }
     },
     start() {
+      suspended = false;
       options.news?.resume();
+      options.hourlyShadow?.resume();
+      options.parallelPaper?.resume?.();
       scheduler = new WalletSchedulerService({
         database: options.database, clock: options.clock, ownerId: hostId,
       });
@@ -167,7 +197,10 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
     tick,
     stop() {
       options.reserveDisarm?.();
+      suspended = true;
       options.news?.suspend();
+      options.hourlyShadow?.suspend();
+      options.parallelPaper?.suspend?.();
       if (timer !== null) clearInterval(timer);
       timer = null;
       scheduler?.dispose();
@@ -181,8 +214,8 @@ export function startSchedulerRuntime(options: SchedulerRuntimeOptions): Schedul
     tick: () => host.tick(),
     stop: () => host.stop(),
     status: () => host.status(),
-    dispose: () => { options.news?.dispose(); options.parallelPaper?.suspend?.(); record('shutdown'); host.stop(); },
-    suspend: () => { options.reserveDisarm?.(); suspended = true; options.news?.suspend(); options.parallelPaper?.suspend?.(); record('suspend'); },
-    resume: () => { record('resume'); options.news?.resume(); options.parallelPaper?.resume?.(); suspended = false; void host.tick(); },
+    dispose: () => { options.news?.dispose(); options.parallelPaper?.suspend?.(); options.hourlyShadow?.suspend(); record('shutdown'); host.stop(); },
+    suspend: () => { options.reserveDisarm?.(); suspended = true; options.news?.suspend(); options.parallelPaper?.suspend?.(); options.hourlyShadow?.suspend(); record('suspend'); },
+    resume: () => { record('resume'); options.news?.resume(); options.parallelPaper?.resume?.(); options.hourlyShadow?.resume(); suspended = false; void host.tick(); },
   };
 }

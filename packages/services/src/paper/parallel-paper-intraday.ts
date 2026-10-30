@@ -8,6 +8,7 @@ import { PARALLEL_INSTRUMENTS, PARALLEL_SYMBOLS } from './parallel-signal.js';
 import { activeParallelEvents } from './parallel-paper-plans.js';
 import { parallelSafeFailureReason } from './parallel-paper-utils.js';
 import type { MlSignalSnapshot } from './parallel-ml-worker.js';
+import { parallelRejectedSubmissions } from './parallel-paper-rejections.js';
 
 type Client = ReturnType<typeof createAlpacaPaperClient>;
 type Append = (kind: string, key: string, detail: Record<string, unknown>) => void;
@@ -79,6 +80,8 @@ export async function executeParallelIntraday(input: {
   const slot = slotAt(input.nowMs);
   if (slot === null) return;
   const events = activeParallelEvents(input.events());
+  const rejected = parallelRejectedSubmissions(events);
+  if (events.some(event => event.kind === 'external_intent' && event.detail['slot'] === slot && rejected.has(event.detail['clientOrderId']))) return;
   if (events.some((event) => event.kind === 'intraday_complete' && event.detail['slot'] === slot)) return;
   const decisionDay = String(input.decision.detail['day']);
   if (decisionDay !== new Date(input.nowMs - 86_400_000).toISOString().slice(0, 10)) return;
@@ -120,6 +123,7 @@ export async function executeParallelIntraday(input: {
   const weights = baseline;
   const hasPending = events.some((event) => event.kind === 'external_intent' &&
     event.detail['slot'] !== slot &&
+    !rejected.has(event.detail['clientOrderId']) &&
     !events.some((other) => other.kind === 'external_order' &&
       other.detail['clientOrderId'] === event.detail['clientOrderId'] && other.detail['status'] === 'filled'));
   const open = await input.client.orders('open');

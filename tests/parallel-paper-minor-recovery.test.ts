@@ -61,6 +61,14 @@ describe('exact delayed-fee recovery',()=>{
     await expect(reconcilePaperPositionEvidence(f.input)).rejects.toMatchObject({pendingFeeEvidence:{status:'awaiting'},
       positionDifferences:[{symbol:'ETHUSD',differenceQty:'-0.005'}]});
   });
+  it('recognizes the remaining gap after a partial fee report without using its billing date',async()=>{
+    const f=fixture(); f.setNow(start+DAY);
+    f.append('external_fee','',{activityId:'partial',symbol:'BTCUSD',quantity:'-0.001',date:'2026-10-22'});
+    f.append('broker_activity_metadata','',{activityId:'partial',createdAt:new Date(start+1000).toISOString()});
+    await expect(reconcilePaperPositionEvidence(f.input)).rejects.toMatchObject({pendingFeeEvidence:{status:'awaiting'},
+      positionDifferences:[{symbol:'BTCUSD',differenceQty:'-0.0015'}]});
+    expect(f.events.filter(e=>e.kind==='external_fee')).toHaveLength(1);
+  });
   it('persists the same review threshold through restart, midnight and overdue checks, never granting permission',async()=>{
     const f=fixture();
     for(const [now,status] of [[start+DAY,'awaiting'],[Date.parse('2026-10-22T00:00:00Z'),'overdue'],[start+30*DAY,'overdue']] as const){

@@ -74,6 +74,8 @@ export const CHANNEL_POLICIES: Readonly<Record<ChannelName, ChannelPolicy>> = {
   'alpaca.paper.connect': { refetchIntervalMs: false, staleTimeMs: 0 },
   'alpaca.paper.refresh': { refetchIntervalMs: false, staleTimeMs: 0 },
   'alpaca.paper.disconnect': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'parallel.paper.hourly-study.preview': { refetchIntervalMs: false, staleTimeMs: 0 },
+  'parallel.paper.hourly-study.restart': { refetchIntervalMs: false, staleTimeMs: 0 },
   'parallel.paper.status': { refetchIntervalMs: 60 * SECOND, staleTimeMs: 30 * SECOND },
   'parallel.paper.start': { refetchIntervalMs: false, staleTimeMs: 0 },
   'parallel.paper.reconcile': { refetchIntervalMs: false, staleTimeMs: 0 },

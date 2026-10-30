@@ -86,3 +86,4 @@ export * from './paper-capital-book.js';
 export * from './paper-profit-reserve.js';
 export * from './capital-prospective.js';
 export * from './prospective-qualification.js';
+export * from './account-capital-authority.js';

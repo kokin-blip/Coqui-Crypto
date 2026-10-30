@@ -1,0 +1,11 @@
+{
+  "command": [
+    "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "node_modules/eslint/bin/eslint.js",
+    "packages/core/src/execution/account-capital-authority.ts",
+    "packages/storage/src/repositories/account-capital-authority.ts",
+    "packages/services/src/paper/account-capital-runtime.ts",
+    "tests/account-capital-authority.test.ts"
+  ],
+  "exitCode": 0
+}

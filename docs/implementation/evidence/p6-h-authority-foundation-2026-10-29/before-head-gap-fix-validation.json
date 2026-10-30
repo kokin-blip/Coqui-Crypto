@@ -1,0 +1,183 @@
+{
+  "date": "2026-10-29",
+  "status": "local_partial_H2_disabled_journal_foundation",
+  "baseAndPushedReadinessCommit": "9164e163af667c82d66cd3b7cd15146a046e4a96",
+  "foundationCommitted": false,
+  "readinessCommitPathsVerified": 25,
+  "isolated": {
+    "sourcePaths": 7,
+    "suites": 351,
+    "tests": 2379,
+    "rootBuild": "pass",
+    "rootTypecheck": "pass",
+    "lint": "pass",
+    "newAuthorityCases": 16
+  },
+  "working": {
+    "focusedSuites": 4,
+    "focusedCases": 29,
+    "rootTypecheck": "pass",
+    "rendererTypecheck": "pass",
+    "focusedLint": "pass"
+  },
+  "separateProcessProbe": {
+    "crossProcessSameHeadRace": "pass",
+    "lostAcknowledgementRetry": "pass",
+    "independentCopyCannotGrantAuthority": "pass",
+    "executionPermitted": false,
+    "financialClaimsFunded": false,
+    "providerCalls": false,
+    "installedProfilesOpened": false
+  },
+  "applicationIntegration": false,
+  "executionPermitted": false,
+  "financialClaimsFunded": false,
+  "installedDatabaseOrProviderOpened": false,
+  "orderCancelWithdrawalResume": false,
+  "actualRegistrationCollectorFinalQualification": false,
+  "deploymentOrRelease": false,
+  "nativeUiRerun": false,
+  "profileMigrationManifestChanged": false,
+  "preservation": {
+    "baselineFiles": 3354,
+    "unchanged": 3350,
+    "intentionalChanges": [
+      "docs/implementation/small-portfolio-phase-tracker-2026-10-23.md",
+      "packages/core/src/execution/index.ts",
+      "packages/services/src/paper/index.ts",
+      "packages/storage/src/repositories/index.ts"
+    ],
+    "unexpectedChanges": [],
+    "missing": [],
+    "indexClean": true,
+    "workingGeneratedManifestsPreserved": true,
+    "originalPlansAndFrozenEvidencePreserved": true
+  },
+  "pending": [
+    "H1 intended host, topology, credentials, dedicated account and COQ-12/14 source/financial/provider/rights review",
+    "H2 actual shared financial claims, budget enforcement and verified enrollment",
+    "H3 dispatch enforcement and every consumer",
+    "H4 actual unknown/fee/manual/restore/takeover financial proof",
+    "H5 reviewed disabled app integration and lifecycle/native",
+    "H6 permitted connected account observations",
+    "P5-H actual adequate permitted development evidence and global trial/consumption custody",
+    "P6-G actual F/objective/qualification/operational acceptance",
+    "P7-H approved owner/independent reviewer/future design/rights/registry/power/resources",
+    "P7-I genuine elapsed evidence/actions/coverage",
+    "P7-J timely freeze/final once/independent exact acceptance"
+  ],
+  "sourceHashes": {
+    "packages/core/src/execution/account-capital-authority.ts": "ef8cf991eca31f1c8d02640f8d2f1cde9cefdb2d1084bb06297037966cf7482b",
+    "packages/core/src/execution/index.ts": "da323fc29591b7e94fdf521f7b0c091575e1527f2b28279c78cfa93f9aae8b29",
+    "packages/storage/src/repositories/account-capital-authority.ts": "48d275007e53b8f9a8a0272750265851a9e36a6fac9d153132e4080424efa580",
+    "packages/storage/src/repositories/index.ts": "283ea72c56e5c7272fd8ef1b8f9d84f0b2339352dea89cfbaa011319ee82f142",
+    "packages/services/src/paper/account-capital-runtime.ts": "d5a044847d279a24970e81393d74a3ebce3f37e6e2a1d162c0dfb182b5c29400",
+    "packages/services/src/paper/index.ts": "704afb4d01a02af0a76666f2ccb4327a1d14e18088091332c74025fb4b8fa44a",
+    "tests/account-capital-authority.test.ts": "42746c31042a3ea38288665296fcd19d61a4b00da72a4db8db933178682d8d71"
+  },
+  "checks": {
+    "working-focused-lint-result.json": {
+      "command": [
+        "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "node_modules/eslint/bin/eslint.js",
+        "packages/core/src/execution/account-capital-authority.ts",
+        "packages/storage/src/repositories/account-capital-authority.ts",
+        "packages/services/src/paper/account-capital-runtime.ts",
+        "tests/account-capital-authority.test.ts"
+      ],
+      "exitCode": 0
+    },
+    "isolated-build-manifests-result.json": {
+      "command": [
+        "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "scripts/build-study-manifests.mjs"
+      ],
+      "exitCode": 0
+    },
+    "working-focused-result.json": {
+      "command": [
+        "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/account-capital-authority.test.ts",
+        "tests/small-portfolio-evidence-inventory.test.ts",
+        "tests/host-authority.test.ts",
+        "tests/paper-profit-reserve-authority.test.ts"
+      ],
+      "exitCode": 0
+    },
+    "cross-process-probe-final-result.json": {
+      "command": [
+        "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/docs/implementation/evidence/p6-h-authority-foundation-2026-10-29/cross-process-probe.mjs",
+        "/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-h-authority-ft85h6vj"
+      ],
+      "exitCode": 0
+    },
+    "isolated-tests-result.json": {
+      "command": [
+        "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/vitest/vitest.mjs",
+        "run",
+        "--maxWorkers=1"
+      ],
+      "exitCode": 0
+    },
+    "working-renderer-typecheck-result.json": {
+      "command": [
+        "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "apps/desktop/tsconfig.renderer.json",
+        "--noEmit"
+      ],
+      "exitCode": 0
+    },
+    "isolated-lint-result.json": {
+      "command": [
+        "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/eslint/bin/eslint.js",
+        "."
+      ],
+      "exitCode": 0
+    },
+    "working-typecheck-result.json": {
+      "command": [
+        "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "tsconfig.check.json",
+        "--noEmit"
+      ],
+      "exitCode": 0
+    },
+    "isolated-typecheck-result.json": {
+      "command": [
+        "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/typescript/bin/tsc",
+        "-p",
+        "tsconfig.check.json",
+        "--noEmit"
+      ],
+      "exitCode": 0
+    },
+    "isolated-build-result.json": {
+      "command": [
+        "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/typescript/bin/tsc",
+        "-b",
+        "--force"
+      ],
+      "exitCode": 0
+    },
+    "cross-process-probe-result.json": {
+      "command": [
+        "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/docs/implementation/evidence/p6-h-authority-foundation-2026-10-29/cross-process-probe.mjs",
+        "/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-h-authority-ft85h6vj"
+      ],
+      "exitCode": 0
+    }
+  },
+  "linear": "pending"
+}

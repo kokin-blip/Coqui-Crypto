@@ -11,6 +11,14 @@ const ACCOUNT = { id: 'paper-account-1234', status: 'PAPER_ONLY', currency: 'USD
   cash: '100000', equity: '100000', trading_blocked: false, account_blocked: false };
 
 describe('Alpaca paper boundary', () => {
+  it('does not retain unrecognized rejection text, codes, or request headers', async () => {
+    const client = createAlpacaPaperClient({ keyId: KEY_ID, secretKey: SECRET }, async () => Response.json({
+      code: SECRET, message: SECRET, balance: SECRET }, { status: 403, headers: { 'x-request-id': SECRET } }));
+    await expect(client.submit({ symbol: 'BTCUSD', side: 'buy', qty: '1', client_order_id: 'id' }))
+      .rejects.toMatchObject({ rejection: { providerCode: null, reason: 'unspecified', requestId: null } });
+    try { await client.submit({ symbol: 'BTCUSD', side: 'buy', qty: '1', client_order_id: 'id' }); }
+    catch (error) { expect(JSON.stringify(error)).not.toContain(SECRET); }
+  });
   it('rejects omitted, malformed, or mismatched requested asset rules and preserves explicit halts', async () => {
     const valid={symbol:'BTC/USD',status:'active',tradable:true,min_order_size:'0.0001',min_trade_increment:'0.0001'};
     for(const body of [{},{...valid,symbol:'ETH/USD'},{...valid,min_trade_increment:'NaN'},{...valid,tradable:'yes'}]) {
@@ -92,6 +100,9 @@ describe('Alpaca paper boundary', () => {
     await client.activities('2026-09-26T00:00:00Z', 'page-2');
     expect(String(fetcher.mock.calls[3]?.[0])).toContain('activity_types=FILL%2CCFEE%2CFEE');
     expect(String(fetcher.mock.calls[3]?.[0])).toContain('page_token=page-2');
+    await client.activities('2026-09-26T00:00:00Z', 'audit-page', true);
+    expect(String(fetcher.mock.calls[4]?.[0])).not.toContain('activity_types=');
+    expect(String(fetcher.mock.calls[4]?.[0])).toContain('page_token=audit-page');
     expect(fetcher.mock.calls.every((call) => !String(call[0]).includes('https://api.alpaca.markets/'))).toBe(true);
   });
 

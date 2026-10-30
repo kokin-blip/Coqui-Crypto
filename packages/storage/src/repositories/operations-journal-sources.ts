@@ -1,5 +1,8 @@
 /** Each branch selects allowlisted facts; no raw source payload crosses this projection. */
-export const OPERATIONS_JOURNAL_SQL = `WITH scope AS (SELECT ? AS profile), raw_journal AS (
+export const OPERATIONS_JOURNAL_SQL = `WITH scope AS (SELECT ? AS profile), parallel_links AS MATERIALIZED (
+  SELECT experiment_id,kind,detail_json FROM parallel_paper_events_v1
+    WHERE profile_id=(SELECT profile FROM scope) AND kind IN('external_intent','external_order')
+), raw_journal AS (
   SELECT id,work_id,attempt_id,worker,source,phase,status,at_ms,deadline_at_ms,'profile' AS scope,
     facts_json,content_hash FROM operations_activity_events_v1 WHERE profile_id=(SELECT profile FROM scope)
   UNION ALL
@@ -77,12 +80,13 @@ export const OPERATIONS_JOURNAL_SQL = `WITH scope AS (SELECT ? AS profile), raw_
     WHERE s.profile_id=(SELECT profile FROM scope) AND s.kind IN('acquired','released','lost','cancelled')
   UNION ALL
   SELECT 'parallel:'||p.id,'parallel:'||p.experiment_id||':'||coalesce(json_extract(p.detail_json,'$.day'),
-    (SELECT json_extract(i.detail_json,'$.day') FROM parallel_paper_events_v1 i WHERE i.experiment_id=p.experiment_id
+    CASE WHEN json_extract(p.detail_json,'$.clientOrderId') IS NOT NULL OR json_extract(p.detail_json,'$.orderId') IS NOT NULL THEN
+    (SELECT json_extract(i.detail_json,'$.day') FROM parallel_links i WHERE i.experiment_id=p.experiment_id
       AND i.kind='external_intent' AND
       (json_extract(i.detail_json,'$.clientOrderId')=json_extract(p.detail_json,'$.clientOrderId') OR
         json_extract(i.detail_json,'$.clientOrderId')=(SELECT json_extract(o.detail_json,'$.clientOrderId')
-          FROM parallel_paper_events_v1 o WHERE o.experiment_id=p.experiment_id AND o.kind='external_order'
-          AND json_extract(o.detail_json,'$.orderId')=json_extract(p.detail_json,'$.orderId') LIMIT 1)) LIMIT 1),p.id),
+          FROM parallel_links o WHERE o.experiment_id=p.experiment_id AND o.kind='external_order'
+          AND json_extract(o.detail_json,'$.orderId')=json_extract(p.detail_json,'$.orderId') LIMIT 1)) LIMIT 1) END,p.id),
     p.id,CASE WHEN p.kind IN('decision','market_refresh_started','market_refresh_finished') THEN 'market'
       WHEN p.kind IN('paused','resumed','stopped','started','pass_deferred') THEN 'host'
       WHEN p.kind='intraday_skipped' THEN 'risk' ELSE 'execution' END,'parallel',p.kind,

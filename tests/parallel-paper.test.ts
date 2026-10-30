@@ -138,7 +138,7 @@ describe('parallel paper experiment', () => {
     expect(listStudyInstances('main',HOURLY_EXECUTION_V1.id,database)).toHaveLength(1);
     database.close();
   });
-  it('repairs a market-data pause but requires manual resume after the current bar is ready', async () => {
+  it('repairs a legacy market-data pause but still requires manual resume', async () => {
     const { database, clock, secrets } = await setup();
     const mock = mockClient();
     const ready: PaperDecisionPreparation = { ok: true, dataset: dataset(),
@@ -151,6 +151,7 @@ describe('parallel paper experiment', () => {
     expect((await service.start('market-recovery-test', true)).ok).toBe(true);
     preparation = { ok: false, code: 'market_fetch_failed' };
     await service.tick();
+    expect(service.summary().latestPass?.outcome).toBe('deferred'); appendParallelEvent({ experimentId: service.status().experiment!.id, profileId: 'main', kind: 'paused', key: 'legacy-market_fetch_failed', at: clock.nowMs(), detail: { reason: 'market_fetch_failed' } }, database);
     expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'market_fetch_failed' });
     expect(mock.submit).not.toHaveBeenCalled();
 
@@ -189,6 +190,7 @@ describe('parallel paper experiment', () => {
     expect((await service.start('credential-recovery-test', true)).ok).toBe(true);
     failRead = true;
     await service.tick();
+    expect(service.summary().latestPass?.outcome).toBe('deferred'); appendParallelEvent({ experimentId: service.status().experiment!.id, profileId: 'main', kind: 'paused', key: 'legacy-secret_store_unavailable', at: clock.nowMs(), detail: { reason: 'secret_store_unavailable' } }, database);
     expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'secret_store_unavailable' });
     await service.tick();
     expect(service.summary()).toMatchObject({ state: 'paused', reconciliationAttention: { blocked: false } });
@@ -300,6 +302,7 @@ describe('parallel paper experiment', () => {
     expect((await service.start('alpaca-read-recovery', true)).ok).toBe(true);
     unavailable = true;
     await service.tick();
+    expect(service.summary().latestPass?.outcome).toBe('deferred'); appendParallelEvent({ experimentId: service.status().experiment!.id, profileId: 'main', kind: 'paused', key: 'legacy-alpaca_unavailable', at: clock.nowMs(), detail: { reason: 'alpaca_unavailable', operation: 'account', httpStatus: 503 } }, database);
     expect(service.summary()).toMatchObject({ state: 'paused', lastReason: 'alpaca_unavailable' });
     expect(service.status().events.find((event) => event.kind === 'paused')?.detail).toMatchObject({
       reason: 'alpaca_unavailable', operation: 'account', httpStatus: 503 });

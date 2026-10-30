@@ -36,7 +36,22 @@ export function parallelBrokerEvidence(events: readonly ParallelPaperEvent[], no
   const updates = events.filter((event) => event.kind === 'broker_trade_update');
   const lastExecution = updates.at(-1)?.detail['at'];
   const lastExecutionAtMs = typeof lastExecution === 'string' ? Date.parse(lastExecution) : NaN;
+  const settlement = events.findLast(event => event.kind === 'broker_settlement_verified');
+  const settlementTime = settlement?.detail['oldestFillAtMs'];
+  const pending = settlement?.detail['pending'];
+  const reviewAfterMs = typeof settlementTime === 'number' ? (Math.floor(settlementTime / 86_400_000) + 2) * 86_400_000 : null;
+  const failed = events.findLast(event => ['reconciliation_error', 'pass_deferred'].includes(event.kind) ||
+    event.kind === 'paused' && event.detail['reason'] !== 'user_action');
+  const verified = snapshot && lastSuccess && events.indexOf(lastSuccess) > events.indexOf(snapshot) &&
+    (!lastAttempt || events.indexOf(snapshot) > events.indexOf(lastAttempt)) &&
+    (!failed || events.indexOf(lastSuccess) > events.indexOf(failed));
   return {
+    settlement: verified && lastSuccess?.detail['positionBasis'] === 'broker_trade_updates' && settlement &&
+      typeof settlementTime === 'number' && reviewAfterMs !== null && Array.isArray(pending) ? {
+        atMs: lastSuccess.at, oldestFillAtMs: settlementTime, reviewAfterMs,
+        status: nowMs >= reviewAfterMs ? 'overdue' as const : 'pending' as const,
+        assets: (pending as { symbol: string; quantity: string; unreportedDebitQty: string }[]).map(row => ({ ...row })),
+      } : null,
     tradeStream: stream?.detail['status'] === 'listening' ? 'listening' as const : stream?.detail['status'] === 'connecting' ? 'connecting' as const : 'unavailable' as const,
     quoteStatus: hasAssetEvidence ? assetQuoteStatus : quote?.detail['status'] === 'unavailable' ? 'unavailable' as const : quoteAtMs === null ? 'unknown' as const :
       nowMs - quoteAtMs > 60_000 || quoteAtMs - nowMs > 5000 ? 'stale' as const : 'fresh' as const,

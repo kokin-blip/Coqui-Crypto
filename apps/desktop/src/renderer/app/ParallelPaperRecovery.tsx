@@ -21,8 +21,8 @@ export function ParallelPaperRecovery({ client, data }: {
   const networkMessage = paperNetworkMessage(failure);
   return <>
     {data.state === 'active' && data.latestPass?.outcome === 'deferred' && <SurfaceState kind="empty"
-      title="Waiting for a complete check"
-      detail={`The ${data.latestPass.phase.replaceAll('_', ' ')} check ran out of time before an order was submitted. Coqui will retry automatically; orders wait for complete checks.`} />}
+      title="Check pending · retrying automatically"
+      detail={`The ${data.latestPass.phase.replaceAll('_', ' ')} check could not complete. Coqui will retry automatically; new orders wait until all checks pass.`} />}
 
     {evidence && <section className="parallel-paper-decision" aria-label="Alpaca broker evidence">
       <h3>Alpaca broker evidence</h3>
@@ -40,13 +40,18 @@ export function ParallelPaperRecovery({ client, data }: {
           <td>{row.receivedAtMs === null ? 'Not yet checked' : <time dateTime={exactUtcTimestamp(row.receivedAtMs)}>{formatLocalTimestamp(row.receivedAtMs)}</time>}</td>
         </tr>)}</tbody></table></div>}
       <p className="muted">Quote timestamps describe provider events; last response describes the API read. Resume arms the scheduler; fresh prices for the assets needed by each order are checked before submission.</p>
-      <p className="muted">Coinbase market-feed health is separate from Alpaca execution readiness. Captured stream positions do not replace the accounting guard.</p>
+      <p className="muted">Coinbase market-feed health is separate from Alpaca execution readiness. Execution positions require matching broker fills, a complete activity audit, and current holdings. Fee accounting remains separate.</p>
+      {evidence.settlement && <div role="status">
+        <p>Broker positions verified · fee accounting {evidence.settlement.status === 'overdue' ? 'overdue for review' : 'pending'}. Exact execution records agree with current Alpaca holdings. Estimated fees have not been booked. New orders still require all execution checks.</p>
+        <ul>{evidence.settlement.assets.map(row => <li key={row.symbol}>{row.symbol}: {row.quantity} held · {row.unreportedDebitQty} observed asset debit awaiting fee records.</li>)}</ul>
+        {evidence.settlement.status === 'overdue' && <p>Review the missing fee records with Alpaca. The recorded debit remains unconfirmed as a fee; current holdings are independently verified.</p>}
+      </div>}
       {evidence.latestFeeCreatedAtMs !== null && <p>Latest reported fee created <time dateTime={exactUtcTimestamp(evidence.latestFeeCreatedAtMs)}>{formatLocalTimestamp(evidence.latestFeeCreatedAtMs)}</time>.</p>}
       {evidence.latestFillAtMs !== null && <p>Latest fill <time dateTime={exactUtcTimestamp(evidence.latestFillAtMs)}>{formatLocalTimestamp(evidence.latestFillAtMs)}</time>.</p>}
     </section>}
     {data.state === 'paused' && !attention.blocked && <SurfaceState kind="success" title="Recovery complete · ready to resume"
       detail="The paper account checks passed. Trading remains paused until you press Resume; Resume checks the broker again. Orders still require fresh execution prices." compact />}
-    {attention.minorResolution && <p role="status">An earlier build accepted a paper-only position discrepancy ({formatApproxUsd(attention.minorResolution.valueUsd)}). Fee attribution remains unconfirmed. Current recovery requires exact quantities backed by reported fees; this historical checkpoint cannot clear a check.</p>}
+    {attention.minorResolution && <p role="status">An earlier build accepted a paper-only position discrepancy ({formatApproxUsd(attention.minorResolution.valueUsd)}). Fee attribution remains unconfirmed. This historical allowance cannot clear a check; execution positions need independent broker evidence.</p>}
     {attention.blocked && <section className="parallel-paper-decision" aria-label="Paper execution recovery">
     <SurfaceState kind="blocked" title={pendingFees ? pendingFees.status === 'overdue' ? 'Fee evidence overdue · review Alpaca' : 'Waiting for fee evidence' : feeLimit ? 'Position gap exceeds recovery limits' : preparationTimeout ? 'Market preparation timed out' : staleQuote ? 'Waiting for fresh Alpaca quotes' : 'New paper orders blocked until reconciliation completes'}
       detail={preparationTimeout ? 'The market-data refresh ran out of time during recovery. Coqui will retry while open. Trading remains paused until all recovery checks complete and you press Resume.' : staleQuote ? 'Alpaca returned an outdated execution quote. Coqui checks again automatically while open; fresh Coinbase display data does not replace Alpaca execution evidence. Recovery pricing checks use only assets with a discrepancy. Orders still require fresh prices before submission.' : 'Coqui rechecks the broker while this app is running. Recovery checks orders, fills, activities, and positions before the scheduler can submit again. Retry below to request another read check.'} compact />
@@ -71,7 +76,9 @@ export function ParallelPaperRecovery({ client, data }: {
         {failure && ` · ${Math.max(0, Math.floor((failure.atMs - pendingFees.oldestFillAtMs) / 3_600_000))}h before the latest check`}.</p>
       <p>{pendingFees.status === 'overdue' ? 'Fee evidence is still missing beyond the review threshold. Check the Alpaca paper dashboard or contact Alpaca support; elapsed time does not clear this block.' : 'Coqui rechecks the full activity history while open. If evidence is still missing after the review threshold, Coqui will flag it for review.'}
         {' '}Review threshold: <time dateTime={exactUtcTimestamp(pendingFees.reviewAfterMs)}>{formatLocalTimestamp(pendingFees.reviewAfterMs)}</time>. This is a review reminder, not a promised posting time.</p>
-      <p>All new paper orders remain blocked until reported fees and positions reconcile exactly. Recovery never resumes trading automatically; press Resume only after the checks pass.</p>
+      <p>All new paper orders remain blocked until reported fees and positions reconcile exactly. {data.state === 'active'
+        ? 'This run is still armed. Coqui retries automatically and continues at an eligible window after exact reconciliation; no Resume is needed for this wait.'
+        : 'Trading remains paused. Press Resume only after the checks pass.'}</p>
     </div>}
     {feeLimit && <p role="status">The fee-shaped position gap is valued at {formatApproxUsd(feeLimit.observedValueUsd)}.
       Recovery requires the gap to stay within both {formatApproxUsd(feeLimit.maxAbsoluteValueUsd)} and 0.05% of account equity ({formatApproxUsd(feeLimit.maxEquityValueUsd)}).

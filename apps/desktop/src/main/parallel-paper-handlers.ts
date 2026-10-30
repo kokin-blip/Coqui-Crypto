@@ -1,9 +1,11 @@
 import type { ParallelPaperService } from '@coqui/services';
 
+import { createHourlyStudyHandlers } from './hourly-study-handlers.js';
 import type { ChannelHandlers } from './dispatch.js';
 
-export function createParallelPaperHandlers(service: ParallelPaperService): ChannelHandlers {
+export function createParallelPaperHandlers(service: ParallelPaperService, hourly?: Parameters<typeof createHourlyStudyHandlers>[0]): ChannelHandlers {
   return {
+    ...(hourly ? createHourlyStudyHandlers(hourly) : {}),
     'parallel.paper.status': () => ({ ok: true, value: service.summary() }),
     'parallel.paper.start': async (payload: { readonly commandId: string; readonly smokeVerified: true }) => {
       const result = await service.start(payload.commandId, payload.smokeVerified);

@@ -7,6 +7,7 @@ import { PARALLEL_INSTRUMENTS } from './parallel-signal.js';
 import { activeParallelEvents } from './parallel-paper-plans.js';
 import { alpacaQuantity, eventFor, money, quantity, symbolFor } from './parallel-paper-utils.js';
 import { recordParallelPreOrder } from './parallel-paper-intraday.js';
+import { parallelRejectedSubmissions } from './parallel-paper-rejections.js';
 
 const ASSET_IDS = PARALLEL_INSTRUMENTS.map(instrumentKey);
 const CUTOFF_MS = 900_000, MIN_TRADE = new Decimal(25), BAND = new Decimal('0.05');
@@ -23,6 +24,9 @@ export async function executeParallelDaily(input: {
     throw new Error('execution_window_missed');
   }
   let events = activeParallelEvents(input.events());
+  const rejected = parallelRejectedSubmissions(events);
+  // A refused leg is never retried in its original execution window.
+  if (events.some(event => event.kind === 'external_intent' && event.detail['day'] === day && rejected.has(event.detail['clientOrderId']))) return;
   const decision = eventFor(events, 'decision', day)!;
   const weights = decision.detail['weights'] as Record<string, number>;
   const account = await client.account();
@@ -30,7 +34,7 @@ export async function executeParallelDaily(input: {
   const ourIds = new Set(events.filter((event) => event.kind === 'external_intent').map((event) => event.detail['clientOrderId']));
   if (openOrders.some((order) => !ourIds.has(order.client_order_id))) throw new Error('unexpected_alpaca_order');
   if (openOrders.length > 0 || events.some((event) => event.kind === 'external_intent' && event.detail['day'] !== day &&
-      !events.some((other) => other.kind === 'external_order' && other.detail['clientOrderId'] === event.detail['clientOrderId'] && other.detail['status'] === 'filled'))) return;
+      !rejected.has(event.detail['clientOrderId']) && !events.some((other) => other.kind === 'external_order' && other.detail['clientOrderId'] === event.detail['clientOrderId'] && other.detail['status'] === 'filled'))) return;
   const prices = Object.fromEntries(ASSET_IDS.map((id) => [symbolFor(id),
     money(String(preparation.dataset.closesById[id]?.at(-1)))])) as Record<string, Decimal>;
   const equity = money(account.equity);

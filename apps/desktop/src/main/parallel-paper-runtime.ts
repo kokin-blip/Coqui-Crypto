@@ -3,6 +3,7 @@ import { STUDY_BEHAVIOR_HASHES, type Clock } from '@coqui/core';
 import { startOperationsActivity, ParallelPaperService, PARALLEL_INSTRUMENTS, resolveKillSwitch } from '@coqui/services';
 import { appendParallelEvent, countParallelEvents, latestParallelExperiment, listParallelEvents, parallelExperimentStatus, type Db } from '@coqui/storage';
 
+import { createHourlyShadowRuntime } from './hourly-shadow-runtime.js';
 import { createPaperMarketFeed, type PaperMarketFeedDependencies } from './paper-market.js';
 import type { createMlSignalRuntime } from './ml-signal-runtime.js';
 
@@ -22,7 +23,7 @@ export function createParallelPaperRuntime(input: {
   readonly marketSelector?: { refresh(): Promise<void> };
   readonly mlSignal?: ReturnType<typeof createMlSignalRuntime>;
 }) {
-  const loadedAtMs = input.clock.nowMs(), build = { schedulerVersion: 'paper-recovery-budget-v3',
+  const loadedAtMs = input.clock.nowMs(), build = { schedulerVersion: 'paper-read-retry-v4',
     behaviorHash: STUDY_BEHAVIOR_HASHES['trendvol-hourly-execution-v1'] };
   console.info('Coqui paper runtime loaded', build);
   const existing = latestParallelExperiment(input.profileId, input.database);
@@ -62,7 +63,8 @@ export function createParallelPaperRuntime(input: {
     },
     killSwitchEngaged: () => resolveKillSwitch(input.profileId, input.database).engaged,
     ...(input.mlSignal === undefined ? {} : { mlSignal: input.mlSignal.current }) });
-  return { service, suspend() { service.suspend(); }, resume() { service.resume(); },
+  const hourlyShadow = createHourlyShadowRuntime({ ...input, hostId: input.hostId ?? 'desktop-main-test', hostKind: input.hostKind ?? 'desktop' });
+  return { service, hourlyShadow, suspend() { service.suspend(); }, resume() { service.resume(); },
     async tick(): Promise<void> {
       const now = input.clock.nowMs(), slot = Math.floor(now / 14_400_000) * 14_400_000;
       const deadline = createRequestDeadline(() => input.clock.nowMs(), 30_000,

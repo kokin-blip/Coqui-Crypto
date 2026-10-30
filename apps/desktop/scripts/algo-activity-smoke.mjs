@@ -1,10 +1,12 @@
 import { app,BrowserWindow,ipcMain,shell } from 'electron';
+import { Buffer } from 'node:buffer';
 import { mkdtempSync,mkdirSync,rmSync,writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname,join } from 'node:path';
 import { fileURLToPath,pathToFileURL } from 'node:url';
 import { setTimeout as delay } from 'node:timers/promises';
 import { profileConnectionV2,sha256Hex } from '@coqui/core';
+import {createMemorySecretStore} from '@coqui/adapters';
 import { openDatabase,saveProfileConnectionV2,saveParallelExperiment,appendParallelEvent,savePaperDailyValuationEvidence } from '@coqui/storage';
 import { seedCoinbaseSmokeProfile } from './coinbase-settings-smoke.mjs';
 
@@ -30,7 +32,7 @@ function seed(id,side,quantity,price,at,product='BTC-USD',order=id){
   if(!db.prepare('SELECT id FROM paper_orders_v3 WHERE id=?').get(order))db.prepare('INSERT INTO paper_orders_v3 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)').run(order,profile,order,product,`coinbase|spot|${product}`,side,quantity,price,'filled','fixture-rules','fixture-snapshot',null,at,at);
   db.prepare('INSERT INTO paper_fills_v3 VALUES (?,?,?,?,?,?,?,?,?,?,?,?)').run(id,order,profile,quantity,price,price,'1','0','0','0',at,'fixture-market');
 }
-async function capture(name){await delay(150);writeFileSync(join(output,`${name}.png`),(await window.webContents.capturePage()).toPNG());}
+async function capture(name){await js('new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))');window.webContents.debugger.attach('1.3');try{const screenshot=await window.webContents.debugger.sendCommand('Page.captureScreenshot',{format:'png',fromSurface:false,captureBeyondViewport:false});writeFileSync(join(output,`${name}.png`),Buffer.from(screenshot.data,'base64'));}finally{window.webContents.debugger.detach();}}
 async function run(){
   mkdirSync(output,{recursive:true});globalThis.WebSocket=class{close(){}send(){}};globalThis.fetch=async()=>new globalThis.Response('{}',{status:503});
   await seedCoinbaseSmokeProfile(directory);
@@ -53,9 +55,16 @@ async function run(){
   const snapshot=sha256Hex('fixture-snapshot');db.prepare('INSERT INTO connection_account_snapshots_v2 VALUES (?,?,?,?,?,?,?,?,?,?)').run(snapshot,profile,connection.id,'coinbase',now,1,'healthy','{}',sha256Hex('fixture-content'),now);
   const experiment=sha256Hex('fixture-experiment');saveParallelExperiment({id:experiment,profileId:profile,sourceConnectionSnapshotId:snapshot,alpacaAccountId:'fixture-broker-123456',openingCoquiCash:'1000',openingAlpacaCash:'1000',openingAlpacaEquity:'1000',anchor:{},startedAt:now-12*day,configVersion:'fixture'},db);
   appendParallelEvent({profileId:profile,experimentId:experiment,kind:'external_fill',key:'external-fill',at:now-1000,detail:{activityId:'fixture-external',orderId:'fixture-external-order',symbol:'BTCUSD',side:'buy',quantity:'1',price:'100',at:new Date(now-1000).toISOString()}},db);
-  activityDispatch=createDispatcher({handlers:createTradingActivityHandlers({profileId:profile,database:db,now:()=>Date.now(),mark:()=>({priceUsd:'130',source:'Synthetic smoke quote',atMs:now})})});
+  const performanceSecrets=createMemorySecretStore();
+  await performanceSecrets.write('alpaca-paper-credentials',JSON.stringify({keyId:'fixture',secretKey:'fixture'}),profile);
+  activityDispatch=createDispatcher({handlers:createTradingActivityHandlers({profileId:profile,database:db,now:()=>Date.now(),mark:()=>({priceUsd:'130',source:'Synthetic smoke quote',atMs:now}),secrets:performanceSecrets,
+    brokerPerformanceClientFactory:()=>({account:async()=>({id:'fixture-broker-123456',status:'ACTIVE',currency:'USD',cash:'2000',equity:'104929.64',trading_blocked:false,account_blocked:false}),
+      portfolioHistory:async()=>({baseValueUsd:'1000',points:[{atMs:now-13*day,equityUsd:'1000',reportedPnlUsd:'0'},{atMs:now,equityUsd:'104929.64',reportedPnlUsd:'103929.64'}],cashflows:{JNLC:['1000','12190.60']}}),
+      allActivities:async()=>[{id:'funding',activity_type:'JNLC',net_amount:'1000',currency:'USD',status:'executed',created_at:new Date(now-13*day).toISOString()},{id:'fill',order_id:'broker-order',activity_type:'FILL',symbol:'BTC/USD',side:'buy',qty:'1',price:'11190.60',transaction_time:new Date(now-day).toISOString()}],
+      orders:async()=>[{id:'broker-order',client_order_id:'fixture',symbol:'BTC/USD',side:'buy',status:'filled',qty:'1',filled_qty:'1',filled_avg_price:'11190.60',submitted_at:new Date(now-day).toISOString(),filled_at:new Date(now-day).toISOString()}]})})});
   ipcMain.handle('coqui:query',async(_event,channel,payload)=>{
     counts.set(channel,(counts.get(channel)??0)+1);
+    if(channel==='alpaca.paper.performance')return activityDispatch(channel,payload);
     if(channel.startsWith('trading.activity.')&&channel!=='trading.activity.shared'){
       if(channel==='trading.activity.overview'&&failRead)return {status:'failed',issues:[{path:[],code:'synthetic_read_failed'}]};
       const started=globalThis.performance.now();const value=await activityDispatch(channel,payload);readMs.push(globalThis.performance.now()-started);
@@ -76,6 +85,13 @@ async function run(){
   check('default is Algo Activity with all assets, 7D and Closed P/L',await js(`document.querySelector('#microstructure-tab-0').textContent==='Algo Activity'&&document.querySelector('[aria-label="Activity assets"]').value==='all'&&document.querySelector('[aria-label="Activity period"]').value==='7d'&&document.querySelector('[aria-label="P/L chart mode"] button[aria-pressed="true"]').textContent==='Closed'`));
   check('account selectors share source state with the main chart',await js(`Array.from(document.querySelectorAll('[aria-label="Paper activity source"]')).every(select=>select.value==='ledger')&&document.querySelector('.terminal-microstructure [aria-label="Wallet activity filter"]').disabled`));
   check('chart, metrics and recorded grouped orders render',await js(`document.querySelector('.terminal-pnl-canvas canvas')!==null&&document.querySelectorAll('.terminal-algo-metrics .terminal-metric').length===4&&document.querySelector('.terminal-algo-trades').innerText.includes('2 fills')`));
+  await js(`document.querySelector('[aria-label="About Open P/L · now"]').focus()`);
+  window.webContents.sendInputEvent({type:'keyDown',keyCode:'Space'});window.webContents.sendInputEvent({type:'keyUp',keyCode:'Space'});
+  await waitFor(`document.querySelector(':popover-open')?.textContent.includes('Unrealized profit or loss')`);
+  check('metric information opens with keyboard and explains missing evidence',await js(`document.querySelector(':popover-open').textContent.includes('Missing evidence')`));
+  window.webContents.sendInputEvent({type:'keyDown',keyCode:'Escape'});window.webContents.sendInputEvent({type:'keyUp',keyCode:'Escape'});
+  await waitFor(`document.querySelector(':popover-open')===null`);
+  check('Escape dismisses information and retains the trigger focus',await js(`document.activeElement?.getAttribute('aria-label')==='About Open P/L · now'`));
   await capture('algo-activity-dark-1920');
   await js(`document.querySelector('.terminal-algo-order-row button[aria-expanded]').click()`);
   await waitFor(`document.querySelector('.terminal-algo-order-detail')?.innerText.includes('Lifetime execution')`);
@@ -110,6 +126,18 @@ async function run(){
   await waitFor(`document.querySelector('.terminal-algo-context')?.innerText.includes('123456')`);release();await delay(250);
   check('source/account change rejects late prior-source display data',await js(`document.querySelector('.terminal-algo-context').innerText.includes('123456')&&!document.querySelector('.terminal-algo-context').innerText.includes('Combined simulation')`));
   check('broker missing fees and Total history remain explicitly unavailable',(await text()).includes('Unavailable')&&(await text()).includes('Two attributable recorded valuations'));
+  await waitFor(`document.querySelector('.terminal-algo-broker')?.innerText.includes('$104,929.64')`);
+  await click('.terminal-algo-broker summary');
+  await waitFor(`document.querySelector('.terminal-algo-broker select')?.options.length===2`);
+  check('disconnected capital evidence is not selected automatically',await js(`document.querySelector('.terminal-algo-broker select').value===''&&!document.querySelector('.terminal-algo-broker .capital-performance')`));
+  await select('.terminal-algo-broker select',await js(`document.querySelector('.terminal-algo-broker select').options[1].value`));
+  await waitFor(`document.querySelector('.terminal-algo-broker .capital-performance')?.innerText.includes('Economic P&L')`);
+  const brokerText=await js(`document.querySelector('.terminal-algo-broker').innerText`);
+  check('legacy cash proof does not manufacture canonical investment profit',brokerText.includes('$12,190.60')&&brokerText.includes('Legacy execution cash proof reconciled')&&brokerText.includes('Historical evidence only')&&brokerText.includes('initiator and purpose remain unknown')&&!brokerText.includes('$91,739.04')&&await js(`(()=>{const metrics=[...document.querySelectorAll('.terminal-algo-broker .capital-performance .metric-grid>div')];return metrics.length===3&&metrics.every(metric=>metric.querySelector('dd').textContent.includes('Unavailable'));})()`),brokerText);
+  check('all account and order metric explanations open individually',await js(`(()=>{const buttons=[...document.querySelectorAll('.terminal-algo-activity .terminal-metric-help button')];const labels=buttons.map(button=>button.getAttribute('aria-label'));const canonical=['Economic P&L','Time-weighted return','Maximum daily drawdown'];const required=['Open P/L · now','Winning / losing exits','Executed orders','Broker account equity','Opening equity','Equity change since opening','Cash adjustments in history','Latest daily history',...canonical];return buttons.length===12&&required.every(label=>labels.includes('About '+label))&&labels.some(label=>label.startsWith('About Realized net ·'))&&buttons.every(button=>{button.click();const open=[...document.querySelectorAll(':popover-open')];const label=button.getAttribute('aria-label').slice(6);return open.length===1&&open[0].querySelector('strong').textContent===label&&open[0].textContent.length>(canonical.includes(label)?20:100);});})()`));
+  await click('[aria-label="About Equity change since opening"]');
+  await capture('algo-activity-metric-information');
+  await js(`document.querySelector(':popover-open').hidePopover()`);
   await capture('algo-activity-alpaca-missing-evidence');
   await select('.terminal-microstructure [aria-label="Paper activity source"]','ledger');await select('[aria-label="Activity period"]','7d');
   await js(`Array.from(document.querySelectorAll('[aria-label="P/L chart mode"] button')).find(button=>button.textContent==='Closed').click()`);
@@ -126,6 +154,11 @@ async function run(){
     const geometry=await js(`(()=>{const panel=document.querySelector('.terminal-microstructure');const metrics=panel.querySelector('.terminal-algo-metrics');return {innerWidth,innerHeight,width:panel.clientWidth,scrollWidth:panel.scrollWidth,overflow:document.documentElement.scrollWidth>innerWidth,metricsOverflow:metrics.scrollWidth>metrics.clientWidth,figma:Array.from(panel.querySelectorAll('[data-figma-node]')).map(el=>el.dataset.figmaNode),theme:document.documentElement.dataset.theme}})()`);
     check(`${name} compact panel fits without internal clipping`,geometry.scrollWidth<=geometry.width+1&&!geometry.metricsOverflow,JSON.stringify(geometry));
     check(`${name} uses Figma dropdown, badge and row primitives`,['3:56','3:46','3:72'].every(id=>geometry.figma.includes(id)));
+    await click('[aria-label="About Open P/L · now"]');
+    const helpGeometry=await js(`(()=>{const r=document.querySelector(':popover-open').getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:innerWidth,height:innerHeight};})()`);
+    check(`${name} information remains inside the viewport`,helpGeometry.left>=0&&helpGeometry.right<=helpGeometry.width&&helpGeometry.top>=0&&helpGeometry.bottom<=helpGeometry.height,JSON.stringify(helpGeometry));
+    await capture(`algo-activity-information-${name}`);
+    await js(`document.querySelector(':popover-open').hidePopover()`);
     measurements.push({name,...geometry});await capture(`algo-activity-${name}`);
     if(name==='dark-1440'){const rect=await js(`(()=>{const r=document.querySelector('.terminal-microstructure').getBoundingClientRect();return {x:Math.round(r.x),y:Math.round(r.y),width:Math.round(r.width),height:Math.min(Math.round(r.height),innerHeight-Math.round(r.y))}})()`);writeFileSync(join(output,'algo-activity-panel.png'),(await window.webContents.capturePage(rect)).toPNG());}
   }

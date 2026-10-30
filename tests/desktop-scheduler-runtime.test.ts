@@ -15,7 +15,7 @@ import {
   type ProductRuleSnapshot,
   type UsdAmount,
 } from '../packages/core/src/index.js';
-import type { PaperRunLoopDependencies } from '../packages/services/src/index.js';
+import { createProfileOperationGate, type PaperRunLoopDependencies } from '../packages/services/src/index.js';
 import {
   countCompletedDecisionRuns,
   listRemediationEvidence,
@@ -140,6 +140,38 @@ function paperDeps(db: Db, clock: Clock = new FixedClock(T0)): PaperRunLoopDepen
 }
 
 describe('the scheduler finally has a wake-up', () => {
+  it('keeps Alpaca checks running while local preparation is stalled, without overlapping paper passes', async () => {
+    const db = seeded(), clock = new StepClock(T0), prepare = vi.fn(), gate = createProfileOperationGate();
+    let finishLocal!: () => void, finishPaper!: () => void;
+    const local = new Promise<void>(resolve => { finishLocal = resolve; });
+    const paper = vi.fn(async () => {});
+    prepare.mockImplementation(() => local);
+    const runtime = startSchedulerRuntime({ database: db, clock, profileId: PROFILE,
+      paper: paperDeps(db, clock), prepare, operationGate: gate, parallelPaper: { tick: paper }, pollMs: 3_600_000 });
+    const first = runtime.tick();
+    await vi.waitFor(() => expect(prepare).toHaveBeenCalledOnce());
+    expect(gate.begin()).toBe(false);
+    clock.advance(60_000);
+    paper.mockImplementationOnce(() => new Promise<void>(resolve => { finishPaper = resolve; }));
+    const second = runtime.tick();
+    await vi.waitFor(() => expect(paper).toHaveBeenCalledTimes(2));
+    const third = runtime.tick();
+    expect(paper).toHaveBeenCalledTimes(2);
+    finishPaper(); await Promise.all([second, third]);
+    expect(gate.isBusy()).toBe(true);
+    expect(prepare).toHaveBeenCalledOnce();
+    runtime.suspend(); await runtime.tick(); expect(paper).toHaveBeenCalledTimes(2);
+    finishLocal(); await first; expect(gate.isBusy()).toBe(false); runtime.dispose(); db.close();
+  });
+  it('does not enter either lane during an external profile operation and retries synchronous paper failures', async () => {
+    const db = seeded(), clock = new StepClock(T0), gate = createProfileOperationGate(), prepare = vi.fn(async () => {});
+    const paper = vi.fn((): Promise<void> => { throw new Error('read_failed'); });
+    const runtime = startSchedulerRuntime({ database: db, clock, profileId: PROFILE,
+      paper: paperDeps(db, clock), prepare, operationGate: gate, parallelPaper: { tick: paper }, pollMs: 3_600_000 });
+    gate.begin(); await runtime.tick(); expect(paper).not.toHaveBeenCalled(); expect(prepare).not.toHaveBeenCalled();
+    gate.end(); await runtime.tick(); await runtime.tick(); expect(paper).toHaveBeenCalledTimes(2);
+    expect(gate.isBusy()).toBe(false); runtime.stop(); expect(runtime.status().state).toBe('stopped'); runtime.dispose(); db.close();
+  });
   it.each(['pending', 'rejected', 'throwing'])('isolates %s news work from paper preparation and execution', async mode => {
     const db = seeded(), clock = new StepClock(T0), order: string[] = [], report = vi.fn();
     const news = { tick: () => {
@@ -154,6 +186,24 @@ describe('the scheduler finally has a wake-up', () => {
     expect(order).toEqual(['alpaca', 'prepare']);
     expect(countCompletedDecisionRuns(PROFILE, 0, db)).toBe(1);
     if (mode !== 'pending') expect(report).toHaveBeenCalledWith('news_host_tick', expect.any(Error));
+    runtime.dispose(); db.close();
+  });
+
+  it('runs hourly research while the broker lane is stalled and fences it on suspend', async () => {
+    const db = seeded(), clock = new StepClock(T0), gate = createProfileOperationGate();
+    let finishBroker!: () => void;
+    const broker = vi.fn(() => new Promise<void>(resolve => { finishBroker = resolve; }));
+    const hourly = { tick: vi.fn(async () => {}), suspend: vi.fn(), resume: vi.fn() };
+    const runtime = startSchedulerRuntime({ database: db, clock, profileId: PROFILE,
+      paper: paperDeps(db, clock), operationGate: gate, parallelPaper: { tick: broker }, hourlyShadow: hourly, pollMs: 3600000 });
+    const first = runtime.tick();
+    await vi.waitFor(() => expect(hourly.tick).toHaveBeenCalledTimes(1), { interval: 1 });
+    const second = runtime.tick();
+    await vi.waitFor(() => expect(hourly.tick).toHaveBeenCalledTimes(2), { interval: 1 });
+    expect(broker).toHaveBeenCalledTimes(1); expect(gate.isBusy()).toBe(true);
+    runtime.suspend(); expect(hourly.suspend).toHaveBeenCalled();
+    await runtime.tick(); expect(hourly.tick).toHaveBeenCalledTimes(2);
+    finishBroker(); await Promise.all([first, second]); expect(gate.isBusy()).toBe(false);
     runtime.dispose(); db.close();
   });
 

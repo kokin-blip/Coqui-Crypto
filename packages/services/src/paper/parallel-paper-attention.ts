@@ -4,19 +4,23 @@ import { parallelPaperFailureDetail, parallelSafeOperation, paperFeeLimitDetail,
 import { safeAlpacaNetworkCode } from '@coqui/adapters';
 import type { PaperPositionDifference } from './parallel-paper-utils.js';
 import { currentPaperPositionResolution } from './parallel-paper-resolution.js';
+import { parallelRejectedSubmissions } from './parallel-paper-rejections.js';
 
 /** Persistent projection independent of the short activity timeline. */
 export function parallelReconciliationAttention(events: readonly ParallelPaperEvent[], state: string) {
   const successful = events.findLast((event) => event.kind === 'readiness' &&
     event.detail['operation'] === 'broker_reconciliation' && event.detail['status'] === 'validated');
-  const failure = events.findLast((event) => event.kind === 'reconciliation_error' || (event.kind === 'paused' && event.detail['reason'] !== 'user_action'));
+  const failure = events.findLast((event) => event.kind === 'reconciliation_error' ||
+    (event.kind === 'pass_deferred' && paperPendingFeeDetail(event.detail['pendingFeeEvidence']) !== null) ||
+    (event.kind === 'paused' && event.detail['reason'] !== 'user_action'));
   const pause = events.findLast((event) => ['paused', 'resumed', 'started', 'stopped'].includes(event.kind));
   const unknown = (!successful || (pause !== undefined && events.indexOf(successful) < events.indexOf(pause))) && state === 'paused' && ['paper_execution_unknown', 'submission_outcome_unknown', 'broker_positions_mismatch'].includes(String(pause?.detail['reason']));
   const failedAfterSuccess = failure !== undefined && events.indexOf(failure) > (successful ? events.indexOf(successful) : -1);
+  const rejected = parallelRejectedSubmissions(events);
   const unresolvedOrders = events.filter((event) => event.kind === 'submit_attempt').flatMap((attempt) => {
     const order = events.findLast((event) => event.kind === 'external_order' && event.detail['clientOrderId'] === attempt.detail['clientOrderId']);
     const fills = events.filter((event) => event.kind === 'external_fill' && event.detail['orderId'] === order?.detail['orderId']);
-    if (parallelAttemptsResolved([attempt, ...(order ? [order] : []), ...fills])) return [];
+    if (rejected.has(attempt.detail['clientOrderId']) || parallelAttemptsResolved([attempt, ...(order ? [order] : []), ...fills])) return [];
     return [{ clientOrderId: String(attempt.detail['clientOrderId']),
       orderId: typeof order?.detail['orderId'] === 'string' ? order.detail['orderId'] : null }];
   });
