@@ -1,0 +1,335 @@
+{
+  "bundle": "/tmp/coqui-beta24-release-downloads/zip-unpacked/Coqui.app",
+  "metadata": {
+    "version": "0.1.0-beta.24",
+    "sourceRevision": "b33ddcf6680f5973591f4c4d288117e8be0b6d36",
+    "dirty": false,
+    "sourceHash": "79833b1ed228af6dc6ac20557dc4063e2a4dc09fea9b56453f4bd3570f80955a",
+    "channel": "beta-candidate",
+    "builtAtMs": 1793322367376
+  },
+  "compiledRevision": "b33ddcf6680f5973591f4c4d288117e8be0b6d36",
+  "sourceHashMatchesLocal": true,
+  "zod": "4.6.6",
+  "adHocSignatureVerified": true,
+  "transportAndCapabilitiesVerified": true,
+  "members": [
+    {
+      "path": "dist/main/index.js",
+      "sha256": "c25033c47fc06468ad08228b6a86871727a849bc40406fa581c18c8ec5720043"
+    },
+    {
+      "path": "dist/main/paper-reserve-runtime.js",
+      "sha256": "b555417094064b7f93e553feedbda9cf90677c61e79acbd2dd32c2ee6ed4e420"
+    },
+    {
+      "path": "dist/main/alpaca-performance-handlers.js",
+      "sha256": "bd37dde909feb5289ef6d5239dbb2fff38ef321a4d7ab7b54cb15c07f7a424f2"
+    },
+    {
+      "path": "dist/main/parallel-paper-runtime.js",
+      "sha256": "29c00e61ee5c6e3e42ed6046ab2f2bf19f051bd8b2d4c3467bc48c31c07000e2"
+    },
+    {
+      "path": "dist/preload/index.cjs",
+      "sha256": "9b277f79f806f0ec94655147d3bc78bcd350d100e3d1fa5fac15f055d58a8ecf"
+    },
+    {
+      "path": "dist/renderer/index.html",
+      "sha256": "170c455d9d8380e75a14e9071ca0812a8dacea2a68cbb4846a27f8b61b0ed21a"
+    },
+    {
+      "path": "dist/renderer/assets/Activity-CSwwkkdJ.js",
+      "sha256": "3e1545c1f452522b5bfd51f50b7b4fa9616822af19e755aff9810c577c9a7b4f"
+    },
+    {
+      "path": "dist/renderer/assets/AdvancedMarkets-BgDiHFb5.js",
+      "sha256": "0fddbd8fd844afe3a42443b7596679ceac77362df1047bd51195cd3aee64d956"
+    },
+    {
+      "path": "dist/renderer/assets/Alerts-DQaYAsAq.js",
+      "sha256": "1a23ad88f611c3c362bcb98c9d5329ddce984d63fc617bc46c1fd35a3a8e8932"
+    },
+    {
+      "path": "dist/renderer/assets/Allocation-0TeyxLKA.css",
+      "sha256": "6ad93878851dc0169d689df275c00b78430bdc9451226fd067edddf3978b844c"
+    },
+    {
+      "path": "dist/renderer/assets/Allocation-DSSHi0zT.js",
+      "sha256": "33f7c911e48a44a49006302ced8133f3d2419a7f977d2c4248574542acd35dd1"
+    },
+    {
+      "path": "dist/renderer/assets/AllocationLegend-lMY95dLS.js",
+      "sha256": "eaa5198e9ac32f2a138158c668f41d99e681717d2e6220fdfabfa2d24bbc8c64"
+    },
+    {
+      "path": "dist/renderer/assets/AllocationRingChart-CGPL5mTI.js",
+      "sha256": "7590e51b8642fa71d919f35a6a5d8887a0122f87984f136ba015d452271f2ff2"
+    },
+    {
+      "path": "dist/renderer/assets/CapitalPerformance-66ywzAx2.js",
+      "sha256": "11f83135cdce942aebce942472c82522c091ef760e641df92842a741f6fe97de"
+    },
+    {
+      "path": "dist/renderer/assets/ChartViewControl-CCRT9QUh.js",
+      "sha256": "355ffc6c0c8ae6bc665942e8befe2e2540f16f16fad852fd5d03f2ab9af61250"
+    },
+    {
+      "path": "dist/renderer/assets/CoinbaseMarketContext-BRWEakBl.js",
+      "sha256": "a1228af0f877d714b4490f1f7de7643c32595193c876fdba5444d5e04b354f9a"
+    },
+    {
+      "path": "dist/renderer/assets/CoquiComponents-BKmi-RBV.js",
+      "sha256": "09080d987cc711bfe4a20df207d01862d8bda1aa2215550f7d08cbe44b3b17d0"
+    },
+    {
+      "path": "dist/renderer/assets/CrewRobot-CyvlOeIU.js",
+      "sha256": "c03b411a272fd2a09cfee305a91b5cd685e2b77813267a0ac81192253d054d36"
+    },
+    {
+      "path": "dist/renderer/assets/DecisionEvidencePanel-ddUGGXeO.js",
+      "sha256": "15083295ee30f07b74f217e6d5d8cd55fc74655b8e226aaf6343e9cafdeba598"
+    },
+    {
+      "path": "dist/renderer/assets/DeferredPanel-Ctaeyo4u.js",
+      "sha256": "9100a1969b7701dd38541a3c8416ed96069584a3ad301a7441ce59b55b8bf37a"
+    },
+    {
+      "path": "dist/renderer/assets/Events-B0Lij3k5.js",
+      "sha256": "320e9ff319d4839383c5710933fb1617b4366b286bf2dfdcecc780e22d5f3c73"
+    },
+    {
+      "path": "dist/renderer/assets/EvidenceExplainButton-D47ibrp-.js",
+      "sha256": "cbdf5ca50ff8e6f2a196d3fddd14159389a2901fd474b13c7b8ccc3d00c48b44"
+    },
+    {
+      "path": "dist/renderer/assets/FinancialChart-DiNRZTS9.js",
+      "sha256": "05bed34bfb3f7665ff81364e3cebe60d1cad877fce6e3e5c9bd327a32723af26"
+    },
+    {
+      "path": "dist/renderer/assets/IonicCommandPopover-BNKJbjOv.js",
+      "sha256": "d79a0da78f9527ced64973e6491807e718b1f35e5a602fdaf78416fa956bc032"
+    },
+    {
+      "path": "dist/renderer/assets/Markets-Ctl3cP1A.js",
+      "sha256": "76c8f657a2194d9f005fb49ea06a5b7cbeae4ac575733cf1fa0a77c189d13550"
+    },
+    {
+      "path": "dist/renderer/assets/NewsPanels-Db9KnJd5.js",
+      "sha256": "0e014c03bd969e1005663d1b5853cf7adb3f888e4eda8dd1b6be9ee36de8b224"
+    },
+    {
+      "path": "dist/renderer/assets/OperationsFloor-B8qs6DN6.js",
+      "sha256": "ef5f9e65fe234749f2b0441bc4cbcc69c1abc0ea82e9ef777f0499d4ee98b1d6"
+    },
+    {
+      "path": "dist/renderer/assets/OperationsJournal-Nml_cAk0.js",
+      "sha256": "8661dc590bf74ee0a556dcefb48f5f816cd5b97ca9d7daff5ceea6da0001485b"
+    },
+    {
+      "path": "dist/renderer/assets/Overview-C7GdnE-d.js",
+      "sha256": "2e4db8cb5fa74175da6c09004590affe8e125cceccfa7aea2b15b8608041e3f0"
+    },
+    {
+      "path": "dist/renderer/assets/PaperProposalReview-B7_2G8P_.js",
+      "sha256": "fbd6dae5a6470c0ae256dff46adb605816f11efd212bdd92ebd5f5d68fa1dd13"
+    },
+    {
+      "path": "dist/renderer/assets/PaperTrading-DKcFqdlN.js",
+      "sha256": "66c1d97e68447ab1e279bb2a65fbd4a71d264db63ac861ca5a6568e4f469b192"
+    },
+    {
+      "path": "dist/renderer/assets/ParallelPaperRecovery-CFD4jQNC.js",
+      "sha256": "f69fd560306045558df247800d4b8b3afa15303d88061376c2704cfa67bdfa5c"
+    },
+    {
+      "path": "dist/renderer/assets/Performance-CrzInOZ0.js",
+      "sha256": "f07ff1082ec318f5237f03f244ca9219f6bef06a5f28c13c790038cd47d0f969"
+    },
+    {
+      "path": "dist/renderer/assets/Portfolio-DBzTDUIM.js",
+      "sha256": "f2330385cd8d904b58b9aaf9971e35ef779a316f7f5ad37df2793af8e7bbe621"
+    },
+    {
+      "path": "dist/renderer/assets/Reconciliation-Dg-45wTj.js",
+      "sha256": "8cb5f9059e07c68f447dc5b8938ff304a08af323a48f65ec79353230835ee7b0"
+    },
+    {
+      "path": "dist/renderer/assets/Research-3v_JpFB9.css",
+      "sha256": "fd91003d781b65db704e1b19d376b9f6bf1def9fe344c9cf3ecb9349bc5838c4"
+    },
+    {
+      "path": "dist/renderer/assets/Research-3wahr5yG.js",
+      "sha256": "a05b74440dabce2a0c7a67c3535ba6b849aa560b64362886f46da54e6afef571"
+    },
+    {
+      "path": "dist/renderer/assets/Risk-v1Jfk1Rx.js",
+      "sha256": "15dd779e0c24e90b92944bef79794c468fe33b5f92ac40300f2f791698b8d859"
+    },
+    {
+      "path": "dist/renderer/assets/Scoreboard-D2-H_YBQ.js",
+      "sha256": "9d923f5e5e2624fabdeab1afddca024f21cebf12c4b091c9c859e0bff356d5bf"
+    },
+    {
+      "path": "dist/renderer/assets/Settings-BgOoFYHP.js",
+      "sha256": "be33bb4efee1cd2999f59b29f7e5967b6ce85ca0de33e7f053a4ca24fbbb2139"
+    },
+    {
+      "path": "dist/renderer/assets/Tax-Kt9klz8m.js",
+      "sha256": "d77f3cc462ae32a4e3c51834aa280cfe58a5f18aa8a7bae814c5d4640fdf691e"
+    },
+    {
+      "path": "dist/renderer/assets/TerminalPerformance-Bj9v6jjh.js",
+      "sha256": "71ed84636ebdae78c6c11f07ad5c74a5357af0a6d5503d0f81602e677ff711e6"
+    },
+    {
+      "path": "dist/renderer/assets/WalletNames-BK7Lfvto.js",
+      "sha256": "f2c3622b91be2a9d5673dab53c32421b235f82d0c5c82f0dd385b5a9c935462a"
+    },
+    {
+      "path": "dist/renderer/assets/advisor-navigation-D7JwDVtt.js",
+      "sha256": "1abdd16c1a97272a4d51f9642783022b944783cfb9bcac6eb05816ff13b2fc79"
+    },
+    {
+      "path": "dist/renderer/assets/badges-jU54efrw.js",
+      "sha256": "1a2c61e1866218b9f149cc0c3dcb50389afac9b857f12ad5f8bf88eb2f740501"
+    },
+    {
+      "path": "dist/renderer/assets/chart-lifecycle-_sDJnr0y.js",
+      "sha256": "9bd280c7d6eb039aebeaaa697e7dcf901eb06d0cafd807394bf2ce6c0ec4430e"
+    },
+    {
+      "path": "dist/renderer/assets/chevron-down-CJAd5SX4.js",
+      "sha256": "74ae7ec11897d22be0093e68a48c52582910f1455bde4fcc6b7585382b2aec1c"
+    },
+    {
+      "path": "dist/renderer/assets/dist-HZ_C_A0A.js",
+      "sha256": "9ff6ee13bc821e10e8092fe5946d66ecb11deba3e75ddeab3b12a7b2dbac744e"
+    },
+    {
+      "path": "dist/renderer/assets/evidence-visualization-DsDSJ95F.js",
+      "sha256": "442a6b8e575fd8641399d60c6b7484581631eb6ec256410f3d47f68dea4eb9b7"
+    },
+    {
+      "path": "dist/renderer/assets/file-up-Boeu7BCw.js",
+      "sha256": "46368ad8f61f8372b0ee23f7ad53f0cd1f21b846944468aa5d1b61f01f64c1f8"
+    },
+    {
+      "path": "dist/renderer/assets/format-B9VBX1wM.js",
+      "sha256": "5df00ae4c9b0b0dfff8d886d4f68d543c09a06e0cd62a529043dddb6f029f640"
+    },
+    {
+      "path": "dist/renderer/assets/index-BVY1ms8x.js",
+      "sha256": "417cb7553a254865a4bb7701906ee5a94f560e753841be34019283bfc2b193bc"
+    },
+    {
+      "path": "dist/renderer/assets/index-DriwM_QL.css",
+      "sha256": "813ba173b6f7f28b3cb0bff8fb5867c8ab0184179a39259569f76a6dfe934d6e"
+    },
+    {
+      "path": "dist/renderer/assets/jsx-runtime-B-hcVAMW.js",
+      "sha256": "1995133101003118446b07fbe7df8bdd5a0abac381044062204e54e926c63f02"
+    },
+    {
+      "path": "dist/renderer/assets/p-1sJ0ZDPe-YkMm5iKi.js",
+      "sha256": "c9e46a5d16142bf9375153aeb145ae52afcbda2168a2553d35165bc297400324"
+    },
+    {
+      "path": "dist/renderer/assets/p-5ldEpNdG-CoSYTxH8.js",
+      "sha256": "54dcdf4bd0970a199be70c43ad263ab2c4171f3e4fca5b59a62adb83641ad535"
+    },
+    {
+      "path": "dist/renderer/assets/p-BMPN55of-C0P_qWS_.js",
+      "sha256": "a3cbea9636e6a2506308ca8c30fd1cda4878bb602aefec8a7e4d3c863317e53a"
+    },
+    {
+      "path": "dist/renderer/assets/p-BQyuFxYc-BP5sUz4F.js",
+      "sha256": "ffa48331c457daab4896f0799fe6f0b45613e09448373f479e988194bac160ab"
+    },
+    {
+      "path": "dist/renderer/assets/p-BT9-hMMz-dTgYnGDm.js",
+      "sha256": "aca5e55eff0625ec258f30aeadd4886f3a39b923cef7989090d797ac2543acbf"
+    },
+    {
+      "path": "dist/renderer/assets/p-BWoa-cki-C4JaT4g-.js",
+      "sha256": "7b3f8763386f9218138f45b129ff7517c708fa064e032f8caeb2873b0eb90203"
+    },
+    {
+      "path": "dist/renderer/assets/p-BmVRXR1y-CUdNq1pd.js",
+      "sha256": "930b1b7fcb83658f6ee3c166a1ddf130180029fd17fc996e7ece3a1ce8a18c14"
+    },
+    {
+      "path": "dist/renderer/assets/p-C-NbvXu4-CuUa-LMa.js",
+      "sha256": "2784f56bffeec1d736b81be4c3b085d2b1d60df778b215302c0debcf1ce493e6"
+    },
+    {
+      "path": "dist/renderer/assets/p-C09TXohi-BME7HMRv.js",
+      "sha256": "581d2c8f2918cbb64c95863529cfb9c31823a23438c9d7e5d92a02ceca7d5db2"
+    },
+    {
+      "path": "dist/renderer/assets/p-C4VpVfrJ-Cl0eZZUT.js",
+      "sha256": "5d06a82be56f3dcb12673e0440ff722308dfa88fbb8ba1dabd410e19433edae4"
+    },
+    {
+      "path": "dist/renderer/assets/p-CG_zZq_I-Dazyzt_J.js",
+      "sha256": "691cd8b5714c7de722e6ea635a1b22eddd7a48c826c01c8e55a1e8e67bba16a0"
+    },
+    {
+      "path": "dist/renderer/assets/p-CWuIRJQN-CjiHx0rx.js",
+      "sha256": "cff4fef42648582671c6ceb9b85a8731152d465f80b8270d7c5ebd84cb9aa0ba"
+    },
+    {
+      "path": "dist/renderer/assets/p-D0YpjgON-D9XAT2uD.js",
+      "sha256": "2771cbc1751ec686f13953d1245b76e427cac7c770b897ec4b3eb813271ce0e3"
+    },
+    {
+      "path": "dist/renderer/assets/p-D7-vHX0A-bNEFZldE.js",
+      "sha256": "e72d36026c9b71c26fa11b1e62f1e40a6b664e1380558e50aba8f7518c795bc1"
+    },
+    {
+      "path": "dist/renderer/assets/p-ZjP4CjeZ-DJ1DGIsW.js",
+      "sha256": "fb8223951862d85ca908a66f07a394a9aec94e214b0d426342312eb373b446d8"
+    },
+    {
+      "path": "dist/renderer/assets/sparkles-CuMWZwj5.js",
+      "sha256": "b5977ed19cf5a89f6ed0168eef409d792c4a5ae4ec41d719f04fc25a73452874"
+    },
+    {
+      "path": "dist/renderer/assets/use-channel-CiFhO4Xo.js",
+      "sha256": "1cffaee2e338a9e3e3e73d880c303b125b3e86d30a3bd1767cbb475e3003e36f"
+    },
+    {
+      "path": "dist/renderer/assets/use-command-DWrGIuqW.js",
+      "sha256": "a45e31d94b36e2b3817b21677c932617aca36726ae3ed183c7744d154e1551d0"
+    },
+    {
+      "path": "node_modules/@coqui/storage/dist/repositories/account-capital-authority.js",
+      "sha256": "290cbdf1ee639c5043e522767a6b85b9233c3a6c6f301b0b040f28c43f68f7bd"
+    },
+    {
+      "path": "node_modules/@coqui/core/dist/portfolio/capital-performance.js",
+      "sha256": "838b742ef835f6076463e5e97383ffc610d7675956bd5811d7f96ce5028245af"
+    },
+    {
+      "path": "node_modules/@coqui/services/dist/portfolio/paper-capital-evidence.js",
+      "sha256": "94b1f27786a6bc54e43638e22b404e0fdcd6d5fd978f7cd17120f72a4b428985"
+    },
+    {
+      "path": "node_modules/@coqui/services/dist/paper/parallel-paper-settlement.js",
+      "sha256": "3a822047090151c4c4fce96a7cd7c1b8a28596139e0215525d09b504d8fde407"
+    },
+    {
+      "path": "node_modules/@coqui/core/dist/research/study-manifests.generated.js",
+      "sha256": "f51a353060b5445dd73d03a77136b78cc0dd43723c4fcd0f09fb58e6b91d0b3d"
+    }
+  ],
+  "smoke": {
+    "opened": true,
+    "schemaVersion": 100,
+    "workerLoaded": true,
+    "provenanceVerified": true,
+    "error": null
+  },
+  "disposableProfile": true,
+  "actualProfilesTouched": false
+}

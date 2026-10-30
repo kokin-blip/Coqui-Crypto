@@ -1,0 +1,32 @@
+{
+  "sourceCommit": "b33ddcf6680f5973591f4c4d288117e8be0b6d36",
+  "localColdSuites": 359,
+  "localColdTests": 2492,
+  "typecheck": "pass",
+  "lint": "pass",
+  "productionAuditKnownVulnerabilities": 0,
+  "nativeSafety": "ALL PASS",
+  "nativePerformance": {
+    "passed": true,
+    "warmUsefulShellMs": 178.0,
+    "interactionP75Ms": 9.0,
+    "regressionControlP75Ms": 250.5,
+    "budgetMs": 200
+  },
+  "prospectiveChecks": 11,
+  "prospectiveSoftwareRendered": true,
+  "saleChecks": 18,
+  "saleSoftwareRendered": true,
+  "salePostTagFixtureOnly": true,
+  "activityChecks": 37,
+  "visualInspection": [
+    "prospective contrast zoom",
+    "sale desktop consequence"
+  ],
+  "packagedSchema": 100,
+  "localCompiledMembersMatched": 9,
+  "localSignature": "ad-hoc verified",
+  "actualAccountOrStudyAction": false,
+  "humanVoiceOverAndOperationalGates": "pending",
+  "publication": "pending"
+}

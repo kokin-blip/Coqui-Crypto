@@ -1,0 +1,25 @@
+{
+  "checkedFiles": 3420,
+  "missing": [],
+  "intentionalChanges": [
+    ".github/workflows/release.yml",
+    "apps/desktop/package.json",
+    "apps/desktop/scripts/algo-activity-smoke.mjs",
+    "apps/desktop/scripts/build-metadata.mjs",
+    "apps/desktop/scripts/capital-prospective-smoke.mjs",
+    "apps/desktop/scripts/packaged-smoke.mjs",
+    "apps/desktop/scripts/paper-reserve-sale-smoke.mjs",
+    "apps/desktop/src/main/index.ts",
+    "apps/desktop/src/main/paper-reserve-runtime.ts",
+    "docs/implementation/small-portfolio-phase-tracker-2026-10-23.md",
+    "docs/studies/behavior-manifests-v1.json",
+    "package.json",
+    "packages/contracts/package.json",
+    "packages/core/src/research/study-manifests.generated.ts",
+    "pnpm-lock.yaml",
+    "scripts/build-study-manifests.mjs"
+  ],
+  "roadmapUnchanged": true,
+  "unrelatedDeletionPreserved": true,
+  "financialOrResearchActions": false
+}

@@ -1,0 +1,11 @@
+{
+  "command": [
+    "/Users/kokinmartinez/Documents/ChatGPT/Coqui-Crypto/node_modules/.pnpm/electron@43.4.1_supports-color@7.2.0/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron",
+    "/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-beta22-f50n9z0n/apps/desktop/scripts/smoke.mjs"
+  ],
+  "exitCode": 0,
+  "disposable": true,
+  "sourceCommit": "b33ddcf6680f5973591f4c4d288117e8be0b6d36",
+  "softwareRendering": false,
+  "beganAtMs": 1793321945680
+}

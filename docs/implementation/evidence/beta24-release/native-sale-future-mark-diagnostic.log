@@ -1,0 +1,9 @@
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '21cfcd1eaabe8502dc490f0877cee0ee50559d26634ee8f0c9047035b33c47e2'
+}
+PASS policy stays disarmed 
+FAIL Main-owned source evidence produces a bounded local consequence {"status":"ok","value":{"preferencesHash":"0907140d9f4acf3b9a94c4404ea82f0baab8905c7b61aecff814d15a204239b1","consequence":null,"reasonCodes":["sale_profit_evidence_unavailable"],"gateCodes":["budget_source_incomplete","paper_current_marks_unavailable","sale_manual_authorization_required","sale_source_review_required"]}}
+Error: Main-owned source evidence produces a bounded local consequence
+    at check (file:///private/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-beta22-f50n9z0n/apps/desktop/scripts/paper-reserve-sale-future-mark-diagnostic.mjs:10:207)
+    at run (file:///private/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-beta22-f50n9z0n/apps/desktop/scripts/paper-reserve-sale-future-mark-diagnostic.mjs:33:2)

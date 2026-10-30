@@ -1,0 +1,16 @@
+{
+  "initialNativeRun": "native-sale.log",
+  "initialRunPassed": false,
+  "initialDiagnosticOmittedUnavailableReasons": true,
+  "confirmedFixtureDefect": "Separate Date.now calls permit a mark later than recordedAtMs; the app correctly refuses it.",
+  "controlledFutureMarkProbe": "native-sale-future-mark-diagnostic.log",
+  "controlledProbeExpectedExitCode": 1,
+  "controlledProbeReasons": ["sale_profit_evidence_unavailable", "budget_source_incomplete", "paper_current_marks_unavailable"],
+  "expandedDiagnosticRunPassed": true,
+  "sharedTimestampFixtureChecks": 18,
+  "sharedTimestampFixtureExitCode": 0,
+  "productCodeUnchanged": true,
+  "postTagVerifierCorrectionOnly": true,
+  "assertionsRemovedOrWeakened": false,
+  "earlierFailurePreserved": true
+}

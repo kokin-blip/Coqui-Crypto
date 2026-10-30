@@ -1,0 +1,2 @@
+773cd4571e21bfca5d5bd1e5a3eaeaa81a059358c38cad02d826c432cca4ed38  Coqui-0.1.0-beta.24-mac-arm64.dmg
+5826b5e605c43aafd631469decbc06eb03da552e45718459b7130d55095c0d6e  Coqui-0.1.0-beta.24-mac-arm64.zip

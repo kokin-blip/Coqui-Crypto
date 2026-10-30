@@ -1,0 +1,18 @@
+$ node scripts/packaged-smoke.mjs
+PASS  packaged application located  (./release/mac-arm64/Coqui.app/Contents/MacOS/Coqui)
+PASS  bundle carries an ad-hoc signature  (Apple Silicon refuses an unsigned bundle outright)
+PASS  arbitrary loads are denied  (afterPackHardening)
+PASS  NSCameraUsageDescription stripped  (a declared capability is one macOS will prompt for)
+PASS  NSMicrophoneUsageDescription stripped  (a declared capability is one macOS will prompt for)
+PASS  packaged process ran the smoke and exited  (exit=0)
+PASS  packaged source revision, generated manifests and version agree
+PASS  node:sqlite opened a database under asar  (Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '21cfcd1eaabe8502dc490f0877cee0ee50559d26634ee8f0c9047035b33c47e2'
+}
+COQUI_PACKAGED_SMOKE {"opened":true,"schemaVersion":100,"workerLoaded":true,"provenanceVerified":true,"error":null})
+PASS  news analysis worker loaded inside the package
+PASS  migrations applied inside the package  (user_version=100)
+
+=== PACKAGED SMOKE (ADR-0003 gate) ===
+=== ALL PASS ===

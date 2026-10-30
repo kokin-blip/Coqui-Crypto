@@ -1,0 +1,9 @@
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '21cfcd1eaabe8502dc490f0877cee0ee50559d26634ee8f0c9047035b33c47e2'
+}
+PASS policy stays disarmed 
+FAIL Main-owned source evidence produces a bounded local consequence {}
+Error: Main-owned source evidence produces a bounded local consequence
+    at check (file:///private/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-beta22-f50n9z0n/apps/desktop/scripts/paper-reserve-sale-smoke.mjs:10:207)
+    at run (file:///private/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-beta22-f50n9z0n/apps/desktop/scripts/paper-reserve-sale-smoke.mjs:33:2)

@@ -1,0 +1,5 @@
+Coqui paper runtime loaded {
+  schedulerVersion: 'paper-read-retry-v4',
+  behaviorHash: '21cfcd1eaabe8502dc490f0877cee0ee50559d26634ee8f0c9047035b33c47e2'
+}
+COQUI_PACKAGED_SMOKE {"opened":true,"schemaVersion":100,"workerLoaded":true,"provenanceVerified":true,"error":null}

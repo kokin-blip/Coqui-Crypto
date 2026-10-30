@@ -637,3 +637,18 @@ Ok release a new release with all these new updates. mac build only.
 Annotation follow-up: **commit those**
 
 Scope clarification: **No comit those and add all the new changes in the new release.**
+
+### October 29 — beta.24 Mac-only publication verified
+
+- **Committed/pushed and published:** application integration `12f1769`, startup correction `c6c42de`, final release source/tag `b33ddcf6680f5973591f4c4d288117e8be0b6d36`, [experimental-v0.1.0-beta.24](https://github.com/kokin-blip/Coqui-Crypto/releases/tag/experimental-v0.1.0-beta.24). Exactly three Mac Apple Silicon arm64 assets (DMG/ZIP/checksums), experimental prerelease; no Windows/Intel installer or installed migration. Prior beta.22/.23 candidate tags and failures remain unpublished historical evidence.
+- Final source cold checks pass **359 suites/2,492 tests**, root/renderer typecheck, lint and production audit with zero known vulnerabilities. Exact-tag Release and CI pass. Local native safety/performance, 11 P7, 18 sale and 37 Activity checks pass. Sale fixture's separate clock reads caused possible future synthetic marks; a controlled negative probe retains correct refusal, and one shared timestamp fixes only the verifier. The first failure is preserved. Final receipt/verifier commits do not change the tagged application or move the tag.
+- Downloaded DMG and ZIP pass hashes, strict ad-hoc signature verification, source/generated revision/version agreement, transport/capability checks and scratch-profile schema100/worker startup. **77 runtime members**, including all renderer JS/CSS, preload and entry match the tested compilation. Anonymous published downloads return HTTP200 and match GitHub digests plus the manifest. [Delivery and evidence](beta24-macos-release-2026-10-29.md). Distribution is complete at this scope; review and actual operational acceptance are separate.
+- Full saved P0–P7 architecture, requirements, negative research, frozen reports and consumed holdouts remain intact; 3,420 baseline files have no missing entries and the original roadmap hash is unchanged. P0–P4, P5-A–G, P6-A–F/G and P7-A–G capabilities remain preserved. **P5-H empirical research, actual P6-G admission, remaining H1–H6 account/host/credential/shared financial/dispatch/connected work and actual P7-H–J owner/reviewer/future/elapsed/final/qualification stay pending in full.** Publication grants no authority or qualification and performs no actual installation/profile migration, host or credential change, Resume, order/cancel/withdrawal, registration/collector/final evaluation. Human VoiceOver, actual-market latency, actual-profile restore, source/operational review and connected gates remain open; no future phase is silently completed.
+
+**Prompt used**
+
+Ok release a new release with all these new updates. mac build only.
+
+Annotation follow-up: **commit those**
+
+Scope clarification: **No comit those and add all the new changes in the new release.**

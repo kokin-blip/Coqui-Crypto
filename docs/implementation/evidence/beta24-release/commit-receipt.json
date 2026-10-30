@@ -1,0 +1,17 @@
+{
+  "sourceCommit": "b33ddcf6680f5973591f4c4d288117e8be0b6d36",
+  "tag": "experimental-v0.1.0-beta.24",
+  "branch": "codex/operations-crew-journal",
+  "selectedPaths": 55,
+  "changedPaths": 41,
+  "allSelectedBytesMatchCommit": true,
+  "branchAndPeeledTagRemoteVerified": true,
+  "releaseRun": 40982962028,
+  "tagCiRun": 40982962091,
+  "branchCiRun": 40982960388,
+  "coldSuites": 359,
+  "coldCases": 2492,
+  "publication": "pending",
+  "earlierCandidateTagsMoved": false,
+  "financialOrResearchAuthorityChanged": false
+}

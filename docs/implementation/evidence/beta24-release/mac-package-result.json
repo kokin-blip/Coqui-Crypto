@@ -1,0 +1,15 @@
+{
+  "command": [
+    "pnpm",
+    "--filter",
+    "@coqui/desktop",
+    "package:mac",
+    "--publish",
+    "never"
+  ],
+  "exitCode": 0,
+  "sourceCommit": "b33ddcf6680f5973591f4c4d288117e8be0b6d36",
+  "standaloneDesktopBuild": true,
+  "workspaceGenerationRequired": true,
+  "disposable": true
+}

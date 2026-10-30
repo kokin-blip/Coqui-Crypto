@@ -1,0 +1,10 @@
+{
+  "command": [
+    "pnpm",
+    "--filter",
+    "@coqui/desktop",
+    "smoke:packaged"
+  ],
+  "exitCode": 0,
+  "disposable": true
+}

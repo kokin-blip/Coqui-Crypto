@@ -1,0 +1,1 @@
+$ node scripts/build-study-manifests.mjs && tsc -b

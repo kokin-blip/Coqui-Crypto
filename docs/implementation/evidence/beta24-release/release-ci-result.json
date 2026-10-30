@@ -1,0 +1,1 @@
+{"conclusion":"success","jobs":[{"conclusion":"success","name":"verify","status":"completed"},{"conclusion":"success","name":"build (macos-latest, package:mac, macos-arm64)","status":"completed"},{"conclusion":"success","name":"publish","status":"completed"}],"status":"completed"}

@@ -1,0 +1,63 @@
+{
+  "bundle": "/var/folders/yl/gm0x2l4j3_39zddqdllnnfzw0000gn/T/coqui-beta22-f50n9z0n/apps/desktop/release/mac-arm64/Coqui.app",
+  "metadata": {
+    "version": "0.1.0-beta.24",
+    "sourceRevision": "b33ddcf6680f5973591f4c4d288117e8be0b6d36",
+    "dirty": false,
+    "sourceHash": "79833b1ed228af6dc6ac20557dc4063e2a4dc09fea9b56453f4bd3570f80955a",
+    "channel": "beta-candidate",
+    "builtAtMs": 1793321905381
+  },
+  "compiledRevision": "b33ddcf6680f5973591f4c4d288117e8be0b6d36",
+  "sourceHashMatchesLocal": true,
+  "zod": "4.6.6",
+  "adHocSignatureVerified": true,
+  "transportAndCapabilitiesVerified": true,
+  "members": [
+    {
+      "path": "dist/main/index.js",
+      "sha256": "c25033c47fc06468ad08228b6a86871727a849bc40406fa581c18c8ec5720043"
+    },
+    {
+      "path": "dist/main/paper-reserve-runtime.js",
+      "sha256": "b555417094064b7f93e553feedbda9cf90677c61e79acbd2dd32c2ee6ed4e420"
+    },
+    {
+      "path": "dist/main/alpaca-performance-handlers.js",
+      "sha256": "bd37dde909feb5289ef6d5239dbb2fff38ef321a4d7ab7b54cb15c07f7a424f2"
+    },
+    {
+      "path": "dist/main/parallel-paper-runtime.js",
+      "sha256": "29c00e61ee5c6e3e42ed6046ab2f2bf19f051bd8b2d4c3467bc48c31c07000e2"
+    },
+    {
+      "path": "node_modules/@coqui/storage/dist/repositories/account-capital-authority.js",
+      "sha256": "290cbdf1ee639c5043e522767a6b85b9233c3a6c6f301b0b040f28c43f68f7bd"
+    },
+    {
+      "path": "node_modules/@coqui/core/dist/portfolio/capital-performance.js",
+      "sha256": "838b742ef835f6076463e5e97383ffc610d7675956bd5811d7f96ce5028245af"
+    },
+    {
+      "path": "node_modules/@coqui/services/dist/portfolio/paper-capital-evidence.js",
+      "sha256": "94b1f27786a6bc54e43638e22b404e0fdcd6d5fd978f7cd17120f72a4b428985"
+    },
+    {
+      "path": "node_modules/@coqui/services/dist/paper/parallel-paper-settlement.js",
+      "sha256": "3a822047090151c4c4fce96a7cd7c1b8a28596139e0215525d09b504d8fde407"
+    },
+    {
+      "path": "node_modules/@coqui/core/dist/research/study-manifests.generated.js",
+      "sha256": "f51a353060b5445dd73d03a77136b78cc0dd43723c4fcd0f09fb58e6b91d0b3d"
+    }
+  ],
+  "smoke": {
+    "opened": true,
+    "schemaVersion": 100,
+    "workerLoaded": true,
+    "provenanceVerified": true,
+    "error": null
+  },
+  "disposableProfile": true,
+  "actualProfilesTouched": false
+}
