@@ -1,0 +1,15 @@
+{
+  "draft": true,
+  "published": false,
+  "tag": "experimental-v0.1.0-beta.23",
+  "metadata": {
+    "version": "0.1.0-beta.23",
+    "sourceRevision": "c6c42de3d976150d735bd2a24a120753858f4980",
+    "dirty": false,
+    "sourceHash": "37b3575aaa9b5f39f5d420dba35b6db51beb91e0ec6b525194e86fa529cd3c2c",
+    "channel": "beta-candidate",
+    "builtAtMs": 1793321325267
+  },
+  "compiledStudyRevision": "12f1769258109837aa63d67d107a7dd5770155ec",
+  "revisionMatches": false
+}

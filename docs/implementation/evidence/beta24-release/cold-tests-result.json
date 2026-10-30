@@ -1,0 +1,10 @@
+{
+  "command": [
+    "pnpm",
+    "test"
+  ],
+  "exitCode": 0,
+  "firstPartyDistAbsentAtStart": true,
+  "disposable": true,
+  "candidateVersion": "0.1.0-beta.24"
+}

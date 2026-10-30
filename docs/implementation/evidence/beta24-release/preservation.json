@@ -1,0 +1,23 @@
+{
+  "baselineCommit": "9164e163af667c82d66cd3b7cd15146a046e4a96",
+  "checkedFiles": 3420,
+  "changed": [
+    ".github/workflows/release.yml",
+    "apps/desktop/package.json",
+    "apps/desktop/scripts/algo-activity-smoke.mjs",
+    "apps/desktop/scripts/build-metadata.mjs",
+    "apps/desktop/scripts/capital-prospective-smoke.mjs",
+    "apps/desktop/scripts/packaged-smoke.mjs",
+    "apps/desktop/src/main/index.ts",
+    "apps/desktop/src/main/paper-reserve-runtime.ts",
+    "docs/implementation/small-portfolio-phase-tracker-2026-10-23.md",
+    "docs/studies/behavior-manifests-v1.json",
+    "package.json",
+    "packages/contracts/package.json",
+    "packages/core/src/research/study-manifests.generated.ts",
+    "pnpm-lock.yaml",
+    "scripts/build-study-manifests.mjs"
+  ],
+  "missing": [],
+  "roadmapHashUnchanged": true
+}

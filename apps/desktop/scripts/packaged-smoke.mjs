@@ -95,6 +95,7 @@ if (reported !== null) {
 }
 
 check('packaged process ran the smoke and exited', run.status === 0, `exit=${run.status}`);
+check('packaged source revision, generated manifests and version agree', result?.provenanceVerified === true);
 check('node:sqlite opened a database under asar', result?.opened === true, output.slice(-300).trim());
 check('news analysis worker loaded inside the package', result?.workerLoaded === true);
 check(

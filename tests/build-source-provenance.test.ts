@@ -19,6 +19,9 @@ function fixture(run: (root: string, generated: string, source: string) => void)
   } finally { vi.unstubAllEnvs();rmSync(root,{recursive:true,force:true}); }
 }
 describe('release source provenance', () => {
+  it('rejects an unchanged generated manifest that belongs to an earlier revision', () => fixture((root) => {
+    expect(sourceBuildDirty(root,'verified current generated revision\n')).toBe(true);
+  }));
   it('accepts only the exact verified generated source as a clean derivation', () => fixture((root,generated) => {
     writeFileSync(generated,'verified current generated revision\n');
     expect(sourceBuildDirty(root,'verified current generated revision\n')).toBe(false);

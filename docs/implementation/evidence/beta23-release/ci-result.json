@@ -1,0 +1,9 @@
+{
+  "runId": 40980619663,
+  "conclusion": "success",
+  "macosOnly": true,
+  "createdDraftOnly": true,
+  "published": false,
+  "superseded": "experimental-v0.1.0-beta.24",
+  "reason": "downloaded draft compiled research revision differs from Main source metadata"
+}

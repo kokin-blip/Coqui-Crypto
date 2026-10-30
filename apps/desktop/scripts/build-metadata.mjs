@@ -12,7 +12,7 @@ export function sourceBuildDirty(repository, expectedGeneratedSource) {
   const verified = existsSync(path) && readFileSync(path,'utf8') === expectedGeneratedSource;
   const changed = git('diff','--name-only','-z','HEAD','--',...sourcePaths).split('\0').filter(Boolean);
   const untracked = git('ls-files','--others','--exclude-standard','-z','--',...sourcePaths).split('\0').filter(Boolean);
-  return untracked.length > 0 || changed.some(file => file !== generated || !verified);
+  return !verified || untracked.length > 0 || changed.some(file => file !== generated);
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
 const root = dirname(dirname(fileURLToPath(import.meta.url))), repository = dirname(dirname(root));

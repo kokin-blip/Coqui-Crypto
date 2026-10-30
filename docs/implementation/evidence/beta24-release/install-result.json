@@ -1,0 +1,12 @@
+{
+  "command": [
+    "pnpm",
+    "install",
+    "--frozen-lockfile",
+    "--ignore-scripts"
+  ],
+  "exitCode": 0,
+  "firstPartyDistAbsentAtStart": true,
+  "disposable": true,
+  "candidateVersion": "0.1.0-beta.24"
+}

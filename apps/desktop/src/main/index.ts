@@ -4,6 +4,7 @@ import { readFile, stat, writeFile, link, unlink } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 
 import { createOsKeyringSecretStore, type SecretStore } from '@coqui/adapters';
+import { STUDY_BUILD_REVISION } from '@coqui/core';
 import { app, BrowserWindow, clipboard, dialog, ipcMain, Notification, powerMonitor, shell } from 'electron';
 
 import { createDispatcher } from './dispatch.js';
@@ -231,9 +232,13 @@ function shutdown(): void {
  * packaged process has nowhere else to report to.
  */
 async function runPackagedSmoke(): Promise<void> {
-  let payload: { opened: boolean; schemaVersion: number | null; workerLoaded: boolean; error: string | null };
+  let payload: { opened: boolean; schemaVersion: number | null; workerLoaded: boolean; provenanceVerified: boolean; error: string | null };
   let probe: CoquiRuntime | null = null;
   try {
+    const build = JSON.parse(await readFile(new URL('./build-info.json', import.meta.url), 'utf8')) as Record<string, unknown>;
+    if (build['version'] !== app.getVersion() || build['sourceRevision'] !== STUDY_BUILD_REVISION || build['dirty'] !== false) {
+      throw new Error('Packaged source provenance mismatch');
+    }
     probe = createRuntime({
       databasePath: databasePath(),
       profileId: DEFAULT_PROFILE,
@@ -241,12 +246,13 @@ async function runPackagedSmoke(): Promise<void> {
     });
     const row = probe.database.prepare('PRAGMA user_version').get() as { user_version: number };
     await verifyPackagedNewsWorker();
-    payload = { opened: true, schemaVersion: Number(row.user_version), workerLoaded: true, error: null };
+    payload = { opened: true, schemaVersion: Number(row.user_version), workerLoaded: true, provenanceVerified: true, error: null };
   } catch (error) {
     // The error's *type*, not its message: a failure here is reported in CI
     // logs, and a message can carry a path.
     payload = {
       opened: false,
+      provenanceVerified: false,
       workerLoaded: false,
       schemaVersion: null,
       error: error instanceof Error ? error.constructor.name : typeof error,

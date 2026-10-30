@@ -1,0 +1,22 @@
+Scope: all 10 workspace projects
+✓ Lockfile passes supply-chain policies (verified 42m ago)
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +548
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 548, reused 548, downloaded 0, added 403
+Progress: resolved 548, reused 548, downloaded 0, added 544
+Progress: resolved 548, reused 548, downloaded 0, added 548, done
+
+devDependencies:
++ @emnapi/runtime 2.0.0-alpha.3
++ @eslint/js 10.0.1
++ @napi-rs/cli 3.8.0
++ @types/node 25.9.3
++ eslint 10.5.0
++ fast-check 4.9.0
++ typescript 6.0.3
++ typescript-eslint 8.61.0
++ vitest 4.1.8
+
+Done in 3s using pnpm v11.9.0

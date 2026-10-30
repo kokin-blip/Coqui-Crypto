@@ -1,6 +1,6 @@
 {
   "name": "@coqui/desktop",
-  "version": "0.1.0-beta.23",
+  "version": "0.1.0-beta.24",
   "description": "Evidence-first crypto research and paper-trading workstation with live execution disabled.",
   "author": "Coqui Crypto",
   "private": true,
@@ -14,7 +14,7 @@
   },
   "scripts": {
     "icons": "node scripts/build-icons.mjs",
-    "build": "tsc -b && node scripts/build-preload.mjs && vite build && node scripts/build-metadata.mjs",
+    "build": "pnpm --workspace-root build && tsc -b && node scripts/build-preload.mjs && vite build && node scripts/build-metadata.mjs",
     "dev": "vite",
     "dev:electron": "node scripts/dev-electron.mjs",
     "start": "pnpm build && electron .",

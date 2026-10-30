@@ -1,0 +1,17 @@
+{
+  "baseCommit": "c6c42de3d976150d735bd2a24a120753858f4980",
+  "version": "0.1.0-beta.24",
+  "coldSuites": 359,
+  "coldCases": 2492,
+  "sourceHashes": {
+    ".github/workflows/release.yml": "ba11a5645f1574f489857abc3c7f4c7918d5379a7305bdde05c6ff4898daa96b",
+    "apps/desktop/package.json": "142bd2b3de41b9ea5e5cc194b76f5bb06b0b20ab3fa8dc48c0d5c744dc85389b",
+    "apps/desktop/scripts/build-metadata.mjs": "127071cbd3e069dc37d820645530e434c180b0c2cb4ad9ba8d35fb58bba723f5",
+    "apps/desktop/scripts/packaged-smoke.mjs": "51a1f0ce05d5b43d472ed541eb5d951de0749694e11786427efd821f7f83107d",
+    "apps/desktop/src/main/index.ts": "f88e810bd63ebf35bcecbaa3458da0a6153c7d09df3689d0b66e797e84bc1590",
+    "package.json": "67599aa516504f9e85a409631bea504354b2187d51c342498cb6c8d52faaf56d",
+    "tests/build-source-provenance.test.ts": "c1d746f904478e1fa9902924575d3fb132847a9550c2bb599bb2644293a36148"
+  },
+  "checksBeforeBuild": true,
+  "futureGatesUnchanged": true
+}

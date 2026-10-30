@@ -1,0 +1,11 @@
+{
+  "command": [
+    "pnpm",
+    "--filter",
+    "@coqui/desktop",
+    "package:mac",
+    "--publish",
+    "never"
+  ],
+  "exitCode": 0
+}

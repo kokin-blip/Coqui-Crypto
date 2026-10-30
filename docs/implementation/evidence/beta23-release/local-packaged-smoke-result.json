@@ -1,0 +1,8 @@
+{
+  "command": [
+    "/Users/kokinmartinez/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "scripts/packaged-smoke.mjs"
+  ],
+  "exitCode": 0,
+  "disposableProfile": true
+}

@@ -1,0 +1,9 @@
+{
+  "case": "unchanged generated manifest from an earlier revision",
+  "beforeFix": { "actualDirty": false, "requiredDirty": true, "testExitCode": 1 },
+  "afterFix": { "testExitCode": 0, "suites": 1, "cases": 3 },
+  "downloadedBeta23DraftConfirmsMismatch": true,
+  "draftProof": "../beta23-release/downloaded-draft-provenance.json",
+  "earlierTagsMoved": false,
+  "earlierCandidatesPublished": false
+}

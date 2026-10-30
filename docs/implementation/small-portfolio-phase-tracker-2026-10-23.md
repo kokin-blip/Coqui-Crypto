@@ -623,3 +623,17 @@ Ok release a new release with all these new updates. mac build only.
 Annotation follow-up: **commit those**
 
 Scope clarification: **No comit those and add all the new changes in the new release.**
+
+### October 29 — exact generated-provenance packaging gate; beta.24 candidate
+
+- Recovery/hourly/application integration is committed and pushed as `12f1769`; lazy proof acquisition and the P7 capture verifier as `c6c42de`. Beta.22 and beta.23 remain unpublished candidates with immutable tags. Beta.23's cold checks pass 359 suites/2,491 tests, typecheck/lint and local matching-host packaged startup/schema100/worker checks. Its P7 native capture timed out after narrow assertions and is explicitly incomplete, not a pass.
+- A real-Git regression reproduced falsely clean unchanged stale generated manifests. Fresh desktop-only packaging also lacked the root generator prerequisite. Beta.24 adds that prerequisite, stale-content detection and embedded revision/version agreement to packaged smoke. Product UI and financial permissions are unchanged. [Delivery](beta24-macos-release-2026-10-29.md) retains failures and the final source, CI and artifact evidence. Publication is not inferred from local checks.
+- P0–P4, P5-A–G, P6-A–F/G and P7-A–G remain preserved; P5-H empirical research, actual P6-G admission, remaining H1–H6 shared financial/dispatch/host/credential/connected implementation/evidence, actual P7-H–J owner/reviewer/future/elapsed/final/qualification and human operational/review gates remain pending in full. Distribution creates no connected authority, strategy qualification, installed migration or financial/research action. No scope is removed or phase marked complete.
+
+**Prompt used**
+
+Ok release a new release with all these new updates. mac build only.
+
+Annotation follow-up: **commit those**
+
+Scope clarification: **No comit those and add all the new changes in the new release.**
